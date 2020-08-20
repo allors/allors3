@@ -83,6 +83,7 @@ namespace Allors.Domain.Derivations.Default
                 if (domainDerivationById.Any())
                 {
                     domainAccumulatedChangeSet = new AccumulatedChangeSet();
+                    var domainValidation = new DomainValidation(this.Cycle.Derivation.Validation);
 
                     var changeSet = session.Checkpoint();
                     domainAccumulatedChangeSet.Add(changeSet);
@@ -93,7 +94,7 @@ namespace Allors.Domain.Derivations.Default
                         foreach (var kvp in domainDerivationById)
                         {
                             var domainDerivation = kvp.Value;
-                            domainDerivation.Derive(domainChangeSet);                           
+                            domainDerivation.Derive(domainChangeSet, domainValidation);
                         }
 
                         changeSet = session.Checkpoint();

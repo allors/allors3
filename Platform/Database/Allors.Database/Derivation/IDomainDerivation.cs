@@ -8,6 +8,6 @@ namespace Allors
 {
     public interface IDomainDerivation
     {
-        void Derive(IDomainChangeSet changeSet);
+        void Derive(IDomainChangeSet changeSet, IDomainValidation validation);
     }
 }

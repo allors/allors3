@@ -12,7 +12,7 @@ namespace Allors.Domain
     {
         public class FullNameDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet)
+            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
             {
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.FirstName, out var firstNames);
                 var personFirstNames = firstNames?.OfType<Person>();
@@ -34,7 +34,7 @@ namespace Allors.Domain
 
         public class GreetingDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet)
+            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
             {
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.FullName, out var fullNames);
                 var personFullNames = fullNames?.OfType<Person>();

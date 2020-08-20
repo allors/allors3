@@ -9,9 +9,9 @@ namespace Allors.Domain.Derivations.Default
 
     public class DomainValidation : IDomainValidation
     {
-        private Validation Validation { get; }
+        private IValidation Validation { get; }
 
-        public DomainValidation(Validation validation) => this.Validation = validation;
+        public DomainValidation(IValidation validation) => this.Validation = validation;
 
         public void AddError(string error) => this.Validation.AddError(new DerivationErrorGeneric(this.Validation, relation: null, "End date should be after start date"));
     }
