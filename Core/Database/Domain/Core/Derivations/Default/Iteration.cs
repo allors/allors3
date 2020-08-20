@@ -99,6 +99,8 @@ namespace Allors.Domain.Derivations.Default
 
                         changeSet = session.Checkpoint();
                         domainAccumulatedChangeSet.Add(changeSet);
+
+                        this.Cycle.Derivation.DomainDerivationCount++;
                     }
                 }
 

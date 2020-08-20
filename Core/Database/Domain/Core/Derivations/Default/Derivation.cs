@@ -17,6 +17,7 @@ namespace Allors.Domain.Derivations.Default
     {
         private bool guard;
         private Properties properties;
+        public int DomainDerivationCount { get; set; }
 
         public Derivation(ISession session, DerivationConfig config = null)
         {
@@ -33,6 +34,7 @@ namespace Allors.Domain.Derivations.Default
             this.MarkedBacklog = new HashSet<Object>();
 
             this.guard = false;
+            this.DomainDerivationCount = 0;
         }
 
         public ISession Session { get; }
