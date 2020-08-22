@@ -69,6 +69,8 @@ namespace Tests
             var derivationPersistent = environmentVariable?.ToLowerInvariant().Equals("persistent") == true;
 #endif
 
+            derivationPersistent = true;
+
             var services = new ServiceCollection();
             if (derivationPersistent)
             {

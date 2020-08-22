@@ -16,6 +16,7 @@ namespace Allors.Domain.Derivations.Persistent
     public class Derivation : IDerivation
     {
         private bool guard;
+
         private Properties properties;
 
         public Derivation(ISession session, DerivationConfig config = null)
@@ -52,6 +53,8 @@ namespace Allors.Domain.Derivations.Persistent
         ICycle IDerivation.Cycle => this.Cycle;
 
         IAccumulatedChangeSet IDerivation.ChangeSet => this.ChangeSet;
+
+        public int DomainDerivationCount { get; set; }
 
         public object this[string name]
         {

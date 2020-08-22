@@ -16,9 +16,9 @@ namespace Allors.Domain.Derivations.Default
     public class Derivation : IDerivation
     {
         private bool guard;
-        private Properties properties;
-        public int DomainDerivationCount { get; set; }
 
+        private Properties properties;
+    
         public Derivation(ISession session, DerivationConfig config = null)
         {
             this.Config = config ?? new DerivationConfig();
@@ -52,6 +52,8 @@ namespace Allors.Domain.Derivations.Default
         ICycle IDerivation.Cycle => this.Cycle;
 
         IAccumulatedChangeSet IDerivation.ChangeSet => this.ChangeSet;
+
+        public int DomainDerivationCount { get; set; }
 
         public object this[string name]
         {
