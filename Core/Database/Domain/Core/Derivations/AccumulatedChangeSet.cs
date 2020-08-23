@@ -14,6 +14,10 @@ namespace Allors.Domain.Derivations
 
     public class AccumulatedChangeSet : IAccumulatedChangeSet
     {
+        private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
+
+        private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
+
         internal AccumulatedChangeSet()
         {
             this.Created = new HashSet<long>();
@@ -35,6 +39,18 @@ namespace Allors.Domain.Derivations
         public IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation { get; }
 
         public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole { get; }
+        
+        public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
+            (from kvp in this.RoleTypesByAssociation
+             from value in kvp.Value
+             group kvp.Key by value)
+                 .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+
+        public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=
+            (from kvp in this.AssociationTypesByRole
+             from value in kvp.Value
+             group kvp.Key by value)
+                   .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
 
         public bool IsCreated(Object derivable) => this.Created.Contains(derivable.Id);
 
@@ -142,6 +158,9 @@ namespace Allors.Domain.Derivations
                     this.AssociationTypesByRole[kvp.Key] = new HashSet<IAssociationType>(changeSet.AssociationTypesByRole[kvp.Key]);
                 }
             }
+
+            this.associationsByRoleType = null;
+            this.rolesByAssociationType = null;
         }
     }
 }
