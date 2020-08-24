@@ -221,7 +221,7 @@ namespace Allors.Repository
         [RoleId("4282d539-81fb-4736-af21-283a9a53164a")]
         #endregion
         [Precision(19)]
-        [Scale(2)]
+        [Scale(5)]
         [Workspace]
         public decimal UnitIrpf { get; set; }
 
