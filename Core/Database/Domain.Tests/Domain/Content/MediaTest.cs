@@ -98,5 +98,19 @@ namespace Tests
             Assert.True(media.ExistMediaContent);
             Assert.Equal("application/pdf", media.MediaContent.Type);
         }
+
+        [Fact]
+        public void ModifyMediaContent()
+        {
+            var binary = new byte[] { 0, 1, 2, 3 };
+            var media = new MediaBuilder(this.Session).WithInData(binary).Build();
+
+            this.Session.Derive();
+
+            media.MediaContent.Data = new byte[] { };
+
+            Assert.True(media.ExistMediaContent);
+            Assert.Equal(media.MediaContent.Type, "application/octet-stream");
+        }
     }
 }

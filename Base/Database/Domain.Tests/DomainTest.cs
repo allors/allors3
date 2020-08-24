@@ -85,6 +85,9 @@ namespace Allors
         {
             database.Init();
 
+            database.PersonRegisterDerivations();
+            database.MediaRegisterDerivations();
+
             this.Session = database.CreateSession();
 
             if (populate)

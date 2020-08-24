@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Domain.PartyContactMechanism">
+    <Position X="4.75" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAgAAABAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContactMechanism" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.ContactMechanism">
+    <Position X="8" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAgAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContactMechanismType" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="FollowTo" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.ContactMechanismType" Collapsed="true">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

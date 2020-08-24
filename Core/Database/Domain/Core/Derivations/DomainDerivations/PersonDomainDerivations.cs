@@ -51,7 +51,7 @@ namespace Allors.Domain
             }
         }
 
-        public static void CoreRegisterDerivations(this IDatabase @this)
+        public static void PersonDomainRegisterDerivations(this IDatabase @this)
         {
             @this.DomainDerivationById[new System.Guid("A4E2008B-BFAB-43EF-9090-E2F90ADFBBF1")] = new FullNameDerivation();
             @this.DomainDerivationById[new System.Guid("A5C6A30E-FB67-4D7E-89A8-68C91DA89DC2")] = new GreetingDerivation();

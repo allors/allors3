@@ -95,6 +95,8 @@ namespace Tests
         {
             database.Init();
 
+            database.MediaRegisterDerivations();
+
             this.Session = database.CreateSession();
 
             if (populate)

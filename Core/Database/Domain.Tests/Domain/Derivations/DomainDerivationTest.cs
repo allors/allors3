@@ -17,7 +17,7 @@ namespace Tests
         [Fact]
         public void Derive()
         {
-            this.Session.Database.CoreRegisterDerivations();
+            this.Session.Database.PersonDomainRegisterDerivations();
 
             var person = new PersonBuilder(this.Session)
                 .WithFirstName("Jane")

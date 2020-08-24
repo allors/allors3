@@ -27,8 +27,8 @@ namespace Allors.Domain.Derivations.Default
             this.Deleted = new HashSet<IObject>(session.Instantiate(changeSet.Deleted));
             this.Associations = new HashSet<IObject>(session.Instantiate(changeSet.Associations));
             this.Roles = new HashSet<IObject>(session.Instantiate(changeSet.Roles));
-            this.RoleTypesByAssociation = changeSet.RoleTypesByAssociation.ToDictionary(v => session.Instantiate(v.Key), v => v.Value);
-            this.AssociationTypesByRole = changeSet.AssociationTypesByRole.ToDictionary(v => session.Instantiate(v.Key), v => v.Value);
+            this.RoleTypesByAssociation = changeSet.RoleTypesByAssociation.Where(v => session.Instantiate(v.Key) != null).ToDictionary(v => session.Instantiate(v.Key), v => v.Value);
+            this.AssociationTypesByRole = changeSet.AssociationTypesByRole.Where(v => session.Instantiate(v.Key) != null).ToDictionary(v => session.Instantiate(v.Key), v => v.Value);
 
             this.AssociationsByRoleType = (from kvp in this.RoleTypesByAssociation
                                            from value in kvp.Value
