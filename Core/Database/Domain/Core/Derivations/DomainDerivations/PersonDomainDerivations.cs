@@ -12,13 +12,13 @@ namespace Allors.Domain
     {
         public class FullNameDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.FirstName, out var firstNames);
-                var personFirstNames = firstNames?.OfType<Person>();
+                var personFirstNames = firstNames?.Select(session.Instantiate).OfType<Person>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.LastName, out var lastNames);
-                var personLastNames = lastNames?.OfType<Person>();
+                var personLastNames = lastNames?.Select(session.Instantiate).OfType<Person>();
 
                 if (personFirstNames?.Any() == true || lastNames?.Any() == true)
                 {
@@ -34,10 +34,10 @@ namespace Allors.Domain
 
         public class GreetingDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.FullName, out var fullNames);
-                var personFullNames = fullNames?.OfType<Person>();
+                var personFullNames = fullNames?.Select(session.Instantiate).OfType<Person>();
 
                 if (personFullNames?.Any() == true)
                 {

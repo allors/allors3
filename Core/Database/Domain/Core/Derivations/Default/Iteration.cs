@@ -90,11 +90,10 @@ namespace Allors.Domain.Derivations.Default
 
                     while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
                     {
-                        var domainChangeSet = new DomainChangeSet(session, changeSet);
                         foreach (var kvp in domainDerivationById)
                         {
                             var domainDerivation = kvp.Value;
-                            domainDerivation.Derive(domainChangeSet, domainValidation);
+                            domainDerivation.Derive(session, changeSet, domainValidation);
                         }
 
                         changeSet = session.Checkpoint();

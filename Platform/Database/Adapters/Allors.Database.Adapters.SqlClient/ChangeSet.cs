@@ -9,7 +9,7 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using System.Collections.Generic;
-
+    using System.Linq;
     using Adapters;
 
     using Allors.Meta;
@@ -26,8 +26,10 @@ namespace Allors.Database.Adapters.SqlClient
         private readonly HashSet<long> roles;
 
         private readonly Dictionary<long, ISet<IRoleType>> roleTypesByAssociation;
-
         private readonly Dictionary<long, ISet<IAssociationType>> associationTypesByRole;
+
+        private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
+        private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
 
         internal ChangeSet()
         {
@@ -50,6 +52,18 @@ namespace Allors.Database.Adapters.SqlClient
         public IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation => this.roleTypesByAssociation;
 
         public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole => this.associationTypesByRole;
+
+        public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
+        (from kvp in this.RoleTypesByAssociation
+         from value in kvp.Value
+         group kvp.Key by value)
+             .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
+
+        public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=
+            (from kvp in this.AssociationTypesByRole
+             from value in kvp.Value
+             group kvp.Key by value)
+                   .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
 
         internal void OnCreated(long objectId) => this.created.Add(objectId);
 

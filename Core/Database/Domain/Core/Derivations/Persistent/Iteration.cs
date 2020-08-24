@@ -80,6 +80,34 @@ namespace Allors.Domain.Derivations.Persistent
         {
             try
             {
+                // Domain Derivations
+                var session = this.Cycle.Derivation.Session;
+                AccumulatedChangeSet domainAccumulatedChangeSet = null;
+                var domainDerivationById = session.Database.DomainDerivationById;
+                if (domainDerivationById.Any())
+                {
+                    domainAccumulatedChangeSet = new AccumulatedChangeSet();
+                    var domainValidation = new DomainValidation(this.Cycle.Derivation.Validation);
+
+                    var changeSet = session.Checkpoint();
+                    domainAccumulatedChangeSet.Add(changeSet);
+
+                    while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
+                    {
+                        foreach (var kvp in domainDerivationById)
+                        {
+                            var domainDerivation = kvp.Value;
+                            domainDerivation.Derive(session, changeSet, domainValidation);
+                        }
+
+                        changeSet = session.Checkpoint();
+                        domainAccumulatedChangeSet.Add(changeSet);
+
+                        this.Cycle.Derivation.DomainDerivationCount++;
+                    }
+                }
+
+                // Object Derivations
                 var config = this.Cycle.Derivation.Config;
                 var count = 1;
 
@@ -88,7 +116,7 @@ namespace Allors.Domain.Derivations.Persistent
                     this.Graph.Mark(marked);
                 }
 
-                this.Preparation = new Preparation(this, marked);
+                this.Preparation = new Preparation(this, marked, domainAccumulatedChangeSet);
                 this.Preparations = this.Preparations.Append(this.Preparation).ToArray();
                 this.MarkedBacklog = new HashSet<Object>();
                 this.Preparation.Execute();
