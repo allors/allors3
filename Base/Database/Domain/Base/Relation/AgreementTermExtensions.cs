@@ -11,9 +11,9 @@ namespace Allors.Domain
     {
         public static void BaseOnDerive(this AgreementTerm @this, ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            derivation.Validation.AssertAtLeastOne(@this, M.AgreementTerm.TermType, M.AgreementTerm.Description);
+            //derivation.Validation.AssertAtLeastOne(@this, M.AgreementTerm.TermType, M.AgreementTerm.Description);
         }
     }
 }

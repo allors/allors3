@@ -85,6 +85,9 @@ namespace Allors
         {
             database.Init();
 
+            database.CommunicationEventExtensionsRegisterDerivations();
+            database.AutomatedAgentRegisterDerivations();
+            database.AgreementTermExtensionsRegisterDerivations();
             database.EmailCommunicationRegisterDerivations();
             database.OrganisationRegisterDerivations();
             database.PersonRegisterDerivations();
