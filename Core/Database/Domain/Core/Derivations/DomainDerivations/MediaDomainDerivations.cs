@@ -31,7 +31,7 @@ namespace Allors.Domain
                             "CON", "PRN", "AUX", "NUL", "COM", "LPT"
                         };
 
-                        ((MediaDerivedRoles)media).Revision = Guid.NewGuid();
+                        media.Revision = Guid.NewGuid();
 
                         if (media.ExistInData || media.ExistInDataUri)
                         {
@@ -66,7 +66,7 @@ namespace Allors.Domain
                             media.RemoveInDataUri();
                         }
 
-                        ((MediaDerivedRoles)media).Type = media.MediaContent?.Type;
+                        media.Type = media.MediaContent?.Type;
 
                         var name = !string.IsNullOrWhiteSpace(media.Name) ? media.Name : media.UniqueId.ToString();
                         var fileName = $"{name}.{MimeTypesMap.GetExtension(media.Type)}";
@@ -82,7 +82,7 @@ namespace Allors.Domain
                             }
                         }
 
-                        ((MediaDerivedRoles)media).FileName = safeFileName;
+                        media.FileName = safeFileName;
                     }
                 }
             }

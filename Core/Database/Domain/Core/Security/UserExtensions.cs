@@ -47,7 +47,7 @@ namespace Allors.Domain
             if (!@this.ExistOwnerAccessControl)
             {
                 var ownerRole = new Roles(@this.Strategy.Session).Owner;
-                @this.DerivedRoles.OwnerAccessControl = new AccessControlBuilder(@this.Strategy.Session)
+                @this.OwnerAccessControl = new AccessControlBuilder(@this.Strategy.Session)
                     .WithRole(ownerRole)
                     .WithSubject(@this)
                     .Build();
@@ -55,7 +55,7 @@ namespace Allors.Domain
 
             if (!@this.ExistOwnerSecurityToken)
             {
-                @this.DerivedRoles.OwnerSecurityToken = new SecurityTokenBuilder(@this.Strategy.Session)
+                @this.OwnerSecurityToken = new SecurityTokenBuilder(@this.Strategy.Session)
                     .WithAccessControl(@this.OwnerAccessControl)
                     .Build();
             }
@@ -68,8 +68,8 @@ namespace Allors.Domain
 
         public static void CoreOnDerive(this User @this, ObjectOnDerive method)
         {
-            @this.DerivedRoles.NormalizedUserName = Users.Normalize(@this.UserName);
-            @this.DerivedRoles.NormalizedUserEmail = Users.Normalize(@this.UserEmail);
+            @this.NormalizedUserName = Users.Normalize(@this.UserName);
+            @this.NormalizedUserEmail = Users.Normalize(@this.UserEmail);
 
             if (@this.ExistInUserPassword)
             {

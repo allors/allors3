@@ -27,17 +27,17 @@ namespace Allors.Domain
             }
 
             // Rollup ObjectStates, PreviousObjectState and LastObjectStates
-            @this.DerivedRoles.RemoveObjectStates();
-            @this.DerivedRoles.RemoveLastObjectStates();
-            @this.DerivedRoles.RemovePreviousObjectStates();
+            @this.RemoveObjectStates();
+            @this.RemoveLastObjectStates();
+            @this.RemovePreviousObjectStates();
             foreach (var transitionalConfiguration in @this.TransitionalConfigurations)
             {
                 var objectState = (ObjectState)@this.Strategy.GetCompositeRole(transitionalConfiguration.ObjectState);
                 var lastObjectState = (ObjectState)@this.Strategy.GetCompositeRole(transitionalConfiguration.LastObjectState);
                 var previousObjectState = (ObjectState)@this.Strategy.GetCompositeRole(transitionalConfiguration.PreviousObjectState);
-                @this.DerivedRoles.AddObjectState(objectState);
-                @this.DerivedRoles.AddLastObjectState(lastObjectState);
-                @this.DerivedRoles.AddPreviousObjectState(previousObjectState);
+                @this.AddObjectState(objectState);
+                @this.AddLastObjectState(lastObjectState);
+                @this.AddPreviousObjectState(previousObjectState);
             }
 
             // Update security

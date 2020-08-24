@@ -24,16 +24,7 @@ namespace Allors.Repository
         public Address Address { get; set; }
 
         #endregion
-
-        #region Allors
-        [Id("73f23588-1444-416d-b43c-b3384ca87bfc")]
-        [AssociationId("d1a098bf-a3d8-4b71-948f-a77ae82f02db")]
-        [RoleId("a365f0ee-a94f-4435-a7b1-c92ac804a845")]
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        #endregion
-        public Address[] Addresses { get; set; }
-
+        
         #region Allors
         [Id("2cfea5d4-e893-4264-a966-a68716839acd")]
         [AssociationId("c3c93567-1d78-42ea-a8cf-77549cd1a235")]

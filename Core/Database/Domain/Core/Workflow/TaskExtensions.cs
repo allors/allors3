@@ -14,7 +14,7 @@ namespace Allors.Domain
         {
             if (!@this.ExistDateCreated)
             {
-                @this.DerivedRoles.DateCreated = @this.Strategy.Session.Now();
+                @this.DateCreated = @this.Strategy.Session.Now();
             }
         }
 
@@ -44,7 +44,7 @@ namespace Allors.Domain
         public static void AssignPerformer(this Task @this)
         {
             var currentUser = @this.Strategy.Session.GetUser() as Person;
-            @this.DerivedRoles.Performer = currentUser;
+            @this.Performer = currentUser;
         }
 
         public static void AssignParticipants(this Task @this, IEnumerable<User> participants)
@@ -53,7 +53,7 @@ namespace Allors.Domain
 
             var participantSet = new HashSet<User>(participants.Where(v => v != null).Distinct());
 
-            @this.DerivedRoles.Participants = participantSet.ToArray();
+            @this.Participants = participantSet.ToArray();
 
             // Manage Security
             var defaultSecurityToken = new SecurityTokens(session).DefaultSecurityToken;
