@@ -7,18 +7,18 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
+    using Allors.Meta;
 
     public static partial class DabaseExtensions
     {
         public class OrganisationCreationDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdOrgaisations = changeSet.Created.OfType<Organisation>();
+                var createdOrgaisations = changeSet.Created.Select(session.Instantiate).OfType<Organisation>();
 
                 foreach (var organisation in createdOrgaisations)
                 {
-                    var session = organisation.Strategy.Session;
                     //var singleton = session.GetSingleton();
 
                     session.Prefetch(organisation.PrefetchPolicy);
@@ -62,7 +62,9 @@ namespace Allors.Domain
 
                         if (!organisation.ExistInvoiceSequence)
                         {
-                            organisation.InvoiceSequence = new InvoiceSequenceBuilder(session).Build();
+                            organisation.InvoiceSequence = new InvoiceSequenceBuilder(session)
+                                .WithName(organisation.Name)
+                                .Build();
                         }
 
                         if (organisation.DoAccounting && !organisation.ExistFiscalYearStartMonth)

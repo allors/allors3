@@ -85,8 +85,10 @@ namespace Allors
         {
             database.Init();
 
+            database.OrganisationRegisterDerivations();
             database.PersonRegisterDerivations();
             database.MediaRegisterDerivations();
+            database.PartyRegisterDerivations();
 
             this.Session = database.CreateSession();
 

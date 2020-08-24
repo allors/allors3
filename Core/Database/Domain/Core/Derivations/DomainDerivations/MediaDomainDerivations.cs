@@ -6,6 +6,7 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using Allors.Meta;
@@ -16,9 +17,9 @@ namespace Allors.Domain
     {
         public class MediaCreationDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdMedia = changeSet.Created.OfType<Media>();
+                var createdMedia = changeSet.Created.Select(session.Instantiate).OfType<Media>();
 
                 if (createdMedia.Any())
                 {

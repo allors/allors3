@@ -13,9 +13,9 @@ namespace Allors.Domain
     {
         public class PersonCreationDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPersons = changeSet.Created.OfType<Person>();
+                var createdPersons = changeSet.Created.Select(session.Instantiate).OfType<Person>();
 
                 foreach (var person in createdPersons)
                 {
@@ -64,48 +64,36 @@ namespace Allors.Domain
 
         public class PersonSyncDerivation : IDomainDerivation
         {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
                 changeSet.AssociationsByRoleType.TryGetValue(M.Organisation.PartyContactMechanisms.RoleType, out var changedOrganisations);
-                var organisationWherePartyContactMechanismChanged = changedOrganisations?.OfType<Organisation>();
+                var organisationWherePartyContactMechanismChanged = changedOrganisations?.Select(session.Instantiate).OfType<Organisation>();
 
                 if (organisationWherePartyContactMechanismChanged?.Any() == true)
                 {
                     foreach (var organisation in organisationWherePartyContactMechanismChanged)
                     {
-                        var partyContactMechanisms = organisation.PartyContactMechanisms.ToArray();
-                        foreach (OrganisationContactRelationship organisationContactRelationship in organisation.OrganisationContactRelationshipsWhereOrganisation)
-                        {
-                            foreach (var partyContactMechanism in partyContactMechanisms)
-                            {
-                                var person = organisationContactRelationship.Contact;
-
-                                ((PersonDerivedRoles)person).RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
-
-                                if (partyContactMechanism.FromDate <= person.Session().Now() &&
-                                    (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= person.Session().Now()))
-                                {
-                                    ((PersonDerivedRoles)person).AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
-                                }
-                            }
-                        }
+                        SyncContactPartyContactMechanism(organisation);
                     }
                 }
             }
-        }
 
-        public class PersonPartyContactMechanismChangeDerivation : IDomainDerivation
-        {
-            public void Derive(IDomainChangeSet changeSet, IDomainValidation validation)
+            public static void SyncContactPartyContactMechanism(Organisation organisation)
             {
-                changeSet.AssociationsByRoleType.TryGetValue(M.PartyContactMechanism.FromDate.RoleType, out var changedPartyContactMechanisms);
-                var partyContactMechansmWhereFromDateChanged = changedPartyContactMechanisms?.OfType<PartyContactMechanism>();
-
-                if (partyContactMechansmWhereFromDateChanged?.Any() == true)
+                var partyContactMechanisms = organisation.PartyContactMechanisms.ToArray();
+                foreach (OrganisationContactRelationship organisationContactRelationship in organisation.OrganisationContactRelationshipsWhereOrganisation)
                 {
-                    foreach (var partyContactMechanism in partyContactMechansmWhereFromDateChanged)
+                    foreach (var partyContactMechanism in partyContactMechanisms)
                     {
-                        var temp = partyContactMechanism.PartyWhereCurrentPartyContactMechanism;
+                        var person = organisationContactRelationship.Contact;
+
+                        ((PersonDerivedRoles)person).RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
+
+                        if (partyContactMechanism.FromDate <= person.Session().Now() &&
+                            (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= person.Session().Now()))
+                        {
+                            ((PersonDerivedRoles)person).AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
+                        }
                     }
                 }
             }
@@ -115,7 +103,6 @@ namespace Allors.Domain
         {
             @this.DomainDerivationById[new Guid("2EE5DF33-C797-426B-AB9F-19065513F4B8")] = new PersonCreationDerivation();
             @this.DomainDerivationById[new Guid("83EBBE6E-226D-4A25-815F-334CD25BB679")] = new PersonSyncDerivation();
-            @this.DomainDerivationById[new Guid("B6FCF861-DF51-4AAA-8A73-254FD5DC2445")] = new PersonPartyContactMechanismChangeDerivation();
         }
     }
 }
