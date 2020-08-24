@@ -82,12 +82,12 @@ namespace Allors.Domain
 
                     var now = organisation.Session().Now();
 
-                    ((OrganisationDerivedRoles)organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer
+                    (organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer
                         .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                         .Select(v => v.Employee)
                         .ToArray();
 
-                    ((OrganisationDerivedRoles)organisation).ActiveCustomers = organisation.CustomerRelationshipsWhereInternalOrganisation
+                    (organisation).ActiveCustomers = organisation.CustomerRelationshipsWhereInternalOrganisation
                         .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                         .Select(v => v.Customer)
                         .ToArray();
@@ -96,7 +96,7 @@ namespace Allors.Domain
                     if (!organisation.ExistContactsUserGroup)
                     {
                         var customerContactGroupName = $"Customer contacts at {organisation.Name} ({organisation.UniqueId})";
-                        ((OrganisationDerivedRoles)organisation).ContactsUserGroup = new UserGroupBuilder(organisation.Strategy.Session).WithName(customerContactGroupName).Build();
+                        (organisation).ContactsUserGroup = new UserGroupBuilder(organisation.Strategy.Session).WithName(customerContactGroupName).Build();
                     }
 
                     organisation.DeriveRelationships();

@@ -39,7 +39,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
         [Workspace]
-        public Party Party { get; set; }
+        public Party FinancialParty { get; set; }
 
         #region Allors
         [Id("AB000DAF-93D2-43EE-8820-924575FEB098")]

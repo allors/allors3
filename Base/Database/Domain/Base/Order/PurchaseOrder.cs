@@ -533,7 +533,7 @@ namespace Allors.Domain
                             shipmentItem.SerialisedItem = serialisedItem;
 
                             // HACK: DerivedRoles (WIP)
-                            var serialisedItemDeriveRoles = (SerialisedItemDerivedRoles)serialisedItem;
+                            var serialisedItemDeriveRoles = serialisedItem;
                             serialisedItemDeriveRoles.PurchaseOrder = this;
                             serialisedItem.RemoveAssignedPurchasePrice();
                             serialisedItemDeriveRoles.PurchasePrice = orderItem.TotalExVat;
@@ -567,7 +567,7 @@ namespace Allors.Domain
 
             foreach (PurchaseOrderItem orderItem in this.ValidOrderItems.Where(v => !((PurchaseOrderItem)v).ExistPart))
             {
-                var orderItemDerivedRoles = (PurchaseOrderItemDerivedRoles)orderItem;
+                var orderItemDerivedRoles = orderItem;
                 orderItemDerivedRoles.QuantityReceived = 1;
             }
         }

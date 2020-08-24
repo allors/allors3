@@ -271,7 +271,7 @@ namespace Allors.Domain
             Assert.Equal(activeCustomersBefore + 2, this.InternalOrganisation.ActiveCustomers.Count);
 
             // Removing will not do anything.
-            ((OrganisationDerivedRoles)this.InternalOrganisation).RemoveActiveCustomers();
+            (this.InternalOrganisation).RemoveActiveCustomers();
 
             this.Session.Derive();
             Assert.True(this.InternalOrganisation.ExistActiveCustomers);

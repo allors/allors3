@@ -55,8 +55,8 @@ namespace Allors.Domain
 
             if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
             {
-                @this.DerivedRoles.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber();
-                @this.DerivedRoles.SortableWorkEffortNumber = @this.Session().GetSingleton().SortableNumber(@this.TakenBy.WorkEffortPrefix, @this.WorkEffortNumber, @this.CreationDate.Value.Year.ToString());
+                @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber();
+                @this.SortableWorkEffortNumber = @this.Session().GetSingleton().SortableNumber(@this.TakenBy.WorkEffortPrefix, @this.WorkEffortNumber, @this.CreationDate.Value.Year.ToString());
             }
 
             if (!@this.ExistExecutedBy && @this.ExistTakenBy)
@@ -193,30 +193,30 @@ namespace Allors.Domain
 
         private static void DeriveActualHoursAndDates(this WorkEffort @this)
         {
-            @this.DerivedRoles.ActualHours = 0M;
+            @this.ActualHours = 0M;
 
             foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
             {
                 if (serviceEntry is TimeEntry timeEntry)
                 {
-                    @this.DerivedRoles.ActualHours += timeEntry.ActualHours;
+                    @this.ActualHours += timeEntry.ActualHours;
 
                     if (!@this.ExistActualStart)
                     {
-                        @this.DerivedRoles.ActualStart = timeEntry.FromDate;
+                        @this.ActualStart = timeEntry.FromDate;
                     }
                     else if (timeEntry.FromDate < @this.ActualStart)
                     {
-                        @this.DerivedRoles.ActualStart = timeEntry.FromDate;
+                        @this.ActualStart = timeEntry.FromDate;
                     }
 
                     if (!@this.ExistActualCompletion)
                     {
-                        @this.DerivedRoles.ActualCompletion = timeEntry.ThroughDate;
+                        @this.ActualCompletion = timeEntry.ThroughDate;
                     }
                     else if (timeEntry.ThroughDate > @this.ActualCompletion)
                     {
-                        @this.DerivedRoles.ActualCompletion = timeEntry.ThroughDate;
+                        @this.ActualCompletion = timeEntry.ThroughDate;
                     }
                 }
             }
@@ -298,11 +298,11 @@ namespace Allors.Domain
         {
             if (@this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed))
             {
-                @this.DerivedRoles.CanInvoice = true;
+                @this.CanInvoice = true;
 
                 if (@this.ExistWorkEffortWhereChild)
                 {
-                    @this.DerivedRoles.CanInvoice = false;
+                    @this.CanInvoice = false;
                 }
 
                 if (@this.CanInvoice)
@@ -311,7 +311,7 @@ namespace Allors.Domain
                     {
                         if (!@this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed))
                         {
-                            @this.DerivedRoles.CanInvoice = false;
+                            @this.CanInvoice = false;
                             break;
                         }
                     }
@@ -323,7 +323,7 @@ namespace Allors.Domain
                     {
                         if (!timeEntry.ExistThroughDate)
                         {
-                            @this.DerivedRoles.CanInvoice = false;
+                            @this.CanInvoice = false;
                             break;
                         }
                     }
@@ -331,12 +331,12 @@ namespace Allors.Domain
 
                 if (@this.ExistWorkEffortAssignmentRatesWhereWorkEffort && !@this.ExistWorkEffortAssignmentRatesWhereWorkEffort)
                 {
-                    @this.DerivedRoles.CanInvoice = false;
+                    @this.CanInvoice = false;
                 }
             }
             else
             {
-                @this.DerivedRoles.CanInvoice = false;
+                @this.CanInvoice = false;
             }
         }
     }

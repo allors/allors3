@@ -87,12 +87,12 @@ namespace Allors.Domain
                     {
                         var person = organisationContactRelationship.Contact;
 
-                        ((PersonDerivedRoles)person).RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
+                        (person).RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
 
                         if (partyContactMechanism.FromDate <= person.Session().Now() &&
                             (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= person.Session().Now()))
                         {
-                            ((PersonDerivedRoles)person).AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
+                            (person).AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
                         }
                     }
                 }

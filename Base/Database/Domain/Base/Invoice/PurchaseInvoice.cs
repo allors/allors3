@@ -650,7 +650,7 @@ namespace Allors.Domain
                     && purchaseInvoiceItem.InvoiceItemType.IsProductItem)
                 {
                     var serialisedItem = purchaseInvoiceItem.SerialisedItem;
-                    var deriveRoles = (SerialisedItemDerivedRoles)purchaseInvoiceItem.SerialisedItem;
+                    var deriveRoles = purchaseInvoiceItem.SerialisedItem;
 
                     serialisedItem.RemoveAssignedPurchasePrice();
                     deriveRoles.PurchasePrice = purchaseInvoiceItem.TotalExVat;
@@ -678,7 +678,7 @@ namespace Allors.Domain
                 if (!this.OpenTasks.OfType<PurchaseInvoiceApproval>().Any())
                 {
                     var approval = new PurchaseInvoiceApprovalBuilder(this.Session()).WithPurchaseInvoice(this).Build();
-                    approval.DerivedRoles.WorkItem = approval.PurchaseInvoice;
+                    approval.WorkItem = approval.PurchaseInvoice;
                 }
             }
         }

@@ -808,7 +808,7 @@ namespace Allors.Domain
             this.Session.Derive();
             this.Session.Commit();
 
-            var partyFinancial = customer.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
+            var partyFinancial = customer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
             partyFinancial.CreditLimit = 100M;
 
             this.Session.Derive();

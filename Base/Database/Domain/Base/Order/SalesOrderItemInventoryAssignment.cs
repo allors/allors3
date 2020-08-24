@@ -92,8 +92,7 @@ namespace Allors.Domain
                     newTransaction.SerialisedItem = serialisedInventoryItem.SerialisedItem;
                 }
 
-                // HACK: DerivedRoles
-                ((InventoryItemTransactionDerivedRoles)newTransaction).InventoryItem = inventoryItem;
+                newTransaction.InventoryItem = inventoryItem;
                 this.AddInventoryItemTransaction(newTransaction);
             }
         }

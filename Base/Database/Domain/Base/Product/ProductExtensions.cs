@@ -28,12 +28,12 @@ namespace Allors.Domain
         {
             if (!@this.ExistProductWhereVariant)
             {
-                @this.DerivedRoles.RemoveVirtualProductPriceComponents();
+                @this.RemoveVirtualProductPriceComponents();
             }
 
             if (@this.ExistVariants)
             {
-                @this.DerivedRoles.RemoveVirtualProductPriceComponents();
+                @this.RemoveVirtualProductPriceComponents();
 
                 var priceComponents = @this.PriceComponentsWhereProduct;
 
@@ -42,7 +42,7 @@ namespace Allors.Domain
                     foreach (PriceComponent priceComponent in priceComponents)
                     {
                         // HACK: DerivedRoles
-                        var productDerivedRoles = (ProductDerivedRoles)product;
+                        var productDerivedRoles = product;
                         productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
 
                         if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)

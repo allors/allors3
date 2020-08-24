@@ -19,7 +19,7 @@ namespace Allors.Domain
 
                 foreach(WebSiteCommunication webSiteCommunication in createdWebSiteCommunication)
                 {
-                    ((WebSiteCommunicationDerivedRoles)webSiteCommunication).WorkItemDescription = $"Access website of {webSiteCommunication.ToParty.PartyName} about {webSiteCommunication.Subject}";
+                    (webSiteCommunication).WorkItemDescription = $"Access website of {webSiteCommunication.ToParty.PartyName} about {webSiteCommunication.Subject}";
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = customer.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
+            var partyFinancial = customer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
             Assert.Equal(0, partyFinancial.AmountDue);
         }
 
@@ -37,7 +37,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = customer.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
+            var partyFinancial = customer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
 
             Assert.Equal(0, partyFinancial.AmountOverDue);
         }
@@ -93,7 +93,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial1 = customer1.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship1.InternalOrganisation));
+            var partyFinancial1 = customer1.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship1.InternalOrganisation));
 
             Assert.Equal(1007, partyFinancial1.SubAccountNumber);
 
@@ -102,7 +102,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial2 = customer2.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
+            var partyFinancial2 = customer2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
             Assert.Equal(1015, partyFinancial2.SubAccountNumber);
 
             var customer3 = new PersonBuilder(this.Session).WithLastName("customer3").Build();
@@ -110,7 +110,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial3 = customer3.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship3.InternalOrganisation));
+            var partyFinancial3 = customer3.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship3.InternalOrganisation));
             Assert.Equal(1023, partyFinancial3.SubAccountNumber);
         }
 
@@ -122,7 +122,7 @@ namespace Allors.Domain
             var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
             var euro = belgium.Currency;
 
-            var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
+            var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING BelgiÃ«").WithBic("BBRUBEBB").Build();
 
             var ownBankAccount = new OwnBankAccountBuilder(this.Session)
                 .WithDescription("BE23 3300 6167 6391")
@@ -148,7 +148,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = customer2.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
+            var partyFinancial = customer2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
             partyFinancial.SubAccountNumber = 19;
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -163,7 +163,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = customer.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
+            var partyFinancial = customer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
 
             var billToContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Mechelen").Build();
 
@@ -229,7 +229,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = customer.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
+            var partyFinancial = customer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
 
             var billToContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Mechelen").Build();
 

@@ -121,7 +121,7 @@ namespace Allors.Domain
                     foreach (PriceComponent priceComponent in priceComponents)
                     {
                         // HACK: DerivedRoles
-                        var productDerivedRoles = (ProductDerivedRoles)product;
+                        var productDerivedRoles = product;
 
                         productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
 

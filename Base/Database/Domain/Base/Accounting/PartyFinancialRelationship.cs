@@ -13,13 +13,13 @@ namespace Allors.Domain
         {
             var (iteration, changeSet, derivedObjects) = method;
 
-            iteration.AddDependency(this, this.Party.SalesOrdersWhereBillToCustomer);
-            iteration.AddDependency(this, this.Party.SalesInvoicesWhereBillToCustomer);
+            iteration.AddDependency(this, this.FinancialParty.SalesOrdersWhereBillToCustomer);
+            iteration.AddDependency(this, this.FinancialParty.SalesInvoicesWhereBillToCustomer);
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var party = this.Party;
+            var party = this.FinancialParty;
 
             this.AmountDue = 0;
             this.AmountOverDue = 0;
@@ -83,7 +83,7 @@ namespace Allors.Domain
                 this.InternalOrganisation = internalOrganisations.First();
             }
 
-            this.Parties = new Party[] { this.Party, this.InternalOrganisation };
+            this.Parties = new Party[] { this.FinancialParty, this.InternalOrganisation };
         }
     }
 }

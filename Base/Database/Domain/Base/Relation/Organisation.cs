@@ -256,7 +256,7 @@ namespace Allors.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (PartyFinancialRelationship deletable in this.PartyFinancialRelationshipsWhereParty)
+                foreach (PartyFinancialRelationship deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
                 {
                     deletable.Delete();
                 }

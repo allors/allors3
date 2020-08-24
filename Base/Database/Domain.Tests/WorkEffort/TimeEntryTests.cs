@@ -108,7 +108,7 @@ namespace Allors.Domain
             Assert.Equal(4.00M, timeEntry.ActualHours);
 
             //// Re-arrange
-            ((TimeEntryDerivedRoles)timeEntry).RemoveAmountOfTime();
+            (timeEntry).RemoveAmountOfTime();
             timeEntry.TimeFrequency = frequencies.Day;
 
             // Act
@@ -119,7 +119,7 @@ namespace Allors.Domain
             Assert.Equal(4.00M, timeEntry.ActualHours);
 
             //// Re-arrange
-            ((TimeEntryDerivedRoles)timeEntry).RemoveAmountOfTime();
+            (timeEntry).RemoveAmountOfTime();
             timeEntry.TimeFrequency = frequencies.Minute;
 
             // Act

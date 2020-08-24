@@ -139,7 +139,7 @@ namespace Allors.Domain
                     totalCost += transactionCost;
 
                     var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
-                    ((PartWeightedAverageDerivedRoles)this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
+                    (this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
                 }
                 else if (reason.IncreasesQuantityOnHand == false)
                 {
@@ -232,7 +232,7 @@ namespace Allors.Domain
                     foreach (PriceComponent priceComponent in priceComponents)
                     {
                         // HACK: DerivedRoles
-                        var productDerivedRoles = (ProductDerivedRoles)product;
+                        var productDerivedRoles = product;
 
                         productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
 

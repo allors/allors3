@@ -25,7 +25,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = organisation.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
+            var partyFinancial = organisation.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship.InternalOrganisation));
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
 

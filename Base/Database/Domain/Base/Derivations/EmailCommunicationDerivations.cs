@@ -24,7 +24,7 @@ namespace Allors.Domain
                         emailCommunication.Subject = emailCommunication.EmailTemplate.SubjectTemplate;
                     }
 
-                    ((EmailCommunicationDerivedRoles)emailCommunication).WorkItemDescription = $"Email to {emailCommunication.ToEmail} about {emailCommunication.Subject}";
+                    emailCommunication.WorkItemDescription = $"Email to {emailCommunication.ToEmail} about {emailCommunication.Subject}";
                 }
             }
         }

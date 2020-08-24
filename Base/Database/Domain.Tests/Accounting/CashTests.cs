@@ -74,7 +74,7 @@ namespace Allors.Domain
                 .Build();
 
             internalOrganisation.DoAccounting = true;
-            ((OrganisationDerivedRoles)internalOrganisation).AddActiveCollectionMethod(cash);
+            (internalOrganisation).AddActiveCollectionMethod(cash);
 
             Assert.True(this.Session.Derive(false).HasErrors);
 

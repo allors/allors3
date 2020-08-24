@@ -21,13 +21,13 @@ namespace Allors.Domain
                 if (surchargeComponent.Price.HasValue)
                 {
                     surcharge = surchargeComponent.Price.Value;
-                    @this.DerivedRoles.UnitSurcharge += surcharge;
+                    @this.UnitSurcharge += surcharge;
                 }
                 else
                 {
                     var percentage = surchargeComponent.Percentage ?? 0;
                     surcharge = Math.Round(@this.UnitBasePrice * percentage / 100, 2);
-                    @this.DerivedRoles.UnitSurcharge += surcharge;
+                    @this.UnitSurcharge += surcharge;
                 }
             }
 
@@ -44,13 +44,13 @@ namespace Allors.Domain
                 if (discountComponent.Price.HasValue)
                 {
                     discount = discountComponent.Price.Value;
-                    @this.DerivedRoles.UnitDiscount += discount;
+                    @this.UnitDiscount += discount;
                 }
                 else
                 {
                     var percentage = discountComponent.Percentage ?? 0;
                     discount = Math.Round(@this.UnitBasePrice * percentage / 100, 2);
-                    @this.DerivedRoles.UnitDiscount += discount;
+                    @this.UnitDiscount += discount;
                 }
             }
 

@@ -115,7 +115,7 @@ namespace Allors.Domain
                 .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                 .Select(v => v.Organisation);
 
-            @this.DerivedRoles.InvolvedParties = parties.Union(organisation).ToArray();
+            @this.InvolvedParties = parties.Union(organisation).ToArray();
         }
     }
 }

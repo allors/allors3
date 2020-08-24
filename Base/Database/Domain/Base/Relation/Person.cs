@@ -181,7 +181,7 @@ namespace Allors.Domain
                 deletable.Delete();
             }
 
-            foreach (PartyFinancialRelationship deletable in this.PartyFinancialRelationshipsWhereParty)
+            foreach (PartyFinancialRelationship deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
             {
                 deletable.Delete();
             }
