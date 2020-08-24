@@ -14,5 +14,7 @@ namespace Allors.Domain.Derivations.Default
         public DomainValidation(IValidation validation) => this.Validation = validation;
 
         public void AddError(string error) => this.Validation.AddError(new DerivationErrorGeneric(this.Validation, relation: null, "End date should be after start date"));
+
+        public void AssertAtLeastOne(IObject association, params Meta.RoleType[] roleTypes) => this.Validation.AssertAtLeastOne(association, roleTypes);
     }
 }
