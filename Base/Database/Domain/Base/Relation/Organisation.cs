@@ -201,33 +201,33 @@ namespace Allors.Domain
 
         public void DeriveRelationships()
         {
-            this.CurrentSuppliers = this.SupplierRelationshipsWhereInternalOrganisation
-                .Where(v => v.FromDate <= this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Strategy.Session.Now()))
-                .Select(v => v.Supplier)
-                .ToArray();
+            //this.CurrentSuppliers = this.SupplierRelationshipsWhereInternalOrganisation
+            //    .Where(v => v.FromDate <= this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Strategy.Session.Now()))
+            //    .Select(v => v.Supplier)
+            //    .ToArray();
 
-            this.CurrentCustomers = this.CustomerRelationshipsWhereCustomer
-                .Where(v => v.FromDate <= this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Strategy.Session.Now()))
-                .Select(v => v.Customer)
-                .ToArray();
+            //this.CurrentCustomers = this.CustomerRelationshipsWhereCustomer
+            //    .Where(v => v.FromDate <= this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Strategy.Session.Now()))
+            //    .Select(v => v.Customer)
+            //    .ToArray();
 
-            var allContactRelationships = this.OrganisationContactRelationshipsWhereOrganisation.ToArray();
-            var allContacts = allContactRelationships.Select(v => v.Contact);
+            //var allContactRelationships = this.OrganisationContactRelationshipsWhereOrganisation.ToArray();
+            //var allContacts = allContactRelationships.Select(v => v.Contact);
 
-            this.CurrentOrganisationContactRelationships = allContactRelationships
-                .Where(v => v.FromDate <= this.Session().Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Session().Now()))
-                .ToArray();
+            //this.CurrentOrganisationContactRelationships = allContactRelationships
+            //    .Where(v => v.FromDate <= this.Session().Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Session().Now()))
+            //    .ToArray();
 
-            this.InactiveOrganisationContactRelationships = allContactRelationships
-                .Except(this.CurrentOrganisationContactRelationships)
-                .ToArray();
+            //this.InactiveOrganisationContactRelationships = allContactRelationships
+            //    .Except(this.CurrentOrganisationContactRelationships)
+            //    .ToArray();
 
-            this.CurrentContacts = this.CurrentOrganisationContactRelationships
-                .Select(v => v.Contact).ToArray();
+            //this.CurrentContacts = this.CurrentOrganisationContactRelationships
+            //    .Select(v => v.Contact).ToArray();
 
-            this.InactiveContacts = this.InactiveOrganisationContactRelationships
-                .Select(v => v.Contact)
-                .ToArray();
+            //this.InactiveContacts = this.InactiveOrganisationContactRelationships
+            //    .Select(v => v.Contact)
+            //    .ToArray();
         }
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)

@@ -185,6 +185,7 @@ namespace Allors.Domain
 
                 foreach (var relationship in createdCustomerRelationships)
                 {
+                    // TODO: samenvoegen
                     PartyDerivation.SyncPartyRelationships(relationship.Customer);
                 }
             }

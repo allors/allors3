@@ -1,32 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Interface Name="Allors.Domain.PartyContactMechanism">
-    <Position X="4.75" Y="2" Width="2" />
+  <Interface Name="Allors.Domain.CustomerRelationship">
+    <Position X="5" Y="3.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAgAAAAAgAAABAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="ContactMechanism" />
+      <Property Name="Customer" />
+      <Property Name="InternalOrganisation" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="Allors.Domain.ContactMechanism">
-    <Position X="8" Y="1.75" Width="1.75" />
+  <Interface Name="Allors.Domain.Party" Collapsed="true">
+    <Position X="5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAgAAAgAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <HashCode>wYAoGAAAAoAAAIAQgEgACAgAQIARAhAQFYIFQANAogA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="ContactMechanismType" />
-    </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="FollowTo" />
-    </ShowAsCollectionAssociation>
   </Interface>
-  <Interface Name="Allors.Domain.ContactMechanismType" Collapsed="true">
-    <Position X="11.75" Y="1.75" Width="1.5" />
+  <Interface Name="Allors.Domain.InternalOrganisation" Collapsed="true" HideInheritanceLine="true">
+    <Position X="5" Y="1.75" Width="1.75" />
+    <InheritanceLine Type="Allors.Domain.Party" IsHidden="true" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>WgTAAAGESRYAAAKAUExQJxMKBgmtgoIACAECgAgxSAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
