@@ -17,6 +17,9 @@ namespace Allors.Domain
             {
                 var createdOrgaisations = changeSet.Created.Select(session.Instantiate).OfType<Organisation>();
 
+                changeSet.AssociationsByRoleType.TryGetValue(M.Employment.Employer, out var changedEmployer);
+                var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<Employment>();
+
                 foreach (var organisation in createdOrgaisations)
                 {
                     //var singleton = session.GetSingleton();
@@ -82,10 +85,7 @@ namespace Allors.Domain
 
                     var now = organisation.Session().Now();
 
-                    (organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer
-                        .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
-                        .Select(v => v.Employee)
-                        .ToArray();
+                    DeriveActiveEmployees(organisation, now);
 
                     (organisation).ActiveCustomers = organisation.CustomerRelationshipsWhereInternalOrganisation
                         .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
@@ -113,7 +113,24 @@ namespace Allors.Domain
                         organisation.AddDeniedPermission(deletePermission);
                     }
                 }
+
+                if (employmentWhereEmployer?.Any() == true)
+                {
+                    foreach (var employment in employmentWhereEmployer)
+                    {
+                        var now = employment.Employer.Session().Now();
+
+                        DeriveActiveEmployees((Organisation) employment.Employer, now);
+                    }
+                }
+
+                static void DeriveActiveEmployees(Organisation organisation, DateTime now) => (organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer
+                                        .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+                                        .Select(v => v.Employee)
+                                        .ToArray();
             }
+
+
         }
 
         public static void OrganisationRegisterDerivations(this IDatabase @this)

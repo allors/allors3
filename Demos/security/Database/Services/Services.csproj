@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\allors\Core\Database\Services\Core*\**\*.cs" />
-    <Compile Include="..\..\..\allors\Base\Database\Services\Base*\**\*.cs" />
+    <Compile Include="..\..\..\..\Core\Database\Services\Core*\**\*.cs" />
   </ItemGroup>
 </Project>
