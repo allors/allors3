@@ -32,23 +32,32 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.OrganisationContactRelationship.FromDate.RoleType, out var changedOrganisationContactRelationship);
                 var organisationContactRelationshipWhereFromDateChanged = changedOrganisationContactRelationship?.Select(session.Instantiate).OfType<OrganisationContactRelationship>();
 
-                if (organisationContactRelationshipWhereFromDateChanged?.Any() == true)
+                changeSet.AssociationsByRoleType.TryGetValue(M.OrganisationContactRelationship.ThroughDate.RoleType, out var changedOrganisationContactRelationship2);
+                var organisationContactRelationshipWhereThroughDateDateChanged = changedOrganisationContactRelationship2?.Select(session.Instantiate).OfType<OrganisationContactRelationship>();
+
+                ValidateDate(session, organisationContactRelationshipWhereFromDateChanged);
+                ValidateDate(session, organisationContactRelationshipWhereThroughDateDateChanged);
+
+                static void ValidateDate(ISession session, System.Collections.Generic.IEnumerable<OrganisationContactRelationship> organisationContactRelationshipWhereFromDateChanged)
                 {
-                    foreach (var organisationContactRelationship in organisationContactRelationshipWhereFromDateChanged)
+                    if (organisationContactRelationshipWhereFromDateChanged?.Any() == true)
                     {
-                        if (organisationContactRelationship.Organisation?.ContactsUserGroup != null)
+                        foreach (var organisationContactRelationship in organisationContactRelationshipWhereFromDateChanged)
                         {
-                            if (!(organisationContactRelationship.FromDate <= session.Now()
-                        && (!organisationContactRelationship.ExistThroughDate
-                        || organisationContactRelationship.ThroughDate >= session.Now())))
+                            if (organisationContactRelationship.Organisation?.ContactsUserGroup != null)
                             {
-                                organisationContactRelationship.Organisation.ContactsUserGroup
-                                    .RemoveMember(organisationContactRelationship.Contact);
-                            }
-                            else
-                            {
-                                organisationContactRelationship.Organisation.ContactsUserGroup
-                                    .AddMember(organisationContactRelationship.Contact);
+                                if (!(organisationContactRelationship.FromDate <= session.Now()
+                            && (!organisationContactRelationship.ExistThroughDate
+                            || organisationContactRelationship.ThroughDate >= session.Now())))
+                                {
+                                    organisationContactRelationship.Organisation.ContactsUserGroup
+                                        .RemoveMember(organisationContactRelationship.Contact);
+                                }
+                                else
+                                {
+                                    organisationContactRelationship.Organisation.ContactsUserGroup
+                                        .AddMember(organisationContactRelationship.Contact);
+                                }
                             }
                         }
                     }

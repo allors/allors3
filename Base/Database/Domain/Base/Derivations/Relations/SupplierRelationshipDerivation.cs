@@ -24,16 +24,19 @@ namespace Allors.Domain
                     {
                         // HACK: DerivedRoles
                         var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
-
-                        if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                        if (internalOrganisationDerivedRoles != null)
                         {
-                            internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
+                            if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                            {
+                                internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
+                            }
+
+                            if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
+                            {
+                                internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
+                            }
                         }
 
-                        if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
-                        {
-                            internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
-                        }
 
                         if (supplierRelationship.Supplier.ContactsUserGroup != null)
                         {
