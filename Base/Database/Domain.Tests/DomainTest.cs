@@ -107,6 +107,7 @@ namespace Allors
             database.PartyContactMechanismRegisterDerivations();
             database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
+            database.PassportRegisterDerivations();
 
 
             this.Session = database.CreateSession();
