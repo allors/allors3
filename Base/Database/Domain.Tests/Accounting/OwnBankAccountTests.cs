@@ -159,7 +159,7 @@ namespace Allors.Domain
 
             internalOrganisation.DoAccounting = true;
 
-            ((OrganisationDerivedRoles)internalOrganisation).AddActiveCollectionMethod(collectionMethod);
+            (internalOrganisation).AddActiveCollectionMethod(collectionMethod);
 
             Assert.True(this.Session.Derive(false).HasErrors);
 

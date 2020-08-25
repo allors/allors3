@@ -19,24 +19,24 @@ namespace Allors.Domain
 
                 foreach (var party in createdParties)
                 {
-                    party.DerivedRoles.BillingAddress = null;
-                    party.DerivedRoles.BillingInquiriesFax = null;
-                    party.DerivedRoles.BillingInquiriesPhone = null;
-                    party.DerivedRoles.CellPhoneNumber = null;
-                    party.DerivedRoles.GeneralCorrespondence = null;
-                    party.DerivedRoles.GeneralFaxNumber = null;
-                    party.DerivedRoles.GeneralPhoneNumber = null;
-                    party.DerivedRoles.HeadQuarter = null;
-                    party.DerivedRoles.HomeAddress = null;
-                    party.DerivedRoles.InternetAddress = null;
-                    party.DerivedRoles.OrderAddress = null;
-                    party.DerivedRoles.OrderInquiriesFax = null;
-                    party.DerivedRoles.OrderInquiriesPhone = null;
-                    party.DerivedRoles.PersonalEmailAddress = null;
-                    party.DerivedRoles.SalesOffice = null;
-                    party.DerivedRoles.ShippingAddress = null;
-                    party.DerivedRoles.ShippingInquiriesFax = null;
-                    party.DerivedRoles.ShippingAddress = null;
+                    party.BillingAddress = null;
+                    party.BillingInquiriesFax = null;
+                    party.BillingInquiriesPhone = null;
+                    party.CellPhoneNumber = null;
+                    party.GeneralCorrespondence = null;
+                    party.GeneralFaxNumber = null;
+                    party.GeneralPhoneNumber = null;
+                    party.HeadQuarter = null;
+                    party.HomeAddress = null;
+                    party.InternetAddress = null;
+                    party.OrderAddress = null;
+                    party.OrderInquiriesFax = null;
+                    party.OrderInquiriesPhone = null;
+                    party.PersonalEmailAddress = null;
+                    party.SalesOffice = null;
+                    party.ShippingAddress = null;
+                    party.ShippingInquiriesFax = null;
+                    party.ShippingAddress = null;
 
                     foreach (PartyContactMechanism partyContactMechanism in party.PartyContactMechanisms)
                     {
@@ -44,110 +44,110 @@ namespace Allors.Domain
                         {
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).BillingAddress))
                             {
-                                party.DerivedRoles.BillingAddress = partyContactMechanism.ContactMechanism;
+                                party.BillingAddress = partyContactMechanism.ContactMechanism;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).BillingInquiriesFax))
                             {
-                                party.DerivedRoles.BillingInquiriesFax = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.BillingInquiriesFax = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).BillingInquiriesPhone))
                             {
-                                party.DerivedRoles.BillingInquiriesPhone = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.BillingInquiriesPhone = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).MobilePhoneNumber))
                             {
-                                party.DerivedRoles.CellPhoneNumber = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.CellPhoneNumber = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).GeneralCorrespondence))
                             {
-                                party.DerivedRoles.GeneralCorrespondence = partyContactMechanism.ContactMechanism;
+                                party.GeneralCorrespondence = partyContactMechanism.ContactMechanism;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).GeneralEmail))
                             {
-                                party.DerivedRoles.GeneralEmail = partyContactMechanism.ContactMechanism as EmailAddress;
+                                party.GeneralEmail = partyContactMechanism.ContactMechanism as EmailAddress;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).GeneralFaxNumber))
                             {
-                                party.DerivedRoles.GeneralFaxNumber = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.GeneralFaxNumber = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).GeneralPhoneNumber))
                             {
-                                party.DerivedRoles.GeneralPhoneNumber = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.GeneralPhoneNumber = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).HeadQuarters))
                             {
-                                party.DerivedRoles.HeadQuarter = partyContactMechanism.ContactMechanism;
+                                party.HeadQuarter = partyContactMechanism.ContactMechanism;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).HomeAddress))
                             {
-                                party.DerivedRoles.HomeAddress = partyContactMechanism.ContactMechanism;
+                                party.HomeAddress = partyContactMechanism.ContactMechanism;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).InternetAddress))
                             {
-                                party.DerivedRoles.InternetAddress = partyContactMechanism.ContactMechanism as ElectronicAddress;
+                                party.InternetAddress = partyContactMechanism.ContactMechanism as ElectronicAddress;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).OrderAddress))
                             {
-                                party.DerivedRoles.OrderAddress = partyContactMechanism.ContactMechanism;
+                                party.OrderAddress = partyContactMechanism.ContactMechanism;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).OrderInquiriesFax))
                             {
-                                party.DerivedRoles.OrderInquiriesFax = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.OrderInquiriesFax = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).OrderInquiriesPhone))
                             {
-                                party.DerivedRoles.OrderInquiriesPhone = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.OrderInquiriesPhone = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).PersonalEmailAddress))
                             {
-                                party.DerivedRoles.PersonalEmailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
+                                party.PersonalEmailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).SalesOffice))
                             {
-                                party.DerivedRoles.SalesOffice = partyContactMechanism.ContactMechanism;
+                                party.SalesOffice = partyContactMechanism.ContactMechanism;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).ShippingAddress))
                             {
-                                party.DerivedRoles.ShippingAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+                                party.ShippingAddress = partyContactMechanism.ContactMechanism as PostalAddress;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).ShippingInquiriesFax))
                             {
-                                party.DerivedRoles.ShippingInquiriesFax = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.ShippingInquiriesFax = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
 
                             if (partyContactMechanism.ContactPurposes.Contains(new ContactMechanismPurposes(party.Strategy.Session).ShippingInquiriesPhone))
                             {
-                                party.DerivedRoles.ShippingInquiriesPhone = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
+                                party.ShippingInquiriesPhone = partyContactMechanism.ContactMechanism as TelecommunicationsNumber;
                             }
                         }
 
                         // Fallback
                         if (!party.ExistBillingAddress && party.ExistGeneralCorrespondence)
                         {
-                            party.DerivedRoles.BillingAddress = party.GeneralCorrespondence;
+                            party.BillingAddress = party.GeneralCorrespondence;
                         }
 
                         // Fallback
                         if (!party.ExistShippingAddress && party.GeneralCorrespondence is PostalAddress postalAddress)
                         {
-                            party.DerivedRoles.ShippingAddress = postalAddress;
+                            party.ShippingAddress = postalAddress;
                         }
                     }
 
@@ -157,21 +157,21 @@ namespace Allors.Domain
 
             public static void SyncPartyRelationships(Party party)
             {
-                party.DerivedRoles.CurrentPartyContactMechanisms = party.PartyContactMechanisms
+                party.CurrentPartyContactMechanisms = party.PartyContactMechanisms
                                         .Where(v => v.FromDate <= party.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= party.Strategy.Session.Now()))
                                         .ToArray();
 
-                party.DerivedRoles.InactivePartyContactMechanisms = party.PartyContactMechanisms
+                party.InactivePartyContactMechanisms = party.PartyContactMechanisms
                     .Except(party.CurrentPartyContactMechanisms)
                     .ToArray();
 
                 var allPartyRelationshipsWhereParty = party.PartyRelationshipsWhereParty;
 
-                party.DerivedRoles.CurrentPartyRelationships = allPartyRelationshipsWhereParty
+                party.CurrentPartyRelationships = allPartyRelationshipsWhereParty
                     .Where(v => v.FromDate <= party.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= party.Strategy.Session.Now()))
                     .ToArray();
 
-                party.DerivedRoles.InactivePartyRelationships = allPartyRelationshipsWhereParty
+                party.InactivePartyRelationships = allPartyRelationshipsWhereParty
                     .Except(party.CurrentPartyRelationships)
                     .ToArray();
             }
@@ -185,6 +185,7 @@ namespace Allors.Domain
 
                 foreach (var relationship in createdCustomerRelationships)
                 {
+                    // TODO: samenvoegen
                     PartyDerivation.SyncPartyRelationships(relationship.Customer);
                 }
             }

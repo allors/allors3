@@ -1,0 +1,60 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="Domain.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="Tests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="MediaTest" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Tests.MediaTest.BuilderWithData" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Tests.MediaTest.BuilderWithData" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Tests.MediaTest.BuilderWithDataUrl" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Tests.MediaTest.BuilderWithDataUrl" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Tests.MediaTest.BuilderWithEmptyData" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Tests.MediaTest.BuilderWithEmptyData" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Tests.MediaTest.BuilderWithPdfWithJpegExtension" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Tests.MediaTest.BuilderWithPdfWithJpegExtension" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Tests.MediaTest.BuilderWithPng" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Tests.MediaTest.BuilderWithPng" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Tests.MediaTest.DefaultValues" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Tests.MediaTest.DefaultValues" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

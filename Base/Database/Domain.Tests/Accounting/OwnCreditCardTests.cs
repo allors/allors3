@@ -117,7 +117,7 @@ namespace Allors.Domain
                 .WithGeneralLedgerAccount(internalOrganisationGlAccount)
                 .Build();
 
-            ((OrganisationDerivedRoles)this.InternalOrganisation).AddActiveCollectionMethod(collectionMethod);
+            (this.InternalOrganisation).AddActiveCollectionMethod(collectionMethod);
 
             this.Session.Commit();
 

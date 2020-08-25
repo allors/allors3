@@ -36,14 +36,14 @@ namespace Allors.Domain
             if (!@this.ExistQuoteNumber && @this.ExistIssuer)
             {
                 @this.QuoteNumber = @this.Issuer.NextQuoteNumber(session.Now().Year);
-                ((QuoteDerivedRoles)@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
+                (@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
             }
 
             @this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
 
             foreach (QuoteItem quoteItem in @this.QuoteItems)
             {
-                var quoteItemDerivedRoles = (QuoteItemDerivedRoles)quoteItem;
+                var quoteItemDerivedRoles = quoteItem;
 
                 quoteItemDerivedRoles.VatRegime = quoteItem.AssignedVatRegime ?? @this.VatRegime;
                 quoteItemDerivedRoles.VatRate = quoteItem.VatRegime?.VatRate;
@@ -193,7 +193,7 @@ namespace Allors.Domain
 
         private static void Sync(this Quote @this, IDerivation derivation)
         {
-            var QuoteDerivedRoles = (QuoteDerivedRoles)@this;
+            var QuoteDerivedRoles = @this;
         }
     }
 }

@@ -15,16 +15,7 @@ namespace Allors.Repository
         public Address Address { get; set; }
 
         #endregion
-
-        #region Allors
-        [Id("e9e7c874-4d94-42ff-a4c9-414d05ff9533")]
-        [AssociationId("da5e0427-79f7-4259-8a68-0071aa4c6273")]
-        [RoleId("c922b44f-6c6f-4e8b-901d-6558e79bb558")]
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        #endregion
-        public Address[] Addresses { get; set; }
-
+        
         #region Allors
         [Id("2a25125f-3545-4209-afc6-523eb0d8851e")]
         [AssociationId("94b038b3-2dd6-42a8-9cd6-800ddbef104c")]
@@ -49,6 +40,26 @@ namespace Allors.Repository
         [Workspace]
         [Derived]
         public string FullName { get; set; }
+
+        #region Allors
+        [Id("105CF367-F076-45F8-8E2A-2431BB2D65C7")]
+        [AssociationId("{8CF12010-73B8-4106-B6AA-425E3D596102}")]
+        [RoleId("F53C8D25-74E3-4715-9AA8-C64AEA23D3D8")]
+        [Size(256)]
+        #endregion
+        [Workspace]
+        //[DomainDerived]
+        public string DomainFullName { get; set; }
+
+        #region Allors
+        [Id("0DDC847A-713D-4A19-9C6F-E8FE9175301D")]
+        [AssociationId("4B60BE54-5832-48A9-9A48-6A494C7C0ABA")]
+        [RoleId("F2C08EDD-56DF-4058-AF1E-D956AFC1D617")]
+        [Size(256)]
+        #endregion
+        [Workspace]
+        //[DomainDerived]
+        public string DomainGreeting { get; set; }
 
         #region Allors
         [Id("654f6c84-62f2-4c0a-9d68-532ed3f39447")]

@@ -170,7 +170,7 @@ namespace Allors.Domain
             this.ShipFromAddress ??= this.TakenBy?.ShippingAddress;
             this.ShipToAddress ??= this.ShipToCustomer?.ShippingAddress;
             this.ShipmentMethod ??= this.ShipToCustomer?.DefaultShipmentMethod ?? this.Store.DefaultShipmentMethod;
-            this.PaymentMethod ??= this.ShipToCustomer?.PartyFinancialRelationshipsWhereParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, this.TakenBy))?.DefaultPaymentMethod ?? this.Store.DefaultCollectionMethod;
+            this.PaymentMethod ??= this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, this.TakenBy))?.DefaultPaymentMethod ?? this.Store.DefaultCollectionMethod;
 
             if (!this.ExistOrderNumber && this.ExistStore)
             {
@@ -197,7 +197,7 @@ namespace Allors.Domain
             // SalesOrderItem Derivations and Validations
             foreach (SalesOrderItem salesOrderItem in this.SalesOrderItems)
             {
-                var salesOrderItemDerivedRoles = (SalesOrderItemDerivedRoles)salesOrderItem;
+                var salesOrderItemDerivedRoles = salesOrderItem;
 
                 salesOrderItem.ShipFromAddress ??= this.ShipFromAddress;
                 salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? this.ShipToAddress;
@@ -561,7 +561,7 @@ namespace Allors.Domain
         public void BaseSetReadyForPosting(SalesOrderSetReadyForPosting  method)
         {
             var orderThreshold = this.Store.OrderThreshold;
-            var partyFinancial = this.BillToCustomer.PartyFinancialRelationshipsWhereParty.FirstOrDefault(v => Equals(v.InternalOrganisation, this.TakenBy));
+            var partyFinancial = this.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, this.TakenBy));
 
             var amountOverDue = partyFinancial.AmountOverDue;
             var creditLimit = partyFinancial.CreditLimit ?? (this.Store.ExistCreditLimit ? this.Store.CreditLimit : 0);
@@ -625,7 +625,7 @@ namespace Allors.Domain
 
                         foreach (SalesOrderItem orderItem in this.ValidOrderItems)
                         {
-                            var orderItemDerivedRoles = (SalesOrderItemDerivedRoles)orderItem;
+                            var orderItemDerivedRoles = orderItem;
 
                             if (orderItem.ExistProduct && orderItem.ShipToAddress.Equals(address.Key) && orderItem.QuantityRequestsShipping > 0)
                             {

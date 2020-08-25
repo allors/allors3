@@ -420,7 +420,7 @@ namespace Allors.Domain
                     shipmentItem.SerialisedItem = serialisedItem;
 
                     // HACK: DerivedRoles (WIP)
-                    var serialisedItemDeriveRoles = (SerialisedItemDerivedRoles)serialisedItem;
+                    var serialisedItemDeriveRoles = serialisedItem;
                     serialisedItemDeriveRoles.PurchaseOrder = order;
                     serialisedItemDeriveRoles.SuppliedBy = order.TakenViaSupplier;
                     serialisedItem.RemoveAssignedPurchasePrice();

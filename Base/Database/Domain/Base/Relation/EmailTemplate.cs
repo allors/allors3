@@ -9,10 +9,10 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            if (!this.ExistDescription)
-            {
-                this.Description = "Default";
-            }
+            //if (!this.ExistDescription)
+            //{
+            //    this.Description = "Default";
+            //}
         }
     }
 }

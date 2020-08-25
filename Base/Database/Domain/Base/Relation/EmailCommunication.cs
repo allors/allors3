@@ -18,12 +18,12 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            if (!this.ExistSubject && this.ExistEmailTemplate && this.EmailTemplate.ExistSubjectTemplate)
-            {
-                this.Subject = this.EmailTemplate.SubjectTemplate;
-            }
+            //if (!this.ExistSubject && this.ExistEmailTemplate && this.EmailTemplate.ExistSubjectTemplate)
+            //{
+            //    this.Subject = this.EmailTemplate.SubjectTemplate;
+            //}
 
-            this.WorkItemDescription = $"Email to {this.ToEmail} about {this.Subject}";
+            //this.WorkItemDescription = $"Email to {this.ToEmail} about {this.Subject}";
         }
     }
 }

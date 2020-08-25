@@ -214,7 +214,7 @@ namespace Allors.Domain
                         extra -= diff;
 
                         // HACK: DerivedRoles
-                        var salesOrderItemDerivedRoles = (SalesOrderItemDerivedRoles)salesOrderItem;
+                        var salesOrderItemDerivedRoles = salesOrderItem;
 
                         salesOrderItemDerivedRoles.QuantityShortFalled -= diff;
 

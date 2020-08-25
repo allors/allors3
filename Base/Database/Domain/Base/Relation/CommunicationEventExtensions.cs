@@ -14,71 +14,71 @@ namespace Allors.Domain
     {
         public static void BaseOnDerive(this CommunicationEvent @this, ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (!@this.ExistOwner && @this.Strategy.Session.GetUser() is Person owner)
-            {
-                @this.Owner = owner;
-            }
+            //if (!@this.ExistOwner && @this.Strategy.Session.GetUser() is Person owner)
+            //{
+            //    @this.Owner = owner;
+            //}
 
-            if (@this.ExistScheduledStart && @this.ExistScheduledEnd && @this.ScheduledEnd < @this.ScheduledStart)
-            {
-                derivation.Validation.AddError(@this, M.CommunicationEvent.ScheduledEnd, ErrorMessages.EndDateBeforeStartDate);
-            }
+            //if (@this.ExistScheduledStart && @this.ExistScheduledEnd && @this.ScheduledEnd < @this.ScheduledStart)
+            //{
+            //    derivation.Validation.AddError(@this, M.CommunicationEvent.ScheduledEnd, ErrorMessages.EndDateBeforeStartDate);
+            //}
 
-            if (@this.ExistActualStart && @this.ExistActualEnd && @this.ActualEnd < @this.ActualStart)
-            {
-                derivation.Validation.AddError(@this, M.CommunicationEvent.ActualEnd, ErrorMessages.EndDateBeforeStartDate);
-            }
+            //if (@this.ExistActualStart && @this.ExistActualEnd && @this.ActualEnd < @this.ActualStart)
+            //{
+            //    derivation.Validation.AddError(@this, M.CommunicationEvent.ActualEnd, ErrorMessages.EndDateBeforeStartDate);
+            //}
 
-            if (!@this.ExistCommunicationEventState)
-            {
-                if (!@this.ExistActualStart || (@this.ExistActualStart && @this.ActualStart > @this.Strategy.Session.Now()))
-                {
-                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
-                }
+            //if (!@this.ExistCommunicationEventState)
+            //{
+            //    if (!@this.ExistActualStart || (@this.ExistActualStart && @this.ActualStart > @this.Strategy.Session.Now()))
+            //    {
+            //        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
+            //    }
 
-                if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Session.Now() &&
-                    ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Session.Now()) || !@this.ExistActualEnd))
-                {
-                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).InProgress;
-                }
+            //    if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Session.Now() &&
+            //        ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Session.Now()) || !@this.ExistActualEnd))
+            //    {
+            //        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).InProgress;
+            //    }
 
-                if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Session.Now())
-                {
-                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
-                }
-            }
+            //    if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Session.Now())
+            //    {
+            //        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
+            //    }
+            //}
 
-            if (!@this.ExistInitialScheduledStart && @this.ExistScheduledStart)
-            {
-                @this.InitialScheduledStart = @this.ScheduledStart;
-            }
+            //if (!@this.ExistInitialScheduledStart && @this.ExistScheduledStart)
+            //{
+            //    @this.InitialScheduledStart = @this.ScheduledStart;
+            //}
 
-            if (!@this.ExistInitialScheduledEnd && @this.ExistScheduledEnd)
-            {
-                @this.InitialScheduledEnd = @this.ScheduledEnd;
-            }
+            //if (!@this.ExistInitialScheduledEnd && @this.ExistScheduledEnd)
+            //{
+            //    @this.InitialScheduledEnd = @this.ScheduledEnd;
+            //}
 
-            var openCommunicationTasks = @this.TasksWhereWorkItem
-                .OfType<CommunicationTask>()
-                .Where(v => !v.ExistDateClosed)
-                .ToArray();
+            //var openCommunicationTasks = @this.TasksWhereWorkItem
+            //    .OfType<CommunicationTask>()
+            //    .Where(v => !v.ExistDateClosed)
+            //    .ToArray();
 
-            if (@this.ExistActualEnd)
-            {
-                if (openCommunicationTasks.Length > 0)
-                {
-                    openCommunicationTasks.First().DateClosed = @this.Strategy.Session.Now();
-                }
-            }
-            else
-            {
-                if (openCommunicationTasks.Length == 0)
-                {
-                    new CommunicationTaskBuilder(@this.Strategy.Session).WithCommunicationEvent(@this).Build();
-                }
-            }
+            //if (@this.ExistActualEnd)
+            //{
+            //    if (openCommunicationTasks.Length > 0)
+            //    {
+            //        openCommunicationTasks.First().DateClosed = @this.Strategy.Session.Now();
+            //    }
+            //}
+            //else
+            //{
+            //    if (openCommunicationTasks.Length == 0)
+            //    {
+            //        new CommunicationTaskBuilder(@this.Strategy.Session).WithCommunicationEvent(@this).Build();
+            //    }
+            //}
 
             @this.DeriveInvolvedParties();
         }
@@ -115,7 +115,7 @@ namespace Allors.Domain
                 .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                 .Select(v => v.Organisation);
 
-            @this.DerivedRoles.InvolvedParties = parties.Union(organisation).ToArray();
+            @this.InvolvedParties = parties.Union(organisation).ToArray();
         }
     }
 }

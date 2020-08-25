@@ -51,17 +51,14 @@ namespace Allors.Domain
 
             if (this.ExistContractor && this.ExistSubContractor)
             {
-                // HACK: DerivedRoles
-                var internalOrganisationDerivedRoles = (OrganisationDerivedRoles)this.Contractor;
-
                 if (this.FromDate <= this.Session().Now() && (!this.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
                 {
-                    internalOrganisationDerivedRoles.AddActiveSubContractor(this.SubContractor);
+                    this.Contractor.AddActiveSubContractor(this.SubContractor);
                 }
 
                 if (this.FromDate > this.Session().Now() || (this.ExistThroughDate && this.ThroughDate < this.Session().Now()))
                 {
-                    internalOrganisationDerivedRoles.RemoveActiveSubContractor(this.SubContractor);
+                    this.Contractor.RemoveActiveSubContractor(this.SubContractor);
                 }
 
                 if (this.SubContractor?.ContactsUserGroup != null)

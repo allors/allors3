@@ -41,7 +41,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var subContractor1Financial = subcontractor1.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
+            var subContractor1Financial = subcontractor1.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
 
             this.Session.Derive();
 
@@ -52,7 +52,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var subContractor2Financial = subcontractor2.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
+            var subContractor2Financial = subcontractor2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
 
             this.Session.Derive();
 
@@ -63,7 +63,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var subContractor3Financial = subcontractor3.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
+            var subContractor3Financial = subcontractor3.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
 
             this.Session.Derive();
 
@@ -99,7 +99,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial2 = subcontractor2.PartyFinancialRelationshipsWhereParty.First(v => Equals(v.InternalOrganisation, internalOrganisation2));
+            var partyFinancial2 = subcontractor2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, internalOrganisation2));
 
             partyFinancial2.SubAccountNumber = 19;
 

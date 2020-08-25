@@ -75,7 +75,7 @@ namespace Allors.Domain
             if (this.ExistSupplier)
             {
                 // HACK: DerivedRoles
-                var internalOrganisationDerivedRoles = (OrganisationDerivedRoles)this.InternalOrganisation;
+                var internalOrganisationDerivedRoles = this.InternalOrganisation;
 
                 if (this.FromDate <= this.Session().Now() && (!this.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
                 {

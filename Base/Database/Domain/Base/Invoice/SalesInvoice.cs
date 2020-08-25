@@ -1079,7 +1079,7 @@ namespace Allors.Domain
             decimal quantityOrdered,
             decimal totalBasePrice)
         {
-            var salesInvoiceItemDerivedRoles = (SalesInvoiceItemDerivedRoles)salesInvoiceItem;
+            var salesInvoiceItemDerivedRoles = salesInvoiceItem;
 
             var currentGenericOrProductOrFeaturePriceComponents = new List<PriceComponent>();
             if (salesInvoiceItem.ExistProduct)

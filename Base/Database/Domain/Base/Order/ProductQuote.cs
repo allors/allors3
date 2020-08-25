@@ -374,7 +374,7 @@ namespace Allors.Domain
             decimal quantityOrdered,
             decimal totalBasePrice)
         {
-            var quoteItemDeriveRoles = (QuoteItemDerivedRoles)quoteItem;
+            var quoteItemDeriveRoles = quoteItem;
 
             var currentGenericOrProductOrFeaturePriceComponents = Array.Empty<PriceComponent>();
             if (quoteItem.ExistProduct)
