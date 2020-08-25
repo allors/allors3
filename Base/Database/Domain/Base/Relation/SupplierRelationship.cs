@@ -62,59 +62,45 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            this.BaseOnDeriveInternalOrganisationSupplier(derivation);
-            this.BaseOnDeriveMembership(derivation);
+           // this.BaseOnDeriveInternalOrganisationSupplier(derivation);
+          //  this.BaseOnDeriveMembership(derivation);
 
-            this.Parties = new Party[] { this.Supplier, this.InternalOrganisation };
+            //this.Parties = new Party[] { this.Supplier, this.InternalOrganisation };
         }
 
-        public void BaseOnDeriveInternalOrganisationSupplier(IDerivation derivation)
+        public void BaseOnDeriveInternalOrganisationSupplier()
         {
-            if (this.ExistSupplier)
-            {
-                // HACK: DerivedRoles
-                var internalOrganisationDerivedRoles = this.InternalOrganisation;
-
-                if (this.FromDate <= this.Session().Now() && (!this.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
-                {
-                    internalOrganisationDerivedRoles.AddActiveSupplier(this.Supplier);
-                }
-
-                if (this.FromDate > this.Session().Now() || (this.ExistThroughDate && this.ThroughDate < this.Session().Now()))
-                {
-                    internalOrganisationDerivedRoles.RemoveActiveSupplier(this.Supplier);
-                }
-            }
+            
         }
 
-        public void BaseOnDeriveMembership(IDerivation derivation)
+        public void BaseOnDeriveMembership()
         {
-            if (this.ExistSupplier)
-            {
-                if (this.Supplier.ContactsUserGroup != null)
-                {
-                    foreach (OrganisationContactRelationship contactRelationship in this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
-                    {
-                        if (contactRelationship.FromDate <= this.Session().Now() &&
-                            (!contactRelationship.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
-                        {
-                            if (!this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                            {
-                                this.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
-                            }
-                        }
-                        else
-                        {
-                            if (this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                            {
-                                this.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
-                            }
-                        }
-                    }
-                }
-            }
+            //if (this.ExistSupplier)
+            //{
+            //    if (this.Supplier.ContactsUserGroup != null)
+            //    {
+            //        foreach (OrganisationContactRelationship contactRelationship in this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
+            //        {
+            //            if (contactRelationship.FromDate <= this.Session().Now() &&
+            //                (!contactRelationship.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
+            //            {
+            //                if (!this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+            //                {
+            //                    this.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+            //                {
+            //                    this.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
 }
