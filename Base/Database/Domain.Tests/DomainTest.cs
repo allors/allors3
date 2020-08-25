@@ -95,7 +95,7 @@ namespace Allors
             database.PartyRegisterDerivations();
             database.EmailTemplateRegisterDerivations();
             database.WebSiteCommunicationsRegisterDerivations();
-            database.SupplierRelationshipRegisterDerivations();
+            //database.SupplierRelationshipRegisterDerivations();
 
 
             this.Session = database.CreateSession();
