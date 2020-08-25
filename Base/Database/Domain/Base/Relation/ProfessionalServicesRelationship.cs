@@ -9,13 +9,13 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            this.Parties = new Party[] { this.Professional, this.ProfessionalServicesProvider };
+            //this.Parties = new Party[] { this.Professional, this.ProfessionalServicesProvider };
 
-            if (!this.ExistProfessional | !this.ExistProfessionalServicesProvider)
-            {
-                // TODO: Move Delete
-                this.Delete();
-            }
+            //if (!this.ExistProfessional | !this.ExistProfessionalServicesProvider)
+            //{
+            //    // TODO: Move Delete
+            //    this.Delete();
+            //}
         }
     }
 }

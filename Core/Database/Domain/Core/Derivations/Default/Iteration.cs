@@ -90,6 +90,16 @@ namespace Allors.Domain.Derivations.Default
 
                     while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
                     {
+                        // Initialization
+                        if (changeSet.Created.Any())
+                        {
+                            var newObjects = session.Instantiate(changeSet.Created);
+                            foreach (var newObject in newObjects)
+                            {
+                                ((Object)newObject).OnInit();
+                            }
+                        }
+
                         foreach (var kvp in domainDerivationById)
                         {
                             var domainDerivation = kvp.Value;

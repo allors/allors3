@@ -32,15 +32,15 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var session = this.Strategy.Session;
+            //var session = this.Strategy.Session;
 
-            if (!this.ExistLogoImage)
-            {
-                this.LogoImage = new MediaBuilder(this.Strategy.Session).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
-            }
+            //if (!this.ExistLogoImage)
+            //{
+            //    this.LogoImage = new MediaBuilder(this.Strategy.Session).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
+            //}
 
-            this.Locales = this.AdditionalLocales;
-            this.AddLocale(this.DefaultLocale);
+            //this.Locales = this.AdditionalLocales;
+            //this.AddLocale(this.DefaultLocale);
         }
 
         private byte[] GetResourceBytes(string name)

@@ -33,7 +33,7 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            this.Parties = new Party[] { this.Employee, this.Employer };
+            //this.Parties = new Party[] { this.Employee, this.Employer };
         }
     }
 }

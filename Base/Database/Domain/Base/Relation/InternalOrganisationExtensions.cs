@@ -145,65 +145,65 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            var organisation = (Organisation)@this;
-            if (organisation.IsInternalOrganisation)
-            {
-                if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Session.Extent<PaymentMethod>().Count == 1)
-                {
-                    @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
-                }
+            //var organisation = (Organisation)@this;
+            //if (organisation.IsInternalOrganisation)
+            //{
+            //    if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Session.Extent<PaymentMethod>().Count == 1)
+            //    {
+            //        @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
+            //    }
 
-                if (!@this.ExistPurchaseInvoiceCounter)
-                {
-                    @this.PurchaseInvoiceCounter = new CounterBuilder(@this.Strategy.Session)
-                        .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-                }
+            //    if (!@this.ExistPurchaseInvoiceCounter)
+            //    {
+            //        @this.PurchaseInvoiceCounter = new CounterBuilder(@this.Strategy.Session)
+            //            .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            //    }
 
-                if (!@this.ExistRequestCounter)
-                {
-                    @this.RequestCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                        .WithValue(0).Build();
-                }
+            //    if (!@this.ExistRequestCounter)
+            //    {
+            //        @this.RequestCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
+            //            .WithValue(0).Build();
+            //    }
 
-                if (!@this.ExistQuoteCounter)
-                {
-                    @this.QuoteCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                        .WithValue(0).Build();
-                }
+            //    if (!@this.ExistQuoteCounter)
+            //    {
+            //        @this.QuoteCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
+            //            .WithValue(0).Build();
+            //    }
 
-                if (!@this.ExistPurchaseOrderCounter)
-                {
-                    @this.PurchaseOrderCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                        .WithValue(0).Build();
-                }
+            //    if (!@this.ExistPurchaseOrderCounter)
+            //    {
+            //        @this.PurchaseOrderCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
+            //            .WithValue(0).Build();
+            //    }
 
-                if (!@this.ExistIncomingShipmentCounter)
-                {
-                    @this.IncomingShipmentCounter = new CounterBuilder(@this.Strategy.Session)
-                        .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-                }
+            //    if (!@this.ExistIncomingShipmentCounter)
+            //    {
+            //        @this.IncomingShipmentCounter = new CounterBuilder(@this.Strategy.Session)
+            //            .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            //    }
 
-                if (!@this.ExistSubAccountCounter)
-                {
-                    @this.SubAccountCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                        .WithValue(0).Build();
-                }
+            //    if (!@this.ExistSubAccountCounter)
+            //    {
+            //        @this.SubAccountCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
+            //            .WithValue(0).Build();
+            //    }
 
-                if (!@this.ExistInvoiceSequence)
-                {
-                    @this.InvoiceSequence = new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear;
-                }
+            //    if (!@this.ExistInvoiceSequence)
+            //    {
+            //        @this.InvoiceSequence = new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear;
+            //    }
 
-                if (!@this.ExistFiscalYearStartMonth)
-                {
-                    @this.FiscalYearStartMonth = 1;
-                }
+            //    if (!@this.ExistFiscalYearStartMonth)
+            //    {
+            //        @this.FiscalYearStartMonth = 1;
+            //    }
 
-                if (!@this.ExistFiscalYearStartDay)
-                {
-                    @this.FiscalYearStartDay = 1;
-                }
-            }
+            //    if (!@this.ExistFiscalYearStartDay)
+            //    {
+            //        @this.FiscalYearStartDay = 1;
+            //    }
+        
         }
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)

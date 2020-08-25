@@ -85,6 +85,15 @@ namespace Allors
         {
             database.Init();
 
+            database.SingletonRegisterDerivations();
+            database.SettingsRegisterDerivations();
+            database.PhoneCommunicationRegisterDerivations();
+            database.ProfessionalServicesRelationshipRegisterDerivations();
+            database.OrganisationContactRelationshipRegisterDerivations();
+            database.InternalOrganisationExtensionsRegisterDerivations();
+            database.FaceToFaceCommunicationRegisterDerivations();
+            database.EmploymentRegisterDerivations();
+            database.CommunicationTaskRegisterDerivations();
             database.CommunicationEventExtensionsRegisterDerivations();
             database.AutomatedAgentRegisterDerivations();
             database.AgreementTermExtensionsRegisterDerivations();
@@ -95,7 +104,14 @@ namespace Allors
             database.PartyRegisterDerivations();
             database.EmailTemplateRegisterDerivations();
             database.WebSiteCommunicationsRegisterDerivations();
+            database.CustomerRelationshipRegisterDerivations();
+            database.FaxCommunicationRegisterDerivations();
+            database.LetterCorrespondenceRegisterDerivations();
+            database.OrganisationRollUpRegisterDerivations();
+            database.PartyContactMechanismRegisterDerivations();
             database.SupplierRelationshipRegisterDerivations();
+            database.subcontractorRelationshipRegisterDerivations();
+            database.PassportRegisterDerivations();
 
 
             this.Session = database.CreateSession();

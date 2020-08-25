@@ -33,6 +33,7 @@ namespace Allors.Domain
 
             this.supplierRelationship = new SupplierRelationshipBuilder(this.Session)
                 .WithSupplier(this.supplier)
+                .WithInternalOrganisation(this.InternalOrganisation)
                 .WithFromDate(this.Session.Now().AddYears(-1))
                 .Build();
 

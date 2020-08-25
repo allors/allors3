@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Domain.Person">
+    <Position X="3.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Score">
+    <Position X="7.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAQAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Player" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.Scoreboard">
+    <Position X="1.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Players" />
+      <Property Name="Games" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.Game">
+    <Position X="4" Y="0.75" Width="1.5" />
+    <AssociationLine Name="Declarers" Type="Allors.Domain.Person">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.16" Y="0.568" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Defenders" Type="Allors.Domain.Person">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.227" Y="0.227" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAgAAAAAAAEgAAQAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Scores" />
+      <Property Name="GameType" />
+      <Property Name="Winners" />
+      <Property Name="Declarers" />
+      <Property Name="Defenders" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.GameType">
+    <Position X="7.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
