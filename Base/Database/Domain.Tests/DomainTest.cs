@@ -85,6 +85,10 @@ namespace Allors
         {
             database.Init();
 
+            database.SingletonRegisterDerivations();
+            database.SettingsRegisterDerivations();
+            database.PhoneCommunicationRegisterDerivations();
+            database.ProfessionalServicesRelationshipRegisterDerivations();
             database.OrganisationContactRelationshipRegisterDerivations();
             database.InternalOrganisationExtensionsRegisterDerivations();
             database.FaceToFaceCommunicationRegisterDerivations();

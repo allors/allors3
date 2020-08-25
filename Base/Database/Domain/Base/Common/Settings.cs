@@ -11,20 +11,20 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            if (!this.ExistSkuCounter)
-            {
-                this.SkuCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            }
+            //if (!this.ExistSkuCounter)
+            //{
+            //    this.SkuCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            //}
 
-            if (!this.ExistSerialisedItemCounter)
-            {
-                this.SerialisedItemCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            }
+            //if (!this.ExistSerialisedItemCounter)
+            //{
+            //    this.SerialisedItemCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            //}
 
-            if (!this.ExistProductNumberCounter)
-            {
-                this.ProductNumberCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            }
+            //if (!this.ExistProductNumberCounter)
+            //{
+            //    this.ProductNumberCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            //}
         }
 
         public string NextSkuNumber()
