@@ -17,6 +17,9 @@ namespace Allors.Domain
             {
                 var createdSupplierRelationship = changeSet.Created.Select(session.Instantiate).OfType<SupplierRelationship>();
 
+                changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
+                var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();
+
                 foreach (SupplierRelationship supplierRelationship in createdSupplierRelationship)
                 {
 

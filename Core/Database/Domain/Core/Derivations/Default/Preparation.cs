@@ -24,7 +24,7 @@ namespace Allors.Domain.Derivations.Default
             derivation.ChangeSet.Add(changeSet);
 
             // Initialization
-            if (changeSet.Created.Any())
+            if (domainAccumulatedChangeSet == null && changeSet.Created.Any())
             {
                 var newObjects = derivation.Session.Instantiate(changeSet.Created);
                 foreach (var newObject in newObjects)
