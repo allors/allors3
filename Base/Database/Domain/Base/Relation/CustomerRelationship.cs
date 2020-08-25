@@ -49,6 +49,6 @@ namespace Allors.Domain
             }
         }
 
-        public void BaseOnDerive(ObjectOnDerive method) => this.Parties = new Party[] { this.Customer, this.InternalOrganisation };
+        //public void BaseOnDerive(ObjectOnDerive method) => this.Parties = new Party[] { this.Customer, this.InternalOrganisation };
     }
 }

@@ -278,7 +278,7 @@ namespace Allors.Domain
                     if (partyFinancial == null)
                     {
                         partyFinancial = new PartyFinancialRelationshipBuilder(@this.Strategy.Session)
-                            .WithParty(@this)
+                            .WithFinancialParty(@this)
                             .WithInternalOrganisation(internalOrganisation)
                             .Build();
                     }

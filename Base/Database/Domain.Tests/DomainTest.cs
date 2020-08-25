@@ -95,6 +95,11 @@ namespace Allors
             database.PartyRegisterDerivations();
             database.EmailTemplateRegisterDerivations();
             database.WebSiteCommunicationsRegisterDerivations();
+            database.CustomerRelationshipRegisterDerivations();
+            database.FaxCommunicationRegisterDerivations();
+            database.LetterCorrespondenceRegisterDerivations();
+            database.OrganisationRollUpRegisterDerivations();
+            database.PartyContactMechanismRegisterDerivations();
             //database.SupplierRelationshipRegisterDerivations();
 
 
