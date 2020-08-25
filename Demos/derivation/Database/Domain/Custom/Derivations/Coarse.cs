@@ -46,7 +46,7 @@ namespace Allors.Domain
                             if (score == null)
                             {
                                 score = new ScoreBuilder(scoreboardWithChangedPlayers.Session()).Build();
-                                ((ScoreDerivedRoles)score).Player = player;
+                                score.Player = player;
                                 score.Value = 0;
 
                                 scoreboardWithChangedPlayers.AddAccumulatedScore(score);
@@ -93,7 +93,7 @@ namespace Allors.Domain
                                 var score = new ScoreBuilder(game.Strategy.Session)
                                 .Build();
 
-                                ((ScoreDerivedRoles)score).Player = player;
+                                score.Player = player;
 
                                 game.AddScore(score);
                             }
@@ -130,7 +130,7 @@ namespace Allors.Domain
                 {
                     foreach (Game game in gameWithChangedDeclarers)
                     {
-                        ((GameDerivedRoles)game).Defenders = game.ScoreboardWhereGame?.Players.Except(game.Declarers).ToArray();
+                        game.Defenders = game.ScoreboardWhereGame?.Players.Except(game.Declarers).ToArray();
                     }
                 }
 

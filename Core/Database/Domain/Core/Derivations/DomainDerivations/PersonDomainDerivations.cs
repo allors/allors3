@@ -15,14 +15,14 @@ namespace Allors.Domain
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.FirstName, out var firstNames);
-                var personFirstNames = firstNames?.Select(session.Instantiate).OfType<Person>();
+                var peopleWithChangedFirstName = firstNames?.Select(session.Instantiate).OfType<Person>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.Person.LastName, out var lastNames);
-                var personLastNames = lastNames?.Select(session.Instantiate).OfType<Person>();
+                var peopleWithChangedLastName = lastNames?.Select(session.Instantiate).OfType<Person>();
 
-                if (personFirstNames?.Any() == true || lastNames?.Any() == true)
+                if (peopleWithChangedFirstName?.Any() == true || lastNames?.Any() == true)
                 {
-                    var people = personFirstNames.Union(personLastNames).Distinct();
+                    var people = peopleWithChangedFirstName.Union(peopleWithChangedLastName).Distinct();
 
                     foreach (var person in people)
                     {
@@ -36,16 +36,16 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                changeSet.AssociationsByRoleType.TryGetValue(M.Person.FullName, out var fullNames);
-                var personFullNames = fullNames?.Select(session.Instantiate).OfType<Person>();
+                changeSet.AssociationsByRoleType.TryGetValue(M.Person.DomainFullName, out var fullNames);
+                var peopleWithChangedFullName = fullNames?.Select(session.Instantiate).OfType<Person>();
 
-                if (personFullNames?.Any() == true)
+                if (peopleWithChangedFullName?.Any() == true)
                 {
-                    var people = personFullNames;
+                    var people = peopleWithChangedFullName;
 
                     foreach (var person in people)
                     {
-                        person.DomainGreeting = $"Hello {person.FullName}!";
+                        person.DomainGreeting = $"Hello {person.DomainFullName}!";
                     }
                 }
             }
