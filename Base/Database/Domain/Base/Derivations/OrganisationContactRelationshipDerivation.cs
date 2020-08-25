@@ -18,17 +18,48 @@ namespace Allors.Domain
             {
                 var createdOrganisationContactRelationships = changeSet.Created.Select(session.Instantiate).OfType<OrganisationContactRelationship>();
 
-                foreach(var organisationContactRelationship in createdOrganisationContactRelationships)
+                foreach (var organisationContactRelationship in createdOrganisationContactRelationships)
                 {
                     organisationContactRelationship.Parties = new Party[] { organisationContactRelationship.Contact, organisationContactRelationship.Organisation };
                 }
-                
+            }
+        }
+
+        public class OrganisationContactRelationshipDateChangeDerivation : IDomainDerivation
+        {
+            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            {
+                changeSet.AssociationsByRoleType.TryGetValue(M.OrganisationContactRelationship.FromDate.RoleType, out var changedOrganisationContactRelationship);
+                var organisationContactRelationshipWhereFromDateChanged = changedOrganisationContactRelationship?.Select(session.Instantiate).OfType<OrganisationContactRelationship>();
+
+                if (organisationContactRelationshipWhereFromDateChanged?.Any() == true)
+                {
+                    foreach (var organisationContactRelationship in organisationContactRelationshipWhereFromDateChanged)
+                    {
+                        if (organisationContactRelationship.Organisation?.ContactsUserGroup != null)
+                        {
+                            if (!(organisationContactRelationship.FromDate <= session.Now()
+                        && (!organisationContactRelationship.ExistThroughDate
+                        || organisationContactRelationship.ThroughDate >= session.Now())))
+                            {
+                                organisationContactRelationship.Organisation.ContactsUserGroup
+                                    .RemoveMember(organisationContactRelationship.Contact);
+                            }
+                            else
+                            {
+                                organisationContactRelationship.Organisation.ContactsUserGroup
+                                    .AddMember(organisationContactRelationship.Contact);
+                            }
+                        }
+                    }
+                }
             }
         }
 
         public static void OrganisationContactRelationshipRegisterDerivations(this IDatabase @this)
         {
             @this.DomainDerivationById[new Guid("82517e91-adb3-43f3-b6c8-13f8f0142e35")] = new OrganisationContactRelationshipCreationDerivation();
+            @this.DomainDerivationById[new Guid("916296aa-d713-4881-8a21-8f7a45397bfe")] = new OrganisationContactRelationshipDateChangeDerivation();
         }
     }
 }

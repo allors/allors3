@@ -96,7 +96,7 @@ namespace Allors.Domain
                     if (!organisation.ExistContactsUserGroup)
                     {
                         var customerContactGroupName = $"Customer contacts at {organisation.Name} ({organisation.UniqueId})";
-                        (organisation).ContactsUserGroup = new UserGroupBuilder(organisation.Strategy.Session).WithName(customerContactGroupName).Build();
+                        organisation.ContactsUserGroup = new UserGroupBuilder(organisation.Strategy.Session).WithName(customerContactGroupName).Build();
                     }
 
                     organisation.DeriveRelationships();
