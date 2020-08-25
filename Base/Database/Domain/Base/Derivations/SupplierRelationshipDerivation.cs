@@ -23,7 +23,7 @@ namespace Allors.Domain
                     if (supplierRelationship.ExistSupplier)
                     {
                         // HACK: DerivedRoles
-                        var internalOrganisationDerivedRoles = (OrganisationDerivedRoles)supplierRelationship.InternalOrganisation;
+                        var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
 
                         if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
                         {
@@ -58,7 +58,7 @@ namespace Allors.Domain
                         }
                     }
 
-                    ((SupplierRelationshipDerivedRoles)supplierRelationship).Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
+                    supplierRelationship.Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
                 }
             }
         }
