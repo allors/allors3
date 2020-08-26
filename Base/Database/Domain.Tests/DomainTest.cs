@@ -85,6 +85,13 @@ namespace Allors
         {
             database.Init();
 
+            database.NonSerialisedInventoryItemRegisterDerivations();
+            database.NonUnifiedPartRegisterDerivations();
+            database.PartExtensionsRegisterDerivations();
+            database.InventoryItemTransactionRegisterDerivations();
+            database.InventoryItemExtensionsRegisterDerivations();
+            database.CatalogueRegisterDerivations();
+            database.PriceComponentRegisterDerivations();
             database.SingletonRegisterDerivations();
             database.SettingsRegisterDerivations();
             database.PhoneCommunicationRegisterDerivations();
