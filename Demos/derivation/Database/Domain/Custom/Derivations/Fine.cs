@@ -134,7 +134,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                changeSet.AssociationsByRoleType.TryGetValue(M.Game.GameType, out var changedWinners);
+                changeSet.AssociationsByRoleType.TryGetValue(M.Game.GameMode, out var changedWinners);
                 var newGame = changedWinners?.Select(session.Instantiate).OfType<Game>();
 
                 if (newGame?.Any() == true)
@@ -143,17 +143,17 @@ namespace Allors.Domain
                     {
                         foreach (Score score in game.Scores)
                         {
-                            if (game.ExistEndDate && game.ExistGameType)
+                            if (game.ExistEndDate && game.ExistGameMode)
                             {
 
-                                var gameType = game.GameType;
+                                var gameType = game.GameMode;
                                 var declarers = game.Declarers.ToList();
                                 var winners = game.Winners.ToList();
 
                                 var winning = winners.Contains(score.Player);
                                 var declaring = declarers.Contains(score.Player);
 
-                                if (gameType.IsMiserie || gameType.IsMiserieOpTafel)
+                                if (gameType.IsMisère || gameType.IsOpenMisère)
                                 {
                                     switch (declarers.Count)
                                     {
@@ -220,13 +220,13 @@ namespace Allors.Domain
                                             }
                                             break;
                                     }
-                                    if (gameType.IsMiserieOpTafel)
+                                    if (gameType.IsOpenMisère)
                                     {
                                         score.Value = score.Value * 2;
                                     }
                                 }
 
-                                if (gameType.IsSoloSlim || gameType.IsSolo || gameType.IsAbondance)
+                                if (gameType.IsGrandSlam || gameType.IsSmallSlam || gameType.IsAbondance)
                                 {
                                     if (declaring)
                                     {
@@ -237,30 +237,30 @@ namespace Allors.Domain
                                         score.Value = winners.Count() == 0 ? 5 : -5;
                                     }
 
-                                    if (gameType.IsSolo)
+                                    if (gameType.IsSmallSlam)
                                     {
                                         score.Value = score.Value * 2;
                                     }
 
-                                    if (gameType.IsSoloSlim)
+                                    if (gameType.IsGrandSlam)
                                     {
                                         score.Value = score.Value * 3;
                                     }
                                 }
 
 
-                                if (gameType.IsAlleenGaan || gameType.IsVragenEnMeegaan || gameType.IsTroel)
+                                if (gameType.IsSolo || gameType.IsProposalAndAcceptance || gameType.IsTroel)
                                 {
                                     int aantalDefendersPerPersoon = 3;
                                     var overslagenOmDubbelTeZijn = 8;
 
-                                    if (gameType.IsVragenEnMeegaan || gameType.IsTroel)
+                                    if (gameType.IsProposalAndAcceptance || gameType.IsTroel)
                                     {
                                         aantalDefendersPerPersoon = 1;
                                         overslagenOmDubbelTeZijn = 5;
                                     }
 
-                                    var overslagen = score.GameWhereScore.Overslagen ?? 0;
+                                    var overslagen = score.GameWhereScore.ExtraTricks ?? 0;
 
                                     if (declaring)
                                     {

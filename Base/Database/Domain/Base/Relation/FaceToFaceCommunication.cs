@@ -16,6 +16,6 @@ namespace Allors.Domain
 
         public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
 
-        public void BaseOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Meeting with {this.ToParty.PartyName} about {this.Subject}";
+        //public void BaseOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Meeting with {this.ToParty.PartyName} about {this.Subject}";
     }
 }

@@ -17,23 +17,29 @@ namespace Allors.Domain
             {
                 var createdSupplierRelationship = changeSet.Created.Select(session.Instantiate).OfType<SupplierRelationship>();
 
+                changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
+                var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();
+
                 foreach (SupplierRelationship supplierRelationship in createdSupplierRelationship)
                 {
 
                     if (supplierRelationship.ExistSupplier)
                     {
                         // HACK: DerivedRoles
-                        var internalOrganisationDerivedRoles = (OrganisationDerivedRoles)supplierRelationship.InternalOrganisation;
-
-                        if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                        var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
+                        if (internalOrganisationDerivedRoles != null)
                         {
-                            internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
+                            if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                            {
+                                internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
+                            }
+
+                            if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
+                            {
+                                internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
+                            }
                         }
 
-                        if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
-                        {
-                            internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
-                        }
 
                         if (supplierRelationship.Supplier.ContactsUserGroup != null)
                         {
@@ -58,7 +64,7 @@ namespace Allors.Domain
                         }
                     }
 
-                    ((SupplierRelationshipDerivedRoles)supplierRelationship).Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
+                    supplierRelationship.Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
                 }
             }
         }

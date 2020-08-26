@@ -1,4 +1,4 @@
-﻿using Allors.Repository.Attributes;
+using Allors.Repository.Attributes;
 using System;
 
 namespace Allors.Repository
@@ -7,7 +7,7 @@ namespace Allors.Repository
     [Id("23207fbd-0a09-45db-94e8-d57a9cf84e3a")]
     #endregion
 
-    public class GameType : Enumeration
+    public class GameMode : Enumeration
     {
         #region inherited properties
         public string Name { get; set; }

@@ -34,7 +34,7 @@ namespace Allors.Domain
         private Person player3;
         private Person player4;
 
-        private GameTypes GameTypes;
+        private GameModes GameTypes;
 
         public void Setup(DerivationTypes data)
         {
@@ -54,7 +54,7 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameTypes(this.Session);
+            this.GameTypes = new GameModes(this.Session);
 
             this.Session.Derive();
         }

@@ -47,42 +47,42 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            this.Parties = new[] { this.Contractor, this.SubContractor };
+            //this.Parties = new[] { this.Contractor, this.SubContractor };
 
-            if (this.ExistContractor && this.ExistSubContractor)
-            {
-                if (this.FromDate <= this.Session().Now() && (!this.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
-                {
-                    this.Contractor.AddActiveSubContractor(this.SubContractor);
-                }
+            //if (this.ExistContractor && this.ExistSubContractor)
+            //{
+            //    if (this.FromDate <= this.Session().Now() && (!this.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
+            //    {
+            //        this.Contractor.AddActiveSubContractor(this.SubContractor);
+            //    }
 
-                if (this.FromDate > this.Session().Now() || (this.ExistThroughDate && this.ThroughDate < this.Session().Now()))
-                {
-                    this.Contractor.RemoveActiveSubContractor(this.SubContractor);
-                }
+            //    if (this.FromDate > this.Session().Now() || (this.ExistThroughDate && this.ThroughDate < this.Session().Now()))
+            //    {
+            //        this.Contractor.RemoveActiveSubContractor(this.SubContractor);
+            //    }
 
-                if (this.SubContractor?.ContactsUserGroup != null)
-                {
-                    foreach (OrganisationContactRelationship contactRelationship in this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
-                    {
-                        if (contactRelationship.FromDate <= this.Session().Now() &&
-                            (!contactRelationship.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
-                        {
-                            if (!this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                            {
-                                this.SubContractor.ContactsUserGroup.AddMember(contactRelationship.Contact);
-                            }
-                        }
-                        else
-                        {
-                            if (this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                            {
-                                this.SubContractor.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
-                            }
-                        }
-                    }
-                }
-            }
+            //    if (this.SubContractor?.ContactsUserGroup != null)
+            //    {
+            //        foreach (OrganisationContactRelationship contactRelationship in this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
+            //        {
+            //            if (contactRelationship.FromDate <= this.Session().Now() &&
+            //                (!contactRelationship.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
+            //            {
+            //                if (!this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+            //                {
+            //                    this.SubContractor.ContactsUserGroup.AddMember(contactRelationship.Contact);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+            //                {
+            //                    this.SubContractor.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
 }

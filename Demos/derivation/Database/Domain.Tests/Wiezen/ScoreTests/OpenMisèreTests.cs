@@ -26,7 +26,7 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class MiserieOpTafelTests : DomainTest
+    public class OpenMisèreTests : DomainTest
     {
         private Scoreboard scoreboard;
         private Person player1;
@@ -34,7 +34,7 @@ namespace Allors.Domain
         private Person player3;
         private Person player4;
 
-        private GameTypes GameTypes;
+        private GameModes GameModes;
 
         public void Setup(DerivationTypes data)
         {
@@ -54,14 +54,14 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameTypes(this.Session);
+            this.GameModes = new GameModes(this.Session);
 
             this.Session.Derive();
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithOneDeclarerAndOneWinner(object data)
+        public void TesOpenMisèreWithOneDeclarerAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -73,7 +73,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.MiserieOpTafel;
+            game.GameMode = this.GameModes.OpenMisère;
             game.AddDeclarer(player1);
             game.AddWinner(this.player1);
 

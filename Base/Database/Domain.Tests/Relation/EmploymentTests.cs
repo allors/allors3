@@ -35,6 +35,7 @@ namespace Allors.Domain
 
             new EmploymentBuilder(this.Session)
                 .WithEmployee(employee)
+                .WithEmployer(employer)
                 .Build();
 
             this.Session.Derive();

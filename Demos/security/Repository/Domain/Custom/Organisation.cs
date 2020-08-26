@@ -31,6 +31,7 @@ namespace Allors.Repository
         [RoleId("dcb2a767-f4ed-44bf-b08b-6d493cff9b34")]
 
         #endregion Allors
+        [Multiplicity(Multiplicity.OneToMany)]
         [Workspace]
         public Invoice[] Invoices { get; set; }
 
@@ -41,6 +42,7 @@ namespace Allors.Repository
         [RoleId("7050ec3a-c9b8-45c6-9d40-988f52313fbe")]
 
         #endregion Allors
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace]
         public Person Owner { get; set; }
 

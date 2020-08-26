@@ -11,19 +11,19 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            this.WorkItem = this.CommunicationEvent;
+            //this.WorkItem = this.CommunicationEvent;
 
-            this.Title = this.CommunicationEvent.WorkItemDescription;
+            //this.Title = this.CommunicationEvent.WorkItemDescription;
 
-            // Lifecycle
-            if (!this.ExistDateClosed && this.CommunicationEvent.ExistActualEnd)
-            {
-                this.DateClosed = this.Session().Now();
-            }
+            //// Lifecycle
+            //if (!this.ExistDateClosed && this.CommunicationEvent.ExistActualEnd)
+            //{
+            //    this.DateClosed = this.Session().Now();
+            //}
 
-            // Assignments
-            var participants = this.ExistDateClosed ? Array.Empty<User>() : new[] { this.CommunicationEvent.FromParty as User };
-            this.AssignParticipants(participants);
+            //// Assignments
+            //var participants = this.ExistDateClosed ? Array.Empty<User>() : new[] { this.CommunicationEvent.FromParty as User };
+            //this.AssignParticipants(participants);
         }
 
         public void ManageNotification(TaskAssignment taskAssignment)
