@@ -14,6 +14,7 @@ import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -337,7 +338,7 @@ import {
 import { LoginComponent, MainComponent, DashboardComponent, ErrorComponent, AuthorizationService } from '@allors/angular/material/custom';
 
 import { extend as extendDomain } from '@allors/domain/custom';
-import { extend as extendAngular, PrintService, PrintConfig } from '@allors/angular/base';
+import { extend as extendAngular, PrintService, PrintConfig, InternalOrganisationId } from '@allors/angular/base';
 import { configure as configureMaterial } from '@allors/angular/material/custom';
 
 import { environment } from '../environments/environment';
@@ -588,7 +589,7 @@ export const routes: Routes = [
   },
 ];
 
-export function appInitFactory(workspaceService: WorkspaceService) {
+export function appInitFactory(workspaceService: WorkspaceService, internalOrganisationId: InternalOrganisationId) {
   return () => {
     const metaPopulation = new MetaPopulation(data);
     const workspace = new Workspace(metaPopulation);
@@ -598,7 +599,7 @@ export function appInitFactory(workspaceService: WorkspaceService) {
     extendAngular(workspace);
 
     // Configuration
-    configureMaterial(metaPopulation);
+    configureMaterial(metaPopulation, internalOrganisationId);
 
     workspaceService.workspace = workspace;
   };
@@ -865,6 +866,7 @@ export function appInitFactory(workspaceService: WorkspaceService) {
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
@@ -893,7 +895,7 @@ export function appInitFactory(workspaceService: WorkspaceService) {
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [WorkspaceService],
+      deps: [WorkspaceService, InternalOrganisationId],
       multi: true,
     },
     DatabaseService,
@@ -929,7 +931,6 @@ export function appInitFactory(workspaceService: WorkspaceService) {
     // Angular Base
     PrintService,
     { provide: PrintConfig, useValue: { url: environment.url } },
-
 
     // Angular Material
     {

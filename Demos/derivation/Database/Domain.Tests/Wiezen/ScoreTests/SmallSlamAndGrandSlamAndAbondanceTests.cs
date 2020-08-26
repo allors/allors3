@@ -25,7 +25,7 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class SoloAndSoloSlimAndAbondanceTests : DomainTest
+    public class SmallSlamAndGrandSlamAndAbondanceTests : DomainTest
     {
         private Scoreboard scoreboard;
         private Person player1;
@@ -33,7 +33,7 @@ namespace Allors.Domain
         private Person player3;
         private Person player4;
 
-        private GameTypes GameTypes;
+        private GameModes GameModes;
 
         public void Setup(DerivationTypes data)
         {
@@ -53,14 +53,14 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameTypes(this.Session);
+            this.GameModes = new GameModes(this.Session);
 
             this.Session.Derive();
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndOneWinner(object data)
+        public void TestSmallSlamWithOneDeclarerAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -72,7 +72,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Solo;
+            game.GameMode = this.GameModes.SmallSlam;
             game.AddDeclarer(player1);
             game.AddWinner(this.player1);
 
@@ -88,7 +88,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndNoWinner(object data)
+        public void TestSmallSlamWithOneDeclarerAndNoWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -100,7 +100,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Solo;
+            game.GameMode = this.GameModes.SmallSlam;
             game.AddDeclarer(player1);
             this.Session.Derive();
 
@@ -114,7 +114,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloSlimWithOneDeclarerAndNoWinner(object data)
+        public void TestGrandSlamWithOneDeclarerAndNoWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -126,7 +126,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.SoloSlim;
+            game.GameMode = this.GameModes.GrandSlam;
             game.AddDeclarer(player1);
             this.Session.Derive();
 
@@ -140,7 +140,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloSlimWithOneDeclarerAndOneWinner(object data)
+        public void TestGrandSlamWithOneDeclarerAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -152,7 +152,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.SoloSlim;
+            game.GameMode = this.GameModes.GrandSlam;
             game.AddDeclarer(player1);
             game.AddWinner(player1);
             this.Session.Derive();
@@ -179,7 +179,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Abondance;
+            game.GameMode = this.GameModes.Abondance;
             game.AddDeclarer(player1);
             game.AddWinner(player1);
             this.Session.Derive();
@@ -206,7 +206,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Abondance;
+            game.GameMode = this.GameModes.Abondance;
             game.AddDeclarer(player1);
             this.Session.Derive();
 
