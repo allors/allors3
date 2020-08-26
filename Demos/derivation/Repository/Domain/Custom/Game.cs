@@ -56,7 +56,7 @@ namespace Allors.Repository
         #endregion Allors
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace]
-        public GameType GameType { get; set; }
+        public GameMode GameMode { get; set; }
 
         #region Allors
 
@@ -100,7 +100,7 @@ namespace Allors.Repository
 
         #endregion Allors
         [Workspace]
-        public int Overslagen { get; set; }
+        public int ExtraTricks { get; set; }
 
         #region inherited methods
 

@@ -25,7 +25,7 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class AlleenGaanAndVragenEnMeegaanAndTroelTests : DomainTest
+    public class SoloAndProposalAndAcceptanceAndTroelTests : DomainTest
     {
         private Scoreboard scoreboard;
         private Person player1;
@@ -33,7 +33,7 @@ namespace Allors.Domain
         private Person player3;
         private Person player4;
 
-        private GameTypes GameTypes;
+        private GameModes GameModes;
 
         public void Setup(DerivationTypes data)
         {
@@ -53,14 +53,14 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameTypes(this.Session);
+            this.GameModes = new GameModes(this.Session);
 
             this.Session.Derive();
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAlleenGaanWithOneDeclarerAndNoWinnerAndNoTricks(object data)
+        public void TestSoloWithOneDeclarerAndNoWinnerAndNoTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -72,7 +72,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameModes.Solo;
             game.AddDeclarer(player1);
 
             this.Session.Derive();
@@ -87,7 +87,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAlleenGaanWithOneDeclarerAndNoWinnerAndTricks(object data)
+        public void TestSoloWithOneDeclarerAndNoWinnerAndTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -99,9 +99,9 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameModes.Solo;
             game.AddDeclarer(player1);
-            game.Overslagen = 3;
+            game.ExtraTricks = 3;
 
             this.Session.Derive();
 
@@ -115,7 +115,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAlleenGaanWithOneDeclarerAndOneWinnerAndNoTricks(object data)
+        public void TestSoloWithOneDeclarerAndOneWinnerAndNoTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -127,7 +127,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameModes.Solo;
             game.AddDeclarer(player1);
             game.AddWinner(player1);
 
@@ -143,7 +143,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAlleenGaanWithOneDeclarerAndOneWinnerAndTricks(object data)
+        public void TestSoloWithOneDeclarerAndOneWinnerAndTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -155,10 +155,10 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameModes.Solo;
             game.AddDeclarer(player1);
             game.AddWinner(player1);
-            game.Overslagen = 3;
+            game.ExtraTricks = 3;
 
             this.Session.Derive();
 
@@ -172,7 +172,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAlleenGaanWithOneDeclarerAndOneWinnerAndAllTricks(object data)
+        public void TestSoloWithOneDeclarerAndOneWinnerAndAllTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -184,10 +184,10 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameModes.Solo;
             game.AddDeclarer(player1);
             game.AddWinner(player1);
-            game.Overslagen = 8;
+            game.ExtraTricks = 8;
 
             this.Session.Derive();
 
@@ -201,7 +201,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestVragenEnMeegaanWithTwoDeclarersAndNoWinnersAndNoTricks(object data)
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndNoWinnersAndNoTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -213,7 +213,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.VragenEnMeegaan;
+            game.GameMode = this.GameModes.ProposalAndAcceptance;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -229,7 +229,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestVragenEnMeegaanWithTwoDeclarersAndNoWinnersAndTricks(object data)
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndNoWinnersAndTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -241,11 +241,11 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.VragenEnMeegaan;
+            game.GameMode = this.GameModes.ProposalAndAcceptance;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
-            game.Overslagen = 3;
+            game.ExtraTricks = 3;
 
             this.Session.Derive();
 
@@ -259,7 +259,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestVragenEnMeegaanWithTwoDeclarersAndTwoWinnersAndNoTricks(object data)
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndNoTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -271,7 +271,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.VragenEnMeegaan;
+            game.GameMode = this.GameModes.ProposalAndAcceptance;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -290,7 +290,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestVragenEnMeegaanWithTwoDeclarersAndTwoWinnersAndTricks(object data)
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -302,14 +302,14 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.VragenEnMeegaan;
+            game.GameMode = this.GameModes.ProposalAndAcceptance;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
             game.AddWinner(player1);
             game.AddWinner(player2);
 
-            game.Overslagen = 3;
+            game.ExtraTricks = 3;
 
             this.Session.Derive();
 
@@ -323,7 +323,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestVragenEnMeegaanWithTwoDeclarersAndTwoWinnersAndAllTricks(object data)
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndAllTricks(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -335,14 +335,14 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.VragenEnMeegaan;
+            game.GameMode = this.GameModes.ProposalAndAcceptance;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
             game.AddWinner(player1);
             game.AddWinner(player2);
 
-            game.Overslagen = 5;
+            game.ExtraTricks = 5;
 
             this.Session.Derive();
 
@@ -368,14 +368,14 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Troel;
+            game.GameMode = this.GameModes.Troel;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
             game.AddWinner(player1);
             game.AddWinner(player2);
 
-            game.Overslagen = 5;
+            game.ExtraTricks = 5;
 
             this.Session.Derive();
 
@@ -401,14 +401,14 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Troel;
+            game.GameMode = this.GameModes.Troel;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
             game.AddWinner(player1);
             game.AddWinner(player2);
 
-            game.Overslagen = 3;
+            game.ExtraTricks = 3;
 
             this.Session.Derive();
 

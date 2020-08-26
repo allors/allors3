@@ -34,7 +34,7 @@ namespace Allors.Domain
         private Person player3;
         private Person player4;
 
-        private GameTypes GameTypes;
+        private GameModes GameTypes;
 
         public void Setup(DerivationTypes data)
         {
@@ -54,7 +54,7 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameTypes(this.Session);
+            this.GameTypes = new GameModes(this.Session);
 
             this.Session.Derive();
         }
@@ -121,10 +121,10 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameTypes.Solo;
 
             game.AddDeclarer(player1);
-            game.Overslagen = 0;
+            game.ExtraTricks = 0;
 
             game.AddWinner(this.player1);
 
@@ -158,17 +158,17 @@ namespace Allors.Domain
             game2.EndDate = game2.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameTypes.Solo;
 
             game.AddDeclarer(player1);
-            game.Overslagen = 0;
+            game.ExtraTricks = 0;
 
             game.AddWinner(this.player1);
 
-            game2.GameType = this.GameTypes.AlleenGaan;
+            game2.GameMode = this.GameTypes.Solo;
 
             game2.AddDeclarer(player1);
-            game2.Overslagen = 0;
+            game2.ExtraTricks = 0;
 
             game2.AddWinner(this.player1);
 
@@ -225,23 +225,23 @@ namespace Allors.Domain
             game3.EndDate = game3.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.AlleenGaan;
+            game.GameMode = this.GameTypes.Solo;
 
             game.AddDeclarer(player1);
-            game.Overslagen = 0;
+            game.ExtraTricks = 0;
 
             game.AddWinner(this.player1);
 
-            game2.GameType = this.GameTypes.Troel;
+            game2.GameMode = this.GameTypes.Troel;
 
             game2.AddDeclarer(player1);
             game2.AddDeclarer(player2);
-            game2.Overslagen = 2;
+            game2.ExtraTricks = 2;
 
             game2.AddWinner(this.player1);
             game2.AddWinner(this.player2);
 
-            game3.GameType = this.GameTypes.Miserie;
+            game3.GameMode = this.GameTypes.Misère;
 
             game3.AddDeclarer(player1);
 

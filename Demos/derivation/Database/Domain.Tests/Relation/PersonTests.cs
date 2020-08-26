@@ -57,7 +57,7 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            GameTypes GameTypes = new GameTypes(this.Session);
+            GameModes GameTypes = new GameModes(this.Session);
 
             this.Session.Derive();
 
@@ -68,7 +68,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = GameTypes.AlleenGaan;
+            game.GameMode = GameTypes.Solo;
             game.AddDeclarer(player1);
 
             this.Session.Derive();
@@ -98,7 +98,7 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            GameTypes GameTypes = new GameTypes(this.Session);
+            GameModes GameTypes = new GameModes(this.Session);
 
             this.Session.Derive();
 
@@ -109,7 +109,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = GameTypes.Miserie;
+            game.GameMode = GameTypes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 

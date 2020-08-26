@@ -25,7 +25,7 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class MiserieTests : DomainTest
+    public class MisèreTests : DomainTest
     {
         private Scoreboard scoreboard;
         private Person player1;
@@ -33,7 +33,7 @@ namespace Allors.Domain
         private Person player3;
         private Person player4;
 
-        private GameTypes GameTypes;
+        private GameModes GameModes;
 
         public void Setup(DerivationTypes data)
         {
@@ -53,7 +53,7 @@ namespace Allors.Domain
                 .WithPlayer(player4)
                 .Build();
 
-            this.GameTypes = new GameTypes(this.Session);
+            this.GameModes = new GameModes(this.Session);
 
             this.Session.Derive();
         }
@@ -78,7 +78,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithoutDeclarers(object data)
+        public void TestMisèreWithoutDeclarers(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -87,7 +87,7 @@ namespace Allors.Domain
             scoreboard.AddGame(game);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             this.Session.Derive();
 
             //Assert
@@ -100,7 +100,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithOneDeclarerAndOneWinner(object data)
+        public void TestMisèreWithOneDeclarerAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -112,7 +112,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddWinner(this.player1);
 
@@ -128,7 +128,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithOneDeclarerAndZeroWinner(object data)
+        public void TestMisèreWithOneDeclarerAndZeroWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -140,7 +140,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
 
             this.Session.Derive();
@@ -155,7 +155,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithTwoDeclarersAndZeroWinners(object data)
+        public void TestMisèreWithTwoDeclarersAndZeroWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -167,7 +167,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -183,7 +183,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithTwoDeclarersAndOneWinner(object data)
+        public void TestMisèreWithTwoDeclarersAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -195,7 +195,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -213,7 +213,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithTwoDeclarersAndTwoWinners(object data)
+        public void TestMisèreWithTwoDeclarersAndTwoWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -225,7 +225,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -244,7 +244,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithFourDeclarersAndZeroWinners(object data)
+        public void TestMisèreWithFourDeclarersAndZeroWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -256,7 +256,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -274,7 +274,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithFourDeclarersAndOneWinner(object data)
+        public void TestMisèreWithFourDeclarersAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -286,7 +286,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -306,7 +306,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithFourDeclarersAndTwoWinners(object data)
+        public void TestMisèreWithFourDeclarersAndTwoWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -318,7 +318,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -339,7 +339,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiserieWithFourDeclarersAndThreeWinners(object data)
+        public void TestMisèreWithFourDeclarersAndThreeWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -351,7 +351,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameType = this.GameTypes.Miserie;
+            game.GameMode = this.GameModes.Misère;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
