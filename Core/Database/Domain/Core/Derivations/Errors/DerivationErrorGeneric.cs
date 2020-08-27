@@ -5,7 +5,9 @@
 
 namespace Allors.Domain.Derivations.Errors
 {
+    using System;
     using Allors;
+    using Allors.Database.Adapters;
     using Allors.Meta;
 
     public class DerivationErrorGeneric : DerivationError
@@ -16,7 +18,7 @@ namespace Allors.Domain.Derivations.Errors
         }
 
         public DerivationErrorGeneric(IValidation validation, DerivationRelation relation, string message, params object[] messageParam)
-            : this(validation, new[] { relation }, message, messageParam)
+            : this(validation, relation != null ? new[] { relation } : Array.Empty <DerivationRelation>(), message, messageParam)
         {
         }
 

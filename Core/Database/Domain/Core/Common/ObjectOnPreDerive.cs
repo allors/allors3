@@ -18,7 +18,7 @@ namespace Allors.Domain
             return this;
         }
 
-        public void Deconstruct(out IIteration iteration, out IAccumulatedChangeSet changeSet, out ISet<Object> derivedObjects)
+        public void Deconstruct(out IIteration iteration, out IChangeSet changeSet, out ISet<Object> derivedObjects)
         {
             changeSet = this.Iteration.ChangeSet;
             iteration = this.Iteration;

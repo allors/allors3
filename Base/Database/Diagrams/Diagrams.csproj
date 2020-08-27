@@ -52,6 +52,7 @@
     <None Include="Invoice\Invoice.cd" />
     <None Include="Order\ProductQuote - Approval.cd" />
     <None Include="Order\Overview.cd" />
+    <None Include="Products\Products.cd" />
     <None Include="Products\Inventory Storage.cd" />
     <None Include="Products\Overview.cd" />
     <None Include="Relation\ClassDiagram1.cd" />

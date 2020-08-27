@@ -297,7 +297,7 @@ namespace Allors.Domain
             this.order.Post();
             this.Session.Derive();
 
-            order.Accept();
+            this.order.Accept();
             this.Session.Derive(true);
 
             this.Session.Commit();

@@ -19,23 +19,23 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
-            var defaultLocale = this.Strategy.Session.GetSingleton().DefaultLocale;
+            //var derivation = method.Derivation;
+            //var defaultLocale = this.Strategy.Session.GetSingleton().DefaultLocale;
 
-            if (this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-            {
-                this.Name = this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-            }
+            //if (this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+            //{
+            //    this.Name = this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+            //}
 
-            if (this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
-            {
-                this.Description = this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
-            }
+            //if (this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
+            //{
+            //    this.Description = this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+            //}
 
-            if (!this.ExistCatalogueImage)
-            {
-                this.CatalogueImage = this.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
-            }
+            //if (!this.ExistCatalogueImage)
+            //{
+            //    this.CatalogueImage = this.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
+            //}
         }
     }
 }

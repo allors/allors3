@@ -1,25 +1,7 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PersonTests.cs" company="Allors bvba">
-//   Copyright 2002-2009 Allors bvba.
-// 
-// Dual Licensed under
-//   a) the General Public Licence v3 (GPL)
-//   b) the Allors License
-// 
-// The GPL License is included in the file gpl.txt.
-// The Allors License is an addendum to your contract.
-// 
-// Allors Platform is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// For more information visit http://www.allors.com/legal
+// <copyright file="Domain.cs" company="Allors bvba">
+// Copyright (c) Allors bvba. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>
-//   Defines the PersonTests type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace Allors.Domain
 {
@@ -45,10 +27,10 @@ namespace Allors.Domain
 
             var people = new People(this.Session);
 
-            Person player1 = people.FindBy(M.Person.UserName, "speler1");
-            Person player2 = people.FindBy(M.Person.UserName, "speler2");
-            Person player3 = people.FindBy(M.Person.UserName, "speler3");
-            Person player4 = people.FindBy(M.Person.UserName, "speler4");
+            Person player1 = people.FindBy(M.Person.UserName, "player1");
+            Person player2 = people.FindBy(M.Person.UserName, "player2");
+            Person player3 = people.FindBy(M.Person.UserName, "player3");
+            Person player4 = people.FindBy(M.Person.UserName, "player4");
 
             Scoreboard scoreboard = new ScoreboardBuilder(this.Session)
                 .WithPlayer(player1)
@@ -86,10 +68,10 @@ namespace Allors.Domain
 
             var people = new People(this.Session);
 
-            Person player1 = people.FindBy(M.Person.UserName, "speler1");
-            Person player2 = people.FindBy(M.Person.UserName, "speler2");
-            Person player3 = people.FindBy(M.Person.UserName, "speler3");
-            Person player4 = people.FindBy(M.Person.UserName, "speler4");
+            Person player1 = people.FindBy(M.Person.UserName, "player1");
+            Person player2 = people.FindBy(M.Person.UserName, "player2");
+            Person player3 = people.FindBy(M.Person.UserName, "player3");
+            Person player4 = people.FindBy(M.Person.UserName, "player4");
 
             Scoreboard scoreboard = new ScoreboardBuilder(this.Session)
                 .WithPlayer(player1)
@@ -109,7 +91,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = GameTypes.Misère;
+            game.GameMode = GameTypes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 

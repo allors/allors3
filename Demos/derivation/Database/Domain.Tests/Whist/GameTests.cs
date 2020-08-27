@@ -1,29 +1,11 @@
-//------------------------------------------------------------------------------------------------- 
-// <copyright file="DemoTests.cs" company="Allors bvba">
-// Copyright 2002-2009 Allors bvba.
-// 
-// Dual Licensed under
-//   a) the General Public Licence v3 (GPL)
-//   b) the Allors License
-// 
-// The GPL License is included in the file gpl.txt.
-// The Allors License is an addendum to your contract.
-// 
-// Allors Platform is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// For more information visit http://www.allors.com/legal
+// <copyright file="Domain.cs" company="Allors bvba">
+// Copyright (c) Allors bvba. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the MediaTests type.</summary>
-//-------------------------------------------------------------------------------------------------
 
 namespace Allors.Domain
 {
-    using Allors.Domain.Derivations.Default;
     using Allors.Meta;
-    using System.Linq;
     using Xunit;
 
     public class GameTests : DomainTest
@@ -42,10 +24,10 @@ namespace Allors.Domain
 
             var people = new People(this.Session);
 
-            this.player1 = people.FindBy(M.Person.UserName, "speler1");
-            this.player2 = people.FindBy(M.Person.UserName, "speler2");
-            this.player3 = people.FindBy(M.Person.UserName, "speler3");
-            this.player4 = people.FindBy(M.Person.UserName, "speler4");
+            this.player1 = people.FindBy(M.Person.UserName, "player1");
+            this.player2 = people.FindBy(M.Person.UserName, "player2");
+            this.player3 = people.FindBy(M.Person.UserName, "player3");
+            this.player4 = people.FindBy(M.Person.UserName, "player4");
 
             this.scoreboard = new ScoreboardBuilder(this.Session)
                 .WithPlayer(player1)

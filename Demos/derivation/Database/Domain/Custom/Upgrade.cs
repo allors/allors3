@@ -1,6 +1,5 @@
 namespace Allors
 {
-    using System;
     using System.IO;
 
     public class Upgrade

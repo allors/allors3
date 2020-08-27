@@ -34,33 +34,33 @@ namespace Allors.Domain
 
         public static void BaseOnDerive(this InventoryItem @this, ObjectOnDerive method)
         {
-            var session = @this.Strategy.Session;
-            var now = session.Now();
+            //var session = @this.Strategy.Session;
+            //var now = session.Now();
 
-            (@this).PartDisplayName = @this.Part?.DisplayName;
+            //(@this).PartDisplayName = @this.Part?.DisplayName;
 
-            if (!@this.ExistFacility && @this.ExistPart && @this.Part.ExistDefaultFacility)
-            {
-                @this.Facility = @this.Part.DefaultFacility;
-            }
+            //if (!@this.ExistFacility && @this.ExistPart && @this.Part.ExistDefaultFacility)
+            //{
+            //    @this.Facility = @this.Part.DefaultFacility;
+            //}
 
-            // TODO: Let Sync set Unit of Measure
-            if (!@this.ExistUnitOfMeasure)
-            {
-                @this.UnitOfMeasure = @this.Part?.UnitOfMeasure;
-            }
+            //// TODO: Let Sync set Unit of Measure
+            //if (!@this.ExistUnitOfMeasure)
+            //{
+            //    @this.UnitOfMeasure = @this.Part?.UnitOfMeasure;
+            //}
         }
 
         public static void BaseOnPostDerive(this InventoryItem @this, ObjectOnPostDerive method)
         {
-            var derivation = method.Derivation;
-            var part = @this.Part;
+            //var derivation = method.Derivation;
+            //var part = @this.Part;
 
-            var builder = new StringBuilder();
+            //var builder = new StringBuilder();
 
-            builder.Append(part.SearchString);
+            //builder.Append(part.SearchString);
 
-            @this.SearchString = builder.ToString();
+            //@this.SearchString = builder.ToString();
         }
     }
 }

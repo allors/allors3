@@ -42,85 +42,85 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            var setings = this.Strategy.Session.GetSingleton().Settings;
+            //var setings = this.Strategy.Session.GetSingleton().Settings;
 
-            if (derivation.ChangeSet.HasChangedRoles(this, new RoleType[] { this.Meta.UnitOfMeasure, this.Meta.DefaultFacility }))
-            {
-                this.SyncDefaultInventoryItem();
-            }
+            //if (derivation.ChangeSet.HasChangedRoles(this, new RoleType[] { this.Meta.UnitOfMeasure, this.Meta.DefaultFacility }))
+            //{
+            //    this.SyncDefaultInventoryItem();
+            //}
 
-            this.DeriveName();
+            //this.DeriveName();
 
-            var identifications = this.ProductIdentifications;
-            identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(this.Strategy.Session).Part);
-            var partIdentification = identifications.FirstOrDefault();
+            //var identifications = this.ProductIdentifications;
+            //identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(this.Strategy.Session).Part);
+            //var partIdentification = identifications.FirstOrDefault();
 
-            if (partIdentification == null && setings.UsePartNumberCounter)
-            {
-                partIdentification = new PartNumberBuilder(this.Strategy.Session)
-                    .WithIdentification(setings.NextPartNumber())
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Strategy.Session).Part).Build();
+            //if (partIdentification == null && setings.UsePartNumberCounter)
+            //{
+            //    partIdentification = new PartNumberBuilder(this.Strategy.Session)
+            //        .WithIdentification(setings.NextPartNumber())
+            //        .WithProductIdentificationType(new ProductIdentificationTypes(this.Strategy.Session).Part).Build();
 
-                this.AddProductIdentification(partIdentification);
-            }
+            //    this.AddProductIdentification(partIdentification);
+            //}
 
-            this.ProductNumber = partIdentification.Identification;
+            //this.ProductNumber = partIdentification.Identification;
 
-            this.RemoveSuppliedBy();
-            foreach (SupplierOffering supplierOffering in this.SupplierOfferingsWherePart)
-            {
-                if (supplierOffering.FromDate <= this.Session().Now()
-                    && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= this.Session().Now()))
-                {
-                    this.AddSuppliedBy(supplierOffering.Supplier);
-                }
-            }
+            //this.RemoveSuppliedBy();
+            //foreach (SupplierOffering supplierOffering in this.SupplierOfferingsWherePart)
+            //{
+            //    if (supplierOffering.FromDate <= this.Session().Now()
+            //        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= this.Session().Now()))
+            //    {
+            //        this.AddSuppliedBy(supplierOffering.Supplier);
+            //    }
+            //}
 
-            this.DeriveProductCharacteristics(derivation);
-            this.DeriveQuantityOnHand();
-            this.DeriveAvailableToPromise();
-            this.DeriveQuantityCommittedOut();
-            this.DeriveQuantityExpectedIn();
+            //this.DeriveProductCharacteristics(derivation);
+            //this.DeriveQuantityOnHand();
+            //this.DeriveAvailableToPromise();
+            //this.DeriveQuantityCommittedOut();
+            //this.DeriveQuantityExpectedIn();
 
-            var quantityOnHand = 0M;
-            var totalCost = 0M;
+            //var quantityOnHand = 0M;
+            //var totalCost = 0M;
 
-            foreach (InventoryItemTransaction inventoryTransaction in this.InventoryItemTransactionsWherePart)
-            {
-                var reason = inventoryTransaction.Reason;
+            //foreach (InventoryItemTransaction inventoryTransaction in this.InventoryItemTransactionsWherePart)
+            //{
+            //    var reason = inventoryTransaction.Reason;
 
-                if (reason.IncreasesQuantityOnHand == true)
-                {
-                    quantityOnHand += inventoryTransaction.Quantity;
+            //    if (reason.IncreasesQuantityOnHand == true)
+            //    {
+            //        quantityOnHand += inventoryTransaction.Quantity;
 
-                    var transactionCost = inventoryTransaction.Quantity * inventoryTransaction.Cost;
-                    totalCost += transactionCost;
+            //        var transactionCost = inventoryTransaction.Quantity * inventoryTransaction.Cost;
+            //        totalCost += transactionCost;
 
-                    var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
-                    (this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
-                }
-                else if (reason.IncreasesQuantityOnHand == false)
-                {
-                    quantityOnHand -= inventoryTransaction.Quantity;
+            //        var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
+            //        (this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
+            //    }
+            //    else if (reason.IncreasesQuantityOnHand == false)
+            //    {
+            //        quantityOnHand -= inventoryTransaction.Quantity;
 
-                    totalCost = quantityOnHand * this.PartWeightedAverage.AverageCost;
-                }
-            }
+            //        totalCost = quantityOnHand * this.PartWeightedAverage.AverageCost;
+            //    }
+            //}
         }
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
         public void BaseDelete(DeletableDelete method)
@@ -172,110 +172,110 @@ namespace Allors.Domain
             }
         }
 
-        private void SyncDefaultInventoryItem()
+        public void SyncDefaultInventoryItem()
         {
-            if (this.InventoryItemKind.IsNonSerialised)
-            {
-                var inventoryItems = this.InventoryItemsWherePart;
+        //    if (this.InventoryItemKind.IsNonSerialised)
+        //    {
+        //        var inventoryItems = this.InventoryItemsWherePart;
 
-                if (!inventoryItems.Any(i => i.Facility.Equals(this.DefaultFacility) && i.UnitOfMeasure.Equals(this.UnitOfMeasure)))
-                {
-                    var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(this.Strategy.Session)
-                      .WithFacility(this.DefaultFacility)
-                      .WithUnitOfMeasure(this.UnitOfMeasure)
-                      .WithPart(this)
-                      .Build();
-                }
-            }
+        //        if (!inventoryItems.Any(i => i.Facility.Equals(this.DefaultFacility) && i.UnitOfMeasure.Equals(this.UnitOfMeasure)))
+        //        {
+        //            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(this.Strategy.Session)
+        //              .WithFacility(this.DefaultFacility)
+        //              .WithUnitOfMeasure(this.UnitOfMeasure)
+        //              .WithPart(this)
+        //              .Build();
+        //        }
+        //    }
         }
 
-        private void DeriveProductCharacteristics(IDerivation derivation)
-        {
-            var characteristicsToDelete = this.SerialisedItemCharacteristics.ToList();
+        //private void DeriveProductCharacteristics(IDerivation derivation)
+        //{
+        //    var characteristicsToDelete = this.SerialisedItemCharacteristics.ToList();
 
-            if (this.ExistProductType)
-            {
-                foreach (SerialisedItemCharacteristicType characteristicType in this.ProductType.SerialisedItemCharacteristicTypes)
-                {
-                    var characteristic = this.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(v.SerialisedItemCharacteristicType, characteristicType));
-                    if (characteristic == null)
-                    {
-                        this.AddSerialisedItemCharacteristic(
-                            new SerialisedItemCharacteristicBuilder(this.Strategy.Session)
-                                .WithSerialisedItemCharacteristicType(characteristicType)
-                                .Build());
-                    }
-                    else
-                    {
-                        characteristicsToDelete.Remove(characteristic);
-                    }
-                }
-            }
+        //    if (this.ExistProductType)
+        //    {
+        //        foreach (SerialisedItemCharacteristicType characteristicType in this.ProductType.SerialisedItemCharacteristicTypes)
+        //        {
+        //            var characteristic = this.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(v.SerialisedItemCharacteristicType, characteristicType));
+        //            if (characteristic == null)
+        //            {
+        //                this.AddSerialisedItemCharacteristic(
+        //                    new SerialisedItemCharacteristicBuilder(this.Strategy.Session)
+        //                        .WithSerialisedItemCharacteristicType(characteristicType)
+        //                        .Build());
+        //            }
+        //            else
+        //            {
+        //                characteristicsToDelete.Remove(characteristic);
+        //            }
+        //        }
+        //    }
 
-            foreach (var characteristic in characteristicsToDelete)
-            {
-                this.RemoveSerialisedItemCharacteristic(characteristic);
-            }
-        }
+        //    foreach (var characteristic in characteristicsToDelete)
+        //    {
+        //        this.RemoveSerialisedItemCharacteristic(characteristic);
+        //    }
+        //}
 
-        private void DeriveQuantityOnHand()
-        {
-            this.QuantityOnHand = 0;
+        //private void DeriveQuantityOnHand()
+        //{
+        //    this.QuantityOnHand = 0;
 
-            foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialisedItem)
-                {
-                    this.QuantityOnHand += nonSerialisedItem.QuantityOnHand;
-                }
-                else if (inventoryItem is SerialisedInventoryItem serialisedItem)
-                {
-                    this.QuantityOnHand += serialisedItem.QuantityOnHand;
-                }
-            }
-        }
+        //    foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
+        //    {
+        //        if (inventoryItem is NonSerialisedInventoryItem nonSerialisedItem)
+        //        {
+        //            this.QuantityOnHand += nonSerialisedItem.QuantityOnHand;
+        //        }
+        //        else if (inventoryItem is SerialisedInventoryItem serialisedItem)
+        //        {
+        //            this.QuantityOnHand += serialisedItem.QuantityOnHand;
+        //        }
+        //    }
+        //}
 
-        private void DeriveAvailableToPromise()
-        {
-            this.AvailableToPromise = 0;
+        //private void DeriveAvailableToPromise()
+        //{
+        //    this.AvailableToPromise = 0;
 
-            foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialisedItem)
-                {
-                    this.AvailableToPromise += nonSerialisedItem.AvailableToPromise;
-                }
-                else if (inventoryItem is SerialisedInventoryItem serialisedItem)
-                {
-                    this.AvailableToPromise += serialisedItem.AvailableToPromise;
-                }
-            }
-        }
+        //    foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
+        //    {
+        //        if (inventoryItem is NonSerialisedInventoryItem nonSerialisedItem)
+        //        {
+        //            this.AvailableToPromise += nonSerialisedItem.AvailableToPromise;
+        //        }
+        //        else if (inventoryItem is SerialisedInventoryItem serialisedItem)
+        //        {
+        //            this.AvailableToPromise += serialisedItem.AvailableToPromise;
+        //        }
+        //    }
+        //}
 
-        private void DeriveQuantityCommittedOut()
-        {
-            this.QuantityCommittedOut = 0;
+        //private void DeriveQuantityCommittedOut()
+        //{
+        //    this.QuantityCommittedOut = 0;
 
-            foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialised)
-                {
-                    this.QuantityCommittedOut += nonSerialised.QuantityCommittedOut;
-                }
-            }
-        }
+        //    foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
+        //    {
+        //        if (inventoryItem is NonSerialisedInventoryItem nonSerialised)
+        //        {
+        //            this.QuantityCommittedOut += nonSerialised.QuantityCommittedOut;
+        //        }
+        //    }
+        //}
 
-        private void DeriveQuantityExpectedIn()
-        {
-            this.QuantityExpectedIn = 0;
+        //private void DeriveQuantityExpectedIn()
+        //{
+        //    this.QuantityExpectedIn = 0;
 
-            foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialised)
-                {
-                    this.QuantityExpectedIn += nonSerialised.QuantityExpectedIn;
-                }
-            }
-        }
+        //    foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
+        //    {
+        //        if (inventoryItem is NonSerialisedInventoryItem nonSerialised)
+        //        {
+        //            this.QuantityExpectedIn += nonSerialised.QuantityExpectedIn;
+        //        }
+        //    }
+        //}
     }
 }

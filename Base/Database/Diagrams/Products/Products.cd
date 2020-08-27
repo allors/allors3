@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Domain.Part" Collapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.75" />
+    <InheritanceLine Type="Allors.Domain.UnifiedProduct" FixedFromPoint="true">
+      <Path>
+        <Point X="3.875" Y="1.709" />
+        <Point X="3.875" Y="3.125" />
+        <Point X="1.625" Y="3.125" />
+        <Point X="1.625" Y="3.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAEQAQAAAAAAAQAAAEQQGAQAAAAACCAAgBACgBAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.UnifiedProduct" Collapsed="true">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIIAABAQAgACAAIAQAACQAAAAAAAADQAIAAAAAggA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.NonUnifiedGood" Collapsed="true">
+    <Position X="6.75" Y="5" Width="1.5" />
+    <InheritanceLine Type="Allors.Domain.Good" FixedFromPoint="true">
+      <Path>
+        <Point X="5.938" Y="4.191" />
+        <Point X="5.938" Y="4.625" />
+        <Point X="7.5" Y="4.625" />
+        <Point X="7.5" Y="5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.NonUnifiedPart" Collapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <InheritanceLine Type="Allors.Domain.Part" FixedFromPoint="true">
+      <Path>
+        <Point X="1.312" Y="4.191" />
+        <Point X="1.312" Y="4.625" />
+        <Point X="1.25" Y="4.625" />
+        <Point X="1.25" Y="5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.UnifiedGood" Collapsed="true">
+    <Position X="3.75" Y="5" Width="1.5" />
+    <InheritanceLine Type="Allors.Domain.Part" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.938" Y="4.191" />
+        <Point X="1.938" Y="4.625" />
+        <Point X="4.25" Y="4.625" />
+        <Point X="4.25" Y="5" />
+      </Path>
+    </InheritanceLine>
+    <InheritanceLine Type="Allors.Domain.Good" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.562" Y="4.191" />
+        <Point X="5.562" Y="4.625" />
+        <Point X="4.625" Y="4.625" />
+        <Point X="4.625" Y="5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Good" Collapsed="true">
+    <Position X="5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACCAABAAAAAAQABAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Product" Collapsed="true">
+    <Position X="5.5" Y="2.25" Width="1.5" />
+    <InheritanceLine Type="Allors.Domain.UnifiedProduct" FixedFromPoint="true">
+      <Path>
+        <Point X="4.625" Y="1.709" />
+        <Point X="4.625" Y="1.875" />
+        <Point X="6.25" Y="1.875" />
+        <Point X="6.25" Y="2.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAABEAAQAAAAAAABAAAAAAABAAAAAAAAAAICAEIgA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Service" Collapsed="true">
+    <Position X="10" Y="3.5" Width="1.5" />
+    <InheritanceLine Type="Allors.Domain.Product" FixedFromPoint="true">
+      <Path>
+        <Point X="6.5" Y="2.941" />
+        <Point X="6.5" Y="3.2" />
+        <Point X="10.75" Y="3.2" />
+        <Point X="10.75" Y="3.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.DeliverableBasedService" Collapsed="true">
+    <Position X="9.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.TimeAndMaterialsService" Collapsed="true">
+    <Position X="11.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
