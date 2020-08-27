@@ -5,7 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Allors.Meta;
 
@@ -23,9 +22,9 @@ namespace Allors.Domain
 
                 if (scoreboardsWithChangedGames?.Any() == true)
                 {
-                    foreach (Scoreboard scoreboardWithChangedGames in scoreboardsWithChangedGames)
+                    foreach (var scoreboardWithChangedGames in scoreboardsWithChangedGames)
                     {
-                        foreach (Game game in scoreboardWithChangedGames.Games.Where(v => changedGames.Contains(v)).ToList())
+                        foreach (var game in scoreboardWithChangedGames.Games.Where(v => changedGames.Contains(v)).ToList())
                         {
                             foreach (Score score in game.Scores)
                             {
@@ -63,7 +62,7 @@ namespace Allors.Domain
 
                 if (scoreboardsWithChangedPlayers?.Any() == true)
                 {
-                    foreach (Scoreboard scoreboardWithChangedPlayers in scoreboardsWithChangedPlayers)
+                    foreach (var scoreboardWithChangedPlayers in scoreboardsWithChangedPlayers)
                     {
                         foreach (Score score in scoreboardWithChangedPlayers.AccumulatedScores)
                         {
@@ -102,7 +101,7 @@ namespace Allors.Domain
 
                 if (gameWithChangedDeclarers?.Any() == true)
                 {
-                    foreach (Game game in gameWithChangedDeclarers)
+                    foreach (var game in gameWithChangedDeclarers)
                     {
                         game.Defenders = game.ScoreboardWhereGame?.Players.Except(game.Declarers).ToArray();
                     }
@@ -119,7 +118,7 @@ namespace Allors.Domain
 
                 if (gameWithChangedEndDate?.Any() == true)
                 {
-                    foreach (Game game in gameWithChangedEndDate)
+                    foreach (var game in gameWithChangedEndDate)
                     {
                         if (game.EndDate.Value <= game.StartDate.Value)
                         {
@@ -139,7 +138,7 @@ namespace Allors.Domain
 
                 if (newGame?.Any() == true)
                 {
-                    foreach (Game game in newGame)
+                    foreach (var game in newGame)
                     {
                         foreach (Score score in game.Scores)
                         {
@@ -153,7 +152,7 @@ namespace Allors.Domain
                                 var winning = winners.Contains(score.Player);
                                 var declaring = declarers.Contains(score.Player);
 
-                                if (gameType.IsMisère || gameType.IsOpenMisère)
+                                if (gameType.IsMisery || gameType.IsOpenMisery)
                                 {
                                     switch (declarers.Count)
                                     {
@@ -220,9 +219,9 @@ namespace Allors.Domain
                                             }
                                             break;
                                     }
-                                    if (gameType.IsOpenMisère)
+                                    if (gameType.IsOpenMisery)
                                     {
-                                        score.Value = score.Value * 2;
+                                        score.Value *= 2;
                                     }
                                 }
 
@@ -239,51 +238,51 @@ namespace Allors.Domain
 
                                     if (gameType.IsSmallSlam)
                                     {
-                                        score.Value = score.Value * 2;
+                                        score.Value *= 2;
                                     }
 
                                     if (gameType.IsGrandSlam)
                                     {
-                                        score.Value = score.Value * 3;
+                                        score.Value *= 3;
                                     }
                                 }
 
 
-                                if (gameType.IsSolo || gameType.IsProposalAndAcceptance || gameType.IsTroel)
+                                if (gameType.IsSolo || gameType.IsProposalAndAcceptance || gameType.IsTrull)
                                 {
-                                    int aantalDefendersPerPersoon = 3;
-                                    var overslagenOmDubbelTeZijn = 8;
+                                    var numberOfDefendersPerPersoon = 3;
+                                    var extraTricksToBeDouble = 8;
 
-                                    if (gameType.IsProposalAndAcceptance || gameType.IsTroel)
+                                    if (gameType.IsProposalAndAcceptance || gameType.IsTrull)
                                     {
-                                        aantalDefendersPerPersoon = 1;
-                                        overslagenOmDubbelTeZijn = 5;
+                                        numberOfDefendersPerPersoon = 1;
+                                        extraTricksToBeDouble = 5;
                                     }
 
-                                    var overslagen = score.GameWhereScore.ExtraTricks ?? 0;
+                                    var extraTricks = score.GameWhereScore.ExtraTricks ?? 0;
 
                                     if (declaring)
                                     {
-                                        int punten = aantalDefendersPerPersoon * 2 + (aantalDefendersPerPersoon * overslagen);
-                                        int puntenWinst = punten;
-                                        if (overslagen == overslagenOmDubbelTeZijn)
+                                        var points = (numberOfDefendersPerPersoon * 2) + (numberOfDefendersPerPersoon * extraTricks);
+                                        var pointsWon = points;
+                                        if (extraTricks == extraTricksToBeDouble)
                                         {
-                                            puntenWinst = punten * 2;
+                                            pointsWon = points * 2;
                                         }
-                                        score.Value = winning ? puntenWinst : -punten;
+                                        score.Value = winning ? pointsWon : -points;
                                     }
                                     else
                                     {
-                                        int punten = 2 + (overslagen);
-                                        if (overslagen == overslagenOmDubbelTeZijn)
+                                        var points = 2 + extraTricks;
+                                        if (extraTricks == extraTricksToBeDouble)
                                         {
-                                            punten = punten * 2;
+                                            points *= 2;
                                         }
-                                        score.Value = winners.Count() == 0 ? punten : -punten;
+                                        score.Value = winners.Count() == 0 ? points : -points;
                                     }
-                                    if (gameType.IsTroel)
+                                    if (gameType.IsTrull)
                                     {
-                                        score.Value = score.Value * 2;
+                                        score.Value *= 2;
                                     }
                                 }
                             }
@@ -306,7 +305,7 @@ namespace Allors.Domain
 
                 if (newScores?.Any() == true)
                 {
-                    foreach (Score score in newScores)
+                    foreach (var score in newScores)
                     {
                         if (score.ExistGameWhereScore)
                         {

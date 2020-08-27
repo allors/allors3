@@ -25,7 +25,7 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class MisèreTests : DomainTest
+    public class MiseryTests : DomainTest
     {
         private Scoreboard scoreboard;
         private Person player1;
@@ -41,10 +41,10 @@ namespace Allors.Domain
 
             var people = new People(this.Session);
 
-            this.player1 = people.FindBy(M.Person.UserName, "speler1");
-            this.player2 = people.FindBy(M.Person.UserName, "speler2");
-            this.player3 = people.FindBy(M.Person.UserName, "speler3");
-            this.player4 = people.FindBy(M.Person.UserName, "speler4");
+            this.player1 = people.FindBy(M.Person.UserName, "player1");
+            this.player2 = people.FindBy(M.Person.UserName, "player2");
+            this.player3 = people.FindBy(M.Person.UserName, "player3");
+            this.player4 = people.FindBy(M.Person.UserName, "player4");
 
             this.scoreboard = new ScoreboardBuilder(this.Session)
                 .WithPlayer(player1)
@@ -78,7 +78,7 @@ namespace Allors.Domain
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithoutDeclarers(object data)
+        public void TestMiseryWithoutDeclarers(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -87,7 +87,7 @@ namespace Allors.Domain
             scoreboard.AddGame(game);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             this.Session.Derive();
 
             //Assert
@@ -95,12 +95,12 @@ namespace Allors.Domain
             Assert.Null(game.Scores.First(v => v.Player == player2).Value);
             Assert.Null(game.Scores.First(v => v.Player == player3).Value);
             Assert.Null(game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithOneDeclarerAndOneWinner(object data)
+        public void TestMiseryWithOneDeclarerAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -112,7 +112,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddWinner(this.player1);
 
@@ -123,12 +123,12 @@ namespace Allors.Domain
             Assert.Equal(-5, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(-5, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(-5, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithOneDeclarerAndZeroWinner(object data)
+        public void TestMiseryWithOneDeclarerAndZeroWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -140,7 +140,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
 
             this.Session.Derive();
@@ -150,12 +150,12 @@ namespace Allors.Domain
             Assert.Equal(5, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(5, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(5, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithTwoDeclarersAndZeroWinners(object data)
+        public void TestMiseryWithTwoDeclarersAndZeroWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -167,7 +167,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -178,12 +178,12 @@ namespace Allors.Domain
             Assert.Equal(-15, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(15, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(15, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithTwoDeclarersAndOneWinner(object data)
+        public void TestMiseryWithTwoDeclarersAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -195,7 +195,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -208,12 +208,12 @@ namespace Allors.Domain
             Assert.Equal(-15, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(0, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(0, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithTwoDeclarersAndTwoWinners(object data)
+        public void TestMiseryWithTwoDeclarersAndTwoWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -225,7 +225,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
 
@@ -239,12 +239,12 @@ namespace Allors.Domain
             Assert.Equal(15, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(-15, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(-15, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithFourDeclarersAndZeroWinners(object data)
+        public void TestMiseryWithFourDeclarersAndZeroWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -256,7 +256,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -269,12 +269,12 @@ namespace Allors.Domain
             Assert.Equal(0, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(-0, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(-0, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithFourDeclarersAndOneWinner(object data)
+        public void TestMiseryWithFourDeclarersAndOneWinner(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -286,7 +286,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -301,12 +301,12 @@ namespace Allors.Domain
             Assert.Equal(-15, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(-15, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(-15, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithFourDeclarersAndTwoWinners(object data)
+        public void TestMiseryWithFourDeclarersAndTwoWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -318,7 +318,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -334,12 +334,12 @@ namespace Allors.Domain
             Assert.Equal(15, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(-15, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(-15, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
 
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMisèreWithFourDeclarersAndThreeWinners(object data)
+        public void TestMiseryWithFourDeclarersAndThreeWinners(object data)
         {
             this.Setup((DerivationTypes)data);
 
@@ -351,7 +351,7 @@ namespace Allors.Domain
             game.EndDate = game.StartDate.Value.AddHours(1);
 
             //Act
-            game.GameMode = this.GameModes.Misère;
+            game.GameMode = this.GameModes.Misery;
             game.AddDeclarer(player1);
             game.AddDeclarer(player2);
             game.AddDeclarer(player3);
@@ -368,7 +368,7 @@ namespace Allors.Domain
             Assert.Equal(15, game.Scores.First(v => v.Player == player2).Value);
             Assert.Equal(15, game.Scores.First(v => v.Player == player3).Value);
             Assert.Equal(-45, game.Scores.First(v => v.Player == player4).Value);
-            Assert.True(this.scoreboard.NulProef());
+            Assert.True(this.scoreboard.ZeroTest());
         }
     }
 }
