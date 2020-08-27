@@ -85,6 +85,7 @@ namespace Allors
         {
             database.Init();
 
+            database.UnifiedGoodRegisterDerivations();
             database.NonSerialisedInventoryItemRegisterDerivations();
             database.NonUnifiedPartRegisterDerivations();
             database.PartExtensionsRegisterDerivations();
