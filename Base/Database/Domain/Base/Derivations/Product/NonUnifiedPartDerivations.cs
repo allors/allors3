@@ -22,15 +22,20 @@ namespace Allors.Domain
 
                 var createdNonUnifiedPart = changeSet.Created.Select(session.Instantiate).OfType<NonUnifiedPart>();
 
+                var createdInventoryItemTransaction= changeSet.Created.Select(session.Instantiate).OfType<InventoryItemTransaction>();
+
                 changeSet.AssociationsByRoleType.TryGetValue(M.InventoryItemTransaction.Part, out var inventoryItemTransactions);
                 var inventoryItemTransactionParts = inventoryItemTransactions?.Select(session.Instantiate).OfType<InventoryItemTransaction>().Select(v => v.Part).OfType<NonUnifiedPart>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.NonSerialisedInventoryItem.QuantityOnHand, out var nonSerialisedInventoryItems);
                 var nonSerialisedInventoryItemParts = nonSerialisedInventoryItems?.Select(session.Instantiate).OfType<NonSerialisedInventoryItem>().Select(v => v.Part).OfType<NonUnifiedPart>();
 
-                var parts = createdNonUnifiedPart.Union(inventoryItemTransactionParts ?? empty).Union(nonSerialisedInventoryItemParts ?? empty);
+                var parts = createdNonUnifiedPart
+                    .Union(inventoryItemTransactionParts ?? empty)
+                    .Union(nonSerialisedInventoryItemParts ?? empty)
+                    .Union(createdInventoryItemTransaction.Select(v => v.Part as NonUnifiedPart) ?? empty);
 
-                foreach (var nonUnifiedPart in parts)
+                foreach (var nonUnifiedPart in parts.Where(v => v != null))
                 {
                     var setings = nonUnifiedPart.Strategy.Session.GetSingleton().Settings;
 

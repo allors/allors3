@@ -22,6 +22,8 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem.RoleType, out var changedNonSerialisedInventoryItem);
                 var nonSerialisedInventoryItemWhereInventoryItemTransactionsWhereInventoryItemChanged = changedNonSerialisedInventoryItem?.Select(session.Instantiate).OfType<NonSerialisedInventoryItem>();
 
+                var createdInventoryItemTransaction = changeSet.Created.Select(session.Instantiate).OfType<InventoryItemTransaction>();
+
                 changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, out var changeSalesOrderItem);
                 var salesOrderItemWhereReservedFromNonSerialisedInventoryItemChanged = changeSalesOrderItem?.Select(session.Instantiate).OfType<SalesOrderItem>();
 
@@ -40,81 +42,13 @@ namespace Allors.Domain
                     ValidateQuantityOnHand(nonSerialisedInventoryItem, settings);
 
                     // quantityCommittedOut
-                    var quantityCommittedOut = 0M;
-
-                    foreach (InventoryItemTransaction inventoryTransaction in nonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem)
-                    {
-                        var reason = inventoryTransaction.Reason;
-
-                        if (reason.IncreasesQuantityCommittedOut == true)
-                        {
-                            quantityCommittedOut += inventoryTransaction.Quantity;
-                        }
-                        else if (reason.IncreasesQuantityCommittedOut == false)
-                        {
-                            quantityCommittedOut -= inventoryTransaction.Quantity;
-                        }
-                    }
-
-                    foreach (PickListItem pickListItem in nonSerialisedInventoryItem.PickListItemsWhereInventoryItem)
-                    {
-                        if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(nonSerialisedInventoryItem.Strategy.Session).Picked))
-                        {
-                            foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
-                            {
-                                if (!itemIssuance.ShipmentItem.ShipmentItemState.Shipped)
-                                {
-                                    quantityCommittedOut -= pickListItem.QuantityPicked;
-                                }
-                            }
-                        }
-                    }
-
-                    if (quantityCommittedOut < 0)
-                    {
-                        quantityCommittedOut = 0;
-                    }
-
-                    nonSerialisedInventoryItem.QuantityCommittedOut = quantityCommittedOut;
+                    ValidateQuantityCommittedOut(nonSerialisedInventoryItem);
 
                     // AvailableToPromise
-                    var availableToPromise = nonSerialisedInventoryItem.QuantityOnHand - nonSerialisedInventoryItem.QuantityCommittedOut;
-
-                    if (availableToPromise < 0)
-                    {
-                        availableToPromise = 0;
-                    }
-
-                    nonSerialisedInventoryItem.AvailableToPromise = availableToPromise;
+                    ValidateAvaibleToPromise(nonSerialisedInventoryItem);
 
                     // QuantityExpectedIn
-                    var quantityExpectedIn = 0M;
-
-                    foreach (PurchaseOrderItem purchaseOrderItem in nonSerialisedInventoryItem.Part.PurchaseOrderItemsWherePart)
-                    {
-                        var facility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
-                        if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess)
-                             || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).Sent))
-                            && nonSerialisedInventoryItem.Facility.Equals(facility))
-                        {
-                            quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
-                            quantityExpectedIn -= purchaseOrderItem.QuantityReceived;
-                        }
-                    }
-
-                    nonSerialisedInventoryItem.QuantityExpectedIn = quantityExpectedIn;
-
-                    if (nonSerialisedInventoryItem.ExistPreviousQuantityOnHand && nonSerialisedInventoryItem.QuantityOnHand > nonSerialisedInventoryItem.PreviousQuantityOnHand)
-                    {
-                        BaseReplenishSalesOrders(nonSerialisedInventoryItem);
-                    }
-
-                    if (nonSerialisedInventoryItem.ExistPreviousQuantityOnHand && nonSerialisedInventoryItem.QuantityOnHand < nonSerialisedInventoryItem.PreviousQuantityOnHand)
-                    {
-                        BaseDepleteSalesOrders(nonSerialisedInventoryItem);
-                    }
-
-                    nonSerialisedInventoryItem.PreviousQuantityOnHand = nonSerialisedInventoryItem.QuantityOnHand;
+                    ValidateQuantityExpectedIn(nonSerialisedInventoryItem);
 
                 }
 
@@ -123,6 +57,9 @@ namespace Allors.Domain
                     foreach (var nonSerialisedInventoryItem in nonSerialisedInventoryItemWhereInventoryItemTransactionsWhereInventoryItemChanged)
                     {
                         ValidateQuantityOnHand(nonSerialisedInventoryItem, nonSerialisedInventoryItem.Strategy.Session.GetSingleton().Settings);
+                        ValidateQuantityCommittedOut(nonSerialisedInventoryItem);
+                        ValidateAvaibleToPromise(nonSerialisedInventoryItem);
+                        ValidateQuantityExpectedIn(nonSerialisedInventoryItem);
                     }
                 }
 
@@ -130,8 +67,25 @@ namespace Allors.Domain
                 {
                     foreach (var salesOrderItem in salesOrderItemWhereReservedFromNonSerialisedInventoryItemChanged)
                     {
-                        var nonSerialisedInventoryItem = (NonSerialisedInventoryItem) salesOrderItem.ReservedFromNonSerialisedInventoryItem;
+                        var nonSerialisedInventoryItem = (NonSerialisedInventoryItem)salesOrderItem.ReservedFromNonSerialisedInventoryItem;
                         ValidateQuantityOnHand(nonSerialisedInventoryItem, nonSerialisedInventoryItem.Strategy.Session.GetSingleton().Settings);
+                        ValidateQuantityCommittedOut(nonSerialisedInventoryItem);
+                        ValidateAvaibleToPromise(nonSerialisedInventoryItem);
+                        ValidateQuantityExpectedIn(nonSerialisedInventoryItem);
+                    }
+                }
+
+                foreach (var inventoryItemTransaction in createdInventoryItemTransaction)
+                {
+                    foreach (InventoryItem inventoryItem in inventoryItemTransaction.Part.InventoryItemsWherePart)
+                    {
+                        if (inventoryItem is NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                        {
+                            ValidateQuantityOnHand(nonSerialisedInventoryItem, nonSerialisedInventoryItem.Strategy.Session.GetSingleton().Settings);
+                            ValidateQuantityCommittedOut(nonSerialisedInventoryItem);
+                            ValidateAvaibleToPromise(nonSerialisedInventoryItem);
+                            ValidateQuantityExpectedIn(nonSerialisedInventoryItem);
+                        }
                     }
                 }
 
@@ -173,6 +127,89 @@ namespace Allors.Domain
                     }
 
                     nonSerialisedInventoryItem.QuantityOnHand = quantityOnHand;
+                }
+
+                static void ValidateQuantityCommittedOut(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                {
+                    var quantityCommittedOut = 0M;
+
+                    foreach (InventoryItemTransaction inventoryTransaction in nonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem)
+                    {
+                        var reason = inventoryTransaction.Reason;
+
+                        if (reason.IncreasesQuantityCommittedOut == true)
+                        {
+                            quantityCommittedOut += inventoryTransaction.Quantity;
+                        }
+                        else if (reason.IncreasesQuantityCommittedOut == false)
+                        {
+                            quantityCommittedOut -= inventoryTransaction.Quantity;
+                        }
+                    }
+
+                    foreach (PickListItem pickListItem in nonSerialisedInventoryItem.PickListItemsWhereInventoryItem)
+                    {
+                        if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(nonSerialisedInventoryItem.Strategy.Session).Picked))
+                        {
+                            foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+                            {
+                                if (!itemIssuance.ShipmentItem.ShipmentItemState.Shipped)
+                                {
+                                    quantityCommittedOut -= pickListItem.QuantityPicked;
+                                }
+                            }
+                        }
+                    }
+
+                    if (quantityCommittedOut < 0)
+                    {
+                        quantityCommittedOut = 0;
+                    }
+
+                    nonSerialisedInventoryItem.QuantityCommittedOut = quantityCommittedOut;
+                }
+
+                void ValidateQuantityExpectedIn(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                {
+                    var quantityExpectedIn = 0M;
+
+                    foreach (PurchaseOrderItem purchaseOrderItem in nonSerialisedInventoryItem.Part.PurchaseOrderItemsWherePart)
+                    {
+                        var facility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
+                        if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess)
+                             || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).Sent))
+                            && nonSerialisedInventoryItem.Facility.Equals(facility))
+                        {
+                            quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
+                            quantityExpectedIn -= purchaseOrderItem.QuantityReceived;
+                        }
+                    }
+
+                    nonSerialisedInventoryItem.QuantityExpectedIn = quantityExpectedIn;
+
+                    if (nonSerialisedInventoryItem.ExistPreviousQuantityOnHand && nonSerialisedInventoryItem.QuantityOnHand > nonSerialisedInventoryItem.PreviousQuantityOnHand)
+                    {
+                        BaseReplenishSalesOrders(nonSerialisedInventoryItem);
+                    }
+
+                    if (nonSerialisedInventoryItem.ExistPreviousQuantityOnHand && nonSerialisedInventoryItem.QuantityOnHand < nonSerialisedInventoryItem.PreviousQuantityOnHand)
+                    {
+                        BaseDepleteSalesOrders(nonSerialisedInventoryItem);
+                    }
+
+                    nonSerialisedInventoryItem.PreviousQuantityOnHand = nonSerialisedInventoryItem.QuantityOnHand;
+                }
+
+                static void ValidateAvaibleToPromise(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                {
+                    var availableToPromise = nonSerialisedInventoryItem.QuantityOnHand - nonSerialisedInventoryItem.QuantityCommittedOut;
+
+                    if (availableToPromise < 0)
+                    {
+                        availableToPromise = 0;
+                    }
+
+                    nonSerialisedInventoryItem.AvailableToPromise = availableToPromise;
                 }
             }
 
