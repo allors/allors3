@@ -27,6 +27,8 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, out var changeSalesOrderItem);
                 var salesOrderItemWhereReservedFromNonSerialisedInventoryItemChanged = changeSalesOrderItem?.Select(session.Instantiate).OfType<SalesOrderItem>();
 
+                var createdSalesOrderItem = changeSet.Created.Select(session.Instantiate).OfType<SalesOrderItem>();
+
                 foreach (var nonSerialisedInventoryItem in createdNonSerialisedInventoryItems)
                 {
                     var settings = nonSerialisedInventoryItem.Strategy.Session.GetSingleton().Settings;
@@ -89,7 +91,24 @@ namespace Allors.Domain
                     }
                 }
 
-                static void ValidateQuantityOnHand(NonSerialisedInventoryItem nonSerialisedInventoryItem, Settings settings)
+                foreach (var salesOrderItem in createdSalesOrderItem)
+                {
+                    if (salesOrderItem.Part != null)
+                    {
+                        foreach (InventoryItem inventoryItem in salesOrderItem.Part.InventoryItemsWherePart)
+                        {
+                            if (inventoryItem is NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                            {
+                                ValidateQuantityOnHand(nonSerialisedInventoryItem, nonSerialisedInventoryItem.Strategy.Session.GetSingleton().Settings);
+                                ValidateQuantityCommittedOut(nonSerialisedInventoryItem);
+                                ValidateAvaibleToPromise(nonSerialisedInventoryItem);
+                                ValidateQuantityExpectedIn(nonSerialisedInventoryItem);
+                            }
+                        }
+                    }
+                }
+
+                void ValidateQuantityOnHand(NonSerialisedInventoryItem nonSerialisedInventoryItem, Settings settings)
                 {
                     var quantityOnHand = 0M;
 
@@ -129,7 +148,7 @@ namespace Allors.Domain
                     nonSerialisedInventoryItem.QuantityOnHand = quantityOnHand;
                 }
 
-                static void ValidateQuantityCommittedOut(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                void ValidateQuantityCommittedOut(NonSerialisedInventoryItem nonSerialisedInventoryItem)
                 {
                     var quantityCommittedOut = 0M;
 
@@ -200,7 +219,7 @@ namespace Allors.Domain
                     nonSerialisedInventoryItem.PreviousQuantityOnHand = nonSerialisedInventoryItem.QuantityOnHand;
                 }
 
-                static void ValidateAvaibleToPromise(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+                void ValidateAvaibleToPromise(NonSerialisedInventoryItem nonSerialisedInventoryItem)
                 {
                     var availableToPromise = nonSerialisedInventoryItem.QuantityOnHand - nonSerialisedInventoryItem.QuantityCommittedOut;
 

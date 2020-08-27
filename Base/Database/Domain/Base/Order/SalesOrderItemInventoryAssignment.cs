@@ -23,78 +23,78 @@ namespace Allors.Domain
             }
         }
 
-        public void BaseOnDerive(ObjectOnDerive method)
-        {
-            var salesOrderItem = this.SalesOrderItemWhereSalesOrderItemInventoryAssignment;
-            var state = salesOrderItem.SalesOrderItemState;
-            var inventoryItemChanged = this.ExistCurrentVersion && (!Equals(this.CurrentVersion.InventoryItem, this.InventoryItem));
+        //public void BaseOnDerive(ObjectOnDerive method)
+        //{
+        //    var salesOrderItem = this.SalesOrderItemWhereSalesOrderItemInventoryAssignment;
+        //    var state = salesOrderItem.SalesOrderItemState;
+        //    var inventoryItemChanged = this.ExistCurrentVersion && (!Equals(this.CurrentVersion.InventoryItem, this.InventoryItem));
 
-            foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
-            {
-                this.SyncInventoryTransactions(this.InventoryItem, this.Quantity, createReason, false);
-            }
+        //    foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
+        //    {
+        //        this.SyncInventoryTransactions(this.InventoryItem, this.Quantity, createReason, false);
+        //    }
 
-            foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
-            {
-                this.SyncInventoryTransactions(this.InventoryItem, this.Quantity, cancelReason, true);
-            }
+        //    foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
+        //    {
+        //        this.SyncInventoryTransactions(this.InventoryItem, this.Quantity, cancelReason, true);
+        //    }
 
-            if (inventoryItemChanged)
-            {
-                // CurrentVersion is Previous Version until PostDerive
-                var previousInventoryItem = this.CurrentVersion.InventoryItem;
-                var previousQuantity = this.CurrentVersion.Quantity;
-                state = salesOrderItem.PreviousSalesOrderItemState ?? salesOrderItem.SalesOrderItemState;
+        //    if (inventoryItemChanged)
+        //    {
+        //        // CurrentVersion is Previous Version until PostDerive
+        //        var previousInventoryItem = this.CurrentVersion.InventoryItem;
+        //        var previousQuantity = this.CurrentVersion.Quantity;
+        //        state = salesOrderItem.PreviousSalesOrderItemState ?? salesOrderItem.SalesOrderItemState;
 
-                foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
-                {
-                    this.SyncInventoryTransactions(previousInventoryItem, previousQuantity, createReason, true);
-                }
+        //        foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
+        //        {
+        //            this.SyncInventoryTransactions(previousInventoryItem, previousQuantity, createReason, true);
+        //        }
 
-                foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
-                {
-                    this.SyncInventoryTransactions(previousInventoryItem, previousQuantity, cancelReason, true);
-                }
-            }
-        }
+        //        foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
+        //        {
+        //            this.SyncInventoryTransactions(previousInventoryItem, previousQuantity, cancelReason, true);
+        //        }
+        //    }
+        //}
 
-        private void SyncInventoryTransactions(InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
-        {
-            var adjustmentQuantity = 0M;
-            var existingQuantity = 0M;
-            var matchingTransactions = this.InventoryItemTransactions.Where(t => t.Reason.Equals(reason) && t.Part.Equals(inventoryItem.Part) && t.InventoryItem.Equals(inventoryItem)).ToArray();
+        //private void SyncInventoryTransactions(InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
+        //{
+        //    var adjustmentQuantity = 0M;
+        //    var existingQuantity = 0M;
+        //    var matchingTransactions = this.InventoryItemTransactions.Where(t => t.Reason.Equals(reason) && t.Part.Equals(inventoryItem.Part) && t.InventoryItem.Equals(inventoryItem)).ToArray();
 
-            if (matchingTransactions.Length > 0)
-            {
-                existingQuantity = matchingTransactions.Sum(t => t.Quantity);
-            }
+        //    if (matchingTransactions.Length > 0)
+        //    {
+        //        existingQuantity = matchingTransactions.Sum(t => t.Quantity);
+        //    }
 
-            if (isCancellation)
-            {
-                adjustmentQuantity = 0 - existingQuantity;
-            }
-            else
-            {
-                adjustmentQuantity = initialQuantity - existingQuantity;
-            }
+        //    if (isCancellation)
+        //    {
+        //        adjustmentQuantity = 0 - existingQuantity;
+        //    }
+        //    else
+        //    {
+        //        adjustmentQuantity = initialQuantity - existingQuantity;
+        //    }
 
-            if (adjustmentQuantity != 0)
-            {
-                var newTransaction = new InventoryItemTransactionBuilder(this.Session())
-                    .WithPart(inventoryItem.Part)
-                    .WithQuantity(adjustmentQuantity)
-                    .WithReason(reason)
-                    .WithFacility(inventoryItem.Facility)
-                    .Build();
+        //    if (adjustmentQuantity != 0)
+        //    {
+        //        var newTransaction = new InventoryItemTransactionBuilder(this.Session())
+        //            .WithPart(inventoryItem.Part)
+        //            .WithQuantity(adjustmentQuantity)
+        //            .WithReason(reason)
+        //            .WithFacility(inventoryItem.Facility)
+        //            .Build();
 
-                if (inventoryItem is SerialisedInventoryItem serialisedInventoryItem)
-                {
-                    newTransaction.SerialisedItem = serialisedInventoryItem.SerialisedItem;
-                }
+        //        if (inventoryItem is SerialisedInventoryItem serialisedInventoryItem)
+        //        {
+        //            newTransaction.SerialisedItem = serialisedInventoryItem.SerialisedItem;
+        //        }
 
-                newTransaction.InventoryItem = inventoryItem;
-                this.AddInventoryItemTransaction(newTransaction);
-            }
-        }
+        //        newTransaction.InventoryItem = inventoryItem;
+        //        this.AddInventoryItemTransaction(newTransaction);
+        //    }
+        //}
     }
 }
