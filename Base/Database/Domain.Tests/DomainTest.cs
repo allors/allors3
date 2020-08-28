@@ -91,6 +91,7 @@ namespace Allors
             database.OrderShipmentRegisterDerivations();
             database.DropShipmentsRegisterDerivations();
             database.CustomerShipmentRegisterDerivations();
+            database.TransferRegisterDerivations();
             database.CustomerReturnRegisterDerivations();
             database.SalesOrderItemInventoryAssignmentRegisterDerivations();
             database.SalesOrderItemsRegisterDerivations();
