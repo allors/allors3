@@ -20,7 +20,6 @@ namespace Allors.Domain
 
                 foreach(var purchaseShipment in createdPurchaseShipment)
                 {
-
                     validation.AssertExists(purchaseShipment, purchaseShipment.Meta.ShipFromParty);
 
                     var internalOrganisations = new Organisations(purchaseShipment.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
@@ -41,7 +40,7 @@ namespace Allors.Domain
                     if (!purchaseShipment.ExistShipmentNumber && shipToParty != null)
                     {
                         purchaseShipment.ShipmentNumber = shipToParty.NextShipmentNumber(purchaseShipment.Strategy.Session.Now().Year);
-                        purchaseShipment.SortableShipmentNumber = purchaseShipment.Session().GetSingleton().SortableNumber(((InternalOrganisation)purchaseShipment.ShipToParty).IncomingShipmentNumberPrefix, this.ShipmentNumber, this.CreationDate.Value.Year.ToString());
+                        purchaseShipment.SortableShipmentNumber = purchaseShipment.Session().GetSingleton().SortableNumber(((InternalOrganisation)purchaseShipment.ShipToParty).IncomingShipmentNumberPrefix, purchaseShipment.ShipmentNumber, purchaseShipment.CreationDate.Value.Year.ToString());
                     }
 
                     if (!purchaseShipment.ExistShipFromAddress && purchaseShipment.ExistShipFromParty)

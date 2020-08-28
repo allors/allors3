@@ -54,39 +54,39 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                foreach (PickListItem pickListItem in this.PickListItems)
-                {
-                    iteration.AddDependency(this, pickListItem);
-                    iteration.Mark(pickListItem);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    foreach (PickListItem pickListItem in this.PickListItems)
+            //    {
+            //        iteration.AddDependency(this, pickListItem);
+            //        iteration.Mark(pickListItem);
 
-                    iteration.AddDependency(this, pickListItem.InventoryItem);
-                    iteration.Mark(pickListItem.InventoryItem);
-                }
+            //        iteration.AddDependency(this, pickListItem.InventoryItem);
+            //        iteration.Mark(pickListItem.InventoryItem);
+            //    }
 
-                if (this.ExistShipToParty)
-                {
-                    foreach (var customerShipment in this.ShipToParty.ShipmentsWhereShipToParty
-                        .OfType<CustomerShipment>()
-                        .Where(shipment =>
-                            shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Created)
-                            || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Picking)
-                            || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Picked)
-                            || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).OnHold)
-                            || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Packed)
-                        ))
-                    {
-                        if (!changeSet.IsCreated(customerShipment))
-                        {
-                            iteration.AddDependency(customerShipment, this);
-                            iteration.Mark(customerShipment);
-                        }
-                    }
-                }
-            }
+            //    if (this.ExistShipToParty)
+            //    {
+            //        foreach (var customerShipment in this.ShipToParty.ShipmentsWhereShipToParty
+            //            .OfType<CustomerShipment>()
+            //            .Where(shipment =>
+            //                shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Created)
+            //                || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Picking)
+            //                || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Picked)
+            //                || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).OnHold)
+            //                || shipment.ShipmentState.Equals(new ShipmentStates(this.ShipToParty.Strategy.Session).Packed)
+            //            ))
+            //        {
+            //            if (!changeSet.IsCreated(customerShipment))
+            //            {
+            //                iteration.AddDependency(customerShipment, this);
+            //                iteration.Mark(customerShipment);
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void BaseDelete(PickListDelete method)

@@ -26,6 +26,7 @@ namespace Allors.Domain
             var shipment = new PurchaseShipmentBuilder(this.Session)
                 .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
                 .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithCreationDate(this.Session.Now())
                 .Build();
 
             var shipmentItem = new ShipmentItemBuilder(this.Session).WithPart(good1.Part).WithQuantity(1).Build();
