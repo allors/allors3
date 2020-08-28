@@ -149,6 +149,11 @@ namespace Allors
             database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
             database.PassportRegisterDerivations();
+            database.RequestItemRegisterDerivations();
+            database.RequestForQuoteRegisterDerivations();
+            database.RequestForProposalRegisterDerivations();
+            database.RequestForInformationRegisterDerivations();
+            database.RequestExtensionsRegisterDerivations();
 
             this.Session = database.CreateSession();
 
