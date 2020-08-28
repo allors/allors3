@@ -105,31 +105,31 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-                {
-                    iteration.AddDependency(this, shipmentItem);
-                    iteration.Mark(shipmentItem);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            //    {
+            //        iteration.AddDependency(this, shipmentItem);
+            //        iteration.Mark(shipmentItem);
 
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
-                    {
-                        if (orderShipment.ExistOrderItem && !orderShipment.Strategy.IsNewInSession)
-                        {
-                            iteration.AddDependency(this, orderShipment.OrderItem);
-                            iteration.Mark(orderShipment.OrderItem);
-                        }
-                    }
-                }
+            //        foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+            //        {
+            //            if (orderShipment.ExistOrderItem && !orderShipment.Strategy.IsNewInSession)
+            //            {
+            //                iteration.AddDependency(this, orderShipment.OrderItem);
+            //                iteration.Mark(orderShipment.OrderItem);
+            //            }
+            //        }
+            //    }
 
-                foreach (ShipmentPackage shipmentPackage in this.ShipmentPackages)
-                {
-                    iteration.AddDependency(this, shipmentPackage);
-                    iteration.Mark(shipmentPackage);
-                }
-            }
+            //    foreach (ShipmentPackage shipmentPackage in this.ShipmentPackages)
+            //    {
+            //        iteration.AddDependency(this, shipmentPackage);
+            //        iteration.Mark(shipmentPackage);
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)

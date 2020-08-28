@@ -85,6 +85,7 @@ namespace Allors
         {
             database.Init();
 
+            database.ShipmentExtensionsRegisterDerivations();
             database.SupplierOfferingRegisterDerivations();
             database.ServiceExtensionsRegisterDerivations();
             database.SerialisedItemCharacteristicRegisterDerivations();
