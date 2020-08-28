@@ -60,7 +60,6 @@ namespace Allors.Domain
                 }
 
             }
-
         }
 
         public static void InventoryItemTransactionRegisterDerivations(this IDatabase @this)

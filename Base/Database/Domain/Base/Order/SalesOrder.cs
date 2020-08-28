@@ -58,7 +58,7 @@ namespace Allors.Domain
             }
         }
 
-        private bool IsDeletable =>
+        public bool IsDeletable =>
             (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).Provisional)
                 || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).ReadyForPosting)
                 || this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).Cancelled)
@@ -150,390 +150,390 @@ namespace Allors.Domain
             }
         }
 
-        public void BaseOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-            var session = this.Session();
+        //public void BaseOnDerive(ObjectOnDerive method)
+        //{
+        //    var derivation = method.Derivation;
+        //    var session = this.Session();
 
-            // SalesOrder Derivations and Validations
-            this.BillToCustomer ??= this.ShipToCustomer;
-            this.ShipToCustomer ??= this.BillToCustomer;
-            this.Customers = new[] { this.BillToCustomer, this.ShipToCustomer, this.PlacingCustomer };
-            this.Locale ??= this.BillToCustomer?.Locale ?? this.Strategy.Session.GetSingleton().DefaultLocale;
-            this.VatRegime ??= this.BillToCustomer?.VatRegime;
-            this.IrpfRegime ??= this.BillToCustomer?.IrpfRegime;
-            this.Currency ??= this.BillToCustomer?.PreferredCurrency ?? this.BillToCustomer?.Locale?.Country?.Currency ?? this.TakenBy?.PreferredCurrency;
-            this.TakenByContactMechanism ??= this.TakenBy?.OrderAddress ?? this.TakenBy?.BillingAddress ?? this.TakenBy?.GeneralCorrespondence;
-            this.BillToContactMechanism ??= this.BillToCustomer?.BillingAddress ?? this.BillToCustomer?.ShippingAddress ?? this.BillToCustomer?.GeneralCorrespondence;
-            this.BillToEndCustomerContactMechanism ??= this.BillToEndCustomer?.BillingAddress ?? this.BillToEndCustomer?.ShippingAddress ?? this.BillToCustomer?.GeneralCorrespondence;
-            this.ShipToEndCustomerAddress ??= this.ShipToEndCustomer?.ShippingAddress ?? this.ShipToCustomer?.GeneralCorrespondence as PostalAddress;
-            this.ShipFromAddress ??= this.TakenBy?.ShippingAddress;
-            this.ShipToAddress ??= this.ShipToCustomer?.ShippingAddress;
-            this.ShipmentMethod ??= this.ShipToCustomer?.DefaultShipmentMethod ?? this.Store.DefaultShipmentMethod;
-            this.PaymentMethod ??= this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, this.TakenBy))?.DefaultPaymentMethod ?? this.Store.DefaultCollectionMethod;
+        //    // SalesOrder Derivations and Validations
+        //    this.BillToCustomer ??= this.ShipToCustomer;
+        //    this.ShipToCustomer ??= this.BillToCustomer;
+        //    this.Customers = new[] { this.BillToCustomer, this.ShipToCustomer, this.PlacingCustomer };
+        //    this.Locale ??= this.BillToCustomer?.Locale ?? this.Strategy.Session.GetSingleton().DefaultLocale;
+        //    this.VatRegime ??= this.BillToCustomer?.VatRegime;
+        //    this.IrpfRegime ??= this.BillToCustomer?.IrpfRegime;
+        //    this.Currency ??= this.BillToCustomer?.PreferredCurrency ?? this.BillToCustomer?.Locale?.Country?.Currency ?? this.TakenBy?.PreferredCurrency;
+        //    this.TakenByContactMechanism ??= this.TakenBy?.OrderAddress ?? this.TakenBy?.BillingAddress ?? this.TakenBy?.GeneralCorrespondence;
+        //    this.BillToContactMechanism ??= this.BillToCustomer?.BillingAddress ?? this.BillToCustomer?.ShippingAddress ?? this.BillToCustomer?.GeneralCorrespondence;
+        //    this.BillToEndCustomerContactMechanism ??= this.BillToEndCustomer?.BillingAddress ?? this.BillToEndCustomer?.ShippingAddress ?? this.BillToCustomer?.GeneralCorrespondence;
+        //    this.ShipToEndCustomerAddress ??= this.ShipToEndCustomer?.ShippingAddress ?? this.ShipToCustomer?.GeneralCorrespondence as PostalAddress;
+        //    this.ShipFromAddress ??= this.TakenBy?.ShippingAddress;
+        //    this.ShipToAddress ??= this.ShipToCustomer?.ShippingAddress;
+        //    this.ShipmentMethod ??= this.ShipToCustomer?.DefaultShipmentMethod ?? this.Store.DefaultShipmentMethod;
+        //    this.PaymentMethod ??= this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, this.TakenBy))?.DefaultPaymentMethod ?? this.Store.DefaultCollectionMethod;
 
-            if (!this.ExistOrderNumber && this.ExistStore)
-            {
-                this.OrderNumber = this.Store.NextSalesOrderNumber(this.OrderDate.Year);
-                this.SortableOrderNumber = this.Session().GetSingleton().SortableNumber(this.Store.SalesOrderNumberPrefix, this.OrderNumber, this.OrderDate.Year.ToString());
-            }
+        //    if (!this.ExistOrderNumber && this.ExistStore)
+        //    {
+        //        this.OrderNumber = this.Store.NextSalesOrderNumber(this.OrderDate.Year);
+        //        this.SortableOrderNumber = this.Session().GetSingleton().SortableNumber(this.Store.SalesOrderNumberPrefix, this.OrderNumber, this.OrderDate.Year.ToString());
+        //    }
 
-            if (this.BillToCustomer?.BaseIsActiveCustomer(this.TakenBy, this.OrderDate) == false)
-            {
-                derivation.Validation.AddError(this, M.SalesOrder.BillToCustomer, ErrorMessages.PartyIsNotACustomer);
-            }
+        //    if (this.BillToCustomer?.BaseIsActiveCustomer(this.TakenBy, this.OrderDate) == false)
+        //    {
+        //        derivation.Validation.AddError(this, M.SalesOrder.BillToCustomer, ErrorMessages.PartyIsNotACustomer);
+        //    }
 
-            if (this.ShipToCustomer?.BaseIsActiveCustomer(this.TakenBy, this.OrderDate) == false)
-            {
-                derivation.Validation.AddError(this, M.SalesOrder.ShipToCustomer, ErrorMessages.PartyIsNotACustomer);
-            }
+        //    if (this.ShipToCustomer?.BaseIsActiveCustomer(this.TakenBy, this.OrderDate) == false)
+        //    {
+        //        derivation.Validation.AddError(this, M.SalesOrder.ShipToCustomer, ErrorMessages.PartyIsNotACustomer);
+        //    }
 
-            if (this.SalesOrderState.IsInProcess)
-            {
-                derivation.Validation.AssertExists(this, this.Meta.ShipToAddress);
-                derivation.Validation.AssertExists(this, this.Meta.BillToContactMechanism);
-            }
+        //    if (this.SalesOrderState.IsInProcess)
+        //    {
+        //        derivation.Validation.AssertExists(this, this.Meta.ShipToAddress);
+        //        derivation.Validation.AssertExists(this, this.Meta.BillToContactMechanism);
+        //    }
 
-            // SalesOrderItem Derivations and Validations
-            foreach (SalesOrderItem salesOrderItem in this.SalesOrderItems)
-            {
-                var salesOrderItemDerivedRoles = salesOrderItem;
+        //    // SalesOrderItem Derivations and Validations
+        //    foreach (SalesOrderItem salesOrderItem in this.SalesOrderItems)
+        //    {
+        //        var salesOrderItemDerivedRoles = salesOrderItem;
 
-                salesOrderItem.ShipFromAddress ??= this.ShipFromAddress;
-                salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? this.ShipToAddress;
-                salesOrderItemDerivedRoles.ShipToParty = salesOrderItem.AssignedShipToParty ?? this.ShipToCustomer;
-                salesOrderItemDerivedRoles.DeliveryDate = salesOrderItem.AssignedDeliveryDate ?? this.DeliveryDate;
-                salesOrderItemDerivedRoles.VatRegime = salesOrderItem.AssignedVatRegime ?? this.VatRegime;
-                salesOrderItemDerivedRoles.VatRate = salesOrderItem.VatRegime?.VatRate ;
-                salesOrderItemDerivedRoles.IrpfRegime = salesOrderItem.AssignedIrpfRegime ?? this.IrpfRegime;
-                salesOrderItemDerivedRoles.IrpfRate = salesOrderItem.IrpfRegime?.IrpfRate;
+        //        salesOrderItem.ShipFromAddress ??= this.ShipFromAddress;
+        //        salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? this.ShipToAddress;
+        //        salesOrderItemDerivedRoles.ShipToParty = salesOrderItem.AssignedShipToParty ?? this.ShipToCustomer;
+        //        salesOrderItemDerivedRoles.DeliveryDate = salesOrderItem.AssignedDeliveryDate ?? this.DeliveryDate;
+        //        salesOrderItemDerivedRoles.VatRegime = salesOrderItem.AssignedVatRegime ?? this.VatRegime;
+        //        salesOrderItemDerivedRoles.VatRate = salesOrderItem.VatRegime?.VatRate ;
+        //        salesOrderItemDerivedRoles.IrpfRegime = salesOrderItem.AssignedIrpfRegime ?? this.IrpfRegime;
+        //        salesOrderItemDerivedRoles.IrpfRate = salesOrderItem.IrpfRegime?.IrpfRate;
 
-                // TODO: Use versioning
-                if (salesOrderItem.ExistPreviousProduct && !salesOrderItem.PreviousProduct.Equals(salesOrderItem.Product))
-                {
-                    derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.Product, ErrorMessages.SalesOrderItemProductChangeNotAllowed);
-                }
-                else
-                {
-                    salesOrderItemDerivedRoles.PreviousProduct = salesOrderItem.Product;
-                }
+        //        // TODO: Use versioning
+        //        if (salesOrderItem.ExistPreviousProduct && !salesOrderItem.PreviousProduct.Equals(salesOrderItem.Product))
+        //        {
+        //            derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.Product, ErrorMessages.SalesOrderItemProductChangeNotAllowed);
+        //        }
+        //        else
+        //        {
+        //            salesOrderItemDerivedRoles.PreviousProduct = salesOrderItem.Product;
+        //        }
 
-                if (salesOrderItem.ExistSalesOrderItemWhereOrderedWithFeature)
-                {
-                    derivation.Validation.AssertExists(salesOrderItem, M.SalesOrderItem.ProductFeature);
-                    derivation.Validation.AssertNotExists(salesOrderItem, M.SalesOrderItem.Product);
-                }
-                else
-                {
-                    derivation.Validation.AssertNotExists(salesOrderItem, M.SalesOrderItem.ProductFeature);
-                }
+        //        if (salesOrderItem.ExistSalesOrderItemWhereOrderedWithFeature)
+        //        {
+        //            derivation.Validation.AssertExists(salesOrderItem, M.SalesOrderItem.ProductFeature);
+        //            derivation.Validation.AssertNotExists(salesOrderItem, M.SalesOrderItem.Product);
+        //        }
+        //        else
+        //        {
+        //            derivation.Validation.AssertNotExists(salesOrderItem, M.SalesOrderItem.ProductFeature);
+        //        }
 
-                if (salesOrderItem.ExistProduct && salesOrderItem.ExistQuantityOrdered && salesOrderItem.QuantityOrdered < salesOrderItem.QuantityShipped)
-                {
-                    derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.QuantityOrdered, ErrorMessages.SalesOrderItemLessThanAlreadeyShipped);
-                }
+        //        if (salesOrderItem.ExistProduct && salesOrderItem.ExistQuantityOrdered && salesOrderItem.QuantityOrdered < salesOrderItem.QuantityShipped)
+        //        {
+        //            derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.QuantityOrdered, ErrorMessages.SalesOrderItemLessThanAlreadeyShipped);
+        //        }
 
-                var isSubTotalItem = salesOrderItem.ExistInvoiceItemType && (salesOrderItem.InvoiceItemType.IsProductItem || salesOrderItem.InvoiceItemType.IsPartItem);
-                if (isSubTotalItem)
-                {
-                    if (salesOrderItem.QuantityOrdered == 0)
-                    {
-                        derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.QuantityOrdered, "QuantityOrdered is Required");
-                    }
-                }
-                else
-                {
-                    if (salesOrderItem.AssignedUnitPrice == 0)
-                    {
-                        derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.AssignedUnitPrice, "Price is Required");
-                    }
-                }
+        //        var isSubTotalItem = salesOrderItem.ExistInvoiceItemType && (salesOrderItem.InvoiceItemType.IsProductItem || salesOrderItem.InvoiceItemType.IsPartItem);
+        //        if (isSubTotalItem)
+        //        {
+        //            if (salesOrderItem.QuantityOrdered == 0)
+        //            {
+        //                derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.QuantityOrdered, "QuantityOrdered is Required");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (salesOrderItem.AssignedUnitPrice == 0)
+        //            {
+        //                derivation.Validation.AddError(salesOrderItem, M.SalesOrderItem.AssignedUnitPrice, "Price is Required");
+        //            }
+        //        }
 
-                derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.Product, M.SalesOrderItem.ProductFeature);
-                derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.SerialisedItem, M.SalesOrderItem.ProductFeature);
-                derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.ReservedFromSerialisedInventoryItem, M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
-                derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.AssignedUnitPrice, M.SalesOrderItem.DiscountAdjustments, M.SalesOrderItem.SurchargeAdjustments);
-            }
+        //        derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.Product, M.SalesOrderItem.ProductFeature);
+        //        derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.SerialisedItem, M.SalesOrderItem.ProductFeature);
+        //        derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.ReservedFromSerialisedInventoryItem, M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
+        //        derivation.Validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.AssignedUnitPrice, M.SalesOrderItem.DiscountAdjustments, M.SalesOrderItem.SurchargeAdjustments);
+        //    }
 
-            var validOrderItems = this.SalesOrderItems.Where(v => v.IsValid).ToArray();
-            this.ValidOrderItems = validOrderItems;
+        //    var validOrderItems = this.SalesOrderItems.Where(v => v.IsValid).ToArray();
+        //    this.ValidOrderItems = validOrderItems;
 
-            if (this.ExistVatRegime && this.VatRegime.ExistVatClause)
-            {
-                this.DerivedVatClause = this.VatRegime.VatClause;
-            }
-            else
-            {
-                string TakenbyCountry = null;
+        //    if (this.ExistVatRegime && this.VatRegime.ExistVatClause)
+        //    {
+        //        this.DerivedVatClause = this.VatRegime.VatClause;
+        //    }
+        //    else
+        //    {
+        //        string TakenbyCountry = null;
 
-                if (this.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
-                {
-                    TakenbyCountry = registeredOffice.Country.IsoCode;
-                }
+        //        if (this.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
+        //        {
+        //            TakenbyCountry = registeredOffice.Country.IsoCode;
+        //        }
 
-                var OutsideEUCustomer = this.BillToCustomer?.VatRegime?.Equals(new VatRegimes(session).Export);
-                var shipFromBelgium = this.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.ShipFromAddress?.Country?.IsoCode));
-                var shipToEU = this.ValidOrderItems?.Cast<SalesOrderItem>().Any(v => Equals(true, v.ShipToAddress?.Country?.EuMemberState));
-                var sellerResponsibleForTransport = this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
-                var buyerResponsibleForTransport = this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));
+        //        var OutsideEUCustomer = this.BillToCustomer?.VatRegime?.Equals(new VatRegimes(session).Export);
+        //        var shipFromBelgium = this.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.ShipFromAddress?.Country?.IsoCode));
+        //        var shipToEU = this.ValidOrderItems?.Cast<SalesOrderItem>().Any(v => Equals(true, v.ShipToAddress?.Country?.EuMemberState));
+        //        var sellerResponsibleForTransport = this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
+        //        var buyerResponsibleForTransport = this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));
 
-                if (Equals(this.VatRegime, new VatRegimes(session).ServiceB2B))
-                {
-                    this.DerivedVatClause = new VatClauses(session).ServiceB2B;
-                }
-                else if (Equals(this.VatRegime, new VatRegimes(session).IntraCommunautair))
-                {
-                    this.DerivedVatClause = new VatClauses(session).Intracommunautair;
-                }
-                else if (TakenbyCountry == "BE"
-                         && OutsideEUCustomer.HasValue && OutsideEUCustomer.Value
-                         && shipFromBelgium.HasValue && shipFromBelgium.Value
-                         && shipToEU.HasValue && shipToEU.Value == false)
-                {
-                    if (sellerResponsibleForTransport)
-                    {
-                        // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU and you transport the goods and importer is the customer
-                        this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item1;
-                    }
-                    else if (buyerResponsibleForTransport)
-                    {
-                        // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU  and the customer does the transport of the goods and importer is the customer
-                        this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item2;
-                    }
-                }
-            }
+        //        if (Equals(this.VatRegime, new VatRegimes(session).ServiceB2B))
+        //        {
+        //            this.DerivedVatClause = new VatClauses(session).ServiceB2B;
+        //        }
+        //        else if (Equals(this.VatRegime, new VatRegimes(session).IntraCommunautair))
+        //        {
+        //            this.DerivedVatClause = new VatClauses(session).Intracommunautair;
+        //        }
+        //        else if (TakenbyCountry == "BE"
+        //                 && OutsideEUCustomer.HasValue && OutsideEUCustomer.Value
+        //                 && shipFromBelgium.HasValue && shipFromBelgium.Value
+        //                 && shipToEU.HasValue && shipToEU.Value == false)
+        //        {
+        //            if (sellerResponsibleForTransport)
+        //            {
+        //                // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU and you transport the goods and importer is the customer
+        //                this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item1;
+        //            }
+        //            else if (buyerResponsibleForTransport)
+        //            {
+        //                // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU  and the customer does the transport of the goods and importer is the customer
+        //                this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item2;
+        //            }
+        //        }
+        //    }
 
-            this.DerivedVatClause = this.ExistAssignedVatClause ? this.AssignedVatClause : this.DerivedVatClause;
+        //    this.DerivedVatClause = this.ExistAssignedVatClause ? this.AssignedVatClause : this.DerivedVatClause;
 
-            var salesOrderShipmentStates = new SalesOrderShipmentStates(this.Strategy.Session);
-            var salesOrderPaymentStates = new SalesOrderPaymentStates(this.Strategy.Session);
-            var salesOrderInvoiceStates = new SalesOrderInvoiceStates(this.Strategy.Session);
+        //    var salesOrderShipmentStates = new SalesOrderShipmentStates(this.Strategy.Session);
+        //    var salesOrderPaymentStates = new SalesOrderPaymentStates(this.Strategy.Session);
+        //    var salesOrderInvoiceStates = new SalesOrderInvoiceStates(this.Strategy.Session);
 
-            var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(derivation.Session);
-            var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(derivation.Session);
-            var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(derivation.Session);
+        //    var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(derivation.Session);
+        //    var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(derivation.Session);
+        //    var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(derivation.Session);
 
-            // SalesOrder Shipment State
-            if (validOrderItems.Any())
-            {
-                if (validOrderItems.All(v => v.SalesOrderItemShipmentState.Shipped))
-                {
-                    this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
-                }
-                else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.NotShipped))
-                {
-                    this.SalesOrderShipmentState = salesOrderShipmentStates.NotShipped;
-                }
-                else if (validOrderItems.Any(v => v.SalesOrderItemShipmentState.InProgress))
-                {
-                    this.SalesOrderShipmentState = salesOrderShipmentStates.InProgress;
-                }
-                else
-                {
-                    this.SalesOrderShipmentState = salesOrderShipmentStates.PartiallyShipped;
-                }
+        //    // SalesOrder Shipment State
+        //    if (validOrderItems.Any())
+        //    {
+        //        if (validOrderItems.All(v => v.SalesOrderItemShipmentState.Shipped))
+        //        {
+        //            this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
+        //        }
+        //        else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.NotShipped))
+        //        {
+        //            this.SalesOrderShipmentState = salesOrderShipmentStates.NotShipped;
+        //        }
+        //        else if (validOrderItems.Any(v => v.SalesOrderItemShipmentState.InProgress))
+        //        {
+        //            this.SalesOrderShipmentState = salesOrderShipmentStates.InProgress;
+        //        }
+        //        else
+        //        {
+        //            this.SalesOrderShipmentState = salesOrderShipmentStates.PartiallyShipped;
+        //        }
 
-                // SalesOrder Payment State
-                if (validOrderItems.All(v => v.SalesOrderItemPaymentState.Paid))
-                {
-                    this.SalesOrderPaymentState = salesOrderPaymentStates.Paid;
-                }
-                else if (validOrderItems.All(v => v.SalesOrderItemPaymentState.NotPaid))
-                {
-                    this.SalesOrderPaymentState = salesOrderPaymentStates.NotPaid;
-                }
-                else
-                {
-                    this.SalesOrderPaymentState = salesOrderPaymentStates.PartiallyPaid;
-                }
+        //        // SalesOrder Payment State
+        //        if (validOrderItems.All(v => v.SalesOrderItemPaymentState.Paid))
+        //        {
+        //            this.SalesOrderPaymentState = salesOrderPaymentStates.Paid;
+        //        }
+        //        else if (validOrderItems.All(v => v.SalesOrderItemPaymentState.NotPaid))
+        //        {
+        //            this.SalesOrderPaymentState = salesOrderPaymentStates.NotPaid;
+        //        }
+        //        else
+        //        {
+        //            this.SalesOrderPaymentState = salesOrderPaymentStates.PartiallyPaid;
+        //        }
 
-                // SalesOrder Invoice State
-                if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.Invoiced))
-                {
-                    this.SalesOrderInvoiceState = salesOrderInvoiceStates.Invoiced;
-                }
-                else if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.NotInvoiced))
-                {
-                    this.SalesOrderInvoiceState = salesOrderInvoiceStates.NotInvoiced;
-                }
-                else
-                {
-                    this.SalesOrderInvoiceState = salesOrderInvoiceStates.PartiallyInvoiced;
-                }
+        //        // SalesOrder Invoice State
+        //        if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.Invoiced))
+        //        {
+        //            this.SalesOrderInvoiceState = salesOrderInvoiceStates.Invoiced;
+        //        }
+        //        else if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.NotInvoiced))
+        //        {
+        //            this.SalesOrderInvoiceState = salesOrderInvoiceStates.NotInvoiced;
+        //        }
+        //        else
+        //        {
+        //            this.SalesOrderInvoiceState = salesOrderInvoiceStates.PartiallyInvoiced;
+        //        }
 
-                // SalesOrder OrderState
-                if (this.SalesOrderShipmentState.Shipped && this.SalesOrderInvoiceState.Invoiced)
-                {
-                    this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Completed;
-                }
+        //        // SalesOrder OrderState
+        //        if (this.SalesOrderShipmentState.Shipped && this.SalesOrderInvoiceState.Invoiced)
+        //        {
+        //            this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Completed;
+        //        }
 
-                if (this.SalesOrderState.IsCompleted && this.SalesOrderPaymentState.Paid)
-                {
-                    this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Finished;
-                }
-            }
+        //        if (this.SalesOrderState.IsCompleted && this.SalesOrderPaymentState.Paid)
+        //        {
+        //            this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Finished;
+        //        }
+        //    }
 
-            // TODO: Move to versioning
-            this.PreviousBillToCustomer = this.BillToCustomer;
-            this.PreviousShipToCustomer = this.ShipToCustomer;
+        //    // TODO: Move to versioning
+        //    this.PreviousBillToCustomer = this.BillToCustomer;
+        //    this.PreviousShipToCustomer = this.ShipToCustomer;
 
-            var singleton = session.GetSingleton();
+        //    var singleton = session.GetSingleton();
 
-            this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+        //    this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
 
-            this.ResetPrintDocument();
+        //    this.ResetPrintDocument();
 
-            // CanShip
-            if (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).InProcess))
-            {
-                var somethingToShip = false;
-                var allItemsAvailable = true;
+        //    // CanShip
+        //    if (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).InProcess))
+        //    {
+        //        var somethingToShip = false;
+        //        var allItemsAvailable = true;
 
-                foreach (var salesOrderItem1 in validOrderItems)
-                {
-                    if (!this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping != salesOrderItem1.QuantityOrdered)
-                    {
-                        allItemsAvailable = false;
-                        break;
-                    }
+        //        foreach (var salesOrderItem1 in validOrderItems)
+        //        {
+        //            if (!this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping != salesOrderItem1.QuantityOrdered)
+        //            {
+        //                allItemsAvailable = false;
+        //                break;
+        //            }
 
-                    if (this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping > 0)
-                    {
-                        somethingToShip = true;
-                    }
-                }
+        //            if (this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping > 0)
+        //            {
+        //                somethingToShip = true;
+        //            }
+        //        }
 
-                this.CanShip = (!this.PartiallyShip && allItemsAvailable) || somethingToShip;
-            }
-            else
-            {
-                this.CanShip = false;
-            }
+        //        this.CanShip = (!this.PartiallyShip && allItemsAvailable) || somethingToShip;
+        //    }
+        //    else
+        //    {
+        //        this.CanShip = false;
+        //    }
 
-            // CanInvoice
-            if (this.SalesOrderState.IsInProcess && object.Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForOrderItems))
-            {
-                this.CanInvoice = false;
+        //    // CanInvoice
+        //    if (this.SalesOrderState.IsInProcess && object.Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForOrderItems))
+        //    {
+        //        this.CanInvoice = false;
 
-                foreach (var orderItem2 in validOrderItems)
-                {
-                    var amountAlreadyInvoiced1 = orderItem2.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
+        //        foreach (var orderItem2 in validOrderItems)
+        //        {
+        //            var amountAlreadyInvoiced1 = orderItem2.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
 
-                    var leftToInvoice1 = (orderItem2.QuantityOrdered * orderItem2.UnitPrice) - amountAlreadyInvoiced1;
+        //            var leftToInvoice1 = (orderItem2.QuantityOrdered * orderItem2.UnitPrice) - amountAlreadyInvoiced1;
 
-                    if (leftToInvoice1 > 0)
-                    {
-                        this.CanInvoice = true;
-                    }
-                }
-            }
-            else
-            {
-                this.CanInvoice = false;
-            }
+        //            if (leftToInvoice1 > 0)
+        //            {
+        //                this.CanInvoice = true;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        this.CanInvoice = false;
+        //    }
 
-            if (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).InProcess) &&
-                Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForShipmentItems))
-            {
-                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice, Operations.Execute));
-            }
+        //    if (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).InProcess) &&
+        //        Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForShipmentItems))
+        //    {
+        //        this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice, Operations.Execute));
+        //    }
 
-            if (this.CanShip && this.Store.AutoGenerateCustomerShipment)
-            {
-                this.Ship();
-            }
+        //    if (this.CanShip && this.Store.AutoGenerateCustomerShipment)
+        //    {
+        //        this.Ship();
+        //    }
 
-            if (this.SalesOrderState.IsInProcess
-                && (!this.ExistLastSalesOrderState || !this.LastSalesOrderState.IsInProcess)
-                && this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).SalesOrderAccept))
-            {
-                foreach (SalesOrderItem item in this.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
-                {
-                    if (item.ExistNextSerialisedItemAvailability)
-                    {
-                        item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
+        //    if (this.SalesOrderState.IsInProcess
+        //        && (!this.ExistLastSalesOrderState || !this.LastSalesOrderState.IsInProcess)
+        //        && this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).SalesOrderAccept))
+        //    {
+        //        foreach (SalesOrderItem item in this.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
+        //        {
+        //            if (item.ExistNextSerialisedItemAvailability)
+        //            {
+        //                item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
 
-                        if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(this.Session()).Sold))
-                        {
-                            item.SerialisedItem.OwnedBy = this.ShipToCustomer;
-                            item.SerialisedItem.Ownership = new Ownerships(this.Session()).ThirdParty;
-                        }
-                    }
+        //                if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(this.Session()).Sold))
+        //                {
+        //                    item.SerialisedItem.OwnedBy = this.ShipToCustomer;
+        //                    item.SerialisedItem.Ownership = new Ownerships(this.Session()).ThirdParty;
+        //                }
+        //            }
 
-                    item.SerialisedItem.AvailableForSale = false;
-                }
-            }
+        //            item.SerialisedItem.AvailableForSale = false;
+        //        }
+        //    }
 
-            this.Sync(derivation, validOrderItems);
-        }
+        //    this.Sync(derivation, validOrderItems);
+        //}
 
-        public void BaseOnPostDerive(ObjectOnPostDerive method)
-        {
-            var derivation = method.Derivation;
+        //public void BaseOnPostDerive(ObjectOnPostDerive method)
+        //{
+        //    var derivation = method.Derivation;
 
-            if (this.CanShip)
-            {
-                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship, Operations.Execute));
-            }
-            else
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship, Operations.Execute));
-            }
+        //    if (this.CanShip)
+        //    {
+        //        this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship, Operations.Execute));
+        //    }
+        //    else
+        //    {
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship, Operations.Execute));
+        //    }
 
-            if (this.CanInvoice)
-            {
-                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice, Operations.Execute));
-            }
-            else
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice, Operations.Execute));
-            }
+        //    if (this.CanInvoice)
+        //    {
+        //        this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice, Operations.Execute));
+        //    }
+        //    else
+        //    {
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice, Operations.Execute));
+        //    }
 
-            if (!this.SalesOrderInvoiceState.NotInvoiced || !this.SalesOrderShipmentState.NotShipped)
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.SetReadyForPosting, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Post, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reopen, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Approve, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Hold, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Continue, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Accept, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Complete, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reject, Operations.Execute));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Cancel, Operations.Execute));
+        //    if (!this.SalesOrderInvoiceState.NotInvoiced || !this.SalesOrderShipmentState.NotShipped)
+        //    {
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.SetReadyForPosting, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Post, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reopen, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Approve, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Hold, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Continue, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Accept, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Complete, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reject, Operations.Execute));
+        //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Cancel, Operations.Execute));
 
-                var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+        //        var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
 
-                foreach (Permission permission in this.Session().Extent<Permission>())
-                {
-                    if (permission.ConcreteClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
-                    {
-                        deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
-                    }
-                }
+        //        foreach (Permission permission in this.Session().Extent<Permission>())
+        //        {
+        //            if (permission.ConcreteClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
+        //            {
+        //                deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+        //            }
+        //        }
 
-                foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-                {
-                    this.AddDeniedPermission(keyValuePair.Value);
-                }
-            }
+        //        foreach (var keyValuePair in deniablePermissionByOperandTypeId)
+        //        {
+        //            this.AddDeniedPermission(keyValuePair.Value);
+        //        }
+        //    }
 
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+        //    var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+        //    if (this.IsDeletable)
+        //    {
+        //        this.RemoveDeniedPermission(deletePermission);
+        //    }
+        //    else
+        //    {
+        //        this.AddDeniedPermission(deletePermission);
+        //    }
 
-            if (this.HasChangedStates())
-            {
-                derivation.Mark(this);
-            }
-        }
+        //    if (this.HasChangedStates())
+        //    {
+        //        derivation.Mark(this);
+        //    }
+        //}
 
         public void BaseDelete(SalesOrderDelete method)
         {
@@ -890,185 +890,185 @@ namespace Allors.Domain
             return addresses;
         }
 
-        private void Sync(IDerivation derivation, SalesOrderItem[] validOrderItems)
-        {
-            // Second run to calculate price (because of order value break)
-            foreach (var salesOrderItem in validOrderItems)
-            {
-                foreach (SalesOrderItem featureItem in salesOrderItem.OrderedWithFeatures)
-                {
-                    featureItem.SyncPrices(derivation, this);
-                }
+        //private void Sync(IDerivation derivation, SalesOrderItem[] validOrderItems)
+        //{
+        //    // Second run to calculate price (because of order value break)
+        //    foreach (var salesOrderItem in validOrderItems)
+        //    {
+        //        foreach (SalesOrderItem featureItem in salesOrderItem.OrderedWithFeatures)
+        //        {
+        //            featureItem.SyncPrices(derivation, this);
+        //        }
 
-                salesOrderItem.Sync(this);
-                salesOrderItem.SyncPrices(derivation, this);
-            }
+        //        salesOrderItem.Sync(this);
+        //        salesOrderItem.SyncPrices(derivation, this);
+        //    }
 
-            // Calculate Totals
-            this.TotalBasePrice = 0;
-            this.TotalDiscount = 0;
-            this.TotalSurcharge = 0;
-            this.TotalExVat = 0;
-            this.TotalFee = 0;
-            this.TotalShippingAndHandling = 0;
-            this.TotalExtraCharge = 0;
-            this.TotalVat = 0;
-            this.TotalIrpf = 0;
-            this.TotalIncVat = 0;
-            this.TotalListPrice = 0;
-            this.GrandTotal = 0;
+        //    // Calculate Totals
+        //    this.TotalBasePrice = 0;
+        //    this.TotalDiscount = 0;
+        //    this.TotalSurcharge = 0;
+        //    this.TotalExVat = 0;
+        //    this.TotalFee = 0;
+        //    this.TotalShippingAndHandling = 0;
+        //    this.TotalExtraCharge = 0;
+        //    this.TotalVat = 0;
+        //    this.TotalIrpf = 0;
+        //    this.TotalIncVat = 0;
+        //    this.TotalListPrice = 0;
+        //    this.GrandTotal = 0;
 
-            foreach (var item in validOrderItems)
-            {
-                if (!item.ExistSalesOrderItemWhereOrderedWithFeature)
-                {
-                    this.TotalBasePrice += item.TotalBasePrice;
-                    this.TotalDiscount += item.TotalDiscount;
-                    this.TotalSurcharge += item.TotalSurcharge;
-                    this.TotalExVat += item.TotalExVat;
-                    this.TotalVat += item.TotalVat;
-                    this.TotalIrpf += item.TotalIrpf;
-                    this.TotalIncVat += item.TotalIncVat;
-                    this.TotalListPrice += item.TotalExVat;
-                    this.GrandTotal += item.GrandTotal;
-                }
-            }
+        //    foreach (var item in validOrderItems)
+        //    {
+        //        if (!item.ExistSalesOrderItemWhereOrderedWithFeature)
+        //        {
+        //            this.TotalBasePrice += item.TotalBasePrice;
+        //            this.TotalDiscount += item.TotalDiscount;
+        //            this.TotalSurcharge += item.TotalSurcharge;
+        //            this.TotalExVat += item.TotalExVat;
+        //            this.TotalVat += item.TotalVat;
+        //            this.TotalIrpf += item.TotalIrpf;
+        //            this.TotalIncVat += item.TotalIncVat;
+        //            this.TotalListPrice += item.TotalExVat;
+        //            this.GrandTotal += item.GrandTotal;
+        //        }
+        //    }
 
-            var discount = 0M;
-            var discountVat = 0M;
-            var discountIrpf = 0M;
-            var surcharge = 0M;
-            var surchargeVat = 0M;
-            var surchargeIrpf = 0M;
-            var fee = 0M;
-            var feeVat = 0M;
-            var feeIrpf = 0M;
-            var shipping = 0M;
-            var shippingVat = 0M;
-            var shippingIrpf = 0M;
-            var miscellaneous = 0M;
-            var miscellaneousVat = 0M;
-            var miscellaneousIrpf = 0M;
+        //    var discount = 0M;
+        //    var discountVat = 0M;
+        //    var discountIrpf = 0M;
+        //    var surcharge = 0M;
+        //    var surchargeVat = 0M;
+        //    var surchargeIrpf = 0M;
+        //    var fee = 0M;
+        //    var feeVat = 0M;
+        //    var feeIrpf = 0M;
+        //    var shipping = 0M;
+        //    var shippingVat = 0M;
+        //    var shippingIrpf = 0M;
+        //    var miscellaneous = 0M;
+        //    var miscellaneousVat = 0M;
+        //    var miscellaneousIrpf = 0M;
 
-            foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
-            {
-                if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
-                {
-                    discount = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                    orderAdjustment.Amount ?? 0;
+        //    foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+        //    {
+        //        if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
+        //        {
+        //            discount = orderAdjustment.Percentage.HasValue ?
+        //                            Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+        //                            orderAdjustment.Amount ?? 0;
 
-                    this.TotalDiscount += discount;
+        //            this.TotalDiscount += discount;
 
-                    if (this.ExistVatRegime)
-                    {
-                        discountVat = Math.Round(discount * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
+        //            if (this.ExistVatRegime)
+        //            {
+        //                discountVat = Math.Round(discount * this.VatRegime.VatRate.Rate / 100, 2);
+        //            }
 
-                    if (this.ExistIrpfRegime)
-                    {
-                        discountIrpf = Math.Round(discount * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
+        //            if (this.ExistIrpfRegime)
+        //            {
+        //                discountIrpf = Math.Round(discount * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+        //            }
+        //        }
 
-                if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
-                {
-                    surcharge = orderAdjustment.Percentage.HasValue ?
-                                        Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                        orderAdjustment.Amount ?? 0;
+        //        if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
+        //        {
+        //            surcharge = orderAdjustment.Percentage.HasValue ?
+        //                                Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+        //                                orderAdjustment.Amount ?? 0;
 
-                    this.TotalSurcharge += surcharge;
+        //            this.TotalSurcharge += surcharge;
 
-                    if (this.ExistVatRegime)
-                    {
-                        surchargeVat = Math.Round(surcharge * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
+        //            if (this.ExistVatRegime)
+        //            {
+        //                surchargeVat = Math.Round(surcharge * this.VatRegime.VatRate.Rate / 100, 2);
+        //            }
 
-                    if (this.ExistIrpfRegime)
-                    {
-                        surchargeIrpf = Math.Round(surcharge * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
+        //            if (this.ExistIrpfRegime)
+        //            {
+        //                surchargeIrpf = Math.Round(surcharge * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+        //            }
+        //        }
 
-                if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
-                {
-                    fee = orderAdjustment.Percentage.HasValue ?
-                                Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                orderAdjustment.Amount ?? 0;
+        //        if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
+        //        {
+        //            fee = orderAdjustment.Percentage.HasValue ?
+        //                        Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+        //                        orderAdjustment.Amount ?? 0;
 
-                    this.TotalFee += fee;
+        //            this.TotalFee += fee;
 
-                    if (this.ExistVatRegime)
-                    {
-                        feeVat = Math.Round(fee * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
+        //            if (this.ExistVatRegime)
+        //            {
+        //                feeVat = Math.Round(fee * this.VatRegime.VatRate.Rate / 100, 2);
+        //            }
 
-                    if (this.ExistIrpfRegime)
-                    {
-                        feeIrpf = Math.Round(fee * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
+        //            if (this.ExistIrpfRegime)
+        //            {
+        //                feeIrpf = Math.Round(fee * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+        //            }
+        //        }
 
-                if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
-                {
-                    shipping = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                    orderAdjustment.Amount ?? 0;
+        //        if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
+        //        {
+        //            shipping = orderAdjustment.Percentage.HasValue ?
+        //                            Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+        //                            orderAdjustment.Amount ?? 0;
 
-                    this.TotalShippingAndHandling += shipping;
+        //            this.TotalShippingAndHandling += shipping;
 
-                    if (this.ExistVatRegime)
-                    {
-                        shippingVat = Math.Round(shipping * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
+        //            if (this.ExistVatRegime)
+        //            {
+        //                shippingVat = Math.Round(shipping * this.VatRegime.VatRate.Rate / 100, 2);
+        //            }
 
-                    if (this.ExistIrpfRegime)
-                    {
-                        shippingIrpf = Math.Round(shipping * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
+        //            if (this.ExistIrpfRegime)
+        //            {
+        //                shippingIrpf = Math.Round(shipping * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+        //            }
+        //        }
 
-                if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
-                {
-                    miscellaneous = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                    orderAdjustment.Amount ?? 0;
+        //        if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
+        //        {
+        //            miscellaneous = orderAdjustment.Percentage.HasValue ?
+        //                            Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+        //                            orderAdjustment.Amount ?? 0;
 
-                    this.TotalExtraCharge += miscellaneous;
+        //            this.TotalExtraCharge += miscellaneous;
 
-                    if (this.ExistVatRegime)
-                    {
-                        miscellaneousVat = Math.Round(miscellaneous * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
+        //            if (this.ExistVatRegime)
+        //            {
+        //                miscellaneousVat = Math.Round(miscellaneous * this.VatRegime.VatRate.Rate / 100, 2);
+        //            }
 
-                    if (this.ExistIrpfRegime)
-                    {
-                        miscellaneousIrpf = Math.Round(miscellaneous * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
-            }
+        //            if (this.ExistIrpfRegime)
+        //            {
+        //                miscellaneousIrpf = Math.Round(miscellaneous * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+        //            }
+        //        }
+        //    }
 
-            this.TotalExtraCharge = fee + shipping + miscellaneous;
+        //    this.TotalExtraCharge = fee + shipping + miscellaneous;
 
-            this.TotalExVat = this.TotalExVat - discount + surcharge + fee + shipping + miscellaneous;
-            this.TotalVat = this.TotalVat - discountVat + surchargeVat + feeVat + shippingVat + miscellaneousVat;
-            this.TotalIncVat = this.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
-            this.TotalIrpf = this.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
-            this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
+        //    this.TotalExVat = this.TotalExVat - discount + surcharge + fee + shipping + miscellaneous;
+        //    this.TotalVat = this.TotalVat - discountVat + surchargeVat + feeVat + shippingVat + miscellaneousVat;
+        //    this.TotalIncVat = this.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
+        //    this.TotalIrpf = this.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
+        //    this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
 
-            //// Only take into account items for which there is data at the item level.
-            //// Skip negative sales.
-            decimal totalUnitBasePrice = 0;
-            decimal totalListPrice = 0;
+        //    //// Only take into account items for which there is data at the item level.
+        //    //// Skip negative sales.
+        //    decimal totalUnitBasePrice = 0;
+        //    decimal totalListPrice = 0;
 
-            foreach (var item1 in validOrderItems)
-            {
-                if (item1.TotalExVat > 0)
-                {
-                    totalUnitBasePrice += item1.UnitBasePrice;
-                    totalListPrice += item1.UnitPrice;
-                }
-            }
-        }
+        //    foreach (var item1 in validOrderItems)
+        //    {
+        //        if (item1.TotalExVat > 0)
+        //        {
+        //            totalUnitBasePrice += item1.UnitBasePrice;
+        //            totalListPrice += item1.UnitPrice;
+        //        }
+        //    }
+        //}
     }
 }
