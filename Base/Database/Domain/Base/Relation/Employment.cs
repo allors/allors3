@@ -11,13 +11,13 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.Mark(this.Employer);
-                iteration.Mark(this.Employee);
-            }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.Mark(this.Employer);
+            //    iteration.Mark(this.Employee);
+            //}
         }
 
         public void BaseOnInit(ObjectOnInit method)
