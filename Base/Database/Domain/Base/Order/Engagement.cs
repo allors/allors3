@@ -9,15 +9,15 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            if (!this.ExistBillToContactMechanism && this.ExistBillToParty)
-            {
-                this.BillToContactMechanism = this.BillToParty.BillingAddress;
-            }
+            //if (!this.ExistBillToContactMechanism && this.ExistBillToParty)
+            //{
+            //    this.BillToContactMechanism = this.BillToParty.BillingAddress;
+            //}
 
-            if (!this.ExistPlacingContactMechanism && this.ExistPlacingParty)
-            {
-                this.PlacingContactMechanism = this.PlacingParty.OrderAddress;
-            }
+            //if (!this.ExistPlacingContactMechanism && this.ExistPlacingParty)
+            //{
+            //    this.PlacingContactMechanism = this.PlacingParty.OrderAddress;
+            //}
         }
     }
 }
