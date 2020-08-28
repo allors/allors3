@@ -44,57 +44,57 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this.PartWhereSerialisedItem, this);
-                iteration.Mark(this.PartWhereSerialisedItem);
-            }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.AddDependency(this.PartWhereSerialisedItem, this);
+            //    iteration.Mark(this.PartWhereSerialisedItem);
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            derivation.Validation.AssertExistsAtMostOne(this, this.Meta.AcquiredDate, this.Meta.AcquisitionYear);
+            //derivation.Validation.AssertExistsAtMostOne(this, this.Meta.AcquiredDate, this.Meta.AcquisitionYear);
 
-            if (!this.ExistName && this.ExistPartWhereSerialisedItem)
-            {
-                this.Name = this.PartWhereSerialisedItem.Name;
-            }
+            //if (!this.ExistName && this.ExistPartWhereSerialisedItem)
+            //{
+            //    this.Name = this.PartWhereSerialisedItem.Name;
+            //}
 
-            this.PurchasePrice = this.AssignedPurchasePrice ?? this.PurchaseOrderItemsWhereSerialisedItem.LastOrDefault()?.UnitPrice ?? 0M;
-            this.SuppliedBy = this.AssignedSuppliedBy ?? this.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
+            //this.PurchasePrice = this.AssignedPurchasePrice ?? this.PurchaseOrderItemsWhereSerialisedItem.LastOrDefault()?.UnitPrice ?? 0M;
+            //this.SuppliedBy = this.AssignedSuppliedBy ?? this.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
 
-            this.SuppliedByPartyName = this.ExistSuppliedBy ? this.SuppliedBy.PartyName : string.Empty;
-            this.OwnedByPartyName = this.ExistOwnedBy ? this.OwnedBy.PartyName : string.Empty;
-            this.RentedByPartyName = this.ExistRentedBy ? this.RentedBy.PartyName : string.Empty;
-            this.OwnershipByOwnershipName = this.ExistOwnership ? this.Ownership.Name : string.Empty;
-            this.SerialisedItemAvailabilityName = this.ExistSerialisedItemAvailability ? this.SerialisedItemAvailability.Name : string.Empty;
+            //this.SuppliedByPartyName = this.ExistSuppliedBy ? this.SuppliedBy.PartyName : string.Empty;
+            //this.OwnedByPartyName = this.ExistOwnedBy ? this.OwnedBy.PartyName : string.Empty;
+            //this.RentedByPartyName = this.ExistRentedBy ? this.RentedBy.PartyName : string.Empty;
+            //this.OwnershipByOwnershipName = this.ExistOwnership ? this.Ownership.Name : string.Empty;
+            //this.SerialisedItemAvailabilityName = this.ExistSerialisedItemAvailability ? this.SerialisedItemAvailability.Name : string.Empty;
 
-            var doubles = this.PartWhereSerialisedItem?.SerialisedItems.Where(v =>
-                !string.IsNullOrEmpty(v.SerialNumber)
-                && v.SerialNumber != "."
-                && v.SerialNumber.Equals(this.SerialNumber)).ToArray();
-            if (doubles?.Length > 1)
-            {
-                derivation.Validation.AddError(this, this.Meta.SerialNumber, ErrorMessages.SameSerialNumber);
-            }
+            //var doubles = this.PartWhereSerialisedItem?.SerialisedItems.Where(v =>
+            //    !string.IsNullOrEmpty(v.SerialNumber)
+            //    && v.SerialNumber != "."
+            //    && v.SerialNumber.Equals(this.SerialNumber)).ToArray();
+            //if (doubles?.Length > 1)
+            //{
+            //    derivation.Validation.AddError(this, this.Meta.SerialNumber, ErrorMessages.SameSerialNumber);
+            //}
 
-            this.OnQuote = this.QuoteItemsWhereSerialisedItem.Any(v => v.QuoteItemState.IsDraft
-                        || v.QuoteItemState.IsSubmitted || v.QuoteItemState.IsApproved
-                        || v.QuoteItemState.IsAwaitingAcceptance || v.QuoteItemState.IsAccepted);
+            //this.OnQuote = this.QuoteItemsWhereSerialisedItem.Any(v => v.QuoteItemState.IsDraft
+            //            || v.QuoteItemState.IsSubmitted || v.QuoteItemState.IsApproved
+            //            || v.QuoteItemState.IsAwaitingAcceptance || v.QuoteItemState.IsAccepted);
 
-            this.OnSalesOrder = this.SalesOrderItemsWhereSerialisedItem.Any(v => v.SalesOrderItemState.IsProvisional
-                        || v.SalesOrderItemState.IsReadyForPosting || v.SalesOrderItemState.IsRequestsApproval
-                        || v.SalesOrderItemState.IsAwaitingAcceptance || v.SalesOrderItemState.IsOnHold || v.SalesOrderItemState.IsInProcess);
+            //this.OnSalesOrder = this.SalesOrderItemsWhereSerialisedItem.Any(v => v.SalesOrderItemState.IsProvisional
+            //            || v.SalesOrderItemState.IsReadyForPosting || v.SalesOrderItemState.IsRequestsApproval
+            //            || v.SalesOrderItemState.IsAwaitingAcceptance || v.SalesOrderItemState.IsOnHold || v.SalesOrderItemState.IsInProcess);
 
-            this.OnWorkEffort = this.WorkEffortFixedAssetAssignmentsWhereFixedAsset.Any(v => v.Assignment.WorkEffortState.IsCreated
-                        || v.Assignment.WorkEffortState.IsInProgress);
+            //this.OnWorkEffort = this.WorkEffortFixedAssetAssignmentsWhereFixedAsset.Any(v => v.Assignment.WorkEffortState.IsCreated
+            //            || v.Assignment.WorkEffortState.IsInProgress);
 
-            this.DeriveProductCharacteristics(derivation);
-            this.DeriveDisplayProductCategories();
+            //this.DeriveProductCharacteristics(derivation);
+            //this.DeriveDisplayProductCategories();
         }
 
         public void BaseDeriveDisplayProductCategories(SerialisedItemDeriveDisplayProductCategories method)
@@ -211,43 +211,43 @@ namespace Allors.Domain
             }
         }
 
-        private void DeriveProductCharacteristics(IDerivation derivation)
-        {
-            var characteristicsToDelete = this.SerialisedItemCharacteristics.ToList();
-            var part = this.PartWhereSerialisedItem;
+        //private void DeriveProductCharacteristics(IDerivation derivation)
+        //{
+        //    var characteristicsToDelete = this.SerialisedItemCharacteristics.ToList();
+        //    var part = this.PartWhereSerialisedItem;
 
-            if (this.ExistPartWhereSerialisedItem && part.ExistProductType)
-            {
-                foreach (SerialisedItemCharacteristicType characteristicType in part.ProductType.SerialisedItemCharacteristicTypes)
-                {
-                    var characteristic = this.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(v.SerialisedItemCharacteristicType, characteristicType));
-                    if (characteristic == null)
-                    {
-                        var newCharacteristic = new SerialisedItemCharacteristicBuilder(this.Strategy.Session)
-                            .WithSerialisedItemCharacteristicType(characteristicType).Build();
+        //    if (this.ExistPartWhereSerialisedItem && part.ExistProductType)
+        //    {
+        //        foreach (SerialisedItemCharacteristicType characteristicType in part.ProductType.SerialisedItemCharacteristicTypes)
+        //        {
+        //            var characteristic = this.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(v.SerialisedItemCharacteristicType, characteristicType));
+        //            if (characteristic == null)
+        //            {
+        //                var newCharacteristic = new SerialisedItemCharacteristicBuilder(this.Strategy.Session)
+        //                    .WithSerialisedItemCharacteristicType(characteristicType).Build();
 
-                        this.AddSerialisedItemCharacteristic(newCharacteristic);
+        //                this.AddSerialisedItemCharacteristic(newCharacteristic);
 
-                        var partCharacteristics = part.SerialisedItemCharacteristics;
-                        partCharacteristics.Filter.AddEquals(M.SerialisedItemCharacteristic.SerialisedItemCharacteristicType, characteristicType);
-                        var fromPart = partCharacteristics.FirstOrDefault();
+        //                var partCharacteristics = part.SerialisedItemCharacteristics;
+        //                partCharacteristics.Filter.AddEquals(M.SerialisedItemCharacteristic.SerialisedItemCharacteristicType, characteristicType);
+        //                var fromPart = partCharacteristics.FirstOrDefault();
 
-                        if (fromPart != null)
-                        {
-                            newCharacteristic.Value = fromPart.Value;
-                        }
-                    }
-                    else
-                    {
-                        characteristicsToDelete.Remove(characteristic);
-                    }
-                }
-            }
+        //                if (fromPart != null)
+        //                {
+        //                    newCharacteristic.Value = fromPart.Value;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                characteristicsToDelete.Remove(characteristic);
+        //            }
+        //        }
+        //    }
 
-            foreach (var characteristic in characteristicsToDelete)
-            {
-                this.RemoveSerialisedItemCharacteristic(characteristic);
-            }
-        }
+        //    foreach (var characteristic in characteristicsToDelete)
+        //    {
+        //        this.RemoveSerialisedItemCharacteristic(characteristic);
+        //    }
+        //}
     }
 }

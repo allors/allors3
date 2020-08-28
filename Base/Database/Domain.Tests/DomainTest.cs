@@ -96,6 +96,8 @@ namespace Allors
             database.OrderQuantityBreakRegisterDerivations();
             database.NonUnifiedGoodRegisterDerivations();
             database.StatementOfWorkRegisterDerivations();
+            database.SurchargeComponentRegisterDerivations();
+            database.SerialisedItemRegisterDerivations();
             database.QuoteItemRegisterDerivations();
             database.PurchaseOrderItemDerivations();
             database.PurchaseOrderApprovalLevel1RegisterDerivations();
