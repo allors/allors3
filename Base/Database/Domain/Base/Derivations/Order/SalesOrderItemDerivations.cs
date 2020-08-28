@@ -26,10 +26,14 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.SalesOrderItemState, out var changedSalesOrderState);
                 var salesOrdersWhereStateChanged = changedSalesOrderState?.Select(session.Instantiate).OfType<SalesOrderItem>();
 
+                changeSet.AssociationsByRoleType.TryGetValue(M.OrderShipment.Quantity, out var changedOrderShipments);
+                var orderShipmentsWhereQuantityChanged = changedOrderShipments?.Select(session.Instantiate).OfType<OrderShipment>();
 
+                var salesOrderItems = orderShipmentsWhereQuantityChanged?.Select(v => v.OrderItem);
 
                 var allPurchaseOrders = createdSalesOrderItem
-                    .Union(salesOrdersWhereStateChanged ?? empty);
+                    .Union(salesOrdersWhereStateChanged ?? empty)
+                    .Union(salesOrderItems?.OfType<SalesOrderItem>() ?? empty);
 
                 foreach (var salesOrderItem in allPurchaseOrders.Where(v => v != null))
                 {

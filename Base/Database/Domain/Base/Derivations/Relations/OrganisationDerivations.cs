@@ -20,6 +20,8 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.Employment.Employer, out var changedEmployer);
                 var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<Employment>();
 
+                var createdSupplierRelationship = changeSet.Created.Select(session.Instantiate).OfType<SupplierRelationship>();
+
                 foreach (var organisation in createdOrgaisations)
                 {
                     //var singleton = session.GetSingleton();
@@ -122,6 +124,12 @@ namespace Allors.Domain
 
                         DeriveActiveEmployees((Organisation)employment.Employer, now);
                     }
+                }
+
+                foreach (var supplierRelationship in createdSupplierRelationship)
+                {
+                    var organisation = supplierRelationship.InternalOrganisation as Organisation;
+                    organisation.DeriveRelationships();
                 }
 
                 static void DeriveActiveEmployees(Organisation organisation, DateTime now) => (organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer

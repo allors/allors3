@@ -22,10 +22,8 @@ namespace Allors.Domain
 
                 foreach (SupplierRelationship supplierRelationship in createdSupplierRelationship)
                 {
-
                     if (supplierRelationship.ExistSupplier)
                     {
-                        // HACK: DerivedRoles
                         var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
                         if (internalOrganisationDerivedRoles != null)
                         {

@@ -17,9 +17,17 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
+                var empty = Array.Empty<ShipmentItem>();
+
                 var createdShipmentItem = changeSet.Created.Select(session.Instantiate).OfType<ShipmentItem>();
 
-                foreach(var shipmentItem in createdShipmentItem)
+                changeSet.AssociationsByRoleType.TryGetValue(M.OrderShipment.Quantity, out var changedOrderShipments);
+                var orderShipmentsWhereQuantityChanged = changedOrderShipments?.Select(session.Instantiate).OfType<OrderShipment>();
+
+                var allPurchaseOrders = createdShipmentItem
+                    .Union(orderShipmentsWhereQuantityChanged?.Select(v => v.ShipmentItem) ?? empty);
+
+                foreach (var shipmentItem in allPurchaseOrders.Where(v => v != null))
                 {
                     if (shipmentItem.ExistSerialisedItem && !shipmentItem.ExistNextSerialisedItemAvailability)
                     {

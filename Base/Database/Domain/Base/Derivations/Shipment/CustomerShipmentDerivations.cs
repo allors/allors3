@@ -23,10 +23,10 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.CustomerShipment.ShipmentState.RoleType, out var changedCustomerShipmentState);
                 var ShipmentsWhereStateChanged = changedCustomerShipmentState?.Select(session.Instantiate).OfType<CustomerShipment>();
 
-                var allPurchaseOrders = createdCustomerShipments
+                var allCustomerShipments = createdCustomerShipments
                     .Union(ShipmentsWhereStateChanged ?? empty);
 
-                foreach (var customerShipment in allPurchaseOrders.Where(v => v != null))
+                foreach (var customerShipment in allCustomerShipments.Where(v => v != null))
                 {
                     if (!customerShipment.ExistShipmentNumber && customerShipment.ExistStore)
                     {
