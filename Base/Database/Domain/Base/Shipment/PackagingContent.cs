@@ -41,16 +41,16 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (this.ExistQuantity && this.ExistShipmentItem)
-            {
-                var maxQuantity = this.ShipmentItem.Quantity - this.ShipmentItem.QuantityShipped;
-                if (this.Quantity == 0 || this.Quantity > maxQuantity)
-                {
-                    derivation.Validation.AddError(this, M.PackagingContent.Quantity, ErrorMessages.PackagingContentMaximum);
-                }
-            }
+            //if (this.ExistQuantity && this.ExistShipmentItem)
+            //{
+            //    var maxQuantity = this.ShipmentItem.Quantity - this.ShipmentItem.QuantityShipped;
+            //    if (this.Quantity == 0 || this.Quantity > maxQuantity)
+            //    {
+            //        derivation.Validation.AddError(this, M.PackagingContent.Quantity, ErrorMessages.PackagingContentMaximum);
+            //    }
+            //}
         }
     }
 }

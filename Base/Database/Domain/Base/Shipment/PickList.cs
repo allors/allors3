@@ -99,32 +99,32 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (this.Store.IsImmediatelyPicked)
-            {
-                this.SetPicked();
+            //if (this.Store.IsImmediatelyPicked)
+            //{
+            //    this.SetPicked();
 
-                foreach (PickListItem pickListItem in this.PickListItems)
-                {
-                    foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
-                    {
-                        var shipment = itemIssuance.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
-                        var package = shipment?.ShipmentPackages.FirstOrDefault();
+            //    foreach (PickListItem pickListItem in this.PickListItems)
+            //    {
+            //        foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+            //        {
+            //            var shipment = itemIssuance.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
+            //            var package = shipment?.ShipmentPackages.FirstOrDefault();
 
-                        if (this.Store.AutoGenerateShipmentPackage
-                            && package != null
-                            && package.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)
-                        {
-                            package.AddPackagingContent(
-                                new PackagingContentBuilder(this.Strategy.Session)
-                                    .WithShipmentItem(itemIssuance.ShipmentItem)
-                                    .WithQuantity(itemIssuance.Quantity)
-                                    .Build());
-                        }
-                    }
-                }
-            }
+            //            if (this.Store.AutoGenerateShipmentPackage
+            //                && package != null
+            //                && package.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)
+            //            {
+            //                package.AddPackagingContent(
+            //                    new PackagingContentBuilder(this.Strategy.Session)
+            //                        .WithShipmentItem(itemIssuance.ShipmentItem)
+            //                        .WithQuantity(itemIssuance.Quantity)
+            //                        .Build());
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void BaseCancel(PickListCancel method) => this.PickListState = new PickListStates(this.Strategy.Session).Cancelled;

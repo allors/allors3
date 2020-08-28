@@ -90,6 +90,12 @@ namespace Allors
             database.ShipmentItemRegisterDerivations();
             database.ShipmentPackageRegisterDerivations();
             database.ShipmentValueRegisterDerivations();
+            database.PickListItemRegisterDerivations();
+            database.PickListRegisterDerivations();
+            database.PackagingContentRegisterDerivations();
+            database.OrderShipmentRegisterDerivations();
+            database.DropShipmentsRegisterDerivations();
+            database.CustomerShipmentRegisterDerivations();
             database.TransferRegisterDerivations();
             database.shipmentReceiptRegisterDerivations();
             database.CustomerReturnRegisterDerivations();
@@ -131,6 +137,7 @@ namespace Allors
             database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
             database.PassportRegisterDerivations();
+
 
 
             this.Session = database.CreateSession();
