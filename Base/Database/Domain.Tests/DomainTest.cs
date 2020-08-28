@@ -85,15 +85,22 @@ namespace Allors
         {
             database.Init();
 
-            database.QuoteItemRegisterDerivations();
-            database.PurchaseOrderItemDerivations();
-            database.PurchaseOrderApprovalLevel1RegisterDerivations();
-            database.PropasalRegisterDerivations();
-            database.ProductQuoteApprovalRegisterDerivations();
-            database.ProductQuoteRegisterDerivations();
-            database.OrderAdjustmentRegisterDerivations();
-            database.EngagementRegisterDerivations();
-            database.SalesOrderTransferRegisterDerivations();
+            database.QuoteExtensionsRegisterDerivations();
+            database.PurchaseOrderApprovalLevel2RegisterDerivations();
+            database.PurchaseReturnRegisterDerivations();
+            database.PurchaseShipmentRegisterDerivations();
+            database.ShipmentItemRegisterDerivations();
+            database.ShipmentPackageRegisterDerivations();
+            database.ShipmentValueRegisterDerivations();
+            database.PickListItemRegisterDerivations();
+            database.PickListRegisterDerivations();
+            database.PackagingContentRegisterDerivations();
+            database.OrderShipmentRegisterDerivations();
+            database.DropShipmentsRegisterDerivations();
+            database.CustomerShipmentRegisterDerivations();
+            database.TransferRegisterDerivations();
+            database.shipmentReceiptRegisterDerivations();
+            database.CustomerReturnRegisterDerivations();
             database.SalesOrderItemInventoryAssignmentRegisterDerivations();
             database.SalesOrderItemsRegisterDerivations();
             database.SalesOrderRegisterDerivations();
@@ -132,6 +139,7 @@ namespace Allors
             database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
             database.PassportRegisterDerivations();
+
 
 
             this.Session = database.CreateSession();

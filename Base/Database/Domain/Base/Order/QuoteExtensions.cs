@@ -20,41 +20,41 @@ namespace Allors.Domain
 
         public static void BaseOnDerive(this Quote @this, ObjectOnDerive method)
         {
-            var session = @this.Strategy.Session;
-            var derivation = method.Derivation;
+            //var session = @this.Strategy.Session;
+            //var derivation = method.Derivation;
 
-            if (!@this.ExistIssuer)
-            {
-                var internalOrganisations = new Organisations(session).InternalOrganisations();
+            //if (!@this.ExistIssuer)
+            //{
+            //    var internalOrganisations = new Organisations(session).InternalOrganisations();
 
-                if (internalOrganisations.Count() == 1)
-                {
-                    @this.Issuer = internalOrganisations.First();
-                }
-            }
+            //    if (internalOrganisations.Count() == 1)
+            //    {
+            //        @this.Issuer = internalOrganisations.First();
+            //    }
+            //}
 
-            if (!@this.ExistQuoteNumber && @this.ExistIssuer)
-            {
-                @this.QuoteNumber = @this.Issuer.NextQuoteNumber(session.Now().Year);
-                (@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
-            }
+            //if (!@this.ExistQuoteNumber && @this.ExistIssuer)
+            //{
+            //    @this.QuoteNumber = @this.Issuer.NextQuoteNumber(session.Now().Year);
+            //    (@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
+            //}
 
-            @this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
+            //@this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
 
-            foreach (QuoteItem quoteItem in @this.QuoteItems)
-            {
-                var quoteItemDerivedRoles = quoteItem;
+            //foreach (QuoteItem quoteItem in @this.QuoteItems)
+            //{
+            //    var quoteItemDerivedRoles = quoteItem;
 
-                quoteItemDerivedRoles.VatRegime = quoteItem.AssignedVatRegime ?? @this.VatRegime;
-                quoteItemDerivedRoles.VatRate = quoteItem.VatRegime?.VatRate;
+            //    quoteItemDerivedRoles.VatRegime = quoteItem.AssignedVatRegime ?? @this.VatRegime;
+            //    quoteItemDerivedRoles.VatRate = quoteItem.VatRegime?.VatRate;
 
-                quoteItemDerivedRoles.IrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.IrpfRegime;
-                quoteItemDerivedRoles.IrpfRate = quoteItem.IrpfRegime?.IrpfRate;
-            }
+            //    quoteItemDerivedRoles.IrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.IrpfRegime;
+            //    quoteItemDerivedRoles.IrpfRate = quoteItem.IrpfRegime?.IrpfRate;
+            //}
 
-            @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+            //@this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
 
-            @this.Sync(derivation);
+            //@this.Sync(derivation);
         }
 
         public static void BaseDelete(this Quote @this, DeletableDelete method)
@@ -193,7 +193,7 @@ namespace Allors.Domain
 
         private static void Sync(this Quote @this, IDerivation derivation)
         {
-            var QuoteDerivedRoles = @this;
+            //var QuoteDerivedRoles = @this;
         }
     }
 }
