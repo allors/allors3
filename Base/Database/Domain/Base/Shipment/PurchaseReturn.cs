@@ -26,28 +26,28 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (!this.ExistShipToAddress && this.ExistShipToParty)
-            {
-                this.ShipToAddress = this.ShipToParty.ShippingAddress;
-            }
+            //if (!this.ExistShipToAddress && this.ExistShipToParty)
+            //{
+            //    this.ShipToAddress = this.ShipToParty.ShippingAddress;
+            //}
 
-            if (!this.ExistShipFromAddress && this.ExistShipFromParty)
-            {
-                this.ShipFromAddress = this.ShipFromParty.ShippingAddress;
-            }
+            //if (!this.ExistShipFromAddress && this.ExistShipFromParty)
+            //{
+            //    this.ShipFromAddress = this.ShipFromParty.ShippingAddress;
+            //}
 
-            this.Sync(this.Session());
+            //this.Sync(this.Session());
         }
 
         private void Sync(ISession session)
         {
             // session.Prefetch(this.SyncPrefetch, this);
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-            {
-                shipmentItem.Sync(this);
-            }
+            //foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            //{
+            //    shipmentItem.Sync(this);
+            //}
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Allors.Domain
 
         public static void TransferRegisterDerivations(this IDatabase @this)
         {
-            @this.DomainDerivationById[new Guid("c61dccfa-3787-4307-a1d4-2723392971b2")] = new TransferCreationDerivation();
+            @this.DomainDerivationById[new Guid("59b2b160-b0bd-4c40-a7d3-f8a0ecf80731")] = new TransferCreationDerivation();
         }
     }
 }
