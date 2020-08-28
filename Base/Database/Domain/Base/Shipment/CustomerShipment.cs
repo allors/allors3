@@ -134,70 +134,70 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (!this.ExistShipmentNumber && this.ExistStore)
-            {
-                this.ShipmentNumber = this.Store.NextShipmentNumber();
-                this.SortableShipmentNumber = this.Session().GetSingleton().SortableNumber(this.Store.OutgoingShipmentNumberPrefix, this.ShipmentNumber, this.CreationDate.Value.Year.ToString());
-            }
+            //if (!this.ExistShipmentNumber && this.ExistStore)
+            //{
+            //    this.ShipmentNumber = this.Store.NextShipmentNumber();
+            //    this.SortableShipmentNumber = this.Session().GetSingleton().SortableNumber(this.Store.OutgoingShipmentNumberPrefix, this.ShipmentNumber, this.CreationDate.Value.Year.ToString());
+            //}
 
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            //var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-            if (!this.ExistShipFromParty && internalOrganisations.Count() == 1)
-            {
-                this.ShipFromParty = internalOrganisations.First();
-            }
+            //if (!this.ExistShipFromParty && internalOrganisations.Count() == 1)
+            //{
+            //    this.ShipFromParty = internalOrganisations.First();
+            //}
 
-            derivation.Validation.AssertExists(this, this.Meta.ShipToParty);
+            //derivation.Validation.AssertExists(this, this.Meta.ShipToParty);
 
-            if (!this.ExistShipToAddress && this.ExistShipToParty)
-            {
-                this.ShipToAddress = this.ShipToParty.ShippingAddress;
-            }
+            //if (!this.ExistShipToAddress && this.ExistShipToParty)
+            //{
+            //    this.ShipToAddress = this.ShipToParty.ShippingAddress;
+            //}
 
-            if (!this.ExistShipFromAddress)
-            {
-                this.ShipFromAddress = this.ShipFromParty?.ShippingAddress;
-            }
+            //if (!this.ExistShipFromAddress)
+            //{
+            //    this.ShipFromAddress = this.ShipFromParty?.ShippingAddress;
+            //}
 
-            if (!this.ExistShipFromFacility)
-            {
-                this.ShipFromFacility = ((Organisation)this.ShipFromParty)?.FacilitiesWhereOwner.FirstOrDefault();
-            }
+            //if (!this.ExistShipFromFacility)
+            //{
+            //    this.ShipFromFacility = ((Organisation)this.ShipFromParty)?.FacilitiesWhereOwner.FirstOrDefault();
+            //}
 
-            this.BaseOnDeriveShipmentValue(derivation);
-            this.BaseOnDeriveCurrentShipmentState(derivation);
+            //this.BaseOnDeriveShipmentValue(derivation);
+            //this.BaseOnDeriveCurrentShipmentState(derivation);
 
-            if (this.CanShip && this.Store.IsAutomaticallyShipped)
-            {
-                this.Ship();
-            }
+            //if (this.CanShip && this.Store.IsAutomaticallyShipped)
+            //{
+            //    this.Ship();
+            //}
 
-            this.BaseOnDeriveCurrentObjectState(derivation);
+            //this.BaseOnDeriveCurrentObjectState(derivation);
 
-            if (this.ShipmentState.IsShipped
-                && (!this.ExistLastShipmentState || !this.LastShipmentState.IsShipped))
-            {
-                foreach (var item in this.ShipmentItems.Where(v => v.ExistSerialisedItem))
-                {
-                    if (item.ExistNextSerialisedItemAvailability)
-                    {
-                        item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
+            //if (this.ShipmentState.IsShipped
+            //    && (!this.ExistLastShipmentState || !this.LastShipmentState.IsShipped))
+            //{
+            //    foreach (var item in this.ShipmentItems.Where(v => v.ExistSerialisedItem))
+            //    {
+            //        if (item.ExistNextSerialisedItemAvailability)
+            //        {
+            //            item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
 
-                        if ((this.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).CustomerShipmentShip) == true
-                            && item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(this.Session()).Sold))
-                        {
-                            item.SerialisedItem.OwnedBy = this.ShipToParty;
-                            item.SerialisedItem.Ownership = new Ownerships(this.Session()).ThirdParty;
-                        }
-                    }
+            //            if ((this.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).CustomerShipmentShip) == true
+            //                && item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(this.Session()).Sold))
+            //            {
+            //                item.SerialisedItem.OwnedBy = this.ShipToParty;
+            //                item.SerialisedItem.Ownership = new Ownerships(this.Session()).ThirdParty;
+            //            }
+            //        }
 
-                    item.SerialisedItem.AvailableForSale = false;
-                }
-            }
+            //        item.SerialisedItem.AvailableForSale = false;
+            //    }
+            //}
 
-            this.Sync(this.Session());
+            //this.Sync(this.Session());
         }
 
         public void BaseCancel(CustomerShipmentCancel method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).Cancelled;
@@ -588,14 +588,14 @@ namespace Allors.Domain
             }
         }
 
-        private void Sync(ISession session)
-        {
-            // session.Prefetch(this.SyncPrefetch, this);
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-            {
-                shipmentItem.Sync(this);
-            }
-        }
+        //private void Sync(ISession session)
+        //{
+        //    // session.Prefetch(this.SyncPrefetch, this);
+        //    foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+        //    {
+        //        shipmentItem.Sync(this);
+        //    }
+        //}
 
         public void BaseOnDeriveQuantityDecreased(ShipmentItem shipmentItem, SalesOrderItem orderItem, decimal correction)
         {
