@@ -44,8 +44,8 @@ namespace Allors.Domain
             //            iteration.Mark(removedParent);
             //        }
             //    }
-            }
         }
+
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
