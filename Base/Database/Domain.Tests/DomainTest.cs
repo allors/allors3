@@ -85,6 +85,15 @@ namespace Allors
         {
             database.Init();
 
+            database.QuoteItemRegisterDerivations();
+            database.PurchaseOrderItemDerivations();
+            database.PurchaseOrderApprovalLevel1RegisterDerivations();
+            database.PropasalRegisterDerivations();
+            database.ProductQuoteApprovalRegisterDerivations();
+            database.ProductQuoteRegisterDerivations();
+            database.OrderAdjustmentRegisterDerivations();
+            database.EngagementRegisterDerivations();
+            database.SalesOrderTransferRegisterDerivations();
             database.PurchaseOrderRegisterDerivations();
             database.QuoteExtensionsRegisterDerivations();
             database.PurchaseOrderApprovalLevel2RegisterDerivations();
@@ -140,8 +149,6 @@ namespace Allors
             database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
             database.PassportRegisterDerivations();
-
-
 
             this.Session = database.CreateSession();
 
