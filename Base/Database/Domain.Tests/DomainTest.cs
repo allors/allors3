@@ -85,6 +85,8 @@ namespace Allors
         {
             database.Init();
 
+            database.SurchargeComponentRegisterDerivations();
+            database.SerialisedItemRegisterDerivations();
             database.QuoteItemRegisterDerivations();
             database.PurchaseOrderItemDerivations();
             database.PurchaseOrderApprovalLevel1RegisterDerivations();
