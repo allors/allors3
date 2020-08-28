@@ -33,36 +33,36 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            this.BaseOnDeriveSequenceNumber(derivation);
+            //this.BaseOnDeriveSequenceNumber(derivation);
 
-            if (!this.ExistDocuments)
-            {
-                var name =
-                    $"Package {(this.ExistSequenceNumber ? this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
-                this.AddDocument(new PackagingSlipBuilder(this.Strategy.Session).WithName(name).Build());
-            }
+            //if (!this.ExistDocuments)
+            //{
+            //    var name =
+            //        $"Package {(this.ExistSequenceNumber ? this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
+            //    this.AddDocument(new PackagingSlipBuilder(this.Strategy.Session).WithName(name).Build());
+            //}
         }
 
-        public void BaseOnDeriveSequenceNumber(IDerivation derivation)
-        {
-            var highestNumber = 0;
-            if (this.ExistShipmentWhereShipmentPackage)
-            {
-                foreach (ShipmentPackage shipmentPackage in this.ShipmentWhereShipmentPackage.ShipmentPackages)
-                {
-                    if (shipmentPackage.ExistSequenceNumber && shipmentPackage.SequenceNumber > highestNumber)
-                    {
-                        highestNumber = shipmentPackage.SequenceNumber;
-                    }
-                }
+        //public void BaseOnDeriveSequenceNumber(IDerivation derivation)
+        //{
+        //    var highestNumber = 0;
+        //    if (this.ExistShipmentWhereShipmentPackage)
+        //    {
+        //        foreach (ShipmentPackage shipmentPackage in this.ShipmentWhereShipmentPackage.ShipmentPackages)
+        //        {
+        //            if (shipmentPackage.ExistSequenceNumber && shipmentPackage.SequenceNumber > highestNumber)
+        //            {
+        //                highestNumber = shipmentPackage.SequenceNumber;
+        //            }
+        //        }
 
-                if (!this.ExistSequenceNumber || this.SequenceNumber == 0)
-                {
-                    this.SequenceNumber = highestNumber + 1;
-                }
-            }
-        }
+        //        if (!this.ExistSequenceNumber || this.SequenceNumber == 0)
+        //        {
+        //            this.SequenceNumber = highestNumber + 1;
+        //        }
+        //    }
+        //}
     }
 }
