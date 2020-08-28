@@ -85,6 +85,9 @@ namespace Allors.Domain
                             new CommunicationTaskBuilder(communicationEventExtension.Strategy.Session).WithCommunicationEvent(communicationEventExtension).Build();
                         }
                     }
+
+                    communicationEventExtension.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+                    communicationEventExtension.AddSecurityToken(communicationEventExtension.Owner?.OwnerSecurityToken);
                 }
 
             }
