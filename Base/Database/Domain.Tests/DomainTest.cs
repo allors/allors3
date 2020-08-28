@@ -85,6 +85,7 @@ namespace Allors
         {
             database.Init();
 
+            database.PurchaseOrderRegisterDerivations();
             database.PickListItemRegisterDerivations();
             database.PickListRegisterDerivations();
             database.PackagingContentRegisterDerivations();
