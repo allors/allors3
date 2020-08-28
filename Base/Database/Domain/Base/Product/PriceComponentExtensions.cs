@@ -11,14 +11,14 @@ namespace Allors.Domain
     {
         public static void BaseOnDerive(this PriceComponent @this, ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            //var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-            if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
-            {
-                @this.PricedBy = internalOrganisations.First();
-            }
+            //if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
+            //{
+            //    @this.PricedBy = internalOrganisations.First();
+            //}
         }
     }
 }

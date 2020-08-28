@@ -11,50 +11,50 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.Part != null)
-                {
-                    iteration.AddDependency(this.Part, this);
-                    iteration.Mark(this.Part);
-                }
-            }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    if (this.Part != null)
+            //    {
+            //        iteration.AddDependency(this.Part, this);
+            //        iteration.Mark(this.Part);
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (!this.ExistCurrency)
-            {
-                this.Currency = this.Session().GetSingleton().Settings.PreferredCurrency;
-            }
+            //if (!this.ExistCurrency)
+            //{
+            //    this.Currency = this.Session().GetSingleton().Settings.PreferredCurrency;
+            //}
 
-            this.BaseOnDeriveInventoryItem(derivation);
+            //this.BaseOnDeriveInventoryItem(derivation);
         }
 
-        public void BaseOnDeriveInventoryItem(IDerivation derivation)
-        {
-            if (this.ExistPart && this.Part.ExistInventoryItemKind &&
-                this.Part.InventoryItemKind.Equals(new InventoryItemKinds(this.Strategy.Session).NonSerialised))
-            {
-                var warehouses = this.Strategy.Session.Extent<Facility>();
-                warehouses.Filter.AddEquals(M.Facility.FacilityType, new FacilityTypes(this.Session()).Warehouse);
+        //public void BaseOnDeriveInventoryItem(IDerivation derivation)
+        //{
+        //    if (this.ExistPart && this.Part.ExistInventoryItemKind &&
+        //        this.Part.InventoryItemKind.Equals(new InventoryItemKinds(this.Strategy.Session).NonSerialised))
+        //    {
+        //        var warehouses = this.Strategy.Session.Extent<Facility>();
+        //        warehouses.Filter.AddEquals(M.Facility.FacilityType, new FacilityTypes(this.Session()).Warehouse);
 
-                foreach (Facility facility in warehouses)
-                {
-                    var inventoryItems = this.Part.InventoryItemsWherePart;
-                    inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, facility);
-                    var inventoryItem = inventoryItems.First;
+        //        foreach (Facility facility in warehouses)
+        //        {
+        //            var inventoryItems = this.Part.InventoryItemsWherePart;
+        //            inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, facility);
+        //            var inventoryItem = inventoryItems.First;
 
-                    if (inventoryItem == null)
-                    {
-                        new NonSerialisedInventoryItemBuilder(this.Strategy.Session).WithPart(this.Part).WithFacility(facility).Build();
-                    }
-                }
-            }
-        }
+        //            if (inventoryItem == null)
+        //            {
+        //                new NonSerialisedInventoryItemBuilder(this.Strategy.Session).WithPart(this.Part).WithFacility(facility).Build();
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

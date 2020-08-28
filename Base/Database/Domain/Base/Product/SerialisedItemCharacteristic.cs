@@ -11,39 +11,39 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (this.SerialisedItemCharacteristicType.ExistUnitOfMeasure)
-            {
-                this.Sync();
-            }
+            //if (this.SerialisedItemCharacteristicType.ExistUnitOfMeasure)
+            //{
+            //    this.Sync();
+            //}
         }
 
         private void Sync()
         {
-            var existingLocalisedtexts = this.LocalisedValues.ToDictionary(d => d.Locale);
+            //var existingLocalisedtexts = this.LocalisedValues.ToDictionary(d => d.Locale);
 
-            foreach (Locale locale in this.Strategy.Session.GetSingleton().AdditionalLocales)
-            {
-                if (existingLocalisedtexts.TryGetValue(locale, out var localisedText))
-                {
-                    localisedText.Text = this.Value;
-                    existingLocalisedtexts.Remove(locale);
-                }
-                else
-                {
-                    localisedText = new LocalisedTextBuilder(this.Strategy.Session)
-                        .WithLocale(locale)
-                        .Build();
+            //foreach (Locale locale in this.Strategy.Session.GetSingleton().AdditionalLocales)
+            //{
+            //    if (existingLocalisedtexts.TryGetValue(locale, out var localisedText))
+            //    {
+            //        localisedText.Text = this.Value;
+            //        existingLocalisedtexts.Remove(locale);
+            //    }
+            //    else
+            //    {
+            //        localisedText = new LocalisedTextBuilder(this.Strategy.Session)
+            //            .WithLocale(locale)
+            //            .Build();
 
-                    this.AddLocalisedValue(localisedText);
-                }
-            }
+            //        this.AddLocalisedValue(localisedText);
+            //    }
+            //}
 
-            foreach (var localisedText in existingLocalisedtexts.Values)
-            {
-                this.RemoveLocalisedValue(localisedText);
-            }
+            //foreach (var localisedText in existingLocalisedtexts.Values)
+            //{
+            //    this.RemoveLocalisedValue(localisedText);
+            //}
         }
     }
 }

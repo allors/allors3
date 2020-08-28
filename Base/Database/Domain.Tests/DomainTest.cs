@@ -85,6 +85,17 @@ namespace Allors
         {
             database.Init();
 
+            database.SupplierOfferingRegisterDerivations();
+            database.ServiceExtensionsRegisterDerivations();
+            database.SerialisedItemCharacteristicRegisterDerivations();
+            database.SerialisedInventoryItemRegisterDerivations();
+            database.ProductCategoryRegisterDerivations();
+            database.PriceComponentExtensionsRegisterDerivations();
+            database.PartCategoryRegisterDerivations();
+            database.OrderValueRegisterDerivations();
+            database.OrderQuantityBreakRegisterDerivations();
+            database.NonUnifiedGoodRegisterDerivations();
+            database.StatementOfWorkRegisterDerivations();
             database.QuoteItemRegisterDerivations();
             database.PurchaseOrderItemDerivations();
             database.PurchaseOrderApprovalLevel1RegisterDerivations();
