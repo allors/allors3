@@ -9,8 +9,8 @@ namespace Allors.Domain
     {
         public static void BaseOnDerive(this Shipment @this, ObjectOnDerive method)
         {
-            var session = @this.Strategy.Session;
-            @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+            //var session = @this.Strategy.Session;
+            //@this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
         }
     }
 }
