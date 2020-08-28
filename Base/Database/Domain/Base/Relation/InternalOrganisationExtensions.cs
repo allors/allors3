@@ -123,22 +123,22 @@ namespace Allors.Domain
 
         public static void BaseOnPreDerive(this InternalOrganisation @this, ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRole(@this, M.InternalOrganisation.DoAccounting))
-            {
-                foreach (PaymentMethod collectionMethod in @this.ActiveCollectionMethods)
-                {
-                    iteration.AddDependency(collectionMethod, @this);
-                    iteration.Mark(collectionMethod);
-                }
+            //if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRole(@this, M.InternalOrganisation.DoAccounting))
+            //{
+            //    foreach (PaymentMethod collectionMethod in @this.ActiveCollectionMethods)
+            //    {
+            //        iteration.AddDependency(collectionMethod, @this);
+            //        iteration.Mark(collectionMethod);
+            //    }
 
-                foreach (PaymentMethod paymentMethod in @this.PaymentMethods)
-                {
-                    iteration.AddDependency(paymentMethod, @this);
-                    iteration.Mark(paymentMethod);
-                }
-            }
+            //    foreach (PaymentMethod paymentMethod in @this.PaymentMethods)
+            //    {
+            //        iteration.AddDependency(paymentMethod, @this);
+            //        iteration.Mark(paymentMethod);
+            //    }
+            //}
         }
 
         public static void BaseOnDerive(this InternalOrganisation @this, ObjectOnDerive method)

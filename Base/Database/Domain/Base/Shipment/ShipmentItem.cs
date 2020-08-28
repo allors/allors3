@@ -55,13 +55,13 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this.ShipmentWhereShipmentItem, this);
-                iteration.Mark(this.ShipmentWhereShipmentItem, this);
-            }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.AddDependency(this.ShipmentWhereShipmentItem, this);
+            //    iteration.Mark(this.ShipmentWhereShipmentItem, this);
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)

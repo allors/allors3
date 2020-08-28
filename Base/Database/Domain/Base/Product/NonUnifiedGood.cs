@@ -33,106 +33,106 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
-            var defaultLocale = this.Strategy.Session.GetSingleton().DefaultLocale;
-            var settings = this.Strategy.Session.GetSingleton().Settings;
+            //var derivation = method.Derivation;
+            //var defaultLocale = this.Strategy.Session.GetSingleton().DefaultLocale;
+            //var settings = this.Strategy.Session.GetSingleton().Settings;
 
-            var identifications = this.ProductIdentifications;
-            identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(this.Strategy.Session).Good);
-            var goodIdentification = identifications.FirstOrDefault();
+            //var identifications = this.ProductIdentifications;
+            //identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(this.Strategy.Session).Good);
+            //var goodIdentification = identifications.FirstOrDefault();
 
-            if (goodIdentification == null && settings.UseProductNumberCounter)
-            {
-                goodIdentification = new ProductNumberBuilder(this.Strategy.Session)
-                    .WithIdentification(settings.NextProductNumber())
-                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Strategy.Session).Good).Build();
+            //if (goodIdentification == null && settings.UseProductNumberCounter)
+            //{
+            //    goodIdentification = new ProductNumberBuilder(this.Strategy.Session)
+            //        .WithIdentification(settings.NextProductNumber())
+            //        .WithProductIdentificationType(new ProductIdentificationTypes(this.Strategy.Session).Good).Build();
 
-                this.AddProductIdentification(goodIdentification);
-            }
+            //    this.AddProductIdentification(goodIdentification);
+            //}
 
-            this.ProductNumber = goodIdentification.Identification;
+            //this.ProductNumber = goodIdentification.Identification;
 
-            if (!this.ExistProductIdentifications)
-            {
-                derivation.Validation.AssertExists(this, M.Good.ProductIdentifications);
-            }
+            //if (!this.ExistProductIdentifications)
+            //{
+            //    derivation.Validation.AssertExists(this, M.Good.ProductIdentifications);
+            //}
 
-            if (!this.ExistVariants)
-            {
-                derivation.Validation.AssertExists(this, M.NonUnifiedGood.Part);
-            }
+            //if (!this.ExistVariants)
+            //{
+            //    derivation.Validation.AssertExists(this, M.NonUnifiedGood.Part);
+            //}
 
-            if (this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-            {
-                this.Name = this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-            }
+            //if (this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+            //{
+            //    this.Name = this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+            //}
 
-            if (this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
-            {
-                this.Description = this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
-            }
+            //if (this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
+            //{
+            //    this.Description = this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+            //}
 
-            this.DeriveVirtualProductPriceComponent();
+            //this.DeriveVirtualProductPriceComponent();
         }
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var builder = new StringBuilder();
-            if (this.ExistProductIdentifications)
-            {
-                builder.Append(string.Join(" ", this.ProductIdentifications.Select(v => v.Identification)));
-            }
+            //var builder = new StringBuilder();
+            //if (this.ExistProductIdentifications)
+            //{
+            //    builder.Append(string.Join(" ", this.ProductIdentifications.Select(v => v.Identification)));
+            //}
 
-            if (this.ExistProductCategoriesWhereAllProduct)
-            {
-                builder.Append(string.Join(" ", this.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
-            }
+            //if (this.ExistProductCategoriesWhereAllProduct)
+            //{
+            //    builder.Append(string.Join(" ", this.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
+            //}
 
-            builder.Append(string.Join(" ", this.Keywords));
+            //builder.Append(string.Join(" ", this.Keywords));
 
-            this.SearchString = builder.ToString();
+            //this.SearchString = builder.ToString();
 
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
-        public void DeriveVirtualProductPriceComponent()
-        {
-            if (!this.ExistProductWhereVariant)
-            {
-                this.RemoveVirtualProductPriceComponents();
-            }
+        //public void DeriveVirtualProductPriceComponent()
+        //{
+        //    if (!this.ExistProductWhereVariant)
+        //    {
+        //        this.RemoveVirtualProductPriceComponents();
+        //    }
 
-            if (this.ExistVariants)
-            {
-                this.RemoveVirtualProductPriceComponents();
+        //    if (this.ExistVariants)
+        //    {
+        //        this.RemoveVirtualProductPriceComponents();
 
-                var priceComponents = this.PriceComponentsWhereProduct;
+        //        var priceComponents = this.PriceComponentsWhereProduct;
 
-                foreach (Good product in this.Variants)
-                {
-                    foreach (PriceComponent priceComponent in priceComponents)
-                    {
-                        // HACK: DerivedRoles
-                        var productDerivedRoles = product;
+        //        foreach (Good product in this.Variants)
+        //        {
+        //            foreach (PriceComponent priceComponent in priceComponents)
+        //            {
+        //                // HACK: DerivedRoles
+        //                var productDerivedRoles = product;
 
-                        productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
+        //                productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
 
-                        if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
-                        {
-                            productDerivedRoles.AddBasePrice(basePrice);
-                        }
-                    }
-                }
-            }
-        }
+        //                if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
+        //                {
+        //                    productDerivedRoles.AddBasePrice(basePrice);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         public void BaseDelete(DeletableDelete method)
         {

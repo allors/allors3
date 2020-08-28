@@ -7,6 +7,6 @@ namespace Allors.Domain
 {
     public static partial class ServiceExtensions
     {
-        public static void BaseOnDerive(this Service @this, ObjectOnDerive method) => @this.BaseOnDeriveVirtualProductPriceComponent();
+        //public static void BaseOnDerive(this Service @this, ObjectOnDerive method) => @this.BaseOnDeriveVirtualProductPriceComponent();
     }
 }

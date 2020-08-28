@@ -85,9 +85,9 @@ namespace Allors.Domain
 
         public static void BaseOnPostDerive(this CommunicationEvent @this, ObjectOnPostDerive method)
         {
-            var session = @this.Strategy.Session;
-            @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
-            @this.AddSecurityToken(@this.Owner?.OwnerSecurityToken);
+            //var session = @this.Strategy.Session;
+            //@this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+            //@this.AddSecurityToken(@this.Owner?.OwnerSecurityToken);
         }
 
         public static void BaseDelete(this CommunicationEvent @this, DeletableDelete method)

@@ -19,15 +19,15 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (changeSet.IsCreated(this) || changeSet.HasChangedRole(this, this.Meta.AdditionalLocales))
-            {
-                foreach (Good product in new Goods(this.Strategy.Session).Extent())
-                {
-                    iteration.Mark(product);
-                }
-            }
+            //if (changeSet.IsCreated(this) || changeSet.HasChangedRole(this, this.Meta.AdditionalLocales))
+            //{
+            //    foreach (Good product in new Goods(this.Strategy.Session).Extent())
+            //    {
+            //        iteration.Mark(product);
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)

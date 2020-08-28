@@ -85,7 +85,20 @@ namespace Allors
         {
             database.Init();
 
-            database.AuditableExtensionsRegisterDerivations();
+            database.ShipmentExtensionsRegisterDerivations();
+            database.SupplierOfferingRegisterDerivations();
+            database.ServiceExtensionsRegisterDerivations();
+            database.SerialisedItemCharacteristicRegisterDerivations();
+            database.SerialisedInventoryItemRegisterDerivations();
+            database.ProductCategoryRegisterDerivations();
+            database.PriceComponentExtensionsRegisterDerivations();
+            database.PartCategoryRegisterDerivations();
+            database.OrderValueRegisterDerivations();
+            database.OrderQuantityBreakRegisterDerivations();
+            database.NonUnifiedGoodRegisterDerivations();
+            database.StatementOfWorkRegisterDerivations();
+            database.SurchargeComponentRegisterDerivations();
+            database.SerialisedItemRegisterDerivations();
             database.QuoteItemRegisterDerivations();
             database.PurchaseOrderItemDerivations();
             database.PurchaseOrderApprovalLevel1RegisterDerivations();
@@ -95,6 +108,7 @@ namespace Allors
             database.OrderAdjustmentRegisterDerivations();
             database.EngagementRegisterDerivations();
             database.SalesOrderTransferRegisterDerivations();
+            database.PurchaseOrderRegisterDerivations();
             database.QuoteExtensionsRegisterDerivations();
             database.PurchaseOrderApprovalLevel2RegisterDerivations();
             database.PurchaseReturnRegisterDerivations();
@@ -146,6 +160,7 @@ namespace Allors
             database.LetterCorrespondenceRegisterDerivations();
             database.OrganisationRollUpRegisterDerivations();
             database.PartyContactMechanismRegisterDerivations();
+            database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
             database.PassportRegisterDerivations();
             database.RequestItemRegisterDerivations();
@@ -153,9 +168,6 @@ namespace Allors
             database.RequestForProposalRegisterDerivations();
             database.RequestForInformationRegisterDerivations();
             database.RequestExtensionsRegisterDerivations();
-
-            database.SupplierRelationshipRegisterDerivations();
-            database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
 
             this.Session = database.CreateSession();
 

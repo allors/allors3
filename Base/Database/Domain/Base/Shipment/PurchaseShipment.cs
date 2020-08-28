@@ -41,26 +41,26 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.ChangeSet.Associations.Contains(this.Id))
-            {
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-                {
-                    if (shipmentItem.ExistShipmentReceiptWhereShipmentItem
-                        && shipmentItem.ShipmentReceiptWhereShipmentItem.ExistInventoryItem)
-                    {
-                        iteration.AddDependency(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem, this);
-                        iteration.Mark(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem);
-                    }
+            //if (iteration.ChangeSet.Associations.Contains(this.Id))
+            //{
+            //    foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            //    {
+            //        if (shipmentItem.ExistShipmentReceiptWhereShipmentItem
+            //            && shipmentItem.ShipmentReceiptWhereShipmentItem.ExistInventoryItem)
+            //        {
+            //            iteration.AddDependency(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem, this);
+            //            iteration.Mark(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem);
+            //        }
 
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
-                    {
-                        iteration.AddDependency(orderShipment.OrderItem, this);
-                        iteration.Mark(orderShipment.OrderItem);
-                    }
-                }
-            }
+            //        foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+            //        {
+            //            iteration.AddDependency(orderShipment.OrderItem, this);
+            //            iteration.Mark(orderShipment.OrderItem);
+            //        }
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)

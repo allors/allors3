@@ -343,29 +343,29 @@ namespace Allors.Domain
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var SetReadyPermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.SetReadyForProcessing, Operations.Execute);
+            //var SetReadyPermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.SetReadyForProcessing, Operations.Execute);
 
-            if (this.QuoteState.IsCreated)
-            {
-                if (this.ExistValidQuoteItems)
-                {
-                    this.RemoveDeniedPermission(SetReadyPermission);
-                }
-                else
-                {
-                    this.AddDeniedPermission(SetReadyPermission);
-                }
-            }
+            //if (this.QuoteState.IsCreated)
+            //{
+            //    if (this.ExistValidQuoteItems)
+            //    {
+            //        this.RemoveDeniedPermission(SetReadyPermission);
+            //    }
+            //    else
+            //    {
+            //        this.AddDeniedPermission(SetReadyPermission);
+            //    }
+            //}
 
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
         //public void CalculatePrices(

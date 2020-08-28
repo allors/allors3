@@ -11,28 +11,28 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.ExistSubContractor)
-                {
-                    iteration.AddDependency(this.SubContractor, this);
-                    iteration.Mark(this.SubContractor);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    if (this.ExistSubContractor)
+            //    {
+            //        iteration.AddDependency(this.SubContractor, this);
+            //        iteration.Mark(this.SubContractor);
 
-                    foreach (OrganisationContactRelationship contactRelationship in this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
-                    {
-                        iteration.AddDependency(this, contactRelationship);
-                        iteration.Mark(contactRelationship);
-                    }
-                }
+            //        foreach (OrganisationContactRelationship contactRelationship in this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
+            //        {
+            //            iteration.AddDependency(this, contactRelationship);
+            //            iteration.Mark(contactRelationship);
+            //        }
+            //    }
 
-                if (this.ExistContractor)
-                {
-                    iteration.AddDependency(this.Contractor, this);
-                    iteration.Mark(this.Contractor);
-                }
-            }
+            //    if (this.ExistContractor)
+            //    {
+            //        iteration.AddDependency(this.Contractor, this);
+            //        iteration.Mark(this.Contractor);
+            //    }
+            //}
         }
 
         public void BaseOnInit(ObjectOnInit method)

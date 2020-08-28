@@ -30,13 +30,13 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.ChangeSet.Associations.Contains(this.Id))
-            {
-                iteration.AddDependency(this.ShipmentItem, this);
-                iteration.Mark(this.ShipmentItem);
-            }
+            //if (iteration.ChangeSet.Associations.Contains(this.Id))
+            //{
+            //    iteration.AddDependency(this.ShipmentItem, this);
+            //    iteration.Mark(this.ShipmentItem);
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
