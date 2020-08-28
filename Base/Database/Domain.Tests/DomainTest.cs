@@ -85,6 +85,8 @@ namespace Allors
         {
             database.Init();
 
+            database.QuoteExtensionsRegisterDerivations();
+            database.PurchaseOrderApprovalLevel2RegisterDerivations();
             database.PurchaseReturnRegisterDerivations();
             database.PurchaseShipmentRegisterDerivations();
             database.ShipmentItemRegisterDerivations();
