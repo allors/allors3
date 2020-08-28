@@ -17,8 +17,6 @@ namespace Allors.Domain
     {
         public class PurchaseOrderCreationDerivation : IDomainDerivation
         {
-
-
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
                 bool NeedsApprovalLevel1(PurchaseOrder purchaseOrder)
@@ -96,10 +94,17 @@ namespace Allors.Domain
                  && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
                 }
 
+                var empty = Array.Empty<PurchaseOrder>();
 
                 var createdPurchaseOrders = changeSet.Created.Select(session.Instantiate).OfType<PurchaseOrder>();
 
-                foreach (PurchaseOrder purchaseOrder in createdPurchaseOrders)
+                changeSet.AssociationsByRoleType.TryGetValue(M.PurchaseOrder.PurchaseOrderState, out var changedPurchaseOrderState);
+                var purchaseOrdersWhereStateChanged = changedPurchaseOrderState?.Select(session.Instantiate).OfType<PurchaseOrder>();
+
+                var allPurchaseOrders = createdPurchaseOrders
+                    .Union(purchaseOrdersWhereStateChanged ?? empty);
+
+                foreach (PurchaseOrder purchaseOrder in allPurchaseOrders.Where(v => v != null))
                 {
                     if (!purchaseOrder.ExistOrderNumber)
                     {
