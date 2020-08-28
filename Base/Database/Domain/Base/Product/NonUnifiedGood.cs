@@ -13,23 +13,23 @@ namespace Allors.Domain
 
     public partial class NonUnifiedGood
     {
-        //private bool IsDeletable => !this.ExistPart &&
-        //                            !this.ExistDeploymentsWhereProductOffering &&
-        //                            !this.ExistEngagementItemsWhereProduct &&
-        //                            !this.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
-        //                            !this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
-        //                            !this.ExistQuoteItemsWhereProduct &&
-        //                            !this.ExistShipmentItemsWhereGood &&
-        //                            !this.ExistWorkEffortGoodStandardsWhereGood &&
-        //                            !this.ExistMarketingPackageWhereProductsUsedIn &&
-        //                            !this.ExistMarketingPackagesWhereProduct &&
-        //                            !this.ExistOrganisationGlAccountsWhereProduct &&
-        //                            !this.ExistProductConfigurationsWhereProductsUsedIn &&
-        //                            !this.ExistProductConfigurationsWhereProduct &&
-        //                            !this.ExistRequestItemsWhereProduct &&
-        //                            !this.ExistSalesInvoiceItemsWhereProduct &&
-        //                            !this.ExistSalesOrderItemsWhereProduct &&
-        //                            !this.ExistWorkEffortTypesWhereProductToProduce;
+        private bool IsDeletable => !this.ExistPart &&
+                                    !this.ExistDeploymentsWhereProductOffering &&
+                                    !this.ExistEngagementItemsWhereProduct &&
+                                    !this.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                                    !this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
+                                    !this.ExistQuoteItemsWhereProduct &&
+                                    !this.ExistShipmentItemsWhereGood &&
+                                    !this.ExistWorkEffortGoodStandardsWhereGood &&
+                                    !this.ExistMarketingPackageWhereProductsUsedIn &&
+                                    !this.ExistMarketingPackagesWhereProduct &&
+                                    !this.ExistOrganisationGlAccountsWhereProduct &&
+                                    !this.ExistProductConfigurationsWhereProductsUsedIn &&
+                                    !this.ExistProductConfigurationsWhereProduct &&
+                                    !this.ExistRequestItemsWhereProduct &&
+                                    !this.ExistSalesInvoiceItemsWhereProduct &&
+                                    !this.ExistSalesOrderItemsWhereProduct &&
+                                    !this.ExistWorkEffortTypesWhereProductToProduce;
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
