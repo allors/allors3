@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdTransfer = changeSet.Created.Select(session.Instantiate).OfType<Transfer>();
+                var createdTransfer = changeSet.Created.Select(v=>v.GetObject()).OfType<Transfer>();
 
                 foreach(var transfer in createdTransfer)
                 {

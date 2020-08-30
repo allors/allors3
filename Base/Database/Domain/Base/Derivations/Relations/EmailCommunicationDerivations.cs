@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdEmailCommunication = changeSet.Created.Select(session.Instantiate).OfType<EmailCommunication>();
+                var createdEmailCommunication = changeSet.Created.Select(v=>v.GetObject()).OfType<EmailCommunication>();
 
                 foreach(EmailCommunication emailCommunication in createdEmailCommunication)
                 {

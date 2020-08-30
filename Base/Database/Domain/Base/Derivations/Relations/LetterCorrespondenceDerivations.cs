@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdLetterCorrespondence = changeSet.Created.Select(session.Instantiate).OfType<LetterCorrespondence>();
+                var createdLetterCorrespondence = changeSet.Created.Select(v=>v.GetObject()).OfType<LetterCorrespondence>();
 
                 foreach (var letterCorrespondence in createdLetterCorrespondence)
                 {

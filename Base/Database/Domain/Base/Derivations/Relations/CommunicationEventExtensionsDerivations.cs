@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCommunicationEventExtensions = changeSet.Created.Select(session.Instantiate).OfType<CommunicationEvent>();
+                var createdCommunicationEventExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<CommunicationEvent>();
 
                 foreach (var communicationEventExtension in createdCommunicationEventExtensions)
                 {

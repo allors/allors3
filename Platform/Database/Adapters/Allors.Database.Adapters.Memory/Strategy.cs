@@ -478,7 +478,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.IsDeleted = true;
 
-            this.ChangeSet.OnDeleted(this.ObjectId);
+            this.ChangeSet.OnDeleted(this);
         }
 
         public IObject GetObject()

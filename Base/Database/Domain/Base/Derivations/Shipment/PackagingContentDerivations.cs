@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPackagingContents = changeSet.Created.Select(session.Instantiate).OfType<PackagingContent>();
+                var createdPackagingContents = changeSet.Created.Select(v=>v.GetObject()).OfType<PackagingContent>();
 
                 foreach (var packagingContent in createdPackagingContents)
                 {

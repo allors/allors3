@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdAutomatedAgent = changeSet.Created.Select(session.Instantiate).OfType<AutomatedAgent>();
+                var createdAutomatedAgent = changeSet.Created.Select(v=>v.GetObject()).OfType<AutomatedAgent>();
 
                 foreach(var automatedAgent in createdAutomatedAgent)
                 {

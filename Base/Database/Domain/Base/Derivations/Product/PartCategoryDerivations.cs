@@ -19,7 +19,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-               var createdPartCategories = changeSet.Created.Select(session.Instantiate).OfType<PartCategory>();
+               var createdPartCategories = changeSet.Created.Select(v=>v.GetObject()).OfType<PartCategory>();
 
                 foreach(var partCategory in createdPartCategories)
                 {

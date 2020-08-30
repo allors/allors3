@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdParties = changeSet.Created.Select(session.Instantiate).OfType<Party>();
+                var createdParties = changeSet.Created.Select(v=>v.GetObject()).OfType<Party>();
 
                 foreach (var party in createdParties)
                 {
@@ -181,7 +181,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCustomerRelationships = changeSet.Created.Select(session.Instantiate).OfType<CustomerRelationship>();
+                var createdCustomerRelationships = changeSet.Created.Select(v=>v.GetObject()).OfType<CustomerRelationship>();
 
                 foreach (var relationship in createdCustomerRelationships)
                 {

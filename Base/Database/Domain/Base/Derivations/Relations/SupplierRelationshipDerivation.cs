@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSupplierRelationship = changeSet.Created.Select(session.Instantiate).OfType<SupplierRelationship>();
+                var createdSupplierRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<SupplierRelationship>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
                 var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();

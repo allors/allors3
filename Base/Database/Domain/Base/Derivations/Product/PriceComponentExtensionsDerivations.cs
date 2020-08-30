@@ -18,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-               var createdPriceComponentExtensions = changeSet.Created.Select(session.Instantiate).OfType<PriceComponent>();
+               var createdPriceComponentExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<PriceComponent>();
 
                 foreach(var priceComponentExtensions in createdPriceComponentExtensions)
                 {

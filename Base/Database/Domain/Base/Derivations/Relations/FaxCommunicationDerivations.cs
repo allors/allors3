@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdFaxCommunications = changeSet.Created.Select(session.Instantiate).OfType<FaxCommunication>();
+                var createdFaxCommunications = changeSet.Created.Select(v=>v.GetObject()).OfType<FaxCommunication>();
 
                 foreach (var faxCommunication in createdFaxCommunications)
                 {

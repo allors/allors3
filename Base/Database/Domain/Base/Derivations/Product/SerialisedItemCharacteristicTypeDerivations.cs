@@ -18,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-               var createdSerialisedItemCharacteristicTypes = changeSet.Created.Select(session.Instantiate).OfType<SerialisedItemCharacteristicType>();
+               var createdSerialisedItemCharacteristicTypes = changeSet.Created.Select(v=>v.GetObject()).OfType<SerialisedItemCharacteristicType>();
 
                 foreach(var serialisedItemCharacteristicType in createdSerialisedItemCharacteristicTypes)
                 {

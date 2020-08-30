@@ -18,9 +18,9 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdUnifiedGood = changeSet.Created.Select(session.Instantiate).OfType<UnifiedGood>();
+                var createdUnifiedGood = changeSet.Created.Select(v=>v.GetObject()).OfType<UnifiedGood>();
 
-                var createdInventoryItemTransaction = changeSet.Created.Select(session.Instantiate).OfType<InventoryItemTransaction>();
+                var createdInventoryItemTransaction = changeSet.Created.Select(v=>v.GetObject()).OfType<InventoryItemTransaction>();
 
                 foreach (var unifiedGood in createdUnifiedGood)
                 {

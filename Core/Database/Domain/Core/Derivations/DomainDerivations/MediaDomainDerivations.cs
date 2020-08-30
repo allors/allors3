@@ -19,7 +19,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdMedia = changeSet.Created.Select(session.Instantiate).OfType<Media>();
+                var createdMedia = changeSet.Created.Select(v=>v.GetObject()).OfType<Media>();
 
                 if (createdMedia.Any())
                 {

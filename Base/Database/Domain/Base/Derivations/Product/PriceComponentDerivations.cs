@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdBasePrices = changeSet.Created.Select(session.Instantiate).OfType<BasePrice>();
+                var createdBasePrices = changeSet.Created.Select(v=>v.GetObject()).OfType<BasePrice>();
 
                 //changeSet.AssociationsByRoleType.TryGetValue(M.BasePrice, out var changedEmployer);
                 //var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<BasePrice>();
@@ -76,7 +76,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdDiscountComponent = changeSet.Created.Select(session.Instantiate).OfType<DiscountComponent>();
+                var createdDiscountComponent = changeSet.Created.Select(v=>v.GetObject()).OfType<DiscountComponent>();
 
                 foreach (var discountComponent in createdDiscountComponent)
                 {

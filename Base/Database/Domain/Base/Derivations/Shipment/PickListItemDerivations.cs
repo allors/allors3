@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPickListItems = changeSet.Created.Select(session.Instantiate).OfType<PickListItem>();
+                var createdPickListItems = changeSet.Created.Select(v=>v.GetObject()).OfType<PickListItem>();
 
                 foreach(var pickListItems in createdPickListItems)
                 {

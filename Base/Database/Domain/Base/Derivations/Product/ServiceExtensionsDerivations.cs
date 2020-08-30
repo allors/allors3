@@ -18,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-               var createdServiceExtensions = changeSet.Created.Select(session.Instantiate).OfType<Service>();
+               var createdServiceExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<Service>();
 
                 foreach(var serviceExtension in createdServiceExtensions)
                 {

@@ -20,17 +20,17 @@ namespace Allors.Domain.Derivations
 
         internal AccumulatedChangeSet()
         {
-            this.Created = new HashSet<long>();
-            this.Deleted = new HashSet<long>();
+            this.Created = new HashSet<IStrategy>();
+            this.Deleted = new HashSet<IStrategy>();
             this.Associations = new HashSet<long>();
             this.Roles = new HashSet<long>();
             this.RoleTypesByAssociation = new Dictionary<long, ISet<IRoleType>>();
             this.AssociationTypesByRole = new Dictionary<long, ISet<IAssociationType>>();
         }
 
-        public ISet<long> Created { get; }
+        public ISet<IStrategy> Created { get; }
 
-        public ISet<long> Deleted { get; }
+        public ISet<IStrategy> Deleted { get; }
 
         public ISet<long> Associations { get; }
 

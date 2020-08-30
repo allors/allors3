@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPurchaseOrderApprovals = changeSet.Created.Select(session.Instantiate).OfType<PurchaseOrderApprovalLevel1>();
+                var createdPurchaseOrderApprovals = changeSet.Created.Select(v=>v.GetObject()).OfType<PurchaseOrderApprovalLevel1>();
 
                 foreach(var purchaseOrderApproval in createdPurchaseOrderApprovals)
                 {

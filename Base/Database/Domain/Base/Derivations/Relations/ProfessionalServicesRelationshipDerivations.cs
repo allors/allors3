@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdProfessionalServicesRelationsips= changeSet.Created.Select(session.Instantiate).OfType<ProfessionalServicesRelationship>();
+                var createdProfessionalServicesRelationsips= changeSet.Created.Select(v=>v.GetObject()).OfType<ProfessionalServicesRelationship>();
 
                 foreach(var professionalServicesRelationship in createdProfessionalServicesRelationsips)
                 {

@@ -93,7 +93,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             this.Database.Cache.SetObjectType(reference.ObjectId, objectType);
 
-            this.State.ChangeSet.OnCreated(reference.ObjectId);
+            this.State.ChangeSet.OnCreated(reference.Strategy);
 
             return reference.Strategy.GetObject();
         }
@@ -117,7 +117,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 domainObjects[i] = reference.Strategy.GetObject();
 
-                this.State.ChangeSet.OnCreated(reference.ObjectId);
+                this.State.ChangeSet.OnCreated(reference.Strategy);
             }
 
             return domainObjects;

@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdAgreementTermExtensions = changeSet.Created.Select(session.Instantiate).OfType<AgreementTerm>();
+                var createdAgreementTermExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<AgreementTerm>();
 
                 foreach(var agreementTerm in createdAgreementTermExtensions)
                 {

@@ -21,7 +21,7 @@ namespace Allors.Domain
             {
                 var empty = Array.Empty<NonUnifiedPart>();
 
-                var createdNonUnifiedGood = changeSet.Created.Select(session.Instantiate).OfType<NonUnifiedGood>();
+                var createdNonUnifiedGood = changeSet.Created.Select(v=>v.GetObject()).OfType<NonUnifiedGood>();
 
                 foreach (var nonUnifiedGood in createdNonUnifiedGood)
                 {

@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSerialisedItem = changeSet.Created.Select(session.Instantiate).OfType<SerialisedItem>();
+                var createdSerialisedItem = changeSet.Created.Select(v=>v.GetObject()).OfType<SerialisedItem>();
 
                 foreach(var serialisedItem in createdSerialisedItem)
                 {

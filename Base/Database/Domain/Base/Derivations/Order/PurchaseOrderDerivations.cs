@@ -96,7 +96,7 @@ namespace Allors.Domain
 
                 var empty = Array.Empty<PurchaseOrder>();
 
-                var createdPurchaseOrders = changeSet.Created.Select(session.Instantiate).OfType<PurchaseOrder>();
+                var createdPurchaseOrders = changeSet.Created.Select(v=>v.GetObject()).OfType<PurchaseOrder>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.PurchaseOrder.PurchaseOrderState, out var changedPurchaseOrderState);
                 var purchaseOrdersWhereStateChanged = changedPurchaseOrderState?.Select(session.Instantiate).OfType<PurchaseOrder>();

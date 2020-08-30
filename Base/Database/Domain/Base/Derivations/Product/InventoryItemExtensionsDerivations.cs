@@ -18,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdInventoryItemExtensions = changeSet.Created.Select(session.Instantiate).OfType<InventoryItem>();
+                var createdInventoryItemExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<InventoryItem>();
 
                 foreach(var inventoryItemExtensions in createdInventoryItemExtensions)
                 {

@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSurchargeComponent = changeSet.Created.Select(session.Instantiate).OfType<SurchargeComponent>();
+                var createdSurchargeComponent = changeSet.Created.Select(v=>v.GetObject()).OfType<SurchargeComponent>();
 
                 foreach(var surchargeComponent in createdSurchargeComponent)
                 {

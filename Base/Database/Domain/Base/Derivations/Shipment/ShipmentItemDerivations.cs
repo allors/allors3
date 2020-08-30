@@ -19,7 +19,7 @@ namespace Allors.Domain
             {
                 var empty = Array.Empty<ShipmentItem>();
 
-                var createdShipmentItem = changeSet.Created.Select(session.Instantiate).OfType<ShipmentItem>();
+                var createdShipmentItem = changeSet.Created.Select(v=>v.GetObject()).OfType<ShipmentItem>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.OrderShipment.Quantity, out var changedOrderShipments);
                 var orderShipmentsWhereQuantityChanged = changedOrderShipments?.Select(session.Instantiate).OfType<OrderShipment>();

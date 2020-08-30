@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdFaceToFaceCommunications = changeSet.Created.Select(session.Instantiate).OfType<FaceToFaceCommunication>();
+                var createdFaceToFaceCommunications = changeSet.Created.Select(v=>v.GetObject()).OfType<FaceToFaceCommunication>();
 
                 foreach(var faceToFaceCommunication in createdFaceToFaceCommunications)
                 {

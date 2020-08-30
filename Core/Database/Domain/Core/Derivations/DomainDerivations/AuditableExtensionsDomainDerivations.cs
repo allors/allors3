@@ -19,14 +19,14 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdAuditables = changeSet.Created.Select(session.Instantiate).OfType<Auditable>();
+                var createdAuditables = changeSet.Created.Select(v=>v.GetObject()).OfType<Auditable>();
 
                 foreach (var auditable in createdAuditables)
                 {
                     var user = auditable.Strategy.Session.GetUser();
                     if (user != null)
                     {
-                        if (changeSet.Created.Contains(auditable.Id))
+                        if (changeSet.Created.Contains(auditable.Strategy))
                         {
                             auditable.CreationDate = auditable.Strategy.Session.Now();
                             auditable.CreatedBy = user;

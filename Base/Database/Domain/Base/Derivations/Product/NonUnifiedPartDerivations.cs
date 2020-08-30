@@ -20,9 +20,9 @@ namespace Allors.Domain
             {
                 var empty = Array.Empty<NonUnifiedPart>();
 
-                var createdNonUnifiedPart = changeSet.Created.Select(session.Instantiate).OfType<NonUnifiedPart>();
+                var createdNonUnifiedPart = changeSet.Created.Select(v=>v.GetObject()).OfType<NonUnifiedPart>();
 
-                var createdInventoryItemTransaction= changeSet.Created.Select(session.Instantiate).OfType<InventoryItemTransaction>();
+                var createdInventoryItemTransaction= changeSet.Created.Select(v=>v.GetObject()).OfType<InventoryItemTransaction>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.InventoryItemTransaction.Part, out var inventoryItemTransactions);
                 var inventoryItemTransactionParts = inventoryItemTransactions?.Select(session.Instantiate).OfType<InventoryItemTransaction>().Select(v => v.Part).OfType<NonUnifiedPart>();

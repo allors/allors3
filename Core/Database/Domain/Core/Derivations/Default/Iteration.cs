@@ -93,10 +93,10 @@ namespace Allors.Domain.Derivations.Default
                         // Initialization
                         if (changeSet.Created.Any())
                         {
-                            var newObjects = session.Instantiate(changeSet.Created);
+                            var newObjects = changeSet.Created.Select(v=>(Object)v.GetObject());
                             foreach (var newObject in newObjects)
                             {
-                                ((Object)newObject).OnInit();
+                                newObject.OnInit();
                             }
                         }
 

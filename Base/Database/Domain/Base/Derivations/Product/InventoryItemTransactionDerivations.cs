@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdInventoryItemTransaction = changeSet.Created.Select(session.Instantiate).OfType<InventoryItemTransaction>();
+                var createdInventoryItemTransaction = changeSet.Created.Select(v=>v.GetObject()).OfType<InventoryItemTransaction>();
 
                 foreach(var inventoryItemTransaction in createdInventoryItemTransaction)
                 {

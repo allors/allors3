@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCatalogues = changeSet.Created.Select(session.Instantiate).OfType<Catalogue>();
+                var createdCatalogues = changeSet.Created.Select(v=>v.GetObject()).OfType<Catalogue>();
 
                 foreach(var catalogue in createdCatalogues)
                 {

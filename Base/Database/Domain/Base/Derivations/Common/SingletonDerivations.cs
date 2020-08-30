@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSingletons = changeSet.Created.Select(session.Instantiate).OfType<Singleton>();
+                var createdSingletons = changeSet.Created.Select(v=>v.GetObject()).OfType<Singleton>();
 
                 foreach(var singleton in createdSingletons)
                 {

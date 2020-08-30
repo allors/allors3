@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdWebSiteCommunication = changeSet.Created.Select(session.Instantiate).OfType<WebSiteCommunication>();
+                var createdWebSiteCommunication = changeSet.Created.Select(v=>v.GetObject()).OfType<WebSiteCommunication>();
 
                 foreach(WebSiteCommunication webSiteCommunication in createdWebSiteCommunication)
                 {

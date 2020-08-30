@@ -18,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdRequestExtensions = changeSet.Created.Select(session.Instantiate).OfType<Request>();
+                var createdRequestExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<Request>();
 
                 foreach (var requestExtensions in createdRequestExtensions)
                 {

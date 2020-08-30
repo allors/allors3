@@ -14,7 +14,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdEngagements = changeSet.Created.Select(session.Instantiate).OfType<Engagement>();
+                var createdEngagements = changeSet.Created.Select(v=>v.GetObject()).OfType<Engagement>();
 
                 foreach(var engagement in createdEngagements)
                 {

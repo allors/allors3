@@ -18,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdQuote = changeSet.Created.Select(session.Instantiate).OfType<Quote>();
+                var createdQuote = changeSet.Created.Select(v=>v.GetObject()).OfType<Quote>();
 
                 foreach (var Quote in createdQuote)
                 {

@@ -21,7 +21,7 @@ namespace Allors.Domain
             {
                 var empty = Array.Empty<SalesOrderItem>();
 
-                var createdSalesOrderItem = changeSet.Created.Select(session.Instantiate).OfType<SalesOrderItem>();
+                var createdSalesOrderItem = changeSet.Created.Select(v=>v.GetObject()).OfType<SalesOrderItem>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.SalesOrderItemState, out var changedSalesOrderState);
                 var salesOrdersWhereStateChanged = changedSalesOrderState?.Select(session.Instantiate).OfType<SalesOrderItem>();
