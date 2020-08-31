@@ -170,6 +170,7 @@ namespace Allors
             database.PurchaseInvoiceApprovalRegisterDerivations();
             database.RepeatingPurchaseInvoiceRegisterDerivations();
             database.RepeatingSalesInvoiceRegisterDerivations();
+            database.SalesInvoiceRegisterDerivations();
 
             database.SupplierRelationshipRegisterDerivations();
             database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
