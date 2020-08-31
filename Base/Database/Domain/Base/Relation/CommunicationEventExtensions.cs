@@ -80,7 +80,7 @@ namespace Allors.Domain
             //    }
             //}
 
-            @this.DeriveInvolvedParties();
+            //@this.DeriveInvolvedParties();
         }
 
         public static void BaseOnPostDerive(this CommunicationEvent @this, ObjectOnPostDerive method)
@@ -106,16 +106,16 @@ namespace Allors.Domain
 
         private static void DeriveInvolvedParties(this CommunicationEvent @this)
         {
-            var now = @this.Strategy.Session.Now();
+            //var now = @this.Strategy.Session.Now();
 
-            var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();
+            //var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();
 
-            var organisation = parties.OfType<Person>()
-                .SelectMany(v => v.OrganisationContactRelationshipsWhereContact)
-                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
-                .Select(v => v.Organisation);
+            //var organisation = parties.OfType<Person>()
+            //    .SelectMany(v => v.OrganisationContactRelationshipsWhereContact)
+            //    .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+            //    .Select(v => v.Organisation);
 
-            @this.InvolvedParties = parties.Union(organisation).ToArray();
+            //@this.InvolvedParties = parties.Union(organisation).ToArray();
         }
     }
 }

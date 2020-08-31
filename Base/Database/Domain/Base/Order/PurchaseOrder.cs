@@ -144,32 +144,32 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
-            var singleton = this.Strategy.Session.GetSingleton();
+            //var (iteration, changeSet, derivedObjects) = method;
+            //var singleton = this.Strategy.Session.GetSingleton();
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this, singleton);
-                iteration.Mark(singleton);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.AddDependency(this, singleton);
+            //    iteration.Mark(singleton);
 
-                if (this.ExistTakenViaSupplier)
-                {
-                    iteration.AddDependency(this, this.TakenViaSupplier);
-                    iteration.Mark(this.TakenViaSupplier);
-                }
+            //    if (this.ExistTakenViaSupplier)
+            //    {
+            //        iteration.AddDependency(this, this.TakenViaSupplier);
+            //        iteration.Mark(this.TakenViaSupplier);
+            //    }
 
-                if (this.ExistTakenViaSubcontractor)
-                {
-                    iteration.AddDependency(this, this.TakenViaSubcontractor);
-                    iteration.Mark(this.TakenViaSubcontractor);
-                }
+            //    if (this.ExistTakenViaSubcontractor)
+            //    {
+            //        iteration.AddDependency(this, this.TakenViaSubcontractor);
+            //        iteration.Mark(this.TakenViaSubcontractor);
+            //    }
 
-                foreach (PurchaseOrderItem orderItem in this.PurchaseOrderItems)
-                {
-                    iteration.AddDependency(this, orderItem);
-                    iteration.Mark(orderItem);
-                }
-            }
+            //    foreach (PurchaseOrderItem orderItem in this.PurchaseOrderItems)
+            //    {
+            //        iteration.AddDependency(this, orderItem);
+            //        iteration.Mark(orderItem);
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
@@ -654,10 +654,10 @@ namespace Allors.Domain
 
         private void Sync(IDerivation derivation, SalesOrderItem[] validOrderItems)
         {
-            foreach (var orderItem in validOrderItems)
-            {
-                orderItem.Sync(this);
-            }
+            //foreach (var orderItem in validOrderItems)
+            //{
+            //    orderItem.Sync(this);
+            //}
         }
     }
 }

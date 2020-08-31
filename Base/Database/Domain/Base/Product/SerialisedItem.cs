@@ -113,46 +113,46 @@ namespace Allors.Domain
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
 
-            var builder = new StringBuilder();
+            //var builder = new StringBuilder();
 
-            builder.Append(this.ItemNumber);
-            builder.Append(string.Join(" ", this.SerialNumber));
-            builder.Append(string.Join(" ", this.Name));
+            //builder.Append(this.ItemNumber);
+            //builder.Append(string.Join(" ", this.SerialNumber));
+            //builder.Append(string.Join(" ", this.Name));
 
-            if (this.ExistOwnedBy)
-            {
-                builder.Append(string.Join(" ", this.OwnedBy.PartyName));
-            }
+            //if (this.ExistOwnedBy)
+            //{
+            //    builder.Append(string.Join(" ", this.OwnedBy.PartyName));
+            //}
 
-            if (this.ExistBuyer)
-            {
-                builder.Append(string.Join(" ", this.Buyer.PartyName));
-            }
+            //if (this.ExistBuyer)
+            //{
+            //    builder.Append(string.Join(" ", this.Buyer.PartyName));
+            //}
 
-            if (this.ExistSeller)
-            {
-                builder.Append(string.Join(" ", this.Seller.PartyName));
-            }
+            //if (this.ExistSeller)
+            //{
+            //    builder.Append(string.Join(" ", this.Seller.PartyName));
+            //}
 
-            if (this.ExistPartWhereSerialisedItem)
-            {
-                builder.Append(string.Join(" ", this.PartWhereSerialisedItem?.Brand?.Name));
-                builder.Append(string.Join(" ", this.PartWhereSerialisedItem?.Model?.Name));
-            }
+            //if (this.ExistPartWhereSerialisedItem)
+            //{
+            //    builder.Append(string.Join(" ", this.PartWhereSerialisedItem?.Brand?.Name));
+            //    builder.Append(string.Join(" ", this.PartWhereSerialisedItem?.Model?.Name));
+            //}
 
-            builder.Append(string.Join(" ", this.Keywords));
+            //builder.Append(string.Join(" ", this.Keywords));
 
-            this.SearchString = builder.ToString();
+            //this.SearchString = builder.ToString();
         }
 
         public void BaseDelete(DeletableDelete method)

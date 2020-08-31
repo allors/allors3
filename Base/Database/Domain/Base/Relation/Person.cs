@@ -238,41 +238,41 @@ namespace Allors.Domain
             //}
         }
 
-        public string DerivePartyName()
-        {
-            var partyName = new StringBuilder();
+        //public string DerivePartyName()
+        //{
+        //    var partyName = new StringBuilder();
 
-            if (this.ExistFirstName)
-            {
-                partyName.Append(this.FirstName);
-            }
+        //    if (this.ExistFirstName)
+        //    {
+        //        partyName.Append(this.FirstName);
+        //    }
 
-            if (this.ExistMiddleName)
-            {
-                if (partyName.Length > 0)
-                {
-                    partyName.Append(" ");
-                }
+        //    if (this.ExistMiddleName)
+        //    {
+        //        if (partyName.Length > 0)
+        //        {
+        //            partyName.Append(" ");
+        //        }
 
-                partyName.Append(this.MiddleName);
-            }
+        //        partyName.Append(this.MiddleName);
+        //    }
 
-            if (this.ExistLastName)
-            {
-                if (partyName.Length > 0)
-                {
-                    partyName.Append(" ");
-                }
+        //    if (this.ExistLastName)
+        //    {
+        //        if (partyName.Length > 0)
+        //        {
+        //            partyName.Append(" ");
+        //        }
 
-                partyName.Append(this.LastName);
-            }
+        //        partyName.Append(this.LastName);
+        //    }
 
-            if (partyName.Length == 0)
-            {
-                partyName.Append($"[{this.UserName}]");
-            }
+        //    if (partyName.Length == 0)
+        //    {
+        //        partyName.Append($"[{this.UserName}]");
+        //    }
 
-            return partyName.ToString();
-        }
+        //    return partyName.ToString();
+        //}
     }
 }
