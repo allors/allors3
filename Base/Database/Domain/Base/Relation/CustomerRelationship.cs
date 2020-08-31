@@ -11,31 +11,31 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.ExistCustomer)
-                {
-                    iteration.AddDependency(this.Customer, this);
-                    iteration.Mark(this.Customer);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    if (this.ExistCustomer)
+            //    {
+            //        iteration.AddDependency(this.Customer, this);
+            //        iteration.Mark(this.Customer);
 
-                    if (this.Customer is Organisation customer)
-                    {
-                        foreach (OrganisationContactRelationship contactRelationship in customer.OrganisationContactRelationshipsWhereOrganisation)
-                        {
-                            iteration.AddDependency(this, contactRelationship);
-                            iteration.Mark(contactRelationship);
-                        }
-                    }
-                }
+            //        if (this.Customer is Organisation customer)
+            //        {
+            //            foreach (OrganisationContactRelationship contactRelationship in customer.OrganisationContactRelationshipsWhereOrganisation)
+            //            {
+            //                iteration.AddDependency(this, contactRelationship);
+            //                iteration.Mark(contactRelationship);
+            //            }
+            //        }
+            //    }
 
-                if (this.ExistInternalOrganisation)
-                {
-                    iteration.AddDependency(this.InternalOrganisation, this);
-                    iteration.Mark(this.InternalOrganisation);
-                }
-            }
+            //    if (this.ExistInternalOrganisation)
+            //    {
+            //        iteration.AddDependency(this.InternalOrganisation, this);
+            //        iteration.Mark(this.InternalOrganisation);
+            //    }
+            //}
         }
 
         public void BaseOnPostBuild(ObjectOnPostBuild method)
