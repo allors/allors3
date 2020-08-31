@@ -11,30 +11,30 @@ namespace Allors.Domain
     {
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            derivation.Validation.AssertAtLeastOne(this, M.SurchargeComponent.Price, M.SurchargeComponent.Percentage);
-            derivation.Validation.AssertExistsAtMostOne(this, M.SurchargeComponent.Price, M.SurchargeComponent.Percentage);
+            //derivation.Validation.AssertAtLeastOne(this, M.SurchargeComponent.Price, M.SurchargeComponent.Percentage);
+            //derivation.Validation.AssertExistsAtMostOne(this, M.SurchargeComponent.Price, M.SurchargeComponent.Percentage);
 
-            if (this.ExistPrice)
-            {
-                if (!this.ExistCurrency)
-                {
-                    this.Currency = this.PricedBy.PreferredCurrency;
-                }
+            //if (this.ExistPrice)
+            //{
+            //    if (!this.ExistCurrency)
+            //    {
+            //        this.Currency = this.PricedBy.PreferredCurrency;
+            //    }
 
-                derivation.Validation.AssertExists(this, M.BasePrice.Currency);
-            }
+            //    derivation.Validation.AssertExists(this, M.BasePrice.Currency);
+            //}
 
-            this.BaseOnDeriveVirtualProductPriceComponent();
+            //this.BaseOnDeriveVirtualProductPriceComponent();
         }
 
-        public void BaseOnDeriveVirtualProductPriceComponent()
-        {
-            if (this.ExistProduct)
-            {
-                this.Product.BaseOnDeriveVirtualProductPriceComponent();
-            }
-        }
+        //public void BaseOnDeriveVirtualProductPriceComponent()
+        //{
+        //    if (this.ExistProduct)
+        //    {
+        //        this.Product.BaseOnDeriveVirtualProductPriceComponent();
+        //    }
+        //}
     }
 }

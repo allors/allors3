@@ -22,12 +22,12 @@ namespace Allors
         /// <summary>
         /// Gets the created objects.
         /// </summary>
-        ISet<long> Created { get; }
+        ISet<IStrategy> Created { get; }
 
         /// <summary>
         /// Gets the deleted objects.
         /// </summary>
-        ISet<long> Deleted { get; }
+        ISet<IStrategy> Deleted { get; }
 
         /// <summary>
         /// Gets the changed associations.

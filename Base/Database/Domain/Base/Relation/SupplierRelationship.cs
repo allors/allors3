@@ -11,28 +11,28 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.ExistSupplier)
-                {
-                    iteration.AddDependency(this.Supplier, this);
-                    iteration.Mark(this.Supplier);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    if (this.ExistSupplier)
+            //    {
+            //        iteration.AddDependency(this.Supplier, this);
+            //        iteration.Mark(this.Supplier);
 
-                    foreach (OrganisationContactRelationship contactRelationship in this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
-                    {
-                        iteration.AddDependency(this, contactRelationship);
-                        iteration.Mark(contactRelationship);
-                    }
-                }
+            //        foreach (OrganisationContactRelationship contactRelationship in this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
+            //        {
+            //            iteration.AddDependency(this, contactRelationship);
+            //            iteration.Mark(contactRelationship);
+            //        }
+            //    }
 
-                if (this.ExistInternalOrganisation)
-                {
-                    iteration.AddDependency(this.InternalOrganisation, this);
-                    iteration.Mark(this.InternalOrganisation);
-                }
-            }
+            //    if (this.ExistInternalOrganisation)
+            //    {
+            //        iteration.AddDependency(this.InternalOrganisation, this);
+            //        iteration.Mark(this.InternalOrganisation);
+            //    }
+            //}
         }
 
         public void BaseOnInit(ObjectOnInit method)

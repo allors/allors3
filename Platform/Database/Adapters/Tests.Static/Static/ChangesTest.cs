@@ -1091,8 +1091,8 @@ namespace Allors.Database.Adapters
                 var changes = this.Session.Checkpoint();
 
                 Assert.Equal(2, changes.Deleted.Count());
-                Assert.Contains(a.Id, changes.Deleted.ToArray());
-                Assert.Contains(b.Id, changes.Deleted.ToArray());
+                Assert.Contains(a.Strategy, changes.Deleted.ToArray());
+                Assert.Contains(b.Strategy, changes.Deleted.ToArray());
 
                 this.Session.Rollback();
 
@@ -1128,7 +1128,7 @@ namespace Allors.Database.Adapters
                 var changes = this.Session.Checkpoint();
 
                 Assert.Single(changes.Created);
-                Assert.Contains(b.Id, changes.Created.ToArray());
+                Assert.Contains(b.Strategy, changes.Created.ToArray());
 
                 this.Session.Rollback();
 

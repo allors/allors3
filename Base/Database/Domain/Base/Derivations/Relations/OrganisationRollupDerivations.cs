@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdOrganisationRollUp = changeSet.Created.Select(session.Instantiate).OfType<OrganisationRollUp>();
+                var createdOrganisationRollUp = changeSet.Created.Select(v=>v.GetObject()).OfType<OrganisationRollUp>();
 
                 foreach (var organisationRollUp in createdOrganisationRollUp)
                 {

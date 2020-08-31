@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPartyContactMechanism = changeSet.Created.Select(session.Instantiate).OfType<PartyContactMechanism>();
+                var createdPartyContactMechanism = changeSet.Created.Select(v=>v.GetObject()).OfType<PartyContactMechanism>();
 
                 foreach (var partyContactMechanism in createdPartyContactMechanism)
                 {

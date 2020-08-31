@@ -85,11 +85,45 @@ namespace Allors
         {
             database.Init();
 
+            
+            database.AuditableExtensionsRegisterDerivations();
+            database.ShipmentExtensionsRegisterDerivations();
+            database.SupplierOfferingRegisterDerivations();
+            database.ServiceExtensionsRegisterDerivations();
+            database.SerialisedItemCharacteristicRegisterDerivations();
+            database.SerialisedInventoryItemRegisterDerivations();
+            database.ProductCategoryRegisterDerivations();
+            database.PriceComponentExtensionsRegisterDerivations();
+            database.PartCategoryRegisterDerivations();
+            database.OrderValueRegisterDerivations();
+            database.OrderQuantityBreakRegisterDerivations();
+            database.NonUnifiedGoodRegisterDerivations();
+            database.StatementOfWorkRegisterDerivations();
+            database.SurchargeComponentRegisterDerivations();
+            database.SerialisedItemRegisterDerivations();
+            database.QuoteItemRegisterDerivations();
+            database.PurchaseOrderItemDerivations();
+            database.PurchaseOrderApprovalLevel1RegisterDerivations();
+            database.PropasalRegisterDerivations();
+            database.ProductQuoteApprovalRegisterDerivations();
+            database.ProductQuoteRegisterDerivations();
+            database.OrderAdjustmentRegisterDerivations();
+            database.EngagementRegisterDerivations();
+            database.SalesOrderTransferRegisterDerivations();
+            database.QuoteExtensionsRegisterDerivations();
+            database.PurchaseOrderApprovalLevel2RegisterDerivations();
+            database.PurchaseReturnRegisterDerivations();
+            database.PurchaseShipmentRegisterDerivations();
+            database.ShipmentPackageRegisterDerivations();
+            database.ShipmentValueRegisterDerivations();
+            database.PickListItemRegisterDerivations();
+            database.PickListRegisterDerivations();
+            database.PackagingContentRegisterDerivations();
+            database.DropShipmentsRegisterDerivations();
             database.TransferRegisterDerivations();
+            database.shipmentReceiptRegisterDerivations();
             database.CustomerReturnRegisterDerivations();
             database.SalesOrderItemInventoryAssignmentRegisterDerivations();
-            database.SalesOrderItemsRegisterDerivations();
-            database.SalesOrderRegisterDerivations();
             database.UnifiedGoodRegisterDerivations();
             database.NonSerialisedInventoryItemRegisterDerivations();
             database.NonUnifiedPartRegisterDerivations();
@@ -122,10 +156,32 @@ namespace Allors
             database.LetterCorrespondenceRegisterDerivations();
             database.OrganisationRollUpRegisterDerivations();
             database.PartyContactMechanismRegisterDerivations();
-            database.SupplierRelationshipRegisterDerivations();
             database.subcontractorRelationshipRegisterDerivations();
             database.PassportRegisterDerivations();
+            database.RequestItemRegisterDerivations();
+            database.RequestForQuoteRegisterDerivations();
+            database.RequestForProposalRegisterDerivations();
+            database.RequestForInformationRegisterDerivations();
+            database.RequestExtensionsRegisterDerivations();
+            database.PartyFinancialRelationshipRegisterDerivations();
+            database.PaymentApplicationRegisterDerivations();
+            database.PurchaseInvoiceRegisterDerivations();
+            database.PaymentExtensionsRegisterDerivations();
+            database.PurchaseInvoiceApprovalRegisterDerivations();
+            database.RepeatingPurchaseInvoiceRegisterDerivations();
+            database.RepeatingSalesInvoiceRegisterDerivations();
+            database.SalesInvoiceRegisterDerivations();
+            database.SalesInvoiceItemRegisterDerivations();
 
+            database.SupplierRelationshipRegisterDerivations();
+            database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
+
+            database.ShipmentItemRegisterDerivations();
+            database.CustomerShipmentRegisterDerivations();
+
+            database.OrderShipmentRegisterDerivations();
+            database.SalesOrderItemsRegisterDerivations(); //Has Dependency on OrderShipment
+            database.SalesOrderRegisterDerivations();   //Has Dependency on SalesOrderItem
 
             this.Session = database.CreateSession();
 

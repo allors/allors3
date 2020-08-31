@@ -274,7 +274,7 @@ namespace Allors.Database.Adapters.Memory
             var strategy = new Strategy(this, objectType, ++this.currentId, Memory.Database.IntialVersion);
             this.AddStrategy(strategy);
 
-            this.MemoryChangeSet.OnCreated(strategy.ObjectId);
+            this.MemoryChangeSet.OnCreated(strategy);
 
             return strategy.GetObject();
         }
@@ -299,7 +299,7 @@ namespace Allors.Database.Adapters.Memory
             strategy = new Strategy(this, objectType, objectId, objectVersion);
             this.AddStrategy(strategy);
 
-            this.MemoryChangeSet.OnCreated(strategy.ObjectId);
+            this.MemoryChangeSet.OnCreated(strategy);
 
             return strategy;
         }

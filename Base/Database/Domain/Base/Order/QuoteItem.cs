@@ -49,109 +49,109 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.ExistQuoteWhereQuoteItem)
-                {
-                    iteration.AddDependency(this.QuoteWhereQuoteItem, this);
-                    iteration.Mark(this.QuoteWhereQuoteItem);
-                }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    if (this.ExistQuoteWhereQuoteItem)
+            //    {
+            //        iteration.AddDependency(this.QuoteWhereQuoteItem, this);
+            //        iteration.Mark(this.QuoteWhereQuoteItem);
+            //    }
 
-                if (this.ExistSerialisedItem)
-                {
-                    iteration.AddDependency(this.SerialisedItem, this);
-                    iteration.Mark(this.SerialisedItem);
-                }
-            }
+            //    if (this.ExistSerialisedItem)
+            //    {
+            //        iteration.AddDependency(this.SerialisedItem, this);
+            //        iteration.Mark(this.SerialisedItem);
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (this.InvoiceItemType.IsPartItem
-                || this.InvoiceItemType.IsProductFeatureItem
-                || this.InvoiceItemType.IsProductItem)
-            {
-                derivation.Validation.AssertAtLeastOne(this, M.QuoteItem.Product, M.QuoteItem.ProductFeature, M.QuoteItem.SerialisedItem, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
-                derivation.Validation.AssertExistsAtMostOne(this, M.QuoteItem.Product, M.QuoteItem.ProductFeature, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
-                derivation.Validation.AssertExistsAtMostOne(this, M.QuoteItem.SerialisedItem, M.QuoteItem.ProductFeature, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
-            }
-            else
-            {
-                this.Quantity = 1;
-            }
+            //if (this.InvoiceItemType.IsPartItem
+            //    || this.InvoiceItemType.IsProductFeatureItem
+            //    || this.InvoiceItemType.IsProductItem)
+            //{
+            //    derivation.Validation.AssertAtLeastOne(this, M.QuoteItem.Product, M.QuoteItem.ProductFeature, M.QuoteItem.SerialisedItem, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
+            //    derivation.Validation.AssertExistsAtMostOne(this, M.QuoteItem.Product, M.QuoteItem.ProductFeature, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
+            //    derivation.Validation.AssertExistsAtMostOne(this, M.QuoteItem.SerialisedItem, M.QuoteItem.ProductFeature, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
+            //}
+            //else
+            //{
+            //    this.Quantity = 1;
+            //}
 
-            if (this.ExistSerialisedItem && this.Quantity != 1)
-            {
-                derivation.Validation.AddError(this, this.Meta.Quantity, ErrorMessages.SerializedItemQuantity);
-            }
+            //if (this.ExistSerialisedItem && this.Quantity != 1)
+            //{
+            //    derivation.Validation.AddError(this, this.Meta.Quantity, ErrorMessages.SerializedItemQuantity);
+            //}
 
-            if (derivation.ChangeSet.IsCreated(this) && !this.ExistDetails)
-            {
-                this.DeriveDetails();
-            }
+            //if (derivation.ChangeSet.IsCreated(this) && !this.ExistDetails)
+            //{
+            //    this.DeriveDetails();
+            //}
 
-            if (this.ExistRequestItem)
-            {
-                this.RequiredByDate = this.RequestItem.RequiredByDate;
-            }
+            //if (this.ExistRequestItem)
+            //{
+            //    this.RequiredByDate = this.RequestItem.RequiredByDate;
+            //}
 
-            if (!this.ExistUnitOfMeasure)
-            {
-                this.UnitOfMeasure = new UnitsOfMeasure(this.Strategy.Session).Piece;
-            }
+            //if (!this.ExistUnitOfMeasure)
+            //{
+            //    this.UnitOfMeasure = new UnitsOfMeasure(this.Strategy.Session).Piece;
+            //}
 
-            this.UnitVat = this.ExistVatRate ? this.UnitPrice * this.VatRate.Rate / 100 : 0;
+            //this.UnitVat = this.ExistVatRate ? this.UnitPrice * this.VatRate.Rate / 100 : 0;
 
-            // Calculate Totals
-            this.TotalBasePrice = this.UnitBasePrice * this.Quantity;
-            this.TotalDiscount = this.UnitDiscount * this.Quantity;
-            this.TotalSurcharge = this.UnitSurcharge * this.Quantity;
+            //// Calculate Totals
+            //this.TotalBasePrice = this.UnitBasePrice * this.Quantity;
+            //this.TotalDiscount = this.UnitDiscount * this.Quantity;
+            //this.TotalSurcharge = this.UnitSurcharge * this.Quantity;
 
-            if (this.TotalBasePrice > 0)
-            {
-                this.TotalDiscountAsPercentage = Math.Round(this.TotalDiscount / this.TotalBasePrice * 100, 2);
-                this.TotalSurchargeAsPercentage = Math.Round(this.TotalSurcharge / this.TotalBasePrice * 100, 2);
-            }
-            else
-            {
-                this.TotalDiscountAsPercentage = 0;
-                this.TotalSurchargeAsPercentage = 0;
-            }
+            //if (this.TotalBasePrice > 0)
+            //{
+            //    this.TotalDiscountAsPercentage = Math.Round(this.TotalDiscount / this.TotalBasePrice * 100, 2);
+            //    this.TotalSurchargeAsPercentage = Math.Round(this.TotalSurcharge / this.TotalBasePrice * 100, 2);
+            //}
+            //else
+            //{
+            //    this.TotalDiscountAsPercentage = 0;
+            //    this.TotalSurchargeAsPercentage = 0;
+            //}
 
-            this.TotalExVat = this.UnitPrice * this.Quantity;
-            this.TotalVat = Math.Round(this.UnitVat * this.Quantity, 2);
-            this.TotalIncVat = this.TotalExVat + this.TotalVat;
+            //this.TotalExVat = this.UnitPrice * this.Quantity;
+            //this.TotalVat = Math.Round(this.UnitVat * this.Quantity, 2);
+            //this.TotalIncVat = this.TotalExVat + this.TotalVat;
 
-            // CurrentVersion is Previous Version until PostDerive
-            var previousSerialisedItem = this.CurrentVersion?.SerialisedItem;
-            if (previousSerialisedItem != null && previousSerialisedItem != this.SerialisedItem)
-            {
-                previousSerialisedItem.DerivationTrigger = Guid.NewGuid();
-            }
+            //// CurrentVersion is Previous Version until PostDerive
+            //var previousSerialisedItem = this.CurrentVersion?.SerialisedItem;
+            //if (previousSerialisedItem != null && previousSerialisedItem != this.SerialisedItem)
+            //{
+            //    previousSerialisedItem.DerivationTrigger = Guid.NewGuid();
+            //}
         }
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (!this.ExistUnitPrice)
-            {
-                derivation.Validation.AddError(this, this.Meta.UnitPrice, ErrorMessages.UnitPriceRequired);
-            }
+            //if (!this.ExistUnitPrice)
+            //{
+            //    derivation.Validation.AddError(this, this.Meta.UnitPrice, ErrorMessages.UnitPriceRequired);
+            //}
 
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
         public void BaseDeriveDetails(QuoteItemDeriveDetails method)

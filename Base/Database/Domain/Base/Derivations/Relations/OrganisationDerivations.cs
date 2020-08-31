@@ -15,10 +15,12 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdOrgaisations = changeSet.Created.Select(session.Instantiate).OfType<Organisation>();
+                var createdOrgaisations = changeSet.Created.Select(v => v.GetObject()).OfType<Organisation>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.Employment.Employer, out var changedEmployer);
                 var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<Employment>();
+
+                var createdSupplierRelationship = changeSet.Created.Select(v => v.GetObject()).OfType<SupplierRelationship>();
 
                 foreach (var organisation in createdOrgaisations)
                 {
@@ -124,6 +126,12 @@ namespace Allors.Domain
                     }
                 }
 
+                foreach (var supplierRelationship in createdSupplierRelationship)
+                {
+                    var internalOrganisation = supplierRelationship.InternalOrganisation as Organisation;
+                    internalOrganisation.DeriveRelationships();
+                }
+
                 static void DeriveActiveEmployees(Organisation organisation, DateTime now) => (organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer
                                         .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                                         .Select(v => v.Employee)
@@ -135,7 +143,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSubContractorRelationship = changeSet.Created.Select(session.Instantiate).OfType<SubContractorRelationship>();
+                var createdSubContractorRelationship = changeSet.Created.Select(v => v.GetObject()).OfType<SubContractorRelationship>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
                 var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();

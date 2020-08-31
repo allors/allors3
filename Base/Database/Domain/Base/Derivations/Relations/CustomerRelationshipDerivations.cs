@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCustomerRelationship = changeSet.Created.Select(session.Instantiate).OfType<CustomerRelationship>();
+                var createdCustomerRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<CustomerRelationship>();
 
                 foreach(var customerRelationship in createdCustomerRelationship)
                 {

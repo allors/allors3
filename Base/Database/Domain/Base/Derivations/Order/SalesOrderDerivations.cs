@@ -18,9 +18,21 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSalesOrder = changeSet.Created.Select(session.Instantiate).OfType<SalesOrder>();
+                var empty = Array.Empty<SalesOrder>();
 
-                foreach (var salesOrder in createdSalesOrder)
+                var createdSalesOrder = changeSet.Created.Select(v=>v.GetObject()).OfType<SalesOrder>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrder.SalesOrderState, out var changedSalesOrderState);
+                var salesOrdersWhereStateChanged = changedSalesOrderState?.Select(session.Instantiate).OfType<SalesOrder>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrder.SalesOrderItems, out var changedSalesOrderItems);
+                var salesOrdersWhereItemsChanged = changedSalesOrderItems?.Select(session.Instantiate).OfType<SalesOrder>();
+
+                var allSalesOrders = createdSalesOrder
+                    .Union(salesOrdersWhereItemsChanged ?? empty)
+                    .Union(salesOrdersWhereStateChanged ?? empty);
+
+                foreach (var salesOrder in allSalesOrders.Where(v => v != null))
                 {
                     // SalesOrder Derivations and Validations
                     salesOrder.BillToCustomer ??= salesOrder.ShipToCustomer;

@@ -132,22 +132,22 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this.BillToCustomer, this);
-                iteration.Mark(this.BillToCustomer);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.AddDependency(this.BillToCustomer, this);
+            //    iteration.Mark(this.BillToCustomer);
 
-                iteration.AddDependency(this.ShipToCustomer, this);
-                iteration.Mark(this.ShipToCustomer);
+            //    iteration.AddDependency(this.ShipToCustomer, this);
+            //    iteration.Mark(this.ShipToCustomer);
 
-                foreach (SalesOrderItem orderItem in this.SalesOrderItems)
-                {
-                    iteration.AddDependency(this, orderItem);
-                    iteration.Mark(orderItem);
-                }
-            }
+            //    foreach (SalesOrderItem orderItem in this.SalesOrderItems)
+            //    {
+            //        iteration.AddDependency(this, orderItem);
+            //        iteration.Mark(orderItem);
+            //    }
+            //}
         }
 
         //public void BaseOnDerive(ObjectOnDerive method)
@@ -593,6 +593,7 @@ namespace Allors.Domain
         public void BaseContinue(OrderContinue method) => this.SalesOrderState = this.PreviousSalesOrderState;
 
         public void BaseComplete(OrderComplete method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Completed;
+
         public void BaseShip(SalesOrderShip method)
         {
             if (this.CanShip)

@@ -16,7 +16,7 @@ namespace Allors.Domain
     public static partial class IChangeSetExtensions
     {
 
-        public static bool IsCreated(this IChangeSet @this, Object derivable) => @this.Created.Contains(derivable.Id);
+        public static bool IsCreated(this IChangeSet @this, Object derivable) => @this.Created.Contains(derivable.Strategy);
 
         public static bool HasChangedRole(this IChangeSet @this, Object derivable, RoleType roleType)
         {

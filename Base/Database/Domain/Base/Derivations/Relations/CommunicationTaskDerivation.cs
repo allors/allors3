@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCommunicationTasks = changeSet.Created.Select(session.Instantiate).OfType<CommunicationTask>();
+                var createdCommunicationTasks = changeSet.Created.Select(v=>v.GetObject()).OfType<CommunicationTask>();
 
                 foreach(var communicationTask in createdCommunicationTasks)
                 {

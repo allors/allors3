@@ -30,27 +30,27 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.ChangeSet.Associations.Contains(this.Id))
-            {
-                iteration.AddDependency(this.ShipmentItem, this);
-                iteration.Mark(this.ShipmentItem);
-            }
+            //if (iteration.ChangeSet.Associations.Contains(this.Id))
+            //{
+            //    iteration.AddDependency(this.ShipmentItem, this);
+            //    iteration.Mark(this.ShipmentItem);
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (this.ExistQuantity && this.ExistShipmentItem)
-            {
-                var maxQuantity = this.ShipmentItem.Quantity - this.ShipmentItem.QuantityShipped;
-                if (this.Quantity == 0 || this.Quantity > maxQuantity)
-                {
-                    derivation.Validation.AddError(this, M.PackagingContent.Quantity, ErrorMessages.PackagingContentMaximum);
-                }
-            }
+            //if (this.ExistQuantity && this.ExistShipmentItem)
+            //{
+            //    var maxQuantity = this.ShipmentItem.Quantity - this.ShipmentItem.QuantityShipped;
+            //    if (this.Quantity == 0 || this.Quantity > maxQuantity)
+            //    {
+            //        derivation.Validation.AddError(this, M.PackagingContent.Quantity, ErrorMessages.PackagingContentMaximum);
+            //    }
+            //}
         }
     }
 }

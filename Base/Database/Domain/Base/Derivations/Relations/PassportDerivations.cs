@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPassport = changeSet.Created.Select(session.Instantiate).OfType<Passport>();
+                var createdPassport = changeSet.Created.Select(v=>v.GetObject()).OfType<Passport>();
 
                 foreach(var passport in createdPassport)
                 {

@@ -60,6 +60,7 @@
     <None Include="Relation\Relation.cd" />
     <None Include="Security\Security.cd" />
     <None Include="Security\PurchaseOrderApproval.cd" />
+    <None Include="Temp3.cd" />
     <None Include="Shipment\Overview.cd" />
     <None Include="Shipment\Picking.cd" />
     <None Include="Shipment\Quantity.cd" />

@@ -41,69 +41,69 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.ChangeSet.Associations.Contains(this.Id))
-            {
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-                {
-                    if (shipmentItem.ExistShipmentReceiptWhereShipmentItem
-                        && shipmentItem.ShipmentReceiptWhereShipmentItem.ExistInventoryItem)
-                    {
-                        iteration.AddDependency(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem, this);
-                        iteration.Mark(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem);
-                    }
+            //if (iteration.ChangeSet.Associations.Contains(this.Id))
+            //{
+            //    foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            //    {
+            //        if (shipmentItem.ExistShipmentReceiptWhereShipmentItem
+            //            && shipmentItem.ShipmentReceiptWhereShipmentItem.ExistInventoryItem)
+            //        {
+            //            iteration.AddDependency(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem, this);
+            //            iteration.Mark(shipmentItem.ShipmentReceiptWhereShipmentItem.InventoryItem);
+            //        }
 
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
-                    {
-                        iteration.AddDependency(orderShipment.OrderItem, this);
-                        iteration.Mark(orderShipment.OrderItem);
-                    }
-                }
-            }
+            //        foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+            //        {
+            //            iteration.AddDependency(orderShipment.OrderItem, this);
+            //            iteration.Mark(orderShipment.OrderItem);
+            //        }
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            derivation.Validation.AssertExists(this, this.Meta.ShipFromParty);
+            //derivation.Validation.AssertExists(this, this.Meta.ShipFromParty);
 
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-            var shipToParty = this.ShipToParty as InternalOrganisation;
-            if (!this.ExistShipToParty && internalOrganisations.Count() == 1)
-            {
-                this.ShipToParty = internalOrganisations.First();
-                shipToParty = internalOrganisations.First();
-            }
+            //var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+            //var shipToParty = this.ShipToParty as InternalOrganisation;
+            //if (!this.ExistShipToParty && internalOrganisations.Count() == 1)
+            //{
+            //    this.ShipToParty = internalOrganisations.First();
+            //    shipToParty = internalOrganisations.First();
+            //}
 
-            this.ShipToAddress = this.ShipToAddress ?? this.ShipToParty?.ShippingAddress ?? this.ShipToParty?.GeneralCorrespondence as PostalAddress;
+            //this.ShipToAddress = this.ShipToAddress ?? this.ShipToParty?.ShippingAddress ?? this.ShipToParty?.GeneralCorrespondence as PostalAddress;
 
-            if (!this.ExistShipToFacility && shipToParty != null && shipToParty.StoresWhereInternalOrganisation.Count == 1)
-            {
-                this.ShipToFacility = shipToParty.StoresWhereInternalOrganisation.Single().DefaultFacility;
-            }
+            //if (!this.ExistShipToFacility && shipToParty != null && shipToParty.StoresWhereInternalOrganisation.Count == 1)
+            //{
+            //    this.ShipToFacility = shipToParty.StoresWhereInternalOrganisation.Single().DefaultFacility;
+            //}
 
-            if (!this.ExistShipmentNumber && shipToParty != null)
-            {
-                this.ShipmentNumber = shipToParty.NextShipmentNumber(this.Strategy.Session.Now().Year);
-                this.SortableShipmentNumber = this.Session().GetSingleton().SortableNumber(((InternalOrganisation)this.ShipToParty).IncomingShipmentNumberPrefix, this.ShipmentNumber, this.CreationDate.Value.Year.ToString());
-            }
+            //if (!this.ExistShipmentNumber && shipToParty != null)
+            //{
+            //    this.ShipmentNumber = shipToParty.NextShipmentNumber(this.Strategy.Session.Now().Year);
+            //    this.SortableShipmentNumber = this.Session().GetSingleton().SortableNumber(((InternalOrganisation)this.ShipToParty).IncomingShipmentNumberPrefix, this.ShipmentNumber, this.CreationDate.Value.Year.ToString());
+            //}
 
-            if (!this.ExistShipFromAddress && this.ExistShipFromParty)
-            {
-                this.ShipFromAddress = this.ShipFromParty.ShippingAddress;
-            }
+            //if (!this.ExistShipFromAddress && this.ExistShipFromParty)
+            //{
+            //    this.ShipFromAddress = this.ShipFromParty.ShippingAddress;
+            //}
 
-            if (this.ShipmentItems.Any()
-                && this.ShipmentItems.All(v => v.ExistShipmentReceiptWhereShipmentItem
-                &&  v.ShipmentReceiptWhereShipmentItem.QuantityAccepted.Equals(v.ShipmentReceiptWhereShipmentItem.OrderItem?.QuantityOrdered))
-                && this.ShipmentItems.All(v => v.ShipmentItemState.Equals(new ShipmentItemStates(this.strategy.Session).Received)))
-            {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Received;
-            }
+            //if (this.ShipmentItems.Any()
+            //    && this.ShipmentItems.All(v => v.ExistShipmentReceiptWhereShipmentItem
+            //    &&  v.ShipmentReceiptWhereShipmentItem.QuantityAccepted.Equals(v.ShipmentReceiptWhereShipmentItem.OrderItem?.QuantityOrdered))
+            //    && this.ShipmentItems.All(v => v.ShipmentItemState.Equals(new ShipmentItemStates(this.strategy.Session).Received)))
+            //{
+            //    this.ShipmentState = new ShipmentStates(this.Strategy.Session).Received;
+            //}
 
-            this.Sync(this.Session());
+            //this.Sync(this.Session());
         }
 
         public void BaseReceive(PurchaseShipmentReceive method)
@@ -180,10 +180,10 @@ namespace Allors.Domain
         private void Sync(ISession session)
         {
             // session.Prefetch(this.SyncPrefetch, this);
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-            {
-                shipmentItem.Sync(this);
-            }
+            //foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            //{
+            //    shipmentItem.Sync(this);
+            //}
         }
     }
 }

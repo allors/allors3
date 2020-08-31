@@ -6,6 +6,7 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Allors.Domain.Derivations;
     using Allors.Meta;
@@ -17,7 +18,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSalesOrderItemInventoryAssignment = changeSet.Created.Select(session.Instantiate).OfType<SalesOrderItemInventoryAssignment>();
+                var createdSalesOrderItemInventoryAssignment = changeSet.Created.Select(v=>v.GetObject()).OfType<SalesOrderItemInventoryAssignment>();
 
                 foreach (var salesOrderItemInventoryAssignment in createdSalesOrderItemInventoryAssignment)
                 {

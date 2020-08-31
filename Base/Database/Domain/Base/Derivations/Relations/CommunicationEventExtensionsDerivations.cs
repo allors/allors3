@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCommunicationEventExtensions = changeSet.Created.Select(session.Instantiate).OfType<CommunicationEvent>();
+                var createdCommunicationEventExtensions = changeSet.Created.Select(v=>v.GetObject()).OfType<CommunicationEvent>();
 
                 foreach (var communicationEventExtension in createdCommunicationEventExtensions)
                 {
@@ -85,6 +85,20 @@ namespace Allors.Domain
                             new CommunicationTaskBuilder(communicationEventExtension.Strategy.Session).WithCommunicationEvent(communicationEventExtension).Build();
                         }
                     }
+
+                    communicationEventExtension.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+                    communicationEventExtension.AddSecurityToken(communicationEventExtension.Owner?.OwnerSecurityToken);
+
+                    var now = communicationEventExtension.Strategy.Session.Now();
+
+                    var parties = new[] { communicationEventExtension.FromParty, communicationEventExtension.ToParty, communicationEventExtension.Owner }.Distinct().ToArray();
+
+                    var organisation = parties.OfType<Person>()
+                        .SelectMany(v => v.OrganisationContactRelationshipsWhereContact)
+                        .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+                        .Select(v => v.Organisation);
+
+                    communicationEventExtension.InvolvedParties = parties.Union(organisation).ToArray();
                 }
 
             }

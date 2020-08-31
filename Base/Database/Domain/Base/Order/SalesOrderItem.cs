@@ -108,38 +108,38 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
-            var salesOrder = this.SalesOrderWhereSalesOrderItem;
+            //var (iteration, changeSet, derivedObjects) = method;
+            //var salesOrder = this.SalesOrderWhereSalesOrderItem;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(salesOrder, this);
-                iteration.Mark(salesOrder);
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.AddDependency(salesOrder, this);
+            //    iteration.Mark(salesOrder);
 
-                foreach (SalesOrderItem featureItem in this.OrderedWithFeatures)
-                {
-                    iteration.AddDependency(this, featureItem);
-                    iteration.Mark(featureItem);
-                }
+            //    foreach (SalesOrderItem featureItem in this.OrderedWithFeatures)
+            //    {
+            //        iteration.AddDependency(this, featureItem);
+            //        iteration.Mark(featureItem);
+            //    }
 
-                if (this.ExistReservedFromNonSerialisedInventoryItem)
-                {
-                    iteration.AddDependency(this, this.ReservedFromNonSerialisedInventoryItem);
-                    iteration.Mark(this.ReservedFromNonSerialisedInventoryItem);
-                }
+            //    if (this.ExistReservedFromNonSerialisedInventoryItem)
+            //    {
+            //        iteration.AddDependency(this, this.ReservedFromNonSerialisedInventoryItem);
+            //        iteration.Mark(this.ReservedFromNonSerialisedInventoryItem);
+            //    }
 
-                if (this.ExistReservedFromSerialisedInventoryItem)
-                {
-                    iteration.AddDependency(this, this.ReservedFromSerialisedInventoryItem);
-                    iteration.Mark(this.ReservedFromSerialisedInventoryItem);
-                }
+            //    if (this.ExistReservedFromSerialisedInventoryItem)
+            //    {
+            //        iteration.AddDependency(this, this.ReservedFromSerialisedInventoryItem);
+            //        iteration.Mark(this.ReservedFromSerialisedInventoryItem);
+            //    }
 
-                if (this.ExistSerialisedItem)
-                {
-                    iteration.AddDependency(this.SerialisedItem, this);
-                    iteration.Mark(this.SerialisedItem);
-                }
-            }
+            //    if (this.ExistSerialisedItem)
+            //    {
+            //        iteration.AddDependency(this.SerialisedItem, this);
+            //        iteration.Mark(this.SerialisedItem);
+            //    }
+            //}
         }
 
         //public void BaseOnDerive(ObjectOnDerive method)

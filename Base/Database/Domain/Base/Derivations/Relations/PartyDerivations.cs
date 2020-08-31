@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdParties = changeSet.Created.Select(session.Instantiate).OfType<Party>();
+                var createdParties = changeSet.Created.Select(v => v.GetObject()).OfType<Party>();
 
                 foreach (var party in createdParties)
                 {
@@ -152,6 +152,29 @@ namespace Allors.Domain
                     }
 
                     SyncPartyRelationships(party);
+
+                    var internalOrganisations = new Organisations(party.Strategy.Session).InternalOrganisations();
+
+                    if (!internalOrganisations.Contains(party))
+                    {
+                        foreach (var internalOrganisation in internalOrganisations)
+                        {
+                            var partyFinancial = party.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
+
+                            if (partyFinancial == null)
+                            {
+                                partyFinancial = new PartyFinancialRelationshipBuilder(party.Strategy.Session)
+                                    .WithFinancialParty(party)
+                                    .WithInternalOrganisation(internalOrganisation)
+                                    .Build();
+                            }
+
+                            if (partyFinancial.SubAccountNumber == 0)
+                            {
+                                partyFinancial.SubAccountNumber = internalOrganisation.NextSubAccountNumber();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -181,7 +204,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdCustomerRelationships = changeSet.Created.Select(session.Instantiate).OfType<CustomerRelationship>();
+                var createdCustomerRelationships = changeSet.Created.Select(v => v.GetObject()).OfType<CustomerRelationship>();
 
                 foreach (var relationship in createdCustomerRelationships)
                 {

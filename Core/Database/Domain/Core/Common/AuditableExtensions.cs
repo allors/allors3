@@ -9,24 +9,24 @@ namespace Allors.Domain
     {
         public static void CoreOnDerive(this Auditable @this, ObjectOnDerive method)
         {
-            var user = @this.Strategy.Session.GetUser();
-            if (user != null)
-            {
-                var derivation = method.Derivation;
-                var changeSet = derivation.ChangeSet;
+            //var user = @this.Strategy.Session.GetUser();
+            //if (user != null)
+            //{
+            //    var derivation = method.Derivation;
+            //    var changeSet = derivation.ChangeSet;
 
-                if (changeSet.Created.Contains(@this.Id))
-                {
-                    @this.CreationDate = @this.Strategy.Session.Now();
-                    @this.CreatedBy = user;
-                }
+            //    if (changeSet.Created.Contains(@this.Id))
+            //    {
+            //        @this.CreationDate = @this.Strategy.Session.Now();
+            //        @this.CreatedBy = user;
+            //    }
 
-                if (changeSet.Associations.Contains(@this.Id))
-                {
-                    @this.LastModifiedDate = @this.Strategy.Session.Now();
-                    @this.LastModifiedBy = user;
-                }
-            }
+            //    if (changeSet.Associations.Contains(@this.Id))
+            //    {
+            //        @this.LastModifiedDate = @this.Strategy.Session.Now();
+            //        @this.LastModifiedBy = user;
+            //    }
+            //}
         }
     }
 }

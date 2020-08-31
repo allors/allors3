@@ -97,6 +97,7 @@ namespace Tests
         {
             database.Init();
 
+            database.AuditableExtensionsRegisterDerivations();
             database.MediaRegisterDerivations();
 
             this.Session = database.CreateSession();

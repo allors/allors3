@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSettings = changeSet.Created.Select(session.Instantiate).OfType<Settings>();
+                var createdSettings = changeSet.Created.Select(v=>v.GetObject()).OfType<Settings>();
 
                 foreach(var settings in createdSettings)
                 {

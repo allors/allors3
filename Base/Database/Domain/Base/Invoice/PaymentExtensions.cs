@@ -20,32 +20,32 @@ namespace Allors.Domain
 
         public static void BaseOnPreDerive(this Payment @this, ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-            {
-                foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
-                {
-                    iteration.AddDependency(@this, paymentApplication);
-                    iteration.Mark(paymentApplication);
-                }
-            }
+            //if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
+            //{
+            //    foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
+            //    {
+            //        iteration.AddDependency(@this, paymentApplication);
+            //        iteration.Mark(paymentApplication);
+            //    }
+            //}
         }
 
         public static void BaseOnDerive(this Payment @this, ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            decimal totalAmountApplied = 0;
-            foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
-            {
-                totalAmountApplied += paymentApplication.AmountApplied;
-            }
+            //decimal totalAmountApplied = 0;
+            //foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
+            //{
+            //    totalAmountApplied += paymentApplication.AmountApplied;
+            //}
 
-            if (@this.ExistAmount && totalAmountApplied > @this.Amount)
-            {
-                derivation.Validation.AddError(@this, M.Payment.Amount, ErrorMessages.PaymentAmountIsToSmall);
-            }
+            //if (@this.ExistAmount && totalAmountApplied > @this.Amount)
+            //{
+            //    derivation.Validation.AddError(@this, M.Payment.Amount, ErrorMessages.PaymentAmountIsToSmall);
+            //}
         }
 
         public static void BaseDelete(this Payment @this, DeletableDelete method)

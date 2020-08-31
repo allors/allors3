@@ -19,9 +19,31 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSalesOrderItem = changeSet.Created.Select(session.Instantiate).OfType<SalesOrderItem>();
+                var empty = Array.Empty<SalesOrderItem>();
 
-                foreach(var salesOrderItem in createdSalesOrderItem)
+                var createdSalesOrderItem = changeSet.Created.Select(v=>v.GetObject()).OfType<SalesOrderItem>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrder.SalesOrderState, out var changedSalesOrderState);
+                var salesOrdersWhereStateChanged = changedSalesOrderState?.Select(session.Instantiate).OfType<SalesOrder>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.SalesOrderItemState, out var changedSalesOrderItemState);
+                var salesOrdersItemsWhereStateChanged = changedSalesOrderItemState?.Select(session.Instantiate).OfType<SalesOrderItem>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.QuantityOrdered.RoleType, out var changedSalesOrderStates);
+                var salesOrdersWhereQuantityOrderedChanged = changedSalesOrderStates?.Select(session.Instantiate).OfType<SalesOrderItem>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.OrderShipment.Quantity, out var changedOrderShipments);
+                var orderShipmentsWhereQuantityChanged = changedOrderShipments?.Select(session.Instantiate).OfType<OrderShipment>();
+
+                var salesOrderItems = orderShipmentsWhereQuantityChanged?.Select(v => v.OrderItem);
+
+                var allPurchaseOrders = createdSalesOrderItem
+                    .Union(salesOrdersWhereStateChanged?.SelectMany(v => v.SalesOrderItems) ?? empty)
+                    //.Union(salesOrdersItemsWhereStateChanged ?? empty)
+                    .Union(salesOrdersWhereQuantityOrderedChanged ?? empty)
+                    .Union(salesOrderItems?.OfType<SalesOrderItem>() ?? empty);
+
+                foreach (var salesOrderItem in allPurchaseOrders.Where(v => v != null))
                 {
                     var salesOrder = salesOrderItem.SalesOrderWhereSalesOrderItem;
                     var shipped = new ShipmentStates(salesOrderItem.Session()).Shipped;

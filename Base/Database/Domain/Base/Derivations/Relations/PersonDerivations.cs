@@ -7,6 +7,7 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
+    using System.Text;
     using Allors.Meta;
 
     public static partial class DabaseExtensions
@@ -15,7 +16,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdPersons = changeSet.Created.Select(session.Instantiate).OfType<Person>();
+                var createdPersons = changeSet.Created.Select(v=>v.GetObject()).OfType<Person>();
 
                 foreach (var person in createdPersons)
                 {
@@ -60,6 +61,43 @@ namespace Allors.Domain
                     }
                 }
             }
+        }
+
+        static string DerivePartyName(this Person person)
+        {
+            var partyName = new StringBuilder();
+
+            if (person.ExistFirstName)
+            {
+                partyName.Append(person.FirstName);
+            }
+
+            if (person.ExistMiddleName)
+            {
+                if (partyName.Length > 0)
+                {
+                    partyName.Append(" ");
+                }
+
+                partyName.Append(person.MiddleName);
+            }
+
+            if (person.ExistLastName)
+            {
+                if (partyName.Length > 0)
+                {
+                    partyName.Append(" ");
+                }
+
+                partyName.Append(person.LastName);
+            }
+
+            if (partyName.Length == 0)
+            {
+                partyName.Append($"[{person.UserName}]");
+            }
+
+            return partyName.ToString();
         }
 
         public class PersonSyncDerivation : IDomainDerivation

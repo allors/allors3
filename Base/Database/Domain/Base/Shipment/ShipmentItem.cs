@@ -55,86 +55,86 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this.ShipmentWhereShipmentItem, this);
-                iteration.Mark(this.ShipmentWhereShipmentItem, this);
-            }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    iteration.AddDependency(this.ShipmentWhereShipmentItem, this);
+            //    iteration.Mark(this.ShipmentWhereShipmentItem, this);
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            if (this.ExistSerialisedItem && !this.ExistNextSerialisedItemAvailability)
-            {
-                derivation.Validation.AssertExists(this, this.Meta.NextSerialisedItemAvailability);
-            }
+            //if (this.ExistSerialisedItem && !this.ExistNextSerialisedItemAvailability)
+            //{
+            //    derivation.Validation.AssertExists(this, this.Meta.NextSerialisedItemAvailability);
+            //}
 
-            if (this.ExistSerialisedItem && this.Quantity != 1)
-            {
-                derivation.Validation.AddError(this, this.Meta.Quantity, ErrorMessages.SerializedItemQuantity);
-            }
+            //if (this.ExistSerialisedItem && this.Quantity != 1)
+            //{
+            //    derivation.Validation.AddError(this, this.Meta.Quantity, ErrorMessages.SerializedItemQuantity);
+            //}
 
-            this.BaseOnDeriveCustomerShipmentItem(derivation);
+            //this.BaseOnDeriveCustomerShipmentItem(derivation);
 
-            this.BaseOnDerivePurchaseShipmentItem(derivation);
+            //this.BaseOnDerivePurchaseShipmentItem(derivation);
         }
 
-        public void BaseOnDerivePurchaseShipmentItem(IDerivation derivation)
-        {
-            if (this.ExistShipmentWhereShipmentItem
-                && this.ShipmentWhereShipmentItem is PurchaseShipment
-                && this.ExistPart
-                && this.Part.InventoryItemKind.IsNonSerialised
-                && !this.ExistUnitPurchasePrice)
-            {
-                derivation.Validation.AssertExists(this, this.Meta.UnitPurchasePrice);
-            }
+        //public void BaseOnDerivePurchaseShipmentItem(IDerivation derivation)
+        //{
+        //    if (this.ExistShipmentWhereShipmentItem
+        //        && this.ShipmentWhereShipmentItem is PurchaseShipment
+        //        && this.ExistPart
+        //        && this.Part.InventoryItemKind.IsNonSerialised
+        //        && !this.ExistUnitPurchasePrice)
+        //    {
+        //        derivation.Validation.AssertExists(this, this.Meta.UnitPurchasePrice);
+        //    }
 
-            if (this.ExistShipmentWhereShipmentItem
-                && this.ShipmentWhereShipmentItem is PurchaseShipment
-                && !this.ExistStoredInFacility
-                && this.ShipmentWhereShipmentItem.ExistShipToFacility)
-            {
-                this.StoredInFacility = this.ShipmentWhereShipmentItem.ShipToFacility;
-            }
+        //    if (this.ExistShipmentWhereShipmentItem
+        //        && this.ShipmentWhereShipmentItem is PurchaseShipment
+        //        && !this.ExistStoredInFacility
+        //        && this.ShipmentWhereShipmentItem.ExistShipToFacility)
+        //    {
+        //        this.StoredInFacility = this.ShipmentWhereShipmentItem.ShipToFacility;
+        //    }
 
-            if (this.ExistShipmentWhereShipmentItem
-                && this.ShipmentWhereShipmentItem is PurchaseShipment
-                && this.ExistShipmentReceiptWhereShipmentItem)
-            {
-                this.Quantity = 0;
-                var shipmentReceipt = this.ShipmentReceiptWhereShipmentItem;
-                this.Quantity += shipmentReceipt.QuantityAccepted + shipmentReceipt.QuantityRejected;
-            }
-        }
+        //    if (this.ExistShipmentWhereShipmentItem
+        //        && this.ShipmentWhereShipmentItem is PurchaseShipment
+        //        && this.ExistShipmentReceiptWhereShipmentItem)
+        //    {
+        //        this.Quantity = 0;
+        //        var shipmentReceipt = this.ShipmentReceiptWhereShipmentItem;
+        //        this.Quantity += shipmentReceipt.QuantityAccepted + shipmentReceipt.QuantityRejected;
+        //    }
+        //}
 
-        public void BaseOnDeriveCustomerShipmentItem(IDerivation derivation)
-        {
-            if (this.ShipmentWhereShipmentItem is CustomerShipment)
-            {
-                this.QuantityPicked = 0;
-                foreach (ItemIssuance itemIssuance in this.ItemIssuancesWhereShipmentItem)
-                {
-                    if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
-                    {
-                        this.QuantityPicked += itemIssuance.Quantity;
-                    }
-                }
+        //public void BaseOnDeriveCustomerShipmentItem(IDerivation derivation)
+        //{
+        //    if (this.ShipmentWhereShipmentItem is CustomerShipment)
+        //    {
+        //        this.QuantityPicked = 0;
+        //        foreach (ItemIssuance itemIssuance in this.ItemIssuancesWhereShipmentItem)
+        //        {
+        //            if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
+        //            {
+        //                this.QuantityPicked += itemIssuance.Quantity;
+        //            }
+        //        }
 
-                if (Equals(this.ShipmentWhereShipmentItem.ShipmentState, new ShipmentStates(this.Strategy.Session).Shipped))
-                {
-                    this.QuantityShipped = 0;
-                    foreach (ItemIssuance itemIssuance in this.ItemIssuancesWhereShipmentItem)
-                    {
-                        this.QuantityShipped += itemIssuance.Quantity;
-                    }
-                }
-            }
-        }
+        //        if (Equals(this.ShipmentWhereShipmentItem.ShipmentState, new ShipmentStates(this.Strategy.Session).Shipped))
+        //        {
+        //            this.QuantityShipped = 0;
+        //            foreach (ItemIssuance itemIssuance in this.ItemIssuancesWhereShipmentItem)
+        //            {
+        //                this.QuantityShipped += itemIssuance.Quantity;
+        //            }
+        //        }
+        //    }
+        //}
 
         public void Sync(Shipment shipment) => this.SyncedShipment = shipment;
     }

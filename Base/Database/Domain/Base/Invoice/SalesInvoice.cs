@@ -145,486 +145,486 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
-            var session = this.Session();
-
-            var internalOrganisations = new Organisations(session).InternalOrganisations();
-
-            if (!this.ExistBilledFrom && internalOrganisations.Count() == 1)
-            {
-                this.BilledFrom = internalOrganisations.First();
-            }
-
-            if (!this.ExistStore && this.ExistBilledFrom)
-            {
-                var stores = new Stores(session).Extent();
-                stores.Filter.AddEquals(M.Store.InternalOrganisation, this.BilledFrom);
-                this.Store = stores.FirstOrDefault();
-            }
-
-            if (!this.ExistInvoiceNumber && this.ExistStore)
-            {
-                this.InvoiceNumber = this.Store.NextTemporaryInvoiceNumber();
-                this.SortableInvoiceNumber = this.Session().GetSingleton().SortableNumber(null, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
-            }
-
-            if (!this.ExistBilledFromContactMechanism && this.ExistBilledFrom)
-            {
-                this.BilledFromContactMechanism = this.BilledFrom.ExistBillingAddress ? this.BilledFrom.BillingAddress : this.BilledFrom.GeneralCorrespondence;
-            }
-
-            if (!this.ExistBillToContactMechanism && this.ExistBillToCustomer)
-            {
-                this.BillToContactMechanism = this.BillToCustomer.BillingAddress;
-            }
-
-            if (!this.ExistBillToEndCustomerContactMechanism && this.ExistBillToEndCustomer)
-            {
-                this.BillToEndCustomerContactMechanism = this.BillToEndCustomer.BillingAddress;
-            }
-
-            if (!this.ExistShipToEndCustomerAddress && this.ExistShipToEndCustomer)
-            {
-                this.ShipToEndCustomerAddress = this.ShipToEndCustomer.ShippingAddress;
-            }
-
-            if (!this.ExistShipToAddress && this.ExistShipToCustomer)
-            {
-                this.ShipToAddress = this.ShipToCustomer.ShippingAddress;
-            }
-
-            if (!this.ExistCurrency && this.ExistBilledFrom)
-            {
-                if (this.ExistBillToCustomer && (this.BillToCustomer.ExistPreferredCurrency || this.BillToCustomer.ExistLocale))
-                {
-                    this.Currency = this.BillToCustomer.ExistPreferredCurrency ? this.BillToCustomer.PreferredCurrency : this.BillToCustomer.Locale.Country.Currency;
-                }
-                else
-                {
-                    this.Currency = this.BilledFrom.ExistPreferredCurrency ?
-                        this.BilledFrom.PreferredCurrency :
-                        session.GetSingleton().DefaultLocale.Country.Currency;
-                }
-            }
-
-            this.VatRegime ??= this.BillToCustomer?.VatRegime;
-            this.IrpfRegime ??= this.BillToCustomer?.IrpfRegime;
-            this.IsRepeating = this.ExistRepeatingSalesInvoiceWhereSource;
-
-            foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
-            {
-                foreach (OrderItemBilling orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
-                {
-                    if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem && !this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))
-                    {
-                        this.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
-                    }
-                }
-
-                foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
-                {
-                    if (!this.WorkEfforts.Contains(workEffortBilling.WorkEffort))
-                    {
-                        this.AddWorkEffort(workEffortBilling.WorkEffort);
-                    }
-                }
-
-                foreach (TimeEntryBilling timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
-                {
-                    if (!this.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
-                    {
-                        this.AddWorkEffort(timeEntryBilling.TimeEntry.WorkEffort);
-                    }
-                }
-            }
-
-            this.IsRepeatingInvoice = this.ExistRepeatingSalesInvoiceWhereSource && (!this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate || this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= this.Strategy.Session.Now().Date);
-
-            this.SalesInvoiceItems = this.SalesInvoiceItems.ToArray();
-
-            if (this.ExistBillToCustomer && this.BillToCustomer.ExistLocale)
-            {
-                this.Locale = this.BillToCustomer.Locale;
-            }
-            else
-            {
-                this.Locale = session.GetSingleton().DefaultLocale;
-            }
-
-            if (this.ExistSalesTerms)
-            {
-                foreach (AgreementTerm term in this.SalesTerms)
-                {
-                    if (term.TermType.Equals(new InvoiceTermTypes(session).PaymentNetDays))
-                    {
-                        if (int.TryParse(term.TermValue, out var netDays))
-                        {
-                            this.PaymentDays = netDays;
-                        }
-                    }
-                }
-            }
-            else if (this.BillToCustomer?.PaymentNetDays().HasValue == true)
-            {
-                this.PaymentDays = this.BillToCustomer.PaymentNetDays().Value;
-            }
-            else if (this.ExistStore && this.Store.ExistPaymentNetDays)
-            {
-                this.PaymentDays = this.Store.PaymentNetDays;
-            }
-
-            if (!this.ExistPaymentDays)
-            {
-                this.PaymentDays = 0;
-            }
-
-            if (this.ExistInvoiceDate)
-            {
-                this.DueDate = this.InvoiceDate.AddDays(this.PaymentNetDays);
-            }
-
-            var validInvoiceItems = this.SalesInvoiceItems.Where(v => v.IsValid).ToArray();
-            this.ValidInvoiceItems = validInvoiceItems;
-
-            var currentPriceComponents = new PriceComponents(this.Strategy.Session).CurrentPriceComponents(this.InvoiceDate);
-
-            var quantityByProduct = validInvoiceItems
-                .Where(v => v.ExistProduct)
-                .GroupBy(v => v.Product)
-                .ToDictionary(v => v.Key, v => v.Sum(w => w.Quantity));
-
-            // First run to calculate price
-            foreach (var salesInvoiceItem in validInvoiceItems)
-            {
-                decimal quantityOrdered = 0;
-
-                if (salesInvoiceItem.ExistProduct)
-                {
-                    quantityByProduct.TryGetValue(salesInvoiceItem.Product, out quantityOrdered);
-                }
-
-                this.CalculatePrices(derivation, salesInvoiceItem, currentPriceComponents, quantityOrdered, 0);
-            }
-
-            var totalBasePriceByProduct = validInvoiceItems
-                .Where(v => v.ExistProduct)
-                .GroupBy(v => v.Product)
-                .ToDictionary(v => v.Key, v => v.Sum(w => w.TotalBasePrice));
-
-            // Second run to calculate price (because of order value break)
-            foreach (var salesInvoiceItem in validInvoiceItems)
-            {
-                decimal quantityOrdered = 0;
-                decimal totalBasePrice = 0;
-
-                if (salesInvoiceItem.ExistProduct)
-                {
-                    quantityByProduct.TryGetValue(salesInvoiceItem.Product, out quantityOrdered);
-                    totalBasePriceByProduct.TryGetValue(salesInvoiceItem.Product, out totalBasePrice);
-                }
-
-                this.CalculatePrices(derivation, salesInvoiceItem, currentPriceComponents, quantityOrdered, totalBasePrice);
-            }
-
-            // Calculate Totals
-            this.TotalBasePrice = 0;
-            this.TotalDiscount = 0;
-            this.TotalSurcharge = 0;
-            this.TotalExVat = 0;
-            this.TotalFee = 0;
-            this.TotalShippingAndHandling = 0;
-            this.TotalExtraCharge = 0;
-            this.TotalVat = 0;
-            this.TotalIrpf = 0;
-            this.TotalIncVat = 0;
-            this.TotalListPrice = 0;
-            this.TotalIrpf = 0;
-            this.GrandTotal = 0;
-
-            foreach (var item in validInvoiceItems)
-            {
-                this.TotalBasePrice += item.TotalBasePrice;
-                this.TotalDiscount += item.TotalDiscount;
-                this.TotalSurcharge += item.TotalSurcharge;
-                this.TotalExVat += item.TotalExVat;
-                this.TotalVat += item.TotalVat;
-                this.TotalIrpf += item.TotalIrpf;
-                this.TotalIncVat += item.TotalIncVat;
-                this.TotalListPrice += item.TotalExVat;
-                this.GrandTotal += item.GrandTotal;
-            }
-
-            var discount = 0M;
-            var discountVat = 0M;
-            var discountIrpf = 0M;
-            var surcharge = 0M;
-            var surchargeVat = 0M;
-            var surchargeIrpf = 0M;
-            var fee = 0M;
-            var feeVat = 0M;
-            var feeIrpf = 0M;
-            var shipping = 0M;
-            var shippingVat = 0M;
-            var shippingIrpf = 0M;
-            var miscellaneous = 0M;
-            var miscellaneousVat = 0M;
-            var miscellaneousIrpf = 0M;
-
-            foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
-            {
-                if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
-                {
-                    discount = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                    orderAdjustment.Amount ?? 0;
-
-                    this.TotalDiscount += discount;
-
-                    if (this.ExistVatRegime)
-                    {
-                        discountVat = Math.Round(discount * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
-
-                    if (this.ExistIrpfRegime)
-                    {
-                        discountIrpf = Math.Round(discount * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
-                {
-                    surcharge = orderAdjustment.Percentage.HasValue ?
-                                        Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                        orderAdjustment.Amount ?? 0;
-
-                    this.TotalSurcharge += surcharge;
-
-                    if (this.ExistVatRegime)
-                    {
-                        surchargeVat = Math.Round(surcharge * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
-
-                    if (this.ExistIrpfRegime)
-                    {
-                        surchargeIrpf = Math.Round(surcharge * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
-                {
-                    fee = orderAdjustment.Percentage.HasValue ?
-                                Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                orderAdjustment.Amount ?? 0;
-
-                    this.TotalFee += fee;
-
-                    if (this.ExistVatRegime)
-                    {
-                        feeVat = Math.Round(fee * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
-
-                    if (this.ExistIrpfRegime)
-                    {
-                        feeIrpf = Math.Round(fee * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
-                {
-                    shipping = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                    orderAdjustment.Amount ?? 0;
-
-                    this.TotalShippingAndHandling += shipping;
-
-                    if (this.ExistVatRegime)
-                    {
-                        shippingVat = Math.Round(shipping * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
-
-                    if (this.ExistIrpfRegime)
-                    {
-                        shippingIrpf = Math.Round(shipping * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
-
-                if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
-                {
-                    miscellaneous = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
-                                    orderAdjustment.Amount ?? 0;
-
-                    this.TotalExtraCharge += miscellaneous;
-
-                    if (this.ExistVatRegime)
-                    {
-                        miscellaneousVat = Math.Round(miscellaneous * this.VatRegime.VatRate.Rate / 100, 2);
-                    }
-
-                    if (this.ExistIrpfRegime)
-                    {
-                        miscellaneousIrpf = Math.Round(miscellaneous * this.IrpfRegime.IrpfRate.Rate / 100, 2);
-                    }
-                }
-            }
-
-            this.TotalExtraCharge = fee + shipping + miscellaneous;
-
-            this.TotalExVat = this.TotalExVat - discount + surcharge + fee + shipping + miscellaneous;
-            this.TotalVat = this.TotalVat - discountVat + surchargeVat + feeVat + shippingVat + miscellaneousVat;
-            this.TotalIncVat = this.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
-            this.TotalIrpf = this.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
-            this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
-
-            //// Only take into account items for which there is data at the item level.
-            //// Skip negative sales.
-            decimal totalUnitBasePrice = 0;
-            decimal totalListPrice = 0;
-
-            foreach (var item1 in validInvoiceItems)
-            {
-                if (item1.TotalExVat > 0)
-                {
-                    totalUnitBasePrice += item1.UnitBasePrice;
-                    totalListPrice += item1.UnitPrice;
-                }
-            }
-
-            var salesInvoiceItemStates = new SalesInvoiceItemStates(derivation.Session);
-            var salesInvoiceStates = new SalesInvoiceStates(derivation.Session);
-
-            foreach (var invoiceItem in validInvoiceItems)
-            {
-                if (!invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.ReadyForPosting))
-                {
-                    if (invoiceItem.AmountPaid == 0)
-                    {
-                        invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.NotPaid;
-                    }
-                    else if (invoiceItem.ExistAmountPaid && invoiceItem.AmountPaid > 0 && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)
-                    {
-                        invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
-                    }
-                    else
-                    {
-                        invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.PartiallyPaid;
-                    }
-                }
-            }
-
-            if (validInvoiceItems.Any() && !this.SalesInvoiceState.Equals(salesInvoiceStates.ReadyForPosting))
-            {
-                if (this.SalesInvoiceItems.All(v => v.SalesInvoiceItemState.IsPaid))
-                {
-                    this.SalesInvoiceState = salesInvoiceStates.Paid;
-                }
-                else if (this.SalesInvoiceItems.All(v => v.SalesInvoiceItemState.IsNotPaid))
-                {
-                    this.SalesInvoiceState = salesInvoiceStates.NotPaid;
-                }
-                else
-                {
-                    this.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
-                }
-            }
-
-            this.AmountPaid = this.AdvancePayment;
-            this.AmountPaid += this.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
-
-            //// Perhaps payments are recorded at the item level.
-            if (this.AmountPaid == 0)
-            {
-                this.AmountPaid = this.InvoiceItems.Sum(v => v.AmountPaid);
-            }
-
-            // If receipts are not matched at invoice level
-            // if only advancedPayment is received do not set to partially paid
-            // this would disable the invoice for editing and adding new items
-            if (this.AmountPaid - this.AdvancePayment > 0)
-            {
-                if (this.AmountPaid >= this.TotalIncVat)
-                {
-                    this.SalesInvoiceState = salesInvoiceStates.Paid;
-                }
-                else
-                {
-                    if (this.AmountPaid > 0)
-                    {
-                        this.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
-                    }
-                }
-
-                foreach (var invoiceItem in validInvoiceItems)
-                {
-                    if (!invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.CancelledByInvoice) &&
-                        !invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.WrittenOff))
-                    {
-                        if (this.AmountPaid >= this.TotalIncVat)
-                        {
-                            invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
-                        }
-                        else
-                        {
-                            invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.PartiallyPaid;
-                        }
-                    }
-                }
-            }
-
-            if (this.ExistVatRegime && this.VatRegime.ExistVatClause)
-            {
-                this.DerivedVatClause = this.VatRegime.VatClause;
-            }
-            else
-            {
-                if (Equals(this.VatRegime, new VatRegimes(session).ServiceB2B))
-                {
-                    this.DerivedVatClause = new VatClauses(session).ServiceB2B;
-                }
-                else if (Equals(this.VatRegime, new VatRegimes(session).IntraCommunautair))
-                {
-                    this.DerivedVatClause = new VatClauses(session).Intracommunautair;
-                }
-            }
-
-            this.DerivedVatClause = this.ExistAssignedVatClause ? this.AssignedVatClause : this.DerivedVatClause;
-
-            this.BaseOnDeriveCustomers(derivation);
-
-            if (this.ExistBillToCustomer && !this.BillToCustomer.BaseIsActiveCustomer(this.BilledFrom, this.InvoiceDate))
-            {
-                derivation.Validation.AddError(this, M.SalesInvoice.BillToCustomer, ErrorMessages.PartyIsNotACustomer);
-            }
-
-            if (this.ExistShipToCustomer && !this.ShipToCustomer.BaseIsActiveCustomer(this.BilledFrom, this.InvoiceDate))
-            {
-                derivation.Validation.AddError(this, M.SalesInvoice.ShipToCustomer, ErrorMessages.PartyIsNotACustomer);
-            }
-
-            this.PreviousBillToCustomer = this.BillToCustomer;
-            this.PreviousShipToCustomer = this.ShipToCustomer;
-
-            // this.BaseOnDeriveRevenues(derivation);
-            var singleton = this.Session().GetSingleton();
-
-            this.AddSecurityToken(new SecurityTokens(this.Session()).DefaultSecurityToken);
-
-            this.Sync(this.Session());
-
-            this.ResetPrintDocument();
+            //var derivation = method.Derivation;
+            //var session = this.Session();
+
+            //var internalOrganisations = new Organisations(session).InternalOrganisations();
+
+            //if (!this.ExistBilledFrom && internalOrganisations.Count() == 1)
+            //{
+            //    this.BilledFrom = internalOrganisations.First();
+            //}
+
+            //if (!this.ExistStore && this.ExistBilledFrom)
+            //{
+            //    var stores = new Stores(session).Extent();
+            //    stores.Filter.AddEquals(M.Store.InternalOrganisation, this.BilledFrom);
+            //    this.Store = stores.FirstOrDefault();
+            //}
+
+            //if (!this.ExistInvoiceNumber && this.ExistStore)
+            //{
+            //    this.InvoiceNumber = this.Store.NextTemporaryInvoiceNumber();
+            //    this.SortableInvoiceNumber = this.Session().GetSingleton().SortableNumber(null, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
+            //}
+
+            //if (!this.ExistBilledFromContactMechanism && this.ExistBilledFrom)
+            //{
+            //    this.BilledFromContactMechanism = this.BilledFrom.ExistBillingAddress ? this.BilledFrom.BillingAddress : this.BilledFrom.GeneralCorrespondence;
+            //}
+
+            //if (!this.ExistBillToContactMechanism && this.ExistBillToCustomer)
+            //{
+            //    this.BillToContactMechanism = this.BillToCustomer.BillingAddress;
+            //}
+
+            //if (!this.ExistBillToEndCustomerContactMechanism && this.ExistBillToEndCustomer)
+            //{
+            //    this.BillToEndCustomerContactMechanism = this.BillToEndCustomer.BillingAddress;
+            //}
+
+            //if (!this.ExistShipToEndCustomerAddress && this.ExistShipToEndCustomer)
+            //{
+            //    this.ShipToEndCustomerAddress = this.ShipToEndCustomer.ShippingAddress;
+            //}
+
+            //if (!this.ExistShipToAddress && this.ExistShipToCustomer)
+            //{
+            //    this.ShipToAddress = this.ShipToCustomer.ShippingAddress;
+            //}
+
+            //if (!this.ExistCurrency && this.ExistBilledFrom)
+            //{
+            //    if (this.ExistBillToCustomer && (this.BillToCustomer.ExistPreferredCurrency || this.BillToCustomer.ExistLocale))
+            //    {
+            //        this.Currency = this.BillToCustomer.ExistPreferredCurrency ? this.BillToCustomer.PreferredCurrency : this.BillToCustomer.Locale.Country.Currency;
+            //    }
+            //    else
+            //    {
+            //        this.Currency = this.BilledFrom.ExistPreferredCurrency ?
+            //            this.BilledFrom.PreferredCurrency :
+            //            session.GetSingleton().DefaultLocale.Country.Currency;
+            //    }
+            //}
+
+            //this.VatRegime ??= this.BillToCustomer?.VatRegime;
+            //this.IrpfRegime ??= this.BillToCustomer?.IrpfRegime;
+            //this.IsRepeating = this.ExistRepeatingSalesInvoiceWhereSource;
+
+            //foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+            //{
+            //    foreach (OrderItemBilling orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
+            //    {
+            //        if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem && !this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))
+            //        {
+            //            this.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
+            //        }
+            //    }
+
+            //    foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
+            //    {
+            //        if (!this.WorkEfforts.Contains(workEffortBilling.WorkEffort))
+            //        {
+            //            this.AddWorkEffort(workEffortBilling.WorkEffort);
+            //        }
+            //    }
+
+            //    foreach (TimeEntryBilling timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
+            //    {
+            //        if (!this.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
+            //        {
+            //            this.AddWorkEffort(timeEntryBilling.TimeEntry.WorkEffort);
+            //        }
+            //    }
+            //}
+
+            //this.IsRepeatingInvoice = this.ExistRepeatingSalesInvoiceWhereSource && (!this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate || this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= this.Strategy.Session.Now().Date);
+
+            //this.SalesInvoiceItems = this.SalesInvoiceItems.ToArray();
+
+            //if (this.ExistBillToCustomer && this.BillToCustomer.ExistLocale)
+            //{
+            //    this.Locale = this.BillToCustomer.Locale;
+            //}
+            //else
+            //{
+            //    this.Locale = session.GetSingleton().DefaultLocale;
+            //}
+
+            //if (this.ExistSalesTerms)
+            //{
+            //    foreach (AgreementTerm term in this.SalesTerms)
+            //    {
+            //        if (term.TermType.Equals(new InvoiceTermTypes(session).PaymentNetDays))
+            //        {
+            //            if (int.TryParse(term.TermValue, out var netDays))
+            //            {
+            //                this.PaymentDays = netDays;
+            //            }
+            //        }
+            //    }
+            //}
+            //else if (this.BillToCustomer?.PaymentNetDays().HasValue == true)
+            //{
+            //    this.PaymentDays = this.BillToCustomer.PaymentNetDays().Value;
+            //}
+            //else if (this.ExistStore && this.Store.ExistPaymentNetDays)
+            //{
+            //    this.PaymentDays = this.Store.PaymentNetDays;
+            //}
+
+            //if (!this.ExistPaymentDays)
+            //{
+            //    this.PaymentDays = 0;
+            //}
+
+            //if (this.ExistInvoiceDate)
+            //{
+            //    this.DueDate = this.InvoiceDate.AddDays(this.PaymentNetDays);
+            //}
+
+            //var validInvoiceItems = this.SalesInvoiceItems.Where(v => v.IsValid).ToArray();
+            //this.ValidInvoiceItems = validInvoiceItems;
+
+            //var currentPriceComponents = new PriceComponents(this.Strategy.Session).CurrentPriceComponents(this.InvoiceDate);
+
+            //var quantityByProduct = validInvoiceItems
+            //    .Where(v => v.ExistProduct)
+            //    .GroupBy(v => v.Product)
+            //    .ToDictionary(v => v.Key, v => v.Sum(w => w.Quantity));
+
+            //// First run to calculate price
+            //foreach (var salesInvoiceItem in validInvoiceItems)
+            //{
+            //    decimal quantityOrdered = 0;
+
+            //    if (salesInvoiceItem.ExistProduct)
+            //    {
+            //        quantityByProduct.TryGetValue(salesInvoiceItem.Product, out quantityOrdered);
+            //    }
+
+            //    this.CalculatePrices(derivation, salesInvoiceItem, currentPriceComponents, quantityOrdered, 0);
+            //}
+
+            //var totalBasePriceByProduct = validInvoiceItems
+            //    .Where(v => v.ExistProduct)
+            //    .GroupBy(v => v.Product)
+            //    .ToDictionary(v => v.Key, v => v.Sum(w => w.TotalBasePrice));
+
+            //// Second run to calculate price (because of order value break)
+            //foreach (var salesInvoiceItem in validInvoiceItems)
+            //{
+            //    decimal quantityOrdered = 0;
+            //    decimal totalBasePrice = 0;
+
+            //    if (salesInvoiceItem.ExistProduct)
+            //    {
+            //        quantityByProduct.TryGetValue(salesInvoiceItem.Product, out quantityOrdered);
+            //        totalBasePriceByProduct.TryGetValue(salesInvoiceItem.Product, out totalBasePrice);
+            //    }
+
+            //    this.CalculatePrices(derivation, salesInvoiceItem, currentPriceComponents, quantityOrdered, totalBasePrice);
+            //}
+
+            //// Calculate Totals
+            //this.TotalBasePrice = 0;
+            //this.TotalDiscount = 0;
+            //this.TotalSurcharge = 0;
+            //this.TotalExVat = 0;
+            //this.TotalFee = 0;
+            //this.TotalShippingAndHandling = 0;
+            //this.TotalExtraCharge = 0;
+            //this.TotalVat = 0;
+            //this.TotalIrpf = 0;
+            //this.TotalIncVat = 0;
+            //this.TotalListPrice = 0;
+            //this.TotalIrpf = 0;
+            //this.GrandTotal = 0;
+
+            //foreach (var item in validInvoiceItems)
+            //{
+            //    this.TotalBasePrice += item.TotalBasePrice;
+            //    this.TotalDiscount += item.TotalDiscount;
+            //    this.TotalSurcharge += item.TotalSurcharge;
+            //    this.TotalExVat += item.TotalExVat;
+            //    this.TotalVat += item.TotalVat;
+            //    this.TotalIrpf += item.TotalIrpf;
+            //    this.TotalIncVat += item.TotalIncVat;
+            //    this.TotalListPrice += item.TotalExVat;
+            //    this.GrandTotal += item.GrandTotal;
+            //}
+
+            //var discount = 0M;
+            //var discountVat = 0M;
+            //var discountIrpf = 0M;
+            //var surcharge = 0M;
+            //var surchargeVat = 0M;
+            //var surchargeIrpf = 0M;
+            //var fee = 0M;
+            //var feeVat = 0M;
+            //var feeIrpf = 0M;
+            //var shipping = 0M;
+            //var shippingVat = 0M;
+            //var shippingIrpf = 0M;
+            //var miscellaneous = 0M;
+            //var miscellaneousVat = 0M;
+            //var miscellaneousIrpf = 0M;
+
+            //foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+            //{
+            //    if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
+            //    {
+            //        discount = orderAdjustment.Percentage.HasValue ?
+            //                        Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+            //                        orderAdjustment.Amount ?? 0;
+
+            //        this.TotalDiscount += discount;
+
+            //        if (this.ExistVatRegime)
+            //        {
+            //            discountVat = Math.Round(discount * this.VatRegime.VatRate.Rate / 100, 2);
+            //        }
+
+            //        if (this.ExistIrpfRegime)
+            //        {
+            //            discountIrpf = Math.Round(discount * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+            //        }
+            //    }
+
+            //    if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
+            //    {
+            //        surcharge = orderAdjustment.Percentage.HasValue ?
+            //                            Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+            //                            orderAdjustment.Amount ?? 0;
+
+            //        this.TotalSurcharge += surcharge;
+
+            //        if (this.ExistVatRegime)
+            //        {
+            //            surchargeVat = Math.Round(surcharge * this.VatRegime.VatRate.Rate / 100, 2);
+            //        }
+
+            //        if (this.ExistIrpfRegime)
+            //        {
+            //            surchargeIrpf = Math.Round(surcharge * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+            //        }
+            //    }
+
+            //    if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
+            //    {
+            //        fee = orderAdjustment.Percentage.HasValue ?
+            //                    Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+            //                    orderAdjustment.Amount ?? 0;
+
+            //        this.TotalFee += fee;
+
+            //        if (this.ExistVatRegime)
+            //        {
+            //            feeVat = Math.Round(fee * this.VatRegime.VatRate.Rate / 100, 2);
+            //        }
+
+            //        if (this.ExistIrpfRegime)
+            //        {
+            //            feeIrpf = Math.Round(fee * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+            //        }
+            //    }
+
+            //    if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
+            //    {
+            //        shipping = orderAdjustment.Percentage.HasValue ?
+            //                        Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+            //                        orderAdjustment.Amount ?? 0;
+
+            //        this.TotalShippingAndHandling += shipping;
+
+            //        if (this.ExistVatRegime)
+            //        {
+            //            shippingVat = Math.Round(shipping * this.VatRegime.VatRate.Rate / 100, 2);
+            //        }
+
+            //        if (this.ExistIrpfRegime)
+            //        {
+            //            shippingIrpf = Math.Round(shipping * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+            //        }
+            //    }
+
+            //    if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
+            //    {
+            //        miscellaneous = orderAdjustment.Percentage.HasValue ?
+            //                        Math.Round(this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+            //                        orderAdjustment.Amount ?? 0;
+
+            //        this.TotalExtraCharge += miscellaneous;
+
+            //        if (this.ExistVatRegime)
+            //        {
+            //            miscellaneousVat = Math.Round(miscellaneous * this.VatRegime.VatRate.Rate / 100, 2);
+            //        }
+
+            //        if (this.ExistIrpfRegime)
+            //        {
+            //            miscellaneousIrpf = Math.Round(miscellaneous * this.IrpfRegime.IrpfRate.Rate / 100, 2);
+            //        }
+            //    }
+            //}
+
+            //this.TotalExtraCharge = fee + shipping + miscellaneous;
+
+            //this.TotalExVat = this.TotalExVat - discount + surcharge + fee + shipping + miscellaneous;
+            //this.TotalVat = this.TotalVat - discountVat + surchargeVat + feeVat + shippingVat + miscellaneousVat;
+            //this.TotalIncVat = this.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
+            //this.TotalIrpf = this.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
+            //this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
+
+            ////// Only take into account items for which there is data at the item level.
+            ////// Skip negative sales.
+            //decimal totalUnitBasePrice = 0;
+            //decimal totalListPrice = 0;
+
+            //foreach (var item1 in validInvoiceItems)
+            //{
+            //    if (item1.TotalExVat > 0)
+            //    {
+            //        totalUnitBasePrice += item1.UnitBasePrice;
+            //        totalListPrice += item1.UnitPrice;
+            //    }
+            //}
+
+            //var salesInvoiceItemStates = new SalesInvoiceItemStates(derivation.Session);
+            //var salesInvoiceStates = new SalesInvoiceStates(derivation.Session);
+
+            //foreach (var invoiceItem in validInvoiceItems)
+            //{
+            //    if (!invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.ReadyForPosting))
+            //    {
+            //        if (invoiceItem.AmountPaid == 0)
+            //        {
+            //            invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.NotPaid;
+            //        }
+            //        else if (invoiceItem.ExistAmountPaid && invoiceItem.AmountPaid > 0 && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)
+            //        {
+            //            invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
+            //        }
+            //        else
+            //        {
+            //            invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.PartiallyPaid;
+            //        }
+            //    }
+            //}
+
+            //if (validInvoiceItems.Any() && !this.SalesInvoiceState.Equals(salesInvoiceStates.ReadyForPosting))
+            //{
+            //    if (this.SalesInvoiceItems.All(v => v.SalesInvoiceItemState.IsPaid))
+            //    {
+            //        this.SalesInvoiceState = salesInvoiceStates.Paid;
+            //    }
+            //    else if (this.SalesInvoiceItems.All(v => v.SalesInvoiceItemState.IsNotPaid))
+            //    {
+            //        this.SalesInvoiceState = salesInvoiceStates.NotPaid;
+            //    }
+            //    else
+            //    {
+            //        this.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
+            //    }
+            //}
+
+            //this.AmountPaid = this.AdvancePayment;
+            //this.AmountPaid += this.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
+
+            ////// Perhaps payments are recorded at the item level.
+            //if (this.AmountPaid == 0)
+            //{
+            //    this.AmountPaid = this.InvoiceItems.Sum(v => v.AmountPaid);
+            //}
+
+            //// If receipts are not matched at invoice level
+            //// if only advancedPayment is received do not set to partially paid
+            //// this would disable the invoice for editing and adding new items
+            //if (this.AmountPaid - this.AdvancePayment > 0)
+            //{
+            //    if (this.AmountPaid >= this.TotalIncVat)
+            //    {
+            //        this.SalesInvoiceState = salesInvoiceStates.Paid;
+            //    }
+            //    else
+            //    {
+            //        if (this.AmountPaid > 0)
+            //        {
+            //            this.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
+            //        }
+            //    }
+
+            //    foreach (var invoiceItem in validInvoiceItems)
+            //    {
+            //        if (!invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.CancelledByInvoice) &&
+            //            !invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.WrittenOff))
+            //        {
+            //            if (this.AmountPaid >= this.TotalIncVat)
+            //            {
+            //                invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
+            //            }
+            //            else
+            //            {
+            //                invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.PartiallyPaid;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //if (this.ExistVatRegime && this.VatRegime.ExistVatClause)
+            //{
+            //    this.DerivedVatClause = this.VatRegime.VatClause;
+            //}
+            //else
+            //{
+            //    if (Equals(this.VatRegime, new VatRegimes(session).ServiceB2B))
+            //    {
+            //        this.DerivedVatClause = new VatClauses(session).ServiceB2B;
+            //    }
+            //    else if (Equals(this.VatRegime, new VatRegimes(session).IntraCommunautair))
+            //    {
+            //        this.DerivedVatClause = new VatClauses(session).Intracommunautair;
+            //    }
+            //}
+
+            //this.DerivedVatClause = this.ExistAssignedVatClause ? this.AssignedVatClause : this.DerivedVatClause;
+
+            //this.BaseOnDeriveCustomers(derivation);
+
+            //if (this.ExistBillToCustomer && !this.BillToCustomer.BaseIsActiveCustomer(this.BilledFrom, this.InvoiceDate))
+            //{
+            //    derivation.Validation.AddError(this, M.SalesInvoice.BillToCustomer, ErrorMessages.PartyIsNotACustomer);
+            //}
+
+            //if (this.ExistShipToCustomer && !this.ShipToCustomer.BaseIsActiveCustomer(this.BilledFrom, this.InvoiceDate))
+            //{
+            //    derivation.Validation.AddError(this, M.SalesInvoice.ShipToCustomer, ErrorMessages.PartyIsNotACustomer);
+            //}
+
+            //this.PreviousBillToCustomer = this.BillToCustomer;
+            //this.PreviousShipToCustomer = this.ShipToCustomer;
+
+            //// this.BaseOnDeriveRevenues(derivation);
+            //var singleton = this.Session().GetSingleton();
+
+            //this.AddSecurityToken(new SecurityTokens(this.Session()).DefaultSecurityToken);
+
+            //this.Sync(this.Session());
+
+            //this.ResetPrintDocument();
         }
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
         public void BaseSend(SalesInvoiceSend method)
@@ -1010,16 +1010,16 @@ namespace Allors.Domain
 
         public void BaseOnDeriveCustomers(IDerivation derivation)
         {
-            this.RemoveCustomers();
-            if (this.ExistBillToCustomer && !this.Customers.Contains(this.BillToCustomer))
-            {
-                this.AddCustomer(this.BillToCustomer);
-            }
+            //this.RemoveCustomers();
+            //if (this.ExistBillToCustomer && !this.Customers.Contains(this.BillToCustomer))
+            //{
+            //    this.AddCustomer(this.BillToCustomer);
+            //}
 
-            if (this.ExistShipToCustomer && !this.Customers.Contains(this.ShipToCustomer))
-            {
-                this.AddCustomer(this.ShipToCustomer);
-            }
+            //if (this.ExistShipToCustomer && !this.Customers.Contains(this.ShipToCustomer))
+            //{
+            //    this.AddCustomer(this.ShipToCustomer);
+            //}
         }
 
         public void BaseDelete(DeletableDelete method)
@@ -1079,113 +1079,113 @@ namespace Allors.Domain
             decimal quantityOrdered,
             decimal totalBasePrice)
         {
-            var salesInvoiceItemDerivedRoles = salesInvoiceItem;
+            //var salesInvoiceItemDerivedRoles = salesInvoiceItem;
 
-            var currentGenericOrProductOrFeaturePriceComponents = new List<PriceComponent>();
-            if (salesInvoiceItem.ExistProduct)
-            {
-                currentGenericOrProductOrFeaturePriceComponents.AddRange(salesInvoiceItem.Product.GetPriceComponents(currentPriceComponents));
-            }
+            //var currentGenericOrProductOrFeaturePriceComponents = new List<PriceComponent>();
+            //if (salesInvoiceItem.ExistProduct)
+            //{
+            //    currentGenericOrProductOrFeaturePriceComponents.AddRange(salesInvoiceItem.Product.GetPriceComponents(currentPriceComponents));
+            //}
 
-            foreach (ProductFeature productFeature in salesInvoiceItem.ProductFeatures)
-            {
-                currentGenericOrProductOrFeaturePriceComponents.AddRange(productFeature.GetPriceComponents(salesInvoiceItem.Product, currentPriceComponents));
-            }
+            //foreach (ProductFeature productFeature in salesInvoiceItem.ProductFeatures)
+            //{
+            //    currentGenericOrProductOrFeaturePriceComponents.AddRange(productFeature.GetPriceComponents(salesInvoiceItem.Product, currentPriceComponents));
+            //}
 
-            var priceComponents = currentGenericOrProductOrFeaturePriceComponents.Where(
-                v => PriceComponents.BaseIsApplicable(
-                    new PriceComponents.IsApplicable
-                    {
-                        PriceComponent = v,
-                        Customer = this.BillToCustomer,
-                        Product = salesInvoiceItem.Product,
-                        SalesInvoice = this,
-                        QuantityOrdered = quantityOrdered,
-                        ValueOrdered = totalBasePrice,
-                    })).ToArray();
+            //var priceComponents = currentGenericOrProductOrFeaturePriceComponents.Where(
+            //    v => PriceComponents.BaseIsApplicable(
+            //        new PriceComponents.IsApplicable
+            //        {
+            //            PriceComponent = v,
+            //            Customer = this.BillToCustomer,
+            //            Product = salesInvoiceItem.Product,
+            //            SalesInvoice = this,
+            //            QuantityOrdered = quantityOrdered,
+            //            ValueOrdered = totalBasePrice,
+            //        })).ToArray();
 
-            var unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+            //var unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
 
-            // Calculate Unit Price (with Discounts and Surcharges)
-            if (salesInvoiceItem.AssignedUnitPrice.HasValue)
-            {
-                salesInvoiceItemDerivedRoles.UnitBasePrice = unitBasePrice ?? salesInvoiceItem.AssignedUnitPrice.Value;
-                salesInvoiceItemDerivedRoles.UnitDiscount = 0;
-                salesInvoiceItemDerivedRoles.UnitSurcharge = 0;
-                salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.AssignedUnitPrice.Value;
-            }
-            else
-            {
-                if (!unitBasePrice.HasValue)
-                {
-                    derivation.Validation.AddError(salesInvoiceItem, M.SalesOrderItem.UnitBasePrice, "No BasePrice with a Price");
-                    return;
-                }
+            //// Calculate Unit Price (with Discounts and Surcharges)
+            //if (salesInvoiceItem.AssignedUnitPrice.HasValue)
+            //{
+            //    salesInvoiceItemDerivedRoles.UnitBasePrice = unitBasePrice ?? salesInvoiceItem.AssignedUnitPrice.Value;
+            //    salesInvoiceItemDerivedRoles.UnitDiscount = 0;
+            //    salesInvoiceItemDerivedRoles.UnitSurcharge = 0;
+            //    salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.AssignedUnitPrice.Value;
+            //}
+            //else
+            //{
+            //    if (!unitBasePrice.HasValue)
+            //    {
+            //        derivation.Validation.AddError(salesInvoiceItem, M.SalesOrderItem.UnitBasePrice, "No BasePrice with a Price");
+            //        return;
+            //    }
 
-                salesInvoiceItemDerivedRoles.UnitBasePrice = unitBasePrice.Value;
+            //    salesInvoiceItemDerivedRoles.UnitBasePrice = unitBasePrice.Value;
 
-                salesInvoiceItemDerivedRoles.UnitDiscount = priceComponents.OfType<DiscountComponent>().Sum(
-                    v => v.Percentage.HasValue
-                             ? Math.Round(salesInvoiceItem.UnitBasePrice * v.Percentage.Value / 100, 2)
-                             : v.Price ?? 0);
+            //    salesInvoiceItemDerivedRoles.UnitDiscount = priceComponents.OfType<DiscountComponent>().Sum(
+            //        v => v.Percentage.HasValue
+            //                 ? Math.Round(salesInvoiceItem.UnitBasePrice * v.Percentage.Value / 100, 2)
+            //                 : v.Price ?? 0);
 
-                salesInvoiceItemDerivedRoles.UnitSurcharge = priceComponents.OfType<SurchargeComponent>().Sum(
-                    v => v.Percentage.HasValue
-                             ? Math.Round(salesInvoiceItem.UnitBasePrice * v.Percentage.Value / 100, 2)
-                             : v.Price ?? 0);
+            //    salesInvoiceItemDerivedRoles.UnitSurcharge = priceComponents.OfType<SurchargeComponent>().Sum(
+            //        v => v.Percentage.HasValue
+            //                 ? Math.Round(salesInvoiceItem.UnitBasePrice * v.Percentage.Value / 100, 2)
+            //                 : v.Price ?? 0);
 
-                salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
+            //    salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
 
-                foreach (OrderAdjustment orderAdjustment in salesInvoiceItem.DiscountAdjustments)
-                {
-                    salesInvoiceItemDerivedRoles.UnitDiscount += orderAdjustment.Percentage.HasValue ?
-                        Math.Round(salesInvoiceItem.UnitPrice * orderAdjustment.Percentage.Value / 100, 2) :
-                        orderAdjustment.Amount ?? 0;
-                }
+            //    foreach (OrderAdjustment orderAdjustment in salesInvoiceItem.DiscountAdjustments)
+            //    {
+            //        salesInvoiceItemDerivedRoles.UnitDiscount += orderAdjustment.Percentage.HasValue ?
+            //            Math.Round(salesInvoiceItem.UnitPrice * orderAdjustment.Percentage.Value / 100, 2) :
+            //            orderAdjustment.Amount ?? 0;
+            //    }
 
-                foreach (OrderAdjustment orderAdjustment in salesInvoiceItem.SurchargeAdjustments)
-                {
-                    salesInvoiceItemDerivedRoles.UnitSurcharge += orderAdjustment.Percentage.HasValue ?
-                        Math.Round(salesInvoiceItem.UnitPrice * orderAdjustment.Percentage.Value / 100, 2) :
-                        orderAdjustment.Amount ?? 0;
-                }
+            //    foreach (OrderAdjustment orderAdjustment in salesInvoiceItem.SurchargeAdjustments)
+            //    {
+            //        salesInvoiceItemDerivedRoles.UnitSurcharge += orderAdjustment.Percentage.HasValue ?
+            //            Math.Round(salesInvoiceItem.UnitPrice * orderAdjustment.Percentage.Value / 100, 2) :
+            //            orderAdjustment.Amount ?? 0;
+            //    }
 
-                salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
-            }
+            //    salesInvoiceItemDerivedRoles.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
+            //}
 
-            salesInvoiceItemDerivedRoles.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.VatRate.Rate / 100 : 0;
-            salesInvoiceItemDerivedRoles.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRate.Rate / 100 : 0;
+            //salesInvoiceItemDerivedRoles.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.VatRate.Rate / 100 : 0;
+            //salesInvoiceItemDerivedRoles.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRate.Rate / 100 : 0;
 
-            // Calculate Totals
-            salesInvoiceItemDerivedRoles.TotalBasePrice = salesInvoiceItem.UnitBasePrice * salesInvoiceItem.Quantity;
-            salesInvoiceItemDerivedRoles.TotalDiscount = salesInvoiceItem.UnitDiscount * salesInvoiceItem.Quantity;
-            salesInvoiceItemDerivedRoles.TotalSurcharge = salesInvoiceItem.UnitSurcharge * salesInvoiceItem.Quantity;
+            //// Calculate Totals
+            //salesInvoiceItemDerivedRoles.TotalBasePrice = salesInvoiceItem.UnitBasePrice * salesInvoiceItem.Quantity;
+            //salesInvoiceItemDerivedRoles.TotalDiscount = salesInvoiceItem.UnitDiscount * salesInvoiceItem.Quantity;
+            //salesInvoiceItemDerivedRoles.TotalSurcharge = salesInvoiceItem.UnitSurcharge * salesInvoiceItem.Quantity;
 
-            if (salesInvoiceItem.TotalBasePrice > 0)
-            {
-                salesInvoiceItemDerivedRoles.TotalDiscountAsPercentage = Math.Round(salesInvoiceItem.TotalDiscount / salesInvoiceItem.TotalBasePrice * 100, 2);
-                salesInvoiceItemDerivedRoles.TotalSurchargeAsPercentage = Math.Round(salesInvoiceItem.TotalSurcharge / salesInvoiceItem.TotalBasePrice * 100, 2);
-            }
-            else
-            {
-                salesInvoiceItemDerivedRoles.TotalDiscountAsPercentage = 0;
-                salesInvoiceItemDerivedRoles.TotalSurchargeAsPercentage = 0;
-            }
+            //if (salesInvoiceItem.TotalBasePrice > 0)
+            //{
+            //    salesInvoiceItemDerivedRoles.TotalDiscountAsPercentage = Math.Round(salesInvoiceItem.TotalDiscount / salesInvoiceItem.TotalBasePrice * 100, 2);
+            //    salesInvoiceItemDerivedRoles.TotalSurchargeAsPercentage = Math.Round(salesInvoiceItem.TotalSurcharge / salesInvoiceItem.TotalBasePrice * 100, 2);
+            //}
+            //else
+            //{
+            //    salesInvoiceItemDerivedRoles.TotalDiscountAsPercentage = 0;
+            //    salesInvoiceItemDerivedRoles.TotalSurchargeAsPercentage = 0;
+            //}
 
-            salesInvoiceItemDerivedRoles.TotalExVat = salesInvoiceItem.UnitPrice * salesInvoiceItem.Quantity;
-            salesInvoiceItemDerivedRoles.TotalVat = Math.Round(salesInvoiceItem.UnitVat * salesInvoiceItem.Quantity, 2);
-            salesInvoiceItemDerivedRoles.TotalIncVat = salesInvoiceItem.TotalExVat + salesInvoiceItem.TotalVat;
-            salesInvoiceItemDerivedRoles.TotalIrpf = Math.Round(salesInvoiceItem.UnitIrpf * salesInvoiceItem.Quantity, 2);
-            salesInvoiceItemDerivedRoles.GrandTotal = salesInvoiceItem.TotalIncVat - salesInvoiceItem.TotalIrpf;
+            //salesInvoiceItemDerivedRoles.TotalExVat = salesInvoiceItem.UnitPrice * salesInvoiceItem.Quantity;
+            //salesInvoiceItemDerivedRoles.TotalVat = Math.Round(salesInvoiceItem.UnitVat * salesInvoiceItem.Quantity, 2);
+            //salesInvoiceItemDerivedRoles.TotalIncVat = salesInvoiceItem.TotalExVat + salesInvoiceItem.TotalVat;
+            //salesInvoiceItemDerivedRoles.TotalIrpf = Math.Round(salesInvoiceItem.UnitIrpf * salesInvoiceItem.Quantity, 2);
+            //salesInvoiceItemDerivedRoles.GrandTotal = salesInvoiceItem.TotalIncVat - salesInvoiceItem.TotalIrpf;
         }
 
         private void Sync(ISession session)
         {
             // session.Prefetch(this.SyncPrefetch, this);
-            foreach (SalesInvoiceItem invoiceItem in this.SalesInvoiceItems)
-            {
-                invoiceItem.Sync(this);
-            }
+            //foreach (SalesInvoiceItem invoiceItem in this.SalesInvoiceItems)
+            //{
+            //    invoiceItem.Sync(this);
+            //}
         }
     }
 }

@@ -17,17 +17,17 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdNonSerialisedInventoryItems = changeSet.Created.Select(session.Instantiate).OfType<NonSerialisedInventoryItem>();
+                var createdNonSerialisedInventoryItems = changeSet.Created.Select(v=>v.GetObject()).OfType<NonSerialisedInventoryItem>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem.RoleType, out var changedNonSerialisedInventoryItem);
                 var nonSerialisedInventoryItemWhereInventoryItemTransactionsWhereInventoryItemChanged = changedNonSerialisedInventoryItem?.Select(session.Instantiate).OfType<NonSerialisedInventoryItem>();
 
-                var createdInventoryItemTransaction = changeSet.Created.Select(session.Instantiate).OfType<InventoryItemTransaction>();
+                var createdInventoryItemTransaction = changeSet.Created.Select(v=>v.GetObject()).OfType<InventoryItemTransaction>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, out var changeSalesOrderItem);
                 var salesOrderItemWhereReservedFromNonSerialisedInventoryItemChanged = changeSalesOrderItem?.Select(session.Instantiate).OfType<SalesOrderItem>();
 
-                var createdSalesOrderItem = changeSet.Created.Select(session.Instantiate).OfType<SalesOrderItem>();
+                var createdSalesOrderItem = changeSet.Created.Select(v=>v.GetObject()).OfType<SalesOrderItem>();
 
                 foreach (var nonSerialisedInventoryItem in createdNonSerialisedInventoryItems)
                 {

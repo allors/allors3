@@ -18,24 +18,24 @@ namespace Allors.Domain
 
         public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
 
-        public void BaseOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
+        //public void BaseOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            if (!this.ExistOriginator)
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Submit, Operations.Execute));
-            }
+            //if (!this.ExistOriginator)
+            //{
+            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Submit, Operations.Execute));
+            //}
 
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable())
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable())
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
         public void BaseCreateQuote(RequestForQuoteCreateQuote Method)
@@ -46,11 +46,11 @@ namespace Allors.Domain
 
         private void Sync(ISession session)
         {
-            // session.Prefetch(this.SyncPrefetch, this);
-            foreach (RequestItem requestItem in this.RequestItems)
-            {
-                requestItem.Sync(this);
-            }
+            //session.Prefetch(this.SyncPrefetch, this);
+            //foreach (RequestItem requestItem in this.RequestItems)
+            //{
+            //    requestItem.Sync(this);
+            //}
         }
 
         private ProductQuote QuoteThis()

@@ -24,16 +24,16 @@ namespace Allors.Domain
 
         public static void BaseOnPreDerive(this Party @this, ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-            {
-                foreach (PartyFinancialRelationship partyFinancialRelationship in @this.PartyFinancialRelationshipsWhereFinancialParty)
-                {
-                    iteration.AddDependency(partyFinancialRelationship, @this);
-                    iteration.Mark(partyFinancialRelationship);
-                }
-            }
+            //if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
+            //{
+            //    foreach (PartyFinancialRelationship partyFinancialRelationship in @this.PartyFinancialRelationshipsWhereFinancialParty)
+            //    {
+            //        iteration.AddDependency(partyFinancialRelationship, @this);
+            //        iteration.Mark(partyFinancialRelationship);
+            //    }
+            //}
         }
 
         public static void BaseOnDerive(this Party @this, ObjectOnDerive method)
@@ -191,9 +191,9 @@ namespace Allors.Domain
 
         public static void BaseOnPostDerive(this Party @this, ObjectOnPostDerive method)
         {
-            var derivation = method.Derivation;
+            //var derivation = method.Derivation;
 
-            @this.BaseOnDerivePartyFinancialRelationships(derivation);
+            //@this.BaseOnDerivePartyFinancialRelationships(derivation);
         }
 
         public static int? PaymentNetDays(this Party @this)
@@ -267,28 +267,28 @@ namespace Allors.Domain
 
         public static void BaseOnDerivePartyFinancialRelationships(this Party @this, IDerivation derivation)
         {
-            var internalOrganisations = new Organisations(@this.Strategy.Session).InternalOrganisations();
+            //var internalOrganisations = new Organisations(@this.Strategy.Session).InternalOrganisations();
 
-            if (!internalOrganisations.Contains(@this))
-            {
-                foreach (var internalOrganisation in internalOrganisations)
-                {
-                    var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
+            //if (!internalOrganisations.Contains(@this))
+            //{
+            //    foreach (var internalOrganisation in internalOrganisations)
+            //    {
+            //        var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
 
-                    if (partyFinancial == null)
-                    {
-                        partyFinancial = new PartyFinancialRelationshipBuilder(@this.Strategy.Session)
-                            .WithFinancialParty(@this)
-                            .WithInternalOrganisation(internalOrganisation)
-                            .Build();
-                    }
+            //        if (partyFinancial == null)
+            //        {
+            //            partyFinancial = new PartyFinancialRelationshipBuilder(@this.Strategy.Session)
+            //                .WithFinancialParty(@this)
+            //                .WithInternalOrganisation(internalOrganisation)
+            //                .Build();
+            //        }
 
-                    if (partyFinancial.SubAccountNumber == 0)
-                    {
-                        partyFinancial.SubAccountNumber = internalOrganisation.NextSubAccountNumber();
-                    }
-                }
-            }
+            //        if (partyFinancial.SubAccountNumber == 0)
+            //        {
+            //            partyFinancial.SubAccountNumber = internalOrganisation.NextSubAccountNumber();
+            //        }
+            //    }
+            //}
         }
     }
 }

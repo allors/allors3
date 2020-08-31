@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSubcontractorRelationship = changeSet.Created.Select(session.Instantiate).OfType<SubContractorRelationship>();
+                var createdSubcontractorRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<SubContractorRelationship>();
 
                 foreach (var subcontractorRelationship in createdSubcontractorRelationship)
                 {

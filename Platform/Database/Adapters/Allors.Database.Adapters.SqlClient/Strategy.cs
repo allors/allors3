@@ -110,7 +110,7 @@ namespace Allors.Database.Adapters.SqlClient
             this.Session.Commands.DeleteObject(this);
             this.Reference.Exists = false;
 
-            this.Session.State.ChangeSet.OnDeleted(this.ObjectId);
+            this.Session.State.ChangeSet.OnDeleted(this);
         }
 
         public virtual bool ExistRole(IRelationType relationType)

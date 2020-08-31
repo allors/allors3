@@ -19,8 +19,8 @@ namespace Allors.Database.Adapters.Memory
         private static readonly EmptySet<IRoleType> EmptyRoleTypeSet = new EmptySet<IRoleType>();
         private static readonly EmptySet<IAssociationType> EmptyAssociationTypeSet = new EmptySet<IAssociationType>();
 
-        private readonly HashSet<long> created;
-        private readonly HashSet<long> deleted;
+        private readonly HashSet<IStrategy> created;
+        private readonly HashSet<IStrategy> deleted;
 
         private readonly HashSet<long> associations;
         private readonly HashSet<long> roles;
@@ -33,17 +33,17 @@ namespace Allors.Database.Adapters.Memory
 
         internal ChangeSet()
         {
-            this.created = new HashSet<long>();
-            this.deleted = new HashSet<long>();
+            this.created = new HashSet<IStrategy>();
+            this.deleted = new HashSet<IStrategy>();
             this.associations = new HashSet<long>();
             this.roles = new HashSet<long>();
             this.roleTypesByAssociation = new Dictionary<long, ISet<IRoleType>>();
             this.associationTypesByRole = new Dictionary<long, ISet<IAssociationType>>();
         }
 
-        public ISet<long> Created => this.created;
+        public ISet<IStrategy> Created => this.created;
 
-        public ISet<long> Deleted => this.deleted;
+        public ISet<IStrategy> Deleted => this.deleted;
 
         public ISet<long> Associations => this.associations;
 
@@ -65,9 +65,9 @@ namespace Allors.Database.Adapters.Memory
              group kvp.Key by value)
                    .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
 
-        internal void OnCreated(long objectId) => this.created.Add(objectId);
+        internal void OnCreated(IStrategy strategy) => this.created.Add(strategy);
 
-        internal void OnDeleted(long objectId) => this.deleted.Add(objectId);
+        internal void OnDeleted(IStrategy strategy) => this.deleted.Add(strategy);
 
         internal void OnChangingUnitRole(long association, IRoleType roleType)
         {
