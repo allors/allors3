@@ -166,7 +166,46 @@ namespace Allors.Domain
                             deriveRoles.PurchasePrice = purchaseInvoiceItem.TotalExVat;
                         }
 
-                        purchaseInvoiceItem.BaseOnDerivePrices();
+                        //purchaseInvoiceItem.BaseOnDerivePrices();
+                        purchaseInvoiceItem.UnitBasePrice = 0;
+                        purchaseInvoiceItem.UnitDiscount = 0;
+                        purchaseInvoiceItem.UnitSurcharge = 0;
+
+                        if (purchaseInvoiceItem.AssignedUnitPrice.HasValue)
+                        {
+                            purchaseInvoiceItem.UnitBasePrice = purchaseInvoiceItem.AssignedUnitPrice.Value;
+                            purchaseInvoiceItem.UnitPrice = purchaseInvoiceItem.AssignedUnitPrice.Value;
+                        }
+                        else
+                        {
+                            var invoice = purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem;
+                            if (purchaseInvoiceItem.ExistPart)
+                            {
+                                purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Session).PurchasePrice(invoice.BilledFrom, invoice.InvoiceDate, purchaseInvoiceItem.Part);
+                            }
+                        }
+
+                        if (purchaseInvoiceItem.ExistUnitBasePrice)
+                        {
+                            purchaseInvoiceItem.VatRegime = purchaseInvoiceItem.AssignedVatRegime ?? purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.VatRegime;
+                            purchaseInvoiceItem.VatRate = purchaseInvoiceItem.VatRegime?.VatRate;
+
+                            purchaseInvoiceItem.IrpfRegime = purchaseInvoiceItem.AssignedIrpfRegime ?? purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.IrpfRegime;
+                            purchaseInvoiceItem.IrpfRate = purchaseInvoiceItem.IrpfRegime?.IrpfRate;
+
+                            purchaseInvoiceItem.TotalBasePrice = purchaseInvoiceItem.UnitBasePrice * purchaseInvoiceItem.Quantity;
+                            purchaseInvoiceItem.TotalDiscount = purchaseInvoiceItem.UnitDiscount * purchaseInvoiceItem.Quantity;
+                            purchaseInvoiceItem.TotalSurcharge = purchaseInvoiceItem.UnitSurcharge * purchaseInvoiceItem.Quantity;
+                            purchaseInvoiceItem.UnitPrice = purchaseInvoiceItem.UnitBasePrice - purchaseInvoiceItem.UnitDiscount + purchaseInvoiceItem.UnitSurcharge;
+
+                            purchaseInvoiceItem.UnitVat = purchaseInvoiceItem.ExistVatRate ? purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.VatRate.Rate / 100 : 0;
+                            purchaseInvoiceItem.UnitIrpf = purchaseInvoiceItem.ExistIrpfRate ? purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.IrpfRate.Rate / 100 : 0;
+                            purchaseInvoiceItem.TotalVat = purchaseInvoiceItem.UnitVat * purchaseInvoiceItem.Quantity;
+                            purchaseInvoiceItem.TotalExVat = purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.Quantity;
+                            purchaseInvoiceItem.TotalIrpf = purchaseInvoiceItem.UnitIrpf * purchaseInvoiceItem.Quantity;
+                            purchaseInvoiceItem.TotalIncVat = purchaseInvoiceItem.TotalExVat + purchaseInvoiceItem.TotalVat;
+                            purchaseInvoiceItem.GrandTotal = purchaseInvoiceItem.TotalIncVat - purchaseInvoiceItem.TotalIrpf;
+                        }
                     }
 
                     //BaseOnDeriveInvoiceTotals
@@ -332,7 +371,8 @@ namespace Allors.Domain
                     //Sync
                     foreach (PurchaseInvoiceItem invoiceItem in purchaseInvoice.PurchaseInvoiceItems)
                     {
-                        invoiceItem.Sync(purchaseInvoice);
+                        //invoiceItem.Sync(purchaseInvoice);
+                        invoiceItem.SyncedInvoice = purchaseInvoice;
                     }
 
                     purchaseInvoice.ResetPrintDocument();

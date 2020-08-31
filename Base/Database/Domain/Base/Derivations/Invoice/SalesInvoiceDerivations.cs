@@ -17,12 +17,17 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
+                var empty = Array.Empty<SalesInvoice>();
 
                 var createdSalesInvoice = changeSet.Created.Select(v => v.GetObject()).OfType<SalesInvoice>();
 
-                foreach (var salesInvoice in createdSalesInvoice)
-                {
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesInvoice.SalesInvoiceItems, out var changedInvoiceItems);
+                var salesInvoiceWhereInvoiceItemsChanged = changedInvoiceItems?.Select(session.Instantiate).OfType<SalesInvoice>();
 
+                var allSalesInvoices = createdSalesInvoice.Union(salesInvoiceWhereInvoiceItemsChanged ?? empty);
+
+                foreach (var salesInvoice in allSalesInvoices.Where(v => v != null))
+                {
                     var internalOrganisations = new Organisations(session).InternalOrganisations();
 
                     if (!salesInvoice.ExistBilledFrom && internalOrganisations.Count() == 1)

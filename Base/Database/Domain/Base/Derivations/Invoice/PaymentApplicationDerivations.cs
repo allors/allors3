@@ -38,12 +38,6 @@ namespace Allors.Domain
                     {
                         validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
                     }
-
-                    var totalInvoiceItemAmountPaid = paymentApplication.InvoiceItem?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
-                    if (paymentApplication.ExistInvoiceItem && totalInvoiceItemAmountPaid > paymentApplication.InvoiceItem.TotalIncVat)
-                    {
-                        validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
-                    }
                 }
             }
         }

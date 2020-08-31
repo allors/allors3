@@ -10,6 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Domain.Derivations;
     using Allors.Meta;
+    using Resources;
 
     public static partial class DabaseExtensions
     {
@@ -17,9 +18,17 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
+                var empty = Array.Empty<PurchaseOrderItem>();
+
                 var createdPurchaseOrderItem = changeSet.Created.Select(v=>v.GetObject()).OfType<PurchaseOrderItem>();
 
-                foreach(var purchaseOrderItem in createdPurchaseOrderItem)
+                changeSet.AssociationsByRoleType.TryGetValue(M.PurchaseOrderItem.PurchaseOrderItemState, out var changedState);
+                var PurhcaseOrderItemWhereStateChanged = changedState?.Select(session.Instantiate).OfType<PurchaseOrderItem>();
+
+                var allPurchaseOrderItems = createdPurchaseOrderItem
+                    .Union(PurhcaseOrderItemWhereStateChanged ?? empty);
+
+                foreach (var purchaseOrderItem in allPurchaseOrderItems.Where(v => v != null))
                 {
                     if (!purchaseOrderItem.ExistStoredInFacility && purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.ExistStoredInFacility)
                     {
@@ -121,18 +130,18 @@ namespace Allors.Domain
 
                         if (purchaseOrderItem.QuantityOrdered != 1)
                         {
-                            validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {Resources.ErrorMessages.InvalidQuantity}");
+                            validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                         }
                     }
 
                     if (!purchaseOrderItem.ExistPart && purchaseOrderItem.QuantityOrdered != 1)
                     {
-                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {Resources.ErrorMessages.InvalidQuantity}");
+                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                     }
 
                     if (purchaseOrderItem.ExistPart && purchaseOrderItem.Part.InventoryItemKind.IsNonSerialised && purchaseOrderItem.QuantityOrdered == 0)
                     {
-                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {Resources.ErrorMessages.InvalidQuantity}");
+                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                     }
 
                     var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(session);

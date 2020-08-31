@@ -18,8 +18,6 @@ namespace Allors.Domain
 
                 var createdSalesInvoices = changeSet.Created.Select(v => v.GetObject()).OfType<SalesInvoice>();
 
-                var createdReceipts = changeSet.Created.Select(v => v.GetObject()).OfType<Receipt>();
-
                 foreach (var partyFinancialRelationship in createdPartyFinancialRelationships)
                 {
                     DerivePartyFinancialRealtionship(partyFinancialRelationship);
@@ -28,81 +26,82 @@ namespace Allors.Domain
                 foreach (var createdSalesInvoice in createdSalesInvoices)
                 {
                     var organisation = createdSalesInvoice.BillToCustomer;
-                    var financialRelationship = organisation.PartyFinancialRelationshipsWhereFinancialParty.First;
+                    if(organisation != null)
+                    {
+                        var financialRelationship = organisation.PartyFinancialRelationshipsWhereFinancialParty.First;
 
-                    DerivePartyFinancialRealtionship(financialRelationship);
-                }
-
-                foreach (var receipt in createdReceipts)
-                {
-                    DerivePartyFinancialRealtionship(receipt.Sender.PartyFinancialRelationshipsWhereFinancialParty.First);
+                        DerivePartyFinancialRealtionship(financialRelationship);
+                    }
                 }
 
                 static void DerivePartyFinancialRealtionship(PartyFinancialRelationship partyFinancialRelationship)
                 {
-                    var party = partyFinancialRelationship.FinancialParty;
-
-                    partyFinancialRelationship.AmountDue = 0;
-                    partyFinancialRelationship.AmountOverDue = 0;
-
-                    // Open Order Amount
-                    partyFinancialRelationship.OpenOrderAmount = party.SalesOrdersWhereBillToCustomer
-                        .Where(v =>
-                            Equals(v.TakenBy, partyFinancialRelationship.InternalOrganisation) &&
-                            !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Finished) &&
-                            !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Cancelled))
-                        .Sum(v => v.TotalIncVat);
-
-                    // Amount Due
-                    // Amount OverDue
-                    foreach (var salesInvoice in party.SalesInvoicesWhereBillToCustomer.Where(v => Equals(v.BilledFrom, partyFinancialRelationship.InternalOrganisation) &&
-                                                                                                            !v.SalesInvoiceState.Equals(new SalesInvoiceStates(party.Strategy.Session).Paid)))
+                    if(partyFinancialRelationship != null)
                     {
-                        if (salesInvoice.AmountPaid > 0)
+                        var party = partyFinancialRelationship.FinancialParty;
+
+                        partyFinancialRelationship.AmountDue = 0;
+                        partyFinancialRelationship.AmountOverDue = 0;
+
+                        // Open Order Amount
+                        partyFinancialRelationship.OpenOrderAmount = party.SalesOrdersWhereBillToCustomer
+                            .Where(v =>
+                                Equals(v.TakenBy, partyFinancialRelationship.InternalOrganisation) &&
+                                !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Finished) &&
+                                !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Cancelled))
+                            .Sum(v => v.TotalIncVat);
+
+                        // Amount Due
+                        // Amount OverDue
+                        foreach (var salesInvoice in party.SalesInvoicesWhereBillToCustomer.Where(v => Equals(v.BilledFrom, partyFinancialRelationship.InternalOrganisation) &&
+                                                                                                                !v.SalesInvoiceState.Equals(new SalesInvoiceStates(party.Strategy.Session).Paid)))
                         {
-                            partyFinancialRelationship.AmountDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
-                        }
-                        else
-                        {
-                            foreach (SalesInvoiceItem invoiceItem in salesInvoice.InvoiceItems)
+                            if (salesInvoice.AmountPaid > 0)
                             {
-                                if (!invoiceItem.SalesInvoiceItemState.Equals(
-                                    new SalesInvoiceItemStates(party.Strategy.Session).Paid))
+                                partyFinancialRelationship.AmountDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
+                            }
+                            else
+                            {
+                                foreach (SalesInvoiceItem invoiceItem in salesInvoice.InvoiceItems)
                                 {
-                                    if (invoiceItem.ExistTotalIncVat)
+                                    if (!invoiceItem.SalesInvoiceItemState.Equals(
+                                        new SalesInvoiceItemStates(party.Strategy.Session).Paid))
                                     {
-                                        partyFinancialRelationship.AmountDue += invoiceItem.TotalIncVat - invoiceItem.AmountPaid;
+                                        if (invoiceItem.ExistTotalIncVat)
+                                        {
+                                            partyFinancialRelationship.AmountDue += invoiceItem.TotalIncVat - invoiceItem.AmountPaid;
+                                        }
                                     }
+                                }
+                            }
+
+                            var gracePeriod = salesInvoice.Store?.PaymentGracePeriod;
+
+                            if (salesInvoice.DueDate.HasValue)
+                            {
+                                var dueDate = salesInvoice.DueDate.Value;
+
+                                if (gracePeriod.HasValue)
+                                {
+                                    dueDate = salesInvoice.DueDate.Value.AddDays(gracePeriod.Value);
+                                }
+
+                                if (party.Strategy.Session.Now() > dueDate)
+                                {
+                                    partyFinancialRelationship.AmountOverDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
                                 }
                             }
                         }
 
-                        var gracePeriod = salesInvoice.Store?.PaymentGracePeriod;
+                        var internalOrganisations = new Organisations(partyFinancialRelationship.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                        if (salesInvoice.DueDate.HasValue)
+                        if (!partyFinancialRelationship.ExistInternalOrganisation && internalOrganisations.Count() == 1)
                         {
-                            var dueDate = salesInvoice.DueDate.Value;
-
-                            if (gracePeriod.HasValue)
-                            {
-                                dueDate = salesInvoice.DueDate.Value.AddDays(gracePeriod.Value);
-                            }
-
-                            if (party.Strategy.Session.Now() > dueDate)
-                            {
-                                partyFinancialRelationship.AmountOverDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
-                            }
+                            partyFinancialRelationship.InternalOrganisation = internalOrganisations.First();
                         }
+
+                        partyFinancialRelationship.Parties = new Party[] { partyFinancialRelationship.FinancialParty, partyFinancialRelationship.InternalOrganisation };
                     }
-
-                    var internalOrganisations = new Organisations(partyFinancialRelationship.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                    if (!partyFinancialRelationship.ExistInternalOrganisation && internalOrganisations.Count() == 1)
-                    {
-                        partyFinancialRelationship.InternalOrganisation = internalOrganisations.First();
-                    }
-
-                    partyFinancialRelationship.Parties = new Party[] { partyFinancialRelationship.FinancialParty, partyFinancialRelationship.InternalOrganisation };
                 }
             }
         }
