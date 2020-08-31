@@ -7,6 +7,9 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
+    using Allors.Domain.Derivations;
+    using Allors.Meta;
+    using Resources;
 
     public static partial class DabaseExtensions
     {
@@ -18,7 +21,29 @@ namespace Allors.Domain
 
                 foreach(var paymentApplication in createdPaymentApplications)
                 {
-                    
+                    validation.AssertExistsAtMostOne(paymentApplication, M.PaymentApplication.Invoice, M.PaymentApplication.InvoiceItem);
+
+                    if (paymentApplication.ExistPaymentWherePaymentApplication && paymentApplication.AmountApplied > paymentApplication.PaymentWherePaymentApplication.Amount)
+                    {
+                        validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");
+                    }
+
+                    var totalInvoiceAmountPaid = paymentApplication.Invoice?.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
+                    if (paymentApplication.Invoice is SalesInvoice salesInvoice)
+                    {
+                        totalInvoiceAmountPaid += salesInvoice.AdvancePayment;
+                    }
+
+                    if (paymentApplication.ExistInvoice && totalInvoiceAmountPaid > paymentApplication.Invoice.TotalIncVat)
+                    {
+                        validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
+                    }
+
+                    var totalInvoiceItemAmountPaid = paymentApplication.InvoiceItem?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
+                    if (paymentApplication.ExistInvoiceItem && totalInvoiceItemAmountPaid > paymentApplication.InvoiceItem.TotalIncVat)
+                    {
+                        validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
+                    }
                 }
             }
         }
