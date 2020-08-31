@@ -15,43 +15,43 @@ namespace Allors.Domain
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.ExistSource)
-                {
-                    iteration.AddDependency(this.Source, this);
-                    iteration.Mark(this.Source);
-                }
-            }
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
+            //    if (this.ExistSource)
+            //    {
+            //        iteration.AddDependency(this.Source, this);
+            //        iteration.Mark(this.Source);
+            //    }
+            //}
         }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
-            if (!this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Month) && !this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week))
-            {
-                derivation.Validation.AddError(this, M.RepeatingSalesInvoice.Frequency, ErrorMessages.FrequencyNotSupported);
-            }
+            //var derivation = method.Derivation;
+            //if (!this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Month) && !this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week))
+            //{
+            //    derivation.Validation.AddError(this, M.RepeatingSalesInvoice.Frequency, ErrorMessages.FrequencyNotSupported);
+            //}
 
-            if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week) && !this.ExistDayOfWeek)
-            {
-                derivation.Validation.AssertExists(this, M.RepeatingSalesInvoice.DayOfWeek);
-            }
+            //if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week) && !this.ExistDayOfWeek)
+            //{
+            //    derivation.Validation.AssertExists(this, M.RepeatingSalesInvoice.DayOfWeek);
+            //}
 
-            if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Month) && this.ExistDayOfWeek)
-            {
-                derivation.Validation.AssertNotExists(this, M.RepeatingSalesInvoice.DayOfWeek);
-            }
+            //if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Month) && this.ExistDayOfWeek)
+            //{
+            //    derivation.Validation.AssertNotExists(this, M.RepeatingSalesInvoice.DayOfWeek);
+            //}
 
-            if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week) && this.ExistDayOfWeek && this.ExistNextExecutionDate)
-            {
-                if (!this.NextExecutionDate.DayOfWeek.ToString().Equals(this.DayOfWeek.Name))
-                {
-                    derivation.Validation.AddError(this, M.RepeatingSalesInvoice.DayOfWeek, ErrorMessages.DateDayOfWeek);
-                }
-            }
+            //if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week) && this.ExistDayOfWeek && this.ExistNextExecutionDate)
+            //{
+            //    if (!this.NextExecutionDate.DayOfWeek.ToString().Equals(this.DayOfWeek.Name))
+            //    {
+            //        derivation.Validation.AddError(this, M.RepeatingSalesInvoice.DayOfWeek, ErrorMessages.DateDayOfWeek);
+            //    }
+            //}
         }
 
         public void Repeat()
