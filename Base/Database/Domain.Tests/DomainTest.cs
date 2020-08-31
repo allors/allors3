@@ -164,6 +164,7 @@ namespace Allors
             database.RequestForInformationRegisterDerivations();
             database.RequestExtensionsRegisterDerivations();
             database.PartyFinancialRelationshipRegisterDerivations();
+            database.SalesInvoiceRegisterDerivations();
 
             database.SupplierRelationshipRegisterDerivations();
             database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
