@@ -25,7 +25,11 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrder.SalesOrderState, out var changedSalesOrderState);
                 var salesOrdersWhereStateChanged = changedSalesOrderState?.Select(session.Instantiate).OfType<SalesOrder>();
 
+                changeSet.AssociationsByRoleType.TryGetValue(M.SalesOrder.SalesOrderItems, out var changedSalesOrderItems);
+                var salesOrdersWhereItemsChanged = changedSalesOrderItems?.Select(session.Instantiate).OfType<SalesOrder>();
+
                 var allSalesOrders = createdSalesOrder
+                    .Union(salesOrdersWhereItemsChanged ?? empty)
                     .Union(salesOrdersWhereStateChanged ?? empty);
 
                 foreach (var salesOrder in allSalesOrders.Where(v => v != null))
