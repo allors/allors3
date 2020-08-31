@@ -815,11 +815,11 @@ namespace Allors.Domain
         //        this.TotalSurchargeAsPercentage = 0;
         //    }
 
-        //    this.TotalExVat = this.UnitPrice * this.QuantityOrdered;
-        //    this.TotalVat = this.UnitVat * this.QuantityOrdered;
-        //    this.TotalIncVat = this.TotalExVat + this.TotalVat;
-        //    this.TotalIrpf = this.UnitIrpf * this.QuantityOrdered;
-        //    this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
+        //this.TotalExVat = this.UnitPrice* this.QuantityOrdered;
+        //this.TotalVat = Math.Round(this.UnitVat * this.QuantityOrdered, 2);
+        //this.TotalIncVat = this.TotalExVat + this.TotalVat;
+        //this.TotalIrpf = Math.Round(this.UnitIrpf * this.QuantityOrdered, 2);
+        //this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
         //}
     }
-}
+    }
