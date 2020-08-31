@@ -7,6 +7,7 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
+    using System.Text;
     using Allors.Domain.Derivations;
     using Allors.Meta;
     using Resources;
@@ -98,7 +99,61 @@ namespace Allors.Domain
                     {
                         serialisedItem.RemoveSerialisedItemCharacteristic(characteristic);
                     }
-                }
+
+                    var deletePermission = new Permissions(serialisedItem.Strategy.Session).Get(serialisedItem.Meta.ObjectType, serialisedItem.Meta.Delete, Operations.Execute);
+                    if (IsDeletable(serialisedItem))
+                    {
+                        serialisedItem.RemoveDeniedPermission(deletePermission);
+                    }
+                    else
+                    {
+                        serialisedItem.AddDeniedPermission(deletePermission);
+                    }
+
+                    var builder = new StringBuilder();
+
+                    builder.Append(serialisedItem.ItemNumber);
+                    builder.Append(string.Join(" ", serialisedItem.SerialNumber));
+                    builder.Append(string.Join(" ", serialisedItem.Name));
+
+                    if (serialisedItem.ExistOwnedBy)
+                    {
+                        builder.Append(string.Join(" ", serialisedItem.OwnedBy.PartyName));
+                    }
+
+                    if (serialisedItem.ExistBuyer)
+                    {
+                        builder.Append(string.Join(" ", serialisedItem.Buyer.PartyName));
+                    }
+
+                    if (serialisedItem.ExistSeller)
+                    {
+                        builder.Append(string.Join(" ", serialisedItem.Seller.PartyName));
+                    }
+
+                    if (serialisedItem.ExistPartWhereSerialisedItem)
+                    {
+                        builder.Append(string.Join(" ", serialisedItem.PartWhereSerialisedItem?.Brand?.Name));
+                        builder.Append(string.Join(" ", serialisedItem.PartWhereSerialisedItem?.Model?.Name));
+                    }
+
+                    builder.Append(string.Join(" ", serialisedItem.Keywords));
+
+                    serialisedItem.SearchString = builder.ToString();
+
+                    bool IsDeletable(SerialisedItem serialised)
+                    {
+                     return !serialised.ExistInventoryItemTransactionsWhereSerialisedItem
+                            && !serialised.ExistPurchaseInvoiceItemsWhereSerialisedItem
+                            && !serialised.ExistPurchaseOrderItemsWhereSerialisedItem
+                            && !serialised.ExistQuoteItemsWhereSerialisedItem
+                            && !serialised.ExistSalesInvoiceItemsWhereSerialisedItem
+                            && !serialised.ExistSalesOrderItemsWhereSerialisedItem
+                            && !serialised.ExistSerialisedInventoryItemsWhereSerialisedItem
+                            && !serialised.ExistShipmentItemsWhereSerialisedItem;
+                    }
+            
+        }
             }
         }
 
