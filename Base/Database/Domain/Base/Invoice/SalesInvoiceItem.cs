@@ -82,41 +82,41 @@ namespace Allors.Domain
 
         public void BaseOnPreDerive(ObjectOnPreDerive method)
         {
-            var (iteration, changeSet, derivedObjects) = method;
+            //var (iteration, changeSet, derivedObjects) = method;
 
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
+            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            //{
 
-                if (this.ExistSalesInvoiceWhereSalesInvoiceItem)
-                {
-                    iteration.AddDependency(this.SalesInvoiceWhereSalesInvoiceItem, this);
-                    iteration.Mark(this.SalesInvoiceWhereSalesInvoiceItem);
-                }
+            //    if (this.ExistSalesInvoiceWhereSalesInvoiceItem)
+            //    {
+            //        iteration.AddDependency(this.SalesInvoiceWhereSalesInvoiceItem, this);
+            //        iteration.Mark(this.SalesInvoiceWhereSalesInvoiceItem);
+            //    }
 
-                if (this.ExistPaymentApplicationsWhereInvoiceItem)
-                {
-                    foreach (PaymentApplication paymentApplication in this.PaymentApplicationsWhereInvoiceItem)
-                    {
-                        iteration.AddDependency(this, paymentApplication);
-                        iteration.Mark(paymentApplication);
-                    }
-                }
+            //    if (this.ExistPaymentApplicationsWhereInvoiceItem)
+            //    {
+            //        foreach (PaymentApplication paymentApplication in this.PaymentApplicationsWhereInvoiceItem)
+            //        {
+            //            iteration.AddDependency(this, paymentApplication);
+            //            iteration.Mark(paymentApplication);
+            //        }
+            //    }
 
-                foreach (OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
-                {
-                    iteration.AddDependency(orderItemBilling.OrderItem, this);
-                    iteration.Mark(orderItemBilling.OrderItem);
-                }
+            //    foreach (OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
+            //    {
+            //        iteration.AddDependency(orderItemBilling.OrderItem, this);
+            //        iteration.Mark(orderItemBilling.OrderItem);
+            //    }
 
-                foreach (ShipmentItemBilling shipmentItemBilling in this.ShipmentItemBillingsWhereInvoiceItem)
-                {
-                    foreach (OrderShipment orderShipment in shipmentItemBilling.ShipmentItem.OrderShipmentsWhereShipmentItem)
-                    {
-                        iteration.AddDependency(orderShipment.OrderItem, this);
-                        iteration.Mark(orderShipment.OrderItem);
-                    }
-                }
-            }
+            //    foreach (ShipmentItemBilling shipmentItemBilling in this.ShipmentItemBillingsWhereInvoiceItem)
+            //    {
+            //        foreach (OrderShipment orderShipment in shipmentItemBilling.ShipmentItem.OrderShipmentsWhereShipmentItem)
+            //        {
+            //            iteration.AddDependency(orderShipment.OrderItem, this);
+            //            iteration.Mark(orderShipment.OrderItem);
+            //        }
+            //    }
+            //}
         }
 
         public void BaseOnInit(ObjectOnInit method)
@@ -129,190 +129,190 @@ namespace Allors.Domain
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
-            var derivation = method.Derivation;
-            var salesInvoice = this.SalesInvoiceWhereSalesInvoiceItem;
-            var salesInvoiceItemStates = new SalesInvoiceItemStates(derivation.Session);
+            //var derivation = method.Derivation;
+            //var salesInvoice = this.SalesInvoiceWhereSalesInvoiceItem;
+            //var salesInvoiceItemStates = new SalesInvoiceItemStates(derivation.Session);
 
-            derivation.Validation.AssertExistsAtMostOne(this, M.SalesInvoiceItem.Product, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
-            derivation.Validation.AssertExistsAtMostOne(this, M.SalesInvoiceItem.SerialisedItem, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
+            //derivation.Validation.AssertExistsAtMostOne(this, M.SalesInvoiceItem.Product, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
+            //derivation.Validation.AssertExistsAtMostOne(this, M.SalesInvoiceItem.SerialisedItem, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
 
-            if (this.ExistSerialisedItem && !this.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Session()).SalesInvoice))
-            {
-                derivation.Validation.AssertExists(this, this.Meta.NextSerialisedItemAvailability);
-            }
+            //if (this.ExistSerialisedItem && !this.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Session()).SalesInvoice))
+            //{
+            //    derivation.Validation.AssertExists(this, this.Meta.NextSerialisedItemAvailability);
+            //}
 
-            if (this.Part != null && this.Part.InventoryItemKind.IsSerialised && this.Quantity != 1)
-            {
-                derivation.Validation.AddError(this, M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
-            }
+            //if (this.Part != null && this.Part.InventoryItemKind.IsSerialised && this.Quantity != 1)
+            //{
+            //    derivation.Validation.AddError(this, M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
+            //}
 
-            if (this.Part != null && this.Part.InventoryItemKind.IsNonSerialised && this.Quantity == 0)
-            {
-                derivation.Validation.AddError(this, M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
-            }
+            //if (this.Part != null && this.Part.InventoryItemKind.IsNonSerialised && this.Quantity == 0)
+            //{
+            //    derivation.Validation.AddError(this, M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
+            //}
 
-            if (this.ExistInvoiceItemType && this.InvoiceItemType.MaxQuantity.HasValue && this.Quantity > this.InvoiceItemType.MaxQuantity.Value)
-            {
-                derivation.Validation.AddError(this, M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
-            }
+            //if (this.ExistInvoiceItemType && this.InvoiceItemType.MaxQuantity.HasValue && this.Quantity > this.InvoiceItemType.MaxQuantity.Value)
+            //{
+            //    derivation.Validation.AddError(this, M.SalesInvoiceItem.Quantity, ErrorMessages.InvalidQuantity);
+            //}
 
-            this.VatRegime = this.ExistAssignedVatRegime ? this.AssignedVatRegime : this.SalesInvoiceWhereSalesInvoiceItem?.VatRegime;
-            this.VatRate = this.VatRegime?.VatRate;
+            //this.VatRegime = this.ExistAssignedVatRegime ? this.AssignedVatRegime : this.SalesInvoiceWhereSalesInvoiceItem?.VatRegime;
+            //this.VatRate = this.VatRegime?.VatRate;
 
-            this.IrpfRegime = this.ExistAssignedIrpfRegime ? this.AssignedIrpfRegime : this.SalesInvoiceWhereSalesInvoiceItem?.IrpfRegime;
-            this.IrpfRate = this.IrpfRegime?.IrpfRate;
+            //this.IrpfRegime = this.ExistAssignedIrpfRegime ? this.AssignedIrpfRegime : this.SalesInvoiceWhereSalesInvoiceItem?.IrpfRegime;
+            //this.IrpfRate = this.IrpfRegime?.IrpfRate;
 
-            if (this.ExistInvoiceItemType && this.IsSubTotalItem().Result == true && this.Quantity <= 0)
-            {
-                derivation.Validation.AssertExists(this, this.Meta.Quantity);
-            }
+            //if (this.ExistInvoiceItemType && this.IsSubTotalItem().Result == true && this.Quantity <= 0)
+            //{
+            //    derivation.Validation.AssertExists(this, this.Meta.Quantity);
+            //}
 
-            this.AmountPaid = 0;
-            foreach (PaymentApplication paymentApplication in this.PaymentApplicationsWhereInvoiceItem)
-            {
-                this.AmountPaid += paymentApplication.AmountApplied;
-            }
+            //this.AmountPaid = 0;
+            //foreach (PaymentApplication paymentApplication in this.PaymentApplicationsWhereInvoiceItem)
+            //{
+            //    this.AmountPaid += paymentApplication.AmountApplied;
+            //}
 
-            if (salesInvoice != null && salesInvoice.SalesInvoiceState.IsReadyForPosting && this.SalesInvoiceItemState.IsCancelledByInvoice)
-            {
-                this.SalesInvoiceItemState = salesInvoiceItemStates.ReadyForPosting;
-            }
+            //if (salesInvoice != null && salesInvoice.SalesInvoiceState.IsReadyForPosting && this.SalesInvoiceItemState.IsCancelledByInvoice)
+            //{
+            //    this.SalesInvoiceItemState = salesInvoiceItemStates.ReadyForPosting;
+            //}
 
-            // SalesInvoiceItem States
-            if (salesInvoice != null && this.IsValid)
-            {
-                if (salesInvoice.SalesInvoiceState.IsWrittenOff)
-                {
-                    this.SalesInvoiceItemState = salesInvoiceItemStates.WrittenOff;
-                }
+            //// SalesInvoiceItem States
+            //if (salesInvoice != null && this.IsValid)
+            //{
+            //    if (salesInvoice.SalesInvoiceState.IsWrittenOff)
+            //    {
+            //        this.SalesInvoiceItemState = salesInvoiceItemStates.WrittenOff;
+            //    }
 
-                if (salesInvoice.SalesInvoiceState.IsCancelled)
-                {
-                    this.SalesInvoiceItemState = salesInvoiceItemStates.CancelledByInvoice;
-                }
-            }
+            //    if (salesInvoice.SalesInvoiceState.IsCancelled)
+            //    {
+            //        this.SalesInvoiceItemState = salesInvoiceItemStates.CancelledByInvoice;
+            //    }
+            //}
 
-            // TODO: Move to Custom
-            if (derivation.ChangeSet.IsCreated(this) && !this.ExistDescription)
-            {
-                if (this.ExistSerialisedItem)
-                {
-                    var builder = new StringBuilder();
-                    var part = this.SerialisedItem.PartWhereSerialisedItem;
+            //// TODO: Move to Custom
+            //if (derivation.ChangeSet.IsCreated(this) && !this.ExistDescription)
+            //{
+            //    if (this.ExistSerialisedItem)
+            //    {
+            //        var builder = new StringBuilder();
+            //        var part = this.SerialisedItem.PartWhereSerialisedItem;
 
-                    if (part != null && part.ExistManufacturedBy)
-                    {
-                        builder.Append($", Manufacturer: {part.ManufacturedBy.PartyName}");
-                    }
+            //        if (part != null && part.ExistManufacturedBy)
+            //        {
+            //            builder.Append($", Manufacturer: {part.ManufacturedBy.PartyName}");
+            //        }
 
-                    if (part != null && part.ExistBrand)
-                    {
-                        builder.Append($", Brand: {part.Brand.Name}");
-                    }
+            //        if (part != null && part.ExistBrand)
+            //        {
+            //            builder.Append($", Brand: {part.Brand.Name}");
+            //        }
 
-                    if (part != null && part.ExistModel)
-                    {
-                        builder.Append($", Model: {part.Model.Name}");
-                    }
+            //        if (part != null && part.ExistModel)
+            //        {
+            //            builder.Append($", Model: {part.Model.Name}");
+            //        }
 
-                    builder.Append($", SN: {this.SerialisedItem.SerialNumber}");
+            //        builder.Append($", SN: {this.SerialisedItem.SerialNumber}");
 
-                    if (this.SerialisedItem.ExistManufacturingYear)
-                    {
-                        builder.Append($", YOM: {this.SerialisedItem.ManufacturingYear}");
-                    }
+            //        if (this.SerialisedItem.ExistManufacturingYear)
+            //        {
+            //            builder.Append($", YOM: {this.SerialisedItem.ManufacturingYear}");
+            //        }
 
-                    foreach (SerialisedItemCharacteristic characteristic in this.SerialisedItem.SerialisedItemCharacteristics)
-                    {
-                        if (characteristic.ExistValue)
-                        {
-                            var characteristicType = characteristic.SerialisedItemCharacteristicType;
-                            if (characteristicType.ExistUnitOfMeasure)
-                            {
-                                var uom = characteristicType.UnitOfMeasure.ExistAbbreviation
-                                                ? characteristicType.UnitOfMeasure.Abbreviation
-                                                : characteristicType.UnitOfMeasure.Name;
-                                builder.Append(
-                                    $", {characteristicType.Name}: {characteristic.Value} {uom}");
-                            }
-                            else
-                            {
-                                builder.Append($", {characteristicType.Name}: {characteristic.Value}");
-                            }
-                        }
-                    }
+            //        foreach (SerialisedItemCharacteristic characteristic in this.SerialisedItem.SerialisedItemCharacteristics)
+            //        {
+            //            if (characteristic.ExistValue)
+            //            {
+            //                var characteristicType = characteristic.SerialisedItemCharacteristicType;
+            //                if (characteristicType.ExistUnitOfMeasure)
+            //                {
+            //                    var uom = characteristicType.UnitOfMeasure.ExistAbbreviation
+            //                                    ? characteristicType.UnitOfMeasure.Abbreviation
+            //                                    : characteristicType.UnitOfMeasure.Name;
+            //                    builder.Append(
+            //                        $", {characteristicType.Name}: {characteristic.Value} {uom}");
+            //                }
+            //                else
+            //                {
+            //                    builder.Append($", {characteristicType.Name}: {characteristic.Value}");
+            //                }
+            //            }
+            //        }
 
-                    var details = builder.ToString();
+            //        var details = builder.ToString();
 
-                    if (details.StartsWith(","))
-                    {
-                        details = details.Substring(2);
-                    }
+            //        if (details.StartsWith(","))
+            //        {
+            //            details = details.Substring(2);
+            //        }
 
-                    this.Description = details;
+            //        this.Description = details;
 
-                }
-                else if (this.ExistProduct && this.Product is UnifiedGood unifiedGood)
-                {
-                    var builder = new StringBuilder();
+            //    }
+            //    else if (this.ExistProduct && this.Product is UnifiedGood unifiedGood)
+            //    {
+            //        var builder = new StringBuilder();
 
-                    if (unifiedGood != null && unifiedGood.ExistManufacturedBy)
-                    {
-                        builder.Append($", Manufacturer: {unifiedGood.ManufacturedBy.PartyName}");
-                    }
+            //        if (unifiedGood != null && unifiedGood.ExistManufacturedBy)
+            //        {
+            //            builder.Append($", Manufacturer: {unifiedGood.ManufacturedBy.PartyName}");
+            //        }
 
-                    if (unifiedGood != null && unifiedGood.ExistBrand)
-                    {
-                        builder.Append($", Brand: {unifiedGood.Brand.Name}");
-                    }
+            //        if (unifiedGood != null && unifiedGood.ExistBrand)
+            //        {
+            //            builder.Append($", Brand: {unifiedGood.Brand.Name}");
+            //        }
 
-                    if (unifiedGood != null && unifiedGood.ExistModel)
-                    {
-                        builder.Append($", Model: {unifiedGood.Model.Name}");
-                    }
+            //        if (unifiedGood != null && unifiedGood.ExistModel)
+            //        {
+            //            builder.Append($", Model: {unifiedGood.Model.Name}");
+            //        }
 
-                    foreach (SerialisedItemCharacteristic characteristic in unifiedGood.SerialisedItemCharacteristics)
-                    {
-                        if (characteristic.ExistValue)
-                        {
-                            var characteristicType = characteristic.SerialisedItemCharacteristicType;
-                            if (characteristicType.ExistUnitOfMeasure)
-                            {
-                                var uom = characteristicType.UnitOfMeasure.ExistAbbreviation
-                                                ? characteristicType.UnitOfMeasure.Abbreviation
-                                                : characteristicType.UnitOfMeasure.Name;
-                                builder.Append($", {characteristicType.Name}: {characteristic.Value} {uom}");
-                            }
-                            else
-                            {
-                                builder.Append($", {characteristicType.Name}: {characteristic.Value}");
-                            }
-                        }
-                    }
+            //        foreach (SerialisedItemCharacteristic characteristic in unifiedGood.SerialisedItemCharacteristics)
+            //        {
+            //            if (characteristic.ExistValue)
+            //            {
+            //                var characteristicType = characteristic.SerialisedItemCharacteristicType;
+            //                if (characteristicType.ExistUnitOfMeasure)
+            //                {
+            //                    var uom = characteristicType.UnitOfMeasure.ExistAbbreviation
+            //                                    ? characteristicType.UnitOfMeasure.Abbreviation
+            //                                    : characteristicType.UnitOfMeasure.Name;
+            //                    builder.Append($", {characteristicType.Name}: {characteristic.Value} {uom}");
+            //                }
+            //                else
+            //                {
+            //                    builder.Append($", {characteristicType.Name}: {characteristic.Value}");
+            //                }
+            //            }
+            //        }
 
-                    var details = builder.ToString();
+            //        var details = builder.ToString();
 
-                    if (details.StartsWith(","))
-                    {
-                        details = details.Substring(2);
-                    }
+            //        if (details.StartsWith(","))
+            //        {
+            //            details = details.Substring(2);
+            //        }
 
-                    this.Description = details;
-                }
-            }
+            //        this.Description = details;
+            //    }
+            //}
         }
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
-            if (this.IsDeletable)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //if (this.IsDeletable)
+            //{
+            //    this.RemoveDeniedPermission(deletePermission);
+            //}
+            //else
+            //{
+            //    this.AddDeniedPermission(deletePermission);
+            //}
         }
 
         public void BaseWriteOff() => this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).WrittenOff;
