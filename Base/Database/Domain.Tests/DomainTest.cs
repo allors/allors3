@@ -85,6 +85,7 @@ namespace Allors
         {
             database.Init();
 
+            
             database.AuditableExtensionsRegisterDerivations();
             database.ShipmentExtensionsRegisterDerivations();
             database.SupplierOfferingRegisterDerivations();
@@ -162,6 +163,7 @@ namespace Allors
             database.RequestForProposalRegisterDerivations();
             database.RequestForInformationRegisterDerivations();
             database.RequestExtensionsRegisterDerivations();
+            database.PartyFinancialRelationshipRegisterDerivations();
 
             database.SupplierRelationshipRegisterDerivations();
             database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
