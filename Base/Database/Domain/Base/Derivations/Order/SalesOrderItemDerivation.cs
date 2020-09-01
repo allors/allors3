@@ -22,6 +22,7 @@ namespace Allors.Domain
             new CreatedPattern(M.SalesOrderItem.Class),
             new RoleChangedPattern(M.SalesOrderItem.SalesOrderItemState),
             new RoleChangedPattern(M.SalesOrderItem.QuantityOrdered.RoleType),
+            new RoleChangedPattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
             new RoleChangedPattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
         };
 

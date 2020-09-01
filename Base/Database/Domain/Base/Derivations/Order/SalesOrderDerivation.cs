@@ -19,7 +19,8 @@ namespace Allors.Domain
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
                 new CreatedPattern(M.SalesOrder.Class),
-                new RoleChangedPattern(M.SalesOrder.SalesOrderState)
+                new RoleChangedPattern(M.SalesOrder.SalesOrderState),
+                new RoleChangedPattern(M.SalesOrder.SalesOrderItems)
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

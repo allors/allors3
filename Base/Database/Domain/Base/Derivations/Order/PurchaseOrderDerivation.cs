@@ -20,6 +20,8 @@ namespace Allors.Domain
         {
             new CreatedPattern(M.PurchaseOrder.Class),
             new RoleChangedPattern(M.PurchaseOrder.PurchaseOrderState),
+            new RoleChangedPattern(M.PurchaseOrder.PurchaseOrderItems),
+            new RoleChangedPattern(M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] {M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
             new RoleChangedPattern(M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] {M.InternalOrganisation.ActiveSuppliers, M.Organisation.PurchaseOrdersWhereOrderedBy}},
         };
 
@@ -89,17 +91,16 @@ namespace Allors.Domain
                 return false;
             }
 
-            bool IsDeletable(PurchaseOrder purchaseOrder) =>
-                (purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session)
-                     .Created)
-                 || purchaseOrder.PurchaseOrderState.Equals(
-                     new PurchaseOrderStates(purchaseOrder.Strategy.Session).Cancelled)
-                 || purchaseOrder.PurchaseOrderState.Equals(
-                     new PurchaseOrderStates(purchaseOrder.Strategy.Session).Rejected))
-                && !purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder
-                && !purchaseOrder.ExistSerialisedItemsWherePurchaseOrder
-                && !purchaseOrder.ExistWorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder
-                && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
+            bool IsDeletable(PurchaseOrder purchaseOrder)
+            {
+                return (purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Created)
+                 || purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Cancelled)
+                 || purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Rejected))
+             && !purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder
+             && !purchaseOrder.ExistSerialisedItemsWherePurchaseOrder
+             && !purchaseOrder.ExistWorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder
+             && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
+            }
 
             foreach (var purchaseOrder in matches.Cast<PurchaseOrder>().Where(v => v.OrderedBy?.ActiveSuppliers.Any() == true))
             {
@@ -318,8 +319,6 @@ namespace Allors.Domain
                     }
                 }
             }
-
-
         }
 
     }

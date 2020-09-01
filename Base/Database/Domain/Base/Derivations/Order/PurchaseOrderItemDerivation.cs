@@ -10,6 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Domain.Derivations;
     using Allors.Meta;
+    using Resources;
 
     public class PurchaseOrderItemDerivation : IDomainDerivation
     {
@@ -18,11 +19,13 @@ namespace Allors.Domain
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.PurchaseOrderItem.Class),
+            new RoleChangedPattern(M.PurchaseOrderItem.PurchaseOrderItemState),
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
+            var session = cycle.Session;
 
             foreach (var purchaseOrderItem in matches.Cast<PurchaseOrderItem>())
             {
@@ -126,23 +129,23 @@ namespace Allors.Domain
 
                     if (purchaseOrderItem.QuantityOrdered != 1)
                     {
-                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {Resources.ErrorMessages.InvalidQuantity}");
+                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                     }
                 }
 
                 if (!purchaseOrderItem.ExistPart && purchaseOrderItem.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {Resources.ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
                 if (purchaseOrderItem.ExistPart && purchaseOrderItem.Part.InventoryItemKind.IsNonSerialised && purchaseOrderItem.QuantityOrdered == 0)
                 {
-                    validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {Resources.ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
-                var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(cycle.Session);
-                var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(cycle.Session);
-                var purchaseOrderItemStates = new PurchaseOrderItemStates(cycle.Session);
+                var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(session);
+                var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(session);
+                var purchaseOrderItemStates = new PurchaseOrderItemStates(session);
 
                 if (purchaseOrderItem.IsValid)
                 {
