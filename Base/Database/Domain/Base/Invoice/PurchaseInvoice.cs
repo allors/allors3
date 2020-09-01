@@ -255,6 +255,12 @@ namespace Allors.Domain
             //    this.AddDeniedPermission(deletePermission);
             //}
 
+            //var revisePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Revise, Operations.Execute);
+            //if (this.BilledTo.DoAccounting)
+            //{
+            //    this.AddDeniedPermission(revisePermission);
+            //}
+
             //if (!this.ExistSalesInvoiceWherePurchaseInvoice
             //    && (this.BilledFrom as Organisation)?.IsInternalOrganisation == true
             //    && (this.PurchaseInvoiceState.IsPaid || this.PurchaseInvoiceState.IsPartiallyPaid || this.PurchaseInvoiceState.IsNotPaid))
