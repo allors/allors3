@@ -17,9 +17,17 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
+                var empty = Array.Empty<PickList>();
+
                 var createdPickLists = changeSet.Created.Select(v=>v.GetObject()).OfType<PickList>();
 
-                foreach(var pickLists in createdPickLists)
+                changeSet.AssociationsByRoleType.TryGetValue(M.PickList.Picker, out var changedPickListPicker);
+                var pickListWherePickerChanged = changedPickListPicker?.Select(session.Instantiate).OfType<PickList>();
+
+                var allPickLists = createdPickLists
+                    .Union(pickListWherePickerChanged ?? empty);
+
+                foreach (var pickLists in allPickLists.Where(v => v != null))
                 {
                     if (pickLists.Store.IsImmediatelyPicked)
                     {

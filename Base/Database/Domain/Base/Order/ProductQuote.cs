@@ -469,12 +469,12 @@ namespace Allors.Domain
         //        quoteItemDeriveRoles.TotalSurchargeAsPercentage = 0;
         //    }
 
-        //    quoteItemDeriveRoles.TotalExVat = quoteItem.UnitPrice * quoteItem.Quantity;
-        //    quoteItemDeriveRoles.TotalVat = quoteItem.UnitVat * quoteItem.Quantity;
-        //    quoteItemDeriveRoles.TotalIncVat = quoteItem.TotalExVat + quoteItem.TotalVat;
-        //    quoteItemDeriveRoles.TotalIrpf = quoteItem.UnitIrpf * quoteItem.Quantity;
-        //    quoteItemDeriveRoles.GrandTotal = quoteItem.TotalIncVat - quoteItem.TotalIrpf;
-        //}
+        //quoteItemDeriveRoles.TotalExVat = quoteItem.UnitPrice * quoteItem.Quantity;
+        //quoteItemDeriveRoles.TotalVat = Math.Round(quoteItem.UnitVat * quoteItem.Quantity, 2);
+        //quoteItemDeriveRoles.TotalIncVat = quoteItem.TotalExVat + quoteItem.TotalVat;
+        //quoteItemDeriveRoles.TotalIrpf = Math.Round(quoteItem.UnitIrpf * quoteItem.Quantity, 2);
+        //quoteItemDeriveRoles.GrandTotal = quoteItem.TotalIncVat - quoteItem.TotalIrpf;
+        }
 
         //private void Sync(ISession session)
         //{

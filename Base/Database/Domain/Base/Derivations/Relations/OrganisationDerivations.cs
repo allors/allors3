@@ -15,12 +15,19 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdOrgaisations = changeSet.Created.Select(v=>v.GetObject()).OfType<Organisation>();
+                var empty = Array.Empty<SupplierRelationship>();
+
+                var createdOrgaisations = changeSet.Created.Select(v => v.GetObject()).OfType<Organisation>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.Employment.Employer, out var changedEmployer);
                 var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<Employment>();
 
-                var createdSupplierRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<SupplierRelationship>();
+                var createdSupplierRelationship = changeSet.Created.Select(v => v.GetObject()).OfType<SupplierRelationship>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SupplierRelationship.FromDate.RoleType, out var changedFromDate);
+                var supplierRelationshipWhereFromDateChanged = changedFromDate?.Select(session.Instantiate).OfType<SupplierRelationship>();
+
+                var allSupplierRelationShips = createdSupplierRelationship.Union(supplierRelationshipWhereFromDateChanged ?? empty);
 
                 foreach (var organisation in createdOrgaisations)
                 {
@@ -126,10 +133,10 @@ namespace Allors.Domain
                     }
                 }
 
-                foreach (var supplierRelationship in createdSupplierRelationship)
+                foreach (var supplierRelationship in allSupplierRelationShips.Where(v => v != null))
                 {
-                    var organisation = supplierRelationship.InternalOrganisation as Organisation;
-                    organisation.DeriveRelationships();
+                    var internalOrganisation = supplierRelationship.InternalOrganisation as Organisation;
+                    internalOrganisation.DeriveRelationships();
                 }
 
                 static void DeriveActiveEmployees(Organisation organisation, DateTime now) => (organisation).ActiveEmployees = organisation.EmploymentsWhereEmployer
@@ -143,7 +150,7 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-                var createdSubContractorRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<SubContractorRelationship>();
+                var createdSubContractorRelationship = changeSet.Created.Select(v => v.GetObject()).OfType<SubContractorRelationship>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
                 var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();

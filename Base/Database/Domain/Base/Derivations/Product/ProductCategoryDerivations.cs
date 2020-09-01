@@ -19,9 +19,21 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
-               var createdProductCategories = changeSet.Created.Select(v=>v.GetObject()).OfType<ProductCategory>();
+                var empty = Array.Empty<ProductCategory>();
 
-                foreach(var productCategory in createdProductCategories)
+                var createdProductCategories = changeSet.Created.Select(v=>v.GetObject()).OfType<ProductCategory>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.ProductCategory.PrimaryParent, out var changedPrimaryParent);
+                var productCategoriesWherePrimaryParentChanged = changedPrimaryParent?.Select(session.Instantiate).OfType<ProductCategory>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.ProductCategory.SecondaryParents, out var changedSecondaryParents);
+                var productCategoriesWhereSecondaryParentsChanged = changedSecondaryParents?.Select(session.Instantiate).OfType<ProductCategory>();
+
+                var allProductCategories = createdProductCategories
+                    .Union(productCategoriesWhereSecondaryParentsChanged ?? empty)
+                    .Union(productCategoriesWherePrimaryParentChanged ?? empty);
+
+                foreach (var productCategory in allProductCategories.Where(v => v != null))
                 {
                     var defaultLocale = productCategory.Strategy.Session.GetSingleton().DefaultLocale;
 
@@ -113,14 +125,12 @@ namespace Allors.Domain
 
                     productCategory.PreviousSecondaryParents = productCategory.SecondaryParents;
                 }
-
-              
             }
         }
 
         public static void ProductCategoryRegisterDerivations(this IDatabase @this)
         {
-            @this.DomainDerivationById[new Guid("d54293fe-8a69-4aa9-adaa-d9ab0bab40b2")] = new ProductCategoryCreationDerivation();
+            @this.DomainDerivationById[new Guid("07e82104-a767-4f24-a710-566d0b5ea20c")] = new ProductCategoryCreationDerivation();
         }
     }
 }
