@@ -6,8 +6,15 @@
 
 namespace Allors
 {
+    using System;
+    using System.Collections.Generic;
+
     public interface IDomainDerivation
     {
-        void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation);
+        Guid Id { get; }
+
+        IEnumerable<Pattern> Patterns { get; }
+
+        void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches);
     }
 }

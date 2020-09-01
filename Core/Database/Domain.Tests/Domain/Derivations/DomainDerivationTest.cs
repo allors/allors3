@@ -17,8 +17,6 @@ namespace Tests
         [Fact]
         public void Derive()
         {
-            this.Session.Database.PersonDomainRegisterDerivations();
-
             var person = new PersonBuilder(this.Session)
                 .WithFirstName("Jane")
                 .WithLastName("Doe")
@@ -28,7 +26,6 @@ namespace Tests
 
             Assert.Equal("Jane Doe", person.DomainFullName);
             Assert.Equal("Hello Jane Doe!", person.DomainGreeting);
-
         }
     }
 }

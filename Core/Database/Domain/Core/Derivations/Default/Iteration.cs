@@ -8,6 +8,8 @@ namespace Allors.Domain.Derivations.Default
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http.Headers;
+    using Allors.Data;
     using Object = Domain.Object;
 
     public class Iteration : IIteration
@@ -93,17 +95,57 @@ namespace Allors.Domain.Derivations.Default
                         // Initialization
                         if (changeSet.Created.Any())
                         {
-                            var newObjects = changeSet.Created.Select(v=>(Object)v.GetObject());
+                            var newObjects = changeSet.Created.Select(v => (Object)v.GetObject());
                             foreach (var newObject in newObjects)
                             {
                                 newObject.OnInit();
                             }
                         }
 
+                        var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = session, Validation = domainValidation };
+
+                        var matchesByDerivationId = new Dictionary<Guid, IEnumerable<IObject>>();
                         foreach (var kvp in domainDerivationById)
                         {
+                            var id = kvp.Key;
                             var domainDerivation = kvp.Value;
-                            domainDerivation.Derive(session, changeSet, domainValidation);
+
+                            var matches = new HashSet<IObject>();
+
+                            foreach (var pattern in domainDerivation.Patterns)
+                            {
+                                if (pattern is CreatedPattern createdPattern)
+                                {
+                                    var created = changeSet.Created.Where(v => v.Class.IsAssignableFrom(createdPattern.Composite)).Select(v => v.GetObject());
+                                    matches.UnionWith(created);
+                                }
+
+                                if (pattern is RoleChangedPattern changedRolesPattern)
+                                {
+                                    var changedRoles = changeSet.AssociationsByRoleType
+                                        .Where(v => v.Key.Equals(changedRolesPattern.RoleType))
+                                        .SelectMany(v => session.Instantiate(v.Value));
+                                    matches.UnionWith(changedRoles);
+                                }
+
+                                if (pattern is AssociationChangedPattern changedAssociationsPattern)
+                                {
+                                    var changedAssociations = changeSet.AssociationsByRoleType
+                                        .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
+                                        .SelectMany(v => session.Instantiate(v.Value));
+                                    matches.UnionWith(changedAssociations);
+                                }
+                            }
+
+                            matchesByDerivationId[id] = matches;
+                        }
+
+                        foreach (var kvp in domainDerivationById)
+                        {
+                            var id = kvp.Key;
+                            var domainDerivation = kvp.Value;
+                            var matches = matchesByDerivationId[id];
+                            domainDerivation.Derive(domainCycle, matches);
                         }
 
                         changeSet = session.Checkpoint();

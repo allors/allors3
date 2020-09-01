@@ -12,76 +12,71 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public static partial class DabaseExtensions
+    public class RequestItemDerivation : IDomainDerivation
     {
-        public class RequestItemCreationDerivation : IDomainDerivation
+        public Guid Id => new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221");
+
+        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.RequestItem.Class) };
+
+        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            var validation = cycle.Validation;
+
+            foreach (var requestItem in matches.Cast<RequestItem>())
             {
-                var createdRequestItem = changeSet.Created.Select(v=>v.GetObject()).OfType<RequestItem>();
+                validation.AssertAtLeastOne(requestItem, M.RequestItem.Product, M.RequestItem.ProductFeature, M.RequestItem.SerialisedItem, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
+                validation.AssertExistsAtMostOne(requestItem, M.RequestItem.Product, M.RequestItem.ProductFeature, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
+                validation.AssertExistsAtMostOne(requestItem, M.RequestItem.SerialisedItem, M.RequestItem.ProductFeature, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
 
-                foreach (var requestItem in createdRequestItem)
+                var requestItemStates = new RequestItemStates(cycle.Session);
+                if (requestItem.IsValid)
                 {
-
-                    validation.AssertAtLeastOne(requestItem, M.RequestItem.Product, M.RequestItem.ProductFeature, M.RequestItem.SerialisedItem, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
-                    validation.AssertExistsAtMostOne(requestItem, M.RequestItem.Product, M.RequestItem.ProductFeature, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
-                    validation.AssertExistsAtMostOne(requestItem, M.RequestItem.SerialisedItem, M.RequestItem.ProductFeature, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
-
-                    var requestItemStates = new RequestItemStates(session);
-                    if (requestItem.IsValid)
+                    if (requestItem.RequestWhereRequestItem.RequestState.IsSubmitted && requestItem.RequestItemState.IsDraft)
                     {
-                        if (requestItem.RequestWhereRequestItem.RequestState.IsSubmitted && requestItem.RequestItemState.IsDraft)
-                        {
-                            requestItem.RequestItemState = requestItemStates.Submitted;
-                        }
-
-                        if (requestItem.RequestWhereRequestItem.RequestState.IsCancelled)
-                        {
-                            requestItem.RequestItemState = requestItemStates.Cancelled;
-                        }
-
-                        if (requestItem.RequestWhereRequestItem.RequestState.IsRejected)
-                        {
-                            requestItem.RequestItemState = requestItemStates.Rejected;
-                        }
-
-                        if (requestItem.RequestWhereRequestItem.RequestState.IsQuoted)
-                        {
-                            requestItem.RequestItemState = requestItemStates.Quoted;
-                        }
+                        requestItem.RequestItemState = requestItemStates.Submitted;
                     }
 
-                    if (!requestItem.ExistUnitOfMeasure)
+                    if (requestItem.RequestWhereRequestItem.RequestState.IsCancelled)
                     {
-                        requestItem.UnitOfMeasure = new UnitsOfMeasure(requestItem.Strategy.Session).Piece;
+                        requestItem.RequestItemState = requestItemStates.Cancelled;
                     }
 
-                    if (requestItem.ExistRequestWhereRequestItem && new RequestStates(requestItem.Strategy.Session).Cancelled.Equals(requestItem.RequestWhereRequestItem.RequestState))
+                    if (requestItem.RequestWhereRequestItem.RequestState.IsRejected)
                     {
-                        requestItem.Cancel();
+                        requestItem.RequestItemState = requestItemStates.Rejected;
                     }
 
-                    if (requestItem.ExistSerialisedItem && requestItem.Quantity != 1)
+                    if (requestItem.RequestWhereRequestItem.RequestState.IsQuoted)
                     {
-                        validation.AddError($"{requestItem} {requestItem.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
-                    }
-
-                    var deletePermission = new Permissions(requestItem.Strategy.Session).Get(requestItem.Meta.ObjectType, requestItem.Meta.Delete, Operations.Execute);
-                    if (requestItem.IsDeletable)
-                    {
-                        requestItem.RemoveDeniedPermission(deletePermission);
-                    }
-                    else
-                    {
-                        requestItem.AddDeniedPermission(deletePermission);
+                        requestItem.RequestItemState = requestItemStates.Quoted;
                     }
                 }
-            }
 
-        }
-        public static void RequestItemRegisterDerivations(this IDatabase @this)
-        {
-            @this.DomainDerivationById[new Guid("d6f70dc1-1e91-458e-ab53-7cef431fbd26")] = new RequestItemCreationDerivation();
+                if (!requestItem.ExistUnitOfMeasure)
+                {
+                    requestItem.UnitOfMeasure = new UnitsOfMeasure(requestItem.Strategy.Session).Piece;
+                }
+
+                if (requestItem.ExistRequestWhereRequestItem && new RequestStates(requestItem.Strategy.Session).Cancelled.Equals(requestItem.RequestWhereRequestItem.RequestState))
+                {
+                    requestItem.Cancel();
+                }
+
+                if (requestItem.ExistSerialisedItem && requestItem.Quantity != 1)
+                {
+                    validation.AddError($"{requestItem} {requestItem.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
+                }
+
+                var deletePermission = new Permissions(requestItem.Strategy.Session).Get(requestItem.Meta.ObjectType, requestItem.Meta.Delete, Operations.Execute);
+                if (requestItem.IsDeletable)
+                {
+                    requestItem.RemoveDeniedPermission(deletePermission);
+                }
+                else
+                {
+                    requestItem.AddDeniedPermission(deletePermission);
+                }
+            }
         }
     }
 }

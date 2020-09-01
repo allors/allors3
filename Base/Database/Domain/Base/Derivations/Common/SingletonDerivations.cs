@@ -6,35 +6,28 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public static partial class DabaseExtensions
+    public class SingletonDerivation : IDomainDerivation
     {
-        public class SingletonCreationDerivation : IDomainDerivation
+        public Guid Id => new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b");
+
+        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Singleton.Class) };
+
+        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            foreach (var singleton in matches.Cast<Singleton>())
             {
-                var createdSingletons = changeSet.Created.Select(v=>v.GetObject()).OfType<Singleton>();
-
-                foreach(var singleton in createdSingletons)
+                if (!singleton.ExistLogoImage)
                 {
-                    if (!singleton.ExistLogoImage)
-                    {
-                        singleton.LogoImage = new MediaBuilder(singleton.Strategy.Session).WithInFileName("allors.png").WithInData(singleton.GetResourceBytes("allors.png")).Build();
-                    }
-
-                    singleton.Locales = singleton.AdditionalLocales;
-                    singleton.AddLocale(singleton.DefaultLocale);
+                    singleton.LogoImage = new MediaBuilder(singleton.Strategy.Session).WithInFileName("allors.png").WithInData(singleton.GetResourceBytes("allors.png")).Build();
                 }
 
+                singleton.Locales = singleton.AdditionalLocales;
+                singleton.AddLocale(singleton.DefaultLocale);
             }
-        }
-
-        public static void SingletonRegisterDerivations(this IDatabase @this)
-        {
-            @this.DomainDerivationById[new Guid("2048646b-849f-4b36-8bb5-788dc2cfeb0f")] = new SingletonCreationDerivation();
         }
     }
 }
