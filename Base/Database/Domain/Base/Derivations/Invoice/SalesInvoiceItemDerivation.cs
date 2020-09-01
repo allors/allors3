@@ -22,7 +22,6 @@ namespace Allors.Domain
 
                 foreach(var SalesInvoiceItem in createdSalesInvoiceItems)
                 {
-                   
                     var salesInvoice = SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem;
                     var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
 

@@ -59,7 +59,7 @@ namespace Allors.Domain
                 iteration.Mark(invoice);
             }
 
-            foreach(OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
+            foreach (OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
             {
                 iteration.AddDependency(orderItemBilling.OrderItem, this);
                 iteration.Mark(orderItemBilling.OrderItem);
@@ -68,45 +68,45 @@ namespace Allors.Domain
 
         public void BaseOnDerivePrices()
         {
-            this.UnitBasePrice = 0;
-            this.UnitDiscount = 0;
-            this.UnitSurcharge = 0;
+            //this.UnitBasePrice = 0;
+            //this.UnitDiscount = 0;
+            //this.UnitSurcharge = 0;
 
-            if (this.AssignedUnitPrice.HasValue)
-            {
-                this.UnitBasePrice = this.AssignedUnitPrice.Value;
-                this.UnitPrice = this.AssignedUnitPrice.Value;
-            }
-            else
-            {
-                var invoice = this.PurchaseInvoiceWherePurchaseInvoiceItem;
-                if (this.ExistPart)
-                {
-                    this.UnitBasePrice = new SupplierOfferings(this.Strategy.Session).PurchasePrice(invoice.BilledFrom, invoice.InvoiceDate, this.Part);
-                }
-            }
+            //if (this.AssignedUnitPrice.HasValue)
+            //{
+            //    this.UnitBasePrice = this.AssignedUnitPrice.Value;
+            //    this.UnitPrice = this.AssignedUnitPrice.Value;
+            //}
+            //else
+            //{
+            //    var invoice = this.PurchaseInvoiceWherePurchaseInvoiceItem;
+            //    if (this.ExistPart)
+            //    {
+            //        this.UnitBasePrice = new SupplierOfferings(this.Strategy.Session).PurchasePrice(invoice.BilledFrom, invoice.InvoiceDate, this.Part);
+            //    }
+            //}
 
-            if (this.ExistUnitBasePrice)
-            {
-                this.VatRegime = this.AssignedVatRegime ?? this.PurchaseInvoiceWherePurchaseInvoiceItem.VatRegime;
-                this.VatRate = this.VatRegime?.VatRate;
+            //if (this.ExistUnitBasePrice)
+            //{
+            //    this.VatRegime = this.AssignedVatRegime ?? this.PurchaseInvoiceWherePurchaseInvoiceItem.VatRegime;
+            //    this.VatRate = this.VatRegime?.VatRate;
 
-                this.IrpfRegime = this.AssignedIrpfRegime ?? this.PurchaseInvoiceWherePurchaseInvoiceItem.IrpfRegime;
-                this.IrpfRate = this.IrpfRegime?.IrpfRate;
+            //    this.IrpfRegime = this.AssignedIrpfRegime ?? this.PurchaseInvoiceWherePurchaseInvoiceItem.IrpfRegime;
+            //    this.IrpfRate = this.IrpfRegime?.IrpfRate;
 
-                this.TotalBasePrice = this.UnitBasePrice * this.Quantity;
-                this.TotalDiscount = this.UnitDiscount * this.Quantity;
-                this.TotalSurcharge = this.UnitSurcharge * this.Quantity;
-                this.UnitPrice = this.UnitBasePrice - this.UnitDiscount + this.UnitSurcharge;
+            //    this.TotalBasePrice = this.UnitBasePrice * this.Quantity;
+            //    this.TotalDiscount = this.UnitDiscount * this.Quantity;
+            //    this.TotalSurcharge = this.UnitSurcharge * this.Quantity;
+            //    this.UnitPrice = this.UnitBasePrice - this.UnitDiscount + this.UnitSurcharge;
 
-                this.UnitVat = this.ExistVatRate ? this.UnitPrice * this.VatRate.Rate / 100 : 0;
-                this.UnitIrpf = this.ExistIrpfRate ? this.UnitPrice * this.IrpfRate.Rate / 100 : 0;
-                this.TotalExVat = this.UnitPrice * this.Quantity;
-                this.TotalVat = Math.Round(this.UnitVat * this.Quantity, 2);
-                this.TotalIncVat = this.TotalExVat + this.TotalVat;
-                this.TotalIrpf = Math.Round(this.UnitIrpf * this.Quantity, 2);
-                this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
-            }
+            //    this.UnitVat = this.ExistVatRate ? this.UnitPrice * this.VatRate.Rate / 100 : 0;
+            //    this.UnitIrpf = this.ExistIrpfRate ? this.UnitPrice * this.IrpfRate.Rate / 100 : 0;
+            //    this.TotalVat = this.UnitVat * this.Quantity;
+            //    this.TotalExVat = this.UnitPrice * this.Quantity;
+            //    this.TotalIrpf = this.UnitIrpf * this.Quantity;
+            //    this.TotalIncVat = this.TotalExVat + this.TotalVat;
+            //    this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
+            //}
         }
 
         public void CancelFromInvoice() => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).CancelledByinvoice;
@@ -127,6 +127,6 @@ namespace Allors.Domain
 
         public void BaseRevise(PurchaseInvoiceItemRevise method) => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).Created;
 
-        public void Sync(Invoice invoice) => this.SyncedInvoice = invoice;
+        //public void Sync(Invoice invoice) => this.SyncedInvoice = invoice;
     }
 }

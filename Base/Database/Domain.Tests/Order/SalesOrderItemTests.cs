@@ -711,10 +711,10 @@ namespace Allors.Domain
             this.order.SetReadyForPosting();
             this.Session.Derive();
 
-            order.Post();
+            this.order.Post();
             this.Session.Derive(true);
 
-            order.Accept();
+            this.order.Accept();
             this.Session.Derive(true);
 
             Assert.Equal(salesOrderItem.QuantityOrdered, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);

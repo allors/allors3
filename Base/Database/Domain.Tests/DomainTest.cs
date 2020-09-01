@@ -85,7 +85,7 @@ namespace Allors
         {
             database.Init();
 
-            
+
             database.AuditableExtensionsRegisterDerivations();
             database.ShipmentExtensionsRegisterDerivations();
             database.SupplierOfferingRegisterDerivations();
@@ -102,7 +102,6 @@ namespace Allors
             database.SurchargeComponentRegisterDerivations();
             database.SerialisedItemRegisterDerivations();
             database.QuoteItemRegisterDerivations();
-            database.PurchaseOrderItemDerivations();
             database.PurchaseOrderApprovalLevel1RegisterDerivations();
             database.PropasalRegisterDerivations();
             database.ProductQuoteApprovalRegisterDerivations();
@@ -163,15 +162,18 @@ namespace Allors
             database.RequestForProposalRegisterDerivations();
             database.RequestForInformationRegisterDerivations();
             database.RequestExtensionsRegisterDerivations();
-            database.PartyFinancialRelationshipRegisterDerivations();
-            database.PaymentApplicationRegisterDerivations();
+            
             database.PurchaseInvoiceRegisterDerivations();
+            database.PurchaseOrderItemDerivations();
+
             database.PaymentExtensionsRegisterDerivations();
             database.PurchaseInvoiceApprovalRegisterDerivations();
+            database.SalesInvoiceItemRegisterDerivations();
             database.RepeatingPurchaseInvoiceRegisterDerivations();
             database.RepeatingSalesInvoiceRegisterDerivations();
             database.SalesInvoiceRegisterDerivations();
-            database.SalesInvoiceItemRegisterDerivations();
+            database.PartyFinancialRelationshipRegisterDerivations();
+            database.PaymentApplicationRegisterDerivations();
 
             database.SupplierRelationshipRegisterDerivations();
             database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
@@ -182,6 +184,8 @@ namespace Allors
             database.OrderShipmentRegisterDerivations();
             database.SalesOrderItemsRegisterDerivations(); //Has Dependency on OrderShipment
             database.SalesOrderRegisterDerivations();   //Has Dependency on SalesOrderItem
+
+            database.InvoiceItemsTotalIncVatRegisterDerivations();
 
             this.Session = database.CreateSession();
 

@@ -15,12 +15,19 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
+                var empty = Array.Empty<SupplierRelationship>();
+
                 var createdOrgaisations = changeSet.Created.Select(v => v.GetObject()).OfType<Organisation>();
 
                 changeSet.AssociationsByRoleType.TryGetValue(M.Employment.Employer, out var changedEmployer);
                 var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<Employment>();
 
                 var createdSupplierRelationship = changeSet.Created.Select(v => v.GetObject()).OfType<SupplierRelationship>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.SupplierRelationship.FromDate.RoleType, out var changedFromDate);
+                var supplierRelationshipWhereFromDateChanged = changedFromDate?.Select(session.Instantiate).OfType<SupplierRelationship>();
+
+                var allSupplierRelationShips = createdSupplierRelationship.Union(supplierRelationshipWhereFromDateChanged ?? empty);
 
                 foreach (var organisation in createdOrgaisations)
                 {
@@ -126,7 +133,7 @@ namespace Allors.Domain
                     }
                 }
 
-                foreach (var supplierRelationship in createdSupplierRelationship)
+                foreach (var supplierRelationship in allSupplierRelationShips.Where(v => v != null))
                 {
                     var internalOrganisation = supplierRelationship.InternalOrganisation as Organisation;
                     internalOrganisation.DeriveRelationships();

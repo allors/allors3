@@ -104,9 +104,17 @@ namespace Allors.Domain
                 changeSet.AssociationsByRoleType.TryGetValue(M.InternalOrganisation.ActiveSuppliers, out var changedInternalOrganisation);
                 var internalOrganisationWhereActiveSuppliersChanged = changedInternalOrganisation?.Select(session.Instantiate).OfType<InternalOrganisation>();
 
+                changeSet.AssociationsByRoleType.TryGetValue(M.PurchaseOrder.PurchaseOrderItems, out var changedPurchaseOrderItems);
+                var purchaseOrdersWhereItemsChanged = changedPurchaseOrderItems?.Select(session.Instantiate).OfType<PurchaseOrder>();
+
+                changeSet.AssociationsByRoleType.TryGetValue(M.PurchaseOrderItem.PurchaseOrderItemState, out var changedState);
+                var PurhcaseOrderItemWhereStateChanged = changedState?.Select(session.Instantiate).OfType<PurchaseOrderItem>();
+
                 var allPurchaseOrders = createdPurchaseOrders
                     .Union(internalOrganisationWhereActiveSuppliersChanged?.SelectMany(v => v.PurchaseOrdersWhereOrderedBy) ?? empty)
                     .Union(purchaseOrdersWhereStateChanged ?? empty)
+                    .Union(purchaseOrdersWhereItemsChanged ?? empty)
+                    .Union(PurhcaseOrderItemWhereStateChanged?.Select(v => v.PurchaseOrderWherePurchaseOrderItem) ?? empty)
                     .Where(v => v != null)
                     .Distinct();
 

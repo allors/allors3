@@ -15,12 +15,16 @@ namespace Allors.Domain
         {
             public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
             {
+                var empty = Array.Empty<SupplierRelationship>();
+
                 var createdSupplierRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<SupplierRelationship>();
 
-                changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
-                var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();
+                changeSet.AssociationsByRoleType.TryGetValue(M.SupplierRelationship.FromDate.RoleType, out var changedFromDate);
+                var supplierRelationshipWhereFromDateChanged = changedFromDate?.Select(session.Instantiate).OfType<SupplierRelationship>();
 
-                foreach (SupplierRelationship supplierRelationship in createdSupplierRelationship)
+                var allSupplierRelationShips = createdSupplierRelationship.Union(supplierRelationshipWhereFromDateChanged ?? empty);
+
+                foreach (SupplierRelationship supplierRelationship in allSupplierRelationShips.Where(v => v != null))
                 {
                     if (supplierRelationship.ExistSupplier)
                     {
