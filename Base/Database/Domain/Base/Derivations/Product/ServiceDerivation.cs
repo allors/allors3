@@ -8,20 +8,27 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
+    using Allors.Domain.Derivations;
     using Allors.Meta;
+    using Resources;
 
-    public class PersonFullNameDerivation : IDomainDerivation
+    public class ServiceDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D");
+        public Guid Id => new Guid("8A24C272-EE5E-416D-B840-DFF2C82C47F4");
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { M.Person.FirstName, M.Person.LastName }.Select(v => new ChangedRolePattern(v));
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
+        {
+            new CreatedPattern(M.Service.Interface),
+        };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var person in matches.Cast<Person>())
+            foreach (var serviceExtension in matches.Cast<Service>())
             {
-                person.DomainFullName = $"{person.FirstName} {person.LastName}";
+                serviceExtension.BaseOnDeriveVirtualProductPriceComponent();
             }
         }
     }
+
 }

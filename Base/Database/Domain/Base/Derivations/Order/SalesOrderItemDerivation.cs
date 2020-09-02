@@ -20,12 +20,12 @@ namespace Allors.Domain
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.SalesOrderItem.Class),
-            new RoleChangedPattern(M.SalesOrderItem.SalesOrderItemState),
-            new RoleChangedPattern(M.SalesOrderItem.QuantityOrdered.RoleType),
-            new RoleChangedPattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
-            new RoleChangedPattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
+            new ChangedRolePattern(M.SalesOrderItem.SalesOrderItemState),
+            new ChangedRolePattern(M.SalesOrderItem.QuantityOrdered.RoleType),
+            new ChangedRolePattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
+            new ChangedRolePattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
         };
-
+    
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;

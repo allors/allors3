@@ -11,5 +11,7 @@ namespace Allors
     public abstract class Pattern
     {
         public IPropertyType[] Steps { get; set; }
+
+        public IComposite OfType { get; set; } 
     }
 }

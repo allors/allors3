@@ -122,7 +122,7 @@ namespace Allors.Domain.Derivations.Persistent
                                     matches.UnionWith(created);
                                 }
 
-                                if (pattern is RoleChangedPattern changedRolesPattern)
+                                if (pattern is ChangedRolePattern changedRolesPattern)
                                 {
                                     var changedRoles = changeSet.AssociationsByRoleType
                                         .Where(v => v.Key.Equals(changedRolesPattern.RoleType))
@@ -130,7 +130,7 @@ namespace Allors.Domain.Derivations.Persistent
                                     matches.UnionWith(changedRoles);
                                 }
 
-                                if (pattern is AssociationChangedPattern changedAssociationsPattern)
+                                if (pattern is ChangedAssociationPattern changedAssociationsPattern)
                                 {
                                     var changedAssociations = changeSet.AssociationsByRoleType
                                         .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))

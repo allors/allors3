@@ -19,10 +19,10 @@ namespace Allors.Domain
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.PurchaseOrder.Class),
-            new RoleChangedPattern(M.PurchaseOrder.PurchaseOrderState),
-            new RoleChangedPattern(M.PurchaseOrder.PurchaseOrderItems),
-            new RoleChangedPattern(M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] {M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
-            new RoleChangedPattern(M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] {M.InternalOrganisation.ActiveSuppliers, M.Organisation.PurchaseOrdersWhereOrderedBy}},
+            new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderState),
+            new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderItems),
+            new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] {M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
+            new ChangedRolePattern(M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] {M.InternalOrganisation.ActiveSuppliers, M.Organisation.PurchaseOrdersWhereOrderedBy}},
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -8,10 +8,10 @@ namespace Allors
 {
     using Allors.Meta;
 
-    public class RoleChangedPattern : Pattern
+    public class ChangedAssociationPattern : Pattern
     {
-        public RoleChangedPattern(IRoleType roleType) => this.RoleType = roleType;
+        public ChangedAssociationPattern(IAssociationType associationType) => this.AssociationType = associationType;
 
-        public IRoleType RoleType { get; }
+        public IAssociationType AssociationType { get; set; }
     }
 }

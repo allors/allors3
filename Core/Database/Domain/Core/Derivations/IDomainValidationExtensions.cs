@@ -5,12 +5,10 @@
 
 namespace Allors.Domain.Derivations
 {
-    using Allors.Domain.Derivations.Errors;
     using Allors.Meta;
 
     public static class IDomainValidationExtensions
     {
-        
         public static void AssertExists(this IDomainValidation @this, IObject association, RoleType roleType)
         {
             if (!association.Strategy.ExistRole(roleType.RelationType))

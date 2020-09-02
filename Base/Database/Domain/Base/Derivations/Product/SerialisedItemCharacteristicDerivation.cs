@@ -6,29 +6,24 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
-    public static partial class DabaseExtensions
+    public class SerialisedItemCharacteristicCreationDerivation : IDomainDerivation
     {
-        public class SerialisedItemCharacteristicCreationDerivation : IDomainDerivation
+        public Guid Id => new Guid("B9EB094F-4E60-4ABD-8AE6-CAA02D38AFA1");
+
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            new CreatedPattern(M.SerialisedItemCharacteristic.Class),
+        };
+
+        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        {
+            foreach (var serialisedItemCharacteristic in matches.Cast<SerialisedItemCharacteristic>())
             {
-               var createdSerialisedItemCharacteristics = changeSet.Created.Select(v=>v.GetObject()).OfType<SerialisedItemCharacteristic>();
-
-                foreach(var serialisedItemCharacteristic in createdSerialisedItemCharacteristics)
-                {
-                    if (serialisedItemCharacteristic.SerialisedItemCharacteristicType.ExistUnitOfMeasure)
-                    {
-                        Sync(serialisedItemCharacteristic);
-                    }
-                }
-
-                void Sync(SerialisedItemCharacteristic serialisedItemCharacteristic)
+                if (serialisedItemCharacteristic.SerialisedItemCharacteristicType.ExistUnitOfMeasure)
                 {
                     var existingLocalisedtexts = serialisedItemCharacteristic.LocalisedValues.ToDictionary(d => d.Locale);
 
@@ -54,14 +49,7 @@ namespace Allors.Domain
                         serialisedItemCharacteristic.RemoveLocalisedValue(localisedText);
                     }
                 }
-
-
             }
-        }
-
-        public static void SerialisedItemCharacteristicRegisterDerivations(this IDatabase @this)
-        {
-            @this.DomainDerivationById[new Guid("2a1b5544-11f0-4fa4-8699-afbf27d6875f")] = new SerialisedItemCharacteristicCreationDerivation();
         }
     }
 }
