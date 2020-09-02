@@ -210,7 +210,7 @@ namespace Allors.Domain
             //this.TotalIncVat = this.TotalExVat + this.TotalVat;
             //this.TotalIrpf = Math.Round(this.UnitIrpf * this.QuantityOrdered, 2);
             //this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
-            }
+            //}
 
             //if (this.ExistPart && this.Part.InventoryItemKind.IsSerialised)
             //{

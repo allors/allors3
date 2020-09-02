@@ -1,3 +1,4 @@
+
 // <copyright file="PurchaseInvoiceItem.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
@@ -255,6 +256,6 @@ namespace Allors.Repository
         [Id("eedc34ce-d944-435d-bc67-c57d695a6102")]
         #endregion
         [Workspace]
-        public void DoneRevising() { }
+        public void FinishRevising() { }
     }
 }
