@@ -6,74 +6,66 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Allors.Meta;
 
-    public static partial class DabaseExtensions
+    public class SupplierRelationshipCreationDerivation : IDomainDerivation
     {
-        public class SupplierRelationshipCreationDerivation : IDomainDerivation
+        public Guid Id => new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5");
+
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            new CreatedPattern(M.SupplierRelationship.Class),
+            new ChangedRolePattern(M.SupplierRelationship.FromDate.RoleType),
+        };
+
+        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        {
+            foreach (SupplierRelationship supplierRelationship in matches.Cast<SupplierRelationship>())
             {
-                var empty = Array.Empty<SupplierRelationship>();
-
-                var createdSupplierRelationship = changeSet.Created.Select(v=>v.GetObject()).OfType<SupplierRelationship>();
-
-                changeSet.AssociationsByRoleType.TryGetValue(M.SupplierRelationship.FromDate.RoleType, out var changedFromDate);
-                var supplierRelationshipWhereFromDateChanged = changedFromDate?.Select(session.Instantiate).OfType<SupplierRelationship>();
-
-                var allSupplierRelationShips = createdSupplierRelationship.Union(supplierRelationshipWhereFromDateChanged ?? empty);
-
-                foreach (SupplierRelationship supplierRelationship in allSupplierRelationShips.Where(v => v != null))
+                if (supplierRelationship.ExistSupplier)
                 {
-                    if (supplierRelationship.ExistSupplier)
+                    var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
+                    if (internalOrganisationDerivedRoles != null)
                     {
-                        var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
-                        if (internalOrganisationDerivedRoles != null)
+                        if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
                         {
-                            if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
-                            {
-                                internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
-                            }
-
-                            if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
-                            {
-                                internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
-                            }
+                            internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
                         }
 
-
-                        if (supplierRelationship.Supplier.ContactsUserGroup != null)
+                        if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
                         {
-                            foreach (OrganisationContactRelationship contactRelationship in supplierRelationship.Supplier.OrganisationContactRelationshipsWhereOrganisation)
+                            internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
+                        }
+                    }
+
+
+                    if (supplierRelationship.Supplier.ContactsUserGroup != null)
+                    {
+                        foreach (OrganisationContactRelationship contactRelationship in supplierRelationship.Supplier.OrganisationContactRelationshipsWhereOrganisation)
+                        {
+                            if (contactRelationship.FromDate <= supplierRelationship.Session().Now() &&
+                                (!contactRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
                             {
-                                if (contactRelationship.FromDate <= supplierRelationship.Session().Now() &&
-                                    (!contactRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                                if (!supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
                                 {
-                                    if (!supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                                    {
-                                        supplierRelationship.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
-                                    }
+                                    supplierRelationship.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
                                 }
-                                else
+                            }
+                            else
+                            {
+                                if (supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
                                 {
-                                    if (supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                                    {
-                                        supplierRelationship.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
-                                    }
+                                    supplierRelationship.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
                                 }
                             }
                         }
                     }
-
-                    supplierRelationship.Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
                 }
-            }
-        }
 
-        public static void SupplierRelationshipRegisterDerivations(this IDatabase @this)
-        {
-            @this.DomainDerivationById[new Guid("0013700f-2b32-4f36-8735-30add58ba1ec")] = new SupplierRelationshipCreationDerivation();
+                supplierRelationship.Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
+            }
         }
     }
 }

@@ -6,41 +6,37 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public static partial class DabaseExtensions
+    public class CommunicationTaskDerivation : IDomainDerivation
     {
-        public class CommunicationTaskCreationDerivation : IDomainDerivation
+        public Guid Id => new Guid("0001CEF2-6A6F-4DB7-A932-07F854C66478");
+
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            new CreatedPattern(M.CommunicationTask.Class),
+        };
+
+        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        {
+            foreach (var communicationTask in matches.Cast<CommunicationTask>())
             {
-                var createdCommunicationTasks = changeSet.Created.Select(v=>v.GetObject()).OfType<CommunicationTask>();
+                communicationTask.WorkItem = communicationTask.CommunicationEvent;
 
-                foreach(var communicationTask in createdCommunicationTasks)
+                communicationTask.Title = communicationTask.CommunicationEvent.WorkItemDescription;
+
+                // Lifecycle
+                if (!communicationTask.ExistDateClosed && communicationTask.CommunicationEvent.ExistActualEnd)
                 {
-                    communicationTask.WorkItem = communicationTask.CommunicationEvent;
-
-                    communicationTask.Title = communicationTask.CommunicationEvent.WorkItemDescription;
-
-                    // Lifecycle
-                    if (!communicationTask.ExistDateClosed && communicationTask.CommunicationEvent.ExistActualEnd)
-                    {
-                        communicationTask.DateClosed = communicationTask.Session().Now();
-                    }
-
-                    // Assignments
-                    var participants = communicationTask.ExistDateClosed ? Array.Empty<User>() : new[] { communicationTask.CommunicationEvent.FromParty as User };
-                    communicationTask.AssignParticipants(participants);
+                    communicationTask.DateClosed = communicationTask.Session().Now();
                 }
-                
-            }
-        }
 
-        public static void CommunicationTaskRegisterDerivations(this IDatabase @this)
-        {
-            @this.DomainDerivationById[new Guid("9a5c082a-3141-44b2-8bc2-8d43ef3da9f6")] = new CommunicationTaskCreationDerivation();
+                // Assignments
+                var participants = communicationTask.ExistDateClosed ? Array.Empty<User>() : new[] { communicationTask.CommunicationEvent.FromParty as User };
+                communicationTask.AssignParticipants(participants);
+            }
         }
     }
 }
