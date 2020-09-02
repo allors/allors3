@@ -545,6 +545,24 @@ namespace Allors.Domain
             }
         }
 
+        public void BaseRevise(PurchaseInvoiceRevise method)
+        {
+            this.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Strategy.Session).Revising;
+            foreach (PurchaseInvoiceItem purchaseInvoiceItem in this.ValidInvoiceItems)
+            {
+                purchaseInvoiceItem.Revise();
+            }
+        }
+
+        public void BaseFinishRevising(PurchaseInvoiceFinishRevising method)
+        {
+            this.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Strategy.Session).Created;
+            foreach (PurchaseInvoiceItem purchaseInvoiceItem in this.ValidInvoiceItems)
+            {
+                purchaseInvoiceItem.FinishRevising();
+            }
+        }
+
         public void BaseDelete(DeletableDelete method)
         {
             if (this.IsDeletable)
