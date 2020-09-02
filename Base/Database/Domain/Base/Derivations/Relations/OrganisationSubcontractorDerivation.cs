@@ -16,37 +16,21 @@ namespace Allors.Domain
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            new ChangedRolePattern(M.OrganisationContactRelationship.FromDate.RoleType),
-            new ChangedRolePattern(M.OrganisationContactRelationship.ThroughDate.RoleType),
+            new CreatedPattern(M.SubContractorRelationship.Class),
+            new ChangedRolePattern(M.SubContractorRelationship.FromDate.RoleType),
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var createdSubContractorRelationship = changeSet.Created.Select(v => v.GetObject()).OfType<SubContractorRelationship>();
+            var session = cycle.Session;
 
-            changeSet.AssociationsByRoleType.TryGetValue(M.SubContractorRelationship.FromDate.RoleType, out var changedSubContractorRelationship);
-            var subContractorRelationshipWhereFromDateChanged = changedSubContractorRelationship?.Select(session.Instantiate).OfType<SubContractorRelationship>();
-
-            foreach (var subContractorRelationship in createdSubContractorRelationship)
-            {
-                ValidateDate(session, subContractorRelationship);
-            }
-
-            if (subContractorRelationshipWhereFromDateChanged?.Any() == true)
-            {
-                foreach (var subContractorRelationship in subContractorRelationshipWhereFromDateChanged)
-                {
-                    ValidateDate(session, subContractorRelationship);
-                }
-            }
-
-            static void ValidateDate(ISession session, SubContractorRelationship subContractorRelationship)
+            foreach (var subContractorRelationship in matches.Cast<SubContractorRelationship>())
             {
                 if (subContractorRelationship.Contractor != null)
                 {
                     if (!(subContractorRelationship.FromDate <= session.Now()
-                    && (!subContractorRelationship.ExistThroughDate
-                    || subContractorRelationship.ThroughDate >= session.Now())))
+                          && (!subContractorRelationship.ExistThroughDate
+                              || subContractorRelationship.ThroughDate >= session.Now())))
                     {
                         subContractorRelationship.Contractor
                             .RemoveActiveSubContractor(subContractorRelationship.SubContractor);

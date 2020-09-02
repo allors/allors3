@@ -474,7 +474,7 @@ namespace Allors.Domain
         //quoteItemDeriveRoles.TotalIncVat = quoteItem.TotalExVat + quoteItem.TotalVat;
         //quoteItemDeriveRoles.TotalIrpf = Math.Round(quoteItem.UnitIrpf * quoteItem.Quantity, 2);
         //quoteItemDeriveRoles.GrandTotal = quoteItem.TotalIncVat - quoteItem.TotalIrpf;
-        }
+        //}
 
         //private void Sync(ISession session)
         //{

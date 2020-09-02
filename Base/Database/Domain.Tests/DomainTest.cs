@@ -85,107 +85,106 @@ namespace Allors
         {
             database.Init();
 
+            var derivations = new IDomainDerivation[]
+            {
+                new AuditableDerivation(),
+                new ShipmentDerivation(),
+                new SupplierOfferingDerivation(),
+                new ServiceDerivation(),
+                new SerialisedItemCharacteristicDerivation(),
+                new SerialisedInventoryItemDerivation(),
+                new ProductCategoryDerivation(),
+                new PriceComponentDerivation(),
+                new PartCategoryDerivation(),
+                new OrderValueDerivation(),
+                new OrderQuantityBreakDerivation(),
+                new NonUnifiedGoodDerivation(),
+                new StatementOfWorkDerivation(),
+                new SurchargeComponentDerivation(),
+                new SerialisedItemDerivation(),
+                new QuoteItemDerivation(),
+                new PurchaseOrderApprovalLevel1Derivation(),
+                new ProposalDerivation(),
+                new ProductQuoteApprovalDerivation(),
+                new ProductQuoteDerivation(),
+                new OrderAdjustmentDerivation(),
+                new EngagementDerivation(),
+                new SalesOrderTransferDerivation(),
+                new QuoteDerivation(),
+                new PurchaseOrderApprovalLevel2Derivation(),
+                new PurchaseReturnDerivation(),
+                new PurchaseShipmentDerivation(),
+                new ShipmentPackageDerivation(),
+                new ShipmentValueDerivation(),
+                new PickListItemDerivation(),
+                new PickListDerivation(),
+                new PackagingContentDerivation(),
+                new DropShipmentsDerivation(),
+                new TransferDerivation(),
+                new shipmentReceiptDerivation(),
+                new CustomerReturnDerivation(),
+                new SalesOrderItemInventoryAssignmentDerivation(),
+                new UnifiedGoodDerivation(),
+                new NonSerialisedInventoryItemDerivation(),
+                new NonUnifiedPartDerivation(),
+                new PartDerivation(),
+                new InventoryItemTransactionDerivation(),
+                new InventoryItemDerivation(),
+                new CatalogueDerivation(),
+                new PriceComponentDerivation(),
+                new SingletonDerivation(),
+                new SettingsDerivation(),
+                new PhoneCommunicationDerivation(),
+                new ProfessionalServicesRelationshipDerivation(),
+                new OrganisationContactRelationshipDerivation(),
+                new InternalOrganisationDerivation(),
+                new FaceToFaceCommunicationDerivation(),
+                new EmploymentDerivation(),
+                new CommunicationTaskDerivation(),
+                new CommunicationEventDerivation(),
+                new AutomatedAgentDerivation(),
+                new AgreementTermDerivation(),
+                new EmailCommunicationDerivation(),
+                new OrganisationDerivation(),
+                new PersonDerivation(),
+                new MediaDerivation(),
+                new PartyDerivation(),
+                new EmailTemplateDerivation(),
+                new WebSiteCommunicationsDerivation(),
+                new CustomerRelationshipDerivation(),
+                new FaxCommunicationDerivation(),
+                new LetterCorrespondenceDerivation(),
+                new OrganisationRollUpDerivation(),
+                new PartyContactMechanismDerivation(),
+                new subcontractorRelationshipDerivation(),
+                new PassportDerivation(),
+                new RequestItemDerivation(),
+                new RequestForQuoteDerivation(),
+                new RequestForProposalDerivation(),
+                new RequestForInformationDerivation(),
+                new RequestDerivation(),
+                new PurchaseInvoiceDerivation(),
+                new PurchaseOrderItemDerivation(),
+                new PaymentDerivation(),
+                new PurchaseInvoiceApprovalDerivation(),
+                new SalesInvoiceItemDerivation(),
+                new RepeatingPurchaseInvoiceDerivation(),
+                new RepeatingSalesInvoiceDerivation(),
+                new SalesInvoiceDerivation(),
+                new PartyFinancialRelationshipDerivation(),
+                new PaymentApplicationDerivation(),
+                new SupplierRelationshipDerivation(),
+                new PurchaseOrderDerivation(), //Has Dependency on SupplierRelationship
 
-            database.AuditableExtensionsRegisterDerivations();
-            database.ShipmentExtensionsRegisterDerivations();
-            database.SupplierOfferingRegisterDerivations();
-            database.ServiceExtensionsRegisterDerivations();
-            database.SerialisedItemCharacteristicRegisterDerivations();
-            database.SerialisedInventoryItemRegisterDerivations();
-            database.ProductCategoryRegisterDerivations();
-            database.PriceComponentExtensionsRegisterDerivations();
-            database.PartCategoryRegisterDerivations();
-            database.OrderValueRegisterDerivations();
-            database.OrderQuantityBreakRegisterDerivations();
-            database.NonUnifiedGoodRegisterDerivations();
-            database.StatementOfWorkRegisterDerivations();
-            database.SurchargeComponentRegisterDerivations();
-            database.SerialisedItemRegisterDerivations();
-            database.QuoteItemRegisterDerivations();
-            database.PurchaseOrderApprovalLevel1RegisterDerivations();
-            database.PropasalRegisterDerivations();
-            database.ProductQuoteApprovalRegisterDerivations();
-            database.ProductQuoteRegisterDerivations();
-            database.OrderAdjustmentRegisterDerivations();
-            database.EngagementRegisterDerivations();
-            database.SalesOrderTransferRegisterDerivations();
-            database.QuoteExtensionsRegisterDerivations();
-            database.PurchaseOrderApprovalLevel2RegisterDerivations();
-            database.PurchaseReturnRegisterDerivations();
-            database.PurchaseShipmentRegisterDerivations();
-            database.ShipmentPackageRegisterDerivations();
-            database.ShipmentValueRegisterDerivations();
-            database.PickListItemRegisterDerivations();
-            database.PickListRegisterDerivations();
-            database.PackagingContentRegisterDerivations();
-            database.DropShipmentsRegisterDerivations();
-            database.TransferRegisterDerivations();
-            database.shipmentReceiptRegisterDerivations();
-            database.CustomerReturnRegisterDerivations();
-            database.SalesOrderItemInventoryAssignmentRegisterDerivations();
-            database.UnifiedGoodRegisterDerivations();
-            database.NonSerialisedInventoryItemRegisterDerivations();
-            database.NonUnifiedPartRegisterDerivations();
-            database.PartExtensionsRegisterDerivations();
-            database.InventoryItemTransactionRegisterDerivations();
-            database.InventoryItemExtensionsRegisterDerivations();
-            database.CatalogueRegisterDerivations();
-            database.PriceComponentRegisterDerivations();
-            database.SingletonRegisterDerivations();
-            database.SettingsRegisterDerivations();
-            database.PhoneCommunicationRegisterDerivations();
-            database.ProfessionalServicesRelationshipRegisterDerivations();
-            database.OrganisationContactRelationshipRegisterDerivations();
-            database.InternalOrganisationExtensionsRegisterDerivations();
-            database.FaceToFaceCommunicationRegisterDerivations();
-            database.EmploymentRegisterDerivations();
-            database.CommunicationTaskRegisterDerivations();
-            database.CommunicationEventExtensionsRegisterDerivations();
-            database.AutomatedAgentRegisterDerivations();
-            database.AgreementTermExtensionsRegisterDerivations();
-            database.EmailCommunicationRegisterDerivations();
-            database.OrganisationRegisterDerivations();
-            database.PersonRegisterDerivations();
-            database.MediaRegisterDerivations();
-            database.PartyRegisterDerivations();
-            database.EmailTemplateRegisterDerivations();
-            database.WebSiteCommunicationsRegisterDerivations();
-            database.CustomerRelationshipRegisterDerivations();
-            database.FaxCommunicationRegisterDerivations();
-            database.LetterCorrespondenceRegisterDerivations();
-            database.OrganisationRollUpRegisterDerivations();
-            database.PartyContactMechanismRegisterDerivations();
-            database.subcontractorRelationshipRegisterDerivations();
-            database.PassportRegisterDerivations();
-            database.RequestItemRegisterDerivations();
-            database.RequestForQuoteRegisterDerivations();
-            database.RequestForProposalRegisterDerivations();
-            database.RequestForInformationRegisterDerivations();
-            database.RequestExtensionsRegisterDerivations();
-            
-            database.PurchaseInvoiceRegisterDerivations();
-            database.PurchaseOrderItemDerivations();
+                new ShipmentItemDerivation(),
+                new CustomerShipmentDerivation(),
+                new OrderShipmentDerivation(),
+                new SalesOrderItemsDerivation(), //Has Dependency on OrderShipment
+                new SalesOrderDerivation(), //Has Dependency on SalesOrderItem
 
-            database.PaymentExtensionsRegisterDerivations();
-            database.PurchaseInvoiceApprovalRegisterDerivations();
-            database.SalesInvoiceItemRegisterDerivations();
-            database.RepeatingPurchaseInvoiceRegisterDerivations();
-            database.RepeatingSalesInvoiceRegisterDerivations();
-            database.SalesInvoiceRegisterDerivations();
-            database.PartyFinancialRelationshipRegisterDerivations();
-            database.PaymentApplicationRegisterDerivations();
+                new InvoiceItemsTotalIncVatDerivation(),
+            };
 
-            database.SupplierRelationshipRegisterDerivations();
-            database.PurchaseOrderRegisterDerivations();  //Has Dependency on SupplierRelationship
-
-            database.ShipmentItemRegisterDerivations();
-            database.CustomerShipmentRegisterDerivations();
-
-            database.OrderShipmentRegisterDerivations();
-            database.SalesOrderItemsRegisterDerivations(); //Has Dependency on OrderShipment
-            database.SalesOrderRegisterDerivations();   //Has Dependency on SalesOrderItem
-
-            database.InvoiceItemsTotalIncVatRegisterDerivations();
 
             this.Session = database.CreateSession();
 

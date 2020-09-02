@@ -11,7 +11,7 @@ namespace Allors.Domain
     using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public class PartyContactMechanismCreationDerivation : IDomainDerivation
+    public class PartyContactMechanismDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("7C4E6217-8D71-4544-B8E4-8B2C51F6A5C1");
 

@@ -10,7 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class FaxCommunicationCreationDerivation : IDomainDerivation
+    public class FaxCommunicationDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("A6D89A8A-641F-4D11-8E92-CC10A7A2A89E");
 

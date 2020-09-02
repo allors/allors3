@@ -8,22 +8,23 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public class WebSiteCommunicationsDerivation : IDomainDerivation
+    public class ShipmentValueDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8");
+        public Guid Id => new Guid("FF7A2ED6-9D20-4A68-874D-98BF42B5CB5B");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            new CreatedPattern(M.WebSiteCommunication.Class),
+            new CreatedPattern(M.ShipmentValue.Class),
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var webSiteCommunication in matches.Cast<WebSiteCommunication>())
+            foreach (var shipmentValue in matches.Cast<ShipmentValue>())
             {
-                webSiteCommunication.WorkItemDescription = $"Access website of {webSiteCommunication.ToParty.PartyName} about {webSiteCommunication.Subject}";
+                cycle.Validation.AssertAtLeastOne(shipmentValue, M.ShipmentValue.FromAmount, M.ShipmentValue.ThroughAmount);
             }
         }
     }

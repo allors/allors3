@@ -12,7 +12,7 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class InventoryItemTransactionCreationDerivation : IDomainDerivation
+    public class InventoryItemTransactionDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9");
 

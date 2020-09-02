@@ -12,7 +12,7 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class PurchaseOrderApprovalLevel2CreationDerivation : IDomainDerivation
+    public class PurchaseOrderApprovalLevel2Derivation : IDomainDerivation
     {
         public Guid Id => new Guid("5AE4FAD8-8BF0-4EB0-8051-5564E874ED10");
 

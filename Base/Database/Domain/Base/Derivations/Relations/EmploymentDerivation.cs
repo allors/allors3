@@ -10,7 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class EmploymentCreationDerivation : IDomainDerivation
+    public class EmploymentDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("F0587A19-E7CF-40FF-B715-5A6021525326");
 

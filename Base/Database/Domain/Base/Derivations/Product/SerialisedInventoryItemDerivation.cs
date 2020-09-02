@@ -10,7 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class SerialisedInventoryItemCreationDerivation : IDomainDerivation
+    public class SerialisedInventoryItemDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("29B3C9B5-7BB2-4851-A424-F984E7AE348B");
 

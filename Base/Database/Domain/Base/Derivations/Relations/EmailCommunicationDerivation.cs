@@ -10,7 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class EmailCommunicationCreationDerivation : IDomainDerivation
+    public class EmailCommunicationDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("21A5FF76-FB80-4CA3-B3C4-A79066BADA8E");
 

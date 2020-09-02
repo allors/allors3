@@ -201,7 +201,8 @@ namespace Allors.Domain
 
                 if (party is Organisation organisation)
                 {
-                    DabaseExtensions.PersonSyncDerivation.SyncContactPartyContactMechanism(organisation);
+                    // TODO: Martien
+                    //PersonDerivation.SyncContactPartyContactMechanism(organisation);
                 }
             }
         }
