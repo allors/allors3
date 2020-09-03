@@ -10,9 +10,12 @@ namespace Allors.Domain
 
     public class PersonTests : DomainTest
     {
-        [Fact]
-        public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist()
+        [Theory]
+        [MemberData(nameof(TestedDerivationTypes))]
+        public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist(object data)
         {
+            this.RegisterDerivations((DerivationTypes)data);
+
             var builder = new PersonBuilder(this.Session);
             builder.Build();
 
@@ -61,10 +64,11 @@ namespace Allors.Domain
             Assert.Contains(player4, game.Defenders);
         }
 
-        [Fact]
-        public void TwoDeclarerAndTwoDefenderDerivationTest()
+        [Theory]
+        [MemberData(nameof(TestedDerivationTypes))]
+        public void TwoDeclarerAndTwoDefenderDerivationTest(object data)
         {
-            this.RegisterDerivations(DerivationTypes.Fine);
+            this.RegisterDerivations((DerivationTypes)data);
 
             var people = new People(this.Session);
 

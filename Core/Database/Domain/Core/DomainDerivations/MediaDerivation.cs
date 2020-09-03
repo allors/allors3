@@ -18,7 +18,10 @@ namespace Allors.Domain
     {
         public Guid Id => new Guid("436E574A-FE3E-46ED-8AD2-A59CACC2C9C4");
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Media.Class) };
+        public IEnumerable<Pattern> Patterns { get; } = new[]
+        {
+            new CreatedPattern(M.Media.Class)
+        };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

@@ -5,13 +5,17 @@
 
 namespace Allors
 {
+    using Domain;
     using Xunit;
 
     public class SandboxTests : DomainTest
     {
-        [Fact]
-        public void Dummy()
+        [Theory]
+        [MemberData(nameof(TestedDerivationTypes))]
+        public void Dummy(object data)
         {
+            this.RegisterDerivations((DerivationTypes)data);
+
             // arrange
 
             // act

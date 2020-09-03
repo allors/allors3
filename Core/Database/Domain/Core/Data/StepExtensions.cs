@@ -28,8 +28,10 @@ namespace Allors.Domain
                             yield return next;
                         }
                     }
-
-                    yield return (IObject)step.PropertyType.Get(@object.Strategy);
+                    else
+                    {
+                        yield return (IObject)step.PropertyType.Get(@object.Strategy);
+                    }
                 }
             }
             else

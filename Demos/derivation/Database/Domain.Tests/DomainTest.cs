@@ -93,11 +93,11 @@ namespace Allors
         {
             if (derivationType == DerivationTypes.Fine)
             {
-                this.Session.Database.FineRegisterDerivations();
+                this.Session.Database.RegisterFineDerivations();
             }
             else
             {
-                this.Session.Database.CoarseRegisterDerivations();
+                this.Session.Database.RegisterCoarseDerivations();
             }
         }
     }

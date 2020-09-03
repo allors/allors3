@@ -14,7 +14,11 @@ namespace Allors.Domain
     {
         public Guid Id => new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D");
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { M.Person.FirstName, M.Person.LastName }.Select(v => new ChangedRolePattern(v));
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
+        {
+            new ChangedRolePattern( M.Person.FirstName),
+            new ChangedRolePattern( M.Person.LastName),
+        };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

@@ -20,6 +20,7 @@ namespace Allors.Domain
         {
             new CreatedPattern(M.PurchaseOrderItem.Class),
             new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState),
+            // new ChangedRolePattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

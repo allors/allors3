@@ -14,7 +14,11 @@ namespace Allors.Domain
     {
         public Guid Id => new Guid("a310ed3b-2129-4bee-8457-ae3c8441597f");
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Auditable.Interface) };
+        public IEnumerable<Pattern> Patterns { get; } = new[]
+        {
+            new CreatedPattern(M.Auditable.Interface),
+            // new ChangedPattern(M.Auditable.Interface)
+        };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

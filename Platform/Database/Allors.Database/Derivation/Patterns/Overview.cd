@@ -12,7 +12,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Allors.ChangedAssociationPattern">
-    <Position X="12.75" Y="4" Width="2.25" />
+    <Position X="13.5" Y="4" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Derivation\Patterns\ChangedAssociationPattern.cs</FileName>
@@ -22,7 +22,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Allors.ChangedRolePattern">
-    <Position X="9" Y="4" Width="1.75" />
+    <Position X="8.5" Y="4" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Derivation\Patterns\ChangedRolePattern.cs</FileName>
@@ -40,6 +40,13 @@
     <ShowAsAssociation>
       <Property Name="Composite" />
     </ShowAsAssociation>
+  </Class>
+  <Class Name="Allors.ChangedConcreteRolePattern">
+    <Position X="11" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Derivation\Patterns\ChangedConcreteRolePattern.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Interface Name="Allors.Meta.IComposite" Collapsed="true">
     <Position X="5.25" Y="1.75" Width="1.5" />

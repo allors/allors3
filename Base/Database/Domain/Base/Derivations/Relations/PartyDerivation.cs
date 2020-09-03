@@ -16,9 +16,9 @@ namespace Allors.Domain
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-                new CreatedPattern(M.Party.Interface),
-                new CreatedPattern(M.CustomerRelationship.Class) {Steps = new IPropertyType[] { M.CustomerRelationship.Customer } },
-                new ChangedRolePattern(M.PartyContactMechanism.ThroughDate.RoleType) {Steps = new IPropertyType[] { M.PartyContactMechanism.PartyWherePartyContactMechanism } , OfType = M.Organisation.Class},
+            new CreatedPattern(M.Party.Interface),
+            new CreatedPattern(M.CustomerRelationship.Class) {Steps = new IPropertyType[] { M.CustomerRelationship.Customer } },
+            new ChangedRolePattern(M.PartyContactMechanism.ThroughDate.RoleType) {Steps = new IPropertyType[] { M.PartyContactMechanism.PartyWherePartyContactMechanism } , OfType = M.Organisation.Class},
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

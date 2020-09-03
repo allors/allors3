@@ -5,345 +5,294 @@
 
 namespace Allors.Domain
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Meta;
 
-    public static partial class CoarseDabaseExtensions
+    public class CoarseDerivation : IDomainDerivation
     {
-        public class CompleteDerivation : IDomainDerivation
+        public Guid Id => new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6");
+
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            public void Derive(ISession session, IChangeSet changeSet, IDomainValidation validation)
+            new CreatedPattern(M.Game.Class),
+            new ChangedRolePattern(M.Scoreboard.Players) { Steps = new IPropertyType[]{M.Scoreboard.Games} },
+            new ChangedRolePattern(M.Scoreboard.Players),
+            new ChangedRolePattern(M.Game.Declarers),
+            new ChangedRolePattern(M.Game.StartDate),
+            new ChangedRolePattern(M.Game.EndDate),
+            new ChangedRolePattern(M.Game.GameMode),
+            new ChangedRolePattern(M.Game.Winners),
+            new ChangedRolePattern(M.Scoreboard.AccumulatedScores),
+            new ChangedRolePattern(M.Score.Value) {Steps = new IPropertyType[]
             {
-                var derivedScoreboards = new HashSet<Scoreboard>();
+                M.Score.GameWhereScore,
+                M.Game.ScoreboardWhereGame,
+            }},
+        };
 
-                #region Scoreboard
+        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        {
+            // TODO: implement cross derive optimizations
 
-                changeSet.AssociationsByRoleType.TryGetValue(M.Scoreboard.Players, out var players);
-                var scoreboardsWithChangedPlayers = players?.Select(session.Instantiate).OfType<Scoreboard>();
+            #region ScoreboardDerivation
 
-                if (scoreboardsWithChangedPlayers?.Any() == true)
+            foreach (var scoreboard in matches.OfType<Scoreboard>())
+            {
+                var players = new HashSet<Person>(scoreboard.Players);
+
+                foreach (var score in scoreboard.AccumulatedScores.Where(v => !players.Contains(v.Player)))
                 {
-                    foreach (var scoreboardWithChangedPlayers in scoreboardsWithChangedPlayers)
-                    {
-                        derivedScoreboards.Add(scoreboardWithChangedPlayers);
-
-                        foreach (Score score in scoreboardWithChangedPlayers.AccumulatedScores)
-                        {
-                            var player = score.Player;
-                            if (!scoreboardWithChangedPlayers.Players.Contains(player))
-                            {
-                                score.Delete();
-                            }
-                        }
-
-                        foreach (Person player in scoreboardWithChangedPlayers.Players)
-                        {
-                            var scores = scoreboardWithChangedPlayers.AccumulatedScores.ToArray();
-                            var score = scores.FirstOrDefault(v => v.Player == player);
-
-                            if (score == null)
-                            {
-                                score = new ScoreBuilder(scoreboardWithChangedPlayers.Session()).Build();
-                                score.Player = player;
-                                score.Value = 0;
-
-                                scoreboardWithChangedPlayers.AddAccumulatedScore(score);
-                            }
-                        }
-                    }
+                    players.Remove(score.Player);
+                    score.Delete();
                 }
 
-                #endregion
+                players.ExceptWith(scoreboard.AccumulatedScores.Select(v => v.Player));
 
-                #region Game
-                changeSet.AssociationsByRoleType.TryGetValue(M.Scoreboard.Games, out var scoreboards);
-                var scoreboardsWithChangedGames = scoreboards?.Select(session.Instantiate).OfType<Scoreboard>();
-
-                changeSet.RolesByAssociationType.TryGetValue(M.Scoreboard.Games.AssociationType, out var games);
-                var changedGames = games?.Select(session.Instantiate).OfType<Game>();
-
-                var changedScoreboards = new HashSet<Scoreboard>(derivedScoreboards);
-                if(scoreboardsWithChangedGames != null)
+                foreach (var player in players)
                 {
-                    changedScoreboards.UnionWith(scoreboardsWithChangedGames);
+                    var score = new ScoreBuilder(cycle.Session)
+                        .WithPlayer(player)
+                        .WithValue(0)
+                        .Build();
+
+                    scoreboard.AddAccumulatedScore(score);
+                }
+            }
+
+            #endregion
+
+            #region GameDerivation
+
+            foreach (var game in matches.OfType<Game>())
+            {
+                var players = new HashSet<Person>(game.ScoreboardWhereGame.Players);
+
+                foreach (var score in game.Scores.Where(v => !players.Contains(v.Player)))
+                {
+                    players.Remove(score.Player);
+                    score.Delete();
                 }
 
-                if (changedScoreboards.Any())
+                players.ExceptWith(game.Scores.Select(v => v.Player));
+
+                foreach (var player in players)
                 {
-                    foreach (var scoreboardWithChangedGames in changedScoreboards)
+                    var score = new ScoreBuilder(cycle.Session)
+                        .WithPlayer(player)
+                        .Build();
+
+                    game.AddScore(score);
+                }
+            }
+
+            #endregion
+
+            #region StartEndDate
+
+            foreach (var game in matches.OfType<Game>())
+            {
+                if (game.StartDate.HasValue && game.EndDate.HasValue && game.EndDate.Value <= game.StartDate.Value)
+                {
+                    cycle.Validation.AddError("Start date must be before end date.");
+                }
+            }
+
+            #endregion
+
+            #region GameDefenderDerivation
+
+            foreach (var game in matches.OfType<Game>())
+            {
+                game.Defenders = game.ScoreboardWhereGame?.Players.Except(game.Declarers).ToArray();
+            }
+
+            #endregion
+
+            #region ScoreDerivation
+
+            foreach (var game in matches.OfType<Game>())
+            {
+                foreach (Score score in game.Scores)
+                {
+                    if (game.ExistEndDate && game.ExistGameMode)
                     {
-                        foreach (var game in scoreboardWithChangedGames.Games.Where(v => changedGames.Contains(v)).ToList())
+
+                        var gameType = game.GameMode;
+                        var declarers = game.Declarers.ToList();
+                        var winners = game.Winners.ToList();
+
+                        var winning = winners.Contains(score.Player);
+                        var declaring = declarers.Contains(score.Player);
+
+                        if (gameType.IsMisery || gameType.IsOpenMisery)
                         {
-                            foreach (Score score in game.Scores)
+                            switch (declarers.Count)
                             {
-                                if (scoreboardWithChangedGames.Players.Contains(score.Player))
-                                {
-                                    scoreboardWithChangedGames.Players.Remove(score.Player);
-                                }
-                                else
-                                {
-                                    score.Delete();
-                                }
-                            }
-
-                            foreach (Person player in scoreboardWithChangedGames.Players)
-                            {
-                                var score = new ScoreBuilder(game.Strategy.Session)
-                                .Build();
-
-                                score.Player = player;
-
-                                game.AddScore(score);
-                            }
-                        }
-                    }
-                }
-
-                #endregion
-
-                #region StartEndDate
-
-                changeSet.AssociationsByRoleType.TryGetValue(M.Game.EndDate, out var endDate);
-                var gameWithChangedEndDate = endDate?.Select(session.Instantiate).OfType<Game>();
-
-                if (gameWithChangedEndDate?.Any() == true)
-                {
-                    foreach (var game in gameWithChangedEndDate)
-                    {
-                        if (game.EndDate.Value <= game.StartDate.Value)
-                        {
-                            validation.AddError("Start date must be before end date.");
-                        }
-                    }
-                }
-
-                #endregion
-
-                #region Defender
-
-                changeSet.AssociationsByRoleType.TryGetValue(M.Game.Declarers, out var declarers);
-                var gameWithChangedDeclarers = declarers?.Select(session.Instantiate).OfType<Game>();
-
-                if (gameWithChangedDeclarers?.Any() == true)
-                {
-                    foreach (var game in gameWithChangedDeclarers)
-                    {
-                        game.Defenders = game.ScoreboardWhereGame?.Players.Except(game.Declarers).ToArray();
-                    }
-                }
-
-                #endregion
-
-                #region GameScore
-
-                var changedScores = new HashSet<Score>();
-
-                changeSet.AssociationsByRoleType.TryGetValue(M.Game.GameMode, out var changedWinners);
-                var newGame = changedWinners?.Select(session.Instantiate).OfType<Game>();
-
-                if (newGame?.Any() == true)
-                {
-                    foreach (var game in newGame)
-                    {
-                        foreach (Score score in game.Scores)
-                        {
-                            if (game.ExistEndDate && game.ExistGameMode)
-                            {
-                                var gameType = game.GameMode;
-                                var gameDeclarers = game.Declarers.ToList();
-                                var winners = game.Winners.ToList();
-
-                                var winning = winners.Contains(score.Player);
-                                var declaring = gameDeclarers.Contains(score.Player);
-
-                                if (gameType.IsMisery || gameType.IsOpenMisery)
-                                {
-                                    switch (gameDeclarers.Count)
-                                    {
-                                        case 1:
-                                            if (declaring)
-                                            {
-                                                score.Value = winning ? 15 : -15;
-                                            }
-                                            else
-                                            {
-                                                score.Value = winners.Count() == 0 ? 5 : -5;
-                                            }
-                                            break;
-                                        case 2:
-                                            if (declaring)
-                                            {
-                                                switch (winners.Count())
-                                                {
-                                                    case 0:
-                                                        score.Value = -15;
-                                                        break;
-                                                    case 1:
-                                                        score.Value = winning ? 15 : -15;
-                                                        break;
-                                                    default:
-                                                        score.Value = 15;
-                                                        break;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                switch (winners.Count())
-                                                {
-                                                    case 0:
-                                                        score.Value = 15;
-                                                        break;
-                                                    case 1:
-                                                        score.Value = 0;
-                                                        break;
-                                                    default:
-                                                        score.Value = -15;
-                                                        break;
-                                                }
-                                            }
-                                            break;
-                                        case 4:
-                                            if (declaring)
-                                            {
-                                                switch (winners.Count())
-                                                {
-                                                    case 0:
-                                                        score.Value = 0;
-                                                        break;
-                                                    case 1:
-                                                        score.Value = winning ? 45 : -15;
-                                                        break;
-                                                    case 2:
-                                                        score.Value = winning ? 15 : -15;
-                                                        break;
-                                                    default:
-                                                        score.Value = winning ? 15 : -45;
-                                                        break;
-                                                }
-                                            }
-                                            break;
-                                    }
-                                    if (gameType.IsOpenMisery)
-                                    {
-                                        score.Value *= 2;
-                                    }
-                                }
-
-                                if (gameType.IsGrandSlam || gameType.IsSmallSlam || gameType.IsAbondance)
-                                {
+                                case 1:
                                     if (declaring)
                                     {
                                         score.Value = winning ? 15 : -15;
                                     }
                                     else
                                     {
-                                        score.Value = winners.Count() == 0 ? 5 : -5;
+                                        score.Value = !winners.Any() ? 5 : -5;
                                     }
 
-                                    if (gameType.IsSmallSlam)
-                                    {
-                                        score.Value *= 2;
-                                    }
-
-                                    if (gameType.IsGrandSlam)
-                                    {
-                                        score.Value *= 3;
-                                    }
-                                }
-
-
-                                if (gameType.IsSolo || gameType.IsProposalAndAcceptance || gameType.IsTrull)
-                                {
-                                    var numberOfDefendersPerPersoon = 3;
-                                    var extraTricksToBeDouble = 8;
-
-                                    if (gameType.IsProposalAndAcceptance || gameType.IsTrull)
-                                    {
-                                        numberOfDefendersPerPersoon = 1;
-                                        extraTricksToBeDouble = 5;
-                                    }
-
-                                    var extraTricks = score.GameWhereScore.ExtraTricks ?? 0;
-
+                                    break;
+                                case 2:
                                     if (declaring)
                                     {
-                                        var points = (numberOfDefendersPerPersoon * 2) + (numberOfDefendersPerPersoon * extraTricks);
-                                        var pointsWon = points;
-                                        if (extraTricks == extraTricksToBeDouble)
+                                        switch (winners.Count)
                                         {
-                                            pointsWon = points * 2;
+                                            case 0:
+                                                score.Value = -15;
+                                                break;
+                                            case 1:
+                                                score.Value = winning ? 15 : -15;
+                                                break;
+                                            default:
+                                                score.Value = 15;
+                                                break;
                                         }
-                                        score.Value = winning ? pointsWon : -points;
                                     }
                                     else
                                     {
-                                        var points = 2 + extraTricks;
-                                        if (extraTricks == extraTricksToBeDouble)
+                                        switch (winners.Count)
                                         {
-                                            points *= 2;
+                                            case 0:
+                                                score.Value = 15;
+                                                break;
+                                            case 1:
+                                                score.Value = 0;
+                                                break;
+                                            default:
+                                                score.Value = -15;
+                                                break;
                                         }
-                                        score.Value = winners.Count() == 0 ? points : -points;
                                     }
-                                    if (gameType.IsTrull)
-                                    {
-                                        score.Value *= 2;
-                                    }
-                                }
 
-                                changedScores.Add(score);
+                                    break;
+                                case 4:
+                                    if (declaring)
+                                    {
+                                        switch (winners.Count)
+                                        {
+                                            case 0:
+                                                score.Value = 0;
+                                                break;
+                                            case 1:
+                                                score.Value = winning ? 45 : -15;
+                                                break;
+                                            case 2:
+                                                score.Value = winning ? 15 : -15;
+                                                break;
+                                            default:
+                                                score.Value = winning ? 15 : -45;
+                                                break;
+                                        }
+                                    }
+
+                                    break;
+                            }
+
+                            if (gameType.IsOpenMisery)
+                            {
+                                score.Value *= 2;
+                            }
+                        }
+
+                        if (gameType.IsGrandSlam || gameType.IsSmallSlam || gameType.IsAbondance)
+                        {
+                            if (declaring)
+                            {
+                                score.Value = winning ? 15 : -15;
                             }
                             else
                             {
-                                score.RemoveValue();
+                                score.Value = !winners.Any() ? 5 : -5;
                             }
-                        }
-                    }
-                }
 
-                #endregion
-
-                #region AccumulatedScore
-
-                changeSet.AssociationsByRoleType.TryGetValue(M.Score.Value, out var changedScore);
-                var newScores = changedScore?.Select(session.Instantiate).OfType<Score>();
-
-                var allChangedScores = new HashSet<Score>(changedScores);
-                if(newScores != null)
-                {
-                    allChangedScores.UnionWith(newScores);
-                }
-
-                if (allChangedScores.Any())
-                {
-                    foreach (var score in allChangedScores)
-                    {
-                        if (score.ExistGameWhereScore)
-                        {
-                            var game = score.GameWhereScore;
-
-                            if (game.ExistScoreboardWhereGame)
+                            if (gameType.IsSmallSlam)
                             {
-                                var scoreboard = game.ScoreboardWhereGame;
+                                score.Value *= 2;
+                            }
 
-                                var accumulatedScore = scoreboard.AccumulatedScores.FirstOrDefault(v => v.Player == score.Player);
+                            if (gameType.IsGrandSlam)
+                            {
+                                score.Value *= 3;
+                            }
+                        }
 
-                                if (accumulatedScore != null)
+
+                        if (gameType.IsSolo || gameType.IsProposalAndAcceptance || gameType.IsTrull)
+                        {
+                            var numberOfDefendersPerPerson = 3;
+                            var extraTricksToBeDouble = 8;
+
+                            if (gameType.IsProposalAndAcceptance || gameType.IsTrull)
+                            {
+                                numberOfDefendersPerPerson = 1;
+                                extraTricksToBeDouble = 5;
+                            }
+
+                            var extraTricks = score.GameWhereScore.ExtraTricks ?? 0;
+
+                            if (declaring)
+                            {
+                                var points = (numberOfDefendersPerPerson * 2) +
+                                             (numberOfDefendersPerPerson * extraTricks);
+                                var pointsWon = points;
+                                if (extraTricks == extraTricksToBeDouble)
                                 {
-                                    accumulatedScore.Value =
-                                            scoreboard.Games.SelectMany(v => v.Scores)
-                                            .Where(v => v.Player == accumulatedScore.Player)
-                                            .Aggregate(0, (acc, v) => acc + v.Value ?? 0);
+                                    pointsWon = points * 2;
                                 }
+
+                                score.Value = winning ? pointsWon : -points;
+                            }
+                            else
+                            {
+                                var points = 2 + extraTricks;
+                                if (extraTricks == extraTricksToBeDouble)
+                                {
+                                    points *= 2;
+                                }
+
+                                score.Value = !winners.Any() ? points : -points;
+                            }
+
+                            if (gameType.IsTrull)
+                            {
+                                score.Value *= 2;
                             }
                         }
                     }
+                    else
+                    {
+                        score.RemoveValue();
+                    }
                 }
-
-                #endregion
             }
-        }
 
-        public static void CoarseRegisterDerivations(this IDatabase @this) => @this.DomainDerivationById[new System.Guid("D684885C-8115-4BB0-99D6-6CB47A27FAE3")] = new CompleteDerivation();
+
+            #endregion
+
+            #region AccumulatedScoreDerivation
+
+            foreach (var scoreboard in matches.OfType<Scoreboard>())
+            {
+                foreach (Score accumulatedScore in scoreboard.AccumulatedScores)
+                {
+                    accumulatedScore.Value =
+                        scoreboard.Games.SelectMany(v => v.Scores)
+                            .Where(v => v.Player == accumulatedScore.Player)
+                            .Aggregate(0, (acc, v) => acc + v.Value ?? 0);
+                }
+            }
+
+            #endregion
+        }
     }
+
 }
