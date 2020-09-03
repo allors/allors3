@@ -15,13 +15,13 @@ namespace Allors.Domain
 
     public class SalesOrderItemDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("2B36132A-5557-4FBD-8611-F80302E8550C");
+        public Guid Id => new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.SalesOrderItem.Class),
             new ChangedRolePattern(M.SalesOrderItem.SalesOrderItemState),
-            new ChangedRolePattern(M.SalesOrderItem.QuantityOrdered.RoleType),
+            new ChangedConcreteRolePattern(M.SalesOrderItem.QuantityOrdered),
             new ChangedRolePattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
             new ChangedRolePattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
         };

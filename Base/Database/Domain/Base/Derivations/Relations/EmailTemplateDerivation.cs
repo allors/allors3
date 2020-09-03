@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class EmailTemplateDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("F0587A19-E7CF-40FF-B715-5A6021525326");
+        public Guid Id => new Guid("334F4D84-D343-4FD7-9F74-2FF0617DE747");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {

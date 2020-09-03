@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class ProductQuoteDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("F51A25BD-3FB7-4539-A541-5F19F124AA9F");
+        public Guid Id => new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218");
 
         public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.ProductQuote.Class) };
 

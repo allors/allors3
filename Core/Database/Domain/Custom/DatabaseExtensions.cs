@@ -19,7 +19,7 @@ namespace Allors.Domain
 
             foreach (var derivation in derivations)
             {
-                @this.DomainDerivationById[derivation.Id] = derivation;
+                @this.DomainDerivationById.Add(derivation.Id, derivation);
             }
         }
     }

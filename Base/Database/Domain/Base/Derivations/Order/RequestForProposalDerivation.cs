@@ -10,7 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class RequestForProposalDerivations : IDomainDerivation
+    public class RequestForProposalDerivation : IDomainDerivation
     {
         public Guid Id => new Guid("E2C5250C-5C18-4720-BBFE-859AC31D8D49");
 

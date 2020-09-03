@@ -17,7 +17,7 @@ namespace Allors.Domain
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.SubContractorRelationship.Class),
-            new ChangedRolePattern(M.SubContractorRelationship.FromDate.RoleType),
+            new ChangedConcreteRolePattern(M.SubContractorRelationship.FromDate),
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

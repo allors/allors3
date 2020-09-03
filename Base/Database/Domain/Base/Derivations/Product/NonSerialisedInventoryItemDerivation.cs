@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class NonSerialisedInventoryItemDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9");
+        public Guid Id => new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
@@ -26,7 +26,7 @@ namespace Allors.Domain
                 },
                 OfType = M.NonSerialisedInventoryItem.Class
             },
-            new ChangedRolePattern(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem.RoleType),
+            new ChangedAssociationPattern(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem),
             new ChangedRolePattern(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
             {
                 Steps = new IPropertyType[]

@@ -14,6 +14,50 @@ namespace Allors.Domain
 
     public static class StepExtensions
     {
+        public static IEnumerable<IObject> Get(this Step step, IObject @object)
+        {
+            if (step.IsOne)
+            {
+                var resolved = step.PropertyType.Get(@object.Strategy);
+                if (resolved != null)
+                {
+                    if (step.ExistNext)
+                    {
+                        foreach (var next in step.Next.Get((IObject)resolved))
+                        {
+                            yield return next;
+                        }
+                    }
+
+                    yield return (IObject)step.PropertyType.Get(@object.Strategy);
+                }
+            }
+            else
+            {
+                var resolved = (IEnumerable)step.PropertyType.Get(@object.Strategy);
+                if (resolved != null)
+                {
+                    if (step.ExistNext)
+                    {
+                        foreach (var resolvedItem in resolved)
+                        {
+                            foreach (var next in step.Next.Get((IObject)resolvedItem))
+                            {
+                                yield return next;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (IObject child in (Allors.Extent)step.PropertyType.Get(@object.Strategy))
+                        {
+                            yield return child;
+                        }
+                    }
+                }
+            }
+        }
+
         public static object Get(this Step step, IObject @object, IAccessControlLists acls)
         {
             var acl = acls[@object];

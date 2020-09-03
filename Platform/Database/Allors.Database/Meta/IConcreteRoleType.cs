@@ -8,6 +8,8 @@ namespace Allors.Meta
 {
     public interface IConcreteRoleType
     {
+        IClass Class { get; }
+
         IRoleType RoleType { get; set; }
     }
 }

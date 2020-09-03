@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class DropShipmentDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("A4B63A0B-C6AF-44CB-B778-3CD75EDBE2B7");
+        public Guid Id => new Guid("1B7E3857-425A-4946-AB63-15AEE196350D");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {

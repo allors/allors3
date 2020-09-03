@@ -13,12 +13,12 @@ namespace Allors.Domain
 
     public class OrganisationContactRelationshipDateDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("C7C44D1F-11F1-4A48-8385-491089090F44");
+        public Guid Id => new Guid("A00B983C-6766-406F-B137-19430890547A");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
-            new ChangedRolePattern(M.OrganisationContactRelationship.FromDate.RoleType),
-            new ChangedRolePattern(M.OrganisationContactRelationship.ThroughDate.RoleType),
+            new ChangedConcreteRolePattern(M.OrganisationContactRelationship.FromDate),
+            new ChangedConcreteRolePattern(M.OrganisationContactRelationship.ThroughDate),
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

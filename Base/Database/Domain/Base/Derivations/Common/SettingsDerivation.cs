@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class SettingsDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b");
+        public Guid Id => new Guid("48BC48B2-1614-4E79-984C-E1BFC14C0C22");
 
         public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Settings.Class) };
 

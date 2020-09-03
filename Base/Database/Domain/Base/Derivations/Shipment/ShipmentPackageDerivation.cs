@@ -13,7 +13,7 @@ namespace Allors.Domain
 
     public class ShipmentPackageDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("BE525828-2AAC-4996-98A0-08293485D7DD");
+        public Guid Id => new Guid("9CB50263-5EA0-4B16-85A2-117BEE8A570A");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {

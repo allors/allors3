@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class PriceComponentDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1");
+        public Guid Id => new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {

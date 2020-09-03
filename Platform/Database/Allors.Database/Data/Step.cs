@@ -14,6 +14,10 @@ namespace Allors.Data
         {
         }
 
+        public Step(params IPropertyType[] propertyTypes) : this(propertyTypes, 0)
+        {
+        }
+
         internal Step(IPropertyType[] propertyTypes, int index)
         {
             this.PropertyType = propertyTypes[index];

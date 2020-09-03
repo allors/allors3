@@ -14,7 +14,7 @@ namespace Allors.Domain
 
     public class RepeatingPurchaseInvoiceDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB");
+        public Guid Id => new Guid("BCFAE9E0-8100-4BD0-9262-14A56E557B57");
 
         public IEnumerable<Pattern> Patterns { get; } = new[]
         {

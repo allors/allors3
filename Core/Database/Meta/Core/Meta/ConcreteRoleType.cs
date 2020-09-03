@@ -32,6 +32,8 @@ namespace Allors.Meta
 
         public RelationType RelationType => this.RoleType.RelationType;
 
+        IClass IConcreteRoleType.Class => this.Class;
+
         public Class Class { get; }
 
         public static implicit operator RoleType(ConcreteRoleType concreteRoleType) => concreteRoleType.RoleType;

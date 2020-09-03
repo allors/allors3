@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class SalesOrderTransferDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("8307B027-0A59-409F-B47C-B2B2C98267C8");
+        public Guid Id => new Guid("7E5895C6-712C-42F9-8B1C-964D8B8CBC1D");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {

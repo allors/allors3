@@ -15,7 +15,7 @@ namespace Allors.Domain
 
     public class UnifiedGoodDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC");
+        public Guid Id => new Guid("B1C14106-C300-453D-989B-81E05767CFC4");
 
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {

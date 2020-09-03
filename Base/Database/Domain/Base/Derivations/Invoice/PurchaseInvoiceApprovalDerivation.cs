@@ -12,7 +12,7 @@ namespace Allors.Domain
 
     public class PurchaseInvoiceApprovalDerivation : IDomainDerivation
     {
-        public Guid Id => new Guid("7F6A083E-1409-4158-B302-603F0973A98C");
+        public Guid Id => new Guid("5F1021C3-39B5-4BAB-936D-F7203F04281F");
 
         public IEnumerable<Pattern> Patterns { get; } = new[]
         {

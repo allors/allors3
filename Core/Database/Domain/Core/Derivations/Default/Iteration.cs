@@ -114,26 +114,37 @@ namespace Allors.Domain.Derivations.Default
 
                             foreach (var pattern in domainDerivation.Patterns)
                             {
-                                if (pattern is CreatedPattern createdPattern)
+                                var source = pattern switch
                                 {
-                                    var created = changeSet.Created.Where(v => v.Class.IsAssignableFrom(createdPattern.Composite)).Select(v => v.GetObject());
-                                    matches.UnionWith(created);
-                                }
-
-                                if (pattern is ChangedRolePattern changedRolesPattern)
-                                {
-                                    var changedRoles = changeSet.AssociationsByRoleType
-                                        .Where(v => v.Key.Equals(changedRolesPattern.RoleType))
-                                        .SelectMany(v => session.Instantiate(v.Value));
-                                    matches.UnionWith(changedRoles);
-                                }
-
-                                if (pattern is ChangedAssociationPattern changedAssociationsPattern)
-                                {
-                                    var changedAssociations = changeSet.AssociationsByRoleType
+                                    CreatedPattern createdPattern => changeSet.Created
+                                        .Where(v => v.Class.IsAssignableFrom(createdPattern.Composite))
+                                        .Select(v => v.GetObject()),
+                                    ChangedRolePattern changedRolePattern => changeSet.AssociationsByRoleType
+                                        .Where(v => v.Key.Equals(changedRolePattern.RoleType))
+                                        .SelectMany(v => session.Instantiate(v.Value)),
+                                    ChangedConcreteRolePattern changedConcreteRolePattern => changeSet.AssociationsByRoleType
+                                        .Where(v => v.Key.Equals(changedConcreteRolePattern.ConcreteRoleType.RoleType))
+                                        .SelectMany(v => session.Instantiate(v.Value))
+                                        .Where(v => v.Strategy.Class.Equals(changedConcreteRolePattern.ConcreteRoleType.Class)),
+                                    ChangedAssociationPattern changedAssociationsPattern => changeSet
+                                        .AssociationsByRoleType
                                         .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
-                                        .SelectMany(v => session.Instantiate(v.Value));
-                                    matches.UnionWith(changedAssociations);
+                                        .SelectMany(v => session.Instantiate(v.Value)),
+                                    _ => Array.Empty<IObject>()
+                                };
+
+                                if (source != null)
+                                {
+                                    if (pattern.Steps?.Length > 0)
+                                    {
+                                        var step = new Step(pattern.Steps);
+                                        var stepped = source.SelectMany(v => step.Get(v));
+                                        matches.UnionWith(stepped);
+                                    }
+                                    else
+                                    {
+                                        matches.UnionWith(source);
+                                    }
                                 }
                             }
 
