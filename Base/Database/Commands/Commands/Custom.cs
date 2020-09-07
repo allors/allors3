@@ -51,7 +51,7 @@ namespace Commands
         private int MetaStatistics()
         {
             var metaPopulation = this.databaseService.Database.MetaPopulation;
-            Console.WriteLine("Workspace ObjectTypes: " + metaPopulation.Composites.Cast<Composite>().Count(v => v.Workspace));
+            Console.WriteLine("Workspace ObjectTypes: " + metaPopulation.Composites.Cast<Composite>().Count(v => v.RoleTypes.Any(v => v.Workspace)));
 
             return 0;
         }

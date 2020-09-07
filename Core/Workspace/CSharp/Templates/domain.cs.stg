@@ -23,8 +23,8 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
-	$meta.WorkspaceInterfaces:{interface|<generation template="castInterface" input="$interface.Id $" output="$interface.SingularName$.g.cs"/>}$
-	$meta.WorkspaceClasses:{class|<generation template="castClass" input="$class.Id $" output="$class.SingularName$.g.cs"/>}$
+	$meta.Interfaces:{interface|<generation template="castInterface" input="$interface.Id $" output="$interface.SingularName$.g.cs"/>}$
+	$meta.Classes:{class|<generation template="castClass" input="$class.Id $" output="$class.SingularName$.g.cs"/>}$
 </generations>
 >>
 
@@ -38,13 +38,13 @@ interface(meta,interface) ::= <<
 namespace Allors.Workspace.Domain
 {
 $interface.XmlDocComment$
-	public partial interface $interface.name$ : ISessionObject $if(interface.WorkspaceDirectSupertypes)$ $interface.WorkspaceDirectSupertypes:{directSupertype|, $directSupertype.SingularName$}$ $endif$
+	public partial interface $interface.name$ : ISessionObject $if(interface.DirectSupertypes)$ $interface.DirectSupertypes:{directSupertype|, $directSupertype.SingularName$}$ $endif$
 	{
-$interface.WorkspaceExclusiveRoleTypes:{roleType|$interfaceRoleType()$}$
+$interface.ExclusiveRoleTypes:{roleType|$interfaceRoleType()$}$
 
-$interface.WorkspaceExclusiveAssociationTypes:{associationType|$interfaceAssociationType()$}; separator="\n"$
+$interface.ExclusiveAssociationTypes:{associationType|$interfaceAssociationType()$}; separator="\n"$
 
-$interface.workspaceMethodTypes:{methodType|$interfaceMethodType()$}; separator="\n"$
+$interface.MethodTypes:{methodType|$interfaceMethodType()$}; separator="\n"$
 	}
 }
 >>
@@ -141,7 +141,7 @@ class(meta,class) ::= <<
 namespace Allors.Workspace.Domain
 {
 $class.XmlDocComment$
-	public partial class $class.name$ : SessionObject $class.WorkspaceDirectSupertypes:{directSupertype|, $directSupertype.SingularName$}$
+	public partial class $class.name$ : SessionObject $class.DirectSupertypes:{directSupertype|, $directSupertype.SingularName$}$
 	{
 		public $class.name$(Session session)
 		: base(session)
@@ -178,11 +178,11 @@ $class.XmlDocComment$
         }
 
 
-$class.workspaceConcreteRoleTypes:{concreteRoleType|$classConcreteRoleType_Class()$}$
+$class.ConcreteRoleTypes:{concreteRoleType|$classConcreteRoleType_Class()$}$
 
-$class.workspaceAssociationTypes:{associationType|$classAssociationType()$}; separator="\n"$
+$class.AssociationTypes:{associationType|$classAssociationType()$}; separator="\n"$
 
-$class.workspaceMethodTypes:{methodType|$classMethodType()$}; separator="\n"$
+$class.MethodTypes:{methodType|$classMethodType()$}; separator="\n"$
 	}
 }
 >>

@@ -91,7 +91,8 @@ namespace Allors.Server
                         I = v.Id.ToString(),
                         V = v.Strategy.ObjectVersion.ToString(),
                         T = v.Strategy.Class.IdAsString,
-                        R = @class.WorkspaceRoleTypes
+                        // TODO: Cache
+                        R = @class.RoleTypes.Where(v=>v.Workspace)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w.RelationType))
                             .Select(w => CreateSyncResponseRole(v, w))
                             .ToArray(),

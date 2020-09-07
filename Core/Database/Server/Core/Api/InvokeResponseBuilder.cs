@@ -104,7 +104,8 @@ namespace Allors.Server
             }
 
             var composite = (Composite)obj.Strategy.Class;
-            var methodTypes = composite.WorkspaceMethodTypes;
+            // TODO: Cache
+            var methodTypes = composite.MethodTypes.Where(v => v.Workspace);
             var methodType = methodTypes.FirstOrDefault(x => x.Id.Equals(Guid.Parse(invocation.M)));
 
             if (methodType == null)

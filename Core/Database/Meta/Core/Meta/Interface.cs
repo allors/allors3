@@ -84,7 +84,7 @@ namespace Allors.Meta
         /// Gets the sub types.
         /// </summary>
         /// <value>The super types.</value>
-        public IEnumerable<Composite> Subtypes
+        public override IEnumerable<Composite> Subtypes
         {
             get
             {
@@ -101,8 +101,6 @@ namespace Allors.Meta
                 return this.derivedExclusiveSubclass;
             }
         }
-
-        public override IEnumerable<Composite> WorkspaceSubtypes => this.Subtypes.Where(v => v.Workspace).ToArray();
 
         public override Type ClrType => this.clrType;
 

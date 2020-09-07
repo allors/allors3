@@ -10,10 +10,13 @@ namespace Allors.Meta
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Resources;
+    using System.Runtime.CompilerServices;
 
     public sealed partial class MetaPopulation : IMetaPopulation
     {
-        public static readonly MetaPopulation Instance;
+        public static MetaPopulation Instance { get; private set; }
+
         private readonly Dictionary<Guid, MetaObjectBase> metaObjectById;
 
         private Dictionary<string, Class> derivedClassByLowercaseName;
@@ -31,7 +34,9 @@ namespace Allors.Meta
         private IList<RoleType> roleTypes;
         private IList<MethodType> methodTypes;
 
-        static MetaPopulation()
+        static MetaPopulation() => Reset();
+
+        public static void Reset()
         {
             Instance = new MetaPopulation();
             var metaBuilder = new MetaBuilder(Instance);
@@ -52,7 +57,7 @@ namespace Allors.Meta
             metaBuilder.ExtendClasses();
         }
 
-        private MetaPopulation()
+        internal MetaPopulation()
         {
             this.isStale = true;
             this.isDeriving = false;
@@ -136,52 +141,6 @@ namespace Allors.Meta
                 }
 
                 return true;
-            }
-        }
-
-        // TODO: Added for Workspace.Meta
-        public IEnumerable<Composite> WorkspaceComposites
-        {
-            get
-            {
-                this.Derive();
-                return this.Composites.Where(m => m.Workspace);
-            }
-        }
-
-        public IEnumerable<Interface> WorkspaceInterfaces
-        {
-            get
-            {
-                this.Derive();
-                return this.Interfaces.Where(m => m.Workspace);
-            }
-        }
-
-        public IEnumerable<Class> WorkspaceClasses
-        {
-            get
-            {
-                this.Derive();
-                return this.Classes.Where(m => m.Workspace);
-            }
-        }
-
-        public IEnumerable<RelationType> WorkspaceRelationTypes
-        {
-            get
-            {
-                this.Derive();
-                return this.RelationTypes.Where(m => m.Workspace);
-            }
-        }
-
-        public IEnumerable<MethodType> WorkspaceMethodTypes
-        {
-            get
-            {
-                this.Derive();
-                return this.MethodTypes.Where(m => m.Workspace);
             }
         }
 
@@ -499,12 +458,6 @@ namespace Allors.Meta
                     foreach (var @class in this.classes)
                     {
                         @class.DeriveConcreteMethodTypes(sharedMethodTypes);
-                    }
-
-                    // workspace composites
-                    foreach (var composite in this.Composites)
-                    {
-                        composite.DeriveWorkspace();
                     }
 
                     // MetaPopulation
