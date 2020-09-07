@@ -25,8 +25,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points && node ./postinstall.js",
-    "domain:test": "npx nx test domain-custom",
-    "intranet:serve": "npx nx serve intranet"
+    "domain:test": "npx nx test domain-custom"
   },
   "private": true,
   "dependencies": {

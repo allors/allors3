@@ -95,6 +95,9 @@ partial class Build
     private Target BaseWorkspaceTypescriptTest => _ => _
         .DependsOn(BaseWorkspaceTypescriptDomain);
 
+    Target BaseWorkspaceTest => _ => _
+        .DependsOn(BaseWorkspaceTypescriptTest);
+
     private Target BaseTest => _ => _
         .DependsOn(BaseDatabaseTest)
         .DependsOn(BaseWorkspaceTypescriptTest);
