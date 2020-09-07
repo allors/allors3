@@ -48,30 +48,6 @@
     },
     "protocol-system": {
       "tags": []
-    },
-    "angular-core": {
-      "tags": []
-    },
-    "angular-base": {
-      "tags": []
-    },
-    "angular-material-core": {
-      "tags": []
-    },
-    "angular-material-base": {
-      "tags": []
-    },
-    "angular-material-custom": {
-      "tags": []
-    },
-    "intranet": {
-      "tags": []
-    },
-    "angular-services-core": {
-      "tags": []
-    },
-    "angular-material-services-core": {
-      "tags": []
     }
   }
 }

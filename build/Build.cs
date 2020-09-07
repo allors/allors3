@@ -3,9 +3,7 @@ using System.Linq;
 using Nuke.Common;
 using Nuke.Common.Execution;
 using Nuke.Common.IO;
-using Nuke.Common.ProjectModel;
 using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.Tooling.ProcessTasks;
 
 [CheckBuildProjectConfigurations(TimeoutInMilliseconds = 5000)]
 [UnsetVisualStudioEnvironmentVariables]
@@ -63,16 +61,10 @@ partial class Build : NukeBuild
         .DependsOn(this.CoreGenerate)
         .DependsOn(this.BaseGenerate);
 
-    Target Scaffold => _ => _
-        .DependsOn(this.CoreScaffold)
-        .DependsOn(this.BaseScaffold);
-
     Target Default => _ => _
-        .DependsOn(this.Generate)
-        .DependsOn(this.Scaffold);
+        .DependsOn(this.Generate);
 
     Target All => _ => _
         .DependsOn(this.Install)
-        .DependsOn(this.Generate)
-        .DependsOn(this.Scaffold);
+        .DependsOn(this.Generate);
 }

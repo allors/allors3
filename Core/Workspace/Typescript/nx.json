@@ -22,12 +22,6 @@
     }
   },
   "projects": {
-    "angular-core": {
-      "tags": []
-    },
-    "angular-app": {
-      "tags": []
-    },
     "data-system": {
       "tags": []
     },
@@ -55,37 +49,10 @@
     "meta-custom": {
       "tags": []
     },
-    "angular-material-core": {
-      "tags": []
-    },
-    "angular-material-app": {
-      "tags": []
-    },
-    "angular-material-custom": {
-      "tags": []
-    },
     "promise-core": {
       "tags": []
     },
     "promise-custom": {
-      "tags": []
-    },
-    "gatsby": {
-      "tags": []
-    },
-    "gatsby-source-core": {
-      "tags": []
-    },
-    "gatsby-source-custom": {
-      "tags": []
-    },
-    "angular-custom": {
-      "tags": []
-    },
-    "angular-services-core": {
-      "tags": []
-    },
-    "angular-material-services-core": {
       "tags": []
     }
   }

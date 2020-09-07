@@ -38,7 +38,7 @@ namespace Allors
 
             string[,] workspace =
             {
-                { "Workspace/Csharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/generated" },
+                //{ "Workspace/Csharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/generated" },
                 { "Workspace/Csharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
                 { "Workspace/Csharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 

@@ -25,14 +25,8 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "node ./postinstall.js && ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
-    "scaffold:project": "npx tsc  --project ./tools/scaffold/tsconfig.json && node ./dist/out-tsc/tools/scaffold/main.js",
-    "scaffold:config": "npx nx test angular-material-app",
-    "scaffold": "npm run scaffold:project && npm run scaffold:config",
     "domain:test": "npx nx test domain-custom",
     "promise:test": "npx nx test promise-custom --runInBand",
-    "angular:test": "npx nx test angular-custom --runInBand",
-    "angular-material:serve": "npx nx serve angular-material-app",
-    "gatsby:source": "npx tsc --project ./libs/gatsby/source/custom/tsconfig.lib.json"
   },
   "private": true,
   "dependencies": {
