@@ -36,6 +36,11 @@ namespace Allors.Domain
                 validation.AssertExistsAtMostOne(SalesInvoiceItem, M.SalesInvoiceItem.Product, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
                 validation.AssertExistsAtMostOne(SalesInvoiceItem, M.SalesInvoiceItem.SerialisedItem, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
 
+                if (!SalesInvoiceItem.ExistDerivationTrigger)
+                {
+                    SalesInvoiceItem.DerivationTrigger = Guid.NewGuid();
+                }
+
                 if (SalesInvoiceItem.ExistSerialisedItem && !SalesInvoiceItem.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(SalesInvoiceItem.Session()).SalesInvoice))
                 {
                     validation.AssertExists(SalesInvoiceItem, SalesInvoiceItem.Meta.NextSerialisedItemAvailability);

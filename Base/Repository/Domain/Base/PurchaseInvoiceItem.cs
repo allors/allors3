@@ -109,6 +109,8 @@ namespace Allors.Repository
 
         public DateTime LastModifiedDate { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region ObjectStates
