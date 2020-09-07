@@ -30,6 +30,11 @@ namespace Allors.Domain
 
             foreach (var purchaseOrderItem in matches.Cast<PurchaseOrderItem>())
             {
+                if (!purchaseOrderItem.ExistDerivationTrigger)
+                {
+                    purchaseOrderItem.DerivationTrigger = Guid.NewGuid();
+                }
+
                 if (!purchaseOrderItem.ExistStoredInFacility && purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.ExistStoredInFacility)
                 {
                     purchaseOrderItem.StoredInFacility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;

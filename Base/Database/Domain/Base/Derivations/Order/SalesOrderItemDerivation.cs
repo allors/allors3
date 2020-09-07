@@ -36,6 +36,11 @@ namespace Allors.Domain
                 var salesOrder = salesOrderItem.SalesOrderWhereSalesOrderItem;
                 var shipped = new ShipmentStates(salesOrderItem.Session()).Shipped;
 
+                if (!salesOrderItem.ExistDerivationTrigger)
+                {
+                    salesOrderItem.DerivationTrigger = Guid.NewGuid();
+                }
+
                 if (salesOrderItem.ExistSerialisedItem && !salesOrderItem.ExistNextSerialisedItemAvailability)
                 {
                     validation.AssertExists(salesOrderItem, salesOrderItem.Meta.NextSerialisedItemAvailability);
