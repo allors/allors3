@@ -5,7 +5,7 @@ TemplateName() ::= <<Allors C# Uml>>
 TemplateVersion() ::= <<1.0.23>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta) ::= <<
-$! 
+$!
 Copyright 2002-2013 Allors bvba.
 
 Dual Licensed under
@@ -23,14 +23,14 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
-	<generation template="domain" output="domain.g.cs"/> 
+	<generation template="domain" output="domain.g.cs"/>
 </generations>
 >>
 
 domain(meta) ::= <<
 namespace Allors.Domain
 {
-	$meta.WorkspaceComposites:{objectType|
+	$meta.Composites:{objectType|
 		$composite(meta=meta,composite=objectType)$
 	}$
 }
@@ -38,9 +38,9 @@ namespace Allors.Domain
 
 composite(meta,composite) ::= <<
 
-	public interface $composite.Name$ $if(composite.WorkspaceDirectSupertypes)$: $composite.WorkspaceDirectSupertypes:{directSupertype|$directSupertype.SingularName$}; separator=", "$ $endif$
+	public interface $composite.Name$ $if(composite.DirectSupertypes)$: $composite.DirectSupertypes:{directSupertype|$directSupertype.SingularName$}; separator=", "$ $endif$
 	{
-		$composite.WorkspaceExclusiveRoleTypes:{roleType|$roleType(roleType=roleType)$}; separator="\n"$
+		$composite.ExclusiveRoleTypes:{roleType|$roleType(roleType=roleType)$}; separator="\n"$
 	}
 >>
 

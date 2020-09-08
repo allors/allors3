@@ -16,12 +16,6 @@
       }
     },
     {
-      "name": "scaffold",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/dist/out-tsc/tools/scaffold/src/main.js"
-    },
-    {
       "name": "jest",
       "type": "node",
       "request": "launch",

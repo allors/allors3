@@ -1,4 +1,4 @@
-﻿// <copyright file="Program.cs" company="Allors bvba">
+// <copyright file="Program.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,6 +9,7 @@ namespace Allors
     using System.IO;
 
     using Allors.Development.Repository.Tasks;
+    using Meta;
 
     class Program
     {
@@ -19,7 +20,7 @@ namespace Allors
                 case 0:
                     return Default();
                 case 2:
-                    return Generate.Execute(args[0], args[1]).ErrorOccured ? 1 : 0;
+                    return Generate.Execute(MetaPopulation.Instance, args[0], args[1]).ErrorOccured ? 1 : 0;
                 default:
                     return 1;
             }
@@ -27,6 +28,8 @@ namespace Allors
 
         private static int Default()
         {
+            var metaPopulation = MetaPopulation.Instance;
+
             string[,] config =
                 {
                     { "Templates/adapters.cs.stg", "Domain/Generated" },
@@ -41,7 +44,7 @@ namespace Allors
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(template, output);
+                var log = Generate.Execute(metaPopulation, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;

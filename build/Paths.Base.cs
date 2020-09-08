@@ -15,9 +15,5 @@ public partial class Paths
     public AbsolutePath BaseDatabaseResources => BaseDatabase / "Resources";
     public AbsolutePath BaseDatabaseResourcesBase => BaseDatabaseResources / "Base";
 
-    public AbsolutePath BaseWorkspaceCSharp => Base / "Workspace/CSharp";
-
     public AbsolutePath BaseWorkspaceTypescript => Base / "Workspace/Typescript";
-    public AbsolutePath BaseWorkspaceIntranetTests => Base / "Workspace/Scaffold/Intranet.Tests";
-    public AbsolutePath BaseWorkspaceScaffoldGenerate => Base / "Workspace/Scaffold/Generate/Generate.csproj";
 }

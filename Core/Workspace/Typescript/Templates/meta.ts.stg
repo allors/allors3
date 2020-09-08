@@ -39,7 +39,7 @@ index(meta) ::= <<
 
 export {
     Meta,
-    $meta.WorkspaceComposites:{composite|	Meta$composite$}; separator=",\n"$
+    $meta.Composites:{composite|	Meta$composite$}; separator=",\n"$
 } from './domain.g';
 
 export { ids} from './ids.g';
@@ -58,18 +58,18 @@ domain(meta) ::= <<
 import { MetaPopulation, ObjectType, MethodType, RoleType, AssociationType } from '@allors/meta/system';
 
 export interface Meta extends MetaPopulation {
-$meta.WorkspaceComposites:{composite|    $composite.SingularName$: Meta$composite.SingularName$;}; separator="\n"$
+$meta.Composites:{composite|    $composite.SingularName$: Meta$composite.SingularName$;}; separator="\n"$
 }
 
-$meta.WorkspaceComposites:{composite|$metaComposite(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$metaComposite(composite)$}; separator="\n\n"$
 
 >>
 
 metaComposite(composite) ::= <<
 export interface Meta$composite.SingularName$ extends ObjectType {
-$composite.WorkspaceRoleTypes:{role|    $role.Name$: RoleType;}; separator="\n"$
-$composite.WorkspaceAssociationTypes:{association|    $association.PropertyName$: AssociationType;}; separator="\n"$
-$composite.WorkspaceMethodTypes:{method|    $method.Name$: MethodType;}; separator="\n"$
+$composite.RoleTypes:{role|    $role.Name$: RoleType;}; separator="\n"$
+$composite.AssociationTypes:{association|    $association.PropertyName$: AssociationType;}; separator="\n"$
+$composite.MethodTypes:{method|    $method.Name$: MethodType;}; separator="\n"$
 }
 >>
 
@@ -85,10 +85,10 @@ export class TreeFactory {
     constructor(private meta: Meta) {
     }
 
-$meta.WorkspaceComposites:{composite|$treeFactory(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$treeFactory(composite)$}; separator="\n\n"$
 }
 
-$meta.WorkspaceComposites:{composite|$treeComposite(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$treeComposite(composite)$}; separator="\n\n"$
 
 >>
 
@@ -100,18 +100,18 @@ treeFactory(composite) ::= <<
 
 treeComposite(composite) ::= <<
 export interface Tree$composite.SingularName$ {
-$composite.WorkspaceCompositeRoleTypes:{role|    $role.Name$?: Tree | Tree$role.ObjectType.Name$;}; separator="\n"$
-$composite.WorkspaceAssociationTypes:{association|    $association.PropertyName$?: Tree | Tree$association.ObjectType.Name$;}; separator="\n"$
+$composite.CompositeRoleTypes:{role|    $role.Name$?: Tree | Tree$role.ObjectType.Name$;}; separator="\n"$
+$composite.AssociationTypes:{association|    $association.PropertyName$?: Tree | Tree$association.ObjectType.Name$;}; separator="\n"$
 
-$composite.WorkspaceSubtypes:{type|$treeSubType(type)$}$
+$composite.Subtypes:{type|$treeSubType(type)$}$
 }
 
 >>
 
 treeSubType(type) ::= <<
 
-$type.WorkspaceCompositeRoleTypes:{role|    $type.Name$_$role.Name$?: Tree$role.ObjectType.Name$;}; separator="\n"$
-$type.WorkspaceAssociationTypes:{association|    $type.Name$_$association.PropertyName$?: Tree$association.ObjectType.Name$;}; separator="\n"$
+$type.CompositeRoleTypes:{role|    $type.Name$_$role.Name$?: Tree$role.ObjectType.Name$;}; separator="\n"$
+$type.AssociationTypes:{association|    $type.Name$_$association.PropertyName$?: Tree$association.ObjectType.Name$;}; separator="\n"$
 
 >>
 
@@ -122,17 +122,17 @@ fetch(meta) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { Fetch, Tree } from '@allors/data/system';
-import { $meta.WorkspaceComposites:{composite|Tree$composite.Name$}; separator=", "$ } from './tree.g';
+import { $meta.Composites:{composite|Tree$composite.Name$}; separator=", "$ } from './tree.g';
 import { Meta } from './domain.g';
 
 export class FetchFactory {
     constructor(private meta: Meta) {
     }
 
-$meta.WorkspaceComposites:{composite|$fetchFactory(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$fetchFactory(composite)$}; separator="\n\n"$
 }
 
-$meta.WorkspaceComposites:{composite|$fetchComposite(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$fetchComposite(composite)$}; separator="\n\n"$
 
 >>
 
@@ -144,11 +144,11 @@ fetchFactory(composite) ::= <<
 
 fetchComposite(composite) ::= <<
 export interface Fetch$composite.SingularName$ {
-$composite.WorkspaceCompositeRoleTypes:{role|    $role.Name$?: Fetch | Fetch$role.ObjectType.Name$;}; separator="\n"$
+$composite.CompositeRoleTypes:{role|    $role.Name$?: Fetch | Fetch$role.ObjectType.Name$;}; separator="\n"$
 
-$composite.WorkspaceAssociationTypes:{association|    $association.PropertyName$?: Fetch | Fetch$association.ObjectType.Name$;}; separator="\n"$
+$composite.AssociationTypes:{association|    $association.PropertyName$?: Fetch | Fetch$association.ObjectType.Name$;}; separator="\n"$
 
-$composite.WorkspaceSubtypes:{subtype|$fetchSubtype(subtype)$}$
+$composite.Subtypes:{subtype|$fetchSubtype(subtype)$}$
 
    include?: Tree | Tree$composite.SingularName$;
 }
@@ -156,9 +156,9 @@ $composite.WorkspaceSubtypes:{subtype|$fetchSubtype(subtype)$}$
 
 fetchSubtype(subtype) ::= <<
 
-$subtype.WorkspaceExclusiveCompositeRoleTypes:{role|    $subtype.Name$_$role.Name$?: Fetch | Fetch$role.ObjectType.Name$;}; separator="\n"$
+$subtype.ExclusiveCompositeRoleTypes:{role|    $subtype.Name$_$role.Name$?: Fetch | Fetch$role.ObjectType.Name$;}; separator="\n"$
 
-$subtype.WorkspaceExclusiveAssociationTypes:{association|    $subtype.Name$_$association.PropertyName$?: Fetch | Fetch$association.ObjectType.Name$;}; separator="\n"$
+$subtype.ExclusiveAssociationTypes:{association|    $subtype.Name$_$association.PropertyName$?: Fetch | Fetch$association.ObjectType.Name$;}; separator="\n"$
 
 >>
 
@@ -169,17 +169,17 @@ pull(meta) ::= <<
 // tslint:disable:no-consecutive-blank-lines
 import { Meta } from './domain.g';
 import { Pull, FlatPull, Fetch, Tree } from '@allors/data/system';
-import { $meta.WorkspaceComposites:{composite|Fetch$composite.Name$}; separator=", "$ } from './fetch.g';
-import { $meta.WorkspaceComposites:{composite|Tree$composite.Name$}; separator=", "$ } from './tree.g';
+import { $meta.Composites:{composite|Fetch$composite.Name$}; separator=", "$ } from './fetch.g';
+import { $meta.Composites:{composite|Tree$composite.Name$}; separator=", "$ } from './tree.g';
 
 export class PullFactory {
     constructor(private meta: Meta) {
     }
 
-$meta.WorkspaceComposites:{composite|$pullFactory(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$pullFactory(composite)$}; separator="\n\n"$
 }
 
-$meta.WorkspaceComposites:{composite|$pullComposite(composite)$}; separator="\n\n"$
+$meta.Composites:{composite|$pullComposite(composite)$}; separator="\n\n"$
 
 >>
 
@@ -204,7 +204,7 @@ ids(meta) ::= <<
 
 export const ids = {
 $meta.Units:{unit|  $unit.Name$: '$unit.IdAsString$',}; separator="\n"$
-$meta.WorkspaceComposites:{composite|  $composite.Name$: '$composite.IdAsString$',}; separator="\n"$
+$meta.Composites:{composite|  $composite.Name$: '$composite.IdAsString$',}; separator="\n"$
 };
 >>
 
@@ -218,19 +218,19 @@ $meta.SortedDomains:{domain|      "$domain.Name$"}; separator=",\n"$
       ],
     "interfaces":
       [
-$meta.WorkspaceInterfaces:{interface|$interface(interface)$}; separator=",\n"$
+$meta.Interfaces:{interface|$interface(interface)$}; separator=",\n"$
       ],
     "classes":
       [
-$meta.WorkspaceClasses:{class|$class(class)$}; separator=",\n"$
+$meta.Classes:{class|$class(class)$}; separator=",\n"$
       ],
     "relationTypes":
       [
-$meta.WorkspaceRelationTypes:{relationType|$relationType(relationType)$}; separator=",\n"$
+$meta.RelationTypes:{relationType|$relationType(relationType)$}; separator=",\n"$
       ],
     "methodTypes":
       [
-$meta.WorkspaceMethodTypes:{methodType|$methodType(methodType)$}; separator=",\n"$
+$meta.MethodTypes:{methodType|$methodType(methodType)$}; separator=",\n"$
       ]
   }
 }
@@ -240,10 +240,10 @@ interface(interface) ::= <<
       {
         "id": "$interface.IdAsString$",
         "name": "$interface.Name$",
-        "plural": "$interface.PluralName$"$if(interface.WorkspaceSupertypes)$,
+        "plural": "$interface.PluralName$"$if(interface.Supertypes)$,
         "interfaceIds":
           [
-$interface.WorkspaceSupertypes:{interface|            "$interface.IdAsString$"}; separator=",\n"$
+$interface.Supertypes:{interface|            "$interface.IdAsString$"}; separator=",\n"$
           ]
 $endif$
       }
@@ -253,10 +253,10 @@ class(class) ::= <<
       {
         "id": "$class.IdAsString$",
         "name": "$class.Name$",
-        "plural": "$class.PluralName$"$if(class.WorkspaceSupertypes)$,
+        "plural": "$class.PluralName$"$if(class.Supertypes)$,
         "interfaceIds":
           [
-$class.WorkspaceSupertypes:{interface|            "$interface.IdAsString$"}; separator=",\n"$
+$class.Supertypes:{interface|            "$interface.IdAsString$"}; separator=",\n"$
           ]
 $endif$
       }

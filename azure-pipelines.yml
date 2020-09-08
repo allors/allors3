@@ -16,16 +16,16 @@ stages:
       matrix:
         adapters_memory:
           target: 'AdaptersTestMemory'
+        adapters_sqlclient:
+          target: 'AdaptersTestSqlClient'
+        adapters_npgsql:
+          target: 'AdaptersTestNpgsql'
         core_database:
           target: 'CoreDatabaseTest'
-        core_database_debug:
-          allors.derivation: 'persistent'
-          target: 'CoreDatabaseTest'
-        base_database:
-          target: 'BaseDatabaseTest'
-        base_database_debug:
-          allors.derivation: 'persistent'
-          target: 'BaseDatabaseTest'
+        core_workspace:
+          target: 'CoreWorkspaceTest'
+        base_workspace_typescript:
+          target: 'BaseWorkspaceTest'
 
     steps:
     - powershell: Set-Culture -CultureInfo nl-BE

@@ -6,6 +6,7 @@
 
 namespace Allors
 {
+    using System.Linq;
     using Allors.Meta;
 
     public static partial class PrefetchPolicyBuilderExtensions
@@ -27,7 +28,8 @@ namespace Allors
 
         public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, Class @class)
         {
-            foreach (var roleType in @class.WorkspaceRoleTypes)
+            // TODO: Cache
+            foreach (var roleType in @class.RoleTypes.Where(v => v.Workspace))
             {
                 @this.WithRule(roleType);
             }

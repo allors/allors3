@@ -13,7 +13,7 @@ namespace Allors.Development.Repository.Tasks
 
     public static class Generate
     {
-        public static Log Execute(string template, string output)
+        public static Log Execute(MetaPopulation metaPopulation, string template, string output)
         {
             var log = new GenerateLog();
 
@@ -21,7 +21,7 @@ namespace Allors.Development.Repository.Tasks
             var stringTemplate = new StringTemplate(templateFileInfo);
             var outputDirectoryInfo = new DirectoryInfo(output);
 
-            stringTemplate.Generate(MetaPopulation.Instance, outputDirectoryInfo, log);
+            stringTemplate.Generate(metaPopulation, outputDirectoryInfo, log);
 
             return log;
         }

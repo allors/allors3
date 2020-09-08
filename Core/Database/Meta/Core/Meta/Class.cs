@@ -101,7 +101,7 @@ namespace Allors.Meta
             }
         }
 
-        public override IEnumerable<Composite> WorkspaceSubtypes => this.Workspace ? Array.Empty<Composite>() : new[] { this };
+        public override IEnumerable<Composite> Subtypes => new[] { this };
 
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType);
 

@@ -1,9 +1,7 @@
 using Nuke.Common;
-using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Npm;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.Npm.NpmTasks;
 
@@ -102,20 +100,6 @@ partial class Build
                 .SetWorkingDirectory(Paths.CoreWorkspaceTypescript));
         });
 
-    Target CoreScaffold => _ => _
-        .DependsOn(CoreGenerate)
-        .Executes(() =>
-        {
-            NpmRun(s => s
-                .SetEnvironmentVariable("npm_config_loglevel", "error")
-                .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                .SetCommand("scaffold"));
-            
-            DotNetRun(s => s
-                .SetWorkingDirectory(Paths.Core)
-                .SetProjectFile(Paths.CoreWorkspaceScaffoldGenerate));
-        });
-
     Target CoreWorkspaceTypescriptDomain => _ => _
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
@@ -149,56 +133,7 @@ partial class Build
                 }
             }
         });
-
-    Target CoreWorkspaceTypescriptAngular => _ => _
-        .DependsOn(CoreGenerate)
-        .DependsOn(CorePublishServer)
-        .DependsOn(CorePublishCommands)
-        .DependsOn(EnsureDirectories)
-        .DependsOn(CoreResetDatabase)
-        .Executes(async () =>
-        {
-            using (var sqlServer = new SqlServer())
-            {
-                sqlServer.Restart();
-                sqlServer.Populate(Paths.ArtifactsCoreCommands);
-                using (var server = new Server(Paths.ArtifactsCoreServer))
-                {
-                    await server.Ready();
-                    NpmRun(s => s
-                        .SetEnvironmentVariable("npm_config_loglevel", "error")
-                        .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                        .SetCommand("angular:test"));
-                }
-            }
-        });
-
-    Target CoreWorkspaceTypescriptMaterialTests => _ => _
-        .DependsOn(CoreScaffold)
-        .DependsOn(CorePublishServer)
-        .DependsOn(CorePublishCommands)
-        .DependsOn(CoreResetDatabase)
-        .Executes(async () =>
-        {
-            using (var sqlServer = new SqlServer())
-            {
-                sqlServer.Restart();
-                sqlServer.Populate(Paths.ArtifactsCoreCommands);
-                using (var server = new Server(Paths.ArtifactsCoreServer))
-                {
-                    using (var angular = new Angular(Paths.CoreWorkspaceTypescript, "angular-material:serve"))
-                    {
-                        await server.Ready();
-                        await angular.Init();
-                        DotNetTest(s => s
-                            .SetProjectFile(Paths.CoreWorkspaceScaffoldAngularMaterialTests)
-                            .SetLogger("trx;LogFileName=CoreWorkspaceTypescriptMaterialTests.trx")
-                            .SetResultsDirectory(Paths.ArtifactsTests));
-                    }
-                }
-            }
-        });
-
+   
     Target CoreWorkspaceCSharpDomainTests => _ => _
         .DependsOn(CorePublishServer)
         .DependsOn(CorePublishCommands)
@@ -226,9 +161,7 @@ partial class Build
 
     Target CoreWorkspaceTypescriptTest => _ => _
         .DependsOn(CoreWorkspaceTypescriptDomain)
-        .DependsOn(CoreWorkspaceTypescriptPromise)
-        .DependsOn(CoreWorkspaceTypescriptAngular)
-        .DependsOn(CoreWorkspaceTypescriptMaterialTests);
+        .DependsOn(CoreWorkspaceTypescriptPromise);
 
     Target CoreWorkspaceCSharpTest => _ => _
         .DependsOn(CoreWorkspaceCSharpDomainTests);

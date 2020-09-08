@@ -9,6 +9,7 @@ namespace Allors
     using System.IO;
 
     using Allors.Development.Repository.Tasks;
+    using Meta;
 
     class Program
     {
@@ -19,7 +20,7 @@ namespace Allors
                 case 0:
                     return Default();
                 case 2:
-                    return Generate.Execute(args[0], args[1]).ErrorOccured ? 1 : 0;
+                    return Generate.Execute(MetaPopulation.Instance, args[0], args[1]).ErrorOccured ? 1 : 0;
                 default:
                     return 1;
             }
@@ -27,29 +28,53 @@ namespace Allors
 
         private static int Default()
         {
-            string[,] config =
+            string[,] database =
                 {
                     { "../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/Generated" },
                     { "../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/Generated" },
                     // { "../Core/Database/Templates/uml.java.stg", "DataBase/Diagrams.java/allors" },
-
-                    { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
-                    { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
-
-                    { "../Core/Workspace/Typescript/Templates/meta.ts.stg", "Workspace/Typescript/libs/meta/generated/src" },
-                    { "../Core/Workspace/Typescript/Templates/domain.ts.stg", "Workspace/Typescript/libs/domain/generated/src" },
                 };
 
-            for (var i = 0; i < config.GetLength(0); i++)
+            string[,] workspace =
             {
-                var template = config[i, 0];
-                var output = config[i, 1];
+                { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
+                { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
+
+                { "../Core/Workspace/Typescript/Templates/meta.ts.stg", "Workspace/Typescript/libs/meta/generated/src" },
+                { "../Core/Workspace/Typescript/Templates/domain.ts.stg", "Workspace/Typescript/libs/domain/generated/src" },
+            };
+
+            var metaPopulation = MetaPopulation.Instance;
+
+            for (var i = 0; i < database.GetLength(0); i++)
+            {
+                var template = database[i, 0];
+                var output = database[i, 1];
 
                 Console.WriteLine("-> " + output);
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(template, output);
+                var log = Generate.Execute(metaPopulation, template, output);
+                if (log.ErrorOccured)
+                {
+                    return 1;
+                }
+            }
+
+            var workspaceTransformation = new WorkspaceTransformation();
+            var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation);
+
+            for (var i = 0; i < workspace.GetLength(0); i++)
+            {
+                var template = workspace[i, 0];
+                var output = workspace[i, 1];
+
+                Console.WriteLine("-> " + output);
+
+                RemoveDirectory(output);
+
+                var log = Generate.Execute(workspaceMetaPopulation, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;
