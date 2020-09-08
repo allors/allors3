@@ -26,13 +26,13 @@ namespace Allors.Meta
 
         private bool workspace;
 
-        public RelationType(MetaPopulation metaPopulation, Guid id, Guid associationTypeId, Guid roleTypdId)
+        public RelationType(MetaPopulation metaPopulation, Guid id, Guid associationTypeId, Guid roleTypeId)
             : base(metaPopulation)
         {
             this.Id = id;
 
             this.AssociationType = new AssociationType(this, associationTypeId);
-            this.RoleType = new RoleType(this, roleTypdId);
+            this.RoleType = new RoleType(this, roleTypeId);
 
             metaPopulation.OnRelationTypeCreated(this);
         }
@@ -47,6 +47,19 @@ namespace Allors.Meta
                 this.MetaPopulation.Stale();
             }
         }
+
+        public Origins Origin
+        {
+            get;
+
+            set;
+        }
+
+        public bool HasDatabaseOrigin => this.Origin == Origins.Database;
+
+        public bool HasWorkspaceOrigin => this.Origin == Origins.Workspace;
+
+        public bool HasSessionOrigin => this.Origin == Origins.Session;
 
         public string XmlDoc
         {

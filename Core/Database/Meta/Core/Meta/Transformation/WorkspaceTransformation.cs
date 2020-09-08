@@ -21,7 +21,7 @@ namespace Allors.Meta
                 _ = new Unit(to, fromUnit.Id)
                 {
                     UnitTag = fromUnit.UnitTag,
-                    SingularName = fromUnit.SingularName
+                    SingularName = fromUnit.SingularName,
                 };
             }
 
@@ -61,6 +61,7 @@ namespace Allors.Meta
 
                 var toRelationType = new RelationType(to, fromRelationType.Id, fromAssociationType.Id, fromRoleType.Id)
                 {
+                    Origin = Origins.Database,
                     AssignedMultiplicity = fromRelationType.AssignedMultiplicity,
                     IsDerived = fromRelationType.IsDerived,
                 };

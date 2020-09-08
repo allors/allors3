@@ -120,27 +120,41 @@ $objectType.ExclusiveMethodTypes:{methodType|$classMethodType()$}; separator="\n
 >>
 
 classRoleType() ::= <<
-    CanRead$roleType.PropertyName$: boolean;
+$if(roleType.RelationType.HasDatabaseOrigin)$
 
+    CanRead$roleType.PropertyName$: boolean;
 $if(!roleType.RelationType.IsDerived)$
     CanWrite$roleType.PropertyName$: boolean;
 $endif$
 
 $if(roleType.ObjectType.IsUnit)$
     $if(roleType.RelationType.IsDerived)$readonly $endif$$roleType.PropertyName$: $objectType_Name(roleType.ObjectType)$ | null;
-
 $else$
 $if(roleType.IsOne)$
     $if(roleType.RelationType.IsDerived)$readonly $endif$$roleType.PropertyName$: $objectType_Name(roleType.ObjectType)$ | null;
-
 $else$
     $if(roleType.RelationType.IsDerived)$readonly $endif$$roleType.PluralPropertyName$: $objectType_Name(roleType.ObjectType)$[];
-
 $if(!roleType.RelationType.IsDerived)$
     Add$roleType.SingularPropertyName$(value: $objectType_Name(roleType.ObjectType)$) : void;
     Remove$roleType.SingularPropertyName$(value: $objectType_Name(roleType.ObjectType)$) : void;
 $endif$
 $endif$
+$endif$
+
+$else$
+
+$if(roleType.ObjectType.IsUnit)$
+    $roleType.PropertyName$: $objectType_Name(roleType.ObjectType)$ | null;
+$else$
+$if(roleType.IsOne)$
+    $roleType.PropertyName$: $objectType_Name(roleType.ObjectType)$ | null;
+$else$
+    $roleType.PluralPropertyName$: $objectType_Name(roleType.ObjectType)$[];
+    Add$roleType.SingularPropertyName$(value: $objectType_Name(roleType.ObjectType)$) : void;
+    Remove$roleType.SingularPropertyName$(value: $objectType_Name(roleType.ObjectType)$) : void;
+$endif$
+$endif$
+
 $endif$
 >>
 

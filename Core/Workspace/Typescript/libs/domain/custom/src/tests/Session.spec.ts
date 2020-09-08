@@ -8,7 +8,7 @@ import { Organisation, Person} from '@allors/domain/generated';
 import { syncResponse, securityResponse } from './fixture';
 import { PushRequestInfo } from './helpers/PushRequestInfo';
 
-import { extend } from '..'
+import { extend } from '../index'
 
 import 'jest-extended';
 
