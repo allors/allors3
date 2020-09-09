@@ -8,8 +8,8 @@ export {
   serializeAllDefined,
   deserialize,
 } from './SessionObject';
-export { IWorkspace, Workspace } from './Workspace';
-export { IWorkspaceObject, WorkspaceObject } from './WorkspaceObject';
+export { IDatabase, Database } from './Database';
+export { IDatabaseObject, DatabaseObject } from './DatabaseObject';
 
 export {
   UnitTypes,

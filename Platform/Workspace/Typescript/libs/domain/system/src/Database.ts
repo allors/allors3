@@ -14,18 +14,18 @@ import {
 } from '@allors/protocol/system';
 
 import { SessionObject } from './SessionObject';
-import { WorkspaceObject, IWorkspaceObject } from './WorkspaceObject';
+import { DatabaseObject, IDatabaseObject } from './DatabaseObject';
 import { AccessControl } from './AccessControl';
 import { Permission } from './Permission';
 
-export interface IWorkspace {
+export interface IDatabase {
   metaPopulation: MetaPopulation;
   constructorByObjectType: Map<ObjectType, typeof SessionObject>;
 
   diff(data: PullResponse): SyncRequest;
   sync(data: SyncResponse): SecurityRequest | undefined;
   security(data: SecurityResponse): void;
-  get(id: string): IWorkspaceObject | undefined;
+  get(id: string): IDatabaseObject | undefined;
   permission(
     objectType: ObjectType,
     operandType: OperandType,
@@ -33,11 +33,11 @@ export interface IWorkspace {
   ): Permission | undefined;
 }
 
-export class Workspace implements IWorkspace {
+export class Database implements IDatabase {
   constructorByObjectType: Map<ObjectType, any>;
 
-  workspaceObjectById: Map<string, WorkspaceObject>;
-  workspaceObjectsByClass: Map<ObjectType, Set<WorkspaceObject>>;
+  workspaceObjectById: Map<string, DatabaseObject>;
+  workspaceObjectsByClass: Map<ObjectType, Set<DatabaseObject>>;
 
   accessControlById: Map<string, AccessControl>;
   permissionById: Map<string, Permission>;
@@ -165,7 +165,7 @@ export class Workspace implements IWorkspace {
     });
   }
 
-  get(id: string): IWorkspaceObject | undefined {
+  get(id: string): IDatabaseObject | undefined {
     const workspaceObject = this.workspaceObjectById.get(id);
     if (workspaceObject === undefined) {
       throw new Error(`Object with id ${id} is not present.`);
@@ -174,7 +174,7 @@ export class Workspace implements IWorkspace {
     return workspaceObject ?? null;
   }
 
-  getForAssociation(id: string): WorkspaceObject | undefined {
+  getForAssociation(id: string): DatabaseObject | undefined {
     return this.workspaceObjectById.get(id);
   }
 
@@ -239,7 +239,7 @@ export class Workspace implements IWorkspace {
 
     if (syncResponse.objects) {
       syncResponse.objects.forEach((v) => {
-        const workspaceObject = new WorkspaceObject(
+        const workspaceObject = new DatabaseObject(
           this,
           this.metaPopulation,
           v,
@@ -348,8 +348,8 @@ export class Workspace implements IWorkspace {
     return undefined;
   }
 
-  new(id: string, objectType: ObjectType): WorkspaceObject {
-    const workspaceObject = new WorkspaceObject(this, objectType, id);
+  new(id: string, objectType: ObjectType): DatabaseObject {
+    const workspaceObject = new DatabaseObject(this, objectType, id);
     this.add(workspaceObject);
     return workspaceObject;
   }
@@ -375,7 +375,7 @@ export class Workspace implements IWorkspace {
     }
   }
 
-  private add(workspaceObject: WorkspaceObject) {
+  private add(workspaceObject: DatabaseObject) {
     this.workspaceObjectById.set(workspaceObject.id, workspaceObject);
     this.workspaceObjectsByClass
       .get(workspaceObject.objectType)

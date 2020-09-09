@@ -1,0 +1,13 @@
+@startuml overview
+
+Session o-- WorkSpace
+WorkSpace o-- Database
+
+Database *-- DatabaseObject
+WorkSpace *-- WorkspaceObject
+Session *-- SessionObject
+
+SessionObject o-- WorkspaceObject
+WorkspaceObject o-- DatabaseObject
+
+@enduml

@@ -8,11 +8,11 @@ import {
 
 import { ISessionObject } from './ISessionObject';
 import { SessionObject } from './SessionObject';
-import { IWorkspace, Workspace } from './Workspace';
-import { IWorkspaceObject } from './WorkspaceObject';
+import { IDatabase, Database } from './Database';
+import { IDatabaseObject } from './DatabaseObject';
 
 export interface ISession {
-  workspace: IWorkspace;
+  workspace: IDatabase;
 
   hasChanges: boolean;
 
@@ -39,7 +39,7 @@ export class Session implements ISession {
 
   private sessionObjectByIdByClass: Map<ObjectType, Map<string, SessionObject>>;
 
-  constructor(public workspace: Workspace) {
+  constructor(public workspace: Database) {
     this.hasChanges = false;
 
     this.existingSessionObjectById = new Map();
@@ -290,7 +290,7 @@ export class Session implements ISession {
     return associations;
   }
 
-  private instantiate(workspaceObject: IWorkspaceObject): SessionObject {
+  private instantiate(workspaceObject: IDatabaseObject): SessionObject {
     const constructor = this.workspace.constructorByObjectType.get(
       workspaceObject.objectType
     );
