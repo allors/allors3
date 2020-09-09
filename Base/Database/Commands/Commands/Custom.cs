@@ -121,7 +121,7 @@ namespace Commands
                 if (invoice.ExistInvoiceNumber)
                 {
                     var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
-                    var barcode = barcodeService.Generate(invoice.InvoiceNumber, BarcodeType.CODE_128, 320, 80);
+                    var barcode = barcodeService.Generate(invoice.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
 
@@ -184,7 +184,7 @@ namespace Commands
                 if (invoice.ExistInvoiceNumber)
                 {
                     var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
-                    var barcode = barcodeService.Generate(invoice.InvoiceNumber, BarcodeType.CODE_128, 320, 80);
+                    var barcode = barcodeService.Generate(invoice.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
 
@@ -247,7 +247,7 @@ namespace Commands
                 if (quote.ExistQuoteNumber)
                 {
                     var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
-                    var barcode = barcodeService.Generate(quote.QuoteNumber, BarcodeType.CODE_128, 320, 80);
+                    var barcode = barcodeService.Generate(quote.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
 
@@ -311,7 +311,7 @@ namespace Commands
                 if (workTask.ExistWorkEffortNumber)
                 {
                     var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
-                    var barcode = barcodeService.Generate(workTask.WorkEffortNumber, BarcodeType.CODE_128, 320, 80);
+                    var barcode = barcodeService.Generate(workTask.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
 
