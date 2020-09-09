@@ -81,6 +81,7 @@ namespace Allors.Server
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
             var databaseBuilder = new DatabaseBuilder(app.ApplicationServices, this.Configuration, new ObjectFactory(MetaPopulation.Instance, typeof(User)));
             databaseService.Database = databaseBuilder.Build();
+            databaseService.Database.RegisterDerivations();
 
             if (env.IsDevelopment())
             {

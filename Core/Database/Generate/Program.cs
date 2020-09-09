@@ -68,6 +68,8 @@ namespace Allors
             var workspaceTransformation = new WorkspaceTransformation();
             var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation);
 
+            workspaceMetaPopulation.SetupWorkspace();
+
             for (var i = 0; i < workspace.GetLength(0); i++)
             {
                 var template = workspace[i, 0];

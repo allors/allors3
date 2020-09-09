@@ -6,7 +6,7 @@
 namespace Allors.Repository
 {
     using System;
-
+    using System.Runtime.InteropServices.ComTypes;
     using Allors.Repository.Attributes;
 
     #region Allors
