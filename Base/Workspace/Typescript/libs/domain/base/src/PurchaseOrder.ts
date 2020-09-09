@@ -1,9 +1,9 @@
 import { Meta } from '@allors/meta/generated';
 import { assert } from '@allors/meta/system';
 import { PurchaseOrder } from '@allors/domain/generated';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
-export function extendPurchaseOrder(workspace: Workspace) {
+export function extendPurchaseOrder(workspace: Database) {
   const m = workspace.metaPopulation as Meta;
   const cls = workspace.constructorByObjectType.get(m.PurchaseOrder);
   assert(cls);

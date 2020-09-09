@@ -2,9 +2,9 @@ import { Meta } from '@allors/meta/generated';
 import { assert } from '@allors/meta/system';
 import { PurchaseOrderItem } from '@allors/domain/generated';
 import { inlineLists } from 'common-tags';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
-export function extendPurchaseOrderItem(workspace: Workspace) {
+export function extendPurchaseOrderItem(workspace: Database) {
   const m = workspace.metaPopulation as Meta;
   const cls = workspace.constructorByObjectType.get(m.PurchaseOrderItem);
   assert(cls);

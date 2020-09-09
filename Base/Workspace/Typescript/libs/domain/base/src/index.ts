@@ -117,7 +117,7 @@ declare module '@allors/domain/generated' {
   }
 }
 
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 
 import { extendAutomatedAgent } from './AutomatedAgent';
@@ -140,7 +140,7 @@ import { extendWorkEffortInventoryAssignment } from './WorkEffortInventoryAssign
 import { extendWorkEffortPartyAssignment } from './WorkEffortPartyAssignment';
 import { extendWorkEffortState } from './WorkEffortState';
 
-export function extend(workspace: Workspace) {
+export function extend(workspace: Database) {
   extendAutomatedAgent(workspace);
   extendEmailAddress(workspace);
   extendNonSerialisedInventoryItem(workspace);

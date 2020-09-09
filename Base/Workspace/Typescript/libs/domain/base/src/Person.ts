@@ -1,13 +1,13 @@
 import { Meta } from '@allors/meta/generated';
 import { assert } from '@allors/meta/system';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 import { Person, EmailAddress, TelecommunicationsNumber } from '@allors/domain/generated';
 
 import { inlineLists } from 'common-tags';
 
 
-export function extendPerson(workspace: Workspace) {
+export function extendPerson(workspace: Database) {
   const m = workspace.metaPopulation as Meta;
   const cls = workspace.constructorByObjectType.get(m.Person);
   assert(cls);
