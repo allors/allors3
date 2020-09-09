@@ -103,7 +103,7 @@ namespace Allors.Domain
             {
                 if (this.ExistBillToCustomer)
                 {
-                    foreach (PartyFinancialRelationship partyFinancialRelationship in this.BillToCustomer.PartyFinancialRelationshipsWhereParty)
+                    foreach (PartyFinancialRelationship partyFinancialRelationship in this.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty)
                     {
                         iteration.AddDependency(partyFinancialRelationship, this);
                         iteration.Mark(partyFinancialRelationship);
