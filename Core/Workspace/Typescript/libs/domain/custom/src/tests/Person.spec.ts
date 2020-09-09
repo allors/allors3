@@ -1,5 +1,5 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Session, Workspace } from '@allors/domain/system';
+import { Session, Database } from '@allors/domain/system';
 import { Person } from '@allors/domain/generated';
 
 import { data, Meta } from '@allors/meta/generated';
@@ -12,11 +12,11 @@ describe('Person', () => {
 
   beforeEach(() => {
     const metaPopulation = new MetaPopulation(data);
-    const workspace = new Workspace(metaPopulation);
-    extend(workspace);
+    const database = new Database(metaPopulation);
+    extend(database);
 
     m = metaPopulation as Meta;
-    session = new Session(workspace);
+    session = new Session(database);
   });
 
   describe('UserName', () => {
@@ -31,7 +31,7 @@ describe('Person', () => {
     });
   });
 
-  describe('displayName', () => {
+  xdescribe('displayName', () => {
     let person: Person;
 
     beforeEach(() => {

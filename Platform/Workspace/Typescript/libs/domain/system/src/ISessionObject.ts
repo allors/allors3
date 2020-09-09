@@ -2,7 +2,7 @@
 import { Operations,PushRequestObject, PushRequestNewObject } from '@allors/protocol/system';
 
 import { ISession } from './Session';
-import { IWorkspaceObject } from './WorkspaceObject';
+import { IDatabaseObject } from './WorkspaceObject';
 
 export interface IObject {
   id: string;
@@ -18,7 +18,7 @@ export interface ISessionObject extends IObject {
   isNew: boolean;
 
   session: ISession;
-  workspaceObject?: IWorkspaceObject;
+  workspaceObject?: IDatabaseObject;
 
   hasChanges: boolean;
 

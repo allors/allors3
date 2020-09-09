@@ -1,5 +1,5 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Session, Workspace } from '@allors/domain/system';
+import { Session, Database } from '@allors/domain/system';
 import { PushResponse, ResponseType } from '@allors/protocol/system';
 
 import { data, Meta } from '@allors/meta/generated';
@@ -14,22 +14,22 @@ import 'jest-extended';
 
 describe('Session', () => {
   let m: Meta;
-  let workspace: Workspace;
+  let database: Database;
 
   beforeEach(() => {
     m = new MetaPopulation(data) as Meta;
-    workspace = new Workspace(m);
-    extend(workspace);
+    database = new Database(m);
+    extend(database);
 
-    workspace.sync(syncResponse(m));
-    workspace.security(securityResponse(m));
+    database.sync(syncResponse(m));
+    database.security(securityResponse(m));
   });
 
   describe('delete', () => {
     let session: Session;
 
     beforeEach(() => {
-      session = new Session(workspace);
+      session = new Session(database);
     });
 
     it('should throw exception for existing object', () => {
@@ -130,7 +130,7 @@ describe('Session', () => {
     let session: Session;
 
     beforeEach(() => {
-      session = new Session(workspace);
+      session = new Session(database);
     });
 
     it('should get unit roles', () => {
@@ -219,8 +219,8 @@ describe('Session', () => {
       let icme2: Organisation;
 
       beforeEach(() => {
-        session1 = new Session(workspace);
-        session2 = new Session(workspace);
+        session1 = new Session(database);
+        session2 = new Session(database);
 
         koen1 = session1.get('1') as Person;
         patrick1 = session1.get('2') as Person;

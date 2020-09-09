@@ -19,7 +19,7 @@ import { assert } from '@allors/meta/system';
 import { Http } from './http/Http';
 import { HttpResponse } from './http/HttpResponse';
 
-export class Database {
+export class Client {
   constructor(private http: Http) {}
 
   pull(requestOrCustomService: PullRequest | Pull | string, customArgs?: any): Promise<PullResponse> {

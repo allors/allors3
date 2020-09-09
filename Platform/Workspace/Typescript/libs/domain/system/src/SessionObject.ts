@@ -3,7 +3,7 @@ import { Operations,PushRequestObject, PushRequestNewObject, PushRequestRole } f
 
 import { Method } from './Method';
 import { Session } from './Session';
-import { IWorkspaceObject } from './WorkspaceObject';
+import { IDatabaseObject } from './DatabaseObject';
 
 import { ISessionObject } from './ISessionObject';
 import { ParameterTypes, UnitTypes, CompositeTypes } from './Types';
@@ -15,7 +15,7 @@ export abstract class SessionObject implements ISessionObject {
   public newId?: string;
   private changedRoleByRoleType?: Map<RoleType, any>;
   private roleByRoleType?: Map<RoleType, any>;
-  public workspaceObject?: IWorkspaceObject;
+  public workspaceObject?: IDatabaseObject;
 
   get isNew(): boolean {
     return this.newId ? true : false;

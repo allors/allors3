@@ -1,5 +1,5 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/domain/system';
 import { ResponseType, PullResponse } from '@allors/protocol/system';
 
 import { data, Meta } from '@allors/meta/generated';
@@ -7,22 +7,22 @@ import { data, Meta } from '@allors/meta/generated';
 import { syncResponse, securityResponse, securityResponse2 } from './fixture';
 import { extend } from '../index';
 
-describe('Workspace',
+describe('Database',
   () => {
 
     let m: Meta;
-    let workspace: Workspace;
+    let database: Database;
 
     beforeEach(() => {
       m = new MetaPopulation(data) as Meta;
-      workspace = new Workspace(m);
-      extend(workspace);
+      database = new Database(m);
+      extend(database);
     });
 
     it('should have its relations set when synced', () => {
-      workspace.sync(syncResponse(m));
+      database.sync(syncResponse(m));
 
-      const martien = workspace.get('3');
+      const martien = database.get('3');
 
       expect(martien?.id).toBe( '3');
       expect(martien?.version).toBe( '1003');
@@ -38,7 +38,7 @@ describe('Workspace',
       () => {
 
         beforeEach(() => {
-          workspace.sync(syncResponse(m));
+          database.sync(syncResponse(m));
         });
 
         it('should require load objects only for changed version', () => {
@@ -52,7 +52,7 @@ describe('Workspace',
             responseType: ResponseType.Pull,
           };
 
-          const requireLoad = workspace.diff(pullResponse);
+          const requireLoad = database.diff(pullResponse);
 
           expect(requireLoad.objects.length).toBe( 1);
           expect(requireLoad.objects[0]).toBe( '103');
@@ -63,7 +63,7 @@ describe('Workspace',
     describe('synced with different security',
       () => {
         beforeEach(() => {
-          workspace.sync(syncResponse(m));
+          database.sync(syncResponse(m));
         });
 
         it('should require load objects for all objects', () => {
@@ -77,7 +77,7 @@ describe('Workspace',
             responseType: ResponseType.Pull,
           };
 
-          const syncRequest = workspace.diff(pullResponse);
+          const syncRequest = database.diff(pullResponse);
 
           expect(syncRequest.objects.length).toBe( 2);
           expect(syncRequest.objects).toIncludeSameMembers( ['101', '102']);
@@ -88,17 +88,17 @@ describe('Workspace',
     describe('call security',
       () => {
         beforeEach(() => {
-          workspace.sync(syncResponse(m));
-          workspace.security(securityResponse(m));
+          database.sync(syncResponse(m));
+          database.security(securityResponse(m));
         });
 
         it('with different accesscontrol but already existing permissions', () => {
 
-          const accessControl801 = workspace.accessControlById.get('801');
+          const accessControl801 = database.accessControlById.get('801');
 
-          workspace.security(securityResponse2(m));
+          database.security(securityResponse2(m));
 
-          const accessControl802 = workspace.accessControlById.get('802');
+          const accessControl802 = database.accessControlById.get('802');
 
           if (accessControl802?.permissionIds) {
             for (const permission of accessControl802.permissionIds) {

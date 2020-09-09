@@ -1,8 +1,8 @@
-import { ISession, Workspace, Session, Method } from '@allors/domain/system';
+import { ISession, Database, Session, Method } from '@allors/domain/system';
 import { Pull } from '@allors/data/system';
 import { PullRequest, PullResponse, SyncResponse, PushRequest, PushResponse, SyncRequest, PushRequestObject, InvokeResponse } from '@allors/protocol/system';
 
-import { Database } from './Database';
+import { Client } from './Client';
 
 import { Invoked } from './responses/Invoked';
 import { Loaded } from './responses/Loaded';
@@ -11,33 +11,33 @@ import { Saved } from './responses/Saved';
 export class Context {
   public session: ISession;
 
-  constructor(public database: Database, public workspace: Workspace) {
-    this.session = new Session(this.workspace);
+  constructor(public client: Client, public database: Database) {
+    this.session = new Session(this.database);
   }
 
   public load(pull: Pull | PullRequest): Promise<Loaded>;
   public load(customService: string, customArgs?: any): Promise<Loaded>;
   public load(requestOrCustomService: PullRequest | Pull | string, customArgs?: any): Promise<Loaded> {
     return new Promise((resolve, reject) => {
-      this.database
+      this.client
         .pull(requestOrCustomService, customArgs)
         .then((pullResponse: PullResponse) => {
-          const syncRequest = this.workspace.diff(pullResponse);
+          const syncRequest = this.database.diff(pullResponse);
           if (syncRequest.objects.length > 0) {
-            return this.database
+            return this.client
               .sync(syncRequest)
               .then((syncResponse: SyncResponse) => {
-                const securityRequest = this.workspace.sync(syncResponse);
+                const securityRequest = this.database.sync(syncResponse);
                 if (securityRequest) {
-                  this.database
+                  this.client
                     .security(securityRequest)
                     .then((v) => {
-                      const securityRequest2 = this.workspace.security(v);
+                      const securityRequest2 = this.database.security(v);
                       if (securityRequest2) {
-                        this.database
+                        this.client
                           .security(securityRequest2)
                           .then((v) => {
-                            this.workspace.security(v);
+                            this.database.security(v);
                             const loaded = new Loaded(this.session, pullResponse);
                             resolve(loaded);
                           })
@@ -75,7 +75,7 @@ export class Context {
   public save(): Promise<Saved> {
     return new Promise((resolve, reject) => {
       const pushRequest: PushRequest = this.session.pushRequest();
-      return this.database
+      return this.client
         .push(pushRequest)
         .then((pushResponse: PushResponse) => {
           this.session.pushResponse(pushResponse);
@@ -89,10 +89,10 @@ export class Context {
             }
           }
 
-          return this.database
+          return this.client
             .sync(syncRequest)
             .then((syncResponse: SyncResponse) => {
-              this.workspace.sync(syncResponse);
+              this.database.sync(syncResponse);
               const saved: Saved = new Saved(this.session, pushResponse);
               resolve(saved);
             })
@@ -109,7 +109,7 @@ export class Context {
   public invoke(method: Method): Promise<Invoked>;
   public invoke(service: string, args?: any): Promise<Invoked>;
   public invoke(methodOrService: Method | string, args?: any): Promise<Invoked> {
-    return this.database
+    return this.client
       .invoke(methodOrService as any, args)
       .then((invokeResponse: InvokeResponse) => new Invoked(this.session, invokeResponse));
   }

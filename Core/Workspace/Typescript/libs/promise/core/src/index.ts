@@ -8,4 +8,4 @@ export { Saved } from './responses/Saved';
 export { Invoked } from './responses/Invoked';
 
 export { Context } from './Context';
-export { Database } from './Database';
+export { Client } from './Client';

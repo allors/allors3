@@ -1,11 +1,11 @@
 import { MetaPopulation } from '@allors/meta/system';
 import { Meta, PullFactory, TreeFactory, FetchFactory, data } from '@allors/meta/generated';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/domain/system';
 
 import '@allors/meta/core';
 import { extend as extendDomain } from '@allors/domain/custom';
 
-import { Context, AxiosHttp, Database } from '@allors/promise/core';
+import { Context, AxiosHttp, Client } from '@allors/promise/core';
 
 export class Fixture {
 
@@ -29,13 +29,13 @@ export class Fixture {
 
     this.metaPopulation = new MetaPopulation(data);
     this.m = this.metaPopulation as Meta;
-    const workspace = new Workspace(this.metaPopulation);
-    extendDomain(workspace);
+    const database = new Database(this.metaPopulation);
+    extendDomain(database);
 
     await this.login('administrator');
     await this.http.get('Test/Setup', { population });
-    const database = new Database(this.http);
-    this.ctx = new Context(database, workspace);
+    const client = new Client(this.http);
+    this.ctx = new Context(client, database);
 
     this.tree = new TreeFactory(this.m);
     this.fetch = new FetchFactory(this.m);

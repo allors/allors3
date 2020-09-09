@@ -5,33 +5,56 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "chrome (angular)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
-      "name": "chrome (gatsby)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:8000",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
-      "name": "jest",
       "type": "node",
       "request": "launch",
-      "runtimeArgs": [
-        "--inspect-brk",
-        "${workspaceRoot}/node_modules/jest/bin/jest.js",
-        "--runInBand",
-        "--no-cache",
-        "--config=${workspaceFolder}/libs/promise/custom/jest.config.js"
-      ],
+      "name": "Jest Domain",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "--config", "${workspaceFolder}/libs/domain/custom/jest.config.js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "port": 9229
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Domain - Current File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["${fileBasenameNoExtension}", "--config", "${workspaceFolder}/libs/domain/custom/jest.config.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Promise",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "--config", "${workspaceFolder}/libs/promise/custom/jest.config.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Promise - Current File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["${fileBasenameNoExtension}", "--config", "${workspaceFolder}/libs/promise/custom/jest.config.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
     }
   ]
 }
