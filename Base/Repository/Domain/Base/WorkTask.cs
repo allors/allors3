@@ -119,6 +119,8 @@ namespace Allors.Repository
 
         public int SortableWorkEffortNumber { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Allors
