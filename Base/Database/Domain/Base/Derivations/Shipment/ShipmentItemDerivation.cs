@@ -28,6 +28,11 @@ namespace Allors.Domain
 
             foreach (var shipmentItem in matches.Cast<ShipmentItem>())
             {
+                if (!shipmentItem.ExistDerivationTrigger)
+                {
+                    shipmentItem.DerivationTrigger = Guid.NewGuid();
+                }
+
                 if (shipmentItem.ExistSerialisedItem && !shipmentItem.ExistNextSerialisedItemAvailability)
                 {
                     validation.AssertExists(shipmentItem, shipmentItem.Meta.NextSerialisedItemAvailability);
