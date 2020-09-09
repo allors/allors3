@@ -31,9 +31,6 @@
     "domain-generated": {
       "tags": []
     },
-    "domain-system": {
-      "tags": []
-    },
     "meta-system": {
       "tags": []
     },
@@ -53,6 +50,12 @@
       "tags": []
     },
     "promise-custom": {
+      "tags": []
+    },
+    "workspace-system": {
+      "tags": []
+    },
+    "workspace-memory": {
       "tags": []
     }
   }

@@ -1,23 +1,11 @@
 import { ObjectType, MetaPopulation, RoleType } from '@allors/meta/system';
 import { Compressor, SyncResponseObject } from '@allors/protocol/system';
+import { DatabaseObject, Permission, AccessControl } from '@allors/workspace/system';
 
-import { IDatabase, Database } from './Database';
-import { Permission } from './Permission';
-import { AccessControl } from './AccessControl';
 import { deserialize } from './SessionObject';
+import { MemoryDatabase } from './Database';
 
-export interface IDatabaseObject {
-  workspace: IDatabase;
-  objectType: ObjectType;
-  id: string;
-  version: string;
-  roleByRoleTypeId: Map<string, any>;
-
-  isPermitted(permission: Permission): boolean;
-}
-
-export class DatabaseObject implements IDatabaseObject {
-  workspace: Database & IDatabase;
+export class MemoryDatabaseObject implements DatabaseObject {
   objectType: ObjectType;
   id: string;
   version: string;
@@ -32,21 +20,20 @@ export class DatabaseObject implements IDatabaseObject {
   private cachedDeniedPermissions: Set<Permission | undefined> | undefined;
 
   constructor(
-    workspace: Database,
+    workspace: MemoryDatabase,
     metaPopulation: MetaPopulation,
     syncResponseObject: SyncResponseObject,
     sortedAccessControlIdsDecompress: (compressed: string) => string,
     sortedDeniedPermissionIdsDecompress: (compressed: string) => string
   );
-  constructor(workspace: Database, objectType: ObjectType, id: string);
+  constructor(workspace: MemoryDatabase, objectType: ObjectType, id: string);
   constructor(
-    workspace: Database,
+    public workspace: MemoryDatabase,
     objectTypeOrMetaPopulation: ObjectType | MetaPopulation,
     idOrSyncResponseObject: string | SyncResponseObject,
     sortedAccessControlIdsDecompress?: (compressed: string) => string,
     sortedDeniedPermissionIdsDecompress?: (compressed: string) => string
   ) {
-    this.workspace = workspace;
     this.roleByRoleTypeId = new Map();
 
     if (objectTypeOrMetaPopulation instanceof ObjectType) {

@@ -1,6 +1,7 @@
 import { MetaPopulation } from '@allors/meta/system';
 import { Meta, PullFactory, TreeFactory, FetchFactory, data } from '@allors/meta/generated';
-import { Database } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
+import { MemoryDatabase } from '@allors/workspace/memory';
 
 import '@allors/meta/core';
 import { extend as extendDomain } from '@allors/domain/custom';
@@ -29,7 +30,7 @@ export class Fixture {
 
     this.metaPopulation = new MetaPopulation(data);
     this.m = this.metaPopulation as Meta;
-    const database = new Database(this.metaPopulation);
+    const database: Database = new MemoryDatabase(this.metaPopulation);
     extendDomain(database);
 
     await this.login('administrator');

@@ -1,21 +1,30 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType, unitIds } from '@allors/meta/system';
-import { Operations,PushRequestObject, PushRequestNewObject, PushRequestRole } from '@allors/protocol/system';
+import { Operations, PushRequestObject, PushRequestNewObject, PushRequestRole } from '@allors/protocol/system';
+import { DatabaseObject, SessionObject, UnitTypes, serialize, Method } from '@allors/workspace/system';
 
-import { Method } from './Method';
-import { Session } from './Session';
-import { IDatabaseObject } from './DatabaseObject';
+import { MemorySession } from './Session';
 
-import { ISessionObject } from './ISessionObject';
-import { ParameterTypes, UnitTypes, CompositeTypes } from './Types';
+export function deserialize(value: string, objectType: ObjectType): UnitTypes {
+  switch (objectType.id) {
+    case unitIds.Boolean:
+      return value === 'true' ? true : false;
+    case unitIds.Float:
+      return parseFloat(value);
+    case unitIds.Integer:
+      return parseInt(value, 10);
+  }
 
+  return value;
+}
 
-export abstract class SessionObject implements ISessionObject {
-  public objectType!: ObjectType;
-  public session!: Session;
-  public newId?: string;
+export abstract class MemorySessionObject implements SessionObject {
+  objectType!: ObjectType;
+  session: MemorySession
+
+  newId?: string;
   private changedRoleByRoleType?: Map<RoleType, any>;
   private roleByRoleType?: Map<RoleType, any>;
-  public workspaceObject?: IDatabaseObject;
+  public workspaceObject?: DatabaseObject;
 
   get isNew(): boolean {
     return this.newId ? true : false;
@@ -107,7 +116,7 @@ export abstract class SessionObject implements ISessionObject {
             }
 
             throw new Error(
-              `Could not get role ${roleType.name} from [objectType: ${this.objectType.name}, id: ${this.id}, value: '${stringValue}']`,
+              `Could not get role ${roleType.name} from [objectType: ${this.objectType.name}, id: ${this.id}, value: '${stringValue}']`
             );
           }
         }
@@ -196,7 +205,7 @@ export abstract class SessionObject implements ISessionObject {
     this.session.hasChanges = true;
   }
 
-  public add(roleType: RoleType, value: ISessionObject) {
+  public add(roleType: RoleType, value: SessionObject) {
     if (value) {
       this.assertExists();
 
@@ -211,7 +220,7 @@ export abstract class SessionObject implements ISessionObject {
     }
   }
 
-  public remove(roleType: RoleType, value: ISessionObject) {
+  public remove(roleType: RoleType, value: SessionObject) {
     if (value) {
       this.assertExists();
 
@@ -318,7 +327,7 @@ export abstract class SessionObject implements ISessionObject {
 
   private assertExists() {
     if (this.roleByRoleType === undefined) {
-      throw new Error('Object doesn\'t exist anymore.');
+      throw new Error("Object doesn't exist anymore.");
     }
   }
 
@@ -361,57 +370,4 @@ export abstract class SessionObject implements ISessionObject {
 
     return undefined;
   }
-}
-
-export function serializeObject(roles: { [name: string]: ParameterTypes } | undefined): { [name: string]: string } {
-  if (roles) {
-    return Object.keys(roles).reduce((obj, v) => {
-      const role = roles[v];
-      if (Array.isArray(role)) {
-        obj[v] = role.map((w) => serialize(w)).join(',');
-      } else {
-        obj[v] = serialize(role);
-      }
-      return obj;
-    }, {} as { [key: string]: any });
-  }
-
-  return {};
-}
-
-export function serialize(role: UnitTypes | CompositeTypes | undefined): string | undefined {
-  if (role == null) {
-    return undefined;
-  }
-
-  return serializeAllDefined(role);
-}
-
-export function serializeAllDefined(role: UnitTypes | CompositeTypes): string {
-  if (typeof role === 'string') {
-    return role;
-  }
-
-  if (role instanceof Date) {
-    return (role as Date).toISOString();
-  }
-
-  if (role instanceof SessionObject) {
-    return role.id;
-  }
-
-  return role.toString();
-}
-
-export function deserialize(value: string, objectType: ObjectType): UnitTypes {
-  switch (objectType.id) {
-    case unitIds.Boolean:
-      return value === 'true' ? true : false;
-    case unitIds.Float:
-      return parseFloat(value);
-    case unitIds.Integer:
-      return parseInt(value, 10);
-  }
-
-  return value;
 }

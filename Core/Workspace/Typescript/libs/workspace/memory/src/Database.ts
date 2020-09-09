@@ -1,8 +1,4 @@
-import {
-  ObjectType,
-  MetaPopulation,
-  OperandType,
-} from '@allors/meta/system';
+import { ObjectType, MetaPopulation, OperandType } from '@allors/meta/system';
 import {
   Operations,
   Compressor,
@@ -12,48 +8,24 @@ import {
   SecurityRequest,
   SecurityResponse,
 } from '@allors/protocol/system';
+import { Permission, Database, DatabaseObject, SessionObject, Session, AccessControl } from '@allors/workspace/system';
 
-import { SessionObject } from './SessionObject';
-import { DatabaseObject, IDatabaseObject } from './DatabaseObject';
-import { AccessControl } from './AccessControl';
-import { Permission } from './Permission';
+import { MemoryDatabaseObject } from './DatabaseObject';
+import { MemorySessionObject } from './SessionObject';
+import { MemorySession } from './Session';
 
-export interface IDatabase {
-  metaPopulation: MetaPopulation;
-  constructorByObjectType: Map<ObjectType, typeof SessionObject>;
+export class MemoryDatabase implements Database {
+  constructorByObjectType: Map<ObjectType, typeof MemorySessionObject>;
 
-  diff(data: PullResponse): SyncRequest;
-  sync(data: SyncResponse): SecurityRequest | undefined;
-  security(data: SecurityResponse): void;
-  get(id: string): IDatabaseObject | undefined;
-  permission(
-    objectType: ObjectType,
-    operandType: OperandType,
-    operation: Operations
-  ): Permission | undefined;
-}
+  readonly workspaceObjectById: Map<string, MemoryDatabaseObject>;
+  readonly workspaceObjectsByClass: Map<ObjectType, Set<MemoryDatabaseObject>>;
 
-export class Database implements IDatabase {
-  constructorByObjectType: Map<ObjectType, any>;
+  readonly accessControlById: Map<string, AccessControl>;
+  readonly permissionById: Map<string, Permission>;
 
-  workspaceObjectById: Map<string, DatabaseObject>;
-  workspaceObjectsByClass: Map<ObjectType, Set<DatabaseObject>>;
-
-  accessControlById: Map<string, AccessControl>;
-  permissionById: Map<string, Permission>;
-
-  private readPermissionByOperandTypeByClass: Map<
-    ObjectType,
-    Map<OperandType, Permission>
-  >;
-  private writePermissionByOperandTypeByClass: Map<
-    ObjectType,
-    Map<OperandType, Permission>
-  >;
-  private executePermissionByOperandTypeByClass: Map<
-    ObjectType,
-    Map<OperandType, Permission>
-  >;
+  private readPermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
+  private writePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
+  private executePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
 
   constructor(public metaPopulation: MetaPopulation) {
     this.constructorByObjectType = new Map();
@@ -80,15 +52,13 @@ export class Database implements IDatabase {
     this.metaPopulation.classes.forEach((objectType) => {
       const DynamicClass = (() => {
         return function () {
-          // @ts-ignore
           const prototype1 = Object.getPrototypeOf(this);
           const prototype2 = Object.getPrototypeOf(prototype1);
-          // @ts-ignore
           prototype2.init.call(this);
         };
       })();
 
-      DynamicClass.prototype = Object.create(SessionObject.prototype);
+      DynamicClass.prototype = Object.create(MemorySessionObject.prototype);
       DynamicClass.prototype.constructor = DynamicClass;
       this.constructorByObjectType.set(objectType, DynamicClass as any);
 
@@ -124,17 +94,11 @@ export class Database implements IDatabase {
           });
 
           if (roleType.isMany) {
-            prototype['Add' + roleType.singular] = function (
-              this: SessionObject,
-              value: SessionObject
-            ) {
+            prototype['Add' + roleType.singular] = function (this: SessionObject, value: SessionObject) {
               return this.add(roleType, value);
             };
 
-            prototype['Remove' + roleType.singular] = function (
-              this: SessionObject,
-              value: SessionObject
-            ) {
+            prototype['Remove' + roleType.singular] = function (this: SessionObject, value: SessionObject) {
               return this.remove(roleType, value);
             };
           }
@@ -151,13 +115,13 @@ export class Database implements IDatabase {
 
       objectType.methodTypes.forEach((methodType) => {
         Object.defineProperty(prototype, 'CanExecute' + methodType.name, {
-          get(this: SessionObject) {
+          get(this: MemorySessionObject) {
             return this.canExecute(methodType);
           },
         });
 
         Object.defineProperty(prototype, methodType.name, {
-          get(this: SessionObject) {
+          get(this: MemorySessionObject) {
             return this.method(methodType);
           },
         });
@@ -165,7 +129,11 @@ export class Database implements IDatabase {
     });
   }
 
-  get(id: string): IDatabaseObject | undefined {
+  createSession(): Session{
+    return new MemorySession(this);
+  }
+
+  get(id: string): DatabaseObject | undefined {
     const workspaceObject = this.workspaceObjectById.get(id);
     if (workspaceObject === undefined) {
       throw new Error(`Object with id ${id} is not present.`);
@@ -182,20 +150,14 @@ export class Database implements IDatabase {
     const syncRequest: SyncRequest = {
       objects: (response.objects ?? [])
         .filter((syncRequestObject) => {
-          const [
-            id,
-            version,
-            sortedAccessControlIds,
-            sortedDeniedPermissionIds,
-          ] = syncRequestObject;
+          const [id, version, sortedAccessControlIds, sortedDeniedPermissionIds] = syncRequestObject;
           const workspaceObject = this.workspaceObjectById.get(id);
 
           const sync =
             workspaceObject == null ||
             workspaceObject.version !== version ||
             workspaceObject.sortedAccessControlIds !== sortedAccessControlIds ||
-            workspaceObject.sortedDeniedPermissionIds !==
-              sortedDeniedPermissionIds;
+            workspaceObject.sortedDeniedPermissionIds !== sortedDeniedPermissionIds;
 
           return sync;
         })
@@ -223,9 +185,7 @@ export class Database implements IDatabase {
       return compressed;
     };
 
-    const sortedDeniedPermissionIdsDecompress = (
-      compressed: string
-    ): string => {
+    const sortedDeniedPermissionIdsDecompress = (compressed: string): string => {
       if (compressed) {
         compressed.split(Compressor.itemSeparator).forEach((v) => {
           if (!this.permissionById.has(v)) {
@@ -239,7 +199,7 @@ export class Database implements IDatabase {
 
     if (syncResponse.objects) {
       syncResponse.objects.forEach((v) => {
-        const workspaceObject = new DatabaseObject(
+        const workspaceObject = new MemoryDatabaseObject(
           this,
           this.metaPopulation,
           v,
@@ -277,12 +237,8 @@ export class Database implements IDatabase {
     if (securityResponse.permissions) {
       securityResponse.permissions.forEach((v) => {
         const id = v[0];
-        const objectType = this.metaPopulation.metaObjectById.get(
-          v[1]
-        ) as ObjectType;
-        const operandType = this.metaPopulation.metaObjectById.get(
-          v[2]
-        ) as OperandType;
+        const objectType = this.metaPopulation.metaObjectById.get(v[1]) as ObjectType;
+        const operandType = this.metaPopulation.metaObjectById.get(v[2]) as OperandType;
         const operation = parseInt(v[3], 10);
 
         let permission = this.permissionById.get(id);
@@ -293,24 +249,15 @@ export class Database implements IDatabase {
 
         switch (operation) {
           case Operations.Read:
-            this.getOrCreate(
-              this.readPermissionByOperandTypeByClass,
-              objectType
-            ).set(operandType, permission);
+            this.getOrCreate(this.readPermissionByOperandTypeByClass, objectType).set(operandType, permission);
             break;
 
           case Operations.Write:
-            this.getOrCreate(
-              this.writePermissionByOperandTypeByClass,
-              objectType
-            ).set(operandType, permission);
+            this.getOrCreate(this.writePermissionByOperandTypeByClass, objectType).set(operandType, permission);
             break;
 
           case Operations.Execute:
-            this.getOrCreate(
-              this.executePermissionByOperandTypeByClass,
-              objectType
-            ).set(operandType, permission);
+            this.getOrCreate(this.executePermissionByOperandTypeByClass, objectType).set(operandType, permission);
             break;
         }
       });
@@ -349,36 +296,24 @@ export class Database implements IDatabase {
   }
 
   new(id: string, objectType: ObjectType): DatabaseObject {
-    const workspaceObject = new DatabaseObject(this, objectType, id);
+    const workspaceObject = new MemoryDatabaseObject(this, objectType, id);
     this.add(workspaceObject);
     return workspaceObject;
   }
 
-  permission(
-    objectType: ObjectType,
-    operandType: OperandType,
-    operation: Operations
-  ): Permission | undefined {
+  permission(objectType: ObjectType, operandType: OperandType, operation: Operations): Permission | undefined {
     switch (operation) {
       case Operations.Read:
-        return this.readPermissionByOperandTypeByClass
-          .get(objectType)
-          ?.get(operandType);
+        return this.readPermissionByOperandTypeByClass.get(objectType)?.get(operandType);
       case Operations.Write:
-        return this.writePermissionByOperandTypeByClass
-          .get(objectType)
-          ?.get(operandType);
+        return this.writePermissionByOperandTypeByClass.get(objectType)?.get(operandType);
       default:
-        return this.executePermissionByOperandTypeByClass
-          .get(objectType)
-          ?.get(operandType);
+        return this.executePermissionByOperandTypeByClass.get(objectType)?.get(operandType);
     }
   }
 
-  private add(workspaceObject: DatabaseObject) {
+  private add(workspaceObject: MemoryDatabaseObject) {
     this.workspaceObjectById.set(workspaceObject.id, workspaceObject);
-    this.workspaceObjectsByClass
-      .get(workspaceObject.objectType)
-      ?.add(workspaceObject);
+    this.workspaceObjectsByClass.get(workspaceObject.objectType)?.add(workspaceObject);
   }
 }
