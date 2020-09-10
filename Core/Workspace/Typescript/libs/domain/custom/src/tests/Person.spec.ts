@@ -1,5 +1,6 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Session, Database } from '@allors/domain/system';
+import { Database, Session } from '@allors/workspace/system';
+import { MemoryDatabase } from '@allors/workspace/memory';
 import { Person } from '@allors/domain/generated';
 
 import { data, Meta } from '@allors/meta/generated';
@@ -12,11 +13,11 @@ describe('Person', () => {
 
   beforeEach(() => {
     const metaPopulation = new MetaPopulation(data);
-    const database = new Database(metaPopulation);
+    const database: Database = new MemoryDatabase(metaPopulation);
     extend(database);
 
     m = metaPopulation as Meta;
-    session = new Session(database);
+    session = database.createSession();
   });
 
   describe('UserName', () => {

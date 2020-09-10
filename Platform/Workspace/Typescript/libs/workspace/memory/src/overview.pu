@@ -1,0 +1,47 @@
+@startuml overview
+
+class Database {
+    +constructorByObjectType
+    -workspaceObjectById
+    -workspaceObjectsByClass
+    -accessControlById
+    -permissionById
+    -readPermissionByOperandTypeByClass
+    -writePermissionByOperandTypeByClass
+    -executePermissionByOperandTypeByClass
+    +diff()
+    +sync()
+    +security()
+    +get()
+    +permission()
+}
+
+Database *-- DatabaseObject
+Database *-- MetaPopulation
+
+class Session {
+}
+
+Session o-- WorkSpace
+Session *-- SessionObject
+
+class Workspace {
+}
+
+WorkSpace o-- Database
+WorkSpace *-- WorkspaceObject
+
+class SessionObject {
+}
+
+SessionObject o-- WorkspaceObject
+
+class WorkspaceObject {
+}
+
+WorkspaceObject o-- DatabaseObject
+
+class DatabaseObject {
+}
+
+@enduml

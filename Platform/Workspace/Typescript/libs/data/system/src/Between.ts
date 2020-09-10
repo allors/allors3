@@ -1,5 +1,5 @@
 import { ObjectType, RoleType } from '@allors/meta/system';
-import { UnitTypes, serializeAllDefined } from '@allors/domain/system';
+import { UnitTypes, serializeAllDefined } from '@allors/workspace/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
 

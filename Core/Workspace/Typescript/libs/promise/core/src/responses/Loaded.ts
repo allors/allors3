@@ -1,13 +1,13 @@
-import { ISessionObject, ISession } from '@allors/domain/system';
+import { SessionObject, Session } from '@allors/workspace/system';
 import { PullResponse } from '@allors/protocol/system';
 import { assert } from '@allors/meta/system';
 
 export class Loaded {
-  public objects: { [name: string]: ISessionObject } = {};
-  public collections: { [name: string]: ISessionObject[] } = {};
+  public objects: { [name: string]: SessionObject } = {};
+  public collections: { [name: string]: SessionObject[] } = {};
   public values: { [name: string]: any } = {};
 
-  constructor(public session: ISession, public response: PullResponse) {
+  constructor(public session: Session, public response: PullResponse) {
     const namedObjects = response.namedObjects;
     const namedCollections = response.namedCollections;
     const namedValues = response.namedValues;

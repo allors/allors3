@@ -1,5 +1,5 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Database } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 import { data, TreeFactory, Meta } from '@allors/meta/generated';
 

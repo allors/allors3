@@ -1,10 +1,5 @@
 import { ObjectType } from '@allors/meta/system';
-import {
-  ISessionObject,
-  CompositeTypes,
-  ParameterTypes,
-  serializeObject,
-} from '@allors/domain/system';
+import { SessionObject, CompositeTypes, ParameterTypes, serializeObject } from '@allors/workspace/system';
 
 import { IExtent } from './IExtent';
 import { Result } from './Result';
@@ -14,10 +9,7 @@ import { Sort } from './Sort';
 import { Fetch } from './Fetch';
 import { Tree } from './Tree';
 
-export type PullArgs = Pick<
-  Pull,
-  'objectType' | 'extentRef' | 'extent' | 'object' | 'results' | 'parameters'
->;
+export type PullArgs = Pick<Pull, 'objectType' | 'extentRef' | 'extent' | 'object' | 'results' | 'parameters'>;
 
 export class Pull {
   public objectType?: ObjectType;
@@ -64,31 +56,17 @@ export class Pull {
           this.extent = new Extent({ objectType: this.objectType, sort });
         }
 
-        if (
-          flat.fetchRef ||
-          flat.fetch ||
-          flat.include ||
-          flat.name ||
-          flat.skip ||
-          flat.take
-        ) {
+        if (flat.fetchRef || flat.fetch || flat.include || flat.name || flat.skip || flat.take) {
           const result = new Result({
             fetchRef: flat.fetchRef,
-            fetch: flat.fetch
-              ? flat.fetch instanceof Fetch
-                ? flat.fetch
-                : new Fetch(this.objectType, flat.fetch)
-              : undefined,
+            fetch: flat.fetch ? (flat.fetch instanceof Fetch ? flat.fetch : new Fetch(this.objectType, flat.fetch)) : undefined,
             name: flat.name,
             skip: flat.skip,
             take: flat.take,
           });
 
           if (flat.include) {
-            const include =
-              flat.include instanceof Tree
-                ? flat.include
-                : new Tree(this.objectType, flat.include);
+            const include = flat.include instanceof Tree ? flat.include : new Tree(this.objectType, flat.include);
 
             if (result.fetch) {
               if (result.fetch.step) {
@@ -112,14 +90,13 @@ export class Pull {
   }
 
   public toJSON(): any {
-    const sessionObject = this.object as ISessionObject;
+    const sessionObject = this.object as SessionObject;
 
     return {
       extentRef: this.extentRef,
       extent: this.extent,
       objectType: this.objectType && this.objectType.id,
-      object:
-        sessionObject && sessionObject.id ? sessionObject.id : this.object,
+      object: sessionObject && sessionObject.id ? sessionObject.id : this.object,
       results: this.results,
       parameters: serializeObject(this.parameters),
     };

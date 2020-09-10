@@ -13,11 +13,11 @@ import {
   InvokeRequest,
 } from '@allors/protocol/system';
 import { Pull } from '@allors/data/system';
-import { Method } from '@allors/domain/system';
 import { assert } from '@allors/meta/system';
 
 import { Http } from './http/Http';
 import { HttpResponse } from './http/HttpResponse';
+import { Method } from '@allors/workspace/system';
 
 export class Client {
   constructor(private http: Http) {}

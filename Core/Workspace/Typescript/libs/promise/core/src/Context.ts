@@ -1,4 +1,4 @@
-import { ISession, Database, Session, Method } from '@allors/domain/system';
+import { Database, Session, Method } from '@allors/workspace/system';
 import { Pull } from '@allors/data/system';
 import { PullRequest, PullResponse, SyncResponse, PushRequest, PushResponse, SyncRequest, PushRequestObject, InvokeResponse } from '@allors/protocol/system';
 
@@ -9,10 +9,10 @@ import { Loaded } from './responses/Loaded';
 import { Saved } from './responses/Saved';
 
 export class Context {
-  public session: ISession;
+  public session: Session;
 
   constructor(public client: Client, public database: Database) {
-    this.session = new Session(this.database);
+    this.session = database.createSession();
   }
 
   public load(pull: Pull | PullRequest): Promise<Loaded>;

@@ -1,10 +1,10 @@
 import { Meta } from '@allors/meta/generated';
 import { assert } from '@allors/meta/system';
 import { SerialisedItem, UnifiedGood } from '@allors/domain/generated';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 
-export function extendSerialisedItem(workspace: Workspace) {
+export function extendSerialisedItem(workspace: Database) {
   const m = workspace.metaPopulation as Meta;
   const cls = workspace.constructorByObjectType.get(m.SerialisedItem);
   assert(cls);

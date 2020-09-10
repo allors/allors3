@@ -1,10 +1,10 @@
 import { Meta } from '@allors/meta/generated';
 import { assert } from '@allors/meta/system';
 import { WebAddress } from '@allors/domain/generated';
-import { Workspace } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 
-export function extendWebAddress(workspace: Workspace) {
+export function extendWebAddress(workspace: Database) {
   const m = workspace.metaPopulation as Meta;
   const cls = workspace.constructorByObjectType.get(m.WebAddress);
   assert(cls);

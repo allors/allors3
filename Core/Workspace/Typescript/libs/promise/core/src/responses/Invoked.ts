@@ -1,6 +1,6 @@
-import { ISession } from '@allors/domain/system';
+import { Session } from '@allors/workspace/system';
 import { InvokeResponse } from '@allors/protocol/system';
 
 export class Invoked {
-  constructor(public session: ISession, public response: InvokeResponse) {}
+  constructor(public session: Session, public response: InvokeResponse) {}
 }

@@ -15,10 +15,7 @@
               "libs/data/system/tsconfig.lib.json",
               "libs/data/system/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/data/system/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/data/system/**/*"]
           }
         },
         "test": {
@@ -45,10 +42,7 @@
               "libs/domain/system/tsconfig.lib.json",
               "libs/domain/system/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/domain/system/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/domain/system/**/*"]
           }
         },
         "test": {
@@ -75,10 +69,7 @@
               "libs/meta/system/tsconfig.lib.json",
               "libs/meta/system/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/meta/system/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/meta/system/**/*"]
           }
         },
         "test": {
@@ -105,10 +96,7 @@
               "libs/protocol/system/tsconfig.lib.json",
               "libs/protocol/system/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/protocol/system/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/protocol/system/**/*"]
           }
         },
         "test": {
@@ -116,6 +104,60 @@
           "options": {
             "jestConfig": "libs/protocol/system/jest.config.js",
             "tsConfig": "libs/protocol/system/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-system": {
+      "root": "libs/workspace/system",
+      "sourceRoot": "libs/workspace/system/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/workspace/system/tsconfig.lib.json",
+              "libs/workspace/system/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/workspace/system/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/system/jest.config.js",
+            "tsConfig": "libs/workspace/system/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-memory": {
+      "root": "libs/workspace/memory",
+      "sourceRoot": "libs/workspace/memory/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/workspace/memory/tsconfig.lib.json",
+              "libs/workspace/memory/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/workspace/memory/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/memory/jest.config.js",
+            "tsConfig": "libs/workspace/memory/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

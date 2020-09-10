@@ -1,6 +1,7 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Database } from '@allors/domain/system';
 import { ResponseType, PullResponse } from '@allors/protocol/system';
+import { Database } from '@allors/workspace/system';
+import { MemoryDatabase } from '@allors/workspace/memory';
 
 import { data, Meta } from '@allors/meta/generated';
 
@@ -15,7 +16,7 @@ describe('Database',
 
     beforeEach(() => {
       m = new MetaPopulation(data) as Meta;
-      database = new Database(m);
+      database = new MemoryDatabase(m);
       extend(database);
     });
 

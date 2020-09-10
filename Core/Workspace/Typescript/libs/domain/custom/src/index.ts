@@ -1,3 +1,3 @@
-import { Database } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 export function extend(database: Database) {}

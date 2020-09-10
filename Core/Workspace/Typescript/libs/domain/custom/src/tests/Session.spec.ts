@@ -1,6 +1,7 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Session, Database } from '@allors/domain/system';
 import { PushResponse, ResponseType } from '@allors/protocol/system';
+import { Session, Database } from '@allors/workspace/system';
+import { MemoryDatabase } from '@allors/workspace/memory';
 
 import { data, Meta } from '@allors/meta/generated';
 import { Organisation, Person} from '@allors/domain/generated';
@@ -18,7 +19,7 @@ describe('Session', () => {
 
   beforeEach(() => {
     m = new MetaPopulation(data) as Meta;
-    database = new Database(m);
+    database = new MemoryDatabase(m);
     extend(database);
 
     database.sync(syncResponse(m));
@@ -29,7 +30,7 @@ describe('Session', () => {
     let session: Session;
 
     beforeEach(() => {
-      session = new Session(database);
+      session = database.createSession();
     });
 
     it('should throw exception for existing object', () => {
@@ -130,7 +131,7 @@ describe('Session', () => {
     let session: Session;
 
     beforeEach(() => {
-      session = new Session(database);
+      session = database.createSession();
     });
 
     it('should get unit roles', () => {
@@ -219,8 +220,8 @@ describe('Session', () => {
       let icme2: Organisation;
 
       beforeEach(() => {
-        session1 = new Session(database);
-        session2 = new Session(database);
+        session1 = database.createSession();
+        session2 = database.createSession();
 
         koen1 = session1.get('1') as Person;
         patrick1 = session1.get('2') as Person;

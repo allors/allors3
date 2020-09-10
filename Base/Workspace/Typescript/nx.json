@@ -25,9 +25,6 @@
     "data-system": {
       "tags": []
     },
-    "domain-system": {
-      "tags": []
-    },
     "domain-generated": {
       "tags": []
     },
@@ -47,6 +44,12 @@
       "tags": []
     },
     "protocol-system": {
+      "tags": []
+    },
+    "workspace-system": {
+      "tags": []
+    },
+    "workspace-memory": {
       "tags": []
     }
   }

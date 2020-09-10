@@ -1,7 +1,8 @@
 import { Meta, data } from '@allors/meta/generated';
-import { Session, Workspace } from '@allors/domain/system';
 import { MetaPopulation } from '@allors/meta/system';
 import { Person } from '@allors/domain/generated';
+import { Session, Database } from '@allors/workspace/system';
+import { MemoryDatabase } from '@allors/workspace/memory';
 
 import { extend } from '../src';
 
@@ -11,10 +12,10 @@ describe('Person', () => {
 
   beforeEach(() => {
     m = new MetaPopulation(data) as Meta;
-    const workspace = new Workspace(m);
+    const workspace: Database = new MemoryDatabase(m);
     extend(workspace);
 
-    session = new Session(workspace);
+    session = workspace.createSession();
   });
 
   describe('displayName', () => {
