@@ -2,5 +2,6 @@
     "search.useIgnoreFiles": false,
     "search.exclude": {
         "**/*.g.ts": true
-    }
+    },
+    "god.tsconfig": "./tsconfig.base.json"
 }

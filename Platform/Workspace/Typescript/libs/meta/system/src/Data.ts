@@ -15,6 +15,7 @@ export interface ObjectTypeData {
 
 export interface RelationTypeData {
   id: string;
+  origin: 'Database' | 'Workspace' | 'Session';
   associationType: AssociationTypeData;
   roleType: RoleTypeData;
   concreteRoleTypes?: ConcreteRoleTypeData[];

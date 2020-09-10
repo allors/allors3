@@ -24,7 +24,7 @@ export abstract class MemorySessionObject implements SessionObject {
   newId?: string;
   private changedRoleByRoleType?: Map<RoleType, any>;
   private roleByRoleType?: Map<RoleType, any>;
-  public workspaceObject?: DatabaseObject;
+  public databaseObject?: DatabaseObject;
 
   get isNew(): boolean {
     return this.newId ? true : false;
@@ -39,11 +39,11 @@ export abstract class MemorySessionObject implements SessionObject {
   }
 
   get id(): string {
-    return this.workspaceObject ? this.workspaceObject.id : this.newId!;
+    return this.databaseObject ? this.databaseObject.id : this.newId!;
   }
 
   get version(): string | undefined {
-    return this.workspaceObject?.version;
+    return this.databaseObject?.version;
   }
 
   public canRead(roleType: RoleType): boolean | undefined {
@@ -65,9 +65,9 @@ export abstract class MemorySessionObject implements SessionObject {
 
     if (this.newId) {
       return true;
-    } else if (this.workspaceObject) {
-      const permission = this.session.workspace.permission(this.objectType, operandType, operation);
-      return permission ? this.workspaceObject.isPermitted(permission) : false;
+    } else if (this.databaseObject) {
+      const permission = this.session.database.permission(this.objectType, operandType, operation);
+      return permission ? this.databaseObject.isPermitted(permission) : false;
     }
 
     return false;
@@ -90,17 +90,17 @@ export abstract class MemorySessionObject implements SessionObject {
     if (value === undefined) {
       if (this.newId === undefined) {
         if (roleType.objectType.isUnit) {
-          value = this.workspaceObject?.roleByRoleTypeId.get(roleType.id);
+          value = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
           if (value === undefined) {
             value = null;
           }
         } else {
           try {
             if (roleType.isOne) {
-              const role: string = this.workspaceObject?.roleByRoleTypeId.get(roleType.id);
+              const role: string = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
               value = role ? this.session.get(role) : null;
             } else {
-              const roles: string[] = this.workspaceObject?.roleByRoleTypeId.get(roleType.id);
+              const roles: string[] = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
               value = roles
                 ? roles.map((role) => {
                     return this.session.get(role);
@@ -143,16 +143,16 @@ export abstract class MemorySessionObject implements SessionObject {
     if (value === undefined) {
       if (this.newId === undefined) {
         if (roleType.objectType.isUnit) {
-          value = this.workspaceObject?.roleByRoleTypeId.get(roleType.id);
+          value = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
           if (value === undefined) {
             value = null;
           }
         } else {
           if (roleType.isOne) {
-            const role: string = this.workspaceObject?.roleByRoleTypeId.get(roleType.id);
+            const role: string = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
             value = role ? this.session.getForAssociation(role) : null;
           } else {
-            const roles: string[] = this.workspaceObject?.roleByRoleTypeId.get(roleType.id);
+            const roles: string[] = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
             value = roles
               ? roles.map((role) => {
                   return this.session.getForAssociation(role);
@@ -294,7 +294,7 @@ export abstract class MemorySessionObject implements SessionObject {
       delete this.objectType;
       delete this.roleByRoleType;
     } else {
-      this.workspaceObject = this.workspaceObject?.workspace.get(this.id) ?? undefined;
+      this.databaseObject = this.databaseObject?.database.get(this.id) ?? undefined;
       this.roleByRoleType = new Map();
     }
 
@@ -351,7 +351,7 @@ export abstract class MemorySessionObject implements SessionObject {
             if (this.newId) {
               saveRole.a = roleIds;
             } else {
-              const originalRoleIds = this.workspaceObject?.roleByRoleTypeId.get(roleType.id) as string[];
+              const originalRoleIds = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string[];
               if (!originalRoleIds) {
                 saveRole.a = roleIds;
               } else {

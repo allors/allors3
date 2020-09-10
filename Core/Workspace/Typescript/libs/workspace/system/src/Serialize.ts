@@ -1,5 +1,5 @@
 ﻿import { UnitTypes, CompositeTypes, ParameterTypes, isSessionObject } from './Types';
-import { SessionObject } from './SessionObject';
+import { SessionObject } from './Session/SessionObject';
 
 export function serializeAllDefined(role: UnitTypes | CompositeTypes): string {
   if (typeof role === 'string') {

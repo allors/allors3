@@ -2,10 +2,10 @@ import { ObjectType } from '@allors/meta/system';
 import { PushRequest, PushResponse } from '@allors/protocol/system';
 
 import { SessionObject } from './SessionObject';
-import { Database } from './Database';
+import { Database } from '../Database/Database';
 
 export interface Session {
-  readonly workspace: Database;
+  readonly database: Database;
 
   readonly hasChanges: boolean;
 

@@ -1,8 +1,10 @@
-import { serializeAllDefined } from './Serialize';
-export { Database } from './Database';
-export { DatabaseObject } from './DatabaseObject';
-export { Object, SessionObject } from './SessionObject';
-export { Session } from './Session';
+export { Composite } from './Composite'
+
+export { Database } from './Database/Database';
+export { DatabaseObject } from './Database/DatabaseObject';
+
+export { Session } from './Session/Session';
+export { SessionObject } from './Session/SessionObject';
 
 export { Method } from './Method';
 export { Permission } from './Permission';
