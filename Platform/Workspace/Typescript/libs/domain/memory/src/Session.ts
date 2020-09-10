@@ -15,7 +15,7 @@ export class MemorySession implements Session {
 
   private sessionObjectByIdByClass: Map<ObjectType, Map<string, MemorySessionObject>>;
 
-  constructor(public workspace: MemoryDatabase) {
+  constructor(public database: MemoryDatabase) {
     this.hasChanges = false;
 
     this.existingSessionObjectById = new Map();
@@ -34,9 +34,9 @@ export class MemorySession implements Session {
       sessionObject = this.newSessionObjectById.get(id);
 
       if (sessionObject === undefined) {
-        const workspaceObject = this.workspace.get(id);
-        if (workspaceObject) {
-          sessionObject = this.instantiate(workspaceObject);
+        const databaseObject = this.database.get(id);
+        if (databaseObject) {
+          sessionObject = this.instantiate(databaseObject);
         }
       }
     }
@@ -54,10 +54,10 @@ export class MemorySession implements Session {
       sessionObject = this.newSessionObjectById.get(id);
 
       if (!sessionObject) {
-        const workspaceObject = this.workspace.getForAssociation(id);
+        const databaseObject = this.database.getForAssociation(id);
 
-        if (workspaceObject) {
-          sessionObject = this.instantiate(workspaceObject);
+        if (databaseObject) {
+          sessionObject = this.instantiate(databaseObject);
         }
       }
     }
@@ -66,13 +66,13 @@ export class MemorySession implements Session {
   }
 
   public create(objectType: ObjectType | string): SessionObject {
-    const resolvedObjectType = typeof objectType === 'string' ? this.workspace.metaPopulation.objectTypeByName.get(objectType) : objectType;
+    const resolvedObjectType = typeof objectType === 'string' ? this.database.metaPopulation.objectTypeByName.get(objectType) : objectType;
 
     if (!resolvedObjectType) {
       throw new Error(`Could not find class for ${objectType}`);
     }
 
-    const constructor = this.workspace.constructorByObjectType.get(resolvedObjectType) as any;
+    const constructor = this.database.constructorByObjectType.get(resolvedObjectType) as any;
     if (!constructor) {
       throw new Error(`Could not get constructor for ${resolvedObjectType.name}`);
     }
@@ -148,7 +148,7 @@ export class MemorySession implements Session {
         const sessionObject = this.newSessionObjectById.get(newId);
         if (sessionObject) {
           delete sessionObject.newId;
-          sessionObject.workspaceObject = this.workspace.new(id, sessionObject.objectType);
+          sessionObject.databaseObject = this.database.new(id, sessionObject.objectType);
 
           this.newSessionObjectById.delete(newId);
           this.existingSessionObjectById.set(id, sessionObject);
@@ -200,23 +200,23 @@ export class MemorySession implements Session {
     }
 
     associationClasses.forEach((associationClass) => {
-      const workspaceObjects = this.workspace.workspaceObjectsByClass.get(associationClass);
-      if (workspaceObjects) {
-        for (const workspaceObject of workspaceObjects) {
-          if (!associationIds.has(workspaceObject.id)) {
-            const permission = this.workspace.permission(workspaceObject.objectType, roleType, Operations.Read);
-            if (permission && workspaceObject.isPermitted(permission)) {
+      const databaseObjects = this.database.databaseObjectsByClass.get(associationClass);
+      if (databaseObjects) {
+        for (const databaseObject of databaseObjects) {
+          if (!associationIds.has(databaseObject.id)) {
+            const permission = this.database.permission(databaseObject.objectType, roleType, Operations.Read);
+            if (permission && databaseObject.isPermitted(permission)) {
               if (roleType.isOne) {
-                const role: string = workspaceObject.roleByRoleTypeId.get(roleType.id);
+                const role: string = databaseObject.roleByRoleTypeId.get(roleType.id);
                 if (object.id === role) {
-                  associations.push(this.get(workspaceObject.id) as SessionObject);
+                  associations.push(this.get(databaseObject.id) as SessionObject);
                   break;
                 }
               } else {
-                const roles: string[] = workspaceObject.roleByRoleTypeId.get(roleType.id);
-                if (roles && roles.indexOf(workspaceObject.id) > -1) {
-                  associationIds.add(workspaceObject.id);
-                  associations.push(this.get(workspaceObject.id) as SessionObject);
+                const roles: string[] = databaseObject.roleByRoleTypeId.get(roleType.id);
+                if (roles && roles.indexOf(databaseObject.id) > -1) {
+                  associationIds.add(databaseObject.id);
+                  associations.push(this.get(databaseObject.id) as SessionObject);
                 }
               }
             }
@@ -228,16 +228,16 @@ export class MemorySession implements Session {
     return associations;
   }
 
-  private instantiate(workspaceObject: DatabaseObject): MemorySessionObject {
-    const constructor = this.workspace.constructorByObjectType.get(workspaceObject.objectType) as any;
+  private instantiate(databaseObject: DatabaseObject): MemorySessionObject {
+    const constructor = this.database.constructorByObjectType.get(databaseObject.objectType) as any;
     if (!constructor) {
-      throw new Error(`Could not get constructor for ${workspaceObject.objectType.name}`);
+      throw new Error(`Could not get constructor for ${databaseObject.objectType.name}`);
     }
 
-    const sessionObject = new constructor();
+    const sessionObject: MemorySessionObject = new constructor();
     sessionObject.session = this;
-    sessionObject.workspaceObject = workspaceObject;
-    sessionObject.objectType = workspaceObject.objectType;
+    sessionObject.databaseObject = databaseObject;
+    sessionObject.objectType = databaseObject.objectType;
 
     this.existingSessionObjectById.set(sessionObject.id, sessionObject);
     this.addByObjectTypeId(sessionObject);
@@ -246,10 +246,10 @@ export class MemorySession implements Session {
   }
 
   private getAll(objectType: ObjectType): void {
-    const workspaceObjects = this.workspace.workspaceObjectsByClass.get(objectType);
-    if (workspaceObjects) {
-      for (const workspaceObject of workspaceObjects) {
-        this.get(workspaceObject.id);
+    const databaseObjects = this.database.databaseObjectsByClass.get(objectType);
+    if (databaseObjects) {
+      for (const databaseObject of databaseObjects) {
+        this.get(databaseObject.id);
       }
     }
   }

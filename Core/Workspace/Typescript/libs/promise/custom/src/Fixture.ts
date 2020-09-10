@@ -4,7 +4,7 @@ import { Database } from '@allors/domain/system';
 import { MemoryDatabase } from '@allors/domain/memory';
 
 import '@allors/meta/core';
-import { extend as extendDomain } from '@allors/domain/custom';
+import { extend as extendDomain } from '@allors/session/custom';
 
 import { Context, AxiosHttp, Client } from '@allors/promise/core';
 

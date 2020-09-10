@@ -27,7 +27,10 @@
       "@allors/session/generated": ["libs/session/generated/src/index.ts"],
       "@allors/session/custom": ["libs/session/custom/src/index.ts"],
       "@allors/domain/system": ["libs/domain/system/src/index.ts"],
-      "@allors/domain/memory": ["libs/domain/memory/src/index.ts"]
+      "@allors/domain/memory": ["libs/domain/memory/src/index.ts"],
+      "@allors/workspace/generated": ["libs/workspace/generated/src/index.ts"],
+      "@allors/workspace/custom": ["libs/workspace/custom/src/index.ts"],
+      "@allors/database/custom": ["libs/database/custom/src/index.ts"]
     },
     "preserveSymlinks": true,
     "resolveJsonModule": true

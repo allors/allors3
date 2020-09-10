@@ -5,7 +5,7 @@ import { Person } from '@allors/session/generated';
 
 import { data, Meta } from '@allors/meta/generated';
 
-import { extend } from '../index';
+import { extend } from './index';
 
 describe('Person', () => {
   let session: Session;

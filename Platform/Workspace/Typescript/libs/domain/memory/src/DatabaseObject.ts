@@ -20,15 +20,15 @@ export class MemoryDatabaseObject implements DatabaseObject {
   private cachedDeniedPermissions: Set<Permission | undefined> | undefined;
 
   constructor(
-    workspace: MemoryDatabase,
+    database: MemoryDatabase,
     metaPopulation: MetaPopulation,
     syncResponseObject: SyncResponseObject,
     sortedAccessControlIdsDecompress: (compressed: string) => string,
     sortedDeniedPermissionIdsDecompress: (compressed: string) => string
   );
-  constructor(workspace: MemoryDatabase, objectType: ObjectType, id: string);
+  constructor(databse: MemoryDatabase, objectType: ObjectType, id: string);
   constructor(
-    public workspace: MemoryDatabase,
+    public database: MemoryDatabase,
     objectTypeOrMetaPopulation: ObjectType | MetaPopulation,
     idOrSyncResponseObject: string | SyncResponseObject,
     sortedAccessControlIdsDecompress?: (compressed: string) => string,
@@ -89,7 +89,7 @@ export class MemoryDatabaseObject implements DatabaseObject {
       if (this.sortedAccessControlIds) {
         this.cachedAccessControls = this.sortedAccessControlIds
           .split(Compressor.itemSeparator)
-          .map((v) => this.workspace.accessControlById.get(v));
+          .map((v) => this.database.accessControlById.get(v));
       } else {
         delete this.sortedAccessControlIds;
       }
@@ -106,7 +106,7 @@ export class MemoryDatabaseObject implements DatabaseObject {
           // @ts-ignore
           .forEach((v) =>
             this.cachedDeniedPermissions.add(
-              this.workspace.permissionById.get(v)
+              this.database.permissionById.get(v)
             )
           );
       } else {

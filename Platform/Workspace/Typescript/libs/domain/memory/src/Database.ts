@@ -17,8 +17,8 @@ import { MemorySession } from './Session';
 export class MemoryDatabase implements Database {
   constructorByObjectType: Map<ObjectType, typeof MemorySessionObject>;
 
-  readonly workspaceObjectById: Map<string, MemoryDatabaseObject>;
-  readonly workspaceObjectsByClass: Map<ObjectType, Set<MemoryDatabaseObject>>;
+  readonly databaseObjectById: Map<string, MemoryDatabaseObject>;
+  readonly databaseObjectsByClass: Map<ObjectType, Set<MemoryDatabaseObject>>;
 
   readonly accessControlById: Map<string, AccessControl>;
   readonly permissionById: Map<string, Permission>;
@@ -30,10 +30,10 @@ export class MemoryDatabase implements Database {
   constructor(public metaPopulation: MetaPopulation) {
     this.constructorByObjectType = new Map();
 
-    this.workspaceObjectById = new Map();
-    this.workspaceObjectsByClass = new Map();
+    this.databaseObjectById = new Map();
+    this.databaseObjectsByClass = new Map();
     for (const objectType of metaPopulation.classes) {
-      this.workspaceObjectsByClass.set(objectType, new Set());
+      this.databaseObjectsByClass.set(objectType, new Set());
     }
 
     this.accessControlById = new Map();
@@ -134,16 +134,16 @@ export class MemoryDatabase implements Database {
   }
 
   get(id: string): DatabaseObject | undefined {
-    const workspaceObject = this.workspaceObjectById.get(id);
-    if (workspaceObject === undefined) {
+    const databaseObject = this.databaseObjectById.get(id);
+    if (databaseObject === undefined) {
       throw new Error(`Object with id ${id} is not present.`);
     }
 
-    return workspaceObject ?? null;
+    return databaseObject ?? null;
   }
 
   getForAssociation(id: string): DatabaseObject | undefined {
-    return this.workspaceObjectById.get(id);
+    return this.databaseObjectById.get(id);
   }
 
   diff(response: PullResponse): SyncRequest {
@@ -151,13 +151,13 @@ export class MemoryDatabase implements Database {
       objects: (response.objects ?? [])
         .filter((syncRequestObject) => {
           const [id, version, sortedAccessControlIds, sortedDeniedPermissionIds] = syncRequestObject;
-          const workspaceObject = this.workspaceObjectById.get(id);
+          const databaseObject = this.databaseObjectById.get(id);
 
           const sync =
-            workspaceObject == null ||
-            workspaceObject.version !== version ||
-            workspaceObject.sortedAccessControlIds !== sortedAccessControlIds ||
-            workspaceObject.sortedDeniedPermissionIds !== sortedDeniedPermissionIds;
+            databaseObject == null ||
+            databaseObject.version !== version ||
+            databaseObject.sortedAccessControlIds !== sortedAccessControlIds ||
+            databaseObject.sortedDeniedPermissionIds !== sortedDeniedPermissionIds;
 
           return sync;
         })
@@ -199,7 +199,7 @@ export class MemoryDatabase implements Database {
 
     if (syncResponse.objects) {
       syncResponse.objects.forEach((v) => {
-        const workspaceObject = new MemoryDatabaseObject(
+        const databaseObject = new MemoryDatabaseObject(
           this,
           this.metaPopulation,
           v,
@@ -207,7 +207,7 @@ export class MemoryDatabase implements Database {
           sortedDeniedPermissionIdsDecompress
         );
 
-        this.add(workspaceObject);
+        this.add(databaseObject);
       });
     }
 
@@ -296,9 +296,9 @@ export class MemoryDatabase implements Database {
   }
 
   new(id: string, objectType: ObjectType): DatabaseObject {
-    const workspaceObject = new MemoryDatabaseObject(this, objectType, id);
-    this.add(workspaceObject);
-    return workspaceObject;
+    const databaseObject = new MemoryDatabaseObject(this, objectType, id);
+    this.add(databaseObject);
+    return databaseObject;
   }
 
   permission(objectType: ObjectType, operandType: OperandType, operation: Operations): Permission | undefined {
@@ -312,8 +312,8 @@ export class MemoryDatabase implements Database {
     }
   }
 
-  private add(workspaceObject: MemoryDatabaseObject) {
-    this.workspaceObjectById.set(workspaceObject.id, workspaceObject);
-    this.workspaceObjectsByClass.get(workspaceObject.objectType)?.add(workspaceObject);
+  private add(databaseObject: MemoryDatabaseObject) {
+    this.databaseObjectById.set(databaseObject.id, databaseObject);
+    this.databaseObjectsByClass.get(databaseObject.objectType)?.add(databaseObject);
   }
 }

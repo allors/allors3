@@ -288,6 +288,78 @@
           }
         }
       }
+    },
+    "workspace-generated": {
+      "root": "libs/workspace/generated",
+      "sourceRoot": "libs/workspace/generated/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/workspace/generated/tsconfig.lib.json", "libs/workspace/generated/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**", "!libs/workspace/generated/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/generated/jest.config.js",
+            "tsConfig": "libs/workspace/generated/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-custom": {
+      "root": "libs/workspace/custom",
+      "sourceRoot": "libs/workspace/custom/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/workspace/custom/tsconfig.lib.json", "libs/workspace/custom/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**", "!libs/workspace/custom/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/custom/jest.config.js",
+            "tsConfig": "libs/workspace/custom/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "database-custom": {
+      "root": "libs/database/custom",
+      "sourceRoot": "libs/database/custom/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/database/custom/tsconfig.lib.json", "libs/database/custom/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**", "!libs/database/custom/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/database/custom/jest.config.js",
+            "tsConfig": "libs/database/custom/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

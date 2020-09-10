@@ -81,7 +81,7 @@ partial class Build
                 .SetWorkingDirectory(Paths.BaseWorkspaceTypescript));
         });
 
-    private Target BaseWorkspaceTypescriptDomain => _ => _
+    private Target BaseWorkspaceTypescriptSession => _ => _
          .DependsOn(BaseGenerate)
          .DependsOn(EnsureDirectories)
          .Executes(() =>
@@ -89,11 +89,11 @@ partial class Build
              NpmRun(s => s
                  .SetEnvironmentVariable("npm_config_loglevel", "error")
                  .SetWorkingDirectory(Paths.BaseWorkspaceTypescript)
-                 .SetCommand("domain:test"));
+                 .SetCommand("session:test"));
          });
 
     private Target BaseWorkspaceTypescriptTest => _ => _
-        .DependsOn(BaseWorkspaceTypescriptDomain);
+        .DependsOn(BaseWorkspaceTypescriptSession);
 
     Target BaseWorkspaceTest => _ => _
         .DependsOn(BaseWorkspaceTypescriptTest);

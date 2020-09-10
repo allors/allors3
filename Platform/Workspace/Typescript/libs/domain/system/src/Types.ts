@@ -1,4 +1,4 @@
-﻿import { SessionObject } from './SessionObject';
+﻿import { SessionObject } from './Session/SessionObject';
 
 export type UnitTypes = string | Date | boolean | number;
 export type CompositeTypes = SessionObject | string;

@@ -1,15 +1,12 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/system';
 
+import { Composite } from '../Composite';
+import { DatabaseObject } from '../Database/DatabaseObject';
+
 import { Session } from './Session';
-import { DatabaseObject } from './DatabaseObject';
 
-export interface Object {
-  readonly id: string;
-  readonly objectType: ObjectType;
-}
-
-export interface SessionObject extends Object {
+export interface SessionObject extends Composite {
   readonly id: string;
   readonly objectType: ObjectType;
   readonly newId?: string;
@@ -18,7 +15,7 @@ export interface SessionObject extends Object {
   readonly isNew: boolean;
 
   readonly session: Session;
-  readonly workspaceObject?: DatabaseObject;
+  readonly databaseObject?: DatabaseObject;
 
   readonly hasChanges: boolean;
 

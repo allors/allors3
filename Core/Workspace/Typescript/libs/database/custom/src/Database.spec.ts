@@ -6,7 +6,9 @@ import { MemoryDatabase } from '@allors/domain/memory';
 import { data, Meta } from '@allors/meta/generated';
 
 import { syncResponse, securityResponse, securityResponse2 } from './fixture';
-import { extend } from '../index';
+import { extend } from './index';
+
+import 'jest-extended';
 
 describe('Database',
   () => {

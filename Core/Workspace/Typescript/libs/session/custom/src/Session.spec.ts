@@ -9,7 +9,7 @@ import { Organisation, Person} from '@allors/session/generated';
 import { syncResponse, securityResponse } from './fixture';
 import { PushRequestInfo } from './helpers/PushRequestInfo';
 
-import { extend } from '../index'
+import { extend } from './index'
 
 import 'jest-extended';
 

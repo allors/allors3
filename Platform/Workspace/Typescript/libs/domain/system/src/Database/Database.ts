@@ -2,9 +2,9 @@ import { ObjectType, MetaPopulation, OperandType } from '@allors/meta/system';
 import { Operations, PullResponse, SyncRequest, SyncResponse, SecurityRequest, SecurityResponse } from '@allors/protocol/system';
 
 import { DatabaseObject } from './DatabaseObject';
-import { Session } from './Session';
-import { Permission } from './Permission';
-import { AccessControl } from './AccessControl';
+import { Session } from '../Session/Session';
+import { Permission } from '../Permission';
+import { AccessControl } from '../AccessControl';
 
 export interface Database {
   readonly metaPopulation: MetaPopulation;
