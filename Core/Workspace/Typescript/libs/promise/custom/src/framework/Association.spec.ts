@@ -2,7 +2,7 @@ import { Equals } from '@allors/data/system';
 
 import { Fixture } from '../Fixture';
 import { PullRequest } from '@allors/protocol/system';
-import { C2 } from '@allors/domain/generated';
+import { C2 } from '@allors/session/generated';
 
 describe('Association',
   () => {

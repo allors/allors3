@@ -4,9 +4,11 @@ import { RoleType, RoleTypeVirtual } from './RoleType';
 import { RelationTypeData } from './Data';
 import { ObjectType } from './ObjectType';
 
+type Origin = 'Database' | 'Workspace' | 'Session';
+
 export class RelationType {
   public id: string;
-  public origin: 'Database' | 'Workspace' | 'Session';
+  public origin: Origin;
   public associationType: AssociationType;
   public roleType: RoleType;
   public isDerived: boolean;
@@ -16,7 +18,7 @@ export class RelationType {
     relationTypeData: RelationTypeData
   ) {
     this.id = relationTypeData.id;
-    this.origin = relationTypeData.origin;
+    this.origin = relationTypeData.origin as Origin;
     this.associationType = new AssociationType(this, relationTypeData.associationType);
     this.roleType = new RoleType(this, relationTypeData.roleType);
     this.isDerived = relationTypeData.isDerived ?? false;

@@ -1,7 +1,7 @@
 import { MetaPopulation } from '@allors/meta/system';
 import { Database, Session } from '@allors/workspace/system';
 import { MemoryDatabase } from '@allors/workspace/memory';
-import { Person } from '@allors/domain/generated';
+import { Person } from '@allors/session/generated';
 
 import { data, Meta } from '@allors/meta/generated';
 

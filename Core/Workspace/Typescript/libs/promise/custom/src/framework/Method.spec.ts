@@ -1,4 +1,4 @@
-import { Organisation } from '@allors/domain/generated';
+import { Organisation } from '@allors/session/generated';
 
 import { Fixture } from '../Fixture';
 

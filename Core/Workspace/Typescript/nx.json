@@ -28,16 +28,10 @@
     "meta-generated": {
       "tags": []
     },
-    "domain-generated": {
-      "tags": []
-    },
     "meta-system": {
       "tags": []
     },
     "protocol-system": {
-      "tags": []
-    },
-    "domain-custom": {
       "tags": []
     },
     "meta-core": {
@@ -56,6 +50,12 @@
       "tags": []
     },
     "workspace-memory": {
+      "tags": []
+    },
+    "session-generated": {
+      "tags": []
+    },
+    "session-custom": {
       "tags": []
     }
   }

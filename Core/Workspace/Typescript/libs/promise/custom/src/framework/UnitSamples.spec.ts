@@ -1,4 +1,4 @@
-import { UnitSample } from '@allors/domain/generated';
+import { UnitSample } from '@allors/session/generated';
 
 import { Fixture } from '../Fixture';
 

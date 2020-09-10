@@ -1,6 +1,6 @@
 import { Pull, Extent } from '@allors/data/system';
 import { PullRequest } from '@allors/protocol/system';
-import { C1 } from '@allors/domain/generated';
+import { C1 } from '@allors/session/generated';
 
 import { Fixture } from '../Fixture';
 

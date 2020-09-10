@@ -4,7 +4,7 @@ import { Session, Database } from '@allors/workspace/system';
 import { MemoryDatabase } from '@allors/workspace/memory';
 
 import { data, Meta } from '@allors/meta/generated';
-import { Organisation, Person} from '@allors/domain/generated';
+import { Organisation, Person} from '@allors/session/generated';
 
 import { syncResponse, securityResponse } from './fixture';
 import { PushRequestInfo } from './helpers/PushRequestInfo';

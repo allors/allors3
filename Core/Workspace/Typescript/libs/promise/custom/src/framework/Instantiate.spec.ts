@@ -1,6 +1,6 @@
 import { Pull, Result, Fetch, Tree, Extent, Node } from '@allors/data/system';
 import { PullRequest } from '@allors/protocol/system';
-import { Person } from '@allors/domain/generated';
+import { Person } from '@allors/session/generated';
 
 import { Fixture } from '../Fixture';
 
