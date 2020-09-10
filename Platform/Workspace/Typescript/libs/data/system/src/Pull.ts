@@ -1,5 +1,5 @@
 import { ObjectType } from '@allors/meta/system';
-import { SessionObject, CompositeTypes, ParameterTypes, serializeObject } from '@allors/workspace/system';
+import { SessionObject, CompositeTypes, ParameterTypes, serializeObject } from '@allors/domain/system';
 
 import { IExtent } from './IExtent';
 import { Result } from './Result';

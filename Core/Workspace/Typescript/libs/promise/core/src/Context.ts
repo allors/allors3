@@ -1,4 +1,4 @@
-import { Database, Session, Method } from '@allors/workspace/system';
+import { Database, Session, Method } from '@allors/domain/system';
 import { Pull } from '@allors/data/system';
 import { PullRequest, PullResponse, SyncResponse, PushRequest, PushResponse, SyncRequest, PushRequestObject, InvokeResponse } from '@allors/protocol/system';
 

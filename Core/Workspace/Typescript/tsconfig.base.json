@@ -24,10 +24,10 @@
       "@allors/meta/custom": ["libs/meta/custom/src/index.ts"],
       "@allors/promise/core": ["libs/promise/core/src/index.ts"],
       "@allors/promise/custom": ["libs/promise/custom/src/index.ts"],
-      "@allors/workspace/system": ["libs/workspace/system/src/index.ts"],
-      "@allors/workspace/memory": ["libs/workspace/memory/src/index.ts"],
       "@allors/session/generated": ["libs/session/generated/src/index.ts"],
-      "@allors/session/custom": ["libs/session/custom/src/index.ts"]
+      "@allors/session/custom": ["libs/session/custom/src/index.ts"],
+      "@allors/domain/system": ["libs/domain/system/src/index.ts"],
+      "@allors/domain/memory": ["libs/domain/memory/src/index.ts"]
     },
     "preserveSymlinks": true,
     "resolveJsonModule": true

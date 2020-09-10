@@ -25,15 +25,6 @@
     "data-system": {
       "tags": []
     },
-    "domain-generated": {
-      "tags": []
-    },
-    "domain-base": {
-      "tags": []
-    },
-    "domain-custom": {
-      "tags": []
-    },
     "meta-system": {
       "tags": []
     },
@@ -46,10 +37,19 @@
     "protocol-system": {
       "tags": []
     },
-    "workspace-system": {
+    "session-generated": {
       "tags": []
     },
-    "workspace-memory": {
+    "session-base": {
+      "tags": []
+    },
+    "session-custom": {
+      "tags": []
+    },
+    "domain-memory": {
+      "tags": []
+    },
+    "domain-system": {
       "tags": []
     }
   }

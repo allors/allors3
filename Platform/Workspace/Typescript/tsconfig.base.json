@@ -20,8 +20,7 @@
       "@allors/domain/system": ["libs/domain/system/src/index.ts"],
       "@allors/meta/system": ["libs/meta/system/src/index.ts"],
       "@allors/protocol/system": ["libs/protocol/system/src/index.ts"],
-      "@allors/workspace/system": ["libs/workspace/system/src/index.ts"],
-      "@allors/workspace/memory": ["libs/workspace/memory/src/index.ts"]
+      "@allors/domain/memory": ["libs/domain/memory/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

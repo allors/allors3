@@ -1,7 +1,7 @@
 import { MetaPopulation } from '@allors/meta/system';
 import { ResponseType, PullResponse } from '@allors/protocol/system';
-import { Database } from '@allors/workspace/system';
-import { MemoryDatabase } from '@allors/workspace/memory';
+import { Database } from '@allors/domain/system';
+import { MemoryDatabase } from '@allors/domain/memory';
 
 import { data, Meta } from '@allors/meta/generated';
 

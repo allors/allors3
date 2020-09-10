@@ -1,4 +1,4 @@
-import { Session } from '@allors/workspace/system';
+import { Session } from '@allors/domain/system';
 import { PushResponse } from '@allors/protocol/system';
 
 export class Saved {

@@ -34,10 +34,7 @@
     "protocol-system": {
       "tags": []
     },
-    "workspace-system": {
-      "tags": []
-    },
-    "workspace-memory": {
+    "domain-memory": {
       "tags": []
     }
   }

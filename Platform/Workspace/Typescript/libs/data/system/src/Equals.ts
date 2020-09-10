@@ -1,5 +1,5 @@
 import { ObjectType, PropertyType } from '@allors/meta/system';
-import { SessionObject, CompositeTypes, UnitTypes, serialize} from '@allors/workspace/system';
+import { SessionObject, CompositeTypes, UnitTypes, serialize} from '@allors/domain/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
 

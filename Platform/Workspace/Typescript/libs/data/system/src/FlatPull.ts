@@ -1,4 +1,4 @@
-import { SessionObject, ParameterTypes } from '@allors/workspace/system';
+import { SessionObject, ParameterTypes } from '@allors/domain/system';
 
 import { IExtent } from './IExtent';
 import { Result } from './Result';
