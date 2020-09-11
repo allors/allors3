@@ -2,6 +2,7 @@ import { MetaPopulation } from '@allors/meta/system';
 import { Database } from '@allors/domain/system';
 
 import { data, FetchFactory, Meta } from '@allors/meta/generated';
+import { MemoryDatabase } from '@allors/domain/memory';
 
 describe('Fetch', () => {
   let m: Meta;
@@ -10,7 +11,7 @@ describe('Fetch', () => {
 
   beforeEach(async () => {
     m = new MetaPopulation(data) as Meta;
-    database = new Database(m);
+    database = new MemoryDatabase(m);
 
     factory = new FetchFactory(m);
   });

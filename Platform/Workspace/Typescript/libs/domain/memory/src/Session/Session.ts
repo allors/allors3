@@ -1,8 +1,9 @@
 import { ObjectType, AssociationType } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequest, PushResponse } from '@allors/protocol/system';
-import { Database, DatabaseObject, Session, SessionObject } from '@allors/domain/system';
+import { DatabaseObject, Session, SessionObject } from '@allors/domain/system';
 
-import { MemoryDatabase } from './Database';
+import { MemoryDatabase } from '../Database/Database';
+
 import { MemorySessionObject } from './SessionObject';
 
 export class MemorySession implements Session {
@@ -72,12 +73,12 @@ export class MemorySession implements Session {
       throw new Error(`Could not find class for ${objectType}`);
     }
 
-    const constructor = this.database.constructorByObjectType.get(resolvedObjectType) as any;
+    const constructor = this.database.sessionConstructorByObjectType.get(resolvedObjectType) as any;
     if (!constructor) {
       throw new Error(`Could not get constructor for ${resolvedObjectType.name}`);
     }
 
-    const newSessionObject = new constructor();
+    const newSessionObject: MemorySessionObject = new constructor();
     newSessionObject.session = this;
     newSessionObject.objectType = resolvedObjectType;
     newSessionObject.newId = (--MemorySession.idCounter).toString();
@@ -229,7 +230,7 @@ export class MemorySession implements Session {
   }
 
   private instantiate(databaseObject: DatabaseObject): MemorySessionObject {
-    const constructor = this.database.constructorByObjectType.get(databaseObject.objectType) as any;
+    const constructor = this.database.sessionConstructorByObjectType.get(databaseObject.objectType) as any;
     if (!constructor) {
       throw new Error(`Could not get constructor for ${databaseObject.objectType.name}`);
     }

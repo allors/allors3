@@ -3,7 +3,7 @@ import { MetaObject } from './MetaObject';
 import { MetaPopulation } from './MetaPopulation';
 import { MethodType } from './MethodType';
 import { RoleType } from './RoleType';
-
+import { Origin } from './Origin';
 import { unitIds } from './unitIds';
 
 export enum Kind {
@@ -33,6 +33,7 @@ export class ObjectType implements MetaObject {
   constructor(
     public metaPopulation: MetaPopulation,
     public id: string,
+    public origin: Origin,
     public name: string,
     public plural: string,
     public kind: Kind

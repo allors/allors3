@@ -2,7 +2,8 @@ import { ObjectType, MetaPopulation, RoleType } from '@allors/meta/system';
 import { Compressor, SyncResponseObject } from '@allors/protocol/system';
 import { DatabaseObject, Permission, AccessControl } from '@allors/domain/system';
 
-import { deserialize } from './SessionObject';
+import { deserialize } from '../Session/SessionObject';
+
 import { MemoryDatabase } from './Database';
 
 export class MemoryDatabaseObject implements DatabaseObject {

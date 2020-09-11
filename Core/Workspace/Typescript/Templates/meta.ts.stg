@@ -239,6 +239,7 @@ $meta.MethodTypes:{methodType|$methodType(methodType)$}; separator=",\n"$
 interface(interface) ::= <<
       {
         "id": "$interface.IdAsString$",
+        "origin": "$interface.Origin$",
         "name": "$interface.Name$",
         "plural": "$interface.PluralName$"$if(interface.Supertypes)$,
         "interfaceIds":
@@ -252,6 +253,7 @@ $endif$
 class(class) ::= <<
       {
         "id": "$class.IdAsString$",
+        "origin": "$class.Origin$",
         "name": "$class.Name$",
         "plural": "$class.PluralName$"$if(class.Supertypes)$,
         "interfaceIds":

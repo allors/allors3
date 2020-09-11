@@ -7,7 +7,7 @@ export { WorkspaceObject } from './Workspace/WorkspaceObject';
 export { Session } from './Session/Session';
 export { SessionObject } from './Session/SessionObject';
 
-export { Composite } from './Composite';
+export { DomainObject } from './DomainObject';
 export { Method } from './Method';
 export { Permission } from './Permission';
 export { AccessControl } from './AccessControl';

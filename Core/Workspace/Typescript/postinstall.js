@@ -12,7 +12,6 @@ function link(src, dst){
 }
 
 link ('../../../Platform/Workspace/Typescript/libs/data/system/src', 'libs/data/system');
-link ('../../../Platform/Workspace/Typescript/libs/domain/system/src', 'libs/domain/system');
 link ('../../../Platform/Workspace/Typescript/libs/meta/system/src', 'libs/meta/system');
 link ('../../../Platform/Workspace/Typescript/libs/protocol/system/src', 'libs/protocol/system');
 

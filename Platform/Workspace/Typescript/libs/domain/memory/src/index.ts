@@ -1,1 +1,1 @@
-export { MemoryDatabase } from './Database';
+export { MemoryDatabase } from './Database/Database';

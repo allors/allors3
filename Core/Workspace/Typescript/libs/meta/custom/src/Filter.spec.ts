@@ -2,6 +2,7 @@ import { MetaPopulation } from '@allors/meta/system';
 import { Database } from '@allors/domain/system';
 
 import { data, PullFactory, Meta } from '@allors/meta/generated';
+import { MemoryDatabase } from '@allors/domain/memory';
 
 describe('Filter',
     () => {
@@ -11,7 +12,7 @@ describe('Filter',
 
         beforeEach(async () => {
             m = new MetaPopulation(data) as Meta;
-            database = new Database(m);
+            database = new MemoryDatabase(m);
 
             factory = new PullFactory(m);
         });

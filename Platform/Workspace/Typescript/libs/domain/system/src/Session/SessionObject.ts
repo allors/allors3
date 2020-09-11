@@ -1,12 +1,12 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/system';
 
-import { Composite } from '../Composite';
+import { DomainObject } from '../DomainObject';
 import { DatabaseObject } from '../Database/DatabaseObject';
 
 import { Session } from './Session';
 
-export interface SessionObject extends Composite {
+export interface SessionObject extends DomainObject {
   readonly id: string;
   readonly objectType: ObjectType;
   readonly newId?: string;

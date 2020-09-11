@@ -48,12 +48,7 @@ namespace Allors.Meta
             }
         }
 
-        public Origins Origin
-        {
-            get;
-
-            set;
-        }
+        public Origins Origin { get; set; }
 
         public bool HasDatabaseOrigin => this.Origin == Origins.Database;
 

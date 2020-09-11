@@ -1,18 +1,16 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/system';
 
-import { Composite } from '../Composite';
+import { DomainObject } from '../DomainObject';
 import { DatabaseObject } from '../Database/DatabaseObject';
 
 import { Workspace } from './Workspace';
 
-export interface WorkspaceObject extends Composite {
+export interface WorkspaceObject extends DomainObject {
   readonly id: string;
   readonly objectType: ObjectType;
   readonly newId?: string;
   readonly version: string | undefined;
-
-  readonly isNew: boolean;
 
   readonly workspace: Workspace;
   readonly databaseObject?: DatabaseObject;

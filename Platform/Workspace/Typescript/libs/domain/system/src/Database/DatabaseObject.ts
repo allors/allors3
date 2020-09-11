@@ -1,11 +1,11 @@
 import { ObjectType } from '@allors/meta/system';
 
 import { Permission } from '../Permission';
-import { Composite } from '../Composite';
+import { DomainObject } from '../DomainObject';
 
 import { Database } from './Database';
 
-export interface DatabaseObject extends Composite {
+export interface DatabaseObject extends DomainObject {
   readonly database: Database;
   readonly objectType: ObjectType;
   readonly id: string;

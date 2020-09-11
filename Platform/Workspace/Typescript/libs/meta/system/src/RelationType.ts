@@ -3,8 +3,7 @@ import { AssociationType } from './AssociationType';
 import { RoleType, RoleTypeVirtual } from './RoleType';
 import { RelationTypeData } from './Data';
 import { ObjectType } from './ObjectType';
-
-type Origin = 'Database' | 'Workspace' | 'Session';
+import { Origin } from './Origin';
 
 export class RelationType {
   public id: string;

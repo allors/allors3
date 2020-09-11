@@ -8,14 +8,27 @@ import {
   SecurityRequest,
   SecurityResponse,
 } from '@allors/protocol/system';
-import { Permission, Database, DatabaseObject, SessionObject, Session, AccessControl } from '@allors/domain/system';
+import {
+  Permission,
+  Database,
+  DatabaseObject,
+  Workspace,
+  WorkspaceObject,
+  Session,
+  SessionObject,
+  AccessControl,
+} from '@allors/domain/system';
+
+import { MemoryWorkspace } from '../Workspace/Workspace';
+import { MemoryWorkspaceObject } from '../Workspace/WorkspaceObject';
+import { MemorySession } from '../Session/Session';
+import { MemorySessionObject } from '../Session/SessionObject';
 
 import { MemoryDatabaseObject } from './DatabaseObject';
-import { MemorySessionObject } from './SessionObject';
-import { MemorySession } from './Session';
 
 export class MemoryDatabase implements Database {
-  constructorByObjectType: Map<ObjectType, typeof MemorySessionObject>;
+  workspaceConstructorByObjectType: Map<ObjectType, typeof MemoryWorkspaceObject>;
+  sessionConstructorByObjectType: Map<ObjectType, typeof MemorySessionObject>;
 
   readonly databaseObjectById: Map<string, MemoryDatabaseObject>;
   readonly databaseObjectsByClass: Map<ObjectType, Set<MemoryDatabaseObject>>;
@@ -28,7 +41,8 @@ export class MemoryDatabase implements Database {
   private executePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
 
   constructor(public metaPopulation: MetaPopulation) {
-    this.constructorByObjectType = new Map();
+    this.workspaceConstructorByObjectType = new Map();
+    this.sessionConstructorByObjectType = new Map();
 
     this.databaseObjectById = new Map();
     this.databaseObjectsByClass = new Map();
@@ -49,6 +63,87 @@ export class MemoryDatabase implements Database {
       this.executePermissionByOperandTypeByClass.set(v, new Map());
     });
 
+    // Workspace
+    this.metaPopulation.classes.forEach((objectType) => {
+      const DynamicClass = (() => {
+        return function () {
+          const prototype1 = Object.getPrototypeOf(this);
+          const prototype2 = Object.getPrototypeOf(prototype1);
+          prototype2.init.call(this);
+        };
+      })();
+
+      DynamicClass.prototype = Object.create(MemoryWorkspaceObject.prototype);
+      DynamicClass.prototype.constructor = DynamicClass;
+      this.sessionConstructorByObjectType.set(objectType, DynamicClass as any);
+
+      const prototype = DynamicClass.prototype;
+      objectType.roleTypes.forEach((roleType) => {
+        Object.defineProperty(prototype, 'CanRead' + roleType.name, {
+          get(this: WorkspaceObject) {
+            return this.canRead(roleType);
+          },
+        });
+
+        if (roleType.relationType.isDerived) {
+          Object.defineProperty(prototype, roleType.name, {
+            get(this: WorkspaceObject) {
+              return this.get(roleType);
+            },
+          });
+        } else {
+          Object.defineProperty(prototype, 'CanWrite' + roleType.name, {
+            get(this: WorkspaceObject) {
+              return this.canWrite(roleType);
+            },
+          });
+
+          Object.defineProperty(prototype, roleType.name, {
+            get(this: WorkspaceObject) {
+              return this.get(roleType);
+            },
+
+            set(this: WorkspaceObject, value) {
+              this.set(roleType, value);
+            },
+          });
+
+          if (roleType.isMany) {
+            prototype['Add' + roleType.singular] = function (this: WorkspaceObject, value: WorkspaceObject) {
+              return this.add(roleType, value);
+            };
+
+            prototype['Remove' + roleType.singular] = function (this: WorkspaceObject, value: WorkspaceObject) {
+              return this.remove(roleType, value);
+            };
+          }
+        }
+      });
+
+      objectType.associationTypes.forEach((associationType) => {
+        Object.defineProperty(prototype, associationType.name, {
+          get(this: WorkspaceObject) {
+            return this.getAssociation(associationType);
+          },
+        });
+      });
+
+      objectType.methodTypes.forEach((methodType) => {
+        Object.defineProperty(prototype, 'CanExecute' + methodType.name, {
+          get(this: MemoryWorkspaceObject) {
+            return this.canExecute(methodType);
+          },
+        });
+
+        Object.defineProperty(prototype, methodType.name, {
+          get(this: MemoryWorkspaceObject) {
+            return this.method(methodType);
+          },
+        });
+      });
+    });
+
+    // Session
     this.metaPopulation.classes.forEach((objectType) => {
       const DynamicClass = (() => {
         return function () {
@@ -60,7 +155,7 @@ export class MemoryDatabase implements Database {
 
       DynamicClass.prototype = Object.create(MemorySessionObject.prototype);
       DynamicClass.prototype.constructor = DynamicClass;
-      this.constructorByObjectType.set(objectType, DynamicClass as any);
+      this.sessionConstructorByObjectType.set(objectType, DynamicClass as any);
 
       const prototype = DynamicClass.prototype;
       objectType.roleTypes.forEach((roleType) => {
@@ -129,7 +224,11 @@ export class MemoryDatabase implements Database {
     });
   }
 
-  createSession(): Session{
+  createWorkspace(): Workspace {
+    return new MemoryWorkspace(this);
+  }
+
+  createSession(): Session {
     return new MemorySession(this);
   }
 

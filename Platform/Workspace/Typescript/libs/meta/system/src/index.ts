@@ -8,6 +8,8 @@ export { AssociationType } from './AssociationType';
 export { RoleType } from './RoleType';
 export { MethodType } from './MethodType';
 
+export { Origin } from './Origin';
+
 export { assert } from './assert';
 export { humanize } from './humanize';
 

@@ -8,6 +8,7 @@ export interface MetaData {
 
 export interface ObjectTypeData {
   id: string;
+  origin: string;
   name: string;
   plural: string;
   interfaceIds?: string[];

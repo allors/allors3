@@ -7,6 +7,7 @@ interface Database {
     +constructorByObjectType
     +accessControlById
 }
+Database *-- DatabaseObject
 
 interface DatabaseObject {
     +id
@@ -14,27 +15,28 @@ interface DatabaseObject {
     +version
     +roleByRoleTypeId
 }
-DatabaseObject --> Database
 
 ' Workspace
 '---------
 interface Workspace {
 }
-Workspace o-- Database
+Workspace --> Database
+Workspace *-- WorkspaceObject
 
 interface WorkspaceObject {
     +id
     +objectType
+    +version
 }
-WorkspaceObject o-- Workspace
-WorkspaceObject o-- DatabaseObject
+WorkspaceObject --> DatabaseObject
 
 ' Session
 '---------
 interface Session {
     +hasChanges
 }
-Session o-- Database
+Session --> Workspace
+Session *-- SessionObject
 
 interface SessionObject {
     +id
@@ -44,8 +46,7 @@ interface SessionObject {
     +isNew
     +hasChanges
 }
-SessionObject o-- Session
-SessionObject o-- WorkspaceObject
-SessionObject o-- DatabaseObject
+SessionObject --> WorkspaceObject
+SessionObject --> DatabaseObject
 
 @enduml

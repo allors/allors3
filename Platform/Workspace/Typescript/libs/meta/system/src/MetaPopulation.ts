@@ -4,8 +4,8 @@ import { MetaObject } from './MetaObject';
 import { Kind, ObjectType } from './ObjectType';
 import { RelationType } from './RelationType';
 import { MethodType } from './MethodType';
-
 import { unitIdByTypeName } from './unitIdByTypeName';
+import { Origin } from './Origin';
 
 export class MetaPopulation {
   readonly metaObjectById: Map<string, MetaObject>;
@@ -27,19 +27,11 @@ export class MetaPopulation {
     this.objectTypes = [];
 
     // Units
-    this.units = [
-      'Binary',
-      'Boolean',
-      'DateTime',
-      'Decimal',
-      'Float',
-      'Integer',
-      'String',
-      'Unique',
-    ].map((unitName) => {
+    this.units = ['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((unitName) => {
       const objectType = new ObjectType(
         this,
         unitIdByTypeName[unitName],
+        Origin.Database,
         unitName,
         unitName === 'Binary' ? 'Binaries' : unitName + 's',
         Kind.unit
@@ -62,6 +54,7 @@ export class MetaPopulation {
         const objectType = new ObjectType(
           this,
           interfaceData.id,
+          interfaceData.origin as Origin,
           interfaceData.name,
           interfaceData.plural,
           Kind.interface
@@ -77,13 +70,7 @@ export class MetaPopulation {
     // Classes
     this.classes =
       dataClasses.map((classData) => {
-        const objectType = new ObjectType(
-          this,
-          classData.id,
-          classData.name,
-          classData.plural,
-          Kind.class
-        );
+        const objectType = new ObjectType(this, classData.id, classData.origin as Origin, classData.name, classData.plural, Kind.class);
 
         this.composites.push(objectType);
         this.objectTypes.push(objectType);
@@ -92,19 +79,13 @@ export class MetaPopulation {
         return objectType;
       }) ?? [];
 
-    const dataObjectTypes = ([] as ObjectTypeData[])
-      .concat(dataInterfaces)
-      .concat(dataClasses);
+    const dataObjectTypes = ([] as ObjectTypeData[]).concat(dataInterfaces).concat(dataClasses);
 
     // Create Type Hierarchy
     dataObjectTypes.forEach((dataObjectType) => {
-      const objectType = this.metaObjectById.get(
-        dataObjectType.id
-      ) as ObjectType;
+      const objectType = this.metaObjectById.get(dataObjectType.id) as ObjectType;
       objectType.interfaces = dataObjectType.interfaceIds
-        ? dataObjectType.interfaceIds.map(
-            (v) => this.metaObjectById.get(v) as ObjectType
-          )
+        ? dataObjectType.interfaceIds.map((v) => this.metaObjectById.get(v) as ObjectType)
         : [];
     });
 
@@ -136,9 +117,7 @@ export class MetaPopulation {
 
       methodType.objectType.methodTypes.push(methodType);
       if (methodType.objectType.isInterface) {
-        this.composites
-          .filter((v) => v.interfaces.indexOf(methodType.objectType) > -1)
-          .forEach((v) => v.methodTypes.push(methodType));
+        this.composites.filter((v) => v.interfaces.indexOf(methodType.objectType) > -1).forEach((v) => v.methodTypes.push(methodType));
       }
 
       this.metaObjectById.set(methodType.id, methodType);
@@ -151,77 +130,42 @@ export class MetaPopulation {
 
       this.metaObjectById.set(relationType.id, relationType);
       this.metaObjectById.set(relationType.roleType.id, relationType.roleType);
-      this.metaObjectById.set(
-        relationType.associationType.id,
-        relationType.associationType
-      );
+      this.metaObjectById.set(relationType.associationType.id, relationType.associationType);
 
       return relationType;
     });
 
     // Derive RoleType and AssociationType By Name
     this.composites.forEach((objectType) => {
-      objectType.roleTypes.forEach((v) =>
-        objectType.roleTypeByName.set(v.name, v)
-      );
-      objectType.associationTypes.forEach((v) =>
-        objectType.associationTypeByName.set(v.name, v)
-      );
-      objectType.methodTypes.forEach((v) =>
-        objectType.methodTypeByName.set(v.name, v)
-      );
+      objectType.roleTypes.forEach((v) => objectType.roleTypeByName.set(v.name, v));
+      objectType.associationTypes.forEach((v) => objectType.associationTypeByName.set(v.name, v));
+      objectType.methodTypes.forEach((v) => objectType.methodTypeByName.set(v.name, v));
 
       objectType.subtypes.forEach((subtype) => {
         subtype.roleTypes
-          .filter(
-            (subtypeRoleType) =>
-              !objectType.roleTypes.find((v) => v.id === subtypeRoleType.id)
-          )
-          .forEach((v) =>
-            objectType.roleTypeByName.set(`${subtype.name}_${v.name}`, v)
-          );
+          .filter((subtypeRoleType) => !objectType.roleTypes.find((v) => v.id === subtypeRoleType.id))
+          .forEach((v) => objectType.roleTypeByName.set(`${subtype.name}_${v.name}`, v));
 
         subtype.associationTypes
-          .filter(
-            (subtypeAssociationType) =>
-              !objectType.exclusiveAssociationTypes.find(
-                (v) => v === subtypeAssociationType
-              )
-          )
-          .forEach((v) =>
-            objectType.associationTypeByName.set(`${subtype.name}_${v.name}`, v)
-          );
+          .filter((subtypeAssociationType) => !objectType.exclusiveAssociationTypes.find((v) => v === subtypeAssociationType))
+          .forEach((v) => objectType.associationTypeByName.set(`${subtype.name}_${v.name}`, v));
       });
     });
 
     // Assign Own Properties
     this.composites.forEach((objectType) => {
       (this as any)[objectType.name] = objectType;
-      objectType.roleTypes.forEach(
-        (roleType) => ((objectType as any)[roleType.name] = roleType)
-      );
-      objectType.associationTypes.forEach(
-        (associationType) =>
-          ((objectType as any)[associationType.name] = associationType)
-      );
-      objectType.methodTypes.forEach(
-        (methodTypes) => ((objectType as any)[methodTypes.name] = methodTypes)
-      );
+      objectType.roleTypes.forEach((roleType) => ((objectType as any)[roleType.name] = roleType));
+      objectType.associationTypes.forEach((associationType) => ((objectType as any)[associationType.name] = associationType));
+      objectType.methodTypes.forEach((methodTypes) => ((objectType as any)[methodTypes.name] = methodTypes));
     });
 
     // Assign Properties from Interfaces
     this.composites.forEach((objectType) => {
       objectType.interfaces.forEach((v) => {
-        v.roleTypes.forEach(
-          (roleType) => ((objectType as any)[roleType.name] = roleType)
-        );
-        v.associationTypes.forEach(
-          (associationType) =>
-            ((objectType as any)[associationType.name] = associationType)
-        );
-        v.methodTypes.forEach(
-          (methodTypes) => ((objectType as any)[methodTypes.name] = methodTypes)
-        );
+        v.roleTypes.forEach((roleType) => ((objectType as any)[roleType.name] = roleType));
+        v.associationTypes.forEach((associationType) => ((objectType as any)[associationType.name] = associationType));
+        v.methodTypes.forEach((methodTypes) => ((objectType as any)[methodTypes.name] = methodTypes));
       });
     });
   }

@@ -100,6 +100,18 @@ partial class Build
                 .SetWorkingDirectory(Paths.CoreWorkspaceTypescript));
         });
 
+    Target CoreWorkspaceTypescriptMeta => _ => _
+        .DependsOn(CoreGenerate)
+        .DependsOn(EnsureDirectories)
+        .Executes(() =>
+        {
+            NpmRun(s => s
+                .SetEnvironmentVariable("npm_config_loglevel", "error")
+                .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
+                .SetCommand("meta:test"));
+        });
+
+
     Target CoreWorkspaceTypescriptDatabase => _ => _
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
@@ -171,6 +183,7 @@ partial class Build
         .DependsOn(CoreDatabaseTestServer);
 
     Target CoreWorkspaceTypescriptTest => _ => _
+        .DependsOn(CoreWorkspaceTypescriptMeta)
         .DependsOn(CoreWorkspaceTypescriptDatabase)
         .DependsOn(CoreWorkspaceTypescriptSession)
         .DependsOn(CoreWorkspaceTypescriptPromise);

@@ -8,7 +8,8 @@ import { AccessControl } from '../AccessControl';
 
 export interface Database {
   readonly metaPopulation: MetaPopulation;
-  readonly constructorByObjectType: Map<ObjectType, any>;
+  readonly workspaceConstructorByObjectType: Map<ObjectType, any>;
+  readonly sessionConstructorByObjectType: Map<ObjectType, any>;
   readonly accessControlById: Map<string, AccessControl>;
 
   createSession(): Session;

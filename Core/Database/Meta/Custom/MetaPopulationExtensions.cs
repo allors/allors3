@@ -10,9 +10,10 @@ namespace Allors.Meta
 
     public static partial class MetaPopulationExtensions
     {
-        public static Class WorkspaceClass(this MetaPopulation @this, Guid id, string singularName, string pluralName) =>
+        public static Class WorkspaceClass(this MetaPopulation @this, Guid id, Origins origin, string singularName, string pluralName) =>
             new Class(@this, id)
             {
+                Origin = origin,
                 SingularName = singularName,
                 PluralName = pluralName
             };
@@ -54,7 +55,7 @@ namespace Allors.Meta
 
         public static void SetupWorkspace(this MetaPopulation @this)
         {
-            var application = @this.WorkspaceClass(new Guid("D8FCFF7D-953F-4AC3-BCDC-6A6F9EDE3CC5"), "Application", "Applications");
+            var application = @this.WorkspaceClass(new Guid("D8FCFF7D-953F-4AC3-BCDC-6A6F9EDE3CC5"), Origins.Workspace, "Application", "Applications");
 
             var applicationUser = @this.WorkspaceRelationType(
                 Origins.Workspace,
@@ -62,10 +63,10 @@ namespace Allors.Meta
                 new Guid("97EE1C41-409C-4027-87EE-36C329673BB9"),
                 new Guid("FE134B92-AB96-4B5E-840F-D20D63605A25"),
                 application,
-                (ObjectType) @this.Find(M.User.Interface.Id),
+                (ObjectType)@this.Find(M.User.Interface.Id),
                 "LoggedInUser",
                 "LoggedInUsers",
-                Multiplicity.ManyToOne,
+                Multiplicity.OneToOne,
                 false,
                 false,
                 null
