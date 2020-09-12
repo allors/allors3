@@ -22,6 +22,9 @@ export class RelationType {
     this.roleType = new RoleType(this, relationTypeData.roleType);
     this.isDerived = relationTypeData.isDerived ?? false;
 
+    this.associationType.roleType = this.roleType;
+    this.roleType.associationType = this.associationType;
+
     if (relationTypeData.concreteRoleTypes) {
       relationTypeData.concreteRoleTypes.forEach((dataConcreteRoleType) => {
         const roleTypeOverride = new RoleTypeVirtual();

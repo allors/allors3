@@ -3,9 +3,11 @@ import { RelationType } from './RelationType';
 import { MetaPopulation } from './MetaPopulation';
 import { ObjectType } from './ObjectType';
 import { AssociationTypeData } from './Data';
+import { RoleType } from './RoleType';
 
 export class AssociationType implements PropertyType {
   metaPopulation: MetaPopulation;
+  roleType: RoleType;
 
   id: string;
   objectType: ObjectType;

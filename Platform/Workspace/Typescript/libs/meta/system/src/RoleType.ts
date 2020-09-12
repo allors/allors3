@@ -3,6 +3,7 @@ import { ObjectType } from './ObjectType';
 import { RelationType } from './RelationType';
 import { MetaPopulation } from './MetaPopulation';
 import { RoleTypeData } from './Data';
+import { AssociationType } from './AssociationType';
 
 export class RoleTypeVirtual {
   isRequired?: boolean;
@@ -10,6 +11,7 @@ export class RoleTypeVirtual {
 
 export class RoleType implements PropertyType {
   metaPopulation: MetaPopulation;
+  associationType: AssociationType;
 
   overridesByClass: Map<ObjectType, RoleTypeVirtual>;
 
