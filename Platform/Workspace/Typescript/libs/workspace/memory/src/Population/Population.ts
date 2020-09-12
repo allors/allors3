@@ -3,11 +3,11 @@ import { RoleType, ObjectType, AssociationType, MetaPopulation } from '@allors/m
 import { ChangeSet } from './ChangeSet';
 
 export class Population {
-  private readonly roleByAssociationByRoleType: Map<RoleType, Map<ObjectType, object>>;
-  private readonly associationByRoleByAssociationType: Map<AssociationType, Map<ObjectType, object>>;
+  private readonly roleByAssociationByRoleType: Map<RoleType, Map<string, any>>;
+  private readonly associationByRoleByAssociationType: Map<AssociationType, Map<string, any>>;
 
-  private changedRoleByAssociationByRoleType: Map<RoleType, Map<ObjectType, object>>;
-  private changedAssociationByRoleByAssociationType: Map<AssociationType, Map<ObjectType, object>>;
+  private changedRoleByAssociationByRoleType: Map<RoleType, Map<string, any>>;
+  private changedAssociationByRoleByAssociationType: Map<AssociationType, Map<string, any>>;
 
   private objects: string[];
 
@@ -70,74 +70,74 @@ export class Population {
     return this.roleByAssociation(roleType).get(association);
   }
 
-  setRole(association: string,  roleType: RoleType, role: any): void
-  {
-    // TODO: var normalizedRole = roleType.Normalize(role);
-    const normalizedRole = role;
+  // setRole(association: string,  roleType: RoleType, role: any): void
+  // {
+  //   // TODO: var normalizedRole = roleType.Normalize(role);
+  //   const normalizedRole = role;
     
-      if (roleType.isUnit)
-      {
-          // Role
-          this.changedRoleByAssociation(roleType).set(association, normalizedRole);
-      }
-      else
-      {
-          var associationType = roleType.associationType;
-          this.GetRole(association, roleType, out object previousRole);
-          if (roleType.IsOne)
-          {
-              var roleObject = (DynamicObject)normalizedRole;
-              this.GetAssociation(roleObject, associationType, out var previousAssociation);
+  //     if (roleType.isUnit)
+  //     {
+  //         // Role
+  //         this.changedRoleByAssociation(roleType).set(association, normalizedRole);
+  //     }
+  //     else
+  //     {
+  //         var associationType = roleType.associationType;
+  //         this.GetRole(association, roleType, out object previousRole);
+  //         if (roleType.IsOne)
+  //         {
+  //             var roleObject = (DynamicObject)normalizedRole;
+  //             this.GetAssociation(roleObject, associationType, out var previousAssociation);
 
-              // Role
-              var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-              changedRoleByAssociation[association] = roleObject;
+  //             // Role
+  //             var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+  //             changedRoleByAssociation[association] = roleObject;
 
-              // Association
-              var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-              if (associationType.IsOne)
-              {
-                  // One to One
-                  var previousAssociationObject = (DynamicObject)previousAssociation;
-                  if (previousAssociationObject != null)
-                  {
-                      changedRoleByAssociation[previousAssociationObject] = null;
-                  }
+  //             // Association
+  //             var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+  //             if (associationType.IsOne)
+  //             {
+  //                 // One to One
+  //                 var previousAssociationObject = (DynamicObject)previousAssociation;
+  //                 if (previousAssociationObject != null)
+  //                 {
+  //                     changedRoleByAssociation[previousAssociationObject] = null;
+  //                 }
 
-                  if (previousRole != null)
-                  {
-                      var previousRoleObject = (DynamicObject)previousRole;
-                      changedAssociationByRole[previousRoleObject] = null;
-                  }
+  //                 if (previousRole != null)
+  //                 {
+  //                     var previousRoleObject = (DynamicObject)previousRole;
+  //                     changedAssociationByRole[previousRoleObject] = null;
+  //                 }
 
-                  changedAssociationByRole[roleObject] = association;
-              }
-              else
-              {
-                  changedAssociationByRole[roleObject] = NullableArraySet.Remove(previousAssociation, roleObject);
-              }
-          }
-          else
-          {
-              var roles = ((IEnumerable<DynamicObject>)normalizedRole)?.ToArray() ?? Array.Empty<DynamicObject>();
-              var previousRoles = (DynamicObject[])previousRole ?? Array.Empty<DynamicObject>();
+  //                 changedAssociationByRole[roleObject] = association;
+  //             }
+  //             else
+  //             {
+  //                 changedAssociationByRole[roleObject] = NullableArraySet.Remove(previousAssociation, roleObject);
+  //             }
+  //         }
+  //         else
+  //         {
+  //             var roles = ((IEnumerable<DynamicObject>)normalizedRole)?.ToArray() ?? Array.Empty<DynamicObject>();
+  //             var previousRoles = (DynamicObject[])previousRole ?? Array.Empty<DynamicObject>();
 
-              // Use Diff (Add/Remove)
-              var addedRoles = roles.Except(previousRoles);
-              var removedRoles = previousRoles.Except(roles);
+  //             // Use Diff (Add/Remove)
+  //             var addedRoles = roles.Except(previousRoles);
+  //             var removedRoles = previousRoles.Except(roles);
 
-              foreach (var addedRole in addedRoles)
-              {
-                  this.AddRole(association, roleType, addedRole);
-              }
+  //             foreach (var addedRole in addedRoles)
+  //             {
+  //                 this.AddRole(association, roleType, addedRole);
+  //             }
 
-              foreach (var removeRole in removedRoles)
-              {
-                  this.RemoveRole(association, roleType, removeRole);
-              }
-          }
-      }
-  }
+  //             foreach (var removeRole in removedRoles)
+  //             {
+  //                 this.RemoveRole(association, roleType, removeRole);
+  //             }
+  //         }
+  //     }
+  // }
 
   private areSame(isOne: boolean, a: any, b: any): boolean {
     if (isOne) {
@@ -155,7 +155,7 @@ export class Population {
     }
   }
 
-  private associationByRole(asscociationType: AssociationType): Map<ObjectType, object> {
+  private associationByRole(asscociationType: AssociationType): Map<string, object> {
     let associationByRole = this.associationByRoleByAssociationType.get(asscociationType);
 
     if (associationByRole === undefined) {
@@ -166,7 +166,7 @@ export class Population {
     return associationByRole;
   }
 
-  private roleByAssociation(roleType: RoleType): Map<ObjectType, object> {
+  private roleByAssociation(roleType: RoleType): Map<any, object> {
     let roleByAssociation = this.roleByAssociationByRoleType.get(roleType);
 
     if (roleByAssociation === undefined) {
@@ -177,7 +177,7 @@ export class Population {
     return roleByAssociation;
   }
 
-  private changedAssociationByRole(associationType: AssociationType): Map<ObjectType, object> {
+  private changedAssociationByRole(associationType: AssociationType): Map<string, any> {
     let changedAssociationByRole = this.changedAssociationByRoleByAssociationType.get(associationType);
 
     if (changedAssociationByRole === undefined) {
@@ -188,11 +188,11 @@ export class Population {
     return changedAssociationByRole;
   }
 
-  private changedRoleByAssociation(roleType: RoleType): Map<ObjectType, object> {
+  private changedRoleByAssociation(roleType: RoleType): Map<string, any> {
     let changedRoleByAssociation = this.changedRoleByAssociationByRoleType.get(roleType);
 
     if (changedRoleByAssociation === undefined) {
-      changedRoleByAssociation = new Map<ObjectType, object>();
+      changedRoleByAssociation = new Map();
       this.changedRoleByAssociationByRoleType.set(roleType, changedRoleByAssociation);
     }
 

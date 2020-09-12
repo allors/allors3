@@ -22,16 +22,20 @@
     }
   },
   "projects": {
+    "react": {
+      "tags": []
+    },
+    "react-e2e": {
+      "tags": [],
+      "implicitDependencies": ["react"]
+    },
     "data-system": {
       "tags": []
     },
-    "meta-generated": {
+    "domain-custom": {
       "tags": []
     },
-    "meta-system": {
-      "tags": []
-    },
-    "protocol-system": {
+    "domain-generated": {
       "tags": []
     },
     "meta-core": {
@@ -40,22 +44,25 @@
     "meta-custom": {
       "tags": []
     },
+    "meta-generated": {
+      "tags": []
+    },
+    "meta-system": {
+      "tags": []
+    },
     "promise-core": {
       "tags": []
     },
     "promise-custom": {
       "tags": []
     },
-    "workspace-system": {
+    "protocol-system": {
       "tags": []
     },
     "workspace-memory": {
       "tags": []
     },
-    "domain-generated": {
-      "tags": []
-    },
-    "domain-custom": {
+    "workspace-system": {
       "tags": []
     }
   }

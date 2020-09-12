@@ -1,13 +1,13 @@
-import { RoleType, ObjectType, AssociationType, MetaPopulation } from '@allors/meta/system';
+import { RoleType, AssociationType, MetaPopulation } from '@allors/meta/system';
 
 export class ChangeSet {
-  readonly roleByAssociationByRoleType: Map<RoleType, Map<ObjectType, object>>;
-  readonly associationByRoleByRoleType: Map<AssociationType, Map<ObjectType, object>>;
+  readonly roleByAssociationByRoleType: Map<RoleType, Map<string, any>>;
+  readonly associationByRoleByRoleType: Map<AssociationType, Map<string, any>>;
 
   constructor(
     public readonly meta: MetaPopulation,
-    roleByAssociationByRoleType: Map<RoleType, Map<ObjectType, object>>,
-    associationByRoleByAssociationType: Map<AssociationType, Map<ObjectType, object>>
+    roleByAssociationByRoleType: Map<RoleType, Map<string, any>>,
+    associationByRoleByAssociationType: Map<AssociationType, Map<string, any>>
   ) {
     this.roleByAssociationByRoleType = roleByAssociationByRoleType;
     this.associationByRoleByRoleType = associationByRoleByAssociationType;
@@ -28,7 +28,7 @@ export class ChangeSet {
     );
   }
 
-  ChangedRoles(roleType: RoleType): Map<ObjectType, object> {
+  ChangedRoles(roleType: RoleType): Map<any, any> {
     const changedRelations = this.roleByAssociationByRoleType.get(roleType);
     return changedRelations;
   }
