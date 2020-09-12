@@ -108,7 +108,7 @@ partial class Build
             NpmRun(s => s
                 .SetEnvironmentVariable("npm_config_loglevel", "error")
                 .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                .SetCommand("meta:test"));
+                .SetCommand("test:meta"));
         });
 
 
@@ -120,7 +120,7 @@ partial class Build
             NpmRun(s => s
                 .SetEnvironmentVariable("npm_config_loglevel", "error")
                 .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                .SetCommand("domain:test"));
+                .SetCommand("test:domain"));
         });
 
     Target CoreWorkspaceTypescriptPromise => _ => _
@@ -141,7 +141,7 @@ partial class Build
                     NpmRun(s => s
                         .SetEnvironmentVariable("npm_config_loglevel", "error")
                         .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                        .SetCommand("promise:test"));
+                        .SetCommand("test:promise"));
                 }
             }
         });
