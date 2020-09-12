@@ -23,11 +23,6 @@ export class RoleType implements PropertyType {
 
   private virtual: RoleTypeVirtual;
 
-  isRequired(objectType: ObjectType): boolean {
-    const override = objectType ? this.overridesByClass.get(objectType) : null;
-    return override?.isRequired ?? this.virtual.isRequired ?? false;
-  }
-
   constructor(public relationType: RelationType, dataRoleType: RoleTypeData) {
     relationType.roleType = this;
     this.metaPopulation = relationType.metaPopulation;
@@ -37,9 +32,7 @@ export class RoleType implements PropertyType {
     this.virtual.isRequired = dataRoleType.isRequired;
 
     this.id = dataRoleType.id;
-    this.objectType = this.metaPopulation.metaObjectById.get(
-      dataRoleType.objectTypeId
-    ) as ObjectType;
+    this.objectType = this.metaPopulation.metaObjectById.get(dataRoleType.objectTypeId) as ObjectType;
     this.singular = dataRoleType.singular;
     this.plural = dataRoleType.plural;
     this.isOne = dataRoleType.isOne;
@@ -49,5 +42,10 @@ export class RoleType implements PropertyType {
 
   get isMany(): boolean {
     return !this.isOne;
+  }
+
+  isRequired(objectType: ObjectType): boolean {
+    const override = objectType ? this.overridesByClass.get(objectType) : null;
+    return override?.isRequired ?? this.virtual.isRequired ?? false;
   }
 }

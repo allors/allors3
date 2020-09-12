@@ -1,0 +1,19 @@
+@startuml overview
+
+' Database
+'---------
+class MemoryDatabase {
+}
+
+class DatabaseObject{
+}
+
+
+' Session
+'---------
+class MemorySession {
+}
+
+class MemorySessionObject {
+}
+@enduml

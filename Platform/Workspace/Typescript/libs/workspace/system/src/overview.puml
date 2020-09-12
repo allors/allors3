@@ -4,39 +4,36 @@
 '---------
 interface Database {
     +metaPopulation
-    +constructorByObjectType
     +accessControlById
+    +permission()
+    +diff()
+    +sync()
+    +security()
 }
-Database *-- DatabaseObject
+Database ..> Session : createSession()
+Database ..> DatabaseObject : get()
 
-interface DatabaseObject {
-    +id
+interface DatabaseObject{
     +objectType
+    +id
     +version
     +roleByRoleTypeId
+    +isPermitted()
 }
-
-' Workspace
-'---------
-interface Workspace {
-}
-Workspace --> Database
-Workspace *-- WorkspaceObject
-
-interface WorkspaceObject {
-    +id
-    +objectType
-    +version
-}
-WorkspaceObject --> DatabaseObject
+DatabaseObject --> Database
 
 ' Session
 '---------
 interface Session {
     +hasChanges
+    +delete()
+    +pushRequest()
+    +pushResponse()
+    +reset()
 }
-Session --> Workspace
-Session *-- SessionObject
+Session --> Database
+Session ..> SessionObject : get()
+Session ..> SessionObject : create()
 
 interface SessionObject {
     +id
@@ -45,8 +42,24 @@ interface SessionObject {
     +version
     +isNew
     +hasChanges
+    --
+    +canRead()
+    +canWrite()
+    +canExecute()
+    +isPermited()
+    ..
+    +get()
+    +set()
+    +add()
+    +remove()
+    ..
+    getAssociation()
+    ..
+    save()
+    saveNew()
+    reset()
 }
-SessionObject --> WorkspaceObject
+SessionObject --> Session
 SessionObject --> DatabaseObject
 
 @enduml

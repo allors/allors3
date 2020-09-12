@@ -12,8 +12,6 @@ import {
   Permission,
   Database,
   DatabaseObject,
-  Workspace,
-  WorkspaceObject,
   Session,
   SessionObject,
   AccessControl,

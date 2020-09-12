@@ -1,9 +1,6 @@
 export { Database } from './Database/Database';
 export { DatabaseObject } from './Database/DatabaseObject';
 
-export { Workspace } from './Workspace/Workspace';
-export { WorkspaceObject } from './Workspace/WorkspaceObject';
-
 export { Session } from './Session/Session';
 export { SessionObject } from './Session/SessionObject';
 
