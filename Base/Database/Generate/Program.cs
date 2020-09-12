@@ -41,7 +41,7 @@ namespace Allors
                 { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
                 { "../Core/Workspace/Typescript/Templates/meta.ts.stg", "Workspace/Typescript/libs/meta/generated/src" },
-                { "../Core/Workspace/Typescript/Templates/session.ts.stg", "Workspace/Typescript/libs/session/generated/src" },
+                { "../Core/Workspace/Typescript/Templates/domain.ts.stg", "Workspace/Typescript/libs/domain/generated/src" },
             };
 
             var metaPopulation = MetaPopulation.Instance;

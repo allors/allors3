@@ -1,4 +1,4 @@
-import { SessionObject, Session } from '@allors/domain/system';
+import { SessionObject, Session } from '@allors/workspace/system';
 import { PullResponse } from '@allors/protocol/system';
 import { assert } from '@allors/meta/system';
 

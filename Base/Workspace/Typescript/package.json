@@ -7,7 +7,7 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "test:all": "npm run session:test",
+    "test:all": "npm run domain:test",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e",
     "affected:apps": "nx affected:apps",
@@ -26,7 +26,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points && node ./postinstall.js",
-    "session:test": "npx nx test session-custom"
+    "domain:test": "npx nx test domain-custom --skipNxCache"
   },
   "private": true,
   "dependencies": {

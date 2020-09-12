@@ -15,5 +15,5 @@ link ('../../../Platform/Workspace/Typescript/libs/data/system/src', 'libs/data/
 link ('../../../Platform/Workspace/Typescript/libs/meta/system/src', 'libs/meta/system');
 link ('../../../Platform/Workspace/Typescript/libs/protocol/system/src', 'libs/protocol/system');
 
-link ('../../../Platform/Workspace/Typescript/libs/domain/system/src', 'libs/domain/system');
-link ('../../../Platform/Workspace/Typescript/libs/domain/memory/src', 'libs/domain/memory');
+link ('../../../Platform/Workspace/Typescript/libs/workspace/system/src', 'libs/workspace/system');
+link ('../../../Platform/Workspace/Typescript/libs/workspace/memory/src', 'libs/workspace/memory');

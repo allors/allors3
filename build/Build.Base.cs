@@ -89,7 +89,7 @@ partial class Build
              NpmRun(s => s
                  .SetEnvironmentVariable("npm_config_loglevel", "error")
                  .SetWorkingDirectory(Paths.BaseWorkspaceTypescript)
-                 .SetCommand("session:test"));
+                 .SetCommand("domain:test"));
          });
 
     private Target BaseWorkspaceTypescriptTest => _ => _

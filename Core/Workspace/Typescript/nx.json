@@ -46,25 +46,16 @@
     "promise-custom": {
       "tags": []
     },
-    "session-generated": {
+    "workspace-system": {
       "tags": []
     },
-    "session-custom": {
+    "workspace-memory": {
       "tags": []
     },
-    "domain-system": {
+    "domain-generated": {
       "tags": []
     },
-    "domain-memory": {
-      "tags": []
-    },
-    "workspace-generated": {
-      "tags": []
-    },
-    "workspace-custom": {
-      "tags": []
-    },
-    "database-custom": {
+    "domain-custom": {
       "tags": []
     }
   }

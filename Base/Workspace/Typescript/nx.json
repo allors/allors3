@@ -37,19 +37,19 @@
     "protocol-system": {
       "tags": []
     },
-    "session-generated": {
+    "workspace-system": {
       "tags": []
     },
-    "session-base": {
+    "workspace-memory": {
       "tags": []
     },
-    "session-custom": {
+    "domain-generated": {
       "tags": []
     },
-    "domain-memory": {
+    "domain-base": {
       "tags": []
     },
-    "domain-system": {
+    "domain-custom": {
       "tags": []
     }
   }

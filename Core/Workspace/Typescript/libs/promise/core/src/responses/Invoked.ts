@@ -1,4 +1,4 @@
-import { Session } from '@allors/domain/system';
+import { Session } from '@allors/workspace/system';
 import { InvokeResponse } from '@allors/protocol/system';
 
 export class Invoked {

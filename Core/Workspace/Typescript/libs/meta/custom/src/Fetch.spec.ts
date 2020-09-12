@@ -1,8 +1,8 @@
 import { MetaPopulation } from '@allors/meta/system';
-import { Database } from '@allors/domain/system';
+import { Database } from '@allors/workspace/system';
 
 import { data, FetchFactory, Meta } from '@allors/meta/generated';
-import { MemoryDatabase } from '@allors/domain/memory';
+import { MemoryDatabase } from '@allors/workspace/memory';
 
 describe('Fetch', () => {
   let m: Meta;

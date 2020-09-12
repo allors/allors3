@@ -7,7 +7,7 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "test:all": "npm run meta:test && npm run database:test && npm run session:test && npm run promise:test",
+    "test:all": "npm run meta:test && npm run domain:test && npm run promise:test",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e",
     "affected:apps": "nx affected:apps",
@@ -26,11 +26,10 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "node ./postinstall.js && ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
-    "meta:test": "npx nx test meta-custom",
-    "database:test": "npx nx test database-custom",
-    "session:test": "npx nx test session-custom",
-    "promise:test": "npx nx test promise-custom",
-    "compile": "npx tsc --noEmit --project ./tsconfig.base.json"
+    "typecheck": "npx tsc --noEmit --project ./tsconfig.base.json",
+    "meta:test": "npx nx test meta-custom --skipNxCache",
+    "domain:test": "npx nx test domain-custom --skipNxCache",
+    "promise:test": "npx nx test promise-custom --skipNxCache"
   },
   "private": true,
   "dependencies": {

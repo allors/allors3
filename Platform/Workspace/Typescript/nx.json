@@ -25,16 +25,16 @@
     "data-system": {
       "tags": []
     },
-    "domain-system": {
-      "tags": []
-    },
     "meta-system": {
       "tags": []
     },
     "protocol-system": {
       "tags": []
     },
-    "domain-memory": {
+    "workspace-memory": {
+      "tags": []
+    },
+    "workspace-system": {
       "tags": []
     }
   }

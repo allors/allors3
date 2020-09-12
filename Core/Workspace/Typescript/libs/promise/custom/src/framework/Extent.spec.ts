@@ -1,6 +1,6 @@
 import { Pull, Result, Fetch, Tree, And, Equals, Extent, Node } from '@allors/data/system';
 import { PullRequest } from '@allors/protocol/system';
-import { Organisation, User, Media, C1, Person } from '@allors/session/generated';
+import { Organisation, User, Media, C1, Person } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';
 

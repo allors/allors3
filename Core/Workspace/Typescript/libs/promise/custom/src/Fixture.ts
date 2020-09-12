@@ -1,10 +1,10 @@
 import { MetaPopulation } from '@allors/meta/system';
 import { Meta, PullFactory, TreeFactory, FetchFactory, data } from '@allors/meta/generated';
-import { Database } from '@allors/domain/system';
-import { MemoryDatabase } from '@allors/domain/memory';
+import { Database } from '@allors/workspace/system';
+import { MemoryDatabase } from '@allors/workspace/memory';
 
 import '@allors/meta/core';
-import { extend as extendDomain } from '@allors/session/custom';
+import { extend as extendDomain } from '@allors/domain/custom';
 
 import { Context, AxiosHttp, Client } from '@allors/promise/core';
 
