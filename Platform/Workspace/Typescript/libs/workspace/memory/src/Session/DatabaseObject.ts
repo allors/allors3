@@ -1,6 +1,6 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType, unitIds } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequestNewObject, PushRequestRole } from '@allors/protocol/system';
-import { DatabaseObject, SessionObject, UnitTypes, serialize, Method } from '@allors/workspace/system';
+import { Record, DatabaseObject, UnitTypes, serialize, Method } from '@allors/workspace/system';
 
 import { MemorySession } from './Session';
 
@@ -17,14 +17,14 @@ export function deserialize(value: string, objectType: ObjectType): UnitTypes {
   return value;
 }
 
-export abstract class MemorySessionObject implements SessionObject {
+export abstract class MemoryDatabaseObject implements DatabaseObject {
   objectType!: ObjectType;
   session: MemorySession
 
   newId?: string;
   private changedRoleByRoleType?: Map<RoleType, any>;
   private roleByRoleType?: Map<RoleType, any>;
-  public databaseObject?: DatabaseObject;
+  public databaseObject?: Record;
 
   get isNew(): boolean {
     return this.newId ? true : false;
@@ -97,10 +97,10 @@ export abstract class MemorySessionObject implements SessionObject {
         } else {
           try {
             if (roleType.isOne) {
-              const role: string = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
+              const role = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string;
               value = role ? this.session.get(role) : null;
             } else {
-              const roles: string[] = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
+              const roles = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string[];
               value = roles
                 ? roles.map((role) => {
                     return this.session.get(role);
@@ -149,10 +149,10 @@ export abstract class MemorySessionObject implements SessionObject {
           }
         } else {
           if (roleType.isOne) {
-            const role: string = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
+            const role = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string;
             value = role ? this.session.getForAssociation(role) : null;
           } else {
-            const roles: string[] = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
+            const roles = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string[];
             value = roles
               ? roles.map((role) => {
                   return this.session.getForAssociation(role);
@@ -205,7 +205,7 @@ export abstract class MemorySessionObject implements SessionObject {
     this.session.hasChanges = true;
   }
 
-  public add(roleType: RoleType, value: SessionObject) {
+  public add(roleType: RoleType, value: DatabaseObject) {
     if (value) {
       this.assertExists();
 
@@ -220,7 +220,7 @@ export abstract class MemorySessionObject implements SessionObject {
     }
   }
 
-  public remove(roleType: RoleType, value: SessionObject) {
+  public remove(roleType: RoleType, value: DatabaseObject) {
     if (value) {
       this.assertExists();
 
@@ -301,17 +301,17 @@ export abstract class MemorySessionObject implements SessionObject {
     delete this.changedRoleByRoleType;
   }
 
-  public onDelete(deleted: SessionObject) {
+  public onDelete(deleted: DatabaseObject) {
     if (this.changedRoleByRoleType !== undefined) {
       for (const [roleType, value] of this.changedRoleByRoleType) {
         if (!roleType.objectType.isUnit) {
           if (roleType.isOne) {
-            const role = value as SessionObject;
+            const role = value as DatabaseObject;
             if (role && role === deleted) {
               this.set(roleType, null);
             }
           } else {
-            const roles = value as SessionObject[];
+            const roles = value as DatabaseObject[];
             if (roles && roles.indexOf(deleted) > -1) {
               this.remove(roleType, deleted);
             }
@@ -347,7 +347,7 @@ export abstract class MemorySessionObject implements SessionObject {
           if (roleType.isOne) {
             saveRole.s = role ? role.id || role.newId : null;
           } else {
-            const roleIds = role.map((item: SessionObject) => item.id ?? item.newId);
+            const roleIds = role.map((item: DatabaseObject) => item.id ?? item.newId);
             if (this.newId) {
               saveRole.a = roleIds;
             } else {

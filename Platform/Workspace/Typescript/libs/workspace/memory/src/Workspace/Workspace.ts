@@ -1,6 +1,5 @@
 import { RoleType, AssociationType, MetaPopulation } from '@allors/meta/system';
 import { ChangeSet } from './ChangeSet';
-import { forEach } from '../combinators';
 
 import { Composite, Association, Role } from './Types';
 
@@ -28,12 +27,17 @@ function areSame(isOne: boolean, a: any, b: any): boolean {
   }
 }
 
-export class Relations {
+export class MemoryWorkspace {
+
+  private idCounter = 0;
+
   private readonly roleByAssociationByRoleType: Map<RoleType, Map<Composite, Role>>;
   private readonly associationByRoleByAssociationType: Map<AssociationType, Map<Composite, Association>>;
 
   private changedRoleByAssociationByRoleType: Map<RoleType, Map<Composite, Role>>;
   private changedAssociationByRoleByAssociationType: Map<AssociationType, Map<Composite, Association>>;
+
+  private objects: Composite[];
 
   constructor(private readonly meta: MetaPopulation) {
     this.roleByAssociationByRoleType = new Map();
@@ -41,9 +45,11 @@ export class Relations {
 
     this.changedRoleByAssociationByRoleType = new Map();
     this.changedAssociationByRoleByAssociationType = new Map();
+
+    this.objects = [];
   }
 
-  Snapshot(): ChangeSet {
+  snapshot(): ChangeSet {
     this.changedRoleByAssociationByRoleType.forEach((changedRoleByAssociation, roleType) => {
       const roleByAssociation = this.roleByAssociation(roleType);
 
@@ -79,6 +85,12 @@ export class Relations {
     this.changedAssociationByRoleByAssociationType = new Map();
 
     return snapshot;
+  }
+
+  create(): Composite {
+    const newId = `w${++this.idCounter}`;
+    this.objects.push(newId);
+    return newId;
   }
 
   getRole(association: Composite, roleType: RoleType): Role {
@@ -150,16 +162,16 @@ export class Relations {
         // Use Diff (Add/Remove)
         const addedRoles = role.filter((v) => !previousRole.includes(v));
         if (addedRoles?.length > 0) {
-          forEach(addedRoles, (v) => {
+          for (const v of addedRoles) {
             this.addRole(association, roleType, v);
-          });
+          }
         }
 
         const removedRoles = previousRole.filter((v) => !role.includes(v));
         if (removedRoles?.length > 0) {
-          forEach(removedRoles, (v) => {
+          for (const v of removedRoles) {
             this.removeRole(association, roleType, v);
-          });
+          }
         }
       }
     }
@@ -211,31 +223,37 @@ export class Relations {
     }
   }
 
-  removeRole(association: string, roleType: RoleType, role: string): void {
-    // var associationType = roleType.AssociationType;
-    // this.GetAssociation(role, associationType, out var previousAssociation);
-    // this.GetRole(association, roleType, out var previousRole);
-    // if (previousRole != null)
-    // {
-    //     // Role
-    //     var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-    //     changedRoleByAssociation[association] = NullableArraySet.Remove(previousRole, role);
-    //     // Association
-    //     var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-    //     if (associationType.IsOne)
-    //     {
-    //         // One to Many
-    //         changedAssociationByRole[role] = null;
-    //     }
-    //     else
-    //     {
-    //         // Many to Many
-    //         changedAssociationByRole[role] = NullableArraySet.Add(previousAssociation, association);
-    //     }
-    // }
+  removeRole(association: Composite, roleType: RoleType, role: Composite): void {
+    const associationType = roleType.associationType;
+    const previousAssociation = this.getAssociation(role, associationType);
+    const previousRole = this.getRole(association, roleType);
+
+    if (!isComposite(role)) {
+      throw new Error(`${role} is not a Composite`);
+    }
+
+    if (!isComposites(previousRole)) {
+      throw new Error(`${previousRole} are not a Composites`);
+    }
+
+    if (previousRole != null) {
+      // Role
+      const changedRoleByAssociation = this.changedRoleByAssociation(roleType);
+      changedRoleByAssociation[association] = previousRole != null ? previousRole.filter((v) => v != role) : null;
+
+      // Association
+      const changedAssociationByRole = this.changedAssociationByRole(associationType);
+      if (associationType.isOne) {
+        // One to Many
+        changedAssociationByRole.set(role, null);
+      } else {
+        // Many to Many
+        changedAssociationByRole.set(role, previousAssociation != null ? previousAssociation.concat(association) : [association]);
+      }
+    }
   }
 
-  getAssociation(role: Role, associationType: AssociationType): Association {
+  getAssociation(role: Composite, associationType: AssociationType): Association {
     const changedAssociation = this.changedAssociationByRoleByAssociationType.get(associationType)?.get(role);
     if (changedAssociation !== undefined) {
       return changedAssociation;

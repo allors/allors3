@@ -5,14 +5,14 @@ import { Session } from '../Session/Session';
 import { Permission } from '../Permission';
 import { AccessControl } from '../AccessControl';
 
-import { DatabaseObject } from './DatabaseObject';
+import { Record } from './Record';
 
 export interface Database {
   readonly metaPopulation: MetaPopulation;
   readonly accessControlById: Map<string, AccessControl>;
 
   createSession(): Session;
-  get(id: string): DatabaseObject;
+  get(id: string): Record;
   permission(objectType: ObjectType, operandType: OperandType, operation: Operations): Permission | undefined;
 
   diff(data: PullResponse): SyncRequest;

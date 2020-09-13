@@ -1,6 +1,5 @@
 import { RoleType, AssociationType, MetaPopulation } from '@allors/meta/system';
 import { Association, Composite, Role } from './Types';
-import { some } from '../combinators'
 
 export class ChangeSet {
   readonly roleByAssociationByRoleType: Map<RoleType, Map<Composite, Role>>;
@@ -16,10 +15,7 @@ export class ChangeSet {
   }
 
   hasChanges(): boolean {
-    return (
-      some(this.roleByAssociationByRoleType.values(), (v) => v.Value.Count > 0) ||
-      some(this.associationByRoleByRoleType.values(), (v) => v.Value.Count > 0)
-    );
+    return this.roleByAssociationByRoleType.size > 0 || this.associationByRoleByRoleType.size > 0;
   }
 
   ChangedRoles(roleType: RoleType): Map<Composite, Role> {

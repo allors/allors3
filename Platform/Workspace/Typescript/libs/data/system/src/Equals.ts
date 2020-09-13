@@ -1,5 +1,5 @@
 import { ObjectType, PropertyType } from '@allors/meta/system';
-import { SessionObject, CompositeTypes, UnitTypes, serialize} from '@allors/workspace/system';
+import { DatabaseObject, CompositeTypes, UnitTypes, serialize} from '@allors/workspace/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
 
@@ -34,7 +34,7 @@ export class Equals extends ParameterizablePredicate {
       propertytype: this.propertyType.id,
       parameter: this.parameter,
       value: serialize(this.value),
-      object: this.object && (this.object as SessionObject).id ? (this.object as SessionObject).id : this.object,
+      object: this.object && (this.object as DatabaseObject).id ? (this.object as DatabaseObject).id : this.object,
     };
   }
 }

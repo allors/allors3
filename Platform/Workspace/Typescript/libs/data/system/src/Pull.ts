@@ -1,5 +1,5 @@
 import { ObjectType } from '@allors/meta/system';
-import { SessionObject, CompositeTypes, ParameterTypes, serializeObject } from '@allors/workspace/system';
+import { DatabaseObject, CompositeTypes, ParameterTypes, serializeObject } from '@allors/workspace/system';
 
 import { IExtent } from './IExtent';
 import { Result } from './Result';
@@ -90,7 +90,7 @@ export class Pull {
   }
 
   public toJSON(): any {
-    const sessionObject = this.object as SessionObject;
+    const sessionObject = this.object as DatabaseObject;
 
     return {
       extentRef: this.extentRef,

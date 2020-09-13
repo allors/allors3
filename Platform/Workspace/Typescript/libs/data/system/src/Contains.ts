@@ -1,5 +1,5 @@
 import { ObjectType, PropertyType } from '@allors/meta/system';
-import { SessionObject, CompositeTypes } from '@allors/workspace/system';
+import { DatabaseObject, CompositeTypes } from '@allors/workspace/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
 
@@ -32,7 +32,7 @@ export class Contains extends ParameterizablePredicate {
       dependencies: this.dependencies,
       propertyType: this.propertyType.id,
       parameter: this.parameter,
-      object: this.object ? ((this.object as SessionObject).id ? (this.object as SessionObject).id : this.object) : undefined,
+      object: this.object ? ((this.object as DatabaseObject).id ? (this.object as DatabaseObject).id : this.object) : undefined,
     };
   }
 }

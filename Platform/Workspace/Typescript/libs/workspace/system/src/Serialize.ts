@@ -1,5 +1,5 @@
 ﻿import { UnitTypes, CompositeTypes, ParameterTypes, isSessionObject } from './Types';
-import { SessionObject } from './Session/SessionObject';
+import { DatabaseObject } from './Session/DatabaseObject';
 
 export function serializeAllDefined(role: UnitTypes | CompositeTypes): string {
   if (typeof role === 'string') {
@@ -12,7 +12,7 @@ export function serializeAllDefined(role: UnitTypes | CompositeTypes): string {
 
   // TODO: better check or move to Database
   if (isSessionObject(role)) {
-    return (role as SessionObject).id;
+    return (role as DatabaseObject).id;
   }
 
   return role.toString();

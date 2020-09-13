@@ -11,22 +11,24 @@ import {
 import {
   Permission,
   Database,
-  DatabaseObject,
+  Record,
   Session,
-  SessionObject,
+  DatabaseObject,
   AccessControl,
 } from '@allors/workspace/system';
 
 import { MemorySession } from '../Session/Session';
-import { MemorySessionObject } from '../Session/SessionObject';
-
-import { MemoryDatabaseObject } from './DatabaseObject';
+import { MemoryDatabaseObject } from '../Session/DatabaseObject';
+import { MemoryWorkspace } from '../Workspace/Workspace';
+import { MemoryRecord } from './Record';
 
 export class MemoryDatabase implements Database {
-  constructorByObjectType: Map<ObjectType, typeof MemorySessionObject>;
+  constructorByObjectType: Map<ObjectType, typeof MemoryDatabaseObject>;
 
-  readonly databaseObjectById: Map<string, MemoryDatabaseObject>;
-  readonly databaseObjectsByClass: Map<ObjectType, Set<MemoryDatabaseObject>>;
+  readonly workspace: MemoryWorkspace;
+
+  readonly databaseObjectById: Map<string, MemoryRecord>;
+  readonly databaseObjectsByClass: Map<ObjectType, Set<MemoryRecord>>;
 
   readonly accessControlById: Map<string, AccessControl>;
   readonly permissionById: Map<string, Permission>;
@@ -66,47 +68,47 @@ export class MemoryDatabase implements Database {
         };
       })();
 
-      DynamicClass.prototype = Object.create(MemorySessionObject.prototype);
+      DynamicClass.prototype = Object.create(MemoryDatabaseObject.prototype);
       DynamicClass.prototype.constructor = DynamicClass;
       this.constructorByObjectType.set(objectType, DynamicClass as any);
 
       const prototype = DynamicClass.prototype;
       objectType.roleTypes.forEach((roleType) => {
         Object.defineProperty(prototype, 'CanRead' + roleType.name, {
-          get(this: SessionObject) {
+          get(this: DatabaseObject) {
             return this.canRead(roleType);
           },
         });
 
         if (roleType.relationType.isDerived) {
           Object.defineProperty(prototype, roleType.name, {
-            get(this: SessionObject) {
+            get(this: DatabaseObject) {
               return this.get(roleType);
             },
           });
         } else {
           Object.defineProperty(prototype, 'CanWrite' + roleType.name, {
-            get(this: SessionObject) {
+            get(this: DatabaseObject) {
               return this.canWrite(roleType);
             },
           });
 
           Object.defineProperty(prototype, roleType.name, {
-            get(this: SessionObject) {
+            get(this: DatabaseObject) {
               return this.get(roleType);
             },
 
-            set(this: SessionObject, value) {
+            set(this: DatabaseObject, value) {
               this.set(roleType, value);
             },
           });
 
           if (roleType.isMany) {
-            prototype['Add' + roleType.singular] = function (this: SessionObject, value: SessionObject) {
+            prototype['Add' + roleType.singular] = function (this: DatabaseObject, value: DatabaseObject) {
               return this.add(roleType, value);
             };
 
-            prototype['Remove' + roleType.singular] = function (this: SessionObject, value: SessionObject) {
+            prototype['Remove' + roleType.singular] = function (this: DatabaseObject, value: DatabaseObject) {
               return this.remove(roleType, value);
             };
           }
@@ -115,7 +117,7 @@ export class MemoryDatabase implements Database {
 
       objectType.associationTypes.forEach((associationType) => {
         Object.defineProperty(prototype, associationType.name, {
-          get(this: SessionObject) {
+          get(this: DatabaseObject) {
             return this.getAssociation(associationType);
           },
         });
@@ -123,25 +125,27 @@ export class MemoryDatabase implements Database {
 
       objectType.methodTypes.forEach((methodType) => {
         Object.defineProperty(prototype, 'CanExecute' + methodType.name, {
-          get(this: MemorySessionObject) {
+          get(this: MemoryDatabaseObject) {
             return this.canExecute(methodType);
           },
         });
 
         Object.defineProperty(prototype, methodType.name, {
-          get(this: MemorySessionObject) {
+          get(this: MemoryDatabaseObject) {
             return this.method(methodType);
           },
         });
       });
     });
+  
+    this.workspace = new MemoryWorkspace(metaPopulation);
   }
 
   createSession(): Session {
     return new MemorySession(this);
   }
 
-  get(id: string): DatabaseObject | undefined {
+  get(id: string): Record | undefined {
     const databaseObject = this.databaseObjectById.get(id);
     if (databaseObject === undefined) {
       throw new Error(`Object with id ${id} is not present.`);
@@ -150,7 +154,7 @@ export class MemoryDatabase implements Database {
     return databaseObject ?? null;
   }
 
-  getForAssociation(id: string): DatabaseObject | undefined {
+  getForAssociation(id: string): Record | undefined {
     return this.databaseObjectById.get(id);
   }
 
@@ -207,7 +211,7 @@ export class MemoryDatabase implements Database {
 
     if (syncResponse.objects) {
       syncResponse.objects.forEach((v) => {
-        const databaseObject = new MemoryDatabaseObject(
+        const databaseObject = new MemoryRecord(
           this,
           this.metaPopulation,
           v,
@@ -303,8 +307,8 @@ export class MemoryDatabase implements Database {
     return undefined;
   }
 
-  new(id: string, objectType: ObjectType): DatabaseObject {
-    const databaseObject = new MemoryDatabaseObject(this, objectType, id);
+  new(id: string, objectType: ObjectType): Record {
+    const databaseObject = new MemoryRecord(this, objectType, id);
     this.add(databaseObject);
     return databaseObject;
   }
@@ -320,7 +324,7 @@ export class MemoryDatabase implements Database {
     }
   }
 
-  private add(databaseObject: MemoryDatabaseObject) {
+  private add(databaseObject: MemoryRecord) {
     this.databaseObjectById.set(databaseObject.id, databaseObject);
     this.databaseObjectsByClass.get(databaseObject.objectType)?.add(databaseObject);
   }

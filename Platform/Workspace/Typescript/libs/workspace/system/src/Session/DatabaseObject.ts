@@ -1,12 +1,11 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/system';
 
-import { DomainObject } from '../DomainObject';
-import { DatabaseObject } from '../Database/DatabaseObject';
+import { Record } from '../Database/Record';
 
 import { Session } from './Session';
 
-export interface SessionObject extends DomainObject {
+export interface DatabaseObject {
   readonly id: string;
   readonly objectType: ObjectType;
   readonly newId?: string;
@@ -15,7 +14,7 @@ export interface SessionObject extends DomainObject {
   readonly isNew: boolean;
 
   readonly session: Session;
-  readonly databaseObject?: DatabaseObject;
+  readonly databaseObject?: Record;
 
   readonly hasChanges: boolean;
 

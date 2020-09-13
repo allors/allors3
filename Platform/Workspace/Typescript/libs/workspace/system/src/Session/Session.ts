@@ -1,7 +1,7 @@
 import { ObjectType } from '@allors/meta/system';
 import { PushRequest, PushResponse } from '@allors/protocol/system';
 
-import { SessionObject } from './SessionObject';
+import { DatabaseObject } from './DatabaseObject';
 import { Database } from '../Database/Database';
 
 export interface Session {
@@ -9,11 +9,11 @@ export interface Session {
 
   readonly hasChanges: boolean;
 
-  get(id: string): SessionObject | undefined;
+  get(id: string): DatabaseObject | undefined;
 
-  create(objectType: ObjectType | string): SessionObject;
+  create(objectType: ObjectType | string): DatabaseObject;
 
-  delete(object: SessionObject): void;
+  delete(object: DatabaseObject): void;
 
   pushRequest(): PushRequest;
 

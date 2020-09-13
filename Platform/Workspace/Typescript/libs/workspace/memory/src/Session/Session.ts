@@ -1,20 +1,20 @@
-import { ObjectType, AssociationType } from '@allors/meta/system';
+import { ObjectType, AssociationType, Origin } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequest, PushResponse } from '@allors/protocol/system';
-import { DatabaseObject, Session, SessionObject } from '@allors/workspace/system';
+import { Record, Session, DatabaseObject } from '@allors/workspace/system';
 
 import { MemoryDatabase } from '../Database/Database';
 
-import { MemorySessionObject } from './SessionObject';
+import { MemoryDatabaseObject } from './DatabaseObject';
 
 export class MemorySession implements Session {
   private static idCounter = 0;
 
   hasChanges: boolean;
 
-  private existingSessionObjectById: Map<string, MemorySessionObject>;
-  private newSessionObjectById: Map<string, MemorySessionObject>;
+  private existingSessionObjectById: Map<string, MemoryDatabaseObject>;
+  private newSessionObjectById: Map<string, MemoryDatabaseObject>;
 
-  private sessionObjectByIdByClass: Map<ObjectType, Map<string, MemorySessionObject>>;
+  private sessionObjectByIdByClass: Map<ObjectType, Map<string, MemoryDatabaseObject>>;
 
   constructor(public database: MemoryDatabase) {
     this.hasChanges = false;
@@ -25,48 +25,7 @@ export class MemorySession implements Session {
     this.sessionObjectByIdByClass = new Map();
   }
 
-  public get(id: string): SessionObject | undefined {
-    if (!id) {
-      return undefined;
-    }
-
-    let sessionObject = this.existingSessionObjectById.get(id);
-    if (sessionObject === undefined) {
-      sessionObject = this.newSessionObjectById.get(id);
-
-      if (sessionObject === undefined) {
-        const databaseObject = this.database.get(id);
-        if (databaseObject) {
-          sessionObject = this.instantiate(databaseObject);
-        }
-      }
-    }
-
-    return sessionObject;
-  }
-
-  public getForAssociation(id: string): SessionObject | undefined {
-    if (!id) {
-      return undefined;
-    }
-
-    let sessionObject = this.existingSessionObjectById.get(id);
-    if (!sessionObject) {
-      sessionObject = this.newSessionObjectById.get(id);
-
-      if (!sessionObject) {
-        const databaseObject = this.database.getForAssociation(id);
-
-        if (databaseObject) {
-          sessionObject = this.instantiate(databaseObject);
-        }
-      }
-    }
-
-    return sessionObject;
-  }
-
-  public create(objectType: ObjectType | string): SessionObject {
+  public create(objectType: ObjectType | string): DatabaseObject {
     const resolvedObjectType = typeof objectType === 'string' ? this.database.metaPopulation.objectTypeByName.get(objectType) : objectType;
 
     if (!resolvedObjectType) {
@@ -78,25 +37,38 @@ export class MemorySession implements Session {
       throw new Error(`Could not get constructor for ${resolvedObjectType.name}`);
     }
 
-    const newSessionObject: MemorySessionObject = new constructor();
-    newSessionObject.session = this;
-    newSessionObject.objectType = resolvedObjectType;
-    newSessionObject.newId = (--MemorySession.idCounter).toString();
+    const newObject: MemoryDatabaseObject = new constructor();
+    newObject.session = this;
+    newObject.objectType = resolvedObjectType;
 
-    this.newSessionObjectById.set(newSessionObject.newId, newSessionObject);
-    this.addByObjectTypeId(newSessionObject);
+    switch (resolvedObjectType.origin) {
+      case Origin.Database:
+        newObject.newId = (--MemorySession.idCounter).toString();
+        this.newSessionObjectById.set(newObject.newId, newObject);
+        this.addByObjectTypeId(newObject);
+        this.hasChanges = true;
+        break;
 
-    this.hasChanges = true;
+      case Origin.Workspace:
+        newObject.newId = (--MemorySession.idCounter).toString();
+        this.newSessionObjectById.set(newObject.newId, newObject);
+        this.addByObjectTypeId(newObject);
+        this.hasChanges = true;
+        break;
 
-    return newSessionObject;
+      case Origin.Session:
+        break;
+    }
+
+    return newObject;
   }
 
-  public delete(object: SessionObject): void {
+  public delete(object: DatabaseObject): void {
     if (!object.isNew) {
       throw new Error('Existing objects can not be deleted');
     }
 
-    const newSessionObject = object as SessionObject;
+    const newSessionObject = object as DatabaseObject;
     const newId = newSessionObject.newId!;
 
     if (this.newSessionObjectById.has(newId)) {
@@ -126,6 +98,47 @@ export class MemorySession implements Session {
     }
 
     this.hasChanges = false;
+  }
+
+  public get(id: string): DatabaseObject | undefined {
+    if (!id) {
+      return undefined;
+    }
+
+    let sessionObject = this.existingSessionObjectById.get(id);
+    if (sessionObject === undefined) {
+      sessionObject = this.newSessionObjectById.get(id);
+
+      if (sessionObject === undefined) {
+        const databaseObject = this.database.get(id);
+        if (databaseObject) {
+          sessionObject = this.instantiate(databaseObject);
+        }
+      }
+    }
+
+    return sessionObject;
+  }
+
+  public getForAssociation(id: string): DatabaseObject | undefined {
+    if (!id) {
+      return undefined;
+    }
+
+    let sessionObject = this.existingSessionObjectById.get(id);
+    if (!sessionObject) {
+      sessionObject = this.newSessionObjectById.get(id);
+
+      if (!sessionObject) {
+        const databaseObject = this.database.getForAssociation(id);
+
+        if (databaseObject) {
+          sessionObject = this.instantiate(databaseObject);
+        }
+      }
+    }
+
+    return sessionObject;
   }
 
   public pushRequest(): PushRequest {
@@ -165,12 +178,12 @@ export class MemorySession implements Session {
     }
   }
 
-  public getAssociation(object: MemorySessionObject, associationType: AssociationType): SessionObject[] {
+  public getAssociation(object: MemoryDatabaseObject, associationType: AssociationType): DatabaseObject[] {
     const associationClasses = associationType.objectType.classes;
     const roleType = associationType.relationType.roleType;
 
     const associationIds = new Set<string>();
-    const associations: SessionObject[] = [];
+    const associations: DatabaseObject[] = [];
 
     associationClasses.forEach((associationClass) => {
       this.getAll(associationClass);
@@ -179,13 +192,13 @@ export class MemorySession implements Session {
         for (const association of sessionObjectById.values()) {
           if (!associationIds.has(association.id) && association.canRead(roleType)) {
             if (roleType.isOne) {
-              const role: SessionObject = association.getForAssociation(roleType);
+              const role: DatabaseObject = association.getForAssociation(roleType);
               if (role && role.id === object.id) {
                 associationIds.add(association.id);
                 associations.push(association);
               }
             } else {
-              const roles: SessionObject[] = association.getForAssociation(roleType);
+              const roles: DatabaseObject[] = association.getForAssociation(roleType);
               if (roles && roles.find((v) => v === object)) {
                 associationIds.add(association.id);
                 associations.push(association);
@@ -210,14 +223,14 @@ export class MemorySession implements Session {
               if (roleType.isOne) {
                 const role: string = databaseObject.roleByRoleTypeId.get(roleType.id);
                 if (object.id === role) {
-                  associations.push(this.get(databaseObject.id) as SessionObject);
+                  associations.push(this.get(databaseObject.id) as DatabaseObject);
                   break;
                 }
               } else {
                 const roles: string[] = databaseObject.roleByRoleTypeId.get(roleType.id);
                 if (roles && roles.indexOf(databaseObject.id) > -1) {
                   associationIds.add(databaseObject.id);
-                  associations.push(this.get(databaseObject.id) as SessionObject);
+                  associations.push(this.get(databaseObject.id) as DatabaseObject);
                 }
               }
             }
@@ -229,13 +242,13 @@ export class MemorySession implements Session {
     return associations;
   }
 
-  private instantiate(databaseObject: DatabaseObject): MemorySessionObject {
+  private instantiate(databaseObject: Record): MemoryDatabaseObject {
     const constructor = this.database.constructorByObjectType.get(databaseObject.objectType) as any;
     if (!constructor) {
       throw new Error(`Could not get constructor for ${databaseObject.objectType.name}`);
     }
 
-    const sessionObject: MemorySessionObject = new constructor();
+    const sessionObject: MemoryDatabaseObject = new constructor();
     sessionObject.session = this;
     sessionObject.databaseObject = databaseObject;
     sessionObject.objectType = databaseObject.objectType;
@@ -255,7 +268,7 @@ export class MemorySession implements Session {
     }
   }
 
-  private addByObjectTypeId(sessionObject: MemorySessionObject) {
+  private addByObjectTypeId(sessionObject: MemoryDatabaseObject) {
     let sessionObjectById = this.sessionObjectByIdByClass.get(sessionObject.objectType);
     if (!sessionObjectById) {
       sessionObjectById = new Map();

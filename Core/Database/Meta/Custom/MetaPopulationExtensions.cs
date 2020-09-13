@@ -55,22 +55,52 @@ namespace Allors.Meta
 
         public static void SetupWorkspace(this MetaPopulation @this)
         {
-            var application = @this.WorkspaceClass(new Guid("D8FCFF7D-953F-4AC3-BCDC-6A6F9EDE3CC5"), Origins.Workspace, "Application", "Applications");
+            var workspacePerson = @this.WorkspaceClass(new Guid("D8FCFF7D-953F-4AC3-BCDC-6A6F9EDE3CC5"), Origins.Workspace, "WorkspacePerson", "WorkspacePeople");
 
-            var applicationUser = @this.WorkspaceRelationType(
+            var workspacePersonFirstName = @this.WorkspaceRelationType(
                 Origins.Workspace,
                 new Guid("7703E5C7-EF1C-4449-AC79-AFB51BD84829"),
                 new Guid("97EE1C41-409C-4027-87EE-36C329673BB9"),
                 new Guid("FE134B92-AB96-4B5E-840F-D20D63605A25"),
-                application,
-                (ObjectType)@this.Find(M.User.Interface.Id),
-                "LoggedInUser",
-                "LoggedInUsers",
+                workspacePerson,
+                (ObjectType)@this.Find(MetaString.Instance.Unit.Id),
+                "FirstName",
+                "FirstNames",
                 Multiplicity.OneToOne,
                 false,
                 false,
                 null
                 );
+
+            var workspacePersonLastName = @this.WorkspaceRelationType(
+                Origins.Workspace,
+                new Guid("4A9B163B-D7F5-46F2-B12D-F2DBEB93B195"),
+                new Guid("A2570E69-43D6-48B5-8252-B0AB4716EC52"),
+                new Guid("48628353-2E85-427F-8D0A-CB23E2EAEF5D"),
+                workspacePerson,
+                (ObjectType)@this.Find(MetaString.Instance.Unit.Id),
+                "LastName",
+                "LastName",
+                Multiplicity.OneToOne,
+                false,
+                false,
+                null
+            );
+
+            var workspacePersonDisplayName = @this.WorkspaceRelationType(
+                Origins.Session,
+                new Guid("EA183BD0-C9F2-4C4D-9CEB-766EBD0E1719"),
+                new Guid("52051BD8-6527-4169-96BF-EA400062AE6D"),
+                new Guid("E22F4D17-D025-4D3B-A0CA-E2AF8CC2B475"),
+                workspacePerson,
+                (ObjectType)@this.Find(MetaString.Instance.Unit.Id),
+                "DisplayName",
+                "DisplayNames",
+                Multiplicity.OneToOne,
+                true,
+                false,
+                null
+            );
 
             var personDisplayName = @this.WorkspaceRelationType(
                Origins.Session,
@@ -81,7 +111,7 @@ namespace Allors.Meta
                (ObjectType)@this.Find(MetaString.Instance.Unit.Id),
                "DisplayName",
                "DisplayNames",
-               Multiplicity.ManyToOne,
+               Multiplicity.OneToOne,
                true,
                false,
                null
@@ -96,7 +126,7 @@ namespace Allors.Meta
                 (ObjectType)@this.Find(MetaString.Instance.Unit.Id),
                 "DisplayName",
                 "DisplayNames",
-                Multiplicity.ManyToOne,
+                Multiplicity.OneToOne,
                 true,
                 false,
                 null

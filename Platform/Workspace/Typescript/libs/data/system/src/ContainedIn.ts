@@ -1,5 +1,5 @@
 import { ObjectType, PropertyType } from '@allors/meta/system';
-import { SessionObject, CompositeTypes } from '@allors/workspace/system';
+import { DatabaseObject, CompositeTypes } from '@allors/workspace/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
 import { IExtent } from './IExtent';
@@ -35,7 +35,7 @@ export class ContainedIn extends ParameterizablePredicate {
       propertytype: this.propertyType.id,
       parameter: this.parameter,
       extent: this.extent,
-      objects: this.objects ? this.objects.map((v) => ((v as SessionObject).id ? (v as SessionObject).id : v)) : undefined,
+      objects: this.objects ? this.objects.map((v) => ((v as DatabaseObject).id ? (v as DatabaseObject).id : v)) : undefined,
     };
   }
 }

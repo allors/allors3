@@ -1,12 +1,12 @@
 import { ObjectType, MetaPopulation, RoleType } from '@allors/meta/system';
 import { Compressor, SyncResponseObject } from '@allors/protocol/system';
-import { DatabaseObject, Permission, AccessControl } from '@allors/workspace/system';
+import { Record, Permission, AccessControl } from '@allors/workspace/system';
 
-import { deserialize } from '../Session/SessionObject';
+import { deserialize } from '../Session/DatabaseObject';
 
 import { MemoryDatabase } from './Database';
 
-export class MemoryDatabaseObject implements DatabaseObject {
+export class MemoryRecord implements Record {
   objectType: ObjectType;
   id: string;
   version: string;

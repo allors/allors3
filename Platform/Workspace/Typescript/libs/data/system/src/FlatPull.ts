@@ -1,4 +1,4 @@
-import { SessionObject, ParameterTypes } from '@allors/workspace/system';
+import { DatabaseObject, ParameterTypes } from '@allors/workspace/system';
 
 import { IExtent } from './IExtent';
 import { Result } from './Result';
@@ -16,7 +16,7 @@ export interface FlatPull {
 
   sort?: Sort | Sort[];
 
-  object?: SessionObject | string;
+  object?: DatabaseObject | string;
 
   results?: Result[];
 

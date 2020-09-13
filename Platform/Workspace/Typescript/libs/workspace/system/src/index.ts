@@ -1,10 +1,9 @@
 export { Database } from './Database/Database';
-export { DatabaseObject } from './Database/DatabaseObject';
+export { Record } from './Database/Record';
 
 export { Session } from './Session/Session';
-export { SessionObject } from './Session/SessionObject';
+export { DatabaseObject } from './Session/DatabaseObject';
 
-export { DomainObject } from './DomainObject';
 export { Method } from './Method';
 export { Permission } from './Permission';
 export { AccessControl } from './AccessControl';

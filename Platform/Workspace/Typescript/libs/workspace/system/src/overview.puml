@@ -11,16 +11,16 @@ interface Database {
     +security()
 }
 Database ..> Session : createSession()
-Database ..> DatabaseObject : get()
+Database ..> Record : get()
 
-interface DatabaseObject{
+interface Record{
     +objectType
     +id
     +version
     +roleByRoleTypeId
     +isPermitted()
 }
-DatabaseObject --> Database
+Record --> Database
 
 ' Session
 '---------
@@ -32,10 +32,10 @@ interface Session {
     +reset()
 }
 Session --> Database
-Session ..> SessionObject : get()
-Session ..> SessionObject : create()
+Session ..> DatabaseObject : get()
+Session ..> DatabaseObject : create()
 
-interface SessionObject {
+interface DatabaseObject {
     +id
     +objectType
     +newId
@@ -59,7 +59,7 @@ interface SessionObject {
     saveNew()
     reset()
 }
-SessionObject --> Session
-SessionObject --> DatabaseObject
+DatabaseObject --> Session
+DatabaseObject --> Record
 
 @enduml
