@@ -1,4 +1,4 @@
-import { ObjectType, MetaPopulation, OperandType } from '@allors/meta/system';
+import { ObjectType, MetaPopulation, OperandType, Origin } from '@allors/meta/system';
 import {
   Operations,
   Compressor,
@@ -8,22 +8,18 @@ import {
   SecurityRequest,
   SecurityResponse,
 } from '@allors/protocol/system';
-import {
-  Permission,
-  Database,
-  Record,
-  Session,
-  DatabaseObject,
-  AccessControl,
-} from '@allors/workspace/system';
+import { Permission, Database, Record, Session, AccessControl } from '@allors/workspace/system';
 
 import { MemorySession } from '../Session/Session';
-import { MemoryDatabaseObject } from '../Session/DatabaseObject';
 import { MemoryWorkspace } from '../Workspace/Workspace';
+
+import { databaseClasses } from '../Session/databaseClasses';
+import { workspaceClasses } from '../Session/workspaceClasses';
+
 import { MemoryRecord } from './Record';
 
 export class MemoryDatabase implements Database {
-  constructorByObjectType: Map<ObjectType, typeof MemoryDatabaseObject>;
+  constructorByObjectType: Map<ObjectType, any>;
 
   readonly workspace: MemoryWorkspace;
 
@@ -59,85 +55,16 @@ export class MemoryDatabase implements Database {
       this.executePermissionByOperandTypeByClass.set(v, new Map());
     });
 
-    this.metaPopulation.classes.forEach((objectType) => {
-      const DynamicClass = (() => {
-        return function () {
-          const prototype1 = Object.getPrototypeOf(this);
-          const prototype2 = Object.getPrototypeOf(prototype1);
-          prototype2.init.call(this);
-        };
-      })();
+    const classes = metaPopulation.classes;
+    databaseClasses(
+      classes.filter((v) => v.origin === Origin.Database),
+      this.constructorByObjectType
+    );
+    workspaceClasses(
+      classes.filter((v) => v.origin === Origin.Workspace),
+      this.constructorByObjectType
+    );
 
-      DynamicClass.prototype = Object.create(MemoryDatabaseObject.prototype);
-      DynamicClass.prototype.constructor = DynamicClass;
-      this.constructorByObjectType.set(objectType, DynamicClass as any);
-
-      const prototype = DynamicClass.prototype;
-      objectType.roleTypes.forEach((roleType) => {
-        Object.defineProperty(prototype, 'CanRead' + roleType.name, {
-          get(this: DatabaseObject) {
-            return this.canRead(roleType);
-          },
-        });
-
-        if (roleType.relationType.isDerived) {
-          Object.defineProperty(prototype, roleType.name, {
-            get(this: DatabaseObject) {
-              return this.get(roleType);
-            },
-          });
-        } else {
-          Object.defineProperty(prototype, 'CanWrite' + roleType.name, {
-            get(this: DatabaseObject) {
-              return this.canWrite(roleType);
-            },
-          });
-
-          Object.defineProperty(prototype, roleType.name, {
-            get(this: DatabaseObject) {
-              return this.get(roleType);
-            },
-
-            set(this: DatabaseObject, value) {
-              this.set(roleType, value);
-            },
-          });
-
-          if (roleType.isMany) {
-            prototype['Add' + roleType.singular] = function (this: DatabaseObject, value: DatabaseObject) {
-              return this.add(roleType, value);
-            };
-
-            prototype['Remove' + roleType.singular] = function (this: DatabaseObject, value: DatabaseObject) {
-              return this.remove(roleType, value);
-            };
-          }
-        }
-      });
-
-      objectType.associationTypes.forEach((associationType) => {
-        Object.defineProperty(prototype, associationType.name, {
-          get(this: DatabaseObject) {
-            return this.getAssociation(associationType);
-          },
-        });
-      });
-
-      objectType.methodTypes.forEach((methodType) => {
-        Object.defineProperty(prototype, 'CanExecute' + methodType.name, {
-          get(this: MemoryDatabaseObject) {
-            return this.canExecute(methodType);
-          },
-        });
-
-        Object.defineProperty(prototype, methodType.name, {
-          get(this: MemoryDatabaseObject) {
-            return this.method(methodType);
-          },
-        });
-      });
-    });
-  
     this.workspace = new MemoryWorkspace(metaPopulation);
   }
 

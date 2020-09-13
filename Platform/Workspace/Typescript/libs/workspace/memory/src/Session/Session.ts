@@ -1,31 +1,41 @@
 import { ObjectType, AssociationType, Origin } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequest, PushResponse } from '@allors/protocol/system';
-import { Record, Session, DatabaseObject } from '@allors/workspace/system';
+import { Record, Session, DatabaseObject, WorkspaceObject } from '@allors/workspace/system';
 
 import { MemoryDatabase } from '../Database/Database';
+import { MemoryWorkspace } from '../Workspace/Workspace';
 
 import { MemoryDatabaseObject } from './DatabaseObject';
+import { MemoryWorkspaceObject } from './WorkspaceObject';
 
 export class MemorySession implements Session {
+  hasChanges: boolean;
+
   private static idCounter = 0;
 
-  hasChanges: boolean;
+  private readonly workspace: MemoryWorkspace;
 
   private existingSessionObjectById: Map<string, MemoryDatabaseObject>;
   private newSessionObjectById: Map<string, MemoryDatabaseObject>;
 
   private sessionObjectByIdByClass: Map<ObjectType, Map<string, MemoryDatabaseObject>>;
 
-  constructor(public database: MemoryDatabase) {
+  private workspaceObjectById: Map<string, MemoryWorkspaceObject>;
+
+  constructor(public readonly database: MemoryDatabase) {
+    this.workspace = database.workspace;
+
     this.hasChanges = false;
 
     this.existingSessionObjectById = new Map();
     this.newSessionObjectById = new Map();
 
     this.sessionObjectByIdByClass = new Map();
+
+    this.workspaceObjectById = new Map();
   }
 
-  public create(objectType: ObjectType | string): DatabaseObject {
+  public create(objectType: ObjectType | string): DatabaseObject | WorkspaceObject {
     const resolvedObjectType = typeof objectType === 'string' ? this.database.metaPopulation.objectTypeByName.get(objectType) : objectType;
 
     if (!resolvedObjectType) {
@@ -37,30 +47,30 @@ export class MemorySession implements Session {
       throw new Error(`Could not get constructor for ${resolvedObjectType.name}`);
     }
 
-    const newObject: MemoryDatabaseObject = new constructor();
-    newObject.session = this;
-    newObject.objectType = resolvedObjectType;
-
     switch (resolvedObjectType.origin) {
-      case Origin.Database:
+      case Origin.Database: {
+        const newObject: MemoryDatabaseObject = new constructor();
+        newObject.session = this;
+        newObject.objectType = resolvedObjectType;
         newObject.newId = (--MemorySession.idCounter).toString();
         this.newSessionObjectById.set(newObject.newId, newObject);
         this.addByObjectTypeId(newObject);
         this.hasChanges = true;
-        break;
+        return newObject;
+      }
 
-      case Origin.Workspace:
-        newObject.newId = (--MemorySession.idCounter).toString();
-        this.newSessionObjectById.set(newObject.newId, newObject);
-        this.addByObjectTypeId(newObject);
-        this.hasChanges = true;
-        break;
+      case Origin.Workspace: {
+        const newObject: MemoryWorkspaceObject = new constructor();
+        newObject.session = this;
+        newObject.workspace = this.workspace;
+        newObject.objectType = resolvedObjectType;
+        newObject.id = this.workspace.create();
+        return newObject;
+      }
 
       case Origin.Session:
         break;
     }
-
-    return newObject;
   }
 
   public delete(object: DatabaseObject): void {
@@ -105,6 +115,13 @@ export class MemorySession implements Session {
       return undefined;
     }
 
+    if(id.startsWith('w')) {
+      let workspaceObject = this.workspaceObjectById.get(id);
+      if(workspaceObject === undefined){
+        workspaceObject = this.instantiateWorkspace(id);
+      }
+    }
+
     let sessionObject = this.existingSessionObjectById.get(id);
     if (sessionObject === undefined) {
       sessionObject = this.newSessionObjectById.get(id);
@@ -112,7 +129,7 @@ export class MemorySession implements Session {
       if (sessionObject === undefined) {
         const databaseObject = this.database.get(id);
         if (databaseObject) {
-          sessionObject = this.instantiate(databaseObject);
+          sessionObject = this.instantiateDatabase(databaseObject);
         }
       }
     }
@@ -133,7 +150,7 @@ export class MemorySession implements Session {
         const databaseObject = this.database.getForAssociation(id);
 
         if (databaseObject) {
-          sessionObject = this.instantiate(databaseObject);
+          sessionObject = this.instantiateDatabase(databaseObject);
         }
       }
     }
@@ -242,7 +259,12 @@ export class MemorySession implements Session {
     return associations;
   }
 
-  private instantiate(databaseObject: Record): MemoryDatabaseObject {
+  private instantiateWorkspace(id: string): MemoryWorkspaceObject {
+    // Todo:
+    return;
+  }
+
+  private instantiateDatabase(databaseObject: Record): MemoryDatabaseObject {
     const constructor = this.database.constructorByObjectType.get(databaseObject.objectType) as any;
     if (!constructor) {
       throw new Error(`Could not get constructor for ${databaseObject.objectType.name}`);

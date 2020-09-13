@@ -30,6 +30,12 @@ namespace Allors.Meta
         
         public Origins Origin { get; set; }
 
+        public bool HasDatabaseOrigin => this.Origin == Origins.Database;
+
+        public bool HasWorkspaceOrigin => this.Origin == Origins.Workspace;
+
+        public bool HasSessionOrigin => this.Origin == Origins.Session;
+
         public string XmlDoc
         {
             get => this.xmlDoc;

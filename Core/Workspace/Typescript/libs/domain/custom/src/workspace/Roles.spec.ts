@@ -1,12 +1,10 @@
 import { MetaPopulation } from '@allors/meta/system';
 import { Database, Session } from '@allors/workspace/system';
 import { MemoryDatabase } from '@allors/workspace/memory';
-import { Person } from '@allors/domain/generated';
-
 import { data, Meta } from '@allors/meta/generated';
+import { WorkspacePerson } from '@allors/domain/generated';
 
 import { extend } from '../index';
-import { WorkspacePerson } from '../../../generated/src/WorkspacePerson.g';
 
 describe('Workspace', () => {
   let session: Session;
@@ -30,7 +28,7 @@ describe('Workspace', () => {
       workspacePerson = session.create(m.WorkspacePerson) as WorkspacePerson;
     });
 
-    xit('get in different session', () => {
+    it('get in different session', () => {
       workspacePerson.FirstName = "Jos";
 
       const workspacePerson2 = session2.get(workspacePerson.id) as WorkspacePerson;

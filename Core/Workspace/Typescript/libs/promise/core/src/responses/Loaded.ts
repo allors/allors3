@@ -1,10 +1,10 @@
-import { SessionObject, Session } from '@allors/workspace/system';
+import { DatabaseObject, Session, WorkspaceObject } from '@allors/workspace/system';
 import { PullResponse } from '@allors/protocol/system';
 import { assert } from '@allors/meta/system';
 
 export class Loaded {
-  public objects: { [name: string]: SessionObject } = {};
-  public collections: { [name: string]: SessionObject[] } = {};
+  public objects: { [name: string]: DatabaseObject | WorkspaceObject } = {};
+  public collections: { [name: string]: (DatabaseObject| WorkspaceObject)[] } = {};
   public values: { [name: string]: any } = {};
 
   constructor(public session: Session, public response: PullResponse) {

@@ -321,6 +321,7 @@ export abstract class MemoryDatabaseObject implements DatabaseObject {
     }
   }
 
+  // called after dynamic creation
   protected init() {
     this.roleByRoleType = new Map();
   }
