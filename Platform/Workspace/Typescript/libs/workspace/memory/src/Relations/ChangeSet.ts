@@ -1,6 +1,6 @@
 import { RoleType, AssociationType, MetaPopulation } from '@allors/meta/system';
-import { some } from '../iterators';
 import { Association, Composite, Role } from './Types';
+import { some } from '../combinators'
 
 export class ChangeSet {
   readonly roleByAssociationByRoleType: Map<RoleType, Map<Composite, Role>>;

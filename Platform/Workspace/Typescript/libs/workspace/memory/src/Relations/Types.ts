@@ -1,4 +1,5 @@
-﻿export type Composite = string;
-export type Unit = string | Date | boolean | number;
-export type Association = Composite | Set<Composite>
-export type Role = Unit | Composite | Set<Composite>
+﻿export type Unit = string | Date | boolean | number;
+export type Composite = string;
+export type Composites = string[];
+export type Association = Composite | Composites
+export type Role = Unit | Composite | Composites
