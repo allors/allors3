@@ -4,9 +4,9 @@ import { Database } from '@allors/workspace/system';
 import { MemoryDatabase } from '@allors/workspace/memory';
 
 import { data, Meta } from '@allors/meta/generated';
+import { extend } from '@allors/domain/custom';
 
 import { syncResponse, securityResponse, securityResponse2 } from './fixture';
-import { extend } from './index';
 
 import 'jest-extended';
 

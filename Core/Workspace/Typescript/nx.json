@@ -38,22 +38,10 @@
     "domain-generated": {
       "tags": []
     },
-    "meta-core": {
-      "tags": []
-    },
-    "meta-custom": {
-      "tags": []
-    },
     "meta-generated": {
       "tags": []
     },
     "meta-system": {
-      "tags": []
-    },
-    "promise-core": {
-      "tags": []
-    },
-    "promise-custom": {
       "tags": []
     },
     "protocol-system": {
@@ -63,6 +51,18 @@
       "tags": []
     },
     "workspace-system": {
+      "tags": []
+    },
+    "workspace-tests": {
+      "tags": []
+    },
+    "client-tests": {
+      "tags": []
+    },
+    "client-fetch": {
+      "tags": []
+    },
+    "meta-tests": {
       "tags": []
     }
   }

@@ -4,7 +4,7 @@ import { MemoryDatabase } from '@allors/workspace/memory';
 import { data, Meta } from '@allors/meta/generated';
 import { WorkspacePerson } from '@allors/domain/generated';
 
-import { extend } from '../index';
+import { extend } from '@allors/domain/custom';
 
 describe('Workspace', () => {
   let session: Session;

@@ -112,7 +112,7 @@ partial class Build
         });
 
 
-    Target CoreWorkspaceTypescriptDomain => _ => _
+    Target CoreWorkspaceTypescriptWorkspace => _ => _
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() =>
@@ -120,10 +120,10 @@ partial class Build
             NpmRun(s => s
                 .SetEnvironmentVariable("npm_config_loglevel", "error")
                 .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                .SetCommand("test:domain"));
+                .SetCommand("test:workspace"));
         });
 
-    Target CoreWorkspaceTypescriptPromise => _ => _
+    Target CoreWorkspaceTypescriptClient => _ => _
         .DependsOn(CoreGenerate)
         .DependsOn(CorePublishServer)
         .DependsOn(CorePublishCommands)
@@ -141,7 +141,7 @@ partial class Build
                     NpmRun(s => s
                         .SetEnvironmentVariable("npm_config_loglevel", "error")
                         .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                        .SetCommand("test:promise"));
+                        .SetCommand("test:client"));
                 }
             }
         });
@@ -173,8 +173,8 @@ partial class Build
 
     Target CoreWorkspaceTypescriptTest => _ => _
         .DependsOn(CoreWorkspaceTypescriptMeta)
-        .DependsOn(this.CoreWorkspaceTypescriptDomain)
-        .DependsOn(CoreWorkspaceTypescriptPromise);
+        .DependsOn(this.CoreWorkspaceTypescriptWorkspace)
+        .DependsOn(this.CoreWorkspaceTypescriptClient);
 
     Target CoreWorkspaceCSharpTest => _ => _
         .DependsOn(CoreWorkspaceCSharpDomainTests);

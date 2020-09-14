@@ -26,10 +26,10 @@
     "help": "nx help",
     "postinstall": "node ./postinstall.js",
     "typecheck": "npx tsc --noEmit --project ./libs/workspace/memory/tsconfig.lib.json",
-    "test:meta": "npx nx test meta-custom --skipNxCache",
-    "test:domain": "npx nx test domain-custom --skipNxCache",
-    "test:promise": "npx nx test promise-custom --skipNxCache",
-    "test:all": "npm run test:meta && npm run test:domain && npm run test:promise"
+    "test:meta": "npx nx test meta-tests --skipNxCache",
+    "test:workspace": "npx nx test workspace-tests --skipNxCache",
+    "test:client": "npx nx test client-tests --skipNxCache",
+    "test:all": "npm run test:meta && npm run test:workspace && npm run test:client"
   },
   "private": true,
   "dependencies": {

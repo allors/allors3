@@ -7,7 +7,8 @@ import { Organisation, Person} from '@allors/domain/generated';
 
 import { syncResponse, securityResponse } from '../fixture';
 
-import { extend } from '../index'
+import { extend } from '@allors/domain/custom';
+
 
 import 'jest-extended';
 

@@ -5,8 +5,7 @@ import { Person } from '@allors/domain/generated';
 
 import { data, Meta } from '@allors/meta/generated';
 
-import { extend } from '../index';
-import { WorkspacePerson } from '../../../generated/src/WorkspacePerson.g';
+import { extend } from '@allors/domain/custom';
 
 describe('Session', () => {
   let session: Session;

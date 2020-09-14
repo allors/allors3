@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'meta-custom',
+  name: 'client-tests',
   preset: '../../../jest.config.js',
   globals: {
     'ts-jest': {
@@ -10,14 +10,16 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/meta/custom',
+  coverageDirectory: '../../../coverage/libs/client/tests',
   reporters: [
     'default',
     [
       'jest-trx-results-processor',
       {
-        outputFile: '../../../artifacts/tests/meta.trx',
+        outputFile: '../../../artifacts/tests/client.trx',
       },
     ],
   ],
+  // --runInBand
+  "maxWorkers": 1 
 };
