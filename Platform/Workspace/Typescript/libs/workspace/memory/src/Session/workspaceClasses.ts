@@ -12,8 +12,7 @@ export function workspaceClasses(classes: ObjectType[], constructorByObjectType:
       };
     })();
 
-    const x = MemoryWorkspaceObject.prototype;
-    DynamicClass.prototype = Object.create(x);
+    DynamicClass.prototype = Object.create(MemoryWorkspaceObject.prototype);
     DynamicClass.prototype.constructor = DynamicClass;
     constructorByObjectType.set(objectType, DynamicClass);
 

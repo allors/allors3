@@ -4,9 +4,9 @@ import { WebAddress } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
 
-export function extendWebAddress(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.WebAddress);
+export function extendWebAddress(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.WebAddress);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'displayName', {

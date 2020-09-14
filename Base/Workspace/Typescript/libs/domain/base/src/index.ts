@@ -140,24 +140,24 @@ import { extendWorkEffortInventoryAssignment } from './WorkEffortInventoryAssign
 import { extendWorkEffortPartyAssignment } from './WorkEffortPartyAssignment';
 import { extendWorkEffortState } from './WorkEffortState';
 
-export function extend(workspace: Database) {
-  extendAutomatedAgent(workspace);
-  extendEmailAddress(workspace);
-  extendNonSerialisedInventoryItem(workspace);
-  extendOrganisation(workspace);
-  extendPartCategory(workspace);
-  extendPerson(workspace);
-  extendPostalAddress(workspace);
-  extendProductCategory(workspace);
-  extendPurchaseOrder(workspace);
-  extendPurchaseOrderItem(workspace);
-  extendSerialisedInventoryItem(workspace);
-  extendSerialisedItem(workspace);
-  extendSerialisedItemCharacteristicType(workspace);
-  extendTelecommunicationsNumber(workspace);
-  extendUnifiedGood(workspace);
-  extendWebAddress(workspace);
-  extendWorkEffortInventoryAssignment(workspace);
-  extendWorkEffortPartyAssignment(workspace);
-  extendWorkEffortState(workspace);
+export function extend(database: Database) {
+  extendAutomatedAgent(database);
+  extendEmailAddress(database);
+  extendNonSerialisedInventoryItem(database);
+  extendOrganisation(database);
+  extendPartCategory(database);
+  extendPerson(database);
+  extendPostalAddress(database);
+  extendProductCategory(database);
+  extendPurchaseOrder(database);
+  extendPurchaseOrderItem(database);
+  extendSerialisedInventoryItem(database);
+  extendSerialisedItem(database);
+  extendSerialisedItemCharacteristicType(database);
+  extendTelecommunicationsNumber(database);
+  extendUnifiedGood(database);
+  extendWebAddress(database);
+  extendWorkEffortInventoryAssignment(database);
+  extendWorkEffortPartyAssignment(database);
+  extendWorkEffortState(database);
 }

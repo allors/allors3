@@ -3,9 +3,9 @@ import { assert } from '@allors/meta/system';
 import { Organisation, PostalAddress, TelecommunicationsNumber } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
-export function extendOrganisation(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.Organisation);
+export function extendOrganisation(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.Organisation);
   assert(cls);
 
   Object.defineProperties(cls.prototype, {

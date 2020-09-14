@@ -10,7 +10,8 @@ import { Record } from './Record';
 export interface Database {
   readonly metaPopulation: MetaPopulation;
   readonly accessControlById: Map<string, AccessControl>;
-
+  readonly constructorByObjectType: Map<ObjectType, any>;
+  
   createSession(): Session;
   get(id: string): Record;
   permission(objectType: ObjectType, operandType: OperandType, operation: Operations): Permission | undefined;

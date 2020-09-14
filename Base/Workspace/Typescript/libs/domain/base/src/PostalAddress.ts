@@ -4,9 +4,9 @@ import { PostalAddress } from '@allors/domain/generated';
 import { oneLine, stripIndents, inlineLists } from 'common-tags';
 import { Database } from '@allors/workspace/system';
 
-export function extendPostalAddress(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.PostalAddress);
+export function extendPostalAddress(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.PostalAddress);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'displayName', {

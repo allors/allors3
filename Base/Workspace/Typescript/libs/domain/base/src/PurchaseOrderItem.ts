@@ -4,9 +4,9 @@ import { PurchaseOrderItem } from '@allors/domain/generated';
 import { inlineLists } from 'common-tags';
 import { Database } from '@allors/workspace/system';
 
-export function extendPurchaseOrderItem(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.PurchaseOrderItem);
+export function extendPurchaseOrderItem(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.PurchaseOrderItem);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'displayName', {

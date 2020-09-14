@@ -4,9 +4,9 @@ import { SerialisedItem, UnifiedGood } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
 
-export function extendSerialisedItem(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.SerialisedItem);
+export function extendSerialisedItem(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.SerialisedItem);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'displayName', {

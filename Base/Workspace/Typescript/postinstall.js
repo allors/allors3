@@ -18,6 +18,3 @@ link ('../../../Platform/Workspace/Typescript/libs/protocol/system/src', 'libs/p
 
 link ('../../../Platform/Workspace/Typescript/libs/workspace/system/src', 'libs/workspace/system');
 link ('../../../Platform/Workspace/Typescript/libs/workspace/memory/src', 'libs/workspace/memory');
-
-// Core
-link ('../../../Core/Workspace/Typescript/libs/meta/core/src', 'libs/meta/core');

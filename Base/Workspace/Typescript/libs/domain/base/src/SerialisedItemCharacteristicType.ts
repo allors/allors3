@@ -3,9 +3,9 @@ import { assert } from '@allors/meta/system';
 import { SerialisedItemCharacteristicType } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
-export function extendSerialisedItemCharacteristicType(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.SerialisedItemCharacteristicType);
+export function extendSerialisedItemCharacteristicType(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.SerialisedItemCharacteristicType);
   assert(cls);
 
   Object.defineProperties(cls.prototype, {

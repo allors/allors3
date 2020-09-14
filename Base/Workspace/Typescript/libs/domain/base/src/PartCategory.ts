@@ -3,10 +3,10 @@ import { assert } from '@allors/meta/system';
 import { PartCategory } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
-export function extendPartCategory(workspace: Database) {
+export function extendPartCategory(database: Database) {
 
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.PartCategory);
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.PartCategory);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'displayName', {

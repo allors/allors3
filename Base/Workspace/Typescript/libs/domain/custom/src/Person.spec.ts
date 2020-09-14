@@ -12,10 +12,10 @@ describe('Person', () => {
 
   beforeEach(() => {
     m = new MetaPopulation(data) as Meta;
-    const workspace: Database = new MemoryDatabase(m);
-    extend(workspace);
+    const database: Database = new MemoryDatabase(m);
+    extend(database);
 
-    session = workspace.createSession();
+    session = database.createSession();
   });
 
   describe('displayName', () => {

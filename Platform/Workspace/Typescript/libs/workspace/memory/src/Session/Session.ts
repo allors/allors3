@@ -64,13 +64,43 @@ export class MemorySession implements Session {
         newObject.session = this;
         newObject.workspace = this.workspace;
         newObject.objectType = resolvedObjectType;
-        newObject.id = this.workspace.create();
+        newObject.id = this.workspace.create(resolvedObjectType);
         return newObject;
       }
 
       case Origin.Session:
         break;
     }
+  }
+
+  public get(id: string): DatabaseObject | WorkspaceObject | undefined {
+    if (!id) {
+      return undefined;
+    }
+
+    if (id.startsWith('w')) {
+      let workspaceObject = this.workspaceObjectById.get(id);
+      if (workspaceObject === undefined) {
+        workspaceObject = this.instantiateWorkspace(id);
+        this.workspaceObjectById.set(id, workspaceObject);
+      }
+
+      return workspaceObject;
+    }
+
+    let sessionObject = this.existingSessionObjectById.get(id);
+    if (sessionObject === undefined) {
+      sessionObject = this.newSessionObjectById.get(id);
+
+      if (sessionObject === undefined) {
+        const databaseObject = this.database.get(id);
+        if (databaseObject) {
+          sessionObject = this.instantiateDatabase(databaseObject);
+        }
+      }
+    }
+
+    return sessionObject;
   }
 
   public delete(object: DatabaseObject): void {
@@ -108,33 +138,6 @@ export class MemorySession implements Session {
     }
 
     this.hasChanges = false;
-  }
-
-  public get(id: string): DatabaseObject | undefined {
-    if (!id) {
-      return undefined;
-    }
-
-    if(id.startsWith('w')) {
-      let workspaceObject = this.workspaceObjectById.get(id);
-      if(workspaceObject === undefined){
-        workspaceObject = this.instantiateWorkspace(id);
-      }
-    }
-
-    let sessionObject = this.existingSessionObjectById.get(id);
-    if (sessionObject === undefined) {
-      sessionObject = this.newSessionObjectById.get(id);
-
-      if (sessionObject === undefined) {
-        const databaseObject = this.database.get(id);
-        if (databaseObject) {
-          sessionObject = this.instantiateDatabase(databaseObject);
-        }
-      }
-    }
-
-    return sessionObject;
   }
 
   public getForAssociation(id: string): DatabaseObject | undefined {
@@ -260,10 +263,25 @@ export class MemorySession implements Session {
   }
 
   private instantiateWorkspace(id: string): MemoryWorkspaceObject {
-    // Todo:
-    return;
-  }
+    const objectType = this.workspace.getObjectType(id);
 
+    if(!objectType){
+      return undefined;
+    }
+
+    const constructor = this.database.constructorByObjectType.get(objectType) as any;
+    if (!constructor) {
+      throw new Error(`Could not get constructor for ${objectType.name}`);
+    }
+
+    const newObject: MemoryWorkspaceObject = new constructor();
+    newObject.session = this;
+    newObject.workspace = this.workspace;
+    newObject.objectType = objectType;
+    newObject.id = id;
+    return newObject;
+  }
+  
   private instantiateDatabase(databaseObject: Record): MemoryDatabaseObject {
     const constructor = this.database.constructorByObjectType.get(databaseObject.objectType) as any;
     if (!constructor) {

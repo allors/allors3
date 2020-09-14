@@ -7,9 +7,9 @@ import { Person, EmailAddress, TelecommunicationsNumber } from '@allors/domain/g
 import { inlineLists } from 'common-tags';
 
 
-export function extendPerson(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.Person);
+export function extendPerson(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.Person);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'displayName', {

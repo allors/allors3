@@ -1,4 +1,4 @@
-import { RoleType, AssociationType, MetaPopulation } from '@allors/meta/system';
+import { RoleType, AssociationType, MetaPopulation, ObjectType } from '@allors/meta/system';
 import { ChangeSet } from './ChangeSet';
 
 import { Composite, Association, Role } from './Types';
@@ -28,8 +28,9 @@ function areSame(isOne: boolean, a: any, b: any): boolean {
 }
 
 export class MemoryWorkspace {
-
   private idCounter = 0;
+
+  private readonly objectTypeByObjectId: Map<Composite, ObjectType>;
 
   private readonly roleByAssociationByRoleType: Map<RoleType, Map<Composite, Role>>;
   private readonly associationByRoleByAssociationType: Map<AssociationType, Map<Composite, Association>>;
@@ -37,16 +38,14 @@ export class MemoryWorkspace {
   private changedRoleByAssociationByRoleType: Map<RoleType, Map<Composite, Role>>;
   private changedAssociationByRoleByAssociationType: Map<AssociationType, Map<Composite, Association>>;
 
-  private objects: Composite[];
-
   constructor(private readonly meta: MetaPopulation) {
+    this.objectTypeByObjectId = new Map();
+
     this.roleByAssociationByRoleType = new Map();
     this.associationByRoleByAssociationType = new Map();
 
     this.changedRoleByAssociationByRoleType = new Map();
     this.changedAssociationByRoleByAssociationType = new Map();
-
-    this.objects = [];
   }
 
   snapshot(): ChangeSet {
@@ -87,10 +86,14 @@ export class MemoryWorkspace {
     return snapshot;
   }
 
-  create(): Composite {
+  create(objectType: ObjectType): Composite {
     const newId = `w${++this.idCounter}`;
-    this.objects.push(newId);
+    this.objectTypeByObjectId.set(newId, objectType);
     return newId;
+  }
+
+  getObjectType(id: Composite): ObjectType {
+    return this.objectTypeByObjectId.get(id);
   }
 
   getRole(association: Composite, roleType: RoleType): Role {

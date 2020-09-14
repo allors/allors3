@@ -4,10 +4,10 @@ import { TelecommunicationsNumber } from '@allors/domain/generated';
 import { inlineLists } from 'common-tags';
 import { Database } from '@allors/workspace/system';
 
-export function extendTelecommunicationsNumber(workspace: Database) {
+export function extendTelecommunicationsNumber(database: Database) {
 
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.TelecommunicationsNumber);
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.TelecommunicationsNumber);
   assert(cls);
 
   Object.defineProperty(cls?.prototype, 'displayName', {

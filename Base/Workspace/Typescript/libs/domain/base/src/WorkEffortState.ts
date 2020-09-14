@@ -10,9 +10,9 @@ const cancelledId = 'f9fc3cd0-44c9-4343-98fd-494c4d6c9988';
 const completedId = '4d942f82-3b8f-4248-9ebc-22b1e5f05d93';
 const finishedId = '6a9716a1-8174-4b26-86eb-22a265b74e78';
 
-export function extendWorkEffortState(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.WorkEffortState);
+export function extendWorkEffortState(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.WorkEffortState);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'created', {

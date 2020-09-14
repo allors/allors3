@@ -3,10 +3,10 @@ import { assert } from '@allors/meta/system';
 import { NonSerialisedInventoryItem } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
-export function extendNonSerialisedInventoryItem(workspace: Database) {
+export function extendNonSerialisedInventoryItem(database: Database) {
 
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.NonSerialisedInventoryItem);
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.NonSerialisedInventoryItem);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'facilityName', {

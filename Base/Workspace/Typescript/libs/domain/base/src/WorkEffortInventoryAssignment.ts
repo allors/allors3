@@ -3,9 +3,9 @@ import { assert } from '@allors/meta/system';
 import { WorkEffortInventoryAssignment } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
-export function extendWorkEffortInventoryAssignment(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.WorkEffortInventoryAssignment);
+export function extendWorkEffortInventoryAssignment(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.WorkEffortInventoryAssignment);
   assert(cls);
 
   Object.defineProperty(cls.prototype, 'totalSellingPrice', {

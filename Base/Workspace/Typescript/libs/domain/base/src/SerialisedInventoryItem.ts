@@ -4,9 +4,9 @@ import { SerialisedInventoryItem } from '@allors/domain/generated';
 import { Database } from '@allors/workspace/system';
 
 
-export function extendSerialisedInventoryItem(workspace: Database) {
-  const m = workspace.metaPopulation as Meta;
-  const cls = workspace.constructorByObjectType.get(m.SerialisedInventoryItem);
+export function extendSerialisedInventoryItem(database: Database) {
+  const m = database.metaPopulation as Meta;
+  const cls = database.constructorByObjectType.get(m.SerialisedInventoryItem);
   assert(cls);
 
   Object.defineProperty(cls, 'facilityName', {
