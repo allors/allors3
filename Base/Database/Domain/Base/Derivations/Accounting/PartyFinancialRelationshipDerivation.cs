@@ -14,10 +14,11 @@ namespace Allors.Domain
     {
         public Guid Id => new Guid("8403E05C-8C82-47E9-8649-748294FC8463");
 
-        public IEnumerable<Pattern> Patterns { get; } = new[]
+        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.PartyFinancialRelationship.Class),
-            new CreatedPattern(M.SalesInvoice.Class) {Steps = new IPropertyType[]{M.SalesInvoice.BillToCustomer}}
+            new ChangedRolePattern(M.SalesInvoice.BillToCustomer) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+            new ChangedConcreteRolePattern(M.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {M.SalesOrder.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
         };
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

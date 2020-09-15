@@ -7,6 +7,7 @@ namespace Allors
 {
     using System;
     using System.Globalization;
+    using System.Runtime.CompilerServices;
     using Allors.Domain;
     using Allors.Domain.TestPopulation;
 
@@ -161,6 +162,8 @@ namespace Allors
                             .WithProductIdentificationType(new ProductIdentificationTypes(session).Part).Build())
                         .WithInventoryItemKind(new InventoryItemKinds(session).NonSerialised).Build())
                     .Build();
+
+                var serialisedUnifiedGood = new UnifiedGoodBuilder(session).WithSerialisedDefaults(internalOrganisation).Build();
 
                 var catMain = new ProductCategoryBuilder(session).WithName("main cat").Build();
 
