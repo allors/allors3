@@ -17,7 +17,8 @@ namespace Allors.Domain
         public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
         {
             new CreatedPattern(M.PartyFinancialRelationship.Class),
-            new ChangedRolePattern(M.SalesInvoice.BillToCustomer) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+            new ChangedConcreteRolePattern(M.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+            new ChangedConcreteRolePattern(M.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
             new ChangedConcreteRolePattern(M.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {M.SalesOrder.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
         };
 
