@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class PartyFinancialRelationshipTests : DomainTest
     {
         [Fact]
-        public void DeriveOpenOrderAmountOnNewSalesOrder()
+        public void DeriveOpenOrderAmount()
         {
             var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
 
@@ -22,6 +22,69 @@ namespace Allors.Domain
             var partyFinancial = order.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == order.TakenBy);
 
             Assert.True(partyFinancial.OpenOrderAmount == order.TotalIncVat);
+        }
+
+        [Fact]
+        public void DeriveAmountDue()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive();
+
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+
+            Assert.True(partyFinancial.AmountDue == invoice.TotalIncVat - invoice.AmountPaid);
+        }
+
+        [Fact]
+        public void DeriveAmountDueWithoutPayment()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            invoice.AdvancePayment = 0;
+
+            this.Session.Derive();
+
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+
+            Assert.True(partyFinancial.AmountDue == invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void DeriveAmountOverDueWithoutGracePeriod()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            // we know payment must be made within 30 days
+            invoice.InvoiceDate = this.Session.Now().AddDays(-31); //due becomes yesterday
+
+            this.Session.Derive();
+
+            invoice.Store.PaymentGracePeriod = 0;
+
+            this.Session.Derive();
+
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+
+            Assert.True(partyFinancial.AmountOverDue == invoice.TotalIncVat - invoice.AdvancePayment);
+        }
+
+        [Fact]
+        public void DeriveAmountOverDueWithGracePeriod()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            // we know payment must be made within 30 days
+            invoice.InvoiceDate = this.Session.Now().AddDays(-31); //due becomes yesterday
+
+            this.Session.Derive();
+
+            invoice.Store.PaymentGracePeriod = 10;
+
+            this.Session.Derive();
+
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+
+            Assert.True(partyFinancial.AmountOverDue == 0);
         }
     }
 }
