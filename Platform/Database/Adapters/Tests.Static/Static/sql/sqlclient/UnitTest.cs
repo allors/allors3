@@ -8,9 +8,11 @@ namespace Allors.Database.Adapters.SqlClient
     using Allors.Domain;
     using Xunit;
 
-    public abstract class UnitTest : Adapters.UnitTest
+    public class UnitTest : Adapters.UnitTest, IClassFixture<Fixture<UnitTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public UnitTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

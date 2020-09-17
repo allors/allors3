@@ -9,12 +9,11 @@ namespace Allors.Database.Adapters.Npgsql
     using System;
     using Adapters;
 
-    [Collection(Fixture.Collection)]
-    public class RelationExtentTest : Adapters.RelationExtentTest, IDisposable
+    public class RelationExtentTest : Adapters.RelationExtentTest, IClassFixture<Fixture<RelationExtentTest>>
     {
         private readonly Profile profile;
 
-        public RelationExtentTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public RelationExtentTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

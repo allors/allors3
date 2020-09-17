@@ -14,6 +14,12 @@ namespace Allors.Meta
     /// </summary>
     public interface IRelationType : IMetaObject, IComparable
     {
+        bool Workspace { get; }
+
+        string[] WorkspaceNames { get; }
+
+        Origin AssignedOrigin { get; }
+
         IAssociationType AssociationType { get; }
 
         IRoleType RoleType { get; }

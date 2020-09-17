@@ -7,7 +7,7 @@
 namespace Allors
 {
     using System.Collections.Generic;
-
+    using System.Threading;
     using Allors.Meta;
 
     /// <summary>
@@ -37,6 +37,7 @@ namespace Allors
         /// <param name="secondValue">The second object.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddBetween(IRoleType role, object firstValue, object secondValue);
+        ICompositePredicate AddBetween(IRoleClass role, object firstValue, object secondValue);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if any object of the role of the object under evaluation is contained in the containingExtent.
@@ -45,6 +46,7 @@ namespace Allors
         /// <param name="containingExtent">The extent.</param>
         /// <returns>this CompositePredicate.</returns>
         ICompositePredicate AddContainedIn(IRoleType role, Extent containingExtent);
+        ICompositePredicate AddContainedIn(IRoleClass role, Extent containingExtent);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if any object of the role of the object under evaluation is contained in the containingExtent.
@@ -53,6 +55,7 @@ namespace Allors
         /// <param name="containingEnumerable">The enumerable.</param>
         /// <returns>This CompositePredicate. </returns>
         ICompositePredicate AddContainedIn(IRoleType role, IEnumerable<IObject> containingEnumerable);
+        ICompositePredicate AddContainedIn(IRoleClass role, IEnumerable<IObject> containingEnumerable);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if any object of the association of the object under evaluation is contained in the containingExtent.
@@ -77,6 +80,7 @@ namespace Allors
         /// <param name="containedObject">The allors object.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddContains(IRoleType role, IObject containedObject);
+        ICompositePredicate AddContains(IRoleClass role, IObject containedObject);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the association of the object under evaluation contains the allorsObject.
@@ -100,6 +104,7 @@ namespace Allors
         /// <param name="valueOrAllorsObject">The object.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddEquals(IRoleType roleType, object valueOrAllorsObject);
+        ICompositePredicate AddEquals(IRoleClass roleClass, object valueOrAllorsObject);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the association of the object under evaluation equals the allorsObject.
@@ -115,6 +120,7 @@ namespace Allors
         /// <param name="role">The role .</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddExists(IRoleType role);
+        ICompositePredicate AddExists(IRoleClass role);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the association of the object under evaluation exists.
@@ -130,6 +136,7 @@ namespace Allors
         /// <param name="value">The object.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddGreaterThan(IRoleType role, object value);
+        ICompositePredicate AddGreaterThan(IRoleClass role, object value);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the object under evaluation is an instance of the IObjectType.
@@ -145,6 +152,7 @@ namespace Allors
         /// <param name="objectType">the IObjectType.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddInstanceof(IRoleType role, IComposite objectType);
+        ICompositePredicate AddInstanceof(IRoleClass role, IComposite objectType);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the association of the object under evaluation is an instance of the IObjectType.
@@ -161,6 +169,7 @@ namespace Allors
         /// <param name="value">The object.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddLessThan(IRoleType role, object value);
+        ICompositePredicate AddLessThan(IRoleClass role, object value);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the role of the object under evaluation is like the string (Sql like).
@@ -169,6 +178,7 @@ namespace Allors
         /// <param name="value">The string.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddLike(IRoleType role, string value);
+        ICompositePredicate AddLike(IRoleClass role, string value);
 
         /// <summary>
         /// Adds a CompositePredicate that evaluates to true if its composed predicate evaluates to false.

@@ -6,9 +6,11 @@
 
 namespace Allors.Meta
 {
-    public sealed partial class ConcreteRoleType : IConcreteRoleType
+    using System;
+
+    public sealed partial class RoleClass : IRoleClass
     {
-        public ConcreteRoleType(Class @class, RoleType roleType)
+        public RoleClass( Class @class, RoleType roleType)
         {
             this.Class = @class;
             this.RoleType = roleType;
@@ -22,20 +24,16 @@ namespace Allors.Meta
 
         public bool? IsUniqueOverride { get; set; }
 
-        IRoleType IConcreteRoleType.RoleType
-        {
-            get => this.RoleType;
-            set => this.RoleType = (RoleType)value;
-        }
+        IRoleType IRoleClass.RoleType => this.RoleType;
 
-        public RoleType RoleType { get; private set; }
+        public RoleType RoleType { get; }
 
         public RelationType RelationType => this.RoleType.RelationType;
 
-        IClass IConcreteRoleType.Class => this.Class;
+        IClass IRoleClass.Class => this.Class;
 
         public Class Class { get; }
 
-        public static implicit operator RoleType(ConcreteRoleType concreteRoleType) => concreteRoleType.RoleType;
+        public static implicit operator RoleType(RoleClass roleClass) => roleClass.RoleType;
     }
 }

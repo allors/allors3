@@ -64,6 +64,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var populationData = this.Database.Save();
                 var classesData = populationData.ToArray();
@@ -83,6 +84,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 using (var session = this.Database.CreateSession())
                 {
@@ -98,10 +100,10 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(4, classes.Length);
 
-                Assert.Contains(M.C1.Class, classes);
-                Assert.Contains(M.C2.Class, classes);
-                Assert.Contains(M.C3.Class, classes);
-                Assert.Contains(M.C4.Class, classes);
+                Assert.Contains(m.C1.Class, classes);
+                Assert.Contains(m.C2.Class, classes);
+                Assert.Contains(m.C3.Class, classes);
+                Assert.Contains(m.C4.Class, classes);
 
                 foreach (var classData in classesData)
                 {
@@ -111,7 +113,7 @@ namespace Allors.Database.Adapters
                     var versions = objectsData.Select(v => v.Version).ToArray();
                     Assert.True(versions.All(v => v == 1));
 
-                    if (classData.Class.Equals(M.C1.Class))
+                    if (classData.Class.Equals(m.C1.Class))
                     {
                         foreach (var objectData in objectsData)
                         {
@@ -132,17 +134,17 @@ namespace Allors.Database.Adapters
                         }
                     }
 
-                    if (classData.Class.Equals(M.C2.Class))
+                    if (classData.Class.Equals(m.C2.Class))
                     {
 
                     }
 
-                    if (classData.Class.Equals(M.C3.Class))
+                    if (classData.Class.Equals(m.C3.Class))
                     {
 
                     }
 
-                    if (classData.Class.Equals(M.C4.Class))
+                    if (classData.Class.Equals(m.C4.Class))
                     {
 
                     }
@@ -154,10 +156,12 @@ namespace Allors.Database.Adapters
 
         private void AssertPopulation(ISession session)
         {
-            Assert.Equal(4, this.GetExtent(session, C1.Meta.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, C2.Meta.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, C3.Meta.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, C4.Meta.ObjectType).Length);
+            var m = session.Meta();
+
+            Assert.Equal(4, this.GetExtent(session, m.C1.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(session, m.C2.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(session, m.C3.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(session, m.C4.ObjectType).Length);
 
             var c1ACopy = C1.Instantiate(session, this.c1A.Strategy.ObjectId);
             var c1BCopy = C1.Instantiate(session, this.c1B.Strategy.ObjectId);

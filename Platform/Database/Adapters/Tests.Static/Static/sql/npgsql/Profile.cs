@@ -7,26 +7,26 @@ namespace Allors.Database.Adapters.Npgsql
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Text;
-
+    using Caching;
+    using Domain;
     using global::Npgsql;
     using Meta;
     using Microsoft.Extensions.DependencyInjection;
-    using MysticMind.PostgresEmbed;
+    using ObjectFactory = Allors.ObjectFactory;
 
     public class Profile : Adapters.Profile
     {
-        private readonly PgServer pgServer;
+        private readonly string database;
+        private readonly IConnectionFactory connectionFactory;
+        private readonly ICacheFactory cacheFactory;
 
-        public Profile(PgServer pgServer)
+        public Profile(string database, IConnectionFactory connectionFactory = null, ICacheFactory cacheFactory = null)
         {
-            this.pgServer = pgServer;
-            var services = new ServiceCollection();
-            this.ServiceProvider = services.BuildServiceProvider();
+            this.database = database.ToLowerInvariant();
+            this.connectionFactory = connectionFactory;
+            this.cacheFactory = cacheFactory;
         }
-
-        public ServiceProvider ServiceProvider { get; set; }
 
         public override Action[] Markers
         {
@@ -42,52 +42,25 @@ namespace Allors.Database.Adapters.Npgsql
             }
         }
 
-        protected string ConnectionString => (this.pgServer != null) ?
-            $"Server=localhost; Port={this.pgServer.PgPort}; User Id=postgres; Password=test; Database=postgres; Pooling=false; Timeout=300; CommandTimeout=300" :
-            $"Server=localhost; User Id=allors; Password=allors; Database=adapters; Pooling=false; Timeout=300; CommandTimeout=300";
-
-        //protected string ConnectionString =>
-        //    $"Server=localhost; User Id=allors; Password=allors; Database=adapters; Pooling=false";
-
-        public IDatabase CreateDatabase(IMetaPopulation metaPopulation, bool init)
-        {
-            var configuration = new Configuration
-            {
-                ObjectFactory = this.ObjectFactory,
-                ConnectionString = this.ConnectionString,
-                IsolationLevel = IsolationLevel.Serializable,
-            };
-
-            var database = new Database(this.ServiceProvider, configuration);
-
-            if (init)
-            {
-                database.Init();
-            }
-
-            return database;
-        }
+        protected string ConnectionString => $"Server=localhost; User Id=postgres; Password=test; Database={this.database}; Pooling=false; CommandTimeout=300";
 
         public override IDatabase CreateDatabase()
         {
-            var configuration = new Configuration
+            var metaPopulation = new MetaBuilder().Build();
+            var m = new M(metaPopulation);
+            return new Database(new ServiceCollection().BuildServiceProvider(), new Configuration
             {
-                ObjectFactory = this.ObjectFactory,
+                Meta = m,
+                ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 ConnectionString = this.ConnectionString,
-            };
-
-            var database = new Database(this.ServiceProvider, configuration);
-
-            return database;
+                ConnectionFactory = this.connectionFactory,
+                CacheFactory = this.cacheFactory,
+            });
         }
-
-        public override IDatabase CreatePopulation() => new Memory.Database(this.ServiceProvider, new Memory.Configuration { ObjectFactory = this.ObjectFactory });
-
-        protected NpgsqlConnection CreateDbConnection() => new NpgsqlConnection(this.ConnectionString);
-
+        
         public void DropTable(string tableName)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -102,7 +75,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public bool ExistIndex(string table, string column)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -127,7 +100,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public bool ExistProcedure(string procedure)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -147,7 +120,7 @@ WHERE lower(ROUTINE_NAME) = '" + procedure.ToLower() + @"'";
 
         public bool ExistPrimaryKey(string table, string column)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -167,7 +140,7 @@ where lower(table_name) = '" + table.ToLowerInvariant() + "' and lower(constrain
 
         public bool IsInteger(string table, string column)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -189,7 +162,7 @@ AND data_type = 'integer'";
 
         public bool IsLong(string table, string column)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -211,7 +184,7 @@ AND data_type = 'bigint'";
 
         public bool IsUnique(string table, string column)
         {
-            using (var connection = this.CreateDbConnection())
+            using (var connection = this.CreateConnection())
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
@@ -230,5 +203,7 @@ AND data_type = 'uuid'";
                 }
             }
         }
+
+        private NpgsqlConnection CreateConnection() => new NpgsqlConnection(this.ConnectionString);
     }
 }

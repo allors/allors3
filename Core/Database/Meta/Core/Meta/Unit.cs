@@ -128,5 +128,7 @@ namespace Allors.Meta
                     break;
             }
         }
+
+        public override Origin Origin => Origin.Database;
     }
 }

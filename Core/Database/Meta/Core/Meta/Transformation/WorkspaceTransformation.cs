@@ -6,13 +6,11 @@
 namespace Allors.Meta
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
 
     public class WorkspaceTransformation
     {
-        public MetaPopulation Transform(MetaPopulation from)
+        public MetaPopulation Transform(MetaPopulation from, string workspaceName)
         {
             var to = new MetaPopulation();
 
@@ -25,7 +23,9 @@ namespace Allors.Meta
                 };
             }
 
-            static bool IsWorkspace(Composite v) => v.AssociationTypes.Any(w => w.Workspace) || v.RoleTypes.Any(w => w.Workspace) || v.MethodTypes.Any(w => w.Workspace);
+            bool IsWorkspace(Composite v) => v.AssociationTypes.Any(w => w.RelationType.WorkspaceNames?.Contains(workspaceName) == true) ||
+                                             v.RoleTypes.Any(w => w.RelationType.WorkspaceNames?.Contains(workspaceName) == true) ||
+                                             v.MethodTypes.Any(w => w.WorkspaceNames?.Contains(workspaceName) == true);
 
             foreach (var fromInterface in from.Interfaces.Where((Func<Composite, bool>)IsWorkspace))
             {
@@ -36,12 +36,13 @@ namespace Allors.Meta
                 };
             }
 
-            foreach (var fromClass in from.Classes.Where((Func<Composite, bool>)IsWorkspace))
+            foreach (var fromClass in from.Classes.Where(IsWorkspace))
             {
                 _ = new Class(to, fromClass.Id)
                 {
                     SingularName = fromClass.SingularName,
-                    PluralName = fromClass.PluralName
+                    PluralName = fromClass.PluralName,
+                    AssignedOrigin = fromClass.AssignedOrigin
                 };
             }
 
@@ -61,7 +62,7 @@ namespace Allors.Meta
 
                 var toRelationType = new RelationType(to, fromRelationType.Id, fromAssociationType.Id, fromRoleType.Id)
                 {
-                    Origin = Origins.Database,
+                    AssignedOrigin = fromRelationType.AssignedOrigin,
                     AssignedMultiplicity = fromRelationType.AssignedMultiplicity,
                     IsDerived = fromRelationType.IsDerived,
                 };
@@ -98,7 +99,6 @@ namespace Allors.Meta
                 {
                     ObjectType = (Composite)to.Find(fromMethodType.ObjectType.Id),
                     Name = fromMethodType.Name,
-                    Workspace = fromMethodType.Workspace
                 };
 
                 if (toMethodType.ObjectType is Interface toInterface)

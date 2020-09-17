@@ -10,6 +10,8 @@ namespace Allors.Meta
 
     public interface IComposite : IObjectType
     {
+        Origin AssignedOrigin { get; }
+
         IEnumerable<IAssociationType> AssociationTypes { get; }
 
         IEnumerable<IRoleType> RoleTypes { get; }

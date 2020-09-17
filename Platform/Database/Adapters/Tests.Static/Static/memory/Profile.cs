@@ -7,19 +7,10 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
-
     using Adapters;
-
-    using Microsoft.Extensions.DependencyInjection;
 
     public class Profile : Adapters.Profile
     {
-        public Profile()
-        {
-            var services = new ServiceCollection();
-            this.ServiceProvider = services.BuildServiceProvider();
-        }
-
         public override Action[] Markers
         {
             get
@@ -43,10 +34,6 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public ServiceProvider ServiceProvider { get; set; }
-
-        public override IDatabase CreatePopulation() => this.CreateDatabase();
-
-        public override IDatabase CreateDatabase() => new Database(this.ServiceProvider, new Configuration { ObjectFactory = this.ObjectFactory });
+        public override IDatabase CreateDatabase() => this.CreateMemoryDatabase();
     }
 }

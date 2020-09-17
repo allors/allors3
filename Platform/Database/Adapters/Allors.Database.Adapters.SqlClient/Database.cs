@@ -43,6 +43,12 @@ namespace Allors.Database.Adapters.SqlClient
         public Database(IServiceProvider serviceProvider, Configuration configuration)
         {
             this.ServiceProvider = serviceProvider;
+            this.Meta = configuration.Meta;
+            if (this.Meta == null)
+            {
+                throw new Exception("Configuration.Meta is missing");
+            }
+            
             this.ObjectFactory = configuration.ObjectFactory;
             if (!this.ObjectFactory.MetaPopulation.IsValid)
             {
@@ -93,6 +99,8 @@ namespace Allors.Database.Adapters.SqlClient
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
+
+        public object Meta { get; }
 
         public IServiceProvider ServiceProvider { get; }
 

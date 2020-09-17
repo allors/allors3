@@ -13,6 +13,8 @@ namespace Allors
 
     internal class Program
     {
+        private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
+
         private static int Main(string[] args)
         {
             switch (args.Length)
@@ -21,7 +23,7 @@ namespace Allors
                     return Default();
 
                 case 2:
-                    return Generate.Execute(MetaPopulation.Instance, args[0], args[1]).ErrorOccured ? 1 : 0;
+                    return Generate.Execute(MetaBuilder.Build(), args[0], args[1]).ErrorOccured ? 1 : 0;
 
                 default:
                     return 1;
@@ -47,7 +49,7 @@ namespace Allors
 
             };
 
-            var metaPopulation = MetaPopulation.Instance;
+            var metaPopulation = MetaBuilder.Build();
 
             for (var i = 0; i < database.GetLength(0); i++)
             {
@@ -66,9 +68,7 @@ namespace Allors
             }
 
             var workspaceTransformation = new WorkspaceTransformation();
-            var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation);
-
-            workspaceMetaPopulation.SetupWorkspace();
+            var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation, "Default");
 
             for (var i = 0; i < workspace.GetLength(0); i++)
             {

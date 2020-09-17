@@ -7,10 +7,13 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
     using System;
+    using Xunit;
 
-    public class ChangesTest : Adapters.ChangesTest, IDisposable
+    public class ChangesTest : Adapters.ChangesTest, IClassFixture<Fixture<ChangesTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public ChangesTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

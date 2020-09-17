@@ -3,27 +3,27 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Meta
-{
-    using Allors.Data;
+//namespace Allors.Meta
+//{
+//    using Allors.Data;
 
-    public partial class MetaPerson
-    {
-        public Node[] AngularHome;
+//    public partial class MetaPerson
+//    {
+//        public Node[] AngularHome;
 
-        internal override void CustomExtend()
-        {
-            this.Delete.Workspace = true;
+//        internal override void CustomExtend()
+//        {
+//            this.Delete.WorkspaceNames = new[] { "Default" };
 
-            this.FirstName.RelationType.Workspace = true;
-            this.LastName.RelationType.Workspace = true;
-            this.MiddleName.RelationType.Workspace = true;
+//            this.FirstName.RelationType.WorkspaceNames = new[] { "Default" };
+//            this.LastName.RelationType.WorkspaceNames = new[] { "Default" };
+//            this.MiddleName.RelationType.WorkspaceNames = new[] { "Default" };
 
-            var person = this;
-            this.AngularHome = new[]
-                {
-                    new Node(person.Photo),
-                };
-        }
-    }
-}
+//            var person = this;
+//            this.AngularHome = new[]
+//                {
+//                    new Node(person.Photo),
+//                };
+//        }
+//    }
+//}

@@ -13,5 +13,7 @@ namespace Allors.Repository.Domain
         public const string AssociationId = "AssociationId";
 
         public const string RoleId = "RoleId";
+
+        public const string Origin = "Origin";
     }
 }

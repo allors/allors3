@@ -51,6 +51,8 @@ namespace Allors.Meta
             }
         }
 
+        public override Origin Origin => Origin.Database;
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>

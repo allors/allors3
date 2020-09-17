@@ -7,10 +7,13 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
     using System;
+    using Xunit;
 
-    public class RelationExtentTest : Adapters.RelationExtentTest, IDisposable
+    public class RelationExtentTest : Adapters.RelationExtentTest, IClassFixture<Fixture<RelationExtentTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public RelationExtentTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

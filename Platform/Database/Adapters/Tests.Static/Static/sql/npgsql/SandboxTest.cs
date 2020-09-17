@@ -6,15 +6,13 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using Xunit;
-    using System;
     using Adapters;
 
-    [Collection(Fixture.Collection)]
-    public class SandboxTest : Adapters.SandboxTest, IDisposable
+    public class SandboxTest : Adapters.SandboxTest, IClassFixture<Fixture<SandboxTest>>
     {
         private readonly Profile profile;
 
-        public SandboxTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public SandboxTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

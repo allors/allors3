@@ -5,15 +5,13 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    using System;
     using Xunit;
 
-    [Collection(Fixture.Collection)]
-    public class CacheTest : Adapters.CacheTest, IDisposable
+    public class CacheTest : Adapters.CacheTest, IClassFixture<Fixture<CacheTest>>
     {
         private readonly Profile profile;
 
-        public CacheTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public CacheTest() => this.profile = new Profile(this.GetType().Name);
 
         public override void Dispose() => this.profile.Dispose();
 

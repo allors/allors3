@@ -6,15 +6,13 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using Xunit;
-    using System;
     using Adapters;
 
-    [Collection(Fixture.Collection)]
-    public class One2ManyTest : Adapters.One2ManyTest, IDisposable
+    public class One2ManyTest : Adapters.One2ManyTest, IClassFixture<Fixture<One2ManyTest>>
     {
         private readonly Profile profile;
 
-        public One2ManyTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public One2ManyTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

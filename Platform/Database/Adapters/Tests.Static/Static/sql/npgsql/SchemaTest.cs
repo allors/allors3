@@ -5,14 +5,13 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    // [CollectionDefinition(Collection.Npgsql)]
-    // public class SchemaTest : Adapters.SchemaTest, IDisposable
+    // public class SchemaTest : Adapters.SchemaTest, IClassFixture<Fixture<SchemaTest>>
     // {
     // private readonly Profile profile;
 
-    // public SchemaTest(Fixture fixture)
+    // public SchemaTest()
     // {
-    //    this.profile = new Profile(fixture.Server);
+    //    this.profile =new Profile(this.GetType().Name);
     // }
 
     // protected override IProfile Profile => this.profile;

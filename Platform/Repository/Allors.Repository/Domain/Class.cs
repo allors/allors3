@@ -16,6 +16,17 @@ namespace Allors.Repository.Domain
             : base(inflector, id, name) =>
             this.PartialByDomainName = new Dictionary<string, PartialClass>();
 
+        public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Database);
+
+        public string[] WorkspaceNames
+        {
+            get
+            {
+                dynamic attribute = this.AttributeByName.Get("Workspace");
+                return attribute?.Names ?? Array.Empty<string>();
+            }
+        }
+
         public Dictionary<string, PartialClass> PartialByDomainName { get; }
 
         public override Interface[] Interfaces

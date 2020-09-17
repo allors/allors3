@@ -178,16 +178,16 @@ $if(property.RoleType.MediaType)$		relationType.RoleType.MediaType = "$property.
 	}
 >>
 
-inheritedRoles(interface) ::= <<$interface.InheritedRoles:{roleType|$inheritedRole(property=roleType.RelationType)$}; separator="\n"$>>
+inheritedRoles(interface) ::= <<$interface.InheritedRoleTypes:{roleType|$inheritedRole(property=roleType.RelationType)$}; separator="\n"$>>
 inheritedRole(property) ::= <<            Meta$interface.SingularName$.Instance.$property.RoleType.Name$ = Meta$property.AssociationType.ObjectType.SingularName$.Instance.$property.RoleType.Name$;>>
 
-implementedRoles(class) ::= <<$class.InheritedRoles:{roleType|$implementedRole(property=roleType.RelationType)$}; separator="\n"$>>
+implementedRoles(class) ::= <<$class.InheritedRoleTypes:{roleType|$implementedRole(property=roleType.RelationType)$}; separator="\n"$>>
 implementedRole(property) ::= <<            Meta$class.SingularName$.Instance.$property.RoleType.Name$ = Meta$class.SingularName$.Instance.Class.ConcreteRoleTypeByRoleType[Meta$property.AssociationType.ObjectType.SingularName$.Instance.$property.RoleType.Name$];>>
 
 associations(composite) ::= <<$composite.ExclusiveAssociationTypes:{associationType|$association(property=associationType.RelationType)$}; separator="\n"$>>
 association(property) ::= <<            Meta$composite.SingularName$.Instance.$property.AssociationType.PropertyName$ = Meta$property.AssociationType.SingularName$.Instance.$property.RoleType.Name$.AssociationType;>>
 
-inheritedassociations(composite) ::= <<$composite.InheritedAssociations:{associationType|$inheritedassociation(property=associationType.RelationType)$}; separator="\n"$>>
+inheritedassociations(composite) ::= <<$composite.InheritedAssociationTypes:{associationType|$inheritedassociation(property=associationType.RelationType)$}; separator="\n"$>>
 inheritedassociation(property) ::= <<            Meta$composite.SingularName$.Instance.$property.AssociationType.PropertyName$ = Meta$property.AssociationType.SingularName$.Instance.$property.RoleType.Name$.AssociationType;>>
 
 exclusiveMethodTypes(composite) ::= <<$composite.ExclusiveMethodTypes:{method|$definedMethod(method)$}; separator="\n"$>>
@@ -200,7 +200,7 @@ definedMethod(method) ::= <<
 			}
 >>
 
-inheritedMethods(composite) ::= <<$composite.InheritedMethods:{method|$inheritedMethod(method)$}; separator="\n"$>>
+inheritedMethods(composite) ::= <<$composite.InheritedMethodTypes:{method|$inheritedMethod(method)$}; separator="\n"$>>
 inheritedMethod(method) ::= <<				Meta$composite.SingularName$.Instance.$method.Name$ = Meta$method.ObjectType.SingularName$.Instance.$method.Name$;>>
 
 domains(meta) ::= <<
@@ -279,7 +279,7 @@ interface(interface) ::= <<
 $interface.ExclusiveMethodTypes:{method|         public MethodType $method.Name$;}; separator="\n"$
 
 		// Inherited Methods
-$interface.InheritedMethods:{method|         public MethodType $method.Name$;}; separator="\n"$
+$interface.InheritedMethodTypes:{method|         public MethodType $method.Name$;}; separator="\n"$
 
 		// Roles
 $interface.RoleTypes:{property|         public RoleType $property.Name$;}; separator="\n"$

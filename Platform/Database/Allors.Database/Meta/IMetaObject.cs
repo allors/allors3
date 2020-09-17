@@ -12,10 +12,12 @@ namespace Allors.Meta
     /// </summary>
     public interface IMetaObject
     {
+        IMetaPopulation MetaPopulation { get; }
+
         Guid Id { get; }
 
         string IdAsString { get; }
 
-        IMetaPopulation MetaPopulation { get; }
+        Origin Origin { get; }
     }
 }

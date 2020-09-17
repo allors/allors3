@@ -8,15 +8,18 @@ namespace Allors.Database.Adapters.SqlClient
     using System;
     using Allors;
     using Adapters;
+    using Xunit;
 
-    public class SerializationTest : Adapters.SerializationTest, IDisposable
+    public class SerializationTest : Adapters.SerializationTest, IClassFixture<Fixture<SerializationTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public SerializationTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 
         public override void Dispose() => this.profile.Dispose();
 
-        protected override IDatabase CreatePopulation() => this.profile.CreatePopulation();
+        protected override IDatabase CreatePopulation() => this.profile.CreateMemoryDatabase();
     }
 }

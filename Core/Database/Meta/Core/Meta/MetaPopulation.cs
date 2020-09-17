@@ -10,13 +10,9 @@ namespace Allors.Meta
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Resources;
-    using System.Runtime.CompilerServices;
 
     public sealed partial class MetaPopulation : IMetaPopulation
     {
-        public static MetaPopulation Instance { get; private set; }
-
         private readonly Dictionary<Guid, MetaObjectBase> metaObjectById;
 
         private Dictionary<string, Class> derivedClassByLowercaseName;
@@ -34,30 +30,7 @@ namespace Allors.Meta
         private IList<RoleType> roleTypes;
         private IList<MethodType> methodTypes;
 
-        static MetaPopulation() => Reset();
-
-        public static void Reset()
-        {
-            Instance = new MetaPopulation();
-            var metaBuilder = new MetaBuilder(Instance);
-            metaBuilder.BuildDomains();
-            metaBuilder.BuildDomainInheritances();
-            metaBuilder.BuildUnits();
-            metaBuilder.BuildInterfaces();
-            metaBuilder.BuildClasses();
-            metaBuilder.BuildInheritances();
-            metaBuilder.BuildRoles();
-            metaBuilder.BuildInheritedRoles();
-            metaBuilder.BuildImplementedRoles();
-            metaBuilder.BuildAssociations();
-            metaBuilder.BuildInheritedAssociations();
-            metaBuilder.BuildDefinedMethods();
-            metaBuilder.BuildInheritedMethods();
-            metaBuilder.ExtendInterfaces();
-            metaBuilder.ExtendClasses();
-        }
-
-        internal MetaPopulation()
+        public MetaPopulation()
         {
             this.isStale = true;
             this.isDeriving = false;

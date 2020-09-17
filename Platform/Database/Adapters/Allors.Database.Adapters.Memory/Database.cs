@@ -21,6 +21,12 @@ namespace Allors.Database.Adapters.Memory
         public Database(IServiceProvider serviceProvider, Configuration configuration)
         {
             this.ServiceProvider = serviceProvider;
+            this.Meta = configuration.Meta;
+            if (this.Meta == null)
+            {
+                throw new Exception("Configuration.Meta is missing");
+            }
+
             this.ObjectFactory = configuration.ObjectFactory;
             if (this.ObjectFactory == null)
             {
@@ -45,6 +51,8 @@ namespace Allors.Database.Adapters.Memory
         public IObjectFactory ObjectFactory { get; }
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
+
+        public object Meta { get; }
 
         public IServiceProvider ServiceProvider { get; }
 

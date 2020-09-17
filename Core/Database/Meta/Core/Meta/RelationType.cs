@@ -23,9 +23,7 @@ namespace Allors.Meta
         private bool isIndexed;
 
         private string xmlDoc;
-
-        private bool workspace;
-
+        
         public RelationType(MetaPopulation metaPopulation, Guid id, Guid associationTypeId, Guid roleTypeId)
             : base(metaPopulation)
         {
@@ -37,24 +35,13 @@ namespace Allors.Meta
             metaPopulation.OnRelationTypeCreated(this);
         }
 
-        public bool Workspace
-        {
-            get => this.workspace;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.workspace = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public bool Workspace => this.WorkspaceNames != null;
 
-        public Origins Origin { get; set; }
+        public string[] WorkspaceNames { get; set; }
 
-        public bool HasDatabaseOrigin => this.Origin == Origins.Database;
+        public override Origin Origin => this.AssignedOrigin;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origins.Workspace;
-
-        public bool HasSessionOrigin => this.Origin == Origins.Session;
+        public Origin AssignedOrigin { get; set; }
 
         public string XmlDoc
         {
@@ -205,10 +192,10 @@ namespace Allors.Meta
         /// <value>The name of the reverse.</value>
         public string ReverseName => this.RoleType.SingularName + this.AssociationType.SingularName;
 
-        public ConcreteRoleType[] ConcreteRoleTypes =>
+        public RoleClass[] ConcreteRoleTypes =>
                     this.AssociationType.ObjectType.IsInterface ?
                         this.AssociationType.ObjectType.Classes.Select(v => v.ConcreteRoleTypeByRoleType[this.RoleType]).ToArray() :
-                        Array.Empty<ConcreteRoleType>();
+                        Array.Empty<RoleClass>();
 
         /// <summary>
         /// Gets the validation name.

@@ -23,11 +23,7 @@ namespace Allors.Meta
         {
             if (this.array.Count > 0)
             {
-                if (this.set == null)
-                {
-                    this.set = new HashSet<T>(this.array);
-                }
-
+                this.set ??= new HashSet<T>(this.array);
                 return this.set.Contains(item);
             }
 

@@ -27,14 +27,10 @@ namespace Allors.Meta
             : base(metaPopulation)
         {
         }
-        
-        public Origins Origin { get; set; }
 
-        public bool HasDatabaseOrigin => this.Origin == Origins.Database;
+        public override Origin Origin => this.AssignedOrigin;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origins.Workspace;
-
-        public bool HasSessionOrigin => this.Origin == Origins.Session;
+        public Origin AssignedOrigin { get; set; }
 
         public string XmlDoc
         {
@@ -235,11 +231,11 @@ namespace Allors.Meta
 
         public IEnumerable<MethodType> ExclusiveMethodTypes => this.MethodTypes.Where(methodType => this.Equals(methodType.ObjectType)).ToArray();
 
-        public IEnumerable<MethodType> InheritedMethods => this.MethodTypes.Except(this.ExclusiveMethodTypes);
+        public IEnumerable<MethodType> InheritedMethodTypes => this.MethodTypes.Except(this.ExclusiveMethodTypes);
 
-        public IEnumerable<RoleType> InheritedRoles => this.RoleTypes.Except(this.ExclusiveRoleTypes);
+        public IEnumerable<RoleType> InheritedRoleTypes => this.RoleTypes.Except(this.ExclusiveRoleTypes);
 
-        public IEnumerable<AssociationType> InheritedAssociations => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);
+        public IEnumerable<AssociationType> InheritedAssociationTypes => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);
 
         #region Workspace
 
@@ -266,13 +262,13 @@ namespace Allors.Meta
         }
 
         public abstract IEnumerable<Composite> Subtypes { get; }
-        
+
         public IEnumerable<RoleType> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
 
         public IEnumerable<RoleType> ExclusiveRoleTypesWithWorkspaceOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
 
         public IEnumerable<RoleType> ExclusiveRoleTypesWithSessionOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
-        
+
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithDatabaseOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithWorkspaceOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);

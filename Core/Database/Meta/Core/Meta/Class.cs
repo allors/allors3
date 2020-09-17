@@ -14,11 +14,11 @@ namespace Allors.Meta
     {
         private readonly Class[] classes;
 
-        private readonly Dictionary<RoleType, ConcreteRoleType> concreteRoleTypeByRoleType;
+        private readonly Dictionary<RoleType, RoleClass> concreteRoleTypeByRoleType;
 
         private readonly Dictionary<MethodType, ConcreteMethodType> concreteMethodTypeByMethodType;
 
-        private ConcreteRoleType[] concreteRoleTypes;
+        private RoleClass[] concreteRoleTypes;
 
         private ConcreteMethodType[] concreteMethodTypes;
 
@@ -29,17 +29,21 @@ namespace Allors.Meta
         {
             this.Id = id;
 
-            this.concreteRoleTypeByRoleType = new Dictionary<RoleType, ConcreteRoleType>();
+            this.concreteRoleTypeByRoleType = new Dictionary<RoleType, RoleClass>();
             this.concreteMethodTypeByMethodType = new Dictionary<MethodType, ConcreteMethodType>();
 
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
         }
 
+        public bool Workspace => this.WorkspaceNames != null;
+
+        public string[] WorkspaceNames { get; set; }
+        
         // TODO: Review
         public RoleType[] DelegatedAccessRoleTypes { get; set; }
 
-        public Dictionary<RoleType, ConcreteRoleType> ConcreteRoleTypeByRoleType
+        public Dictionary<RoleType, RoleClass> ConcreteRoleTypeByRoleType
         {
             get
             {
@@ -57,7 +61,7 @@ namespace Allors.Meta
             }
         }
 
-        public ConcreteRoleType[] ConcreteRoleTypes
+        public RoleClass[] ConcreteRoleTypes
         {
             get
             {
@@ -83,7 +87,7 @@ namespace Allors.Meta
 
         public override Type ClrType => this.clrType;
 
-        public IEnumerable<ConcreteRoleType> WorkspaceConcreteRoleTypes
+        public IEnumerable<RoleClass> WorkspaceConcreteRoleTypes
         {
             get
             {
@@ -117,7 +121,7 @@ namespace Allors.Meta
 
                 if (!this.concreteRoleTypeByRoleType.TryGetValue(roleType, out var concreteRoleType))
                 {
-                    concreteRoleType = new ConcreteRoleType(this, roleType);
+                    concreteRoleType = new RoleClass(this, roleType);
                     this.concreteRoleTypeByRoleType[roleType] = concreteRoleType;
                 }
             }

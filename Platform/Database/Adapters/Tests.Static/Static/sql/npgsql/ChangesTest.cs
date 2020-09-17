@@ -8,13 +8,12 @@ namespace Allors.Database.Adapters.Npgsql
     using System;
     using Adapters;
     using Xunit;
-
-    [Collection(Fixture.Collection)]
-    public class ChangesTest : Adapters.ChangesTest, IDisposable
+    
+    public class ChangesTest : Adapters.ChangesTest, IClassFixture<Fixture<ChangesTest>>
     {
         private readonly Adapters.Profile profile;
 
-        public ChangesTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public ChangesTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

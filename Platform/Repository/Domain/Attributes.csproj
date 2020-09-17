@@ -1,11 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <Compile Include="..\..\Database\Allors.Database\Multiplicity.cs" Link="Allors\Multiplicity.cs" />
+    <Compile Include="..\..\Database\Allors.Database\Origin.cs" Link="Allors\Origin.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Allors\" />
   </ItemGroup>
 </Project>

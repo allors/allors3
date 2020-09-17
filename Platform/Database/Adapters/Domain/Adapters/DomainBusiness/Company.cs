@@ -9,14 +9,6 @@ namespace Allors.Domain
 
     public partial class Company
     {
-        public static Company Create(ISession session) => (Company)session.Create(Meta.ObjectType);
-
-        public static Company[] Create(ISession session, int count) => (Company[])session.Create(Meta.ObjectType, count);
-
-        public static Company[] Instantiate(ISession session, string[] ids) => (Company[])session.Instantiate(ids);
-
-        public static Company[] Extent(ISession session) => (Company[])session.Extent(Meta.ObjectType).ToArray();
-
         public static Company Create(ISession session, string name)
         {
             var company = Create(session);

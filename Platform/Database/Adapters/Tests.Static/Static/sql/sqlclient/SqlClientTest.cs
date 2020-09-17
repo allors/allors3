@@ -12,15 +12,18 @@ namespace Allors.Database.Adapters.SqlClient
     using Allors.Meta;
     using Xunit;
 
-    public class SqlClientTest : IDisposable
+    public class SqlClientTest : IDisposable, IClassFixture<Fixture<SqlClientTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public SqlClientTest() => this.profile = new Profile(this.GetType().Name);
 
         protected IProfile Profile => this.profile;
 
         public void Dispose() => this.profile.Dispose();
 
         #region Population
+#pragma warning disable IDE1006
         protected C1 c1A;
         protected C1 c1B;
         protected C1 c1C;
@@ -37,6 +40,7 @@ namespace Allors.Database.Adapters.SqlClient
         protected C4 c4B;
         protected C4 c4C;
         protected C4 c4D;
+#pragma warning restore IDE1006
         #endregion
 
         protected ISession Session => this.Profile.Session;
@@ -51,13 +55,14 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var count = Settings.LargeArraySize;
 
                 using (var session = this.CreateSession())
                 {
-                    var c1s = (Extent<C1>)session.Create(MetaC1.Instance.ObjectType, count);
-                    var c2s = (Extent<C2>)session.Create(MetaC2.Instance.ObjectType, count);
+                    var c1s = (Extent<C1>)session.Create(m.C1.ObjectType, count);
+                    var c2s = (Extent<C2>)session.Create(m.C2.ObjectType, count);
 
                     for (var i = 0; i < count; i++)
                     {
@@ -80,17 +85,18 @@ namespace Allors.Database.Adapters.SqlClient
         [Fact]
         public void Prefetch()
         {
-            var c2PrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(C2.Meta.C3Many2Manies)
-                .Build();
-
-            var c1PrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(C1.Meta.C1C2many2manies, c2PrefetchPolicy)
-                .Build();
-
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
+                var c2PrefetchPolicy = new PrefetchPolicyBuilder()
+                    .WithRule(m.C2.C3Many2Manies)
+                    .Build();
+
+                var c1PrefetchPolicy = new PrefetchPolicyBuilder()
+                    .WithRule(m.C1.C1C2many2manies, c2PrefetchPolicy)
+                    .Build();
 
                 this.Populate();
 

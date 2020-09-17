@@ -5,17 +5,15 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    using System;
     using Adapters;
     using Allors;
     using Xunit;
 
-    [Collection(Fixture.Collection)]
-    public class LifeCycleTest : Adapters.LifeCycleTest, IDisposable
+    public class LifeCycleTest : Adapters.LifeCycleTest, IClassFixture<Fixture<LifeCycleTest>>
     {
         private readonly Profile profile;
 
-        public LifeCycleTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public LifeCycleTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

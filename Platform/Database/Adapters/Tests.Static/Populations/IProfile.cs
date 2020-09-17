@@ -18,8 +18,6 @@ namespace Allors.Database.Adapters
 
         Action[] Inits { get; }
 
-        IObjectFactory ObjectFactory { get; }
-
         IDatabase CreateDatabase();
     }
 }

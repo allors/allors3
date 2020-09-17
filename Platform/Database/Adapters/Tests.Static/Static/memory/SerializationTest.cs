@@ -17,6 +17,6 @@ namespace Allors.Database.Adapters.Memory
 
         public override void Dispose() => this.profile.Dispose();
 
-        protected override IDatabase CreatePopulation() => this.profile.CreatePopulation();
+        protected override IDatabase CreatePopulation() => this.profile.CreateMemoryDatabase();
     }
 }
