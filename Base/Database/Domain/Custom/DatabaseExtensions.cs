@@ -98,7 +98,9 @@ namespace Allors.Domain
                 new RepeatingPurchaseInvoiceDerivation(),
                 new RepeatingSalesInvoiceDerivation(),
                 new SalesInvoiceDerivation(),
-                new PartyFinancialRelationshipDerivation(),
+                new PartyFinancialRelationshipCreationDerivation(),
+                new PartyFinancialRelationshipAmountDueDerivation(),
+                new PartyFinancialRelationshipOpenOrderAmountDerivation(),
                 new PaymentApplicationDerivation(),
                 new SupplierRelationshipDerivation(),
                 new PurchaseOrderDerivation(), //Has Dependency on SupplierRelationship

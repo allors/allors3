@@ -16,7 +16,7 @@ namespace Allors.Domain
     {
         public static IEnumerable<IObject> Get(this Step step, IObject @object)
         {
-            if (step.IsOne)
+            if (step.PropertyType.IsOne)
             {
                 var resolved = step.PropertyType.Get(@object.Strategy);
                 if (resolved != null)

@@ -1,4 +1,4 @@
-// <copyright file="OrganisationRollUp.cs" company="Allors bvba">
+// <copyright file="AgreementProductApplicability.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,62 +6,54 @@
 namespace Allors.Repository
 {
     using System;
-
     using Allors.Repository.Attributes;
 
     #region Allors
-    [Id("316fc0d3-2dce-43aa-9b38-a60f964d5395")]
+    [Id("3021de37-fd9a-4ba1-b7e9-2ba56d4cd03e")]
     #endregion
-    public partial class OrganisationRollUp : PartyRelationship
+    public partial class AgreementProductApplicability: Period
     {
         #region inherited properties
-
-        public Party[] Parties { get; set; }
 
         public DateTime FromDate { get; set; }
 
         public DateTime ThroughDate { get; set; }
 
-        public Agreement[] Agreements { get; set; }
-
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
         #endregion
 
         #region Allors
-        [Id("1ed8bd41-7552-44bd-bcb0-f24c47cf84ca")]
-        [AssociationId("924282be-62b0-4a94-814e-04ef94bbeaac")]
-        [RoleId("09c50cf9-87b3-4280-80d3-b793b392d168")]
+        [Id("5ec038e4-581a-400e-bf33-4a6b2543db86")]
+        [AssociationId("6ac3b2c8-f60e-4bcd-8622-1de70b51ca40")]
+        [RoleId("069d1dc7-263b-41a7-b3c1-9418abed4e78")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        public Agreement Agreement { get; set; }
+
+        #region Allors
+        [Id("8cd6c155-30a4-4bb6-b8b4-15333c4a0b2f")]
+        [AssociationId("375e5b6e-b23c-45c2-82e3-da0896601c78")]
+        [RoleId("f113d59f-d7a7-45ee-9f72-6d4e6497d5a0")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        public AgreementItem AgreementItem { get; set; }
+
+        #region Allors
+        [Id("96f730a5-5212-4751-81ad-752046e9eadd")]
+        [AssociationId("26c3a0cf-e9b9-411a-ba0e-e0c0482814f4")]
+        [RoleId("4e8de6c5-f378-4e3f-abc7-f6aed2753e69")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
         [Workspace]
-        public Organisation Parent { get; set; }
-
-        #region Allors
-        [Id("4301bb17-43b6-4bf3-a874-7441dd419dd0")]
-        [AssociationId("5b6d83a4-a7f5-4097-bc9b-7ba91e3b96ee")]
-        [RoleId("269ea202-bffb-42ff-a497-4a2fa1afbaad")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Required]
-        [Workspace]
-        public OrganisationUnit RollupKind { get; set; }
-
-        #region Allors
-        [Id("92ebf310-72ea-468b-a880-7268b48df41a")]
-        [AssociationId("71b8ea7b-5316-42df-adc0-2aded71c9eaf")]
-        [RoleId("e005418e-9180-4146-b55a-81ff9fb06078")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Required]
-        [Workspace]
-        public Organisation Child { get; set; }
+        public Product Product { get; set; }
 
         #region inherited methods
 
@@ -79,7 +71,6 @@ namespace Allors.Repository
 
         public void OnPostDerive() { }
 
-        public void Delete() { }
         #endregion
     }
 }
