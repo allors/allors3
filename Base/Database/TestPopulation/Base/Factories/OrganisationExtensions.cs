@@ -50,7 +50,13 @@ namespace Allors.Domain.TestPopulation
                 .WithCustomer(customer)
                 .WithInternalOrganisation(@this)
                 .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithAgreement(new SalesAgreementBuilder(@this.Session())
+                                .WithDescription("PaymentNetDays")
+                                .WithAgreementTerm(new InvoiceTermBuilder(@this.Session())
+                                .WithTermType(new InvoiceTermTypes(@this.Session()).PaymentNetDays).WithTermValue("30").Build())
+                                .Build())
                 .Build();
+
 
             new OrganisationContactRelationshipBuilder(@this.Session())
                 .WithContact(new PersonBuilder(@this.Session()).WithDefaults().Build())
@@ -69,6 +75,11 @@ namespace Allors.Domain.TestPopulation
                 .WithCustomer(customer)
                 .WithInternalOrganisation(@this)
                 .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
+                .WithAgreement(new SalesAgreementBuilder(@this.Session())
+                                .WithDescription("PaymentNetDays")
+                                .WithAgreementTerm(new InvoiceTermBuilder(@this.Session())
+                                .WithTermType(new InvoiceTermTypes(@this.Session()).PaymentNetDays).WithTermValue("30").Build())
+                                .Build())
                 .Build();
 
             return customer;
@@ -112,7 +123,7 @@ namespace Allors.Domain.TestPopulation
             return subContractor;
         }
 
-        public static Part CreateNonSerialisedNonUnifiedPart(this Organisation @this, Faker faker)
+        public static NonUnifiedPart CreateNonSerialisedNonUnifiedPart(this Organisation @this, Faker faker)
         {
             var part = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
 
@@ -122,6 +133,7 @@ namespace Allors.Domain.TestPopulation
                     .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
                     .WithSupplier(supplier)
                     .WithPart(part)
+                    .WithPrice(faker.Random.Decimal(0, 10))
                     .WithUnitOfMeasure(part.UnitOfMeasure)
                     .Build();
             }
@@ -136,7 +148,7 @@ namespace Allors.Domain.TestPopulation
             return part;
         }
 
-        public static Part CreateSerialisedNonUnifiedPart(this Organisation @this, Faker faker)
+        public static NonUnifiedPart CreateSerialisedNonUnifiedPart(this Organisation @this, Faker faker)
         {
             var part = new NonUnifiedPartBuilder(@this.Session()).WithSerialisedDefaults(@this, faker).Build();
 
@@ -146,6 +158,7 @@ namespace Allors.Domain.TestPopulation
                     .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
                     .WithSupplier(supplier)
                     .WithPart(part)
+                    .WithPrice(faker.Random.Decimal(0, 10))
                     .WithUnitOfMeasure(part.UnitOfMeasure)
                     .Build();
             }
@@ -169,6 +182,88 @@ namespace Allors.Domain.TestPopulation
                 .Build();
 
             return unifiedGood;
+        }
+
+        /*
+         * Create a PurchaseOrder without any PurchaseOrder Items
+         */
+        public static PurchaseOrder CreatePurchaseOrderWithoutItems(this Organisation @this)
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+
+            return purchaseOrder;
+        }
+
+        /*
+         * Create PurchaseOrder with both Serialized & NonSerialized PurchaseOrder Items
+         */
+        public static PurchaseOrder CreatePurchaseOrderWithBothItems(this Organisation @this, Faker faker)
+        {
+            var serializedPart = new UnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(@this).Build();
+            var serializedItem = new SerialisedItemBuilder(@this.Session()).WithDefaults(@this).Build();
+            serializedPart.AddSerialisedItem(serializedItem);
+
+            var nonSerializedPart = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
+
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+
+            new SupplierOfferingBuilder(@this.Session())
+                .WithPart(nonSerializedPart)
+                .WithSupplier(purchaseOrder.TakenViaSupplier)
+                .WithFromDate(@this.Session().Now().AddMinutes(-1))
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Session()).Piece)
+                .WithPrice(faker.Random.Decimal(0, 10))
+                .Build();
+
+            var nonSerializedPartItem = new PurchaseOrderItemBuilder(@this.Session()).WithNonSerializedPartDefaults(nonSerializedPart).Build();
+            var serializedPartItem = new PurchaseOrderItemBuilder(@this.Session()).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(nonSerializedPartItem);
+            purchaseOrder.AddPurchaseOrderItem(serializedPartItem);
+
+            return purchaseOrder;
+        }
+
+        /*
+         * Create PurchaseOrder with Serialized PurchaseOrderItem
+         */
+        public static PurchaseOrder CreatePurchaseOrderWithSerializedItem(this Organisation @this)
+        {
+            var serializedPart = new UnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(@this).Build();
+            var serializedItem = new SerialisedItemBuilder(@this.Session()).WithDefaults(@this).Build();
+            serializedPart.AddSerialisedItem(serializedItem);
+
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+
+            var item = new PurchaseOrderItemBuilder(@this.Session()).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(item);
+
+            return purchaseOrder;
+        }
+
+        /*
+         * Create PurchaseOrder with NonSerialized PurchaseOrderItem
+         */
+        public static PurchaseOrder CreatePurchaseOrderWithNonSerializedItem(this Organisation @this, Faker faker)
+        {
+            var nonSerializedPart = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
+
+            var purchaseOrder = new PurchaseOrderBuilder(@this.Session()).WithDefaults(@this).Build();
+
+            new SupplierOfferingBuilder(@this.Session())
+                .WithPart(nonSerializedPart)
+                .WithSupplier(purchaseOrder.TakenViaSupplier)
+                .WithFromDate(@this.Session().Now().AddMinutes(-1))
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Session()).Piece)
+                .WithPrice(faker.Random.Decimal(0, 10))
+                .Build();
+
+            var item = new PurchaseOrderItemBuilder(@this.Session()).WithNonSerializedPartDefaults(nonSerializedPart).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(item);
+
+            return purchaseOrder;
         }
     }
 }

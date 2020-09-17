@@ -51,9 +51,15 @@ namespace Allors.Domain
                     }
                 }
 
-                if (this.BillToCustomer?.PaymentNetDays().HasValue == true)
+                var now = this.Session().Now();
+                var customerRelationship = this.BillToCustomer?.CustomerRelationshipsWhereCustomer
+                    .FirstOrDefault(v => v.InternalOrganisation == this.BilledFrom
+                      && v.FromDate <= now
+                      && (!v.ExistThroughDate || v.ThroughDate >= now));
+
+                if (customerRelationship?.PaymentNetDays().HasValue == true)
                 {
-                    return this.BillToCustomer.PaymentNetDays().Value;
+                    return customerRelationship.PaymentNetDays().Value;
                 }
 
                 if (this.ExistStore && this.Store.ExistPaymentNetDays)

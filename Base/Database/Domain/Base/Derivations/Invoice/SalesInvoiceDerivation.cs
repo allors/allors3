@@ -131,27 +131,7 @@ namespace Allors.Domain
                     salesInvoice.Locale = session.GetSingleton().DefaultLocale;
                 }
 
-                if (salesInvoice.ExistSalesTerms)
-                {
-                    foreach (AgreementTerm term in salesInvoice.SalesTerms)
-                    {
-                        if (term.TermType.Equals(new InvoiceTermTypes(session).PaymentNetDays))
-                        {
-                            if (int.TryParse(term.TermValue, out var netDays))
-                            {
-                                salesInvoice.PaymentDays = netDays;
-                            }
-                        }
-                    }
-                }
-                else if (salesInvoice.BillToCustomer?.PaymentNetDays().HasValue == true)
-                {
-                    salesInvoice.PaymentDays = salesInvoice.BillToCustomer.PaymentNetDays().Value;
-                }
-                else if (salesInvoice.ExistStore && salesInvoice.Store.ExistPaymentNetDays)
-                {
-                    salesInvoice.PaymentDays = salesInvoice.Store.PaymentNetDays;
-                }
+                salesInvoice.PaymentDays = salesInvoice.PaymentNetDays;
 
                 if (!salesInvoice.ExistPaymentDays)
                 {
