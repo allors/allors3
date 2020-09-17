@@ -130,7 +130,7 @@ namespace Allors.Domain
                 !nonUnifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
                 !nonUnifiedGood.ExistQuoteItemsWhereProduct &&
                 !nonUnifiedGood.ExistShipmentItemsWhereGood &&
-                !nonUnifiedGood.ExistWorkEffortGoodStandardsWhereGood &&
+                !nonUnifiedGood.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
                 !nonUnifiedGood.ExistMarketingPackageWhereProductsUsedIn &&
                 !nonUnifiedGood.ExistMarketingPackagesWhereProduct &&
                 !nonUnifiedGood.ExistOrganisationGlAccountsWhereProduct &&
