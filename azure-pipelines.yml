@@ -3,9 +3,17 @@ trigger:
 - feature/*
 - issue/*
 
-container:
-  image: postgresql
-  options: --name pg-docker -e POSTGRES_PASSWORD=test -p 5432:5432
+resources:
+  containers:
+  - container: pg12
+    image: postgres:12
+    ports:
+    - 5432:5432
+    env:
+      POSTGRES_PASSWORD: test
+
+services:
+  postgres: pg12
 
 stages:
 - stage: Platform
