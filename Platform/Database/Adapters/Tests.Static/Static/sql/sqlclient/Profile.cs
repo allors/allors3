@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using System.Text;
     using Adapters;
     using Caching;
@@ -60,19 +60,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        protected string ConnectionString
-        {
-            get
-            {
-                if (Settings.IsWindows)
-                {
-                    return @$"Server=(local);Database={this.database};Integrated Security=true";
-                    //return @$"Server=(localdb)\MSSQLLocalDB;Database={this.database};Integrated Security=true";
-                }
-
-                return $"server=localhost;database={this.database};User Id=SA;Password=Allors123";
-            }
-        }
+        protected string ConnectionString => $"server=localhost;database={this.database};User Id=test;Password=test;";
 
         public override IDatabase CreateDatabase()
         {

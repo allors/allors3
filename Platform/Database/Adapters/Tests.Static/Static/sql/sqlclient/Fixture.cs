@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.SqlClient
 {
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
 
     public class Fixture<T>
     {
@@ -13,7 +13,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             var database = typeof(T).Name;
 
-            using var connection = new SqlConnection(@"Server=(local);Database=master;Integrated Security=true");
+            using var connection = new SqlConnection(@"Server=(local);Database=master;User Id=test;Password=test;");
             connection.Open();
             using var command = connection.CreateCommand();
             command.CommandText = $"DROP DATABASE IF EXISTS {database}";

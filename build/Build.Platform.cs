@@ -5,18 +5,6 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
-    Target AdaptersResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Adapters";
-            using (var sqlServer = new SqlServer())
-            {
-                sqlServer.Restart();
-                sqlServer.Drop(database);
-                sqlServer.Create(database);
-            }
-        });
-
     Target AdaptersGenerate => _ => _
         .After(Clean)
         .Executes(() =>
@@ -42,18 +30,14 @@ partial class Build
 
     Target AdaptersTestSqlClient => _ => _
         .DependsOn(AdaptersGenerate)
-        .DependsOn(AdaptersResetDatabase)
+        .DependsOn(SqlServerSetup)
         .Executes(() =>
         {
-            using (var database = new SqlServer())
-            {
-                database.Restart();
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.PlatformAdaptersStaticTests)
-                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
-                    .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
+            DotNetTest(s => s
+                .SetProjectFile(Paths.PlatformAdaptersStaticTests)
+                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
+                .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     Target AdaptersTestNpgsql => _ => _
