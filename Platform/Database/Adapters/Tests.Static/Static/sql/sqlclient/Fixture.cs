@@ -13,7 +13,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             var database = typeof(T).Name;
 
-            using var connection = new SqlConnection(@"Server=(local);Database=master;User Id=test;Password=test;");
+            using var connection = new SqlConnection(@"Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=true");
             connection.Open();
             using var command = connection.CreateCommand();
             command.CommandText = $"DROP DATABASE IF EXISTS {database}";

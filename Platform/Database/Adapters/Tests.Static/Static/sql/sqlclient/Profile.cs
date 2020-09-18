@@ -60,7 +60,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        protected string ConnectionString => $"server=localhost;database={this.database};User Id=test;Password=test;";
+        protected string ConnectionString => $@"server=(localdb)\MSSQLLocalDB;database={this.database};Integrated Security=true";
 
         public override IDatabase CreateDatabase()
         {

@@ -1,39 +1,32 @@
-using Microsoft.Data.SqlClient;
-using Nuke.Common;
-using Nuke.Common.Tools.Docker;
-using static Nuke.Common.Tools.Docker.DockerTasks;
+using System;
+using MartinCostello.SqlLocalDb;
+using static Nuke.Common.Logger;
 
-partial class Build
+partial class SqlServer : IDisposable
 {
-    Target SqlServerSetup => _ => _
-        .Executes(() =>
-        {
-            using var connection = new SqlConnection(@"Server=(local);Database=master;User Id=sa;Password='Password1234'");
-            connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = @"
-CREATE LOGIN test WITH PASSWORD = 'Password1234'";
-            command.ExecuteNonQuery();
-            command.CommandText = @"
-EXECUTE sys.sp_addsrvrolemember
-    @loginame = N'test',
-    @rolename = N'dbcreator'";
-            command.ExecuteNonQuery();
-        });
+    private SqlLocalDbApi sqlLocalDbApi;
+    private ISqlLocalDbInstanceInfo dbInstance;
+    private ISqlLocalDbInstanceManager manager;
 
-    Target SqlServer => _ => _
-        .Executes(() =>
+    public SqlServer()
+    {
+        this.sqlLocalDbApi = new SqlLocalDbApi();
+        this.dbInstance = this.sqlLocalDbApi.GetDefaultInstance();
+        this.manager = this.dbInstance.Manage();
+
+        if (!this.dbInstance.IsRunning)
         {
-            DockerImagePull(v => v.SetName("mcr.microsoft.com/mssql/server"));
-            DockerRun(v => v
-                .SetDetach(true)
-                .SetImage("mcr.microsoft.com/mssql/server")
-                .SetName("sql")
-                .SetPublish("1433:1433")
-                .AddEnv("ACCEPT_EULA=Y")
-                .AddEnv("MSSQL_PID=Developer")
-                .AddEnv("SA_PASSWORD=Password1234")
-            );
-        });
+            Normal("SqlServer: Start");
+            this.manager.Start();
+        }
+    }
+
+    public void Dispose()
+    {
+        this.sqlLocalDbApi?.Dispose();
+
+        this.sqlLocalDbApi = null;
+        this.dbInstance = null;
+        this.manager = null;
+    }
 }
-

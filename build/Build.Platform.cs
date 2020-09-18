@@ -30,25 +30,30 @@ partial class Build
 
     Target AdaptersTestSqlClient => _ => _
         .DependsOn(AdaptersGenerate)
-        .DependsOn(SqlServerSetup)
         .Executes(() =>
         {
-            DotNetTest(s => s
-                .SetProjectFile(Paths.PlatformAdaptersStaticTests)
-                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
-                .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
-                .SetResultsDirectory(Paths.ArtifactsTests));
+            using (new SqlServer())
+            {
+                DotNetTest(s => s
+                    .SetProjectFile(Paths.PlatformAdaptersStaticTests)
+                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
+                    .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
+                    .SetResultsDirectory(Paths.ArtifactsTests));
+            }
         });
 
     Target AdaptersTestNpgsql => _ => _
         .DependsOn(AdaptersGenerate)
         .Executes(() =>
         {
-            DotNetTest(s => s
-                .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
-                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
-                .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
-                .SetResultsDirectory(this.Paths.ArtifactsTests));
+            using (new Postgres())
+            {
+                DotNetTest(s => s
+                    .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
+                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
+                    .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+            }
         });
 
     Target Adapters => _ => _

@@ -3,24 +3,6 @@ trigger:
 - feature/*
 - issue/*
 
-resources:
-  containers:
-  - container: postgres
-    image: stellirin/postgres-windows
-    ports:
-      - 5432:5432
-    env:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-  - container: sql
-    image: microsoft/mssql-server-windows-developer
-    ports:
-      - 1433:1433
-    env:
-      ACCEPT_EULA: Y
-      MSSQL_PID: 'Developer'
-      SA_PASSWORD: Password1234
-
 stages:
 - stage: Platform
   jobs:
@@ -44,10 +26,6 @@ stages:
           target: 'CoreWorkspaceTest'
         base_workspace_typescript:
           target: 'BaseWorkspaceTest'
-
-    services:
-      postgres: postgres
-      sql: sql
 
     steps:
     - powershell: Set-Culture -CultureInfo nl-BE
