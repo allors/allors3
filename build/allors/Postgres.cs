@@ -5,16 +5,28 @@ using static Nuke.Common.Tools.Docker.DockerTasks;
 
 partial class Build
 {
-    Target Postgres => _ => _
+    private void postgres(int version)
+    {
+        DockerImagePull(v => v.SetName("postgres"));
+        DockerRun(v => v
+            .SetDetach(true)
+            .SetImage($"postgres:{version}")
+            .SetName($"pg{version}")
+            .SetPublish("5432:5432")
+            .AddEnv("POSTGRES_USER=test")
+            .AddEnv("POSTGRES_PASSWORD=test"));
+    }
+
+    Target Postgres8 => _ => _
         .Executes(() =>
         {
-            DockerImagePull(v => v.SetName("postgres"));
-            DockerRun(v => v
-                .SetDetach(true)
-                .SetImage("postgres")
-                .SetName("pg-docker")
-                .SetPublish("5432:5432")
-                .SetEnv("POSTGRES_PASSWORD=test"));
+            this.postgres(8);
+        });
+
+    Target Postgres12 => _ => _
+        .Executes(() =>
+        {
+            this.postgres(12);
         });
 }
 

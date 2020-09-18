@@ -13,7 +13,7 @@ namespace Allors.Database.Adapters.Npgsql
         {
             var database = typeof(T).Name;
 
-            using var connection = new NpgsqlConnection($"Server=localhost; User Id=postgres; Password=test; Database=postgres; Pooling=false; CommandTimeout=300");
+            using var connection = new NpgsqlConnection($"Server=localhost; User Id=test; Password=test; Database=postgres; Pooling=false; CommandTimeout=300");
             connection.Open();
             using var command = connection.CreateCommand();
             command.CommandText = $"DROP DATABASE IF EXISTS {database}";

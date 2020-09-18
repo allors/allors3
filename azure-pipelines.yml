@@ -6,10 +6,11 @@ trigger:
 resources:
   containers:
   - container: pg12
-    image: postgres:12
+    image: amd64/postgres:12
     ports:
-    - 5432:5432
+    - 5432
     env:
+      POSTGRES_USER: test
       POSTGRES_PASSWORD: test
 
 stages:
