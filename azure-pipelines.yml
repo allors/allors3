@@ -6,7 +6,7 @@ trigger:
 resources:
   containers:
   - container: pg12
-    image: amd64/postgres:12
+    image: stellirin/postgres-windows:12
     ports:
     - 5432
     env:
