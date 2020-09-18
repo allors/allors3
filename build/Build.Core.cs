@@ -84,6 +84,7 @@ partial class Build
         });
 
     Target CoreWorkspaceTypescriptMeta => _ => _
+        .After(CoreInstall)
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() =>
@@ -96,6 +97,7 @@ partial class Build
 
 
     Target CoreWorkspaceTypescriptWorkspace => _ => _
+        .After(CoreInstall)
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() =>
@@ -107,6 +109,7 @@ partial class Build
         });
 
     Target CoreWorkspaceTypescriptClient => _ => _
+        .After(CoreInstall)
         .DependsOn(CoreGenerate)
         .DependsOn(CorePublishServer)
         .DependsOn(CorePublishCommands)

@@ -83,7 +83,7 @@ partial class Build
     private Target BaseWorkspaceTypescriptTest => _ => _
         .DependsOn(BaseWorkspaceTypescriptSession);
 
-    Target BaseWorkspaceTest => _ => _
+    private Target BaseWorkspaceTest => _ => _
         .DependsOn(BaseWorkspaceTypescriptTest);
 
     private Target BaseTest => _ => _
