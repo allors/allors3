@@ -3,6 +3,10 @@ trigger:
 - feature/*
 - issue/*
 
+container:
+  image: postgresql
+  options: --name pg-docker -e POSTGRES_PASSWORD=test -p 5432:5432
+
 stages:
 - stage: Platform
   jobs:
