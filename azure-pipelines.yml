@@ -12,9 +12,6 @@ resources:
     env:
       POSTGRES_PASSWORD: test
 
-services:
-  postgres: pg12
-
 stages:
 - stage: Platform
   jobs:
@@ -38,6 +35,9 @@ stages:
           target: 'CoreWorkspaceTest'
         base_workspace_typescript:
           target: 'BaseWorkspaceTest'
+
+    services:
+      postgres: pg12
 
     steps:
     - powershell: Set-Culture -CultureInfo nl-BE

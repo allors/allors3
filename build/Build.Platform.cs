@@ -60,14 +60,11 @@ partial class Build
         .DependsOn(AdaptersGenerate)
         .Executes(() =>
         {
-            using (new Postgres())
-            {
-                DotNetTest(s => s
-                    .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
-                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
-                    .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
-                    .SetResultsDirectory(this.Paths.ArtifactsTests));
-            }
+            DotNetTest(s => s
+                .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
+                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
+                .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
+                .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
     Target Adapters => _ => _
