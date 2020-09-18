@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 var allorsObject = (IObject)this.obj;
 
-                if (this.roleType.RelationType.ExistExclusiveClasses)
+                if (this.roleType.RelationType.ExistExclusiveDatabaseClasses)
                 {
                     statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.roleType.RelationType] + " IS NOT NULL AND ");
                     statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.roleType.RelationType] + "=" + allorsObject.Strategy.ObjectId + ")");

@@ -45,11 +45,11 @@ namespace Allors.Meta
 
         public abstract Origin Origin { get; }
 
-        public bool HasDatabaseOrigin => this.Origin == Origin.Database;
+        public bool HasDatabaseOrigin => this.Origin == Origin.Remote;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
+        public bool HasWorkspaceOrigin => this.Origin == Origin.Local;
 
-        public bool HasSessionOrigin => this.Origin == Origin.Session;
+        public bool HasSessionOrigin => this.Origin == Origin.Working;
 
         /// <summary>
         /// Gets the validation name.

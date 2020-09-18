@@ -470,8 +470,8 @@ namespace Allors.Database.Adapters.Npgsql
                         if (associationIdValue != null && associationIdValue != DBNull.Value)
                         {
                             var associationId = (long)associationIdValue;
-                            association = associationType.ObjectType.ExistExclusiveClass ?
-                                              this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveClass, associationId, this.Session) :
+                            association = associationType.ObjectType.ExistExclusiveDatabaseClass ?
+                                              this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Session) :
                                               this.Session.State.GetOrCreateReferenceForExistingObject(associationId, this.Session);
 
                             nestedObjectIds?.Add(association.ObjectId);
@@ -533,8 +533,8 @@ namespace Allors.Database.Adapters.Npgsql
 
                     if (prefetchedAssociationByRole.TryGetValue(role, out var associationId))
                     {
-                        association = associationType.ObjectType.ExistExclusiveClass ?
-                                          this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveClass, associationId, this.Session) :
+                        association = associationType.ObjectType.ExistExclusiveDatabaseClass ?
+                                          this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Session) :
                                           this.Session.State.GetOrCreateReferenceForExistingObject(associationId, this.Session);
 
                         nestedObjectIds?.Add(associationId);
@@ -594,9 +594,9 @@ namespace Allors.Database.Adapters.Npgsql
                         var associationId = (long)associationIdValue;
                         associations.Add(associationId);
 
-                        if (associationType.ObjectType.ExistExclusiveClass)
+                        if (associationType.ObjectType.ExistExclusiveDatabaseClass)
                         {
-                            this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveClass, associationId, this.Session);
+                            this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Session);
                         }
                         else
                         {
@@ -678,9 +678,9 @@ namespace Allors.Database.Adapters.Npgsql
 
             foreach (var associationId in prefetchedAssociations)
             {
-                if (associationType.ObjectType.ExistExclusiveClass)
+                if (associationType.ObjectType.ExistExclusiveDatabaseClass)
                 {
-                    this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveClass, associationId, this.Session);
+                    this.Session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, associationId, this.Session);
                 }
                 else
                 {

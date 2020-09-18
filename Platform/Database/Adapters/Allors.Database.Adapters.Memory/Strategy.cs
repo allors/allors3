@@ -390,7 +390,7 @@ namespace Allors.Database.Adapters.Memory
             this.AssertNotDeleted();
 
             // Roles
-            foreach (var roleType in this.UncheckedObjectType.RoleTypes)
+            foreach (var roleType in this.UncheckedObjectType.DatabaseRoleTypes)
             {
                 var relationType = roleType.RelationType;
 
@@ -430,7 +430,7 @@ namespace Allors.Database.Adapters.Memory
             }
 
             // Associations
-            foreach (var associationType in this.UncheckedObjectType.AssociationTypes)
+            foreach (var associationType in this.UncheckedObjectType.DatabaseAssociationTypes)
             {
                 var relationType = associationType.RelationType;
                 var roleType = relationType.RoleType;

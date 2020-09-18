@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + "=" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType]);
             }
-            else if (((IComposite)this.role.ObjectType).ExistExclusiveClass && ((IComposite)this.equalsRole.ObjectType).ExistExclusiveClass)
+            else if (((IComposite)this.role.ObjectType).ExistExclusiveDatabaseClass && ((IComposite)this.equalsRole.ObjectType).ExistExclusiveDatabaseClass)
             {
                 statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + "=" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType]);
             }

@@ -8,18 +8,18 @@ namespace Allors
     public enum Origin
     {
         /// <summary>
-        /// Database origin.
+        /// Remote origin.
         /// </summary>
-        Database = 0,
+        Remote = 0,
 
         /// <summary>
-        /// Workspace origin.
+        /// Local origin.
         /// </summary>
-        Workspace = 1,
+        Local = 1,
 
         /// <summary>
-        /// Session origin.
+        /// Working origin.
         /// </summary>
-        Session = 2,
+        Working = 2,
     }
 }

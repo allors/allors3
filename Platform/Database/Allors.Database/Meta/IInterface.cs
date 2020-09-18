@@ -10,6 +10,6 @@ namespace Allors.Meta
 
     public interface IInterface : IComposite
     {
-        IEnumerable<IClass> Subclasses { get; }
+        IEnumerable<IClass> DatabaseClasses { get; }
     }
 }

@@ -12,11 +12,11 @@ namespace Allors.Meta
 
     public interface IMetaPopulation
     {
-        IEnumerable<IComposite> Composites { get; }
+        IEnumerable<IComposite> DatabaseComposites { get; }
 
-        IEnumerable<IClass> Classes { get; }
+        IEnumerable<IClass> DatabaseClasses { get; }
 
-        IEnumerable<IRelationType> RelationTypes { get; }
+        IEnumerable<IRelationType> DatabaseRelationTypes { get; }
 
         IMetaObject Find(Guid metaObjectId);
 

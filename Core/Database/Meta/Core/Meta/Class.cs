@@ -81,9 +81,11 @@ namespace Allors.Meta
 
         public override IEnumerable<Class> Classes => this.classes;
 
+        public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Remote ? this.classes : Array.Empty<Class>();
+
         public override bool ExistClass => true;
 
-        public override Class ExclusiveSubclass => this;
+        public override Class ExclusiveClass => this;
 
         public override Type ClrType => this.clrType;
 

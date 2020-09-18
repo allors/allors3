@@ -137,7 +137,7 @@ namespace Allors.Database.Adapters.SqlClient
             // insert from _o table into class tables
             using (var transaction = this.connection.BeginTransaction())
             {
-                foreach (var @class in this.database.MetaPopulation.Classes)
+                foreach (var @class in this.database.MetaPopulation.DatabaseClasses)
                 {
                     var tableName = this.database.Mapping.TableNameForObjectByClass[@class];
 
@@ -237,7 +237,7 @@ where c = '{@class.Id}'";
 
         private void LoadUnitRelations(XmlReader reader, IRelationType relationType)
         {
-            var allowedClasses = new HashSet<IClass>(relationType.AssociationType.ObjectType.Classes);
+            var allowedClasses = new HashSet<IClass>(relationType.AssociationType.ObjectType.DatabaseClasses);
             var unitRelationsByClass = new Dictionary<IClass, List<UnitRelation>>();
 
             var skip = false;

@@ -112,7 +112,7 @@ namespace Allors.Database.Adapters.Memory
                 strategies.Sort(strategySorter);
             }
 
-            var sortedRelationTypes = new List<IRelationType>(this.session.Population.MetaPopulation.RelationTypes);
+            var sortedRelationTypes = new List<IRelationType>(this.session.Population.MetaPopulation.DatabaseRelationTypes);
             sortedRelationTypes.Sort();
             foreach (var relationType in sortedRelationTypes)
             {

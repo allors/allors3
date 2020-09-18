@@ -90,7 +90,7 @@ namespace Allors.Database.Adapters.SqlClient
                         var relationType = roleType.RelationType;
                         if (roleType.IsOne)
                         {
-                            if (relationType.ExistExclusiveClasses)
+                            if (relationType.ExistExclusiveDatabaseClasses)
                             {
                                 this.prefetcher.PrefetchCompositeRoleObjectTable(this.references, roleType, nestedObjectIds, leafs);
                             }
@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters.SqlClient
                         else
                         {
                             var associationType = relationType.AssociationType;
-                            if (associationType.IsOne && relationType.ExistExclusiveClasses)
+                            if (associationType.IsOne && relationType.ExistExclusiveDatabaseClasses)
                             {
                                 this.prefetcher.PrefetchCompositesRoleObjectTable(this.references, roleType, nestedObjectIds, leafs);
                             }
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.SqlClient
                         nestedObjectIdsByRoleType[roleType] = nestedObjectIds;
                     }
 
-                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses)
+                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses)
                     {
                         if (associationType.IsOne)
                         {

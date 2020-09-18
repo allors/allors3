@@ -80,7 +80,7 @@ namespace Allors.Meta
             }
         }
 
-        public override Origin Origin => Origin.Database;
+        public override Origin Origin => Origin.Remote;
 
         /// <summary>
         /// Gets the validation name.

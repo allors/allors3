@@ -109,6 +109,20 @@ namespace Allors.Meta
             }
         }
 
+        public bool ExistExclusiveDatabaseClasses
+        {
+            get
+            {
+                if (this.AssociationType?.ObjectType != null && this.RoleType?.ObjectType != null)
+                {
+                    return this.AssociationType.ObjectType.ExistExclusiveDatabaseClass && this.RoleType.ObjectType is Composite roleCompositeType && roleCompositeType.ExistExclusiveDatabaseClass;
+                }
+
+                return false;
+            }
+
+        }
+
         public bool IsIndexed
         {
             get => this.isIndexed;

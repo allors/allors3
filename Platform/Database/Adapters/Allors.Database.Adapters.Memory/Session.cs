@@ -352,7 +352,7 @@ namespace Allors.Database.Adapters.Memory
 
                 if (type is IInterface)
                 {
-                    foreach (var subClass in ((IInterface)type).Subclasses)
+                    foreach (var subClass in ((IInterface)type).DatabaseClasses)
                     {
                         sortedClassAndSubclassList.Add(subClass);
                     }

@@ -14,14 +14,13 @@ namespace Allors.Meta
     /// </summary>
     public interface IRelationType : IMetaObject, IComparable
     {
-
         IAssociationType AssociationType { get; }
 
         IRoleType RoleType { get; }
 
         Multiplicity Multiplicity { get; }
 
-        bool ExistExclusiveClasses { get; }
+        bool ExistExclusiveDatabaseClasses { get; }
 
         bool IsIndexed { get; }
     }

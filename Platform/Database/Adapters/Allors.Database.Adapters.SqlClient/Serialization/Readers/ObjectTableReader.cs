@@ -22,11 +22,11 @@ namespace Allors.Database.Adapters.SqlClient
             this.enumerator = objectIds.GetEnumerator();
 
             var associationTypeByLowerCasedFieldName = new Dictionary<string, IAssociationType>();
-            foreach (var associationType in @class.AssociationTypes)
+            foreach (var associationType in @class.DatabaseAssociationTypes)
             {
                 var relationType = associationType.RelationType;
                 var roleType = relationType.RoleType;
-                if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses && roleType.IsMany)
+                if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                 {
                     var fieldName = mapping.UnescapedColumnNameByRelationType[relationType].ToLowerInvariant();
                     associationTypeByLowerCasedFieldName.Add(fieldName, associationType);
@@ -34,7 +34,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             var roleTypeByLowerCasedFieldName = new Dictionary<string, IRoleType>();
-            foreach (var roleType in @class.RoleTypes)
+            foreach (var roleType in @class.DatabaseRoleTypes)
             {
                 var relationType = roleType.RelationType;
                 var associationType = relationType.AssociationType;
@@ -46,7 +46,7 @@ namespace Allors.Database.Adapters.SqlClient
                 }
                 else
                 {
-                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses && !roleType.IsMany)
+                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
                         var fieldName = mapping.UnescapedColumnNameByRelationType[relationType].ToLowerInvariant();
                         roleTypeByLowerCasedFieldName.Add(fieldName, roleType);
