@@ -10,15 +10,9 @@ namespace Allors.Meta
 
     public interface IComposite : IObjectType
     {
-        Origin AssignedOrigin { get; }
-
         IEnumerable<IAssociationType> AssociationTypes { get; }
 
         IEnumerable<IRoleType> RoleTypes { get; }
-
-        IEnumerable<IInterface> DirectSupertypes { get; }
-
-        IEnumerable<IInterface> Supertypes { get; }
 
         bool ExistSupertype(IInterface @interface);
 
@@ -35,9 +29,5 @@ namespace Allors.Meta
         bool ExistExclusiveClass { get; }
 
         IClass ExclusiveClass { get; }
-
-        bool IsSynced { get; }
-
-        bool AssignedIsSynced { get; set; }
     }
 }

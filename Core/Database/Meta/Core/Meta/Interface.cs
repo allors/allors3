@@ -78,8 +78,6 @@ namespace Allors.Meta
 
         public override IEnumerable<Class> Classes => this.Subclasses;
 
-        IEnumerable<IComposite> IInterface.Subtypes => this.Subtypes;
-
         /// <summary>
         /// Gets the sub types.
         /// </summary>

@@ -13,63 +13,46 @@
   <Interface Name="Allors.Meta.IClass">
     <Position X="3" Y="9.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IClass.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Meta.IComposite">
     <Position X="3.5" Y="6" Width="2" />
     <Members>
-      <Property Name="AssignedOrigin" Hidden="true" />
       <Property Name="Classes" Hidden="true" />
-      <Property Name="DirectSupertypes" Hidden="true" />
       <Property Name="ExclusiveClass" Hidden="true" />
       <Property Name="RoleTypes" Hidden="true" />
     </Members>
-    <AssociationLine Name="Supertypes" Type="Allors.Meta.IInterface" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="5.5" Y="7.962" />
-        <Point X="6.25" Y="7.962" />
-        <Point X="6.25" Y="9.5" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.001" Y="1.591" />
-      </MemberNameLabel>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAIAAAAgAAFABAARACAQAAAAAQAAEAACQQBAAAAAAAA=</HashCode>
+      <HashCode>AAIAAAAAAAFAAAABAAAQAAAAAAAAEAACQQBAAAAAAAA=</HashCode>
       <FileName>Meta\IComposite.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="AssignedOrigin" />
-      <Property Name="DirectSupertypes" />
       <Property Name="Classes" />
       <Property Name="ExclusiveClass" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="AssociationTypes" />
-      <Property Name="Supertypes" />
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="Allors.Meta.IInterface">
     <Position X="4.75" Y="9.5" Width="1.5" />
     <Members>
       <Property Name="Subclasses" Hidden="true" />
-      <Property Name="Subtypes" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IInterface.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Subtypes" />
       <Property Name="Subclasses" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Meta.IMetaObject">
     <Position X="4.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAhAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>Meta\IMetaObject.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -79,21 +62,21 @@
   <Interface Name="Allors.Meta.IMetaPopulation">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgAAAAAGCAAAAAAgIACgAAAAIAAAAEAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAgAAAAAGCAAAAAAgAACAAAAAIAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IMetaPopulation.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Meta.IObjectType">
     <Position X="2.75" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAIAAAAAAAQAACCAAAACAAAAAUAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAQAACCAAAAAAAAAAUAAAAA=</HashCode>
       <FileName>Meta\IObjectType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Meta.IRelationType">
     <Position X="5.25" Y="2.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAgAABAAAAYAIAAAAAgiAAAAAAAEAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAAAAAAAAAAAAAAIAAAAAgiAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>Meta\IRelationType.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -108,39 +91,29 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Meta.IPropertyType">
-    <Position X="9.25" Y="3" Width="1.5" />
+    <Position X="9.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAiAAAAAAAAAJAAAAAAAQAAAAAAAACAIAAAABAAAA=</HashCode>
       <FileName>Meta\IPropertyType.cs</FileName>
       <NewMemberFileName>Meta\IRoleType.cs</NewMemberFileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Meta.IOperandType">
-    <Position X="10.5" Y="1" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAABAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Meta\IOperandType.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="Allors.Meta.IMethodType">
-    <Position X="11.5" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Meta\IMethodType.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="Allors.Meta.IRoleClass">
-    <Position X="11" Y="8.5" Width="1.5" />
+    <Position X="10.75" Y="10" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IRoleClass.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Class" />
+      <Property Name="RoleType" />
+    </ShowAsAssociation>
   </Interface>
-  <Interface Name="Allors.Meta.IRoleInterface">
-    <Position X="13" Y="8.5" Width="1.5" />
+  <Interface Name="Allors.Meta.IRoleType">
+    <Position X="10.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAgAAAAEIAAAAAgAAAAAAQABIAAAAAEAA=</HashCode>
-      <FileName>Meta\IRoleInterface.cs</FileName>
+      <HashCode>AAAEAAAAAAAAgAAAAEIAAAAAgAAAAAAAABAAAAAAEAA=</HashCode>
+      <FileName>Meta\IRoleType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

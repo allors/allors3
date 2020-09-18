@@ -8,7 +8,7 @@ namespace Allors.Meta
     using System;
     using System.Linq;
 
-    public sealed partial class MethodType : OperandType, IMethodType
+    public sealed partial class MethodType : OperandType
     {
         private string name;
         private Composite objectType;

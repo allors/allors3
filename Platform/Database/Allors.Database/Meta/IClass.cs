@@ -8,8 +8,5 @@ namespace Allors.Meta
 {
     public interface IClass : IComposite
     {
-        bool Workspace { get; }
-
-        string[] WorkspaceNames { get; }
     }
 }

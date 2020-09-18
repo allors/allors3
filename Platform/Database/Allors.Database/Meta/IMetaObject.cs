@@ -15,9 +15,5 @@ namespace Allors.Meta
         IMetaPopulation MetaPopulation { get; }
 
         Guid Id { get; }
-
-        string IdAsString { get; }
-
-        Origin Origin { get; }
     }
 }

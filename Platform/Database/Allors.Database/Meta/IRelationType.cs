@@ -14,11 +14,6 @@ namespace Allors.Meta
     /// </summary>
     public interface IRelationType : IMetaObject, IComparable
     {
-        bool Workspace { get; }
-
-        string[] WorkspaceNames { get; }
-
-        Origin AssignedOrigin { get; }
 
         IAssociationType AssociationType { get; }
 
@@ -27,10 +22,6 @@ namespace Allors.Meta
         Multiplicity Multiplicity { get; }
 
         bool ExistExclusiveClasses { get; }
-
-        bool IsDerived { get; }
-
-        bool IsSynced { get; }
 
         bool IsIndexed { get; }
     }

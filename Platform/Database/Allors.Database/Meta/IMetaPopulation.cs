@@ -12,19 +12,13 @@ namespace Allors.Meta
 
     public interface IMetaPopulation
     {
-        IEnumerable<IUnit> Units { get; }
-
         IEnumerable<IComposite> Composites { get; }
 
         IEnumerable<IClass> Classes { get; }
 
-        IEnumerable<IInterface> Interfaces { get; }
-
         IEnumerable<IRelationType> RelationTypes { get; }
 
         IMetaObject Find(Guid metaObjectId);
-
-        IClass FindClassByName(string name);
 
         bool IsValid { get; }
 

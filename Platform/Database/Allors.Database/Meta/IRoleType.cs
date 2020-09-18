@@ -13,11 +13,7 @@ namespace Allors.Meta
     /// </summary>
     public interface IRoleType : IPropertyType
     {
-        string SingularPropertyName { get; }
-
         string SingularFullName { get; }
-
-        string PluralPropertyName { get; }
 
         string PluralFullName { get; }
 

@@ -62,11 +62,7 @@ namespace Allors.Meta
             }
         }
 
-        IEnumerable<IUnit> IMetaPopulation.Units => this.Units;
-
         public IEnumerable<Unit> Units => this.units;
-
-        IEnumerable<IInterface> IMetaPopulation.Interfaces => this.Interfaces;
 
         public IEnumerable<Interface> Interfaces => this.interfaces;
 
@@ -134,8 +130,6 @@ namespace Allors.Meta
 
             return metaObject;
         }
-
-        IClass IMetaPopulation.FindClassByName(string name) => this.FindByName(name);
 
         /// <summary>
         /// Find a meta object by name.

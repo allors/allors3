@@ -146,8 +146,6 @@ namespace Allors.Meta
         /// <value>The root classes.</value>
         public abstract IEnumerable<Class> Classes { get; }
 
-        IEnumerable<IInterface> IComposite.DirectSupertypes => this.DirectSupertypes;
-
         /// <summary>
         /// Gets the direct super types.
         /// </summary>
@@ -160,8 +158,6 @@ namespace Allors.Meta
                 return this.derivedDirectSupertypes;
             }
         }
-
-        IEnumerable<IInterface> IComposite.Supertypes => this.Supertypes;
 
         /// <summary>
         /// Gets the super types.

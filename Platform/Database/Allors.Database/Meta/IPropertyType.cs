@@ -11,7 +11,7 @@ namespace Allors.Meta
     /// <summary>
     /// A <see cref="IPropertyType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>
-    public interface IPropertyType : IOperandType, IComparable
+    public interface IPropertyType : IMetaObject, IComparable
     {
         string Name { get; }
 
