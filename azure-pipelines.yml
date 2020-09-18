@@ -5,15 +5,15 @@ trigger:
 
 resources:
   containers:
-  - container: pg12
-    image: stellirin/postgres-windows:12
+  - container: postgres
+    image: stellirin/postgres-windows
     ports:
       - 5432:5432
     env:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
-  - container: sql2017
-    image: microsoft/mssql-server-windows-developer:2017
+  - container: sql
+    image: microsoft/mssql-server-windows-developer
     ports:
       - 1433:1433
     env:
@@ -46,7 +46,8 @@ stages:
           target: 'BaseWorkspaceTest'
 
     services:
-      postgres: pg12
+      postgres: postgres
+      sql: sql
 
     steps:
     - powershell: Set-Culture -CultureInfo nl-BE
