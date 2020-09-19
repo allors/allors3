@@ -17,12 +17,50 @@ namespace Tests
     using Allors.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Moq;
-    using Configuration = Allors.Database.Adapters.Memory.Configuration;
     using ObjectFactory = Allors.ObjectFactory;
 
     public class DomainTest : IDisposable
     {
-        public DomainTest(bool populate = true) => this.Setup(populate);
+        public DomainTest(bool populate = true)
+        {
+#if ALLORS_DERIVATION_DEBUG
+            var derivationPersistent = true;
+#else
+            var environmentVariable = Environment.GetEnvironmentVariable("ALLORS_DERIVATION");
+            var derivationPersistent = environmentVariable?.ToLowerInvariant().Equals("persistent") == true;
+#endif
+
+            derivationPersistent = false;
+
+            var services = new ServiceCollection();
+            if (derivationPersistent)
+            {
+                services.AddAllors((session) => new Allors.Domain.Derivations.Persistent.Derivation(session, new DerivationConfig { MaxCycles = 10, MaxIterations = 10, MaxPreparations = 10 }));
+            }
+            else
+            {
+                services.AddAllors((session) => new Allors.Domain.Derivations.Default.Derivation(session, new DerivationConfig { MaxCycles = 10, MaxIterations = 10, MaxPreparations = 10 }));
+            }
+
+            this.MetaPopulation = new MetaBuilder().Build();
+            this.M = new M(this.MetaPopulation);
+
+            var serviceProvider = services.BuildServiceProvider();
+            var database = new Database(
+                serviceProvider,
+                new Configuration
+                {
+                    Meta = M,
+                    ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
+                });
+
+            serviceProvider.GetRequiredService<IDatabaseService>().Database = database;
+            this.Setup(database, populate);
+        }
+
+        public MetaPopulation MetaPopulation { get; }
+
+        public M M { get; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
@@ -39,15 +77,13 @@ namespace Tests
             set => this.TimeService.Shift = value;
         }
 
-        protected ObjectFactory ObjectFactory => new ObjectFactory(MetaPopulation.Instance, typeof(User));
-
         public Mock<IAccessControlLists> AclsMock
         {
             get
             {
                 var aclMock = new Mock<IAccessControlList>();
                 aclMock.Setup(acl => acl.CanRead(It.IsAny<IPropertyType>())).Returns(true);
-                aclMock.Setup(acl => acl.CanRead(It.IsAny<IConcreteRoleType>())).Returns(true);
+                aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleClass>())).Returns(true);
                 var aclsMock = new Mock<IAccessControlLists>();
                 aclsMock.Setup(acls => acls[It.IsAny<IObject>()]).Returns(aclMock.Object);
                 return aclsMock;
@@ -58,39 +94,6 @@ namespace Tests
         {
             this.Session.Rollback();
             this.Session = null;
-        }
-
-        protected void Setup(bool populate)
-        {
-#if ALLORS_DERIVATION_DEBUG
-            var derivationPersistent = true;
-#else
-            var environmentVariable = Environment.GetEnvironmentVariable("ALLORS_DERIVATION");
-            var derivationPersistent = environmentVariable?.ToLowerInvariant().Equals("persistent") == true;
-#endif
-
-            derivationPersistent = true;
-
-            var services = new ServiceCollection();
-            if (derivationPersistent)
-            {
-                services.AddAllors((session) => new Allors.Domain.Derivations.Persistent.Derivation(session, new DerivationConfig { MaxCycles = 10, MaxIterations = 10, MaxPreparations = 10 }));
-            }
-            else
-            {
-                services.AddAllors((session) => new Allors.Domain.Derivations.Default.Derivation(session, new DerivationConfig { MaxCycles = 10, MaxIterations = 10, MaxPreparations = 10 }));
-            }
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            var database = new Database(
-                serviceProvider,
-                new Configuration
-                {
-                    ObjectFactory = this.ObjectFactory,
-                });
-            serviceProvider.GetRequiredService<IDatabaseService>().Database = database;
-            this.Setup(database, populate);
         }
 
         protected void Setup(IDatabase database, bool populate)
@@ -119,11 +122,9 @@ namespace Tests
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;
             var resource = assembly.GetManifestResourceStream(name);
-            using (var ms = new MemoryStream())
-            {
-                resource.CopyTo(ms);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            resource?.CopyTo(ms);
+            return ms.ToArray();
         }
     }
 }

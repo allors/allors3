@@ -291,12 +291,12 @@ namespace Allors.Meta
                     unit.Bind();
                 }
 
-                foreach (var @interface in this.interfaces)
+                foreach (Interface @interface in this.DatabaseInterfaces)
                 {
                     @interface.Bind(typeByName);
                 }
 
-                foreach (var @class in this.classes)
+                foreach (Class @class in this.DatabaseClasses)
                 {
                     @class.Bind(typeByName);
                 }
@@ -306,7 +306,7 @@ namespace Allors.Meta
 
                 var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
 
-                foreach (var @class in this.Classes)
+                foreach (Class @class in this.DatabaseClasses)
                 {
                     foreach (var concreteMethodType in @class.ConcreteMethodTypes)
                     {

@@ -11,19 +11,8 @@ namespace Allors
 
     public static partial class PrefetchPolicyBuilderExtensions
     {
-        private static readonly PrefetchPolicy AccessControlPrefetchPolicy;
-
-        private static readonly PrefetchPolicy SecurityTokenPrefetchPolicy;
-
         static PrefetchPolicyBuilderExtensions()
         {
-            AccessControlPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(MetaAccessControl.Instance.CacheId.RoleType)
-                .Build();
-
-            SecurityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(MetaSecurityToken.Instance.AccessControls, AccessControlPrefetchPolicy)
-                .Build();
         }
 
         public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, Class @class)
@@ -35,13 +24,22 @@ namespace Allors
             }
         }
 
-        public static void WithSecurityRules(this PrefetchPolicyBuilder @this, Class @class)
+        public static void WithSecurityRules(this PrefetchPolicyBuilder @this, Class @class, M m)
         {
+            // TODO: Cache
+            var AccessControlPrefetchPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.AccessControl.CacheId)
+                .Build();
+
+            var SecurityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.SecurityToken.AccessControls, AccessControlPrefetchPolicy)
+                .Build();
+
             if (@class.DelegatedAccessRoleTypes != null)
             {
                 var builder = new PrefetchPolicyBuilder()
-                    .WithRule(MetaObject.Instance.SecurityTokens, SecurityTokenPrefetchPolicy)
-                    .WithRule(MetaObject.Instance.DeniedPermissions)
+                    .WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy)
+                    .WithRule(m.Object.DeniedPermissions)
                     .Build();
 
                 var delegatedAccessRoleTypes = @class.DelegatedAccessRoleTypes;
@@ -51,8 +49,8 @@ namespace Allors
                 }
             }
 
-            @this.WithRule(MetaObject.Instance.SecurityTokens, SecurityTokenPrefetchPolicy);
-            @this.WithRule(MetaObject.Instance.DeniedPermissions);
+            @this.WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy);
+            @this.WithRule(m.Object.DeniedPermissions);
         }
     }
 }

@@ -13,18 +13,17 @@ namespace Allors.Domain
 
     public class PermissionCache
     {
-        private static readonly PrefetchPolicy PrefetchPolicy;
-
-        static PermissionCache() =>
-            PrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(M.Permission.ConcreteClassPointer)
-                .Build();
-
         public PermissionCache(ISession session)
         {
             var permissions = new Permissions(session).Extent();
 
-            session.Prefetch(PrefetchPolicy, permissions);
+            // TODO: Cache
+            var m = session.Meta();
+            var prefetchPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.Permission.ConcreteClassPointer)
+                .Build();
+            
+            session.Prefetch(prefetchPolicy, permissions);
 
             this.PermissionIdByOperationByOperandTypeIdByClassId = permissions
                 .GroupBy(v => v.ConcreteClass.Id)

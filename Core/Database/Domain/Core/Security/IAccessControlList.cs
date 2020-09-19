@@ -19,7 +19,7 @@ namespace Allors.Domain
 
         Object Object { get; }
 
-        bool CanExecute(MethodType methodType);
+        bool CanExecute(IMethodType methodType);
 
         bool CanRead(IPropertyType propertyType);
 
@@ -29,6 +29,6 @@ namespace Allors.Domain
 
         bool CanWrite(IRoleClass roleType);
 
-        bool IsPermitted(OperandType operandType, Operations operation);
+        bool IsPermitted(IOperandType operandType, Operations operation);
     }
 }

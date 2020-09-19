@@ -68,7 +68,7 @@ namespace Tests
 
             this.Session.Derive();
 
-            var path = new Fetch(MetaC1.Instance.C1C2One2Manies, MetaC2.Instance.C2AllorsString);
+            var path = new Fetch(M.C1.C1C2One2Manies, M.C2.C2AllorsString);
 
             var result = (ISet<object>)path.Get(c1a, this.AclsMock.Object);
             Assert.Equal(1, result.Count);

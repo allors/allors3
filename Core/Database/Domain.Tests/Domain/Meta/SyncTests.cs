@@ -16,7 +16,7 @@ namespace Tests
         public void IsSync()
         {
             var metaPopulation = this.Session.Database.MetaPopulation;
-            foreach (var composite in metaPopulation.Composites)
+            foreach (var composite in metaPopulation.DatabaseComposites)
             {
                 switch (composite.Name)
                 {

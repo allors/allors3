@@ -21,7 +21,9 @@ namespace Allors.Meta
         bool ExistExclusiveDatabaseClass { get; }
 
         IClass ExclusiveDatabaseClass { get; }
-        
+
+        bool IsSynced { get; }
+
         // TODO: change to HasSuperType
         bool ExistSupertype(IInterface @interface);
 

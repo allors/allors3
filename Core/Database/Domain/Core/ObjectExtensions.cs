@@ -62,7 +62,7 @@ namespace Allors
 
             var clone = (T)ObjectBuilder.Build(session, @class);
 
-            foreach (var roleType in @class.RoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
+            foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
             {
                 var relationType = roleType.RelationType;
                 if (!clone.Strategy.ExistRole(relationType))

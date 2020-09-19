@@ -21,5 +21,7 @@ namespace Allors.Meta
         bool IsClass { get; }
 
         string Name { get; }
+
+        string PluralName { get; }
     }
 }

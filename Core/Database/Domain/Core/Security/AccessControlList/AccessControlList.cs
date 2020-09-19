@@ -56,7 +56,7 @@ namespace Allors.Domain
 
         private IAccessControlLists AccessControlLists { get; }
 
-        public bool CanExecute(MethodType methodType) => this.IsPermitted(methodType, Operations.Execute);
+        public bool CanExecute(IMethodType methodType) => this.IsPermitted(methodType, Operations.Execute);
 
         public bool CanRead(IPropertyType propertyType) => this.IsPermitted(propertyType, Operations.Read);
 
@@ -66,7 +66,7 @@ namespace Allors.Domain
 
         public bool CanWrite(IRoleClass roleType) => this.IsPermitted(roleType.RoleType, Operations.Write);
 
-        public bool IsPermitted(OperandType operandType, Operations operation)
+        public bool IsPermitted(IOperandType operandType, Operations operation)
         {
             if (this.Object == null)
             {

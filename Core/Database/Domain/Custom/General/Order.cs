@@ -6,18 +6,16 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Order
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations =>
+            new[]
             {
-                new TransitionalConfiguration(M.Order, M.Order.OrderState),
-                new TransitionalConfiguration(M.Order, M.Order.ShipmentState),
-                new TransitionalConfiguration(M.Order, M.Order.PaymentState),
+                new TransitionalConfiguration(this.M.Order, this.M.Order.OrderState),
+                new TransitionalConfiguration(this.M.Order, this.M.Order.ShipmentState),
+                new TransitionalConfiguration(this.M.Order, this.M.Order.PaymentState),
             };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
 
         public void CustomOnDerive(ObjectOnDerive method)
         {
