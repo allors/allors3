@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            foreach (var associationType in allorsObject.Strategy.Class.AssociationTypes)
+            foreach (var associationType in allorsObject.Strategy.Class.DatabaseAssociationTypes)
             {
                 if (Array.IndexOf(associationTypes, associationType) >= 0)
                 {
@@ -143,7 +143,7 @@ namespace Allors.Database.Adapters
                 }
             }
 
-            foreach (IRoleType roleType in allorsObject.Strategy.Class.RoleTypes)
+            foreach (IRoleType roleType in allorsObject.Strategy.Class.DatabaseRoleTypes)
             {
                 if (Array.IndexOf(roleTypes, roleType) >= 0)
                 {

@@ -16,7 +16,7 @@ namespace Allors.Repository.Domain
             : base(inflector, id, name) =>
             this.PartialByDomainName = new Dictionary<string, PartialClass>();
 
-        public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Database);
+        public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Remote);
 
         public string[] WorkspaceNames
         {

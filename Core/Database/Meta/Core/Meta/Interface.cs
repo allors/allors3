@@ -15,6 +15,7 @@ namespace Allors.Meta
         private LazySet<Composite> derivedDirectSubtypes;
 
         private LazySet<Composite> derivedSubtypes;
+        private LazySet<Composite> derivedDatabaseSubtypes;
 
         private LazySet<Class> derivedClasses;
 
@@ -86,6 +87,15 @@ namespace Allors.Meta
             {
                 this.MetaPopulation.Derive();
                 return this.derivedSubtypes;
+            }
+        }
+
+        public override IEnumerable<Composite> DatabaseSubtypes
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedDatabaseSubtypes;
             }
         }
 
@@ -161,6 +171,7 @@ namespace Allors.Meta
             this.DeriveSubtypesRecursively(this, subTypes);
 
             this.derivedSubtypes = new LazySet<Composite>(subTypes);
+            this.derivedDatabaseSubtypes = new LazySet<Composite>(subTypes.Where(v=>v.Origin == Origin.Remote));
         }
 
         /// <summary>

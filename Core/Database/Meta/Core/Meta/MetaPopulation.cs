@@ -31,7 +31,9 @@ namespace Allors.Meta
         private bool isDeriving;
 
         private Composite[] derivedComposites;
+
         private Composite[] derivedDatabaseComposites;
+        private Interface[] derivedDatabaseInterfaces;
         private Class[] derivedDatabaseClasses;
         private RelationType[] derivedDatabaseRelationTypes;
 
@@ -118,6 +120,15 @@ namespace Allors.Meta
             {
                 this.Derive();
                 return this.derivedDatabaseComposites;
+            }
+        }
+
+        public IEnumerable<IInterface> DatabaseInterfaces
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedDatabaseInterfaces;
             }
         }
 
@@ -342,7 +353,8 @@ namespace Allors.Meta
 
                     // Database
                     this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseClasses = this.derivedDatabaseComposites.OfType<Class>().ToArray();
+                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Remote).ToArray();
+                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Remote).ToArray();
                     this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Remote).ToArray();
 
                     // DirectSupertypes
@@ -449,7 +461,7 @@ namespace Allors.Meta
                     // ConcreteRoleType
                     foreach (var @class in this.classes)
                     {
-                        @class.DeriveConcreteRoleTypes(sharedRoleTypes);
+                        @class.DeriveRoleClasses(sharedRoleTypes);
                     }
 
                     // ConcreteMethodType

@@ -208,7 +208,7 @@ namespace Allors.Meta
 
         public RoleClass[] ConcreteRoleTypes =>
                     this.AssociationType.ObjectType.IsInterface ?
-                        this.AssociationType.ObjectType.Classes.Select(v => v.ConcreteRoleTypeByRoleType[this.RoleType]).ToArray() :
+                        this.AssociationType.ObjectType.Classes.Select(v => v.RoleClassByRoleType[this.RoleType]).ToArray() :
                         Array.Empty<RoleClass>();
 
         /// <summary>

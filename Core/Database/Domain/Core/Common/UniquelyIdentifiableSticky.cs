@@ -8,13 +8,12 @@ namespace Allors.Domain
     using System;
 
     using Allors;
-    using Allors.Meta;
 
     public class UniquelyIdentifiableSticky<TObject> : Sticky<Guid, TObject>
         where TObject : class, UniquelyIdentifiable
     {
         public UniquelyIdentifiableSticky(ISession session)
-            : base(session, M.UniquelyIdentifiable.UniqueId)
+            : base(session, session.Meta().UniquelyIdentifiable.UniqueId)
         {
         }
     }

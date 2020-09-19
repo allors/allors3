@@ -81,10 +81,10 @@ namespace Allors.Meta
                 {
                     foreach (var toClass in toInterface.Classes)
                     {
-                        foreach (var toConcreteRoleType in toClass.ConcreteRoleTypes)
+                        foreach (var toConcreteRoleType in toClass.RoleClasses)
                         {
                             var fromClass = (Class)from.Find(toClass.Id);
-                            var fromConcreteRoleType = fromClass.ConcreteRoleTypes
+                            var fromConcreteRoleType = fromClass.RoleClasses
                                 .Single(v => v.RelationType.Id == toConcreteRoleType.RelationType.Id);
 
                             toConcreteRoleType.IsRequiredOverride = fromConcreteRoleType.IsRequiredOverride;

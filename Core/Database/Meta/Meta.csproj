@@ -1,11 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Platform\Database\Allors.Database\Allors.Database.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="generated\" />
   </ItemGroup>
 </Project>

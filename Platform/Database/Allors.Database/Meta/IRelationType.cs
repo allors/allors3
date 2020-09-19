@@ -23,5 +23,9 @@ namespace Allors.Meta
         bool ExistExclusiveDatabaseClasses { get; }
 
         bool IsIndexed { get; }
+
+        bool IsDerived { get;  }
+
+        bool IsSynced { get; }
     }
 }

@@ -49,27 +49,27 @@ namespace Allors.Database.Adapters.Memory
 
         public override IDatabase CreateMemoryPopulation()
         {
-            return this.profile.CreateMemoryPopulation();
+            return this.profile.CreateMemoryDatabase();
         }
 
         public override MetaPopulation GetMetaPopulation()
         {
-            return (MetaPopulation)this.profile.GetPopulation().MetaPopulation;
+            return (MetaPopulation)this.profile.GetDatabase().MetaPopulation;
         }
 
         public override MetaPopulation GetMetaPopulation2()
         {
-            return (MetaPopulation)this.profile.GetPopulation2().MetaPopulation;
+            return (MetaPopulation)this.profile.GetDatabase2().MetaPopulation;
         }
 
         public override IDatabase GetPopulation()
         {
-            return this.profile.GetPopulation();
+            return this.profile.GetDatabase();
         }
 
         public override IDatabase GetPopulation2()
         {
-            return this.profile.GetPopulation2();
+            return this.profile.GetDatabase2();
         }
 
         public override ISession GetSession()

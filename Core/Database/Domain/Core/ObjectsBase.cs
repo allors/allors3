@@ -10,7 +10,13 @@ namespace Allors
 
     public abstract partial class ObjectsBase<T> : IObjects where T : IObject
     {
-        protected ObjectsBase(ISession session) => this.Session = session;
+        protected ObjectsBase(ISession session)
+        {
+            this.Session = session;
+            this.M = this.Session.Meta();
+        }
+
+        public M M { get; }
 
         public abstract Composite ObjectType { get; }
 

@@ -21,62 +21,30 @@
 
 namespace Allors.Database.Adapters.Memory
 {
-    using System;
-    using System.Collections.Generic;
-    using Domain;
-    using Meta;
-    using Microsoft.Extensions.DependencyInjection;
-    using ObjectFactory = Allors.ObjectFactory;
-
     public class Profile : Adapters.Profile
     {
-        private IDatabase repository;
-        private IDatabase population2;
-        
-        public Profile()
-        {
-            this.ObjectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(C1));
-            var services = new ServiceCollection();
-            this.ServiceProvider = services.BuildServiceProvider();
-        }
-
-        public ObjectFactory ObjectFactory { get; }
-
-        public ServiceProvider ServiceProvider { get; set; }
-
+        private IDatabase database;
+        private IDatabase database2;
+      
         public override void Dispose()
         {
             base.Dispose();
-            this.repository = null;
-            this.population2 = null;
+            this.database = null;
+            this.database2 = null;
         }
+        
+        public override IDatabase GetDatabase() => this.database;
 
-        public override IDatabase CreateMemoryPopulation()
-        {
-            return this.CreateDatabase();
-        }
-
-        public override IDatabase GetPopulation()
-        {
-            return this.repository;
-        }
-
-        public override IDatabase GetPopulation2()
-        {
-            return this.population2;
-        }
+        public override IDatabase GetDatabase2() => this.database2;
 
         public override void Init()
         {
-            this.repository = this.CreateDatabase();
-            this.population2 = this.CreateDatabase();
+            this.database = this.CreateDatabase();
+            this.database2 = this.CreateDatabase();
         }
 
-        public override bool IsRollbackSupported()
-        {
-            return true;
-        }
+        public override bool IsRollbackSupported() => true;
 
-        public IDatabase CreateDatabase() => new Database(this.ServiceProvider, new Configuration { ObjectFactory = this.ObjectFactory });
+        public IDatabase CreateDatabase() => this.CreateMemoryDatabase();
     }
 }

@@ -144,6 +144,7 @@ build_interface(interface) ::= <<
 build_class(class) ::= <<
 	        objectTypes.$class.SingularName$ = new Class(meta, new System.Guid("$class.AttributeByName.Id.Value$"))
             {
+                AssignedOrigin = Allors.Origin.$class.Origin$,
                 SingularName = "$class.SingularName$",
                 PluralName = "$class.PluralName$",
                 $if(class.WorkspaceNames)$WorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$

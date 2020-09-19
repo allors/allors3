@@ -23,8 +23,8 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
-	$meta.Interfaces:{interface|<generation template="castInterface" input="$interface.Id $" output="$interface.SingularName$.g.cs"/>}$
-	$meta.Classes:{class|<generation template="castClass" input="$class.Id $" output="$class.SingularName$.g.cs"/>}$
+	$meta.DatabaseInterfaces:{interface|<generation template="castInterface" input="$interface.Id $" output="$interface.SingularName$.g.cs"/>}$
+	$meta.DatabaseClasses:{class|<generation template="castClass" input="$class.Id $" output="$class.SingularName$.g.cs"/>}$
 	$meta.MethodTypes:{methodType|<generation template="methodType" input="$methodType.Id $" output="$methodType.FullName$.g.cs"/>}$
 </generations>
 >>
@@ -40,14 +40,14 @@ namespace Allors.Domain
 {
 	public partial interface $interface.name$ : $if(interface.existDirectSupertypes)$ $interface.directSupertypes:{directSupertype|$directSupertype.SingularName$,}$ $endif$Allors.IObject
 	{
-$interface.exclusiveRoleTypes:{roleType|$interfaceExclusiveRoleType_Interface()$}$
-$interface.exclusiveAssociationTypes:{associationType|$interfaceExclusiveAssociationType_Interface()$}$
-$interface.exclusiveMethodTypes:{methodType|$interfaceExclusiveMethodType_Interface()$}$
+$interface.ExclusiveDatabaseRoleTypes:{roleType|$interfaceExclusiveRoleType_Interface()$}$
+$interface.ExclusiveDatabaseAssociationTypes:{associationType|$interfaceExclusiveAssociationType_Interface()$}$
+$interface.ExclusiveMethodTypes:{methodType|$interfaceExclusiveMethodType_Interface()$}$
 	}
 
 	public partial interface $interface.name$Builder : $interface.DirectSupertypes:{directSupertype|$directSupertype.Name$Builder ,}$ global::System.IDisposable
 	{
-$interface.exclusiveRoleTypes:{roleType|$interfaceExclusiveRoleTypes_Builder()$}$
+$interface.exclusiveDatabaseRoleTypes:{roleType|$interfaceExclusiveRoleTypes_Builder()$}$
 	}
 }
 >>
@@ -159,15 +159,17 @@ namespace Allors.Domain
 	public partial class $class.name$ : Allors.IObject $class.directSupertypes:{directSupertype|, $directSupertype.SingularName$}$
 	{
 		private readonly IStrategy strategy;
-		private readonly Allors.Meta.Meta$class.name$ m;
+		private readonly Allors.Meta.M m;
 
 		public $class.name$(Allors.IStrategy strategy)
 		{
 			this.strategy = strategy;
-			this.m = this.strategy.Session.Database.Meta().$class.name$;
+			this.m = this.strategy.Session.Database.Meta();
 		}
 
-		public Allors.Meta.Meta$class.name$ Meta => m;
+		public Allors.Meta.M M => m;
+
+		public Allors.Meta.Meta$class.name$ Meta => m.$class.name$;
 
 		public long Id
 		{
@@ -198,8 +200,8 @@ namespace Allors.Domain
             return this.Strategy.ObjectId.GetHashCode();
         }
 
-$class.ConcreteRoleTypes:{concreteRoleType|$classConcreteRoleType_Class()$}$
-$class.AssociationTypes:{associationType|$classAssociationType_Class()$}$
+$class.DatabaseRoleClasses:{roleClass|$classRoleClass_Class()$}$
+$class.DatabaseAssociationTypes:{associationType|$classAssociationType_Class()$}$
 $class.MethodTypes:{methodType|$classMethodType_Method()$}$
 
         #region Test Helpers
@@ -254,92 +256,92 @@ $else$
 $endif$
 >>
 
-classConcreteRoleType_Class() ::= <<
+classRoleClass_Class() ::= <<
 $\n$
-$if(concreteRoleType.RoleType.ObjectType.IsUnit)$
-		virtual public $concreteRoleType_ObjectType(concreteRoleType)$ $concreteRoleType.RoleType.SingularPropertyName$
+$if(roleClass.RoleType.ObjectType.IsUnit)$
+		virtual public $roleClass_ObjectType(roleClass)$ $roleClass.RoleType.SingularPropertyName$
 		{
 			get
 			{
-				return ($concreteRoleType_ObjectType(concreteRoleType)$) Strategy.GetUnitRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+				return ($roleClass_ObjectType(roleClass)$) Strategy.GetUnitRole(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 			}
 			set
 			{
-				Strategy.SetUnitRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType, value);
+				Strategy.SetUnitRole(Meta.$roleClass.RoleType.PropertyName$.RelationType, value);
 			}
 		}
 
-		virtual public bool Exist$concreteRoleType.RoleType.SingularPropertyName${
+		virtual public bool Exist$roleClass.RoleType.SingularPropertyName${
 			get
 			{
-				return Strategy.ExistUnitRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+				return Strategy.ExistUnitRole(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 			}
 		}
 
-		virtual public void Remove$concreteRoleType.RoleType.SingularPropertyName$()
+		virtual public void Remove$roleClass.RoleType.SingularPropertyName$()
 		{
-			Strategy.RemoveUnitRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+			Strategy.RemoveUnitRole(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 		}
 $else$
-$if(concreteRoleType.RoleType.IsMany)$
-		virtual public global::Allors.Extent<$concreteRoleType_ObjectType(concreteRoleType)$> $concreteRoleType.RoleType.PluralPropertyName$
+$if(roleClass.RoleType.IsMany)$
+		virtual public global::Allors.Extent<$roleClass_ObjectType(roleClass)$> $roleClass.RoleType.PluralPropertyName$
 		{
 			get
 			{
-				return Strategy.GetCompositeRoles(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+				return Strategy.GetCompositeRoles(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 			}
 			set
 			{
-				Strategy.SetCompositeRoles(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType, value);
+				Strategy.SetCompositeRoles(Meta.$roleClass.RoleType.PropertyName$.RelationType, value);
 			}
 		}
 
-		virtual public void Add$concreteRoleType.RoleType.SingularPropertyName$ ($concreteRoleType_ObjectType(concreteRoleType)$ value)
+		virtual public void Add$roleClass.RoleType.SingularPropertyName$ ($roleClass_ObjectType(roleClass)$ value)
 		{
-			Strategy.AddCompositeRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType, value);
+			Strategy.AddCompositeRole(Meta.$roleClass.RoleType.PropertyName$.RelationType, value);
 		}
 
-		virtual public void Remove$concreteRoleType.RoleType.SingularPropertyName$ ($concreteRoleType_ObjectType(concreteRoleType)$ value)
+		virtual public void Remove$roleClass.RoleType.SingularPropertyName$ ($roleClass_ObjectType(roleClass)$ value)
 		{
-			Strategy.RemoveCompositeRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType, value);
+			Strategy.RemoveCompositeRole(Meta.$roleClass.RoleType.PropertyName$.RelationType, value);
 		}
 
-		virtual public bool Exist$concreteRoleType.RoleType.PluralPropertyName$
+		virtual public bool Exist$roleClass.RoleType.PluralPropertyName$
 		{
 			get
 			{
-				return Strategy.ExistCompositeRoles(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+				return Strategy.ExistCompositeRoles(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 			}
 		}
 
-		virtual public void Remove$concreteRoleType.RoleType.PluralPropertyName$()
+		virtual public void Remove$roleClass.RoleType.PluralPropertyName$()
 		{
-			Strategy.RemoveCompositeRoles(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+			Strategy.RemoveCompositeRoles(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 		}
 $else$
-		virtual public $concreteRoleType_ObjectType(concreteRoleType)$ $concreteRoleType.RoleType.SingularPropertyName$
+		virtual public $roleClass_ObjectType(roleClass)$ $roleClass.RoleType.SingularPropertyName$
 		{
 			get
 			{
-				return ($concreteRoleType_ObjectType(concreteRoleType)$) Strategy.GetCompositeRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+				return ($roleClass_ObjectType(roleClass)$) Strategy.GetCompositeRole(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 			}
 			set
 			{
-				Strategy.SetCompositeRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType, value);
+				Strategy.SetCompositeRole(Meta.$roleClass.RoleType.PropertyName$.RelationType, value);
 			}
 		}
 
-		virtual public bool Exist$concreteRoleType.RoleType.SingularPropertyName$
+		virtual public bool Exist$roleClass.RoleType.SingularPropertyName$
 		{
 			get
 			{
-				return Strategy.ExistCompositeRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+				return Strategy.ExistCompositeRole(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 			}
 		}
 
-		virtual public void Remove$concreteRoleType.RoleType.SingularPropertyName$()
+		virtual public void Remove$roleClass.RoleType.SingularPropertyName$()
 		{
-			Strategy.RemoveCompositeRole(Meta.$concreteRoleType.RoleType.PropertyName$.RelationType);
+			Strategy.RemoveCompositeRole(Meta.$roleClass.RoleType.PropertyName$.RelationType);
 		}
 $endif$
 $endif$
@@ -426,8 +428,8 @@ roleType_ObjectType(roleType) ::= <%
 $objectType_NullableName(roleType.ObjectType)$
 %>
 
-concreteRoleType_ObjectType(roleType) ::= <%
-$objectType_NullableName(concreteRoleType.RoleType.ObjectType)$
+roleClass_ObjectType(roleType) ::= <%
+$objectType_NullableName(roleClass.RoleType.ObjectType)$
 %>
 
 objectType_Name(objectType) ::= <%

@@ -12,13 +12,16 @@ namespace Allors.Domain
 
     public class PersonFullNameDerivation : IDomainDerivation
     {
+        public PersonFullNameDerivation(M m) =>
+            this.Patterns = new Pattern[]
+            {
+                new ChangedRolePattern( m.Person.FirstName),
+                new ChangedRolePattern( m.Person.LastName),
+            };
+
         public Guid Id => new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D");
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new ChangedRolePattern( M.Person.FirstName),
-            new ChangedRolePattern( M.Person.LastName),
-        };
+        public IEnumerable<Pattern> Patterns { get; }
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

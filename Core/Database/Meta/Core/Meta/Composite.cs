@@ -188,6 +188,8 @@ namespace Allors.Meta
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypes => this.AssociationTypes.Where(associationType => this.Equals(associationType.RoleType.ObjectType)).ToArray();
 
+        public IEnumerable<AssociationType> ExclusiveDatabaseAssociationTypes => this.ExclusiveAssociationTypes.Where(v=>v.Origin == Origin.Remote).ToArray();
+
         /// <summary>
         /// Gets the roles.
         /// </summary>
@@ -203,11 +205,18 @@ namespace Allors.Meta
 
         public IEnumerable<RoleType> UnitRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsUnit).ToArray();
 
+        public IEnumerable<RoleType> UnitDatabaseRoleTypes => this.UnitRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+
         public IEnumerable<RoleType> CompositeRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsComposite).ToArray();
+
+        public IEnumerable<RoleType> CompositeDatabaseRoleTypes => this.CompositeRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
 
         public IEnumerable<RoleType> ExclusiveRoleTypes => this.RoleTypes.Where(roleType => this.Equals(roleType.AssociationType.ObjectType)).ToArray();
 
+        public IEnumerable<RoleType> ExclusiveDatabaseRoleTypes => this.ExclusiveRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+
         public IEnumerable<RoleType> SortedExclusiveRoleTypes => this.ExclusiveRoleTypes.OrderBy(v => v.Name);
+
 
         /// <summary>
         /// Gets the method types.
@@ -229,6 +238,10 @@ namespace Allors.Meta
         public IEnumerable<RoleType> InheritedRoleTypes => this.RoleTypes.Except(this.ExclusiveRoleTypes);
 
         public IEnumerable<AssociationType> InheritedAssociationTypes => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);
+
+        public IEnumerable<RoleType> InheritedDatabaseRoleTypes => this.InheritedRoleTypes.Where(v => v.Origin == Origin.Remote);
+
+        public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Remote);
 
         #region Workspace
 
@@ -255,6 +268,8 @@ namespace Allors.Meta
         }
 
         public abstract IEnumerable<Composite> Subtypes { get; }
+
+        public abstract IEnumerable<Composite> DatabaseSubtypes { get; }
 
         public IEnumerable<RoleType> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
 
@@ -426,7 +441,7 @@ namespace Allors.Meta
             }
 
             this.derivedAssociationTypes = new LazySet<AssociationType>(associationTypes);
-            this.derivedDatabaseAssociationTypes = new LazySet<AssociationType>(associationTypes.Where(v=>v.Origin == Origin.Remote));
+            this.derivedDatabaseAssociationTypes = new LazySet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Remote));
         }
 
         internal void DeriveIsSynced() => this.isSynced = this.assignedIsSynced || this.derivedSupertypes.Any(v => v.assignedIsSynced);

@@ -11,7 +11,7 @@ namespace Allors.Repository
     [Id("97758A8A-CA98-4119-B354-386643075B19")]
     #endregion
     [Workspace("Default")]
-    [Origin(Origin.Workspace)]
+    [Origin(Origin.Local)]
     public partial class WorkspacePerson 
     {
         #region Allors
@@ -20,7 +20,7 @@ namespace Allors.Repository
         [RoleId("BE6087FE-F7F8-42E1-A22F-3989F7BBBBE9")]
         #endregion
         [Workspace]
-        [Origin(Origin.Workspace)]
+        [Origin(Origin.Local)]
         public string FirstName { get; set; }
 
         #region Allors
@@ -29,7 +29,7 @@ namespace Allors.Repository
         [RoleId("B22E7AC0-22D1-4B50-8937-28739AB5DEEC")]
         #endregion
         [Workspace]
-        [Origin(Origin.Workspace)]
+        [Origin(Origin.Local)]
         public string LastName { get; set; }
     }
 }

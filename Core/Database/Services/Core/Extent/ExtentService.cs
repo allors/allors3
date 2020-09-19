@@ -1,4 +1,4 @@
-﻿// <copyright file="ExtentService.cs" company="Allors bvba">
+// <copyright file="ExtentService.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -30,9 +30,11 @@ namespace Allors.Services
             {
                 using (var session = this.databaseService.Database.CreateSession())
                 {
-                    var filter = new Extent(M.PreparedExtent.Class)
+                    var m = session.Meta();
+
+                    var filter = new Extent(m.PreparedExtent.Class)
                     {
-                        Predicate = new Equals(M.PreparedExtent.UniqueId.RoleType) { Value = id },
+                        Predicate = new Equals(m.PreparedExtent.UniqueId) { Value = id },
                     };
 
                     var preparedExtent = (PreparedExtent)filter.Build(session).First;

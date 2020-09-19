@@ -1,4 +1,4 @@
-﻿// <copyright file="FetchService.cs" company="Allors bvba">
+// <copyright file="FetchService.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -30,9 +30,11 @@ namespace Allors.Services
             {
                 using (var session = this.databaseService.Database.CreateSession())
                 {
-                    var filter = new Extent(M.PreparedFetch.Class)
+                    var m = session.Meta();
+
+                    var filter = new Extent(m.PreparedFetch.Class)
                     {
-                        Predicate = new Equals(M.PreparedFetch.UniqueId.RoleType) { Value = id },
+                        Predicate = new Equals(m.PreparedFetch.UniqueId) { Value = id },
                     };
 
                     var preparedFetch = (PreparedFetch)filter.Build(session).First;

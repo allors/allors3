@@ -124,9 +124,9 @@ namespace Allors.Domain.Derivations.Default
                                         .Where(v => v.Key.Equals(changedRolePattern.RoleType))
                                         .SelectMany(v => session.Instantiate(v.Value)),
                                     ChangedConcreteRolePattern changedConcreteRolePattern => changeSet.AssociationsByRoleType
-                                        .Where(v => v.Key.Equals(changedConcreteRolePattern.ConcreteRoleType.RoleType))
+                                        .Where(v => v.Key.Equals(changedConcreteRolePattern.RoleClass.RoleType))
                                         .SelectMany(v => session.Instantiate(v.Value))
-                                        .Where(v => v.Strategy.Class.Equals(changedConcreteRolePattern.ConcreteRoleType.Class)),
+                                        .Where(v => v.Strategy.Class.Equals(changedConcreteRolePattern.RoleClass.Class)),
                                     ChangedAssociationPattern changedAssociationsPattern => changeSet
                                         .AssociationsByRoleType
                                         .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
