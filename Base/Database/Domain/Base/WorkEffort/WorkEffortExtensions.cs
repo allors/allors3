@@ -11,16 +11,15 @@ namespace Allors.Domain
 
     public static partial class WorkEffortExtensions
     {
-        public static TimeEntry[] BillableTimeEntries(this WorkEffort @this) =>
-           @this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>()
-           .Where(v => v.IsBillable &&
-                       (!v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue) || v.BillableAmountOfTime.HasValue)
-           .Select(v => v)
-           .ToArray();
-
         public static DateTime? FromDate(this WorkEffort @this) => @this.ActualStart ?? @this.ScheduledStart;
 
         public static DateTime? ThroughDate(this WorkEffort @this) => @this.ActualCompletion ?? @this.ScheduledCompletion;
+
+        public static TimeEntry[] BillableTimeEntries(this WorkEffort @this) => @this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>()
+            .Where(v => v.IsBillable
+                        && (!v.BillableAmountOfTime.HasValue && v.AmountOfTime.HasValue) || v.BillableAmountOfTime.HasValue)
+            .Select(v => v)
+            .ToArray();
 
         public static void BaseOnBuild(this WorkEffort @this, ObjectOnBuild method)
         {

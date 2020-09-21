@@ -172,6 +172,26 @@ namespace Allors.Repository
         [Workspace]
         public decimal BillingAmount { get; set; }
 
+        #region Allors
+        [Id("aceb7dfb-6838-4754-a3ac-bff9c8f942e8")]
+        [AssociationId("ebeb6c29-c406-4e1d-b594-15ee764a4760")]
+        [RoleId("7d778939-a92d-45b0-aeb9-d98f6ade3172")]
+        #endregion
+        [Derived]
+        [Required]
+        [Workspace]
+        public decimal AmountOfTimeInMinutes { get; set; }
+
+        #region Allors
+        [Id("2c80b0e5-ae04-423a-841b-a6a5d1481bf1")]
+        [AssociationId("93f2ce43-4341-4599-96f5-4f25647a6233")]
+        [RoleId("fd5e5ea8-71ee-40bc-a9fb-30255e974c78")]
+        #endregion
+        [Derived]
+        [Required]
+        [Workspace]
+        public decimal BillableAmountOfTimeInMinutes { get; set; }
+
         #region inherited methods
         public void OnBuild() { }
 
