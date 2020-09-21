@@ -31,7 +31,9 @@ namespace Allors.Database.Adapters
 
     public abstract class SchemaTest : IDisposable
     {
+#pragma warning disable IDE1006
         protected Domain domain;
+#pragma warning restore IDE1006
 
         protected virtual bool DetectBinarySizedDifferences => true;
 
@@ -51,7 +53,7 @@ namespace Allors.Database.Adapters
         {
             // this.DropTable("allors", "_o");
 
-            // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+            // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
             // var Database = this.CreateDatabase(this.domain.MetaPopulation, true);
             // ISession session = Database.CreateSession();
@@ -85,7 +87,7 @@ namespace Allors.Database.Adapters
         // [ExpectedException]
         // public void InitInvalidDomain()
         // {
-        //    this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        //    this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // new RelationTypeBuilder(this.domain, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()).Build();
 
@@ -280,14 +282,14 @@ namespace Allors.Database.Adapters
         //    this.DropTable("C1");
         //    this.DropTable("C2");
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
         //    this.domain.Name = "MyDomain";
 
         // this.CreateClass("C1");
 
         // this.CreateDatabase(this.domain.MetaPopulation, true);
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
         //    this.domain.Name = "MyDomain";
 
         // this.CreateClass("C1");
@@ -373,14 +375,14 @@ namespace Allors.Database.Adapters
         //    this.DropTable("C1");
         //    this.DropTable("C2");
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = this.CreateClass("C1");
         //    var c2 = this.CreateClass("C2");
 
         // this.CreateDatabase(this.domain.MetaPopulation, true);
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // c1 = this.CreateClass("C1");
         //    c2 = this.CreateClass("C2");
@@ -415,14 +417,14 @@ namespace Allors.Database.Adapters
         //    this.DropTable("C1");
         //    this.DropTable("C2");
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = this.CreateClass("C1");
         //    var c2 = this.CreateClass("C2");
 
         // this.CreateDatabase(this.domain.MetaPopulation, true);
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // c1 = this.CreateClass("C1");
         //    c2 = this.CreateClass("C2");
@@ -455,14 +457,14 @@ namespace Allors.Database.Adapters
         //    this.DropTable("C1");
         //    this.DropTable("C2");
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = this.CreateClass("C1");
         //    var c2 = this.CreateClass("C2");
 
         // this.CreateDatabase(this.domain.MetaPopulation, true);
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // c1 = this.CreateClass("C1");
         //    c2 = this.CreateClass("C2");
@@ -496,14 +498,14 @@ namespace Allors.Database.Adapters
         //    this.DropTable("C1");
         //    this.DropTable("C2");
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = this.CreateClass("C1");
         //    var c2 = this.CreateClass("C2");
 
         // this.CreateDatabase(this.domain.MetaPopulation, true);
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // c1 = this.CreateClass("C1");
         //    c2 = this.CreateClass("C2");
@@ -730,14 +732,14 @@ namespace Allors.Database.Adapters
         //    this.DropTable("C1");
         //    this.DropTable("C2");
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = this.CreateClass("C1");
         //    var c2 = this.CreateClass("C2");
 
         // this.CreateDatabase(this.domain.MetaPopulation, true);
 
-        // this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        // this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // c1 = this.CreateClass("C1");
         //    c2 = this.CreateClass("C2");
@@ -777,7 +779,6 @@ namespace Allors.Database.Adapters
         // {
         //    return new InterfaceBuilder(this.domain, Guid.NewGuid()).WithSingularName(name).WithPluralName(name + "s").Build();
         // }
-        protected abstract IDatabase CreateDatabase(IMetaPopulation metaPopulation, bool init);
 
         protected IDatabase CreateDatabase() => this.Profile.CreateDatabase();
 
@@ -815,7 +816,7 @@ namespace Allors.Database.Adapters
 
         // protected RelationType CreateDomainWithCompositeRelationType(Guid relationTypeId, Multiplicity multiplicity)
         // {
-        //    this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        //    this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = new ClassBuilder(this.domain, Guid.NewGuid()).WithSingularName("C1").WithPluralName("C1s").Build();
         //    var c2 = new ClassBuilder(this.domain, Guid.NewGuid()).WithSingularName("C2").WithPluralName("C2s").Build();
@@ -828,7 +829,7 @@ namespace Allors.Database.Adapters
 
         // protected RelationType CreateDomainWithUnitRelationType(Guid relationTypeId, Guid roleTypeObjectId)
         // {
-        //    this.domain = new Domain(new MetaPopulation(), Guid.NewGuid()) { Name = "MyDomain" };
+        //    this.domain = new Domain(new m.Population(), Guid.NewGuid()) { Name = "MyDomain" };
 
         // var c1 = new ClassBuilder(this.domain, Guid.NewGuid()).WithSingularName("C1").WithPluralName("C1s").Build();
         //    var unitType = (ObjectType)this.domain.MetaPopulation.Find(roleTypeObjectId);

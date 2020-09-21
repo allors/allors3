@@ -43,6 +43,14 @@ namespace Allors.Meta
         /// <value>The id as a string.</value>
         public string IdAsString { get; private set; }
 
+        public abstract Origin Origin { get; }
+
+        public bool HasDatabaseOrigin => this.Origin == Origin.Remote;
+
+        public bool HasWorkspaceOrigin => this.Origin == Origin.Local;
+
+        public bool HasSessionOrigin => this.Origin == Origin.Working;
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>

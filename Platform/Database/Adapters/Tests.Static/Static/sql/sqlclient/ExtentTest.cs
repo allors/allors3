@@ -5,18 +5,17 @@
 
 namespace Allors.Database.Adapters.SqlClient
 {
-    using System;
     using System.Linq;
 
     using Allors;
     using Allors.Domain;
-    using Allors.Meta;
-
     using Xunit;
 
-    public abstract class ExtentTest : Adapters.ExtentTest, IDisposable
+    public class ExtentTest : Adapters.ExtentTest, IClassFixture<Fixture<ExtentTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public ExtentTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 
@@ -34,6 +33,8 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     init();
                     this.Populate();
+                    var m = this.Session.Meta();
+
                     this.Session.Commit();
 
                     this.c1B.C1AllorsString = "3";
@@ -44,8 +45,8 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    var extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.AddSort(MetaC1.Instance.C1AllorsString);
+                    var extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.AddSort(m.C1.C1AllorsString);
 
                     var sortedObjects = (C1[])extent.ToArray(typeof(C1));
                     Assert.Equal(4, sortedObjects.Length);
@@ -56,8 +57,8 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.AddSort(MetaC1.Instance.C1AllorsString, SortDirection.Ascending);
+                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
                     Assert.Equal(4, sortedObjects.Length);
@@ -68,8 +69,8 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.AddSort(MetaC1.Instance.C1AllorsString, SortDirection.Ascending);
+                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
                     Assert.Equal(4, sortedObjects.Length);
@@ -80,8 +81,8 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.AddSort(MetaC1.Instance.C1AllorsString, SortDirection.Descending);
+                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
                     Assert.Equal(4, sortedObjects.Length);
@@ -92,8 +93,8 @@ namespace Allors.Database.Adapters.SqlClient
 
                     marker();
 
-                    extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.AddSort(MetaC1.Instance.C1AllorsString, SortDirection.Descending);
+                    extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
                     Assert.Equal(4, sortedObjects.Length);
@@ -108,12 +109,12 @@ namespace Allors.Database.Adapters.SqlClient
                         {
                             marker();
 
-                            var firstExtent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                            firstExtent.Filter.AddLike(MetaC1.Instance.C1AllorsString, "1");
-                            var secondExtent = this.Session.Extent(MetaC1.Instance.ObjectType);
+                            var firstExtent = this.Session.Extent(m.C1.ObjectType);
+                            firstExtent.Filter.AddLike(m.C1.C1AllorsString, "1");
+                            var secondExtent = this.Session.Extent(m.C1.ObjectType);
                             extent = this.Session.Union(firstExtent, secondExtent);
-                            secondExtent.Filter.AddLike(MetaC1.Instance.C1AllorsString, "3");
-                            extent.AddSort(MetaC1.Instance.C1AllorsString);
+                            secondExtent.Filter.AddLike(m.C1.C1AllorsString, "3");
+                            extent.AddSort(m.C1.C1AllorsString);
 
                             sortedObjects = (C1[])extent.ToArray(typeof(C1));
                             Assert.Equal(2, sortedObjects.Length);
@@ -131,6 +132,8 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 this.Populate();
 
                 this.c1B.C1AllorsString = "a";
@@ -143,9 +146,9 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.Session.Commit();
 
-                var extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                extent.AddSort(MetaC1.Instance.C1AllorsString);
-                extent.AddSort(MetaC1.Instance.C1AllorsInteger);
+                var extent = this.Session.Extent(m.C1.ObjectType);
+                extent.AddSort(m.C1.C1AllorsString);
+                extent.AddSort(m.C1.C1AllorsInteger);
 
                 var sortedObjects = (C1[])extent.ToArray(typeof(C1));
                 Assert.Equal(4, sortedObjects.Length);
@@ -154,9 +157,9 @@ namespace Allors.Database.Adapters.SqlClient
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                extent.AddSort(MetaC1.Instance.C1AllorsString);
-                extent.AddSort(MetaC1.Instance.C1AllorsInteger, SortDirection.Ascending);
+                extent = this.Session.Extent(m.C1.ObjectType);
+                extent.AddSort(m.C1.C1AllorsString);
+                extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Ascending);
 
                 sortedObjects = (C1[])extent.ToArray(typeof(C1));
                 Assert.Equal(4, sortedObjects.Length);
@@ -165,9 +168,9 @@ namespace Allors.Database.Adapters.SqlClient
                 Assert.Equal(this.c1B, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                extent.AddSort(MetaC1.Instance.C1AllorsString);
-                extent.AddSort(MetaC1.Instance.C1AllorsInteger, SortDirection.Descending);
+                extent = this.Session.Extent(m.C1.ObjectType);
+                extent.AddSort(m.C1.C1AllorsString);
+                extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
                 sortedObjects = (C1[])extent.ToArray(typeof(C1));
                 Assert.Equal(4, sortedObjects.Length);
@@ -176,9 +179,9 @@ namespace Allors.Database.Adapters.SqlClient
                 Assert.Equal(this.c1D, sortedObjects[2]);
                 Assert.Equal(this.c1C, sortedObjects[3]);
 
-                extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                extent.AddSort(MetaC1.Instance.C1AllorsString, SortDirection.Descending);
-                extent.AddSort(MetaC1.Instance.C1AllorsInteger, SortDirection.Descending);
+                extent = this.Session.Extent(m.C1.ObjectType);
+                extent.AddSort(m.C1.C1AllorsString, SortDirection.Descending);
+                extent.AddSort(m.C1.C1AllorsInteger, SortDirection.Descending);
 
                 sortedObjects = (C1[])extent.ToArray(typeof(C1));
                 Assert.Equal(4, sortedObjects.Length);
@@ -195,6 +198,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var c1A = C1.Create(this.Session);
                 var c1B = C1.Create(this.Session);
@@ -205,8 +209,8 @@ namespace Allors.Database.Adapters.SqlClient
                 c1B.C1AllorsString = "1";
                 c1C.C1AllorsString = "3";
 
-                var extent = this.Session.Extent(M.C1.Class);
-                extent.AddSort(M.C1.C1AllorsString, SortDirection.Ascending);
+                var extent = this.Session.Extent(m.C1.Class);
+                extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                 var sortedObjects = (C1[])extent.ToArray(typeof(C1));
 
@@ -226,8 +230,8 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     c1A = (C1)session2.Instantiate(c1AId);
 
-                    extent = session2.Extent(M.C1.Class);
-                    extent.AddSort(M.C1.C1AllorsString, SortDirection.Ascending);
+                    extent = session2.Extent(m.C1.Class);
+                    extent.AddSort(m.C1.C1AllorsString, SortDirection.Ascending);
 
                     sortedObjects = (C1[])extent.ToArray(typeof(C1));
 

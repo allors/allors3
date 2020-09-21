@@ -10,19 +10,12 @@ namespace Allors.Meta
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Resources;
-    using System.Runtime.CompilerServices;
 
     public sealed partial class MetaPopulation : IMetaPopulation
     {
-        public static MetaPopulation Instance { get; private set; }
-
         private readonly Dictionary<Guid, MetaObjectBase> metaObjectById;
 
         private Dictionary<string, Class> derivedClassByLowercaseName;
-        private Composite[] derivedComposites;
-        private bool isStale;
-        private bool isDeriving;
 
         private IList<Domain> domains;
         private IList<Unit> units;
@@ -34,30 +27,17 @@ namespace Allors.Meta
         private IList<RoleType> roleTypes;
         private IList<MethodType> methodTypes;
 
-        static MetaPopulation() => Reset();
+        private bool isStale;
+        private bool isDeriving;
 
-        public static void Reset()
-        {
-            Instance = new MetaPopulation();
-            var metaBuilder = new MetaBuilder(Instance);
-            metaBuilder.BuildDomains();
-            metaBuilder.BuildDomainInheritances();
-            metaBuilder.BuildUnits();
-            metaBuilder.BuildInterfaces();
-            metaBuilder.BuildClasses();
-            metaBuilder.BuildInheritances();
-            metaBuilder.BuildRoles();
-            metaBuilder.BuildInheritedRoles();
-            metaBuilder.BuildImplementedRoles();
-            metaBuilder.BuildAssociations();
-            metaBuilder.BuildInheritedAssociations();
-            metaBuilder.BuildDefinedMethods();
-            metaBuilder.BuildInheritedMethods();
-            metaBuilder.ExtendInterfaces();
-            metaBuilder.ExtendClasses();
-        }
+        private Composite[] derivedComposites;
 
-        internal MetaPopulation()
+        private Composite[] derivedDatabaseComposites;
+        private Interface[] derivedDatabaseInterfaces;
+        private Class[] derivedDatabaseClasses;
+        private RelationType[] derivedDatabaseRelationTypes;
+
+        public MetaPopulation()
         {
             this.isStale = true;
             this.isDeriving = false;
@@ -89,21 +69,13 @@ namespace Allors.Meta
             }
         }
 
-        IEnumerable<IUnit> IMetaPopulation.Units => this.Units;
-
         public IEnumerable<Unit> Units => this.units;
 
-        IEnumerable<IInterface> IMetaPopulation.Interfaces => this.Interfaces;
-
         public IEnumerable<Interface> Interfaces => this.interfaces;
-
-        IEnumerable<IClass> IMetaPopulation.Classes => this.Classes;
 
         public IEnumerable<Class> Classes => this.classes;
 
         public IEnumerable<Inheritance> Inheritances => this.inheritances;
-
-        IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.RelationTypes;
 
         public IEnumerable<RelationType> RelationTypes => this.relationTypes;
 
@@ -112,8 +84,6 @@ namespace Allors.Meta
         public IEnumerable<RoleType> RoleTypes => this.roleTypes;
 
         public IEnumerable<MethodType> MethodTypes => this.methodTypes;
-
-        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
 
         public IEnumerable<Composite> Composites
         {
@@ -144,6 +114,42 @@ namespace Allors.Meta
             }
         }
 
+        public IEnumerable<IComposite> DatabaseComposites
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedDatabaseComposites;
+            }
+        }
+
+        public IEnumerable<IInterface> DatabaseInterfaces
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedDatabaseInterfaces;
+            }
+        }
+
+        public IEnumerable<IClass> DatabaseClasses
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedDatabaseClasses;
+            }
+        }
+
+        public IEnumerable<IRelationType> DatabaseRelationTypes
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedDatabaseRelationTypes;
+            }
+        }
+
         IMetaObject IMetaPopulation.Find(Guid id) => this.Find(id);
 
         /// <summary>
@@ -161,8 +167,6 @@ namespace Allors.Meta
 
             return metaObject;
         }
-
-        IClass IMetaPopulation.FindClassByName(string name) => this.FindByName(name);
 
         /// <summary>
         /// Find a meta object by name.
@@ -287,12 +291,12 @@ namespace Allors.Meta
                     unit.Bind();
                 }
 
-                foreach (var @interface in this.interfaces)
+                foreach (Interface @interface in this.DatabaseInterfaces)
                 {
                     @interface.Bind(typeByName);
                 }
 
-                foreach (var @class in this.classes)
+                foreach (Class @class in this.DatabaseClasses)
                 {
                     @class.Bind(typeByName);
                 }
@@ -302,7 +306,7 @@ namespace Allors.Meta
 
                 var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
 
-                foreach (var @class in this.Classes)
+                foreach (Class @class in this.DatabaseClasses)
                 {
                     foreach (var concreteMethodType in @class.ConcreteMethodTypes)
                     {
@@ -346,6 +350,12 @@ namespace Allors.Meta
                     var compositeTypes = new List<Composite>(this.Interfaces);
                     compositeTypes.AddRange(this.Classes);
                     this.derivedComposites = compositeTypes.ToArray();
+
+                    // Database
+                    this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Remote).ToArray();
+                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Remote).ToArray();
+                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Remote).ToArray();
+                    this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Remote).ToArray();
 
                     // DirectSupertypes
                     foreach (var type in this.derivedComposites)
@@ -451,7 +461,7 @@ namespace Allors.Meta
                     // ConcreteRoleType
                     foreach (var @class in this.classes)
                     {
-                        @class.DeriveConcreteRoleTypes(sharedRoleTypes);
+                        @class.DeriveRoleClasses(sharedRoleTypes);
                     }
 
                     // ConcreteMethodType

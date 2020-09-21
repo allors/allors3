@@ -9,8 +9,6 @@ namespace Allors.Repository.Domain
     using System;
     using System.Collections.Generic;
 
-    using Allors.Repository.Attributes;
-
     public class Property
     {
         private readonly Inflector.Inflector inflector;
@@ -30,6 +28,17 @@ namespace Allors.Repository.Domain
         public string AssociationId => ((dynamic)this.AttributeByName.Get(AttributeNames.AssociationId))?.Value;
 
         public string RoleId => ((dynamic)this.AttributeByName.Get(AttributeNames.RoleId))?.Value;
+
+        public string[] WorkspaceNames
+        {
+            get
+            {
+                dynamic attribute = this.AttributeByName.Get("Workspace");
+                return attribute?.Names ?? Array.Empty<string>();
+            }
+        }
+
+        public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Remote);
 
         public XmlDoc XmlDoc { get; set; }
 

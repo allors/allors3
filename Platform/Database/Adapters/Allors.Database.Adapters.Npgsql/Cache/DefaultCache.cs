@@ -30,7 +30,7 @@ namespace Allors.Database.Adapters.Npgsql.Caching
                 this.excludedClasses = new HashSet<IClass>();
                 foreach (var transientObjectType in excludedClasses)
                 {
-                    foreach (var transientConcreteClass in transientObjectType.Classes)
+                    foreach (var transientConcreteClass in transientObjectType.DatabaseClasses)
                     {
                         this.excludedClasses.Add(transientConcreteClass);
                     }

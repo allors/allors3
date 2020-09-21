@@ -9,15 +9,15 @@ namespace Allors.Database.Adapters.SqlClient
     using Meta;
     using Xunit;
 
-    public abstract class SchemaTest : Adapters.Sql.SchemaTest, IDisposable
+    public class SchemaTest : Adapters.Sql.SchemaTest, IClassFixture<Fixture<SchemaTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public SchemaTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 
         public override void Dispose() => this.profile.Dispose();
-
-        protected override IDatabase CreateDatabase(IMetaPopulation metaPopulation, bool init) => this.profile.CreateDatabase(metaPopulation, init);
 
         protected override void DropTable(string schema, string tableName) => this.profile.DropTable(schema, tableName);
 

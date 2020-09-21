@@ -8,35 +8,30 @@ namespace Allors.Database.Adapters.SqlClient
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using System.Text;
     using Adapters;
     using Caching;
     using Debug;
+    using Domain;
     using Meta;
     using Microsoft.Extensions.DependencyInjection;
+    using ObjectFactory = Allors.ObjectFactory;
 
     public class Profile : Adapters.Profile
     {
+        private readonly string database;
+        private readonly IConnectionFactory connectionFactory;
+        private readonly ICacheFactory cacheFactory;
+
         private readonly Prefetchers prefetchers = new Prefetchers();
 
-        private readonly DebugConnectionFactory connectionFactory;
-        private readonly DefaultCacheFactory cacheFactory;
-
-        public Profile()
+        public Profile(string database, IConnectionFactory connectionFactory = null, ICacheFactory cacheFactory = null)
         {
-            var services = new ServiceCollection();
-            this.ServiceProvider = services.BuildServiceProvider();
-        }
-
-        public Profile(DebugConnectionFactory connectionFactory, DefaultCacheFactory cacheFactory)
-        : this()
-        {
+            this.database = database.ToLowerInvariant();
             this.connectionFactory = connectionFactory;
             this.cacheFactory = cacheFactory;
         }
-
-        public ServiceProvider ServiceProvider { get; set; }
 
         public override Action[] Markers
         {
@@ -53,7 +48,7 @@ namespace Allors.Database.Adapters.SqlClient
                     markers.Add(
                         () =>
                         {
-                            foreach (var @class in this.Session.Database.MetaPopulation.Classes)
+                            foreach (var @class in this.Session.Database.MetaPopulation.DatabaseClasses)
                             {
                                 var prefetchPolicy = this.prefetchers[@class];
                                 this.Session.Prefetch(prefetchPolicy, this.Session.Extent(@class).ToArray());
@@ -65,54 +60,20 @@ namespace Allors.Database.Adapters.SqlClient
             }
         }
 
-        protected string ConnectionString
-        {
-            get
-            {
-                if (Settings.IsWindows)
-                {
-                    //return @"Server=(local);Database=Adapters;Integrated Security=true";
-                    return @"Server=(localdb)\MSSQLLocalDB;Database=Adapters;Integrated Security=true";
-                }
-
-                return "server=localhost;database=adapters;User Id=SA;Password=Allors123";
-            }
-        }
-
-        public IDatabase CreateDatabase(IMetaPopulation metaPopulation, bool init)
-        {
-            var configuration = new SqlClient.Configuration
-            {
-                ObjectFactory = this.CreateObjectFactory(metaPopulation),
-                ConnectionString = this.ConnectionString,
-                ConnectionFactory = this.connectionFactory,
-                CacheFactory = this.cacheFactory,
-            };
-            var database = new Database(this.ServiceProvider, configuration);
-
-            if (init)
-            {
-                database.Init();
-            }
-
-            return database;
-        }
-
-        public override IDatabase CreatePopulation() => new Adapters.Memory.Database(this.ServiceProvider, new Adapters.Memory.Configuration { ObjectFactory = this.ObjectFactory });
+        protected string ConnectionString => $@"server=(localdb)\MSSQLLocalDB;database={this.database};Integrated Security=true";
 
         public override IDatabase CreateDatabase()
         {
-            var configuration = new SqlClient.Configuration
+            var metaPopulation = new MetaBuilder().Build();
+            var m = new M(metaPopulation);
+            return new Database(new ServiceCollection().BuildServiceProvider(), new Configuration
             {
-                ObjectFactory = this.ObjectFactory,
+                Meta = m,
+                ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 ConnectionString = this.ConnectionString,
                 ConnectionFactory = this.connectionFactory,
                 CacheFactory = this.cacheFactory,
-            };
-
-            var database = new Database(this.ServiceProvider, configuration);
-
-            return database;
+            });
         }
 
         protected bool Match(ColumnTypes columnType, string dataType)

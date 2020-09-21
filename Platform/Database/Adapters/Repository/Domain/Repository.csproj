@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Allors.Database\Multiplicity.cs" Link="Allors\Multiplicity.cs" />
+    <Compile Include="..\..\..\Allors.Database\Origin.cs" Link="Allors\Origin.cs" />
     <Compile Include="..\..\..\..\Repository\Domain\Attributes*\**\*.cs" />
   </ItemGroup>
 </Project>

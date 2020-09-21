@@ -7,6 +7,8 @@ namespace Allors.Database.Adapters
 {
     public abstract class Configuration
     {
+        public object Meta { get; set; }
+
         public IObjectFactory ObjectFactory { get; set; }
 
         public IRoleCache RoleCache { get; set; }

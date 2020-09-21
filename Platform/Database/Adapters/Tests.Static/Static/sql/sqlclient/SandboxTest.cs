@@ -7,10 +7,13 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
     using System;
+    using Xunit;
 
-    public class SandboxTest : Adapters.SandboxTest, IDisposable
+    public class SandboxTest : Adapters.SandboxTest, IClassFixture<Fixture<SandboxTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public SandboxTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

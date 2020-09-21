@@ -9,14 +9,6 @@ namespace Allors.Domain
 
     public partial class Person
     {
-        public static Person Create(ISession session) => (Person)session.Create(Meta.ObjectType);
-
-        public static Person[] Create(ISession session, int count) => (Person[])session.Create(Meta.ObjectType, count);
-
-        public static Person[] Instantiate(ISession session, string[] ids) => (Person[])session.Instantiate(ids);
-
-        public static Person[] Extent(ISession session) => (Person[])session.Extent(Meta.ObjectType).ToArray();
-
         public static Person Create(ISession session, string name)
         {
             var person = Create(session);

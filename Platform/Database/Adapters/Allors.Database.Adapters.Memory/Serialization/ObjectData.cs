@@ -17,7 +17,7 @@ namespace Allors.Database.Adapters.Memory.IO
 
         public IEnumerator<IRoleData> GetEnumerator()
         {
-            foreach (var roleType in this.strategy.Class.RoleTypes)
+            foreach (var roleType in this.strategy.Class.DatabaseRoleTypes)
             {
                 var relationType = roleType.RelationType;
 

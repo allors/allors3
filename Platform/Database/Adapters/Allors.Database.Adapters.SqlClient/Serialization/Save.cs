@@ -57,7 +57,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected void SaveObjects(ManagementSession session)
         {
-            var concreteCompositeType = new List<IClass>(this.database.MetaPopulation.Classes);
+            var concreteCompositeType = new List<IClass>(this.database.MetaPopulation.DatabaseClasses);
             concreteCompositeType.Sort();
             foreach (var type in concreteCompositeType)
             {
@@ -108,14 +108,14 @@ namespace Allors.Database.Adapters.SqlClient
         {
             var exclusiverRootClassesByObjectType = new Dictionary<IObjectType, HashSet<IObjectType>>();
 
-            var relations = new List<IRelationType>(this.database.MetaPopulation.RelationTypes);
+            var relations = new List<IRelationType>(this.database.MetaPopulation.DatabaseRelationTypes);
             relations.Sort();
 
             foreach (var relation in relations)
             {
                 var associationType = relation.AssociationType;
 
-                if (associationType.ObjectType.ExistClass)
+                if (associationType.ObjectType.ExistDatabaseClass)
                 {
                     var roleType = relation.RoleType;
 
@@ -125,9 +125,9 @@ namespace Allors.Database.Adapters.SqlClient
                         if (!exclusiverRootClassesByObjectType.TryGetValue(associationType.ObjectType, out var exclusiveRootClasses))
                         {
                             exclusiveRootClasses = new HashSet<IObjectType>();
-                            foreach (var concreteClass in associationType.ObjectType.Classes)
+                            foreach (var concreteClass in associationType.ObjectType.DatabaseClasses)
                             {
-                                exclusiveRootClasses.Add(concreteClass.ExclusiveClass);
+                                exclusiveRootClasses.Add(concreteClass.ExclusiveDatabaseClass);
                             }
 
                             exclusiverRootClassesByObjectType[associationType.ObjectType] = exclusiveRootClasses;
@@ -154,7 +154,7 @@ namespace Allors.Database.Adapters.SqlClient
                     }
                     else
                     {
-                        if ((roleType.IsMany && associationType.IsMany) || !relation.ExistExclusiveClasses)
+                        if ((roleType.IsMany && associationType.IsMany) || !relation.ExistExclusiveDatabaseClasses)
                         {
                             sql += "SELECT " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole + "\n";
                             sql += "FROM " + this.database.Mapping.TableNameForRelationByRelationType[relation] + "\n";
@@ -166,7 +166,7 @@ namespace Allors.Database.Adapters.SqlClient
                             if (roleType.IsOne)
                             {
                                 sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
-                                sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveClass] + "\n";
+                                sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveDatabaseClass] + "\n";
                                 sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
                                 sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
                             }
@@ -174,7 +174,7 @@ namespace Allors.Database.Adapters.SqlClient
                             {
                                 // role.Many
                                 sql += "SELECT " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " As " + Mapping.ColumnNameForAssociation + ", " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForRole + "\n";
-                                sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveClass] + "\n";
+                                sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveDatabaseClass] + "\n";
                                 sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " IS NOT NULL\n";
                                 sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
                             }

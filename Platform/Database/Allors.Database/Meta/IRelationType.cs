@@ -20,12 +20,12 @@ namespace Allors.Meta
 
         Multiplicity Multiplicity { get; }
 
-        bool ExistExclusiveClasses { get; }
-
-        bool IsDerived { get; }
-
-        bool IsSynced { get; }
+        bool ExistExclusiveDatabaseClasses { get; }
 
         bool IsIndexed { get; }
+
+        bool IsDerived { get;  }
+
+        bool IsSynced { get; }
     }
 }

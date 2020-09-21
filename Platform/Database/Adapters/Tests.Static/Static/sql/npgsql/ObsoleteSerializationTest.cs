@@ -6,20 +6,18 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using Xunit;
-    using System;
     using Adapters;
 
-    [Collection(Fixture.Collection)]
-    public class ObsoleteSerializationTest : Adapters.ObsoleteSerializationTest, IDisposable
+    public class ObsoleteSerializationTest : Adapters.ObsoleteSerializationTest, IClassFixture<Fixture<ObsoleteSerializationTest>>
     {
         private readonly Profile profile;
 
-        public ObsoleteSerializationTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public ObsoleteSerializationTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 
         public override void Dispose() => this.profile.Dispose();
 
-        protected override IDatabase CreatePopulation() => this.profile.CreatePopulation();
+        protected override IDatabase CreatePopulation() => this.profile.CreateMemoryDatabase();
     }
 }

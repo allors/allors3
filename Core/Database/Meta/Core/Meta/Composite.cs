@@ -21,20 +21,19 @@ namespace Allors.Meta
         private LazySet<RoleType> derivedRoleTypes;
         private LazySet<MethodType> derivedMethodTypes;
 
+        private LazySet<AssociationType> derivedDatabaseAssociationTypes;
+        private LazySet<RoleType> derivedDatabaseRoleTypes;
+
         private string xmlDoc;
 
         protected Composite(MetaPopulation metaPopulation)
             : base(metaPopulation)
         {
         }
-        
-        public Origins Origin { get; set; }
 
-        public bool HasDatabaseOrigin => this.Origin == Origins.Database;
+        public override Origin Origin => this.AssignedOrigin;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origins.Workspace;
-
-        public bool HasSessionOrigin => this.Origin == Origins.Session;
+        public Origin AssignedOrigin { get; set; }
 
         public string XmlDoc
         {
@@ -83,7 +82,7 @@ namespace Allors.Meta
             get
             {
                 this.MetaPopulation.Derive();
-                return this.ExclusiveSubclass != null;
+                return this.ExclusiveClass != null;
             }
         }
 
@@ -134,15 +133,11 @@ namespace Allors.Meta
             }
         }
 
-        IClass IComposite.ExclusiveClass => this.ExclusiveSubclass;
-
         /// <summary>
         /// Gets the exclusive concrete subclass.
         /// </summary>
         /// <value>The exclusive concrete subclass.</value>
-        public abstract Class ExclusiveSubclass { get; }
-
-        IEnumerable<IClass> IComposite.Classes => this.Classes;
+        public abstract Class ExclusiveClass { get; }
 
         /// <summary>
         /// Gets the root classes.
@@ -150,7 +145,7 @@ namespace Allors.Meta
         /// <value>The root classes.</value>
         public abstract IEnumerable<Class> Classes { get; }
 
-        IEnumerable<IInterface> IComposite.DirectSupertypes => this.DirectSupertypes;
+        public abstract IEnumerable<IClass> DatabaseClasses { get; }
 
         /// <summary>
         /// Gets the direct super types.
@@ -165,8 +160,6 @@ namespace Allors.Meta
             }
         }
 
-        IEnumerable<IInterface> IComposite.Supertypes => this.Supertypes;
-
         /// <summary>
         /// Gets the super types.
         /// </summary>
@@ -179,8 +172,6 @@ namespace Allors.Meta
                 return this.derivedSupertypes;
             }
         }
-
-        IEnumerable<IAssociationType> IComposite.AssociationTypes => this.AssociationTypes;
 
         /// <summary>
         /// Gets the associations.
@@ -197,7 +188,7 @@ namespace Allors.Meta
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypes => this.AssociationTypes.Where(associationType => this.Equals(associationType.RoleType.ObjectType)).ToArray();
 
-        IEnumerable<IRoleType> IComposite.RoleTypes => this.RoleTypes;
+        public IEnumerable<AssociationType> ExclusiveDatabaseAssociationTypes => this.ExclusiveAssociationTypes.Where(v=>v.Origin == Origin.Remote).ToArray();
 
         /// <summary>
         /// Gets the roles.
@@ -214,11 +205,18 @@ namespace Allors.Meta
 
         public IEnumerable<RoleType> UnitRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsUnit).ToArray();
 
+        public IEnumerable<RoleType> UnitDatabaseRoleTypes => this.UnitRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+
         public IEnumerable<RoleType> CompositeRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsComposite).ToArray();
+
+        public IEnumerable<RoleType> CompositeDatabaseRoleTypes => this.CompositeRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
 
         public IEnumerable<RoleType> ExclusiveRoleTypes => this.RoleTypes.Where(roleType => this.Equals(roleType.AssociationType.ObjectType)).ToArray();
 
+        public IEnumerable<RoleType> ExclusiveDatabaseRoleTypes => this.ExclusiveRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+
         public IEnumerable<RoleType> SortedExclusiveRoleTypes => this.ExclusiveRoleTypes.OrderBy(v => v.Name);
+
 
         /// <summary>
         /// Gets the method types.
@@ -235,11 +233,15 @@ namespace Allors.Meta
 
         public IEnumerable<MethodType> ExclusiveMethodTypes => this.MethodTypes.Where(methodType => this.Equals(methodType.ObjectType)).ToArray();
 
-        public IEnumerable<MethodType> InheritedMethods => this.MethodTypes.Except(this.ExclusiveMethodTypes);
+        public IEnumerable<MethodType> InheritedMethodTypes => this.MethodTypes.Except(this.ExclusiveMethodTypes);
 
-        public IEnumerable<RoleType> InheritedRoles => this.RoleTypes.Except(this.ExclusiveRoleTypes);
+        public IEnumerable<RoleType> InheritedRoleTypes => this.RoleTypes.Except(this.ExclusiveRoleTypes);
 
-        public IEnumerable<AssociationType> InheritedAssociations => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);
+        public IEnumerable<AssociationType> InheritedAssociationTypes => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);
+
+        public IEnumerable<RoleType> InheritedDatabaseRoleTypes => this.InheritedRoleTypes.Where(v => v.Origin == Origin.Remote);
+
+        public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Remote);
 
         #region Workspace
 
@@ -266,13 +268,15 @@ namespace Allors.Meta
         }
 
         public abstract IEnumerable<Composite> Subtypes { get; }
-        
+
+        public abstract IEnumerable<Composite> DatabaseSubtypes { get; }
+
         public IEnumerable<RoleType> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
 
         public IEnumerable<RoleType> ExclusiveRoleTypesWithWorkspaceOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
 
         public IEnumerable<RoleType> ExclusiveRoleTypesWithSessionOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
-        
+
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithDatabaseOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasDatabaseOrigin);
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithWorkspaceOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasWorkspaceOrigin);
@@ -280,6 +284,30 @@ namespace Allors.Meta
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
 
         #endregion Workspace
+
+        public IEnumerable<IAssociationType> DatabaseAssociationTypes
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedDatabaseAssociationTypes;
+            }
+        }
+
+        public IEnumerable<IRoleType> DatabaseRoleTypes
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedDatabaseRoleTypes;
+            }
+        }
+
+        public bool ExistDatabaseClass => this.DatabaseClasses.Any();
+
+        public bool ExistExclusiveDatabaseClass => this.DatabaseClasses.Count() == 1;
+
+        public IClass ExclusiveDatabaseClass => this.ExistExclusiveDatabaseClass ? this.DatabaseClasses.Single() : null;
 
         public bool ExistSupertype(IInterface @interface)
         {
@@ -387,31 +415,33 @@ namespace Allors.Meta
             }
 
             this.derivedRoleTypes = new LazySet<RoleType>(roleTypes);
+            this.derivedDatabaseRoleTypes = new LazySet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Remote));
         }
 
         /// <summary>
         /// Derive association types.
         /// </summary>
-        /// <param name="associations">The associations.</param>
+        /// <param name="associationTypes">The associations.</param>
         /// <param name="relationTypesByRoleObjectType">AssociationTypes grouped by the ObjectType of the Role.</param>
-        internal void DeriveAssociationTypes(HashSet<AssociationType> associations, Dictionary<ObjectType, HashSet<AssociationType>> relationTypesByRoleObjectType)
+        internal void DeriveAssociationTypes(HashSet<AssociationType> associationTypes, Dictionary<ObjectType, HashSet<AssociationType>> relationTypesByRoleObjectType)
         {
-            associations.Clear();
+            associationTypes.Clear();
 
             if (relationTypesByRoleObjectType.TryGetValue(this, out var classAssociationTypes))
             {
-                associations.UnionWith(classAssociationTypes);
+                associationTypes.UnionWith(classAssociationTypes);
             }
 
             foreach (var superType in this.Supertypes)
             {
                 if (relationTypesByRoleObjectType.TryGetValue(superType, out var interfaceAssociationTypes))
                 {
-                    associations.UnionWith(interfaceAssociationTypes);
+                    associationTypes.UnionWith(interfaceAssociationTypes);
                 }
             }
 
-            this.derivedAssociationTypes = new LazySet<AssociationType>(associations);
+            this.derivedAssociationTypes = new LazySet<AssociationType>(associationTypes);
+            this.derivedDatabaseAssociationTypes = new LazySet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Remote));
         }
 
         internal void DeriveIsSynced() => this.isSynced = this.assignedIsSynced || this.derivedSupertypes.Any(v => v.assignedIsSynced);

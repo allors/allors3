@@ -9,10 +9,8 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections;
     using System.Collections.Generic;
     using System.Data;
-
     using Allors.Meta;
-
-    using Microsoft.SqlServer.Server;
+    using Microsoft.Data.SqlClient.Server;
 
     internal class UnitRoleDataRecords : IEnumerable<SqlDataRecord>
     {

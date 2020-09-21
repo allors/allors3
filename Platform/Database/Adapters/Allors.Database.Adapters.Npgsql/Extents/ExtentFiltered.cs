@@ -63,9 +63,9 @@ namespace Allors.Database.Adapters.Npgsql
             this.LazyLoadFilter();
             this.filter.Setup(statement);
 
-            if (this.objectType.ExistClass)
+            if (this.objectType.ExistDatabaseClass)
             {
-                if (this.objectType.ExistExclusiveClass)
+                if (this.objectType.ExistExclusiveDatabaseClass)
                 {
                     return this.BuildSqlWithExclusiveClass(statement);
                 }
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters.Npgsql
         private string BuildSqlWithExclusiveClass(ExtentStatement statement)
         {
             var alias = statement.CreateAlias();
-            var rootClass = this.objectType.ExclusiveClass;
+            var rootClass = this.objectType.ExclusiveDatabaseClass;
 
             if (statement.IsRoot)
             {
@@ -171,7 +171,7 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     var inRole = inStatement.RoleType;
                     var inIRelationType = inRole.RelationType;
-                    if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveClasses)
+                    if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                     {
                         statement.Append("SELECT " + inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation);
                     }
@@ -206,7 +206,7 @@ namespace Allors.Database.Adapters.Npgsql
                         statement.Append(" WHERE ");
                     }
 
-                    if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveClasses)
+                    if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                     {
                         statement.Append(inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
                     }
@@ -256,10 +256,10 @@ namespace Allors.Database.Adapters.Npgsql
         {
             if (statement.IsRoot)
             {
-                for (var i = 0; i < this.objectType.Classes.Count(); i++)
+                for (var i = 0; i < this.objectType.DatabaseClasses.Count(); i++)
                 {
                     var alias = statement.CreateAlias();
-                    var rootClass = this.objectType.Classes.ToArray()[i];
+                    var rootClass = this.objectType.DatabaseClasses.ToArray()[i];
 
                     statement.Append("SELECT " + alias + "." + Mapping.ColumnNameForObject);
                     if (statement.Sorter != null)
@@ -277,7 +277,7 @@ namespace Allors.Database.Adapters.Npgsql
                         this.filter.BuildWhere(statement, alias);
                     }
 
-                    if (i < this.objectType.Classes.Count() - 1)
+                    if (i < this.objectType.DatabaseClasses.Count() - 1)
                     {
                         statement.Append("\nUNION\n");
                     }
@@ -290,12 +290,12 @@ namespace Allors.Database.Adapters.Npgsql
                 if (inStatement.RoleType != null)
                 {
                     var useUnion = false;
-                    foreach (var rootClass in this.objectType.Classes)
+                    foreach (var rootClass in this.objectType.DatabaseClasses)
                     {
                         var inRole = inStatement.RoleType;
                         var inIRelationType = inRole.RelationType;
 
-                        if (!((IComposite)inRole.ObjectType).Classes.Contains(rootClass))
+                        if (!((IComposite)inRole.ObjectType).DatabaseClasses.Contains(rootClass))
                         {
                             continue;
                         }
@@ -311,7 +311,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                         var alias = statement.CreateAlias();
 
-                        if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveClasses)
+                        if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                         {
                             statement.Append("SELECT " + inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation);
                         }
@@ -347,7 +347,7 @@ namespace Allors.Database.Adapters.Npgsql
                             statement.Append(" WHERE ");
                         }
 
-                        if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveClasses)
+                        if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                         {
                             statement.Append(inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
                         }
@@ -366,10 +366,10 @@ namespace Allors.Database.Adapters.Npgsql
                 }
                 else
                 {
-                    for (var i = 0; i < this.objectType.Classes.Count(); i++)
+                    for (var i = 0; i < this.objectType.DatabaseClasses.Count(); i++)
                     {
                         var alias = statement.CreateAlias();
-                        var rootClass = this.objectType.Classes.ToArray()[i];
+                        var rootClass = this.objectType.DatabaseClasses.ToArray()[i];
 
                         if (statement.IsRoot)
                         {
@@ -394,7 +394,7 @@ namespace Allors.Database.Adapters.Npgsql
                             this.filter.BuildWhere(statement, alias);
                         }
 
-                        if (i < this.objectType.Classes.Count() - 1)
+                        if (i < this.objectType.DatabaseClasses.Count() - 1)
                         {
                             statement.Append("\nUNION\n");
                         }

@@ -33,9 +33,10 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c = this.Session.Create(MetaC3.Instance.ObjectType);
+                var a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c = this.Session.Create(m.C3.ObjectType);
                 this.Session.Commit();
 
                 a = (C1)this.Session.Instantiate(a);
@@ -69,10 +70,10 @@ namespace Allors.Database.Adapters
                 Assert.Equal("b changed", b.C2AllorsString);
 
                 Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(MetaC1.Instance.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
+                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
 
                 Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(MetaC2.Instance.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
+                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
 
                 Assert.True(associations.Contains(a.Id));
                 Assert.True(associations.Contains(b.Id));
@@ -106,10 +107,10 @@ namespace Allors.Database.Adapters
                 Assert.True(associations.Contains(a.Id));
 
                 Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(MetaC1.Instance.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
+                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
 
                 Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(MetaC2.Instance.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
+                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
 
                 Assert.True(associations.Contains(a.Id));
                 Assert.True(associations.Contains(b.Id));
@@ -149,10 +150,10 @@ namespace Allors.Database.Adapters
                 Assert.True(associations.Contains(a.Id));
 
                 Assert.Single(changeSet.GetRoleTypes(a.Id));
-                Assert.Equal(MetaC1.Instance.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
+                Assert.Equal(m.C1.C1AllorsString, changeSet.GetRoleTypes(a.Id).First());
 
                 Assert.Single(changeSet.GetRoleTypes(b.Id));
-                Assert.Equal(MetaC2.Instance.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
+                Assert.Equal(m.C2.C2AllorsString, changeSet.GetRoleTypes(b.Id).First());
 
                 Assert.True(associations.Contains(a.Id));
                 Assert.True(associations.Contains(b.Id));
@@ -224,10 +225,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var c1a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c1b = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c2a = (C2)this.Session.Create(MetaC2.Instance.ObjectType);
+                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
 
                 this.Session.Commit();
 
@@ -267,7 +269,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -302,7 +304,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -337,7 +339,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2one, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -406,10 +408,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var c1a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c1b = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c2a = (C2)this.Session.Create(MetaC2.Instance.ObjectType);
+                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
 
                 this.Session.Commit();
 
@@ -449,7 +452,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -484,7 +487,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -519,7 +522,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2one, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -588,10 +591,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var c1a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c1b = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c2a = (C2)this.Session.Create(MetaC2.Instance.ObjectType);
+                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
 
                 this.Session.Commit();
 
@@ -643,7 +647,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -687,7 +691,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -722,7 +726,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -757,7 +761,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2one2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -832,10 +836,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var c1a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c1b = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c2a = (C2)this.Session.Create(MetaC2.Instance.ObjectType);
+                var c1a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c1b = (C1)this.Session.Create(m.C1.ObjectType);
+                var c2a = (C2)this.Session.Create(m.C2.ObjectType);
 
                 this.Session.Commit();
 
@@ -887,7 +892,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -931,7 +936,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -966,7 +971,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2a.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -1001,7 +1006,7 @@ namespace Allors.Database.Adapters
                 Assert.Contains(c2b.Id, roles);
 
                 Assert.Single(changes.GetRoleTypes(c1a.Id));
-                Assert.Equal(MetaC1.Instance.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
+                Assert.Equal(m.C1.C1C2many2manies, changes.GetRoleTypes(c1a.Id).First());
 
                 Assert.Contains(c1a.Id, associations);
                 Assert.DoesNotContain(c2b.Id, associations);
@@ -1076,9 +1081,10 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c = this.Session.Create(MetaC3.Instance.ObjectType);
+                var a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c = this.Session.Create(m.C3.ObjectType);
                 this.Session.Commit();
 
                 a = (C1)this.Session.Instantiate(a);
@@ -1116,9 +1122,10 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
-                var a = (C1)this.Session.Create(MetaC1.Instance.ObjectType);
-                var c = this.Session.Create(MetaC3.Instance.ObjectType);
+                var a = (C1)this.Session.Create(m.C1.ObjectType);
+                var c = this.Session.Create(m.C3.ObjectType);
                 this.Session.Commit();
 
                 a = (C1)this.Session.Instantiate(a);

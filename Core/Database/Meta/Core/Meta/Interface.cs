@@ -15,10 +15,13 @@ namespace Allors.Meta
         private LazySet<Composite> derivedDirectSubtypes;
 
         private LazySet<Composite> derivedSubtypes;
+        private LazySet<Composite> derivedDatabaseSubtypes;
 
-        private LazySet<Class> derivedSubclasses;
+        private LazySet<Class> derivedClasses;
 
-        private Class derivedExclusiveSubclass;
+        private LazySet<Class> derivedDatabaseClasses;
+
+        private Class derivedExclusiveClass;
 
         private Type clrType;
 
@@ -32,12 +35,12 @@ namespace Allors.Meta
 
         #region Exist
 
-        public bool ExistSubclasses
+        public bool ExistClasses
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedSubclasses.Count > 0;
+                return this.derivedClasses.Count > 0;
             }
         }
 
@@ -55,30 +58,24 @@ namespace Allors.Meta
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedSubclasses.Count > 0;
+                return this.derivedClasses.Count > 0;
             }
         }
 
         #endregion Exist
 
-        IEnumerable<IClass> IInterface.Subclasses => this.Subclasses;
-
         /// <summary>
         /// Gets the subclasses.
         /// </summary>
         /// <value>The subclasses.</value>
-        public IEnumerable<Class> Subclasses
+        public override IEnumerable<Class> Classes
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedSubclasses;
+                return this.derivedClasses;
             }
         }
-
-        public override IEnumerable<Class> Classes => this.Subclasses;
-
-        IEnumerable<IComposite> IInterface.Subtypes => this.Subtypes;
 
         /// <summary>
         /// Gets the sub types.
@@ -93,12 +90,21 @@ namespace Allors.Meta
             }
         }
 
-        public override Class ExclusiveSubclass
+        public override IEnumerable<Composite> DatabaseSubtypes
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedExclusiveSubclass;
+                return this.derivedDatabaseSubtypes;
+            }
+        }
+
+        public override Class ExclusiveClass
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedExclusiveClass;
             }
         }
 
@@ -151,7 +157,8 @@ namespace Allors.Meta
                 }
             }
 
-            this.derivedSubclasses = new LazySet<Class>(subClasses);
+            this.derivedClasses = new LazySet<Class>(subClasses);
+            this.derivedDatabaseClasses = new LazySet<Class>(subClasses.Where(v=>v.Origin == Origin.Remote));
         }
 
         /// <summary>
@@ -164,12 +171,13 @@ namespace Allors.Meta
             this.DeriveSubtypesRecursively(this, subTypes);
 
             this.derivedSubtypes = new LazySet<Composite>(subTypes);
+            this.derivedDatabaseSubtypes = new LazySet<Composite>(subTypes.Where(v=>v.Origin == Origin.Remote));
         }
 
         /// <summary>
         /// Derive exclusive sub classes.
         /// </summary>
-        internal void DeriveExclusiveSubclass() => this.derivedExclusiveSubclass = this.derivedSubclasses.Count == 1 ? this.derivedSubclasses.First() : null;
+        internal void DeriveExclusiveSubclass() => this.derivedExclusiveClass = this.derivedClasses.Count == 1 ? this.derivedClasses.First() : null;
 
         /// <summary>
         /// Derive super types recursively.
@@ -188,6 +196,15 @@ namespace Allors.Meta
                         ((Interface)directSubtype).DeriveSubtypesRecursively(this, subTypes);
                     }
                 }
+            }
+        }
+
+        public override IEnumerable<IClass> DatabaseClasses
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedDatabaseClasses;
             }
         }
     }

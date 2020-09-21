@@ -143,6 +143,10 @@ namespace Allors.Meta
 
         public bool Workspace => this.RelationType.Workspace;
 
+        public string[] WorkspaceNames => this.RelationType.WorkspaceNames;
+
+        public override Origin Origin => this.RelationType.Origin;
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>

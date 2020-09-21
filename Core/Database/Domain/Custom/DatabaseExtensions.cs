@@ -9,12 +9,13 @@ namespace Allors.Domain
     {
         public static void RegisterDerivations(this @IDatabase @this)
         {
+            var m = @this.Meta();
             var derivations = new IDomainDerivation[]
             {
-                new PersonFullNameDerivation(),
-                new PersonGreetingDerivation(),
-                new AuditableDerivation(),
-                new MediaDerivation(),
+                new PersonFullNameDerivation(m),
+                new PersonGreetingDerivation(m),
+                new AuditableDerivation(m),
+                new MediaDerivation(m),
             };
 
             foreach (var derivation in derivations)

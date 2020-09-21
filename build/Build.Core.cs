@@ -7,18 +7,6 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    Target CoreResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Core";
-            using (var sqlServer = new SqlServer())
-            {
-                sqlServer.Restart();
-                sqlServer.Drop(database);
-                sqlServer.Create(database);
-            }
-        });
-
     private Target CoreMerge => _ => _
         .Executes(() =>
         {
@@ -74,21 +62,16 @@ partial class Build
         .DependsOn(CoreGenerate)
         .DependsOn(CorePublishServer)
         .DependsOn(CorePublishCommands)
-        .DependsOn(CoreResetDatabase)
         .Executes(async () =>
         {
-            using (var sqlServer = new SqlServer())
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+            using (var server = new Server(Paths.ArtifactsCoreServer))
             {
-                sqlServer.Restart();
-                sqlServer.Populate(Paths.ArtifactsCoreCommands);
-                using (var server = new Server(Paths.ArtifactsCoreServer))
-                {
-                    await server.Ready();
-                    DotNetTest(s => s
-                        .SetProjectFile(Paths.CoreDatabaseServerTests)
-                        .SetLogger("trx;LogFileName=CoreDatabaseServer.trx")
-                        .SetResultsDirectory(Paths.ArtifactsTests));
-                }
+                await server.Ready();
+                DotNetTest(s => s
+                    .SetProjectFile(Paths.CoreDatabaseServerTests)
+                    .SetLogger("trx;LogFileName=CoreDatabaseServer.trx")
+                    .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
 
@@ -101,6 +84,7 @@ partial class Build
         });
 
     Target CoreWorkspaceTypescriptMeta => _ => _
+        .After(CoreInstall)
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() =>
@@ -113,6 +97,7 @@ partial class Build
 
 
     Target CoreWorkspaceTypescriptWorkspace => _ => _
+        .After(CoreInstall)
         .DependsOn(CoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() =>
@@ -124,46 +109,37 @@ partial class Build
         });
 
     Target CoreWorkspaceTypescriptClient => _ => _
+        .After(CoreInstall)
         .DependsOn(CoreGenerate)
         .DependsOn(CorePublishServer)
         .DependsOn(CorePublishCommands)
         .DependsOn(EnsureDirectories)
-        .DependsOn(CoreResetDatabase)
         .Executes(async () =>
         {
-            using (var sqlServer = new SqlServer())
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+            using (var server = new Server(Paths.ArtifactsCoreServer))
             {
-                sqlServer.Restart();
-                sqlServer.Populate(Paths.ArtifactsCoreCommands);
-                using (var server = new Server(Paths.ArtifactsCoreServer))
-                {
-                    await server.Ready();
-                    NpmRun(s => s
-                        .SetEnvironmentVariable("npm_config_loglevel", "error")
-                        .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
-                        .SetCommand("test:client"));
-                }
+                await server.Ready();
+                NpmRun(s => s
+                    .SetEnvironmentVariable("npm_config_loglevel", "error")
+                    .SetWorkingDirectory(Paths.CoreWorkspaceTypescript)
+                    .SetCommand("test:client"));
             }
         });
 
     Target CoreWorkspaceCSharpDomainTests => _ => _
         .DependsOn(CorePublishServer)
         .DependsOn(CorePublishCommands)
-        .DependsOn(CoreResetDatabase)
         .Executes(async () =>
         {
-            using (var sqlServer = new SqlServer())
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+            using (var server = new Server(Paths.ArtifactsCoreServer))
             {
-                sqlServer.Restart();
-                sqlServer.Populate(Paths.ArtifactsCoreCommands);
-                using (var server = new Server(Paths.ArtifactsCoreServer))
-                {
-                    await server.Ready();
-                    DotNetTest(s => s
-                        .SetProjectFile(Paths.CoreWorkspaceCSharpDomainTests)
-                        .SetLogger("trx;LogFileName=CoreWorkspaceCSharpDomainTests.trx")
-                        .SetResultsDirectory(Paths.ArtifactsTests));
-                }
+                await server.Ready();
+                DotNetTest(s => s
+                    .SetProjectFile(Paths.CoreWorkspaceCSharpDomainTests)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpDomainTests.trx")
+                    .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
 

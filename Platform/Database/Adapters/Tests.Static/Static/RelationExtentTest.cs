@@ -51,6 +51,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
+                var m = this.Session.Meta();
 
                 var acme = Company.Create(this.Session, "Acme", 2);
                 var acne = Company.Create(this.Session, "Acne", 1);
@@ -69,7 +70,7 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, managedCompanies.Count);
 
-                managedCompanies.Filter.AddLike(MetaNamed.Instance.Name, "%ne");
+                managedCompanies.Filter.AddLike(m.Named.Name, "%ne");
 
                 Assert.Single(managedCompanies);
 
@@ -77,7 +78,7 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, managedCompanies.Count);
 
-                managedCompanies.AddSort(MetaNamed.Instance.Index, SortDirection.Descending);
+                managedCompanies.AddSort(m.Named.Index, SortDirection.Descending);
 
                 Assert.Equal(2, managedCompanies.Count);
                 Assert.Equal(acme, managedCompanies[0]);
@@ -92,7 +93,7 @@ namespace Allors.Database.Adapters
 
                 Extent janesCompanies = jane.CompaniesWhereOwner;
 
-                janesCompanies.Filter.AddLike(MetaNamed.Instance.Name, "%ne");
+                janesCompanies.Filter.AddLike(m.Named.Name, "%ne");
 
                 Assert.Single(janesCompanies);
 
@@ -100,7 +101,7 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, janesCompanies.Count);
 
-                janesCompanies.AddSort(MetaNamed.Instance.Index);
+                janesCompanies.AddSort(m.Named.Index);
 
                 Assert.Equal(2, janesCompanies.Count);
                 Assert.Equal(acne, janesCompanies[0]);
@@ -115,6 +116,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
+                var m = this.Session.Meta();
 
                 var acme = Company.Create(this.Session, "Acme");
                 var acne = Company.Create(this.Session, "Acne");
@@ -135,7 +137,7 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, employees.Count);
 
-                employees.Filter.AddLike(MetaNamed.Instance.Name, "Ja%");
+                employees.Filter.AddLike(m.Named.Name, "Ja%");
 
                 Assert.Single(employees);
 
@@ -143,7 +145,7 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, employees.Count);
 
-                employees.AddSort(MetaNamed.Instance.Index, SortDirection.Descending);
+                employees.AddSort(m.Named.Index, SortDirection.Descending);
 
                 Assert.Equal(2, employees.Count);
                 Assert.Equal(john, employees[0]);
@@ -159,7 +161,7 @@ namespace Allors.Database.Adapters
                 Extent acmeOwners = acme.Owners;
                 Extent acneOwners = acme.Owners;
 
-                acmeOwners.Filter.AddLike(MetaNamed.Instance.Name, "Ja%");
+                acmeOwners.Filter.AddLike(m.Named.Name, "Ja%");
 
                 Assert.Single(acmeOwners);
 
@@ -167,7 +169,7 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, acmeOwners.Count);
 
-                acmeOwners.AddSort(MetaNamed.Instance.Index);
+                acmeOwners.AddSort(m.Named.Index);
 
                 Assert.Equal(2, acmeOwners.Count);
                 Assert.Equal(jane, acmeOwners[0]);

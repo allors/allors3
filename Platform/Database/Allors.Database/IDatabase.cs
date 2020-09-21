@@ -7,7 +7,6 @@ namespace Allors
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Xml;
 
     using Allors.Meta;
@@ -60,6 +59,8 @@ namespace Allors
         /// Gets the meta domain of this population.
         /// </summary>
         IMetaPopulation MetaPopulation { get; }
+
+        object Meta { get; }
 
         /// <summary>
         /// Gets the service provider.

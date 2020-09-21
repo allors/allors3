@@ -11,11 +11,11 @@ namespace Allors.Database.Adapters.Npgsql
 
     using Xunit;
 
-    public abstract class UnitTest : Adapters.UnitTest
+    public class UnitTest : Adapters.UnitTest, IClassFixture<Fixture<UnitTest>>
     {
         private readonly Profile profile;
 
-        public UnitTest(Fixture fixture) => this.profile = new Profile(fixture.PgServer);
+        public UnitTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 
@@ -28,186 +28,133 @@ namespace Allors.Database.Adapters.Npgsql
         [Fact]
         public override void AllorsDecimal()
         {
-            // Positive
+            foreach (var init in this.Inits)
             {
-                var values = C1.Create(this.Session);
-                values.C1AllorsDecimal = 10.10m;
-                values.I1AllorsDecimal = 10.10m;
-                values.S1AllorsDecimal = 10.10m;
+                init();
 
-                this.Session.Commit();
-
-                Assert.Equal(10.10m, values.C1AllorsDecimal);
-                Assert.Equal(10.10m, values.I1AllorsDecimal);
-                Assert.Equal(10.10m, values.S1AllorsDecimal);
-            }
-
-            // Negative
-            {
-                var values = C1.Create(this.Session);
-                values.C1AllorsDecimal = -10.10m;
-                values.I1AllorsDecimal = -10.10m;
-                values.S1AllorsDecimal = -10.10m;
-
-                this.Session.Commit();
-                ;
-
-                Assert.Equal(-10.10m, values.C1AllorsDecimal);
-                Assert.Equal(-10.10m, values.I1AllorsDecimal);
-                Assert.Equal(-10.10m, values.S1AllorsDecimal);
-            }
-
-            // Zero
-            {
-                var values = C1.Create(this.Session);
-                values.C1AllorsDecimal = 0m;
-                values.I1AllorsDecimal = 0m;
-                values.S1AllorsDecimal = 0m;
-
-                this.Session.Commit();
-                ;
-
-                Assert.Equal(0m, values.C1AllorsDecimal);
-                Assert.Equal(0m, values.I1AllorsDecimal);
-                Assert.Equal(0m, values.S1AllorsDecimal);
-            }
-
-            // initial empty
-            {
-                var values = C1.Create(this.Session);
-
-                decimal? value = -1;
-                var exceptionThrown = false;
-                try
+                // Positive
                 {
+                    var values = C1.Create(this.Session);
+                    values.C1AllorsDecimal = 10.10m;
+                    values.I1AllorsDecimal = 10.10m;
+                    values.S1AllorsDecimal = 10.10m;
+
+                    this.Session.Commit();
+
+                    Assert.Equal(10.10m, values.C1AllorsDecimal);
+                    Assert.Equal(10.10m, values.I1AllorsDecimal);
+                    Assert.Equal(10.10m, values.S1AllorsDecimal);
+                }
+
+                // Negative
+                {
+                    var values = C1.Create(this.Session);
+                    values.C1AllorsDecimal = -10.10m;
+                    values.I1AllorsDecimal = -10.10m;
+                    values.S1AllorsDecimal = -10.10m;
+
+                    this.Session.Commit();
+
+                    Assert.Equal(-10.10m, values.C1AllorsDecimal);
+                    Assert.Equal(-10.10m, values.I1AllorsDecimal);
+                    Assert.Equal(-10.10m, values.S1AllorsDecimal);
+                }
+
+                // Zero
+                {
+                    var values = C1.Create(this.Session);
+                    values.C1AllorsDecimal = 0m;
+                    values.I1AllorsDecimal = 0m;
+                    values.S1AllorsDecimal = 0m;
+
+                    this.Session.Commit();
+
+                    Assert.Equal(0m, values.C1AllorsDecimal);
+                    Assert.Equal(0m, values.I1AllorsDecimal);
+                    Assert.Equal(0m, values.S1AllorsDecimal);
+                }
+
+                // initial empty
+                {
+                    var values = C1.Create(this.Session);
+
+                    decimal? value = null;
+
                     value = values.C1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
+                    Assert.Null(value);
+
                     value = values.I1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
+                    Assert.Null(value);
+
                     value = values.S1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                Assert.Equal(-1, value);
+                    Assert.Null(value);
 
-                Assert.False(values.ExistC1AllorsDecimal);
-                Assert.False(values.ExistI1AllorsDecimal);
-                Assert.False(values.ExistS1AllorsDecimal);
+                    Assert.False(values.ExistC1AllorsDecimal);
+                    Assert.False(values.ExistI1AllorsDecimal);
+                    Assert.False(values.ExistS1AllorsDecimal);
 
-                this.Session.Commit();
+                    this.Session.Commit();
 
-                value = -1;
-                exceptionThrown = false;
-                try
-                {
                     value = values.C1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
+                    Assert.Null(value);
+
                     value = values.I1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
+                    Assert.Null(value);
+
                     value = values.S1AllorsDecimal;
+                    Assert.Null(value);
+
+                    Assert.False(values.ExistC1AllorsDecimal);
+                    Assert.False(values.ExistI1AllorsDecimal);
+                    Assert.False(values.ExistS1AllorsDecimal);
                 }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                Assert.Equal(-1, value);
 
-                Assert.False(values.ExistC1AllorsDecimal);
-                Assert.False(values.ExistI1AllorsDecimal);
-                Assert.False(values.ExistS1AllorsDecimal);
-            }
-
-            // reset empty
-            {
-                var values = C1.Create(this.Session);
-                values.C1AllorsDecimal = 10.10m;
-                values.I1AllorsDecimal = 10.10m;
-                values.S1AllorsDecimal = 10.10m;
-
-                this.Session.Commit();
-
-                Assert.True(values.ExistC1AllorsDecimal);
-                Assert.True(values.ExistI1AllorsDecimal);
-                Assert.True(values.ExistS1AllorsDecimal);
-
-                values.RemoveC1AllorsDecimal();
-                values.RemoveI1AllorsDecimal();
-                values.RemoveS1AllorsDecimal();
-
-                decimal? value = -1;
-                var exceptionThrown = false;
-                try
+                // reset empty
                 {
+                    var values = C1.Create(this.Session);
+                    values.C1AllorsDecimal = 10.10m;
+                    values.I1AllorsDecimal = 10.10m;
+                    values.S1AllorsDecimal = 10.10m;
+
+                    this.Session.Commit();
+
+                    Assert.True(values.ExistC1AllorsDecimal);
+                    Assert.True(values.ExistI1AllorsDecimal);
+                    Assert.True(values.ExistS1AllorsDecimal);
+
+                    values.RemoveC1AllorsDecimal();
+                    values.RemoveI1AllorsDecimal();
+                    values.RemoveS1AllorsDecimal();
+
+                    decimal? value = null;
                     value = values.C1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
+                    Assert.Null(value);
+
                     value = values.I1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
+                    Assert.Null(value);
+
                     value = values.S1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                Assert.Equal(-1, value);
+                    Assert.Null(value);
 
-                Assert.False(values.ExistC1AllorsDecimal);
-                Assert.False(values.ExistI1AllorsDecimal);
-                Assert.False(values.ExistS1AllorsDecimal);
+                    Assert.False(values.ExistC1AllorsDecimal);
+                    Assert.False(values.ExistI1AllorsDecimal);
+                    Assert.False(values.ExistS1AllorsDecimal);
 
-                this.Session.Commit();
-                value = -1;
-                exceptionThrown = false;
-                try
-                {
+                    this.Session.Commit();
+
                     value = values.C1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
-                    value = values.I1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                exceptionThrown = false;
-                try
-                {
-                    value = values.S1AllorsDecimal;
-                }
-                catch { exceptionThrown = true; }
-                Assert.True(exceptionThrown);
-                Assert.Equal(-1, value);
+                    Assert.Null(value);
 
-                Assert.False(values.ExistC1AllorsDecimal);
-                Assert.False(values.ExistI1AllorsDecimal);
-                Assert.False(values.ExistS1AllorsDecimal);
+                    value = values.I1AllorsDecimal;
+                    Assert.Null(value);
+
+                    value = values.S1AllorsDecimal;
+                    Assert.Null(value);
+
+                    Assert.False(values.ExistC1AllorsDecimal);
+                    Assert.False(values.ExistI1AllorsDecimal);
+                    Assert.False(values.ExistS1AllorsDecimal);
+                }
             }
         }
     }

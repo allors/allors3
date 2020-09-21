@@ -13,7 +13,6 @@ namespace Allors.Meta
         private string name;
         private Composite objectType;
 
-        private bool workspace;
         private string xmlDoc;
 
         public MethodType(MetaPopulation metaPopulation, Guid id)
@@ -24,6 +23,7 @@ namespace Allors.Meta
             metaPopulation.OnMethodTypeCreated(this);
         }
 
+    
         /// <summary>
         /// Gets the display name.
         /// </summary>
@@ -55,16 +55,9 @@ namespace Allors.Meta
             }
         }
 
-        public bool Workspace
-        {
-            get => this.workspace;
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.workspace = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public bool Workspace => this.WorkspaceNames != null;
+
+        public string[] WorkspaceNames { get; set; }
 
         public string XmlDoc
         {
@@ -86,6 +79,8 @@ namespace Allors.Meta
                 return null;
             }
         }
+
+        public override Origin Origin => Origin.Remote;
 
         /// <summary>
         /// Gets the validation name.

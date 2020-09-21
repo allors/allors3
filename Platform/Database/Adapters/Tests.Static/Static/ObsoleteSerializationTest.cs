@@ -63,6 +63,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var otherPopulation = this.CreatePopulation();
                 using (var otherSession = otherPopulation.CreateSession())
@@ -175,7 +176,8 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-
+                    var m = this.Session.Meta();
+                    
                     var otherPopulation = this.CreatePopulation();
                     using (var otherSession = otherPopulation.CreateSession())
                     {
@@ -216,6 +218,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var otherPopulation = this.CreatePopulation();
                 using (var otherSession = otherPopulation.CreateSession())
@@ -281,6 +284,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var otherPopulation = this.CreatePopulation();
                 using (var otherSession = otherPopulation.CreateSession())
@@ -318,6 +322,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var population = this.CreatePopulation();
                 var session = population.CreateSession();
@@ -360,6 +365,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var writeCultureInfo = new CultureInfo("en-US");
                 var readCultureInfo = new CultureInfo("en-GB");
@@ -402,6 +408,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var population = this.CreatePopulation();
                 var session = population.CreateSession();
@@ -449,6 +456,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var savePopulation = this.CreatePopulation();
                 var saveSession = savePopulation.CreateSession();
@@ -506,6 +514,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 using (var session = this.Population.CreateSession())
                 {
@@ -544,6 +553,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 using (var session = this.Population.CreateSession())
                 {
@@ -614,6 +624,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var writeCultureInfo = new CultureInfo("en-US");
                 var readCultureInfo = new CultureInfo("en-GB");
@@ -656,6 +667,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var otherPopulation = this.CreatePopulation();
                 var otherSession = otherPopulation.CreateSession();
@@ -710,6 +722,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -756,6 +769,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -820,6 +834,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -883,6 +898,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -951,6 +967,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1037,10 +1054,12 @@ namespace Allors.Database.Adapters
 
         private void AssertPopulation(ISession session)
         {
-            Assert.Equal(4, this.GetExtent(session, C1.Meta.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, C2.Meta.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, C3.Meta.ObjectType).Length);
-            Assert.Equal(4, this.GetExtent(session, C4.Meta.ObjectType).Length);
+            var m = session.Meta();
+
+            Assert.Equal(4, this.GetExtent(session, m.C1.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(session, m.C2.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(session, m.C3.ObjectType).Length);
+            Assert.Equal(4, this.GetExtent(session, m.C4.ObjectType).Length);
 
             var c1ACopy = C1.Instantiate(session, this.c1A.Strategy.ObjectId);
             var c1BCopy = C1.Instantiate(session, this.c1B.Strategy.ObjectId);

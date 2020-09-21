@@ -40,19 +40,19 @@ namespace Allors.Workspace.Meta
 	public static class M
 	{
 		// Interfaces
-$meta.Interfaces:{interface|         public static readonly Meta$interface.SingularName$ $interface.SingularName$;}; separator="\n"$
+$meta.DatabaseInterfaces:{interface|         public static readonly Meta$interface.SingularName$ $interface.SingularName$;}; separator="\n"$
 
 		// Classes
-$meta.Classes:{class|         public static readonly Meta$class.SingularName$ $class.SingularName$;}; separator="\n"$
+$meta.DatabaseClasses:{class|         public static readonly Meta$class.SingularName$ $class.SingularName$;}; separator="\n"$
 
 
 		static M()
 		{
 		    // Interfaces
-$meta.Interfaces:{interface|             $interface.SingularName$ = Meta$interface.SingularName$.Instance;}; separator="\n"$
+$meta.DatabaseInterfaces:{interface|             $interface.SingularName$ = Meta$interface.SingularName$.Instance;}; separator="\n"$
 
 		    // Classes
-$meta.Classes:{class|             $class.SingularName$ = Meta$class.SingularName$.Instance;}; separator="\n"$
+$meta.DatabaseClasses:{class|             $class.SingularName$ = Meta$class.SingularName$.Instance;}; separator="\n"$
 		}
 	}
 
@@ -109,37 +109,37 @@ $meta.SortedDomains:{assembly|$domain_inheritance(assembly)$}; separator="\n"$
 $meta.Units:{unit|             Meta$unit.SingularName$.Instance = new Meta$unit.SingularName$(this.metaPopulation);}; separator="\n"$
 
 			// Interfaces
-$meta.Interfaces:{interface|             Meta$interface.SingularName$.Instance = new Meta$interface.SingularName$(this.metaPopulation);}; separator="\n"$
+$meta.DatabaseInterfaces:{interface|             Meta$interface.SingularName$.Instance = new Meta$interface.SingularName$(this.metaPopulation);}; separator="\n"$
 
 			// Classes
-$meta.Classes:{class|             Meta$class.SingularName$.Instance = new Meta$class.SingularName$(this.metaPopulation);}; separator="\n"$
+$meta.DatabaseClasses:{class|             Meta$class.SingularName$.Instance = new Meta$class.SingularName$(this.metaPopulation);}; separator="\n"$
 
 			// Inheritance
-$meta.Composites:{composite|$inheritance(composite)$}; separator="\n"$
+$meta.DatabaseComposites:{composite|$inheritance(composite)$}; separator="\n"$
 		}
 
 		internal void BuildOperandTypes()
 		{
 			// Exclusive Roles
-$meta.Composites:{composite|$relations(composite)$}; separator="\n"$
+$meta.DatabaseComposites:{composite|$relations(composite)$}; separator="\n"$
 
 			// Inherited Roles
-$meta.Interfaces:{interface|$inheritedRoles(interface)$}; separator="\n"$
+$meta.DatabaseInterfaces:{interface|$inheritedRoles(interface)$}; separator="\n"$
 
 			// Implemented Roles
-$meta.Classes:{class|$implementedRoles(class)$}; separator="\n"$
+$meta.DatabaseClasses:{class|$implementedRoles(class)$}; separator="\n"$
 
 			// Associations
-$meta.Composites:{composite|$associations(composite)$}; separator="\n"$
+$meta.DatabaseComposites:{composite|$associations(composite)$}; separator="\n"$
 
 			// InheritedAssociations
-$meta.Composites:{composite|$inheritedassociations(composite)$}; separator="\n"$
+$meta.DatabaseComposites:{composite|$inheritedassociations(composite)$}; separator="\n"$
 
 			// Defined Methods
-$meta.Composites:{composite|$exclusiveMethodTypes(composite)$}; separator="\n"$
+$meta.DatabaseComposites:{composite|$exclusiveMethodTypes(composite)$}; separator="\n"$
 
 			// Inherited Methods
-$meta.Composites:{composite|$inheritedMethods(composite)$}; separator="\n"$
+$meta.DatabaseComposites:{composite|$inheritedMethods(composite)$}; separator="\n"$
 
 
 
@@ -157,7 +157,7 @@ domain_inheritance(assembly) ::= <<$assembly.DirectSuperdomains:{base|          
 inheritance(composite) ::= <<$composite.DirectSupertypes:{implementedInterface|$inheritance_implentedInterface(composite, implementedInterface)$}; separator="\n"$>>
 inheritance_implentedInterface(composite, implementedInterface) ::= <<            new Inheritance(this.metaPopulation){ Subtype = (Composite)Meta$composite.SingularName$.Instance.ObjectType, Supertype = Meta$implementedInterface.SingularName$.Instance.Interface};>>
 
-relations(composite) ::= <<$composite.ExclusiveRoleTypes:{roleType|$relation(property=roleType.RelationType)$}; separator="\n"$>>
+relations(composite) ::= <<$composite.ExclusiveDatabaseRoleTypes:{roleType|$relation(property=roleType.RelationType)$}; separator="\n"$>>
 relation(property) ::= <<
 	{
 		var relationType = new RelationType(this.metaPopulation, new System.Guid("$property.Id$"), new System.Guid("$property.AssociationType.Id$"), new System.Guid("$property.RoleType.Id$"));
@@ -178,16 +178,16 @@ $if(property.RoleType.MediaType)$		relationType.RoleType.MediaType = "$property.
 	}
 >>
 
-inheritedRoles(interface) ::= <<$interface.InheritedRoles:{roleType|$inheritedRole(property=roleType.RelationType)$}; separator="\n"$>>
+inheritedRoles(interface) ::= <<$interface.InheritedDatabaseRoleTypes:{roleType|$inheritedRole(property=roleType.RelationType)$}; separator="\n"$>>
 inheritedRole(property) ::= <<            Meta$interface.SingularName$.Instance.$property.RoleType.Name$ = Meta$property.AssociationType.ObjectType.SingularName$.Instance.$property.RoleType.Name$;>>
 
-implementedRoles(class) ::= <<$class.InheritedRoles:{roleType|$implementedRole(property=roleType.RelationType)$}; separator="\n"$>>
+implementedRoles(class) ::= <<$class.InheritedDatabaseRoleTypes:{roleType|$implementedRole(property=roleType.RelationType)$}; separator="\n"$>>
 implementedRole(property) ::= <<            Meta$class.SingularName$.Instance.$property.RoleType.Name$ = Meta$class.SingularName$.Instance.Class.ConcreteRoleTypeByRoleType[Meta$property.AssociationType.ObjectType.SingularName$.Instance.$property.RoleType.Name$];>>
 
-associations(composite) ::= <<$composite.ExclusiveAssociationTypes:{associationType|$association(property=associationType.RelationType)$}; separator="\n"$>>
+associations(composite) ::= <<$composite.ExclusiveDatabaseAssociationTypes:{associationType|$association(property=associationType.RelationType)$}; separator="\n"$>>
 association(property) ::= <<            Meta$composite.SingularName$.Instance.$property.AssociationType.PropertyName$ = Meta$property.AssociationType.SingularName$.Instance.$property.RoleType.Name$.AssociationType;>>
 
-inheritedassociations(composite) ::= <<$composite.InheritedAssociations:{associationType|$inheritedassociation(property=associationType.RelationType)$}; separator="\n"$>>
+inheritedassociations(composite) ::= <<$composite.InheritedDatabaseAssociationTypes:{associationType|$inheritedassociation(property=associationType.RelationType)$}; separator="\n"$>>
 inheritedassociation(property) ::= <<            Meta$composite.SingularName$.Instance.$property.AssociationType.PropertyName$ = Meta$property.AssociationType.SingularName$.Instance.$property.RoleType.Name$.AssociationType;>>
 
 exclusiveMethodTypes(composite) ::= <<$composite.ExclusiveMethodTypes:{method|$definedMethod(method)$}; separator="\n"$>>
@@ -200,7 +200,7 @@ definedMethod(method) ::= <<
 			}
 >>
 
-inheritedMethods(composite) ::= <<$composite.InheritedMethods:{method|$inheritedMethod(method)$}; separator="\n"$>>
+inheritedMethods(composite) ::= <<$composite.InheritedMethodTypes:{method|$inheritedMethod(method)$}; separator="\n"$>>
 inheritedMethod(method) ::= <<				Meta$composite.SingularName$.Instance.$method.Name$ = Meta$method.ObjectType.SingularName$.Instance.$method.Name$;>>
 
 domains(meta) ::= <<
@@ -279,13 +279,13 @@ interface(interface) ::= <<
 $interface.ExclusiveMethodTypes:{method|         public MethodType $method.Name$;}; separator="\n"$
 
 		// Inherited Methods
-$interface.InheritedMethods:{method|         public MethodType $method.Name$;}; separator="\n"$
+$interface.InheritedMethodTypes:{method|         public MethodType $method.Name$;}; separator="\n"$
 
 		// Roles
-$interface.RoleTypes:{property|         public RoleType $property.Name$;}; separator="\n"$
+$interface.DatabaseRoleTypes:{property|         public RoleType $property.Name$;}; separator="\n"$
 
 		// Associations
-$interface.AssociationTypes:{property|         public AssociationType $property.PropertyName$;}; separator="\n"$
+$interface.DatabaseAssociationTypes:{property|         public AssociationType $property.PropertyName$;}; separator="\n"$
 
 		internal Meta$interface.SingularName$(MetaPopulation metaPopulation)
         {
@@ -319,10 +319,10 @@ class(class) ::= <<
 $class.MethodTypes:{method|         public MethodType $method.Name$;}; separator="\n"$
 
 		// RoleTypes
-$class.RoleTypes:{property|         public RoleType $property.Name$;}; separator="\n"$
+$class.DatabaseRoleTypes:{property|         public RoleType $property.Name$;}; separator="\n"$
 
 		// Associations
-$class.AssociationTypes:{property|         public AssociationType $property.PropertyName$;}; separator="\n"$
+$class.DatabaseAssociationTypes:{property|         public AssociationType $property.PropertyName$;}; separator="\n"$
 
 		internal Meta$class.SingularName$(MetaPopulation metaPopulation)
         {
@@ -343,7 +343,7 @@ namespace Allors.Workspace.Meta
     using Data;
 	using System;
 
-$meta.Composites:{composite|$treeComposite(composite)$}; separator="\n\n"$
+$meta.DatabaseComposites:{composite|$treeComposite(composite)$}; separator="\n\n"$
 }
 >>
 
@@ -357,16 +357,16 @@ treeComposite(composite) ::= <<
 			}
 		}
 
-$composite.CompositeRoleTypes:{role|$treeRole()$}; separator="\n"$
-$composite.AssociationTypes:{association|$treeAssociation()$}; separator="\n"$
+$composite.CompositeDatabaseRoleTypes:{role|$treeRole()$}; separator="\n"$
+$composite.DatabaseAssociationTypes:{association|$treeAssociation()$}; separator="\n"$
 
-$composite.Subtypes:{type|$treeSubType(type)$}$
+$composite.DatabaseSubtypes:{type|$treeSubType(type)$}$
 	}
 >>
 
 treeSubType(type) ::= <<
-$type.CompositeRoleTypes:{role|$treeRoleSubType()$}; separator="\n"$
-$type.AssociationTypes:{association|$treeAssociationSubType()$}; separator="\n"$
+$type.CompositeDatabaseRoleTypes:{role|$treeRoleSubType()$}; separator="\n"$
+$type.DatabaseAssociationTypes:{association|$treeAssociationSubType()$}; separator="\n"$
 >>
 
 treeRole() ::= <<

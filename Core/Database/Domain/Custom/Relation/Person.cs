@@ -6,16 +6,11 @@
 
 namespace Allors.Domain
 {
-    using Allors;
-    using Allors.Meta;
-
     /// <summary>
     /// A living human being.
     /// </summary>
     public partial class Person
     {
-        public static Extent<Person> ExtentByLastName(ISession session) => session.Extent<Person>().AddSort(M.Person.LastName);
-
         public override string ToString()
         {
             if (this.ExistLastName)

@@ -22,7 +22,7 @@
       "request": "launch",
       "name": "Jest Workspace - Current File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["${fileBasenameNoExtension}", "--no-cache", "--config", "${workspaceFolder}/libs/worspace/tests/jest.config.js"],
+      "args": ["${fileBasenameNoExtension}", "--no-cache", "--config", "${workspaceFolder}/libs/workspace/tests/jest.config.js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,

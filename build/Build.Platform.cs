@@ -5,18 +5,6 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
-    Target AdaptersResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Adapters";
-            using (var sqlServer = new SqlServer())
-            {
-                sqlServer.Restart();
-                sqlServer.Drop(database);
-                sqlServer.Create(database);
-            }
-        });
-
     Target AdaptersGenerate => _ => _
         .After(Clean)
         .Executes(() =>
@@ -42,12 +30,10 @@ partial class Build
 
     Target AdaptersTestSqlClient => _ => _
         .DependsOn(AdaptersGenerate)
-        .DependsOn(AdaptersResetDatabase)
         .Executes(() =>
         {
-            using (var database = new SqlServer())
+            using (new SqlServer())
             {
-                database.Restart();
                 DotNetTest(s => s
                     .SetProjectFile(Paths.PlatformAdaptersStaticTests)
                     .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
@@ -60,11 +46,14 @@ partial class Build
         .DependsOn(AdaptersGenerate)
         .Executes(() =>
         {
-            DotNetTest(s => s
-               .SetProjectFile(Paths.PlatformAdaptersStaticTests)
-               .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
-               .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
-               .SetResultsDirectory(Paths.ArtifactsTests));
+            using (new Postgres())
+            {
+                DotNetTest(s => s
+                    .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
+                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Npgsql")
+                    .SetLogger("trx;LogFileName=AdaptersNpgsql.trx")
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
+            }
         });
 
     Target Adapters => _ => _

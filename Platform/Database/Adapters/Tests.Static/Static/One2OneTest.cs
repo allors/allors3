@@ -32,6 +32,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -519,8 +520,8 @@ namespace Allors.Database.Adapters
                         Assert.Null(to.C1WhereC1C1one2one);
 
                         // 1-1
-                        from.Strategy.SetRole(MetaC1.Instance.C1C1one2one.RelationType, to);
-                        from.Strategy.SetRole(MetaC1.Instance.C1C1one2one.RelationType, to);
+                        from.Strategy.SetRole(m.C1.C1C1one2one.RelationType, to);
+                        from.Strategy.SetRole(m.C1.C1C1one2one.RelationType, to);
 
                         mark();
                         Assert.Equal(to, from.C1C1one2one);
@@ -531,9 +532,9 @@ namespace Allors.Database.Adapters
                         // 0-0
                         from.RemoveC1C1one2one();
                         from.RemoveC1C1one2one();
-                        from.Strategy.SetRole(MetaC1.Instance.C1C1one2one.RelationType, to);
-                        from.Strategy.SetRole(MetaC1.Instance.C1C1one2one.RelationType, null);
-                        from.Strategy.SetRole(MetaC1.Instance.C1C1one2one.RelationType, null);
+                        from.Strategy.SetRole(m.C1.C1C1one2one.RelationType, to);
+                        from.Strategy.SetRole(m.C1.C1C1one2one.RelationType, null);
+                        from.Strategy.SetRole(m.C1.C1C1one2one.RelationType, null);
                         mark();
                         Assert.Null(from.C1C1one2one);
                         Assert.Null(from.C1C1one2one);
@@ -563,6 +564,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -655,6 +657,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -747,6 +750,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -839,6 +843,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -933,6 +938,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -2063,6 +2069,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -2168,6 +2175,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -2260,6 +2268,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -2704,6 +2713,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -2796,6 +2806,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -2816,7 +2827,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1C2one2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1C2one2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -2829,7 +2840,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1I2one2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1I2one2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -2842,7 +2853,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1S2one2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1S2one2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -2856,7 +2867,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC2.Instance.C1one2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C2.C1one2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -2869,7 +2880,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC2.Instance.C2C2one2one.RelationType, c2b);
+                        c1a.Strategy.SetCompositeRole(m.C2.C2C2one2one.RelationType, c2b);
                     }
                     catch
                     {
@@ -2882,7 +2893,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1AllorsString.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1AllorsString.RelationType, c1b);
                     }
                     catch
                     {
@@ -2895,7 +2906,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1C2one2manies.RelationType, c2b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1C2one2manies.RelationType, c2b);
                     }
                     catch
                     {

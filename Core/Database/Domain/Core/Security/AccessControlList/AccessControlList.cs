@@ -60,11 +60,11 @@ namespace Allors.Domain
 
         public bool CanRead(IPropertyType propertyType) => this.IsPermitted(propertyType, Operations.Read);
 
-        public bool CanRead(IConcreteRoleType roleType) => this.IsPermitted(roleType.RoleType, Operations.Read);
+        public bool CanRead(IRoleClass roleType) => this.IsPermitted(roleType.RoleType, Operations.Read);
 
         public bool CanWrite(IRoleType roleType) => this.IsPermitted(roleType, Operations.Write);
 
-        public bool CanWrite(IConcreteRoleType roleType) => this.IsPermitted(roleType.RoleType, Operations.Write);
+        public bool CanWrite(IRoleClass roleType) => this.IsPermitted(roleType.RoleType, Operations.Write);
 
         public bool IsPermitted(IOperandType operandType, Operations operation)
         {

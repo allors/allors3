@@ -2,7 +2,17 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;INTRANET</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Platform\Repository\Domain\Attributes*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\Platform\Database\Allors.Database\Multiplicity.cs" Link="Allors\Multiplicity.cs" />
+    <Compile Include="..\..\..\Platform\Database\Allors.Database\Origin.cs" Link="Allors\Origin.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Allors\" />
   </ItemGroup>
 </Project>

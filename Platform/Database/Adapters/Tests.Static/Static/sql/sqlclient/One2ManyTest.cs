@@ -7,10 +7,13 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
     using System;
+    using Xunit;
 
-    public class One2ManyTest : Adapters.One2ManyTest, IDisposable
+    public class One2ManyTest : Adapters.One2ManyTest, IClassFixture<Fixture<One2ManyTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public One2ManyTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

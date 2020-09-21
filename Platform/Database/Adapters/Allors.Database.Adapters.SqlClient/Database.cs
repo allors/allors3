@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using System.Linq;
     using System.Xml;
     using System.Xml.Serialization;
@@ -17,7 +17,7 @@ namespace Allors.Database.Adapters.SqlClient
     using Allors.Database.Adapters.SqlClient.Caching;
     using Allors.Meta;
     using Allors.Serialization;
-    using Microsoft.SqlServer.Server;
+    using Microsoft.Data.SqlClient.Server;
 
     public class Database : IDatabase
     {
@@ -43,6 +43,12 @@ namespace Allors.Database.Adapters.SqlClient
         public Database(IServiceProvider serviceProvider, Configuration configuration)
         {
             this.ServiceProvider = serviceProvider;
+            this.Meta = configuration.Meta;
+            if (this.Meta == null)
+            {
+                throw new Exception("Configuration.Meta is missing");
+            }
+            
             this.ObjectFactory = configuration.ObjectFactory;
             if (!this.ObjectFactory.MetaPopulation.IsValid)
             {
@@ -93,6 +99,8 @@ namespace Allors.Database.Adapters.SqlClient
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
+
+        public object Meta { get; }
 
         public IServiceProvider ServiceProvider { get; }
 
@@ -294,7 +302,7 @@ namespace Allors.Database.Adapters.SqlClient
 
             if (!this.concreteClassesByObjectType.TryGetValue(container, out var concreteClasses))
             {
-                concreteClasses = new HashSet<IObjectType>(((IInterface)container).Subclasses);
+                concreteClasses = new HashSet<IObjectType>(((IInterface)container).DatabaseClasses);
                 this.concreteClassesByObjectType[container] = concreteClasses;
             }
 
@@ -317,7 +325,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             if (!this.sortedUnitRolesByObjectType.TryGetValue(objectType, out var sortedUnitRoles))
             {
-                var sortedUnitRoleList = new List<IRoleType>(((IComposite)objectType).RoleTypes.Where(r => r.ObjectType.IsUnit));
+                var sortedUnitRoleList = new List<IRoleType>(((IComposite)objectType).DatabaseRoleTypes.Where(r => r.ObjectType.IsUnit));
                 sortedUnitRoleList.Sort();
                 sortedUnitRoles = sortedUnitRoleList.ToArray();
                 this.sortedUnitRolesByObjectType[objectType] = sortedUnitRoles;

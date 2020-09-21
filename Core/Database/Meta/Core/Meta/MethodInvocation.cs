@@ -10,7 +10,7 @@ namespace Allors.Meta
 
     public partial class MethodInvocation
     {
-        public MethodInvocation(Class @class, MethodType methodType) => this.ConcreteConcreteMethodType = @class.ConcreteMethodTypeByMethodType[methodType];
+        public MethodInvocation(IClass @class, MethodType methodType) => this.ConcreteConcreteMethodType = ((Class)@class).ConcreteMethodTypeByMethodType[methodType];
 
         public ConcreteMethodType ConcreteConcreteMethodType { get; private set; }
 

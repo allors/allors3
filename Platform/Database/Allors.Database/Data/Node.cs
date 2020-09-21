@@ -87,15 +87,6 @@ namespace Allors.Data
             return this;
         }
 
-        public Node Add(IConcreteRoleType concreteRoleType) => this.Add(concreteRoleType.RoleType);
-
-        public Node Add(IConcreteRoleType concreteRoleType, Node[] subTree)
-        {
-            var treeNode = new Node(concreteRoleType.RoleType, subTree);
-            this.Add(treeNode);
-            return this;
-        }
-
         internal void Add(Node node)
         {
             this.AssertAssignable(node);
@@ -117,7 +108,7 @@ namespace Allors.Data
                     addedComposite = (IComposite)associationType.RoleType.ObjectType;
                 }
 
-                if (addedComposite == null || !(this.Composite.Equals(addedComposite) || this.Composite.Classes.Intersect(addedComposite.Classes).Any()))
+                if (addedComposite == null || !(this.Composite.Equals(addedComposite) || this.Composite.DatabaseClasses.Intersect(addedComposite.DatabaseClasses).Any()))
                 {
                     throw new ArgumentException(node.PropertyType + " is not a valid tree node on " + this.Composite + ".");
                 }

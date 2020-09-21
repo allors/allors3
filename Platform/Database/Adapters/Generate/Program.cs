@@ -13,6 +13,8 @@ namespace Allors
 
     class Program
     {
+        private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
+
         static int Main(string[] args)
         {
             switch (args.Length)
@@ -20,7 +22,7 @@ namespace Allors
                 case 0:
                     return Default();
                 case 2:
-                    return Generate.Execute(MetaPopulation.Instance, args[0], args[1]).ErrorOccured ? 1 : 0;
+                    return Generate.Execute(MetaBuilder.Build(), args[0], args[1]).ErrorOccured ? 1 : 0;
                 default:
                     return 1;
             }
@@ -28,11 +30,12 @@ namespace Allors
 
         private static int Default()
         {
-            var metaPopulation = MetaPopulation.Instance;
+            var metaPopulation = MetaBuilder.Build();
 
             string[,] config =
                 {
-                    { "Templates/adapters.cs.stg", "Domain/Generated" },
+                    { "../../../core/database/templates/meta.cs.stg", "Domain/generated/meta" },
+                    { "Templates/adapters.cs.stg", "Domain/generated/adapters" },
                 };
 
             for (var i = 0; i < config.GetLength(0); i++)

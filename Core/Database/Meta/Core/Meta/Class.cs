@@ -14,11 +14,12 @@ namespace Allors.Meta
     {
         private readonly Class[] classes;
 
-        private readonly Dictionary<RoleType, ConcreteRoleType> concreteRoleTypeByRoleType;
+        private readonly Dictionary<RoleType, RoleClass> derivedRoleClassByRoleType;
 
         private readonly Dictionary<MethodType, ConcreteMethodType> concreteMethodTypeByMethodType;
 
-        private ConcreteRoleType[] concreteRoleTypes;
+        private RoleClass[] derivedRoleClasses;
+        private RoleClass[] derivedDatabaseRoleClasses;
 
         private ConcreteMethodType[] concreteMethodTypes;
 
@@ -29,22 +30,26 @@ namespace Allors.Meta
         {
             this.Id = id;
 
-            this.concreteRoleTypeByRoleType = new Dictionary<RoleType, ConcreteRoleType>();
+            this.derivedRoleClassByRoleType = new Dictionary<RoleType, RoleClass>();
             this.concreteMethodTypeByMethodType = new Dictionary<MethodType, ConcreteMethodType>();
 
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
         }
 
+        public bool Workspace => this.WorkspaceNames != null;
+
+        public string[] WorkspaceNames { get; set; }
+        
         // TODO: Review
         public RoleType[] DelegatedAccessRoleTypes { get; set; }
 
-        public Dictionary<RoleType, ConcreteRoleType> ConcreteRoleTypeByRoleType
+        public Dictionary<RoleType, RoleClass> RoleClassByRoleType
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.concreteRoleTypeByRoleType;
+                return this.derivedRoleClassByRoleType;
             }
         }
 
@@ -57,12 +62,21 @@ namespace Allors.Meta
             }
         }
 
-        public ConcreteRoleType[] ConcreteRoleTypes
+        public RoleClass[] RoleClasses
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.concreteRoleTypes;
+                return this.derivedRoleClasses;
+            }
+        }
+
+        public RoleClass[] DatabaseRoleClasses
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedDatabaseRoleClasses;
             }
         }
 
@@ -77,18 +91,20 @@ namespace Allors.Meta
 
         public override IEnumerable<Class> Classes => this.classes;
 
+        public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Remote ? this.classes : Array.Empty<Class>();
+
         public override bool ExistClass => true;
 
-        public override Class ExclusiveSubclass => this;
+        public override Class ExclusiveClass => this;
 
         public override Type ClrType => this.clrType;
 
-        public IEnumerable<ConcreteRoleType> WorkspaceConcreteRoleTypes
+        public IEnumerable<RoleClass> WorkspaceConcreteRoleTypes
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.ConcreteRoleTypes.Where(m => m.RoleType.Workspace);
+                return this.RoleClasses.Where(m => m.RoleType.Workspace);
             }
         }
 
@@ -103,31 +119,34 @@ namespace Allors.Meta
 
         public override IEnumerable<Composite> Subtypes => new[] { this };
 
+        public override IEnumerable<Composite> DatabaseSubtypes => this.Origin == Origin.Remote ? this.Subtypes : Array.Empty<Composite>();
+
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType);
 
-        public void DeriveConcreteRoleTypes(HashSet<RoleType> sharedRoleTypes)
+        public void DeriveRoleClasses(HashSet<RoleType> sharedRoleTypes)
         {
             sharedRoleTypes.Clear();
             var removedRoleTypes = sharedRoleTypes;
-            removedRoleTypes.UnionWith(this.ConcreteRoleTypeByRoleType.Keys);
+            removedRoleTypes.UnionWith(this.RoleClassByRoleType.Keys);
 
             foreach (var roleType in this.RoleTypes)
             {
                 removedRoleTypes.Remove(roleType);
 
-                if (!this.concreteRoleTypeByRoleType.TryGetValue(roleType, out var concreteRoleType))
+                if (!this.derivedRoleClassByRoleType.TryGetValue(roleType, out var concreteRoleType))
                 {
-                    concreteRoleType = new ConcreteRoleType(this, roleType);
-                    this.concreteRoleTypeByRoleType[roleType] = concreteRoleType;
+                    concreteRoleType = new RoleClass(this, roleType);
+                    this.derivedRoleClassByRoleType[roleType] = concreteRoleType;
                 }
             }
 
             foreach (var roleType in removedRoleTypes)
             {
-                this.concreteRoleTypeByRoleType.Remove(roleType);
+                this.derivedRoleClassByRoleType.Remove(roleType);
             }
 
-            this.concreteRoleTypes = this.concreteRoleTypeByRoleType.Values.ToArray();
+            this.derivedRoleClasses = this.derivedRoleClassByRoleType.Values.ToArray();
+            this.derivedDatabaseRoleClasses = this.derivedRoleClasses.Where(v=>v.RelationType.Origin == Origin.Remote).ToArray();
         }
 
         public void DeriveConcreteMethodTypes(HashSet<MethodType> sharedMethodTypes)

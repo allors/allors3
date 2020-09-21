@@ -270,7 +270,7 @@ namespace Allors.Database.Adapters.SqlClient
         {
             if (type.IsInterface)
             {
-                return ((IInterface)type).Subclasses.ToArray();
+                return ((IInterface)type).DatabaseClasses.ToArray();
             }
 
             var concreteSubclasses = new IObjectType[1];
@@ -285,5 +285,17 @@ namespace Allors.Database.Adapters.SqlClient
                 filter.Setup(statement);
             }
         }
+
+        // TODO: RoleType -> Add RoleClass & RoleInterface
+        ICompositePredicate ICompositePredicate.AddBetween(IRoleClass role, object firstValue, object secondValue) => this.AddBetween(role.RoleType, firstValue, secondValue);
+        ICompositePredicate ICompositePredicate.AddContainedIn(IRoleClass role, Allors.Extent containingExtent) => this.AddContainedIn(role.RoleType, containingExtent);
+        ICompositePredicate ICompositePredicate.AddContainedIn(IRoleClass role, IEnumerable<IObject> containingEnumerable) => this.AddContainedIn(role.RoleType, containingEnumerable);
+        ICompositePredicate ICompositePredicate.AddContains(IRoleClass role, IObject containedObject) => this.AddContains(role.RoleType, containedObject);
+        ICompositePredicate ICompositePredicate.AddEquals(IRoleClass roleClass, object valueOrAllorsObject) => this.AddEquals(roleClass.RoleType, valueOrAllorsObject);
+        ICompositePredicate ICompositePredicate.AddExists(IRoleClass role) => this.AddExists(role.RoleType);
+        ICompositePredicate ICompositePredicate.AddGreaterThan(IRoleClass role, object value) => this.AddGreaterThan(role.RoleType, value);
+        ICompositePredicate ICompositePredicate.AddInstanceof(IRoleClass role, IComposite objectType) => this.AddInstanceof(role.RoleType, objectType);
+        ICompositePredicate ICompositePredicate.AddLessThan(IRoleClass role, object value) => this.AddLessThan(role.RoleType, value);
+        ICompositePredicate ICompositePredicate.AddLike(IRoleClass role, string value) => this.AddLike(role.RoleType, value);
     }
 }

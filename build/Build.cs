@@ -16,11 +16,6 @@ partial class Build : NukeBuild
         .DependsOn(CoreInstall)
         .DependsOn(BaseInstall);
 
-    Target ResetDatabase => _ => _
-        .DependsOn(AdaptersResetDatabase)
-        .DependsOn(CoreResetDatabase)
-        .DependsOn(BaseResetDatabase);
-
     Target Clean => _ => _
         .Executes(() =>
         {

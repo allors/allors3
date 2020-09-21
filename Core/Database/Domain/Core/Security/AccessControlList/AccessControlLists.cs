@@ -11,11 +11,6 @@ namespace Allors.Domain
 
     public class AccessControlLists : IAccessControlLists
     {
-        private static readonly PrefetchPolicy PrefetchPolicy = new PrefetchPolicyBuilder()
-            .WithRule(M.AccessControl.CacheId.RoleType)
-            .WithRule(M.AccessControl.EffectivePermissions)
-            .Build();
-
         public AccessControlLists(User user)
         {
             this.User = user;
@@ -75,7 +70,14 @@ namespace Allors.Domain
             {
                 if (misses.Count > 1)
                 {
-                    session.Prefetch(PrefetchPolicy, misses);
+                    // TODO: Cache
+                    var m = this.User.Strategy.Session.Meta();
+                    var prefetchPolicy = new PrefetchPolicyBuilder()
+                        .WithRule(m.AccessControl.CacheId)
+                        .WithRule(m.AccessControl.EffectivePermissions)
+                        .Build();
+
+                    session.Prefetch(prefetchPolicy, misses);
                 }
 
                 foreach (var accessControl in misses)

@@ -15,7 +15,7 @@ namespace Allors.Domain
         {
             if (!@this.ExistUniqueId)
             {
-                @this.Strategy.SetUnitRole(MetaUniquelyIdentifiable.Instance.UniqueId.RelationType, Guid.NewGuid());
+                @this.Strategy.SetUnitRole(@this.Session().Meta().UniquelyIdentifiable.UniqueId.RelationType, Guid.NewGuid());
             }
         }
     }

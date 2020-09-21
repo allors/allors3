@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters.Npgsql
         internal override bool BuildWhere(ExtentStatement statement, string alias)
         {
             var schema = statement.Mapping;
-            if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveClasses)
+            if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append("\n");
                 statement.Append("EXISTS(\n");
@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters.Npgsql
                 statement.Append("\n");
                 statement.Append("EXISTS(\n");
                 statement.Append("SELECT " + Mapping.ColumnNameForObject + "\n");
-                statement.Append("FROM " + schema.TableNameForObjectByClass[((IComposite)this.role.ObjectType).ExclusiveClass] + "\n");
+                statement.Append("FROM " + schema.TableNameForObjectByClass[((IComposite)this.role.ObjectType).ExclusiveDatabaseClass] + "\n");
                 statement.Append("WHERE " + Mapping.ColumnNameForObject + "=" + this.allorsObject.Strategy.ObjectId + "\n");
                 statement.Append("AND " + schema.ColumnNameByRelationType[this.role.RelationType] + "=" + alias + ".O\n");
                 statement.Append(")\n");

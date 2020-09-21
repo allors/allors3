@@ -32,22 +32,22 @@ namespace Allors.Database.Adapters.Npgsql
         public const NpgsqlDbType NpgsqlDbTypeForVersion = NpgsqlDbType.Bigint;
         public const NpgsqlDbType NpgsqlDbTypeForCount = NpgsqlDbType.Integer;
 
-        public readonly MappingArrayParameter ObjectArrayParam;
-        public readonly MappingArrayParameter CompositeRoleArrayParam;
-        public readonly MappingArrayParameter StringRoleArrayParam;
-        public readonly MappingArrayParameter StringMaxRoleArrayParam;
-        public readonly MappingArrayParameter IntegerRoleArrayParam;
-        public readonly MappingArrayParameter LongRoleArrayParam;
-        public readonly MappingArrayParameter DecimalRoleArrayParam;
-        public readonly MappingArrayParameter DoubleRoleArrayParam;
-        public readonly MappingArrayParameter BooleanRoleArrayParam;
-        public readonly MappingArrayParameter DateRoleArrayParam;
-        public readonly MappingArrayParameter DateTimeRoleArrayParam;
-        public readonly MappingArrayParameter UniqueRoleArrayParam;
-        public readonly MappingArrayParameter BinaryRoleArrayParam;
+        public MappingArrayParameter ObjectArrayParam { get; }
+        public MappingArrayParameter CompositeRoleArrayParam { get; }
+        public MappingArrayParameter StringRoleArrayParam { get; }
+        public MappingArrayParameter StringMaxRoleArrayParam { get; }
+        public MappingArrayParameter IntegerRoleArrayParam { get; }
+        public MappingArrayParameter LongRoleArrayParam { get; }
+        public MappingArrayParameter DecimalRoleArrayParam { get; }
+        public MappingArrayParameter DoubleRoleArrayParam { get; }
+        public MappingArrayParameter BooleanRoleArrayParam { get; }
+        public MappingArrayParameter DateRoleArrayParam { get; }
+        public MappingArrayParameter DateTimeRoleArrayParam { get; }
+        public MappingArrayParameter UniqueRoleArrayParam { get; }
+        public MappingArrayParameter BinaryRoleArrayParam { get; }
 
-        public readonly Dictionary<IRoleType, string> ParamNameByRoleType;
-        public readonly Dictionary<IRoleType, string> ParamInvocationNameByRoleType;
+        public Dictionary<IRoleType, string> ParamNameByRoleType { get; }
+        public Dictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
         internal static readonly string ParamNameForObject = string.Format(ParamFormat, ColumnNameForObject);
         internal static readonly string ParamNameForClass = string.Format(ParamFormat, ColumnNameForClass);
@@ -63,32 +63,32 @@ namespace Allors.Database.Adapters.Npgsql
         internal static readonly string ParamInvocationNameForCompositeRole = string.Format(ParamInvocationFormat, ColumnNameForRole);
         internal static readonly string ParamInvocationNameForCount = string.Format(ParamInvocationFormat, "count");
 
-        internal readonly string TableNameForObjects;
+        internal string TableNameForObjects { get; }
 
-        internal readonly Dictionary<IClass, string> TableNameForObjectByClass;
-        internal readonly Dictionary<IRelationType, string> ColumnNameByRelationType;
-        internal readonly Dictionary<IRelationType, string> UnescapedColumnNameByRelationType;
-        internal readonly Dictionary<IRelationType, string> TableNameForRelationByRelationType;
+        internal Dictionary<IClass, string> TableNameForObjectByClass { get; }
+        internal Dictionary<IRelationType, string> ColumnNameByRelationType { get; }
+        internal Dictionary<IRelationType, string> UnescapedColumnNameByRelationType { get; }
+        internal Dictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
 
-        internal readonly Dictionary<IClass, string> ProcedureNameForLoadObjectByClass;
-        internal readonly Dictionary<IClass, string> ProcedureNameForCreateObjectByClass;
-        internal readonly Dictionary<IClass, string> ProcedureNameForCreateObjectsByClass;
-        internal readonly Dictionary<IClass, string> ProcedureNameForDeleteObjectByClass;
-        internal readonly Dictionary<IClass, string> ProcedureNameForGetUnitRolesByClass;
-        internal readonly Dictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass;
-        internal readonly Dictionary<IClass, Dictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType;
-        internal readonly Dictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType;
-        internal string ProcedureNameForInstantiate;
+        internal Dictionary<IClass, string> ProcedureNameForLoadObjectByClass { get; }
+        internal Dictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
+        internal Dictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
+        internal Dictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
+        internal Dictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
+        internal Dictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
+        internal Dictionary<IClass, Dictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
+        internal Dictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
 
-        internal string ProcedureNameForGetVersion;
-        internal string ProcedureNameForUpdateVersion;
+        internal string ProcedureNameForInstantiate { get; private set; }
+        internal string ProcedureNameForGetVersion { get; private set; }
+        internal string ProcedureNameForUpdateVersion { get; private set; }
 
         private const string ProcedurePrefixForInstantiate = "i";
 
@@ -153,22 +153,22 @@ namespace Allors.Database.Adapters.Npgsql
             this.ParamNameByRoleType = new Dictionary<IRoleType, string>();
             this.ParamInvocationNameByRoleType = new Dictionary<IRoleType, string>();
 
-            foreach (var @class in this.Database.MetaPopulation.Classes)
+            foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
                 this.TableNameForObjectByClass.Add(@class, this.Database.SchemaName + "." + this.NormalizeName(@class.SingularName));
 
-                foreach (var associationType in @class.AssociationTypes)
+                foreach (var associationType in @class.DatabaseAssociationTypes)
                 {
                     var relationType = associationType.RelationType;
                     var roleType = relationType.RoleType;
-                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses && roleType.IsMany)
+                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
                         this.ColumnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularPropertyName);
                         this.UnescapedColumnNameByRelationType[relationType] = associationType.SingularPropertyName;
                     }
                 }
 
-                foreach (var roleType in @class.RoleTypes)
+                foreach (var roleType in @class.DatabaseRoleTypes)
                 {
                     var relationType = roleType.RelationType;
                     var associationType3 = relationType.AssociationType;
@@ -181,7 +181,7 @@ namespace Allors.Database.Adapters.Npgsql
                     }
                     else
                     {
-                        if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses && !roleType.IsMany)
+                        if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                         {
                             this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
                             this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
@@ -192,12 +192,12 @@ namespace Allors.Database.Adapters.Npgsql
 
             this.TableNameForRelationByRelationType = new Dictionary<IRelationType, string>();
 
-            foreach (var relationType in this.Database.MetaPopulation.RelationTypes)
+            foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
-                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveClasses))
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     this.TableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + this.NormalizeName(relationType.RoleType.SingularFullName));
                 }
@@ -229,7 +229,7 @@ namespace Allors.Database.Adapters.Npgsql
             this.GetVersionIds();
             this.UpdateVersionIds();
 
-            foreach (var @class in this.Database.MetaPopulation.Classes)
+            foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
                 this.LoadObjects(@class);
                 this.CreateObject(@class);
@@ -242,9 +242,9 @@ namespace Allors.Database.Adapters.Npgsql
                     this.PrefetchUnitRoles(@class);
                 }
 
-                foreach (var associationType in @class.AssociationTypes)
+                foreach (var associationType in @class.DatabaseAssociationTypes)
                 {
-                    if (!(associationType.IsMany && associationType.RoleType.IsMany) && associationType.RelationType.ExistExclusiveClasses && associationType.RoleType.IsMany)
+                    if (!(associationType.IsMany && associationType.RoleType.IsMany) && associationType.RelationType.ExistExclusiveDatabaseClasses && associationType.RoleType.IsMany)
                     {
                         this.GetCompositesRoleObjectTable(@class, associationType);
                         this.PrefetchCompositesRoleObjectTable(@class, associationType);
@@ -261,7 +261,7 @@ namespace Allors.Database.Adapters.Npgsql
                     }
                 }
 
-                foreach (var roleType in @class.RoleTypes)
+                foreach (var roleType in @class.DatabaseRoleTypes)
                 {
                     if (roleType.ObjectType.IsUnit)
                     {
@@ -269,7 +269,7 @@ namespace Allors.Database.Adapters.Npgsql
                     }
                     else
                     {
-                        if (!(roleType.AssociationType.IsMany && roleType.IsMany) && roleType.RelationType.ExistExclusiveClasses && roleType.IsOne)
+                        if (!(roleType.AssociationType.IsMany && roleType.IsMany) && roleType.RelationType.ExistExclusiveDatabaseClasses && roleType.IsOne)
                         {
                             this.GetCompositeRoleObjectTable(@class, roleType);
                             this.PrefetchCompositeRoleObjectTable(@class, roleType);
@@ -292,9 +292,9 @@ namespace Allors.Database.Adapters.Npgsql
                 }
             }
 
-            foreach (var relationType in this.Database.MetaPopulation.RelationTypes)
+            foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
-                if (!relationType.RoleType.ObjectType.IsUnit && ((relationType.AssociationType.IsMany && relationType.RoleType.IsMany) || !relationType.ExistExclusiveClasses))
+                if (!relationType.RoleType.ObjectType.IsUnit && ((relationType.AssociationType.IsMany && relationType.RoleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     this.ProcedureNameForPrefetchAssociationByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant());
                     this.ProcedureNameForClearRoleByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForClearRole + relationType.RoleType.SingularFullName.ToLowerInvariant());
@@ -491,7 +491,7 @@ BEGIN
         VALUES ({ParamNameForClass}, {Reference.InitialVersion} )
         RETURNING {ColumnNameForObject} INTO ID;
 
-        INSERT INTO {this.TableNameForObjectByClass[@class.ExclusiveClass]} ({ColumnNameForObject},{ColumnNameForClass})
+        INSERT INTO {this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass]} ({ColumnNameForObject},{ColumnNameForClass})
         VALUES (ID,{ParamNameForClass});
 
         COUNTER := COUNTER+1;
@@ -542,7 +542,7 @@ CREATE FUNCTION {name}({ParamNameForObject} {SqlTypeForObject})
     LANGUAGE sql
 AS $$
     SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.ColumnNameByRelationType[v.RelationType]))}
-    FROM {this.TableNameForObjectByClass[@class.ExclusiveClass]}
+    FROM {this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass]}
     WHERE {ColumnNameForObject}={ParamNameForObject};
 $$;";
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -551,7 +551,7 @@ $$;";
         private void PrefetchUnitRoles(IClass @class)
         {
             var sortedUnitRoleTypes = this.Database.GetSortedUnitRolesByObjectType(@class);
-            var table = this.TableNameForObjectByClass[@class.ExclusiveClass];
+            var table = this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass];
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchUnits + @class.Name.ToLowerInvariant();

@@ -10,8 +10,8 @@ namespace Allors
 
     public class ChangedConcreteRolePattern : Pattern
     {
-        public ChangedConcreteRolePattern(IConcreteRoleType concreteRoleType) => this.ConcreteRoleType = concreteRoleType;
+        public ChangedConcreteRolePattern(IRoleClass roleClass) => this.RoleClass = roleClass;
 
-        public IConcreteRoleType ConcreteRoleType { get; }
+        public IRoleClass RoleClass { get; }
     }
 }

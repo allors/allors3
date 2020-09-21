@@ -5,11 +5,13 @@
 
 namespace Allors.Database.Adapters.SqlClient
 {
-    using System;
+    using Xunit;
 
-    public class CacheTest : Adapters.CacheTest, IDisposable
+    public class CacheTest : Adapters.CacheTest, IClassFixture<Fixture<CacheTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public CacheTest() => this.profile = new Profile(this.GetType().Name);
 
         public override void Dispose() => this.profile.Dispose();
 

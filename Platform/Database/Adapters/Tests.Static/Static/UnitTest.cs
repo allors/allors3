@@ -41,6 +41,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -180,6 +181,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var c1 = C1.Create(this.Session);
@@ -188,8 +191,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsBoolean = true;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsBoolean, true);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsBoolean, true);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -211,6 +214,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -270,6 +275,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -411,6 +418,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -455,6 +463,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var c1 = C1.Create(this.Session);
@@ -465,8 +475,8 @@ namespace Allors.Database.Adapters
                     this.Session.Commit();
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(C1.Meta.ObjectType);
-                    extent.Filter.AddEquals(C1.Meta.C1AllorsDateTime, new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc));
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsDateTime, new DateTime(1973, 03, 27, 1, 2, 3, 4, DateTimeKind.Utc));
                     var first = extent.First;
                     Assert.NotNull(first);
 
@@ -489,6 +499,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -664,6 +676,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var c1 = C1.Create(this.Session);
@@ -672,8 +686,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsDecimal = 1M;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsDecimal, 1M);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsDecimal, 1M);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -695,6 +709,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -869,6 +885,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var c1 = C1.Create(this.Session);
@@ -877,8 +895,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsDouble = 1;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsDouble, 1);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsDouble, 1);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -900,6 +918,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -1079,6 +1099,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var c1 = C1.Create(this.Session);
@@ -1087,8 +1109,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsInteger = 1;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsInteger, 1);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsInteger, 1);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1110,6 +1132,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     var aLarge = new StringBuilder().Insert(0, "a", 100000).ToString();
@@ -1256,6 +1280,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var aLarge = new StringBuilder().Insert(0, "a", 100000).ToString();
@@ -1266,8 +1292,8 @@ namespace Allors.Database.Adapters
                     c1.C1StringLarge = aLarge;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1StringLarge, aLarge);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1StringLarge, aLarge);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1289,6 +1315,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     var binary1 = new byte[] { 0 };
@@ -1455,6 +1483,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var binary1 = new byte[] { 0 };
@@ -1465,8 +1495,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsBinary = binary1;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsBinary, binary1);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsBinary, binary1);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1488,6 +1518,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -1651,6 +1683,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var c1 = C1.Create(this.Session);
@@ -1659,8 +1693,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsString = "a";
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsString, "a");
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsString, "a");
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1682,6 +1716,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     {
@@ -1818,6 +1854,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 if (this.Session is ISession)
                 {
                     var unique = Guid.NewGuid();
@@ -1828,8 +1866,8 @@ namespace Allors.Database.Adapters
                     c1.C1AllorsUnique = unique;
 
                     // Force a Flush
-                    Extent<C1> extent = this.Session.Extent(MetaC1.Instance.ObjectType);
-                    extent.Filter.AddEquals(MetaC1.Instance.C1AllorsUnique, unique);
+                    Extent<C1> extent = this.Session.Extent(m.C1.ObjectType);
+                    extent.Filter.AddEquals(m.C1.C1AllorsUnique, unique);
                     Assert.NotNull(extent.First);
 
                     // Garbage Collect
@@ -1851,6 +1889,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 var values = new ArrayList();
                 for (var i = 0; i < 4000; i++)
                 {
@@ -1874,6 +1914,8 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
+
                 foreach (var mark in this.Markers)
                 {
                     var c1A = C1.Create(this.Session);
@@ -1885,7 +1927,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsBoolean.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean.RelationType, "Oops");
                     }
                     catch (ArgumentException)
                     {
@@ -1898,7 +1940,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsDecimal.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal.RelationType, "Oops");
                     }
                     catch
                     {
@@ -1911,7 +1953,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsDouble.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble.RelationType, "Oops");
                     }
                     catch
                     {
@@ -1924,7 +1966,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsInteger.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger.RelationType, "Oops");
                     }
                     catch
                     {
@@ -1937,7 +1979,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsString.RelationType, 0);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsString.RelationType, 0);
                     }
                     catch
                     {
@@ -1950,7 +1992,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsInteger.RelationType, 0L);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger.RelationType, 0L);
                     }
                     catch
                     {
@@ -1964,7 +2006,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsBoolean.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean.RelationType, c1B);
                     }
                     catch
                     {
@@ -1977,7 +2019,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsDecimal.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal.RelationType, c1B);
                     }
                     catch
                     {
@@ -1990,7 +2032,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsDouble.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble.RelationType, c1B);
                     }
                     catch
                     {
@@ -2003,7 +2045,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsInteger.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger.RelationType, c1B);
                     }
                     catch
                     {
@@ -2016,7 +2058,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1AllorsString.RelationType, 0);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsString.RelationType, 0);
                     }
                     catch
                     {
@@ -2030,7 +2072,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC2.Instance.C2AllorsBoolean.RelationType, true);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsBoolean.RelationType, true);
                     }
                     catch
                     {
@@ -2043,7 +2085,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC2.Instance.C2AllorsDecimal.RelationType, DateTime.Now);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsDecimal.RelationType, DateTime.Now);
                     }
                     catch
                     {
@@ -2056,7 +2098,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC2.Instance.C2AllorsDouble.RelationType, 0.01m);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsDouble.RelationType, 0.01m);
                     }
                     catch
                     {
@@ -2069,7 +2111,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC2.Instance.C2AllorsInteger.RelationType, 1);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsInteger.RelationType, 1);
                     }
                     catch
                     {
@@ -2082,7 +2124,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC2.Instance.C2AllorsString.RelationType, "hello");
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsString.RelationType, "hello");
                     }
                     catch
                     {
@@ -2096,7 +2138,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(MetaC1.Instance.C1C1one2one.RelationType, "Ooops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1C1one2one.RelationType, "Ooops");
                     }
                     catch
                     {

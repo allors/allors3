@@ -12,8 +12,6 @@ namespace Allors.Meta
     {
         string SingularName { get; }
 
-        string PluralName { get; }
-
         bool IsUnit { get; }
 
         bool IsComposite { get; }
@@ -24,6 +22,6 @@ namespace Allors.Meta
 
         string Name { get; }
 
-        Type ClrType { get; }
+        string PluralName { get; }
     }
 }

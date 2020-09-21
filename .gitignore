@@ -1,7 +1,7 @@
 # Allors
 # ------
-generated/
-artifacts/
+[Gg]enerated/
+[Aa]rtifacts/
 build/Properties/launchSettings.json
 **/package-lock.json
 **/.DS_Store

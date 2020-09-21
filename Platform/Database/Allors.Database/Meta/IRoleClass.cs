@@ -6,10 +6,10 @@
 
 namespace Allors.Meta
 {
-    public interface IConcreteRoleType
+    public interface IRoleClass
     {
         IClass Class { get; }
 
-        IRoleType RoleType { get; set; }
+        IRoleType RoleType { get; }
     }
 }

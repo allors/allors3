@@ -21,6 +21,12 @@ namespace Allors.Database.Adapters.Memory
         public Database(IServiceProvider serviceProvider, Configuration configuration)
         {
             this.ServiceProvider = serviceProvider;
+            this.Meta = configuration.Meta;
+            if (this.Meta == null)
+            {
+                throw new Exception("Configuration.Meta is missing");
+            }
+
             this.ObjectFactory = configuration.ObjectFactory;
             if (this.ObjectFactory == null)
             {
@@ -45,6 +51,8 @@ namespace Allors.Database.Adapters.Memory
         public IObjectFactory ObjectFactory { get; }
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
+
+        public object Meta { get; }
 
         public IServiceProvider ServiceProvider { get; }
 
@@ -89,14 +97,14 @@ namespace Allors.Database.Adapters.Memory
         {
             if (!this.concreteClassesByObjectType.TryGetValue(objectType, out var concreteClassOrClasses))
             {
-                if (objectType.ExistExclusiveClass)
+                if (objectType.ExistExclusiveDatabaseClass)
                 {
-                    concreteClassOrClasses = objectType.ExclusiveClass;
+                    concreteClassOrClasses = objectType.ExclusiveDatabaseClass;
                     this.concreteClassesByObjectType[objectType] = concreteClassOrClasses;
                 }
                 else
                 {
-                    concreteClassOrClasses = new HashSet<IObjectType>(objectType.Classes);
+                    concreteClassOrClasses = new HashSet<IObjectType>(objectType.DatabaseClasses);
                     this.concreteClassesByObjectType[objectType] = concreteClassOrClasses;
                 }
             }

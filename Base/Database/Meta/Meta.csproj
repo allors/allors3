@@ -16,4 +16,8 @@
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="generated\" />
+  </ItemGroup>
 </Project>

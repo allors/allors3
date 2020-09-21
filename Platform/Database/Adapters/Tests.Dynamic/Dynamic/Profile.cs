@@ -19,32 +19,43 @@ namespace Allors.Database.Adapters
     using System;
 
     using Allors;
-    using Adapters;
     using Allors.Meta;
+    using Domain;
+    using Memory;
+    using Microsoft.Extensions.DependencyInjection;
+    using ObjectFactory = Allors.ObjectFactory;
 
     public abstract class Profile : IDisposable
     {
         private ISession session;
         private ISession session2;
 
+        protected Profile()
+        {
+            this.MetaPopulation = new MetaBuilder().Build();
+            this.M = new M(this.MetaPopulation);
+        }
+
+        public MetaPopulation MetaPopulation { get; }
+
+        public M M { get; set; }
+        
         public IObject[] CreateArray(ObjectType objectType, int count)
         {
             var type = objectType.ClrType;
-            var allorsObjects = (IObject[])Array.CreateInstance(type, count);
-            return allorsObjects;
+            return (IObject[])Array.CreateInstance(type, count);
         }
 
-        public abstract IDatabase CreateMemoryPopulation();
+        public IDatabase CreateMemoryDatabase() =>
+            new Database(new ServiceCollection().BuildServiceProvider(), new Memory.Configuration
+            {
+                Meta = this.M,
+                ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
+            });
 
-        public ISession CreateSession()
-        {
-            return this.GetPopulation().CreateSession();
-        }
+        public ISession CreateSession() => this.GetDatabase().CreateSession();
 
-        public ISession CreateSession2()
-        {
-            return this.GetPopulation2().CreateSession();
-        }
+        public ISession CreateSession2() => this.GetDatabase2().CreateSession();
 
         public virtual void Dispose()
         {
@@ -61,19 +72,13 @@ namespace Allors.Database.Adapters
             }
         }
 
-        public abstract IDatabase GetPopulation();
+        public abstract IDatabase GetDatabase();
 
-        public abstract IDatabase GetPopulation2();
+        public abstract IDatabase GetDatabase2();
 
-        public ISession GetSession()
-        {
-            return this.session ?? (this.session = this.GetPopulation().CreateSession());
-        }
+        public ISession GetSession() => this.session ??= this.GetDatabase().CreateSession();
 
-        public ISession GetSession2()
-        {
-            return this.session2 ?? (this.session2 = this.GetPopulation2().CreateSession());
-        }
+        public ISession GetSession2() => this.session2 ??= this.GetDatabase2().CreateSession();
 
         public abstract void Init();
 

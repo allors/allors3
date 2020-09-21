@@ -10,14 +10,14 @@ namespace Allors.Database.Adapters.SqlClient
 
     public class Validation
     {
-        public readonly HashSet<string> MissingTableNames;
-        public readonly HashSet<SchemaTable> InvalidTables;
+        public HashSet<string> MissingTableNames { get; }
+        public HashSet<SchemaTable> InvalidTables { get; }
 
-        public readonly HashSet<string> MissingTableTypeNames;
-        public readonly HashSet<SchemaTableType> InvalidTableTypes;
+        public HashSet<string> MissingTableTypeNames { get; }
+        public HashSet<SchemaTableType> InvalidTableTypes { get; }
 
-        public readonly HashSet<string> MissingProcedureNames;
-        public readonly HashSet<SchemaProcedure> InvalidProcedures;
+        public HashSet<string> MissingProcedureNames { get; }
+        public HashSet<SchemaProcedure> InvalidProcedures { get; }
 
         private readonly Mapping mapping;
 
@@ -138,7 +138,7 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             // Object Tables
-            foreach (var @class in this.Database.MetaPopulation.Classes)
+            foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
                 var tableName = this.mapping.TableNameForObjectByClass[@class];
                 var table = this.Schema.GetTable(tableName);
@@ -152,11 +152,11 @@ namespace Allors.Database.Adapters.SqlClient
                     this.ValidateColumn(table, Mapping.ColumnNameForObject, Mapping.SqlTypeForObject);
                     this.ValidateColumn(table, Mapping.ColumnNameForClass, Mapping.SqlTypeForClass);
 
-                    foreach (var associationType in @class.AssociationTypes)
+                    foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
                         var relationType = associationType.RelationType;
                         var roleType = relationType.RoleType;
-                        if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses
+                        if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses
                             && roleType.IsMany)
                         {
                             this.ValidateColumn(
@@ -166,7 +166,7 @@ namespace Allors.Database.Adapters.SqlClient
                         }
                     }
 
-                    foreach (var roleType in @class.RoleTypes)
+                    foreach (var roleType in @class.DatabaseRoleTypes)
                     {
                         var relationType = roleType.RelationType;
                         var associationType = relationType.AssociationType;
@@ -179,7 +179,7 @@ namespace Allors.Database.Adapters.SqlClient
                         }
                         else
                         {
-                            if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveClasses
+                            if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses
                                 && !roleType.IsMany)
                             {
                                 this.ValidateColumn(
@@ -193,13 +193,13 @@ namespace Allors.Database.Adapters.SqlClient
             }
 
             // Relation Tables
-            foreach (var relationType in this.Database.MetaPopulation.RelationTypes)
+            foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
                 if (!roleType.ObjectType.IsUnit &&
-                    ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveClasses))
+                    ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                     var table = this.Schema.GetTable(tableName);

@@ -7,18 +7,6 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    Target BaseResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Base";
-            using (var sqlServer = new SqlServer())
-            {
-                sqlServer.Restart();
-                sqlServer.Drop(database);
-                sqlServer.Create(database);
-            }
-        });
-
     private Target BaseDatabaseTest => _ => _
          .DependsOn(BaseDatabaseTestDomain);
 
@@ -95,7 +83,7 @@ partial class Build
     private Target BaseWorkspaceTypescriptTest => _ => _
         .DependsOn(BaseWorkspaceTypescriptSession);
 
-    Target BaseWorkspaceTest => _ => _
+    private Target BaseWorkspaceTest => _ => _
         .DependsOn(BaseWorkspaceTypescriptTest);
 
     private Target BaseTest => _ => _

@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (!role.ObjectType.IsUnit)
                 {
-                    if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveClasses)
+                    if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + role.SingularFullName + "_R");
                         this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation);
@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.Npgsql
                     {
                         if (role.IsMany)
                         {
-                            this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[((IComposite)role.ObjectType).ExclusiveClass] + " " + role.SingularFullName + "_R");
+                            this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[((IComposite)role.ObjectType).ExclusiveDatabaseClass] + " " + role.SingularFullName + "_R");
                             this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + this.Mapping.ColumnNameByRelationType[relationType]);
                         }
                     }
@@ -69,7 +69,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (!role.ObjectType.IsUnit && role.IsOne)
                 {
-                    if (!relationType.ExistExclusiveClasses)
+                    if (!relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(role));
                         this.Append(" ON " + this.GetJoinName(role) + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " ");
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.Npgsql
                 var relationType = association.RelationType;
                 var role = relationType.RoleType;
 
-                if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveClasses)
+                if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                 {
                     this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + association.SingularFullName + "_A");
                     this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForRole);
@@ -96,7 +96,7 @@ namespace Allors.Database.Adapters.Npgsql
                 {
                     if (!role.IsMany)
                     {
-                        this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[association.ObjectType.ExclusiveClass] + " " + association.SingularFullName + "_A");
+                        this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[association.ObjectType.ExclusiveDatabaseClass] + " " + association.SingularFullName + "_A");
                         this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + this.Mapping.ColumnNameByRelationType[relationType]);
                     }
                 }
@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 if (!association.ObjectType.IsUnit && association.IsOne)
                 {
-                    if (!relationType.ExistExclusiveClasses)
+                    if (!relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(association));
                         this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " ");
@@ -135,7 +135,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal bool AddWhere(IObjectType rootClass, string alias)
         {
-            var useWhere = !this.Extent.ObjectType.ExistExclusiveClass;
+            var useWhere = !this.Extent.ObjectType.ExistExclusiveDatabaseClass;
 
             if (useWhere)
             {
@@ -147,7 +147,7 @@ namespace Allors.Database.Adapters.Npgsql
                 else
                 {
                     var first = true;
-                    foreach (var subClass in ((IInterface)this.Type).Subclasses)
+                    foreach (var subClass in ((IInterface)this.Type).DatabaseClasses)
                     {
                         if (first)
                         {

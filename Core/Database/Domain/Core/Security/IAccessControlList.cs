@@ -23,11 +23,11 @@ namespace Allors.Domain
 
         bool CanRead(IPropertyType propertyType);
 
-        bool CanRead(IConcreteRoleType roleType);
+        bool CanRead(IRoleClass roleType);
 
         bool CanWrite(IRoleType roleType);
 
-        bool CanWrite(IConcreteRoleType roleType);
+        bool CanWrite(IRoleClass roleType);
 
         bool IsPermitted(IOperandType operandType, Operations operation);
     }

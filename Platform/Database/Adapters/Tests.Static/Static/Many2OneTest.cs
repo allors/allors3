@@ -18,7 +18,9 @@ namespace Allors.Database.Adapters
 
     public abstract class Many2OneTest : IDisposable
     {
-        public static int NR_OF_RUNS = Settings.NumberOfRuns;
+#pragma warning disable IDE1006
+        public static int numberOfRuns = Settings.NumberOfRuns;
+#pragma warning restore IDE1006
 
         protected abstract IProfile Profile { get; }
 
@@ -36,10 +38,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
-                    for (var i = 0; i < NR_OF_RUNS; i++)
+                    for (var i = 0; i < numberOfRuns; i++)
                     {
                         var from1 = C1.Create(this.Session);
                         var from2 = C1.Create(this.Session);
@@ -674,7 +677,7 @@ namespace Allors.Database.Adapters
                         Assert.False(from1.ExistC1C1many2one);
                     }
 
-                    for (var i = 0; i < NR_OF_RUNS; i++)
+                    for (var i = 0; i < numberOfRuns; i++)
                     {
                         var from1 = C1.Create(this.Session);
                         mark();
@@ -1799,10 +1802,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
-                    for (var i = 0; i < NR_OF_RUNS; i++)
+                    for (var i = 0; i < numberOfRuns; i++)
                     {
                         var from1 = C1.Create(this.Session);
                         var from2 = C1.Create(this.Session);
@@ -2446,10 +2450,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
-                    for (var i = 0; i < NR_OF_RUNS; i++)
+                    for (var i = 0; i < numberOfRuns; i++)
                     {
                         var from1 = C3.Create(this.Session);
                         var from2 = C3.Create(this.Session);
@@ -3093,10 +3098,11 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
-                    for (var i = 0; i < NR_OF_RUNS; i++)
+                    for (var i = 0; i < numberOfRuns; i++)
                     {
                         var from1 = C1.Create(this.Session);
                         var from2 = C1.Create(this.Session);
@@ -3732,7 +3738,7 @@ namespace Allors.Database.Adapters
                         Assert.False(from1.ExistI1I12many2one);
                     }
 
-                    for (var i = 0; i < NR_OF_RUNS; i++)
+                    for (var i = 0; i < numberOfRuns; i++)
                     {
                         var from1 = C1.Create(this.Session);
                         mark();
@@ -4857,6 +4863,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Session.Meta();
 
                 foreach (var mark in this.Markers)
                 {
@@ -4874,7 +4881,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1C2many2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1C2many2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -4886,7 +4893,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1I2many2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1I2many2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -4898,7 +4905,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1S2many2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1S2many2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -4912,7 +4919,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC2.Instance.C1many2one.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C2.C1many2one.RelationType, c1b);
                     }
                     catch
                     {
@@ -4924,7 +4931,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC2.Instance.C2C2many2one.RelationType, c2b);
+                        c1a.Strategy.SetCompositeRole(m.C2.C2C2many2one.RelationType, c2b);
                     }
                     catch
                     {
@@ -4936,7 +4943,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1AllorsString.RelationType, c1b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1AllorsString.RelationType, c1b);
                     }
                     catch
                     {
@@ -4948,7 +4955,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1a.Strategy.SetCompositeRole(MetaC1.Instance.C1C2many2manies.RelationType, c2b);
+                        c1a.Strategy.SetCompositeRole(m.C1.C1C2many2manies.RelationType, c2b);
                     }
                     catch
                     {

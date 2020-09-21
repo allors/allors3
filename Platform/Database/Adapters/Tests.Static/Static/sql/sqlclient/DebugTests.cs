@@ -16,7 +16,7 @@ namespace Allors.Database.Adapters.SqlClient
     using Debug;
     using Xunit;
 
-    public class DebugTests : IDisposable
+    public class DebugTests : IDisposable, IClassFixture<Fixture<DebugTests>>
     {
         private readonly Profile profile;
 
@@ -29,12 +29,13 @@ namespace Allors.Database.Adapters.SqlClient
         {
             this.connectionFactory = new DebugConnectionFactory();
             this.cacheFactory = new DefaultCacheFactory();
-            this.profile = new Profile(this.connectionFactory, this.cacheFactory);
+            this.profile = new Profile(this.GetType().Name, this.connectionFactory, this.cacheFactory);
         }
 
         public void Dispose() => this.profile.Dispose();
 
         #region Population
+        #pragma warning disable IDE1006
         protected C1 c1A;
         protected C1 c1B;
         protected C1 c1C;
@@ -51,12 +52,10 @@ namespace Allors.Database.Adapters.SqlClient
         protected C4 c4B;
         protected C4 c4C;
         protected C4 c4D;
+        #pragma warning restore IDE1006
         #endregion
 
         protected Database Database => (Database)this.Profile.Database;
-
-        protected DebugConnectionFactory ConnectionFactory => (DebugConnectionFactory)this.Database.ConnectionFactory;
-
         protected Action[] Markers => this.Profile.Markers;
 
         protected Action[] Inits => this.Profile.Inits;
@@ -78,7 +77,7 @@ namespace Allors.Database.Adapters.SqlClient
                 }
             }
         }
-
+        
         [Fact]
         public void Extent()
         {
@@ -86,17 +85,19 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 init();
                 this.Populate();
+                var m = this.Database.Meta();
 
-                var connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
+
                     connection.Commands.Clear();
 
                     var extent = session.Extent<C1>();
 
                     foreach (C1 c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, C1.Meta.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -107,14 +108,14 @@ namespace Allors.Database.Adapters.SqlClient
                     this.InvalidateCache();
                 }
 
-                connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
 
                     foreach (C1 c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, C1.Meta.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -129,18 +130,19 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Database.Meta();
                 this.Populate();
 
                 this.InvalidateCache();
 
-                var connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     C1[] extent = session.Extent<C1>();
 
                     foreach (var c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, C1.Meta.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -149,14 +151,14 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.InvalidateCache();
 
-                connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
 
                     foreach (C1 c1 in extent)
                     {
-                        Assert.Equal(c1.Strategy.Class, C1.Meta.ObjectType);
+                        Assert.Equal(c1.Strategy.Class, m.C1.ObjectType);
                     }
 
                     Assert.Equal(2, connection.Commands.Count);
@@ -171,9 +173,10 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Database.Meta();
                 this.Populate();
 
-                var connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -190,7 +193,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.InvalidateCache();
 
-                connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -210,14 +213,15 @@ namespace Allors.Database.Adapters.SqlClient
         [Fact]
         public void Prefetch()
         {
-            var c1Prefetcher = new PrefetchPolicyBuilder().WithRule(C1.Meta.C1AllorsString).Build();
-
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Database.Meta();
                 this.Populate();
 
-                var connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                var c1Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.C1AllorsString).Build();
+
+                var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -238,7 +242,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.InvalidateCache();
 
-                connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -259,18 +263,19 @@ namespace Allors.Database.Adapters.SqlClient
         [Fact]
         public void PrefetchOneClass()
         {
-            var c2Prefetcher = new PrefetchPolicyBuilder().WithRule(C1.Meta.C1AllorsString).Build();
-            var c1Prefetcher =
-                new PrefetchPolicyBuilder().WithRule(C1.Meta.C1C2one2one, c2Prefetcher)
-                    .WithRule(C1.Meta.C1AllorsString)
-                    .Build();
-
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Database.Meta();
                 this.Populate();
 
-                var connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                var c2Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.C1AllorsString).Build();
+                var c1Prefetcher =
+                    new PrefetchPolicyBuilder().WithRule(m.C1.C1C2one2one, c2Prefetcher)
+                        .WithRule(m.C1.C1AllorsString)
+                        .Build();
+
+                var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -294,7 +299,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.InvalidateCache();
 
-                connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -318,19 +323,20 @@ namespace Allors.Database.Adapters.SqlClient
         [Fact]
         public void PrefetchManyInterface()
         {
-            var i12Prefetcher = new PrefetchPolicyBuilder().WithRule(C1.Meta.I12AllorsString.RoleType).Build();
-
-            var c1Prefetcher =
-                new PrefetchPolicyBuilder().WithRule(C1.Meta.C1I12one2manies, i12Prefetcher)
-                    .WithRule(C1.Meta.C1AllorsString)
-                    .Build();
-
             foreach (var init in this.Inits)
             {
                 init();
+                var m = this.Database.Meta();
                 this.Populate();
 
-                var connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                var i12Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.I12AllorsString).Build();
+
+                var c1Prefetcher =
+                    new PrefetchPolicyBuilder().WithRule(m.C1.C1I12one2manies, i12Prefetcher)
+                        .WithRule(m.C1.C1AllorsString)
+                        .Build();
+
+                var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -372,7 +378,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                 this.InvalidateCache();
 
-                connection = (DebugConnection)this.ConnectionFactory.Create(this.Database);
+                connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
                 {
                     var extent = session.Extent<C1>();
@@ -396,6 +402,8 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected void Populate()
         {
+            var m = this.Database.Meta();
+
             using (var session = this.Database.CreateSession())
             {
                 var population = new TestPopulation(session);

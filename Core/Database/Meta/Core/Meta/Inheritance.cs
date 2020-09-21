@@ -47,6 +47,8 @@ namespace Allors.Meta
             }
         }
 
+        public override Origin Origin => this.Subtype.AssignedOrigin;
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>

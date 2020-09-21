@@ -36,9 +36,9 @@ namespace Allors.Domain
 
         public bool ExistOperation => this.ExistOperationEnum;
 
-        public IOperandType OperandType
+        public OperandType OperandType
         {
-            get => (IOperandType)this.Strategy.Session.Database.MetaPopulation.Find(this.OperandTypePointer);
+            get => (OperandType)this.Strategy.Session.Database.MetaPopulation.Find(this.OperandTypePointer);
 
             set
             {
@@ -135,7 +135,7 @@ namespace Allors.Domain
             return toString.ToString();
         }
 
-        internal void Sync(ObjectType concreteClass, IOperandType operandType, Operations operation)
+        internal void Sync(ObjectType concreteClass, OperandType operandType, Operations operation)
         {
             this.OperandType = operandType;
             this.Operation = operation;

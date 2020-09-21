@@ -35,6 +35,12 @@ namespace Allors.Meta
             relationType.MetaPopulation.OnRoleTypeCreated(this);
         }
 
+        public bool Workspace => this.RelationType.Workspace;
+
+        public string[] WorkspaceNames => this.RelationType.WorkspaceNames;
+
+        public override Origin Origin => this.RelationType.Origin;
+
         IAssociationType IRoleType.AssociationType => this.AssociationType;
 
         /// <summary>
@@ -211,14 +217,12 @@ namespace Allors.Meta
 
         public string MediaType { get; set; }
 
-        public bool Workspace => this.RelationType.Workspace;
-
         /// <summary>
         /// Gets the validation name.
         /// </summary>
         /// <value>The validation name.</value>
         protected internal override string ValidationName => "RoleType: " + this.RelationType.Name;
-
+        
         /// <summary>
         /// Compares the current instance with another object of the same type.
         /// </summary>

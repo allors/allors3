@@ -10,10 +10,13 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
     using System;
+    using Xunit;
 
-    public class Many2ManyTest : Adapters.Many2ManyTest, IDisposable
+    public class Many2ManyTest : Adapters.Many2ManyTest, IClassFixture<Fixture<Many2ManyTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public Many2ManyTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

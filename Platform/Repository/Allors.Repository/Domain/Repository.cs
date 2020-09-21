@@ -249,7 +249,11 @@ namespace Allors.Repository.Domain
                     if (idAttribute != null)
                     {
                         var id = Guid.Parse((string)idAttribute.ConstructorArguments.First().Value);
-                        var domain = this.Domains.First(v => v.DirectoryInfo.Contains(fileInfo));
+                        var domain = this.Domains.FirstOrDefault(v => v.DirectoryInfo.Contains(fileInfo));
+                        if (domain == null)
+                        {
+                            throw new Exception($"No domain for file {fileInfo}");
+                        }
 
                         var symbol = semanticModel.GetDeclaredSymbol(classDeclaration);
                         if (RepositoryNamespaceName.Equals(symbol.ContainingNamespace.ToDisplayString()))

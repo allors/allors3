@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using System.Linq;
     using Adapters.Schema;
     using Adapters;
@@ -164,7 +164,7 @@ namespace Allors.Database.Adapters.SqlClient
                     }
                     else
                     {
-                        if (!(relationType.AssociationType.IsMany && relationType.RoleType.IsMany) && relationType.ExistExclusiveClasses && relationType.RoleType.IsMany)
+                        if (!(relationType.AssociationType.IsMany && relationType.RoleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && relationType.RoleType.IsMany)
                         {
                             var associationIdByRoleId = this.GetAssociationIdByRoleId(relationType);
                             this.ReadCompositeRelations(xmlRelationTypeComposite, relationType, associationIdByRoleId);
@@ -386,12 +386,12 @@ namespace Allors.Database.Adapters.SqlClient
         {
             var mapping = this.database.Mapping;
 
-            foreach (var relationType in mapping.Database.MetaPopulation.RelationTypes)
+            foreach (var relationType in mapping.Database.MetaPopulation.DatabaseRelationTypes)
             {
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
-                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveClasses))
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     if (this.roleByAssociationIdByRelationTypeId.TryGetValue(relationType, out var roleByAssociationId))
                     {

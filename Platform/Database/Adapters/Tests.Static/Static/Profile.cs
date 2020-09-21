@@ -9,17 +9,14 @@ namespace Allors.Database.Adapters
     using System.Collections.Generic;
 
     using Allors;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Domain;
+    using Memory;
+    using Meta;
+    using Microsoft.Extensions.DependencyInjection;
+    using ObjectFactory = Allors.ObjectFactory;
 
     public abstract class Profile : IProfile
     {
-        private readonly ObjectFactory objectFactory;
-
-        protected Profile() => this.objectFactory = this.CreateObjectFactory(MetaPopulation.Instance);
-
-        public IObjectFactory ObjectFactory => this.objectFactory;
-
         public ISession Session { get; private set; }
 
         public IDatabase Database { get; private set; }
@@ -57,7 +54,16 @@ namespace Allors.Database.Adapters
             this.Database = null;
         }
 
-        public abstract IDatabase CreatePopulation();
+        public IDatabase CreateMemoryDatabase()
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var m = new M(metaPopulation);
+            return new Database(new ServiceCollection().BuildServiceProvider(), new Memory.Configuration
+            {
+                Meta = m,
+                ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
+            });
+        }
 
         public abstract IDatabase CreateDatabase();
 
@@ -80,7 +86,5 @@ namespace Allors.Database.Adapters
                 throw;
             }
         }
-
-        protected ObjectFactory CreateObjectFactory(IMetaPopulation metaPopulation) => new ObjectFactory(metaPopulation, typeof(C1));
     }
 }

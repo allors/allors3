@@ -221,9 +221,9 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void SetUnitRoles(Roles roles, List<IRoleType> sortedRoleTypes)
         {
-            this.setUnitRolesByRoleTypeByClass = this.setUnitRolesByRoleTypeByClass ?? new Dictionary<IClass, Dictionary<IList<IRoleType>, Command>>();
+            this.setUnitRolesByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IList<IRoleType>, Command>>();
 
-            var exclusiveRootClass = roles.Reference.Class.ExclusiveClass;
+            var exclusiveRootClass = roles.Reference.Class.ExclusiveDatabaseClass;
 
             if (!this.setUnitRolesByRoleTypeByClass.TryGetValue(exclusiveRootClass, out var setUnitRoleByRoleType))
             {
@@ -340,7 +340,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void GetCompositesRole(Roles roles, IRoleType roleType)
         {
-            this.getCompositesRoleByRoleType = this.getCompositesRoleByRoleType ?? new Dictionary<IRoleType, Command>();
+            this.getCompositesRoleByRoleType ??= new Dictionary<IRoleType, Command>();
 
             var reference = roles.Reference;
 
@@ -349,7 +349,7 @@ namespace Allors.Database.Adapters.Npgsql
                 var associationType = roleType.AssociationType;
 
                 string sql;
-                if (associationType.IsMany || !roleType.RelationType.ExistExclusiveClasses)
+                if (associationType.IsMany || !roleType.RelationType.ExistExclusiveDatabaseClasses)
                 {
                     sql = this.Database.Mapping.ProcedureNameForGetRoleByRelationType[roleType.RelationType];
                 }
@@ -473,8 +473,8 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 var id = this.session.State.GetObjectIdForExistingObject(result.ToString());
 
-                associationObject = associationType.ObjectType.ExistExclusiveClass ?
-                                        this.session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveClass, id, this.session) :
+                associationObject = associationType.ObjectType.ExistExclusiveDatabaseClass ?
+                                        this.session.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.session) :
                                         this.session.State.GetOrCreateReferenceForExistingObject(id, this.session);
             }
 

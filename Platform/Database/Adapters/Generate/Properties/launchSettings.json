@@ -2,7 +2,7 @@
   "profiles": {
     "Generate": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\KoenVanExem\\Documents\\GitHub\\allors3\\Platform\\Database\\Adapters"
+      "workingDirectory": "C:\\Users\\KoenVanExem\\source\\repos\\Allors\\allors3\\Platform\\Database\\Adapters"
     }
   }
 }

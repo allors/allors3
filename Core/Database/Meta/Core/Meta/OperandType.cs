@@ -13,5 +13,7 @@ namespace Allors.Meta
         }
 
         public abstract string DisplayName { get; }
+
+        public bool Workspace { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Allors.Database.Adapters.SqlClient
                 var root = this.Extent.Filter == null || this.Extent.Filter.Equals(this);
                 if (root)
                 {
-                    var wherePresent = !this.Extent.ObjectType.ExistExclusiveClass;
+                    var wherePresent = !this.Extent.ObjectType.ExistExclusiveDatabaseClass;
                     statement.Append(wherePresent ? " AND " : " WHERE ");
                 }
                 else

@@ -22,6 +22,15 @@ namespace Allors.Repository.Domain
 
         public string Name { get; }
 
+        public string[] WorkspaceNames
+        {
+            get
+            {
+                dynamic attribute = this.AttributeByName.Get("Workspace");
+                return attribute?.Names ?? Array.Empty<string>();
+            }
+        }
+
         public XmlDoc XmlDoc { get; set; }
 
         public Method DefiningMethod { get; set; }
