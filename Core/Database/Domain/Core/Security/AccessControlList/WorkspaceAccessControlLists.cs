@@ -6,7 +6,6 @@
 namespace Allors.Domain
 {
     using System.Collections.Generic;
-    using Meta;
 
     public class WorkspaceAccessControlLists : IAccessControlLists
     {
@@ -68,7 +67,7 @@ namespace Allors.Domain
                 if (misses.Count > 1)
                 {
                     // TODO: Cache
-                    var m = this.User.Strategy.Session.Meta();
+                    var m = this.User.DatabaseScope().M;
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.AccessControl.CacheId)
                         .WithRule(m.AccessControl.EffectivePermissions)

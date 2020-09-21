@@ -27,7 +27,7 @@ namespace Allors.Domain
         {
             foreach (var auditable in matches.Cast<Auditable>())
             {
-                var user = auditable.Strategy.Session.GetUser();
+                var user = auditable.Strategy.Session.Scope().User;
                 if (user != null)
                 {
                     if (cycle.ChangeSet.Created.Contains(auditable.Strategy))

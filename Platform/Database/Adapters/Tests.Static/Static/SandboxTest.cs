@@ -35,7 +35,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var user = User.Create(this.Session);
                 user.From = "Nowhere";
@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 if (this.Population is IDatabase database)
                 {
@@ -72,7 +72,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var c1A = C1.Create(this.Session);
                 var c1B = C1.Create(this.Session);
@@ -93,7 +93,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var population = new TestPopulation(this.Session);
 
@@ -114,7 +114,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var population = new TestPopulation(this.Session);
 
@@ -135,7 +135,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
                 var population = new TestPopulation(this.Session);
 
                 var schemaExtent = new Protocol.Data.Extent
@@ -164,7 +164,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
                 var population = new TestPopulation(this.Session);
 
                 var extent = new Extent(m.C1.ObjectType)

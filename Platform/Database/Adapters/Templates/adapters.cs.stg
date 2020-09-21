@@ -164,7 +164,7 @@ namespace Allors.Domain
 		public $class.name$(Allors.IStrategy strategy)
 		{
 			this.strategy = strategy;
-			this.m = this.strategy.Session.Database.Meta();
+			this.m = this.Registry().M;
 		}
 
 		public Allors.Meta.M M => m;
@@ -205,15 +205,15 @@ $class.DatabaseAssociationTypes:{associationType|$classAssociationType_Class()$}
 $class.MethodTypes:{methodType|$classMethodType_Method()$}$
 
         #region Test Helpers
-        public static $class.name$ Create(ISession session) => ($class.name$)session.Create(session.Meta().$class.name$.ObjectType);
+        public static $class.name$ Create(ISession session) => ($class.name$)session.Create(session.Registry().M.$class.name$.ObjectType);
 
-        public static $class.name$[] Create(ISession session, int count) => ($class.name$[])session.Create(session.Meta().$class.name$.ObjectType, count);
+        public static $class.name$[] Create(ISession session, int count) => ($class.name$[])session.Create(session.Registry().M.$class.name$.ObjectType, count);
 
         public static $class.name$ Instantiate(ISession session, long id) => ($class.name$)session.Instantiate(id);
 
         public static $class.name$[] Instantiate(ISession session, string[] ids) => ($class.name$[])session.Instantiate(ids);
 
-        public static $class.name$[] Extent(ISession session) => ($class.name$[])session.Extent(session.Meta().$class.name$.ObjectType).ToArray();
+        public static $class.name$[] Extent(ISession session) => ($class.name$[])session.Extent(session.Registry().M.$class.name$.ObjectType).ToArray();
         #endregion
 	}
 }
@@ -403,7 +403,7 @@ methodTypeLeafClass() ::= <<
 
 		public $class.Name$$methodType.Name$($objectType_Name(methodType.ObjectType)$ @object) : base(@object)
 		{
-		  this.methodInvocation = new Allors.Meta.MethodInvocation(@object.Strategy.Class, @object.Strategy.Session.Meta().$class.Name$.$methodType.Name$);
+		  this.methodInvocation = new Allors.Meta.MethodInvocation(@object.Strategy.Class, @object.Registry().M.$class.Name$.$methodType.Name$);
 		}
 
 		public override Allors.Meta.MethodInvocation MethodInvocation

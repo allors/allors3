@@ -5,12 +5,10 @@
 
 namespace Allors.Domain.Derivations
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
     using Allors.Meta;
-    using Object = Domain.Object;
 
     public class AccumulatedChangeSet : IAccumulatedChangeSet
     {

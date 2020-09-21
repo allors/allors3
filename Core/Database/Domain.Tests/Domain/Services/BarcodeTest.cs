@@ -6,11 +6,8 @@
 namespace Tests
 {
     using System.IO;
-
+    using Allors;
     using Allors.Services;
-
-    using Microsoft.Extensions.DependencyInjection;
-
     using Xunit;
 
     public class BarcodeTest : DomainTest
@@ -18,7 +15,7 @@ namespace Tests
         [Fact]
         public void Default()
         {
-            var barcodeService = this.Session.ServiceProvider.GetRequiredService<IBarcodeService>();
+            var barcodeService = ((DatabaseScope) this.Session.Database.Scope()).BarcodeService;
             var image = barcodeService.Generate("Allors", BarcodeType.CODE_128);
             File.WriteAllBytes("barcode.png", image);
         }

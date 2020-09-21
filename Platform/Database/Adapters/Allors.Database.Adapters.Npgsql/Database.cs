@@ -38,13 +38,12 @@ namespace Allors.Database.Adapters.Npgsql
 
         private ICacheFactory cacheFactory;
 
-        public Database(IServiceProvider serviceProvider, Configuration configuration)
+        public Database(IDatabaseScope state, Configuration configuration)
         {
-            this.ServiceProvider = serviceProvider;
-            this.Meta = configuration.Meta;
-            if (this.Meta == null)
+            this.Scope = state;
+            if (this.Scope == null)
             {
-                throw new Exception("Configuration.Meta is missing");
+                throw new Exception("Services is missing");
             }
             
             this.ObjectFactory = configuration.ObjectFactory;
@@ -92,26 +91,26 @@ namespace Allors.Database.Adapters.Npgsql
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
 
             this.DomainDerivationById = new Dictionary<Guid, IDomainDerivation>();
+
+            this.Scope.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        public object Meta { get; }
-
-        public IServiceProvider ServiceProvider { get; }
+        public IDatabaseScope Scope { get; }
 
         public IConnectionFactory ConnectionFactory
         {
-            get => this.connectionFactory ?? (this.connectionFactory = new DefaultConnectionFactory());
+            get => this.connectionFactory ??= new DefaultConnectionFactory();
 
             set => this.connectionFactory = value;
         }
 
         public IConnectionFactory ManagementConnectionFactory
         {
-            get => this.managementConnectionFactory ?? (this.managementConnectionFactory = new DefaultConnectionFactory());
+            get => this.managementConnectionFactory ??= new DefaultConnectionFactory();
 
             set => this.managementConnectionFactory = value;
         }
@@ -174,10 +173,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 if (this.ObjectFactory.MetaPopulation != null)
                 {
-                    if (this.mapping == null)
-                    {
-                        this.mapping = new Mapping(this);
-                    }
+                    this.mapping ??= new Mapping(this);
                 }
 
                 return this.mapping;
@@ -199,7 +195,7 @@ namespace Allors.Database.Adapters.Npgsql
                 throw new Exception(this.validationMessage);
             }
 
-            return new Session(this, connection);
+            return new Session(this, connection, this.Scope.CreateSessionScope());
         }
 
         public void Init()

@@ -9,7 +9,7 @@ namespace Allors.Domain
     {
         public static void RegisterDerivations(this @IDatabase @this)
         {
-            var m = @this.Meta();
+            var m = @this.Scope().M;
             var derivations = new IDomainDerivation[]
             {
                 new PersonFullNameDerivation(m),

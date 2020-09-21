@@ -28,8 +28,7 @@ namespace Allors
         /// </summary>
         [Obsolete]
         event RelationNotLoadedEventHandler RelationNotLoaded;
-
-
+        
         IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
 
         /// <summary>
@@ -60,13 +59,8 @@ namespace Allors
         /// </summary>
         IMetaPopulation MetaPopulation { get; }
 
-        object Meta { get; }
-
-        /// <summary>
-        /// Gets the service provider.
-        /// </summary>
-        IServiceProvider ServiceProvider { get; }
-
+        IDatabaseScope Scope { get; }
+        
         /// <summary>
         /// Initializes the database. If this population is persistent then
         /// all existing objects will be deleted.

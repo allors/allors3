@@ -16,9 +16,14 @@ namespace Allors
     public interface ISession : IDisposable
     {
         /// <summary>
-        /// Gets the service provider.
+        /// Gets the database.
         /// </summary>
-        IServiceProvider ServiceProvider { get; }
+        IDatabase Database { get; }
+
+        /// <summary>
+        /// The scope for this session.
+        /// </summary>
+        ISessionScope Scope { get; }
 
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,
@@ -153,12 +158,7 @@ namespace Allors
         void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<IStrategy> strategies);
 
         void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<IObject> objects);
-
-        /// <summary>
-        /// Gets the database.
-        /// </summary>
-        IDatabase Database { get; }
-
+        
         /// <summary>
         /// Instantiate a strategy.
         /// This method is primarily used by <see cref="IWorkspace"/>s.

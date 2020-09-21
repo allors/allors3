@@ -12,7 +12,6 @@ namespace Allors.Database.Adapters
     using Domain;
     using Memory;
     using Meta;
-    using Microsoft.Extensions.DependencyInjection;
     using ObjectFactory = Allors.ObjectFactory;
 
     public abstract class Profile : IProfile
@@ -57,10 +56,9 @@ namespace Allors.Database.Adapters
         public IDatabase CreateMemoryDatabase()
         {
             var metaPopulation = new MetaBuilder().Build();
-            var m = new M(metaPopulation);
-            return new Database(new ServiceCollection().BuildServiceProvider(), new Memory.Configuration
+            var scope = new DatabaseScope();
+            return new Database(scope, new Memory.Configuration
             {
-                Meta = m,
                 ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
             });
         }

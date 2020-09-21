@@ -36,37 +36,31 @@ namespace Allors.Server
             services.AddSingleton(this.Configuration);
 
             // Allors
-            services.AddAllors();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IPolicyService, PolicyService>();
-            services.AddSingleton<IExtentService, ExtentService>();
-            /* Uncomment next line to enable derivation logging */
-            /* services.AddDerivationLogging(); */
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddCors(options =>
-            {
                 options.AddDefaultPolicy(
                     builder => builder
                         .WithOrigins("http://localhost", "http://localhost:4000", "http://localhost:4200", "http://localhost:9876")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials());
-            });
+                        .AllowCredentials()));
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddAllorsStores();
 
             services.AddAuthentication(option => option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
-                {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(this.Configuration.GetSection("JwtToken:Key").Value)),
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                    };
-                });
+                    });
 
             services.AddResponseCaching();
             services.AddControllersWithViews();
@@ -77,7 +71,7 @@ namespace Allors.Server
         {
             // Allors
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
-            var databaseBuilder = new DatabaseBuilder(app.ApplicationServices, this.Configuration, new ObjectFactory(MetaPopulation.Instance, typeof(User)));
+            var databaseBuilder = new DatabaseBuilder(new DatabaseState(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             databaseService.Database = databaseBuilder.Build();
             databaseService.Database.RegisterDerivations();
 
@@ -118,7 +112,5 @@ namespace Allors.Server
                 endpoints.MapControllers();
             });
         }
-
-
     }
 }

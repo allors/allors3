@@ -5,12 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using DataUtils;
-    using HeyRed.Mime;
-
     public partial class Media
     {
         //static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();

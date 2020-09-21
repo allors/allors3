@@ -19,7 +19,7 @@ namespace Allors.Server
             var tree = treeService.Get(composite);
             if (tree == null)
             {
-                tree = composite.RoleTypes.Where(v => v.ObjectType.IsComposite && ((RoleType)v).Workspace).Select(v => new Node(v)).ToArray();
+                tree = composite.DatabaseRoleTypes.Where(v => v.ObjectType.IsComposite && ((RoleType)v).Workspace).Select(v => new Node(v)).ToArray();
                 treeService.Set(composite, tree);
             }
 

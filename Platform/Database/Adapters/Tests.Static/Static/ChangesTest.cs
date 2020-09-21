@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c = this.Session.Create(m.C3.ObjectType);
@@ -225,7 +225,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -408,7 +408,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -591,7 +591,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -836,7 +836,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -1081,7 +1081,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c = this.Session.Create(m.C3.ObjectType);
@@ -1122,7 +1122,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c = this.Session.Create(m.C3.ObjectType);

@@ -6,7 +6,6 @@
 namespace Allors.Domain.Derivations.Default
 {
     using Allors.Domain.Derivations.Errors;
-    using Allors.Meta;
 
     public class DomainValidation : IDomainValidation
     {

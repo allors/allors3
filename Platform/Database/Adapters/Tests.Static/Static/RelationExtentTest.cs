@@ -51,7 +51,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var acme = Company.Create(this.Session, "Acme", 2);
                 var acne = Company.Create(this.Session, "Acne", 1);
@@ -116,7 +116,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 var acme = Company.Create(this.Session, "Acme");
                 var acne = Company.Create(this.Session, "Acne");

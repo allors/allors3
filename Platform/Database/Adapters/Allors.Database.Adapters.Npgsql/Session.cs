@@ -12,8 +12,6 @@ namespace Allors.Database.Adapters.Npgsql
 
     using Allors.Meta;
 
-    using Microsoft.Extensions.DependencyInjection;
-
     public sealed class Session : ISession
     {
         private static readonly IObject[] EmptyObjects = { };
@@ -21,22 +19,19 @@ namespace Allors.Database.Adapters.Npgsql
 
         private Dictionary<string, object> properties;
 
-        internal Session(Database database, Connection connection)
+        internal Session(Database database, Connection connection, ISessionScope scope)
         {
-            var serviceScopeFactory = database.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
-            var scope = serviceScopeFactory.CreateScope();
-            this.ServiceProvider = scope.ServiceProvider;
-
             this.Database = database;
             this.Connection = connection;
+            this.Scope = scope;
 
             this.State = new State();
 
             this.Prefetcher = new Prefetcher(this);
             this.Commands = new Commands(this, connection);
-        }
 
-        public IServiceProvider ServiceProvider { get; }
+            this.Scope = scope;
+        }
 
         public Connection Connection { get; }
 
@@ -45,6 +40,8 @@ namespace Allors.Database.Adapters.Npgsql
         public State State { get; }
 
         IDatabase ISession.Database => this.Database;
+
+        public ISessionScope Scope { get; }
 
         public Database Database { get; }
 

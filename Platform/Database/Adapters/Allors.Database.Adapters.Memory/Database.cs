@@ -18,13 +18,12 @@ namespace Allors.Database.Adapters.Memory
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
         private Session session;
 
-        public Database(IServiceProvider serviceProvider, Configuration configuration)
+        public Database(IDatabaseScope state, Configuration configuration)
         {
-            this.ServiceProvider = serviceProvider;
-            this.Meta = configuration.Meta;
-            if (this.Meta == null)
+            this.Scope = state;
+            if (this.Scope == null)
             {
-                throw new Exception("Configuration.Meta is missing");
+                throw new Exception("Services is missing");
             }
 
             this.ObjectFactory = configuration.ObjectFactory;
@@ -38,6 +37,8 @@ namespace Allors.Database.Adapters.Memory
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
             this.DomainDerivationById = new Dictionary<Guid, IDomainDerivation>();
+
+            this.Scope.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
@@ -52,13 +53,11 @@ namespace Allors.Database.Adapters.Memory
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
 
-        public object Meta { get; }
-
-        public IServiceProvider ServiceProvider { get; }
+        public IDatabaseScope Scope { get; }
 
         internal bool IsLoading { get; private set; }
 
-        protected virtual Session Session => this.session ?? (this.session = new Session(this));
+        protected virtual Session Session => this.session ??= new Session(this, this.Scope.CreateSessionScope());
 
         public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
 

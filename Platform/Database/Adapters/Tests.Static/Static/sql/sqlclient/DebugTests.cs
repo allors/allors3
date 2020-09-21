@@ -85,7 +85,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 init();
                 this.Populate();
-                var m = this.Database.Meta();
+                var m = this.Database.Registry().M;
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
                 using (var session = this.Database.CreateSession(connection))
@@ -130,7 +130,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Database.Meta();
+                var m = this.Database.Registry().M;
                 this.Populate();
 
                 this.InvalidateCache();
@@ -173,7 +173,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Database.Meta();
+                var m = this.Database.Registry().M;
                 this.Populate();
 
                 var connection = (DebugConnection)this.connectionFactory.Create(this.Database);
@@ -216,7 +216,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Database.Meta();
+                var m = this.Database.Registry().M;
                 this.Populate();
 
                 var c1Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.C1AllorsString).Build();
@@ -266,7 +266,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Database.Meta();
+                var m = this.Database.Registry().M;
                 this.Populate();
 
                 var c2Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.C1AllorsString).Build();
@@ -326,7 +326,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Database.Meta();
+                var m = this.Database.Registry().M;
                 this.Populate();
 
                 var i12Prefetcher = new PrefetchPolicyBuilder().WithRule(m.C1.I12AllorsString).Build();
@@ -402,7 +402,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected void Populate()
         {
-            var m = this.Database.Meta();
+            var m = this.Database.Registry().M;
 
             using (var session = this.Database.CreateSession())
             {

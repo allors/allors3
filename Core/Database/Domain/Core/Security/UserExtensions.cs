@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Services;
-    using Microsoft.Extensions.DependencyInjection;
     using System;
 
     public static partial class UserExtensions
@@ -20,9 +18,8 @@ namespace Allors.Domain
         public static T SetPassword<T>(this T @this, string clearTextPassword)
             where T : User
         {
-            var securityService = @this.Session().ServiceProvider.GetRequiredService<IPasswordService>();
-            var passwordHash = securityService.HashPassword(@this.UserName, clearTextPassword);
-            @this.UserPasswordHash = passwordHash;
+            var passwordService = ((DatabaseScope) @this.Session().Database.Scope()).PasswordService;
+            @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
             return @this;
         }
 
@@ -33,8 +30,8 @@ namespace Allors.Domain
                 return false;
             }
 
-            var securityService = @this.Session().ServiceProvider.GetRequiredService<IPasswordService>();
-            return securityService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
+            var passwordService = ((DatabaseScope) @this.Session().Database.Scope()).PasswordService;
+            return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 
         public static void CoreOnPostBuild(this User @this, ObjectOnPostBuild method)
@@ -73,7 +70,7 @@ namespace Allors.Domain
 
             if (@this.ExistInUserPassword)
             {
-                var passwordService = @this.Session().ServiceProvider.GetRequiredService<IPasswordService>();
+                var passwordService = ((DatabaseScope) @this.Session().Database.Scope()).PasswordService;
                 @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, @this.InUserPassword);
                 @this.RemoveInUserPassword();
             }

@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -1815,7 +1815,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -3554,7 +3554,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -5274,7 +5274,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -5330,7 +5330,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Registry().M;
 
                 foreach (var mark in this.Markers)
                 {

@@ -8,11 +8,11 @@ namespace Allors.Database.Adapters.Memory
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Xml;
 
     using Allors.Meta;
     using Allors.Serialization;
-    using Microsoft.Extensions.DependencyInjection;
     using IO;
 
     public class Session : ISession
@@ -28,13 +28,11 @@ namespace Allors.Database.Adapters.Memory
 
         private long currentId;
 
-        internal Session(Database database)
+        internal Session(Database database, ISessionScope scope)
         {
-            var serviceScopeFactory = database.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
-            var scope = serviceScopeFactory.CreateScope();
-            this.ServiceProvider = scope.ServiceProvider;
-
             this.MemoryDatabase = database;
+            this.Scope = scope;
+
             this.busyCommittingOrRollingBack = false;
 
             this.concreteClassesByObjectType = new Dictionary<IObjectType, IObjectType[]>();
@@ -42,13 +40,15 @@ namespace Allors.Database.Adapters.Memory
             this.MemoryChangeSet = new ChangeSet();
 
             this.Reset();
-        }
 
-        public IServiceProvider ServiceProvider { get; }
+            this.Scope.OnInit(this);
+        }
 
         public IDatabase Population => this.MemoryDatabase;
 
         public IDatabase Database => this.MemoryDatabase;
+
+        public ISessionScope Scope { get; }
 
         public bool IsProfilingEnabled => false;
 

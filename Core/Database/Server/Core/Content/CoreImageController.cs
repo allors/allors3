@@ -42,6 +42,8 @@ namespace Allors.Server
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = OneYearInSeconds)]
         public virtual IActionResult Get(string idString, string revisionString, string name, int? w, int? q, string t, string b, string o)
         {
+            var m = ((DatabaseScope) this.Session.Database.Scope()).M;
+
             this.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out var requestEtagValues);
             var requestEtag = requestEtagValues.FirstOrDefault();
             if (requestEtag != null && this.ETagByPath.TryGetValue(requestEtag, out var etagPath))
@@ -56,7 +58,7 @@ namespace Allors.Server
             {
                 if (Guid.TryParse(revisionString, out var revision))
                 {
-                    var media = new Medias(this.Session).FindBy(M.Media.UniqueId, id);
+                    var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
                     if (media != null)
                     {
                         if (media.Revision != revision)

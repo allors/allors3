@@ -6,9 +6,6 @@
 
 namespace Allors.Domain
 {
-    using System.Collections.Generic;
-
-    using Database.Adapters;
     using Allors.Meta;
     using System.Linq;
     using Allors.Domain.Derivations;

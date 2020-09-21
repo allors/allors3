@@ -9,7 +9,6 @@ namespace Allors.Server.Controllers
     using Allors.Domain;
     using Allors.Services;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     public class TestController : Controller
@@ -36,11 +35,8 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var stateService = this.Database.ServiceProvider.GetRequiredService<IStateService>();
-
                 var database = this.Database;
                 database.Init();
-                stateService.Clear();
 
                 return this.Ok("Init");
             }
@@ -57,11 +53,8 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var stateService = this.Database.ServiceProvider.GetRequiredService<IStateService>();
-
                 var database = this.Database;
                 database.Init();
-                stateService.Clear();
 
                 using (var session = database.CreateSession())
                 {
@@ -94,7 +87,7 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.ServiceProvider.GetRequiredService<ITimeService>();
+                var timeService = this.Database.Registry().TimeService;
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

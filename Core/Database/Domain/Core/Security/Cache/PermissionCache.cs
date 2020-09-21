@@ -18,7 +18,7 @@ namespace Allors.Domain
             var permissions = new Permissions(session).Extent();
 
             // TODO: Cache
-            var m = session.Meta();
+            var m = ((DatabaseScope) session.Database.Scope()).M;
             var prefetchPolicy = new PrefetchPolicyBuilder()
                 .WithRule(m.Permission.ConcreteClassPointer)
                 .Build();

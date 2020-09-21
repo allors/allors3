@@ -7,15 +7,13 @@ namespace Allors.Domain
 {
     using System;
 
-    using Allors.Meta;
-
     public static partial class UniquelyIdentifiableExtensions
     {
         public static void CoreOnBuild(this UniquelyIdentifiable @this, ObjectOnBuild method)
         {
             if (!@this.ExistUniqueId)
             {
-                @this.Strategy.SetUnitRole(@this.Session().Meta().UniquelyIdentifiable.UniqueId.RelationType, Guid.NewGuid());
+                @this.Strategy.SetUnitRole(((DatabaseScope) @this.Session().Database.Scope()).M.UniquelyIdentifiable.UniqueId.RelationType, Guid.NewGuid());
             }
         }
     }

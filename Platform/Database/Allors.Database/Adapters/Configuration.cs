@@ -5,10 +5,10 @@
 
 namespace Allors.Database.Adapters
 {
+    using Meta;
+
     public abstract class Configuration
     {
-        public object Meta { get; set; }
-
         public IObjectFactory ObjectFactory { get; set; }
 
         public IRoleCache RoleCache { get; set; }

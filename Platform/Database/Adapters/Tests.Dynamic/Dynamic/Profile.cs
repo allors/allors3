@@ -22,7 +22,6 @@ namespace Allors.Database.Adapters
     using Allors.Meta;
     using Domain;
     using Memory;
-    using Microsoft.Extensions.DependencyInjection;
     using ObjectFactory = Allors.ObjectFactory;
 
     public abstract class Profile : IDisposable
@@ -47,9 +46,8 @@ namespace Allors.Database.Adapters
         }
 
         public IDatabase CreateMemoryDatabase() =>
-            new Database(new ServiceCollection().BuildServiceProvider(), new Memory.Configuration
+            new Database(new DatabaseScope(), new Memory.Configuration
             {
-                Meta = this.M,
                 ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
             });
 

@@ -173,7 +173,7 @@ namespace Allors.Database.Adapters
         {
             var database = this.CreateDatabase();
             database.Init();
-            var m = database.Meta();
+            var m = database.Registry().M;
 
             using (var session = database.CreateSession())
             {
@@ -211,7 +211,7 @@ namespace Allors.Database.Adapters
         {
             var database = this.CreateDatabase();
             database.Init();
-            var m = database.Meta();
+            var m = database.Registry().M;
 
             using (var session = database.CreateSession())
             {
