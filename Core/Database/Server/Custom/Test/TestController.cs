@@ -65,7 +65,7 @@ namespace Allors.Server.Controllers
 
                     var administrator = new PersonBuilder(session).WithUserName("administrator").Build();
                     new UserGroups(session).Administrators.AddMember(administrator);
-                    session.SetUser(administrator);
+                    session.Scope().User = administrator;
 
                     new TestPopulation(session, population).Apply();
                     session.Derive();
@@ -87,7 +87,7 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.Registry().TimeService;
+                var timeService = this.Database.Scope().TimeService;
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

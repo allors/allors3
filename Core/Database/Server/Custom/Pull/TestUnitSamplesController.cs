@@ -39,7 +39,7 @@ namespace Allors.Server.Controllers
                     this.Session.Commit();
                 }
 
-                var acls = new WorkspaceAccessControlLists(this.Session.GetUser());
+                var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
                 var responseBuilder = new PullResponseBuilder(acls, this.TreeService);
 
                 switch (@params.Step)

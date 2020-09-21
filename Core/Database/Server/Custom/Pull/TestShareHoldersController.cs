@@ -34,9 +34,9 @@ namespace Allors.Server.Controllers
 
             try
             {
-                var acls = new WorkspaceAccessControlLists(this.Session.GetUser());
+                var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
                 var response = new PullResponseBuilder(acls, this.TreeService);
-                var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.GetUser());
+                var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.Scope().User);
                 response.AddObject("root", organisation, new[] {
                     new Node(m.Organisation.Shareholders)
                         .Add(m.Person.Photo),

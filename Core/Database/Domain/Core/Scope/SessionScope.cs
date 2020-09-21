@@ -12,6 +12,6 @@ namespace Allors
     {
         public abstract void OnInit(ISession session);
 
-        public User User { get; protected set; }
+        public User User { get; set; }
     }
 }

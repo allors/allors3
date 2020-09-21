@@ -39,7 +39,6 @@ namespace Allors.Server
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<IUserService, UserService>();
 
             services.AddCors(options =>
                 options.AddDefaultPolicy(
@@ -71,7 +70,7 @@ namespace Allors.Server
         {
             // Allors
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
-            var databaseBuilder = new DatabaseBuilder(new DatabaseState(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
+            var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             databaseService.Database = databaseBuilder.Build();
             databaseService.Database.RegisterDerivations();
 

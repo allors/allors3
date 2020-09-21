@@ -28,7 +28,7 @@ namespace Allors.Server.Controllers
         [Authorize]
         public IActionResult UserName()
         {
-            var user = this.Session.GetUser();
+            var user = this.Session.Scope().User;
             var result = user?.UserName;
             return this.Content(result);
         }

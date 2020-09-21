@@ -23,12 +23,14 @@ namespace Allors.Workspace.Local
 
     public class LocalDatabase : IDatabase
     {
-        public LocalDatabase(IDatabaseService databaseService, ITreeService treeService, IFetchService fetchService, IExtentService extentService, ILogger<LocalDatabase> logger)
+        public LocalDatabase(IDatabaseService databaseService, ILogger<LocalDatabase> logger)
         {
             this.DatabaseService = databaseService;
-            this.TreeService = treeService;
-            this.FetchService = fetchService;
-            this.ExtentService = extentService;
+
+            var scope = this.Database.Scope();
+            this.TreeService = scope.TreeService;
+            this.FetchService = scope.FetchService;
+            this.ExtentService = scope.ExtentService;
             this.Logger = logger;
         }
 
@@ -50,7 +52,7 @@ namespace Allors.Workspace.Local
             {
                 using (var session = this.Database.CreateSession())
                 {
-                    var acls = new WorkspaceAccessControlLists(session.GetUser());
+                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
                     var responseBuilder = new InvokeResponseBuilder(session, request, acls);
                     var response = responseBuilder.Build();
                     return System.Threading.Tasks.Task.FromResult(response);
@@ -71,7 +73,7 @@ namespace Allors.Workspace.Local
             {
                 using (var session = this.Database.CreateSession())
                 {
-                    var acls = new WorkspaceAccessControlLists(session.GetUser());
+                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
                     var response = new PullResponseBuilder(acls, this.TreeService);
 
                     if (request.P != null)
@@ -111,7 +113,7 @@ namespace Allors.Workspace.Local
             {
                 using (var session = this.Database.CreateSession())
                 {
-                    var acls = new WorkspaceAccessControlLists(session.GetUser());
+                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
                     var responseBuilder = new PushResponseBuilder(session, request, acls);
                     var response = responseBuilder.Build();
                     if (!response.HasErrors)
@@ -135,7 +137,7 @@ namespace Allors.Workspace.Local
             {
                 using (var session = this.Database.CreateSession())
                 {
-                    var acls = new WorkspaceAccessControlLists(session.GetUser());
+                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
                     var responseBuilder = new SyncResponseBuilder(session, request, acls);
                     var response = responseBuilder.Build();
                     return Task.FromResult(response);
