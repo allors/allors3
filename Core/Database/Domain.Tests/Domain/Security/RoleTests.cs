@@ -8,7 +8,6 @@ namespace Tests
     using Allors;
     using Allors.Domain;
     using Allors.Domain.Derivations.Errors;
-    using Allors.Meta;
     using Xunit;
 
     public class RoleTests : DomainTest
@@ -23,13 +22,13 @@ namespace Tests
             var validation = this.Session.Derive(false);
 
             Assert.True(validation.HasErrors);
-            Assert.Equal(1, validation.Errors.Length);
+            Assert.Single(validation.Errors);
 
             var derivationError = validation.Errors[0];
 
-            Assert.Equal(1, derivationError.Relations.Length);
+            Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
-            Assert.Equal((RoleType)M.Role.Name, derivationError.Relations[0].RoleType);
+            Assert.Equal(this.M.Role.Name, derivationError.Relations[0].RoleType);
         }
 
         [Fact]
@@ -50,9 +49,9 @@ namespace Tests
 
             foreach (var derivationError in validation.Errors)
             {
-                Assert.Equal(1, derivationError.Relations.Length);
+                Assert.Single(derivationError.Relations);
                 Assert.Equal(typeof(DerivationErrorUnique), derivationError.GetType());
-                Assert.Equal((RoleType)M.Role.Name, derivationError.Relations[0].RoleType);
+                Assert.Equal(this.M.Role.Name, derivationError.Relations[0].RoleType);
             }
         }
 

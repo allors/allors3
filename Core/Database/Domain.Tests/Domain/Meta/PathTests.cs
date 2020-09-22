@@ -6,7 +6,6 @@
 namespace Tests
 {
     using System.Collections.Generic;
-
     using Allors;
     using Allors.Data;
     using Allors.Domain;

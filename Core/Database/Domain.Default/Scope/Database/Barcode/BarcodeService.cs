@@ -7,82 +7,83 @@ namespace Allors.Services
 {
     using System;
     using System.IO;
-
     using SkiaSharp;
+    using ZXing;
     using ZXing.Common;
+    using ZXing.SkiaSharp;
 
     public class BarcodeService : IBarcodeService
     {
         public byte[] Generate(string content, BarcodeType type, int? width, int? height, int? margin, bool? pure)
         {
-            ZXing.BarcodeFormat barcodeFormat;
+            BarcodeFormat barcodeFormat;
             switch (type)
             {
                 case BarcodeType.AZTEC:
-                    barcodeFormat = ZXing.BarcodeFormat.AZTEC;
+                    barcodeFormat = BarcodeFormat.AZTEC;
                     break;
                 case BarcodeType.CODABAR:
-                    barcodeFormat = ZXing.BarcodeFormat.CODABAR;
+                    barcodeFormat = BarcodeFormat.CODABAR;
                     break;
                 case BarcodeType.CODE_39:
-                    barcodeFormat = ZXing.BarcodeFormat.CODE_39;
+                    barcodeFormat = BarcodeFormat.CODE_39;
                     break;
                 case BarcodeType.CODE_93:
-                    barcodeFormat = ZXing.BarcodeFormat.CODE_93;
+                    barcodeFormat = BarcodeFormat.CODE_93;
                     break;
                 case BarcodeType.CODE_128:
-                    barcodeFormat = ZXing.BarcodeFormat.CODE_128;
+                    barcodeFormat = BarcodeFormat.CODE_128;
                     break;
                 case BarcodeType.DATA_MATRIX:
-                    barcodeFormat = ZXing.BarcodeFormat.DATA_MATRIX;
+                    barcodeFormat = BarcodeFormat.DATA_MATRIX;
                     break;
                 case BarcodeType.EAN_8:
-                    barcodeFormat = ZXing.BarcodeFormat.EAN_8;
+                    barcodeFormat = BarcodeFormat.EAN_8;
                     break;
                 case BarcodeType.EAN_13:
-                    barcodeFormat = ZXing.BarcodeFormat.EAN_13;
+                    barcodeFormat = BarcodeFormat.EAN_13;
                     break;
                 case BarcodeType.ITF:
-                    barcodeFormat = ZXing.BarcodeFormat.ITF;
+                    barcodeFormat = BarcodeFormat.ITF;
                     break;
                 case BarcodeType.MAXICODE:
-                    barcodeFormat = ZXing.BarcodeFormat.MAXICODE;
+                    barcodeFormat = BarcodeFormat.MAXICODE;
                     break;
                 case BarcodeType.PDF_417:
-                    barcodeFormat = ZXing.BarcodeFormat.PDF_417;
+                    barcodeFormat = BarcodeFormat.PDF_417;
                     break;
                 case BarcodeType.QR_CODE:
-                    barcodeFormat = ZXing.BarcodeFormat.QR_CODE;
+                    barcodeFormat = BarcodeFormat.QR_CODE;
                     break;
                 case BarcodeType.RSS_14:
-                    barcodeFormat = ZXing.BarcodeFormat.RSS_14;
+                    barcodeFormat = BarcodeFormat.RSS_14;
                     break;
                 case BarcodeType.RSS_EXPANDED:
-                    barcodeFormat = ZXing.BarcodeFormat.RSS_EXPANDED;
+                    barcodeFormat = BarcodeFormat.RSS_EXPANDED;
                     break;
                 case BarcodeType.UPC_A:
-                    barcodeFormat = ZXing.BarcodeFormat.UPC_A;
+                    barcodeFormat = BarcodeFormat.UPC_A;
                     break;
                 case BarcodeType.UPC_E:
-                    barcodeFormat = ZXing.BarcodeFormat.UPC_E;
+                    barcodeFormat = BarcodeFormat.UPC_E;
                     break;
                 case BarcodeType.UPC_EAN_EXTENSION:
-                    barcodeFormat = ZXing.BarcodeFormat.UPC_EAN_EXTENSION;
+                    barcodeFormat = BarcodeFormat.UPC_EAN_EXTENSION;
                     break;
                 case BarcodeType.MSI:
-                    barcodeFormat = ZXing.BarcodeFormat.MSI;
+                    barcodeFormat = BarcodeFormat.MSI;
                     break;
                 case BarcodeType.PLESSEY:
-                    barcodeFormat = ZXing.BarcodeFormat.PLESSEY;
+                    barcodeFormat = BarcodeFormat.PLESSEY;
                     break;
                 case BarcodeType.IMB:
-                    barcodeFormat = ZXing.BarcodeFormat.IMB;
+                    barcodeFormat = BarcodeFormat.IMB;
                     break;
                 default:
                     throw new ArgumentException();
             }
 
-            var barcodeWriter = new ZXing.SkiaSharp.BarcodeWriter
+            var barcodeWriter = new BarcodeWriter
             {
                 Format = barcodeFormat,
             };

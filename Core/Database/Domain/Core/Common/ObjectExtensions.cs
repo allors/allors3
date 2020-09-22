@@ -5,7 +5,6 @@
 
 namespace Allors
 {
-    using System.Collections.Concurrent;
     using System.Linq;
 
     using Allors.Meta;
@@ -13,9 +12,6 @@ namespace Allors
 
     public static partial class ObjectExtensions
     {
-        private static readonly ConcurrentDictionary<string, RoleType[]> RequiredRoleTypesByClassName = new ConcurrentDictionary<string, RoleType[]>();
-        private static readonly ConcurrentDictionary<string, RoleType[]> UniqueRoleTypesByClassName = new ConcurrentDictionary<string, RoleType[]>();
-
         public static void CoreOnPreDerive(this Object @this, ObjectOnPreDerive method)
         {
             var (iteration, changeSet, derivedObjects) = method;
@@ -40,35 +36,14 @@ namespace Allors
         {
             var derivation = method.Derivation;
             var @class = (Class)@this.Strategy.Class;
+            var metaService = @this.DatabaseScope().MetaService;
 
-            // Required
-            if (!RequiredRoleTypesByClassName.TryGetValue(@class.Name, out var requiredRoleTypes))
-            {
-                requiredRoleTypes = @class.RoleClasses
-                    .Where(concreteRoleType => concreteRoleType.IsRequired)
-                    .Select(concreteRoleType => concreteRoleType.RoleType)
-                    .ToArray();
-
-                RequiredRoleTypesByClassName[@class.Name] = requiredRoleTypes;
-            }
-
-            foreach (var roleType in requiredRoleTypes)
+            foreach (var roleType in metaService.GetRequiredRoleTypes(@class))
             {
                 derivation.Validation.AssertExists(@this, roleType);
             }
 
-            // Unique
-            if (!UniqueRoleTypesByClassName.TryGetValue(@class.Name, out var uniqueRoleTypes))
-            {
-                uniqueRoleTypes = @class.RoleClasses
-                    .Where(concreteRoleType => concreteRoleType.IsUnique)
-                    .Select(concreteRoleType => concreteRoleType.RoleType)
-                    .ToArray();
-
-                UniqueRoleTypesByClassName[@class.Name] = uniqueRoleTypes;
-            }
-
-            foreach (var roleType in uniqueRoleTypes)
+            foreach (var roleType in @metaService.GetUniqueRoleTypes(@class))
             {
                 derivation.Validation.AssertIsUnique(@this, roleType);
             }

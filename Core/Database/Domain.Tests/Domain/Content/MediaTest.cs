@@ -7,10 +7,8 @@
 namespace Tests
 {
     using System.IO;
-
     using Allors;
     using Allors.Domain;
-
     using Xunit;
 
     public class MediaTest : ContentTests

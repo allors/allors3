@@ -19,7 +19,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();

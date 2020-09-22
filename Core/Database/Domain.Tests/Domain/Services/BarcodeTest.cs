@@ -7,7 +7,6 @@ namespace Tests
 {
     using System.IO;
     using Allors;
-    using Allors.Domain;
     using Allors.Services;
     using Xunit;
 
@@ -16,7 +15,7 @@ namespace Tests
         [Fact]
         public void Default()
         {
-            var barcodeService = ((IDatabaseScope) this.Session.Database.Scope()).BarcodeService;
+            var barcodeService = this.Session.Database.Scope().BarcodeService;
             var image = barcodeService.Generate("Allors", BarcodeType.CODE_128);
             File.WriteAllBytes("barcode.png", image);
         }

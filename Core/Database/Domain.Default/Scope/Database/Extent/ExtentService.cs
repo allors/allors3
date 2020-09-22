@@ -7,9 +7,8 @@ namespace Allors.Services
 {
     using System;
     using System.Collections.Concurrent;
-
-    using Allors.Data;
-    using Allors.Domain;
+    using Data;
+    using Domain;
 
     public class ExtentService : IExtentService
     {
@@ -26,21 +25,19 @@ namespace Allors.Services
         {
             if (!this.extentById.TryGetValue(id, out var extent))
             {
-                using (var session = this.database.CreateSession())
+                using var session = this.database.CreateSession();
+                var m = session.Database.Scope().M;
+
+                var filter = new Extent(m.PreparedExtent.Class)
                 {
-                    var m = ((IDatabaseScope) session.Database.Scope()).M;
+                    Predicate = new Equals(m.PreparedExtent.UniqueId) { Value = id },
+                };
 
-                    var filter = new Extent(m.PreparedExtent.Class)
-                    {
-                        Predicate = new Equals(m.PreparedExtent.UniqueId) { Value = id },
-                    };
-
-                    var preparedExtent = (PreparedExtent)filter.Build(session).First;
-                    if (preparedExtent != null)
-                    {
-                        extent = preparedExtent.Extent;
-                        this.extentById[id] = extent;
-                    }
+                var preparedExtent = (PreparedExtent)filter.Build(session).First;
+                if (preparedExtent != null)
+                {
+                    extent = preparedExtent.Extent;
+                    this.extentById[id] = extent;
                 }
             }
 

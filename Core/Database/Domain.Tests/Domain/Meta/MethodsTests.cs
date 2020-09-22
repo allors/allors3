@@ -9,7 +9,6 @@
 namespace Tests
 {
     using Allors.Domain;
-
     using Xunit;
 
     public class MethodsTests : DomainTest

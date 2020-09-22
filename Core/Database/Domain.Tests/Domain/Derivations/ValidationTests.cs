@@ -9,10 +9,8 @@
 namespace Tests
 {
     using System;
-
     using Allors;
     using Allors.Domain;
-
     using Xunit;
 
     public class ValidationTests : DomainTest

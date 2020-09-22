@@ -10,7 +10,6 @@ namespace Tests
     using Allors;
     using Allors.Domain;
     using Allors.Domain.Derivations.Errors;
-    using Allors.Meta;
     using Xunit;
 
     public class AccessControlTests : DomainTest
@@ -30,11 +29,11 @@ namespace Tests
             var validation = this.Session.Derive(false);
 
             Assert.True(validation.HasErrors);
-            Assert.Equal(1, validation.Errors.Length);
+            Assert.Single(validation.Errors);
 
             var derivationError = validation.Errors[0];
 
-            Assert.Equal(1, derivationError.Relations.Length);
+            Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
             Assert.Equal(M.AccessControl.Role, derivationError.Relations[0].RoleType);
         }
@@ -53,14 +52,14 @@ namespace Tests
             var validation = this.Session.Derive(false);
 
             Assert.True(validation.HasErrors);
-            Assert.Equal(1, validation.Errors.Length);
+            Assert.Single(validation.Errors);
 
             var derivationError = validation.Errors[0];
 
             Assert.Equal(2, derivationError.Relations.Length);
             Assert.Equal(typeof(DerivationErrorAtLeastOne), derivationError.GetType());
-            Assert.True(new ArrayList(derivationError.RoleTypes).Contains((RoleType)M.AccessControl.Subjects));
-            Assert.True(new ArrayList(derivationError.RoleTypes).Contains((RoleType)M.AccessControl.SubjectGroups));
+            Assert.True(new ArrayList(derivationError.RoleTypes).Contains(this.M.AccessControl.Subjects));
+            Assert.True(new ArrayList(derivationError.RoleTypes).Contains(this.M.AccessControl.SubjectGroups));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Allors
     using Domain;
     using Microsoft.AspNetCore.Http;
 
-    public partial class DefaultSessionScope : ISessionScope
+    public class DefaultSessionScope : ISessionScope
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 

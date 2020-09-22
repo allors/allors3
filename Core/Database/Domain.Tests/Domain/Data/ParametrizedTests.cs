@@ -9,11 +9,9 @@
 namespace Tests
 {
     using System.Collections.Generic;
-
     using Allors.Data;
     using Allors.Domain;
     using Xunit;
-    using Extent = Allors.Data.Extent;
 
     public class ParametrizedTests : DomainTest
     {
@@ -42,7 +40,7 @@ namespace Tests
                 Predicate = new Equals { Dependencies = new[] { "useFirstname" }, PropertyType = M.Person.FirstName, Value = "John"},
             };
 
-            var arguments = new Dictionary<string, string> { };
+            var arguments = new Dictionary<string, string>();
             var queryExtent = filter.Build(this.Session, arguments);
 
             var extent = this.Session.Extent(M.Person.ObjectType);

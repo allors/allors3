@@ -6,10 +6,12 @@
 
 namespace Tests
 {
+    using System.Text;
+
     public abstract class ContentTests : DomainTest
     {
         protected static byte[] GetByteArray() => GetByteArray("Some string");
 
-        protected static byte[] GetByteArray(string v) => System.Text.Encoding.UTF8.GetBytes(v);
+        protected static byte[] GetByteArray(string v) => Encoding.UTF8.GetBytes(v);
     }
 }

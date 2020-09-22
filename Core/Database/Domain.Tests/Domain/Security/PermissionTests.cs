@@ -6,9 +6,9 @@
 
 namespace Tests
 {
-    using Allors;
     using System;
     using System.Linq;
+    using Allors;
     using Allors.Domain;
     using Allors.Meta;
     using Xunit;

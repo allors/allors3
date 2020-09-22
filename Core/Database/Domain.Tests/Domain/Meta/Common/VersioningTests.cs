@@ -10,7 +10,6 @@ namespace Tests
 {
     using Allors;
     using Allors.Domain;
-
     using Xunit;
 
     public class VersioningTests : DomainTest
@@ -24,7 +23,7 @@ namespace Tests
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
-            Assert.Equal(1, order.AllVersions.Count);
+            Assert.Single(order.AllVersions);
 
             var version = order.CurrentVersion;
 
@@ -42,7 +41,7 @@ namespace Tests
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
-            Assert.Equal(1, order.AllVersions.Count);
+            Assert.Single(order.AllVersions);
 
             var version = order.CurrentVersion;
 
@@ -67,7 +66,7 @@ namespace Tests
             this.Session.Derive();
 
             Assert.True(order.ExistAllVersions);
-            Assert.Equal(1, order.AllVersions.Count);
+            Assert.Single(order.AllVersions);
             Assert.Equal(currentVersion, order.CurrentVersion);
         }
 
@@ -84,7 +83,7 @@ namespace Tests
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
-            Assert.Equal(1, order.AllVersions.Count);
+            Assert.Single(order.AllVersions);
 
             var version = order.CurrentVersion;
 
@@ -106,13 +105,13 @@ namespace Tests
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
-            Assert.Equal(1, order.AllVersions.Count);
+            Assert.Single(order.AllVersions);
 
             var version = order.CurrentVersion;
 
             Assert.False(version.ExistAmount);
             Assert.False(version.ExistOrderState);
-            Assert.Equal(1, version.OrderLines.Count);
+            Assert.Single(version.OrderLines);
             Assert.Equal(orderLine, version.OrderLines[0]);
         }
     }

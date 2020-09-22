@@ -12,28 +12,13 @@ namespace Allors
 
     public abstract class ObjectBuilder : IObjectBuilder
     {
-        public static readonly Dictionary<IObjectType, Type> BuilderTypeByObjectTypeId = new Dictionary<IObjectType, Type>();
-
         public static object Build(ISession session, IClass @class)
         {
-            if (!BuilderTypeByObjectTypeId.TryGetValue(@class, out var builderType))
-            {
-                var builderTypeName = "Allors.Domain." + @class.Name + "Builder";
-                builderType = Type.GetType(builderTypeName, false);
-                if (builderType != null)
-                {
-                    BuilderTypeByObjectTypeId[@class] = builderType;
-                }
-            }
-
-            if (builderType != null)
-            {
-                object[] parameters = { session };
-                var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);
-                return builder.DefaultBuild();
-            }
-
-            return session.Create(@class);
+            var metaService = session.Database.Scope().MetaService;
+            var builderType = metaService.GetBuilderType(@class);
+            object[] parameters = { session };
+            var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);
+            return builder.DefaultBuild();
         }
 
         public abstract void Dispose();

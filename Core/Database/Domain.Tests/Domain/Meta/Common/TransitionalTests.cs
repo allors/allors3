@@ -10,7 +10,6 @@ namespace Tests
 {
     using Allors;
     using Allors.Domain;
-
     using Xunit;
 
     public class TransitionalTests : DomainTest
@@ -42,9 +41,9 @@ namespace Tests
             Assert.Equal(initial, order.LastOrderState);
             Assert.False(order.ExistPreviousOrderState);
 
-            Assert.Equal(1, order.ObjectStates.Count);
+            Assert.Single(order.ObjectStates);
             Assert.Contains(initial, order.ObjectStates);
-            Assert.Equal(1, order.LastObjectStates.Count);
+            Assert.Single(order.LastObjectStates);
             Assert.Contains(initial, order.LastObjectStates);
             Assert.False(order.ExistPreviousObjectStates);
 
@@ -56,11 +55,11 @@ namespace Tests
             Assert.Equal(confirmed, order.LastOrderState);
             Assert.Equal(initial, order.PreviousOrderState);
 
-            Assert.Equal(1, order.ObjectStates.Count);
+            Assert.Single(order.ObjectStates);
             Assert.Contains(confirmed, order.ObjectStates);
-            Assert.Equal(1, order.LastObjectStates.Count);
+            Assert.Single(order.LastObjectStates);
             Assert.Contains(confirmed, order.LastObjectStates);
-            Assert.Equal(1, order.PreviousObjectStates.Count);
+            Assert.Single(order.PreviousObjectStates);
             Assert.Contains(initial, order.PreviousObjectStates);
         }
 
@@ -99,7 +98,7 @@ namespace Tests
             Assert.Equal(2, order.LastObjectStates.Count);
             Assert.Contains(confirmed, order.LastObjectStates);
             Assert.Contains(notShipped, order.LastObjectStates);
-            Assert.Equal(1, order.PreviousObjectStates.Count);
+            Assert.Single(order.PreviousObjectStates);
             Assert.Contains(initial, order.PreviousObjectStates);
 
             order.ShipmentState = partiallyShipped;

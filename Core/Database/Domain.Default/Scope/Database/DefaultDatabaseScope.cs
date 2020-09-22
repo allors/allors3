@@ -10,7 +10,7 @@ namespace Allors
     using Microsoft.AspNetCore.Http;
     using Services;
 
-    public partial class DefaultDatabaseScope : IDatabaseScope 
+    public class DefaultDatabaseScope : IDatabaseScope 
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
@@ -18,6 +18,8 @@ namespace Allors
 
         public void OnInit(IDatabase database)
         {
+            var metaPopulation = (MetaPopulation)database.MetaPopulation;
+
             this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
 
             this.BarcodeService = new BarcodeService();
@@ -26,6 +28,7 @@ namespace Allors
             this.ExtentService = new ExtentService(database);
             this.FetchService = new FetchService(database);
             this.MailService = new MailService();
+            this.MetaService = new MetaService(metaPopulation, database.ObjectFactory.Assembly);
             this.PasswordService = new PasswordService();
             this.SingletonService = new SingletonService();
             this.StickyService = new StickyService();
@@ -40,6 +43,7 @@ namespace Allors
         public IExtentService ExtentService { get; private set; }
         public IFetchService FetchService { get; private set; }
         public IMailService MailService { get; private set; }
+        public IMetaService MetaService { get; private set; }
         public IPasswordService PasswordService { get; private set; }
         public ISingletonService SingletonService { get; private set; }
         public IStickyService StickyService { get; private set; }

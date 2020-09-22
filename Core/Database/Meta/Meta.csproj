@@ -5,4 +5,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Platform\Database\Allors.Database\Allors.Database.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\Platform\Database\Allors.Meta\Meta*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="generated\" />
+  </ItemGroup>
 </Project>

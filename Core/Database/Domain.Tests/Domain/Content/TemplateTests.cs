@@ -10,10 +10,8 @@ namespace Tests
 {
     using System.Collections.Generic;
     using System.IO;
-
     using Allors;
     using Allors.Domain;
-
     using Xunit;
 
     public class TemplateTests : DomainTest
@@ -30,13 +28,13 @@ namespace Tests
             var people = new People(this.Session).Extent();
             var logo = this.GetResourceBytes("Domain.Tests.Resources.logo.png");
 
-            var data = new Dictionary<string, object>()
-                           {
+            var data = new Dictionary<string, object>
+            {
                                { "people", people },
                            };
 
-            var images = new Dictionary<string, byte[]>()
-                            {
+            var images = new Dictionary<string, byte[]>
+            {
                                 { "logo", logo },
                             };
 

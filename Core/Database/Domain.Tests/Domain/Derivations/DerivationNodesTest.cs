@@ -10,10 +10,8 @@ namespace Tests
 {
     using System;
     using System.Collections.Generic;
-
     using Allors;
     using Allors.Domain;
-
     using Xunit;
 
     public class DerivationNodesTest : DomainTest

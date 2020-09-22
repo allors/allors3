@@ -15,7 +15,6 @@ namespace Tests
     using Allors.Meta;
     using Allors.Services;
     using Moq;
-    using ObjectFactory = Allors.ObjectFactory;
 
     public class DomainTest : IDisposable
     {
@@ -41,9 +40,9 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => ((IDatabaseScope) this.Session.Database.Scope()).TimeService;
+        public ITimeService TimeService => this.Session.Database.Scope().TimeService;
 
-        public IDerivationService DerivationService => ((IDatabaseScope) this.Session.Database.Scope()).DerivationService;
+        public IDerivationService DerivationService => this.Session.Database.Scope().DerivationService;
 
         public TimeSpan? TimeShift
         {

@@ -6,12 +6,13 @@
 namespace Allors.Services
 {
     using System;
-    using Allors.Domain;
+    using Domain;
+    using Domain.Derivations.Default;
 
     public class DerivationService : IDerivationService
     {
         public Func<ISession, IDerivation> Factory { get; set; }
 
-        public IDerivation CreateDerivation(ISession session) => this.Factory != null ? this.Factory(session) : new Domain.Derivations.Default.Derivation(session);
+        public IDerivation CreateDerivation(ISession session) => this.Factory != null ? this.Factory(session) : new Derivation(session);
     }
 }

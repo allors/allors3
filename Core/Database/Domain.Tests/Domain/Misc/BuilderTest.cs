@@ -6,7 +6,6 @@
 namespace Tests
 {
     using Allors.Domain;
-
     using Xunit;
 
     public class BuilderTest : DomainTest

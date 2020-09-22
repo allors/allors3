@@ -24,6 +24,8 @@ namespace Allors
 
         IMailService MailService { get; }
 
+        IMetaService MetaService { get; }
+
         IPasswordService PasswordService { get; }
 
         ISingletonService SingletonService { get; }

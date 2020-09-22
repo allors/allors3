@@ -20,7 +20,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -51,7 +51,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -89,7 +89,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -129,7 +129,7 @@ namespace Tests
             new AccessControlBuilder(this.Session).WithSubject(anotherPerson).WithRole(databaseRole).Build();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -170,7 +170,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -206,7 +206,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
@@ -247,7 +247,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var sessions = new ISession[] { this.Session };
+            var sessions = new[] { this.Session };
             foreach (var session in sessions)
             {
                 session.Commit();
