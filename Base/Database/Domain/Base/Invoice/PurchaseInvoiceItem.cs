@@ -59,6 +59,12 @@ namespace Allors.Domain
                 iteration.Mark(invoice);
             }
 
+            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            {
+                iteration.AddDependency(this.SerialisedItem, this);
+                iteration.Mark(this.SerialisedItem);
+            }
+
             foreach (OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
             {
                 iteration.AddDependency(orderItemBilling.OrderItem, this);

@@ -647,6 +647,7 @@ namespace Allors.Domain
                     .WithAssignedUnitPrice(purchaseInvoiceItem.AssignedUnitPrice)
                     .WithProduct(purchaseInvoiceItem.Part as UnifiedGood)
                     .WithSerialisedItem(purchaseInvoiceItem.SerialisedItem)
+                    .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session()).Sold)
                     .WithQuantity(purchaseInvoiceItem.Quantity)
                     .WithComment(purchaseInvoiceItem.Comment)
                     .WithInternalComment(purchaseInvoiceItem.InternalComment)
