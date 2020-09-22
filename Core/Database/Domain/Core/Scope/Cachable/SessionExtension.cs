@@ -12,7 +12,7 @@ namespace Allors.Domain
     {
         public static ConcurrentDictionary<long, T> GetCache<T>(this ISession @this)
         {
-            var caches = ((DatabaseScope) @this.Database.Scope()).CacheService;
+            var caches = @this.Database.Scope().CacheService;
             var cache = caches.Get<T, ConcurrentDictionary<long, T>>();
             if (cache == null)
             {
@@ -25,7 +25,7 @@ namespace Allors.Domain
 
         public static TValue GetCache<TKey, TValue>(this ISession @this, Func<TValue> factory)
         {
-            var caches = ((DatabaseScope) @this.Database.Scope()).CacheService;
+            var caches = @this.Database.Scope().CacheService;
             var cache = caches.Get<TKey, TValue>();
             if (cache == null)
             {
@@ -38,7 +38,7 @@ namespace Allors.Domain
 
         public static void ClearCache<T>(this ISession @this)
         {
-            var caches = ((DatabaseScope) @this.Database.Scope()).CacheService;
+            var caches = @this.Database.Scope().CacheService;
             caches.Clear<T>();
         }
     }

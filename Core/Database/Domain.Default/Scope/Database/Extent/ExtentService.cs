@@ -28,7 +28,7 @@ namespace Allors.Services
             {
                 using (var session = this.database.CreateSession())
                 {
-                    var m = ((DatabaseScope) session.Database.Scope()).M;
+                    var m = ((IDatabaseScope) session.Database.Scope()).M;
 
                     var filter = new Extent(m.PreparedExtent.Class)
                     {

@@ -27,7 +27,7 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
-            var m = ((DatabaseScope) this.Session.Database.Scope()).M;
+            var m = ((IDatabaseScope) this.Session.Database.Scope()).M;
 
             var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
             var response = new PullResponseBuilder(acls, this.TreeService);

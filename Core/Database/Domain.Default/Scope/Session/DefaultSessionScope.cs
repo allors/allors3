@@ -11,13 +11,15 @@ namespace Allors
     using Domain;
     using Microsoft.AspNetCore.Http;
 
-    public partial class DefaultSessionScope : SessionScope
+    public partial class DefaultSessionScope : ISessionScope
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
         public DefaultSessionScope(IHttpContextAccessor httpContextAccessor) => this.httpContextAccessor = httpContextAccessor;
 
-        public override void OnInit(ISession session)
+        public User User { get; set; }
+
+        public void OnInit(ISession session)
         {
             var nameIdentifier = this.httpContextAccessor?.HttpContext.User.Claims
                 .FirstOrDefault(v => v.Type == ClaimTypes.NameIdentifier)
@@ -27,6 +29,10 @@ namespace Allors
             {
                 this.User = (User)session.Instantiate(userId) ?? new AutomatedAgents(session).Guest;
             }
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

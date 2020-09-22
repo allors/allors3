@@ -328,7 +328,7 @@ $@"CREATE TABLE {tableName}(
 
 )";
 
-                            using (var command = new SqlCommand(sql.ToString(), connection))
+                            using (var command = new SqlCommand(sql, connection))
                             {
                                 command.ExecuteNonQuery();
                             }

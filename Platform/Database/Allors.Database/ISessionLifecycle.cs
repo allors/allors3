@@ -3,12 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Allors
 {
     /// <summary>
-    /// Scope local to the session.
+    /// The Session lifecycle.
     /// </summary>
-    public interface ISessionScope
+    public interface ISessionLifecycle : IDisposable
     {
         void OnInit(ISession session);
     }

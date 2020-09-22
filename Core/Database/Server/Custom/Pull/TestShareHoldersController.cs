@@ -30,7 +30,7 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
-            var m = ((DatabaseScope) this.Session.Database.Scope()).M;
+            var m = ((IDatabaseScope) this.Session.Database.Scope()).M;
 
             try
             {

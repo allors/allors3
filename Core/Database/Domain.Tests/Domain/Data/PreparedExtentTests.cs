@@ -18,7 +18,7 @@ namespace Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = ((DatabaseScope) this.Session.Database.Scope()).ExtentService;
+            var extentService = ((IDatabaseScope) this.Session.Database.Scope()).ExtentService;
             var organizationByName = extentService.Get(PreparedExtents.ByName);
 
             var arguments = new Dictionary<string, string>

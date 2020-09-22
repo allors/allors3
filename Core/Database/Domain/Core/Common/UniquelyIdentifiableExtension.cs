@@ -13,7 +13,7 @@ namespace Allors.Domain
         {
             if (!@this.ExistUniqueId)
             {
-                @this.Strategy.SetUnitRole(((DatabaseScope) @this.Session().Database.Scope()).M.UniquelyIdentifiable.UniqueId.RelationType, Guid.NewGuid());
+                @this.Strategy.SetUnitRole(@this.Session().Database.Scope().M.UniquelyIdentifiable.UniqueId.RelationType, Guid.NewGuid());
             }
         }
     }

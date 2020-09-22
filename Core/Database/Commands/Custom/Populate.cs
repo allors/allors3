@@ -5,57 +5,44 @@
 
 namespace Commands
 {
-    using System.IO;
-
     using Allors;
     using Allors.Domain;
-    using Allors.Services;
-
     using McMaster.Extensions.CommandLineUtils;
-
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
+    using NLog;
 
     [Command(Description = "Add file contents to the index")]
     public class Populate
     {
-        private readonly IDatabaseService databaseService;
+        public Program Parent { get; set; }
 
-        private readonly ILogger<Populate> logger;
-
-        private readonly DirectoryInfo dataPath;
-
-        public Populate(IConfiguration configuration, IDatabaseService databaseService, ILogger<Populate> logger)
-        {
-            this.dataPath = new DirectoryInfo(".").GetAncestorSibling(configuration["datapath"]);
-            this.databaseService = databaseService;
-            this.logger = logger;
-        }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         public int OnExecute(CommandLineApplication app)
         {
-            this.logger.LogInformation("Begin");
+            this.Logger.Info("Begin");
 
-            this.databaseService.Database.Init();
+            var database = this.Parent.Database;
 
-            using (var session = this.databaseService.Database.CreateSession())
+            database.Init();
+
+            using (var session = database.CreateSession())
             {
-                var config = new Config { DataPath = this.dataPath };
+                var config = new Config { DataPath = this.Parent.DataPath };
                 new Setup(session, config).Apply();
 
                 session.Derive();
                 session.Commit();
 
                 var scheduler = new AutomatedAgents(session).System;
-                session.SetUser(scheduler);
+                session.Scope().User = scheduler;
 
-                new Allors.Upgrade(session, this.dataPath).Execute();
+                new Allors.Upgrade(session, this.Parent.DataPath).Execute();
 
                 session.Derive();
                 session.Commit();
             }
 
-            this.logger.LogInformation("End");
+            this.Logger.Info("End");
 
             return ExitCode.Success;
         }

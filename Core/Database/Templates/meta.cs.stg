@@ -147,12 +147,12 @@ namespace Allors
 {
     public static partial class ObjectExtensions
     {
-        public static SessionScope SessionScope(this IObject @this)
+        public static ISessionScope SessionScope(this IObject @this)
         {
             return @this.Strategy.Session.Scope();
         }
 
-        public static DatabaseScope DatabaseScope(this IObject @this)
+        public static IDatabaseScope DatabaseScope(this IObject @this)
         {
             return @this.Strategy.Session.Database.Scope();
         }
@@ -160,17 +160,17 @@ namespace Allors
 
     public static partial class SessionExtensions
     {
-        public static SessionScope Scope(this ISession @this)
+        public static ISessionScope Scope(this ISession @this)
         {
-            return ((SessionScope)@this.Scope);
+            return ((ISessionScope)@this.Lifecycle);
         }
     }
 
     public static partial class DatabaseExtensions
     {
-        public static DatabaseScope Scope(this IDatabase @this)
+        public static IDatabaseScope Scope(this IDatabase @this)
         {
-            return ((DatabaseScope)@this.Scope);
+            return ((IDatabaseScope)@this.Lifecycle);
         }
     }
 }

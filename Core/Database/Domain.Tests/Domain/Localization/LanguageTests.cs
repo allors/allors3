@@ -7,8 +7,6 @@ namespace Tests
 {
     using Allors;
     using Allors.Domain;
-    using Allors.Meta;
-
     using Xunit;
 
     public class LanguageTests : DomainTest

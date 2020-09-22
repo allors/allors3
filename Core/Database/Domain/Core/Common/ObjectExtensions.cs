@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors
 {
     using System.Collections.Concurrent;
     using System.Linq;
 
     using Allors.Meta;
+    using Domain;
 
     public static partial class ObjectExtensions
     {

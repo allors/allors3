@@ -12,5 +12,9 @@ namespace Allors
         public void OnInit(ISession session)
         {
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

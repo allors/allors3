@@ -40,10 +40,10 @@ namespace Allors.Database.Adapters.SqlClient
 
         private ICacheFactory cacheFactory;
 
-        public Database(IDatabaseScope state, Configuration configuration)
+        public Database(IDatabaseLifecycle state, Configuration configuration)
         {
-            this.Scope = state;
-            if (this.Scope == null)
+            this.Lifecycle = state;
+            if (this.Lifecycle == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -94,14 +94,14 @@ namespace Allors.Database.Adapters.SqlClient
 
             this.DomainDerivationById = new Dictionary<Guid, IDomainDerivation>();
 
-            this.Scope.OnInit(this);
+            this.Lifecycle.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        public IDatabaseScope Scope { get; }
+        public IDatabaseLifecycle Lifecycle { get; }
 
         public IConnectionFactory ConnectionFactory
         {
@@ -200,7 +200,7 @@ namespace Allors.Database.Adapters.SqlClient
                 throw new Exception(this.validationMessage);
             }
 
-            return new Session(this, connection, this.Scope.CreateSessionScope());
+            return new Session(this, connection, this.Lifecycle.CreateSessionScope());
         }
 
         public void Init()

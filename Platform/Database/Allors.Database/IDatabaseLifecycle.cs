@@ -5,13 +5,15 @@
 
 namespace Allors
 {
+    using System;
+
     /// <summary>
-    /// Scope local to the database.
+    /// The Database lifecycle.
     /// </summary>
-    public interface IDatabaseScope
+    public interface IDatabaseLifecycle : IDisposable
     {
         void OnInit(IDatabase database);
 
-        ISessionScope CreateSessionScope();
+        ISessionLifecycle CreateSessionScope();
     }
 }

@@ -12,7 +12,7 @@ namespace Allors
 
     public static partial class ObjectExtensions
     {
-        public static void CoreOnPostBuild(this Domain.Object @this, ObjectOnPostBuild method)
+        public static void CoreOnPostBuild(this Allors.Domain.Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
             foreach (var concreteRoleType in ((Class)@this.Strategy.Class).RoleClasses)
@@ -60,7 +60,7 @@ namespace Allors
             var session = strategy.Session;
             var @class = strategy.Class;
 
-            var clone = (T)ObjectBuilder.Build(session, @class);
+            var clone = (T)Allors.ObjectBuilder.Build(session, @class);
 
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
             {

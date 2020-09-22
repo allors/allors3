@@ -9,13 +9,8 @@ namespace Allors
 {
     using Meta;
 
-    public class DatabaseScope : IDatabaseLifecycle
+    public interface IDatabaseScope : IDatabaseLifecycle
     {
-        public void OnInit(IDatabase database) => this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
-
-        public ISessionLifecycle CreateSessionScope() => new SessionScope();
-
-        public M M { get; set; }
-        public void Dispose() { }
+        M M { get; }
     }
 }

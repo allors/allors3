@@ -6,75 +6,64 @@
 namespace Commands
 {
     using System;
-
     using Allors;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Services;
-
     using McMaster.Extensions.CommandLineUtils;
-
-    using Microsoft.Extensions.Logging;
+    using NLog;
 
     [Command(Description = "Print Documents")]
     public class Print
     {
-        private readonly IDatabaseService databaseService;
+        public Program Parent { get; set; }
 
-        private readonly ILogger<Print> logger;
-
-        public Print(IDatabaseService databaseService, ILogger<Print> logger)
-        {
-            this.databaseService = databaseService;
-            this.logger = logger;
-        }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         public int OnExecute(CommandLineApplication app)
         {
             var exitCode = ExitCode.Success;
 
-            using (var session = this.databaseService.Database.CreateSession())
+            using var session = this.Parent.Database.CreateSession();
+            this.Logger.Info("Begin");
+
+            var scheduler = new AutomatedAgents(session).System;
+            session.Scope().User = scheduler;
+
+            var m = this.Parent.M;
+            var printDocuments = new PrintDocuments(session).Extent();
+            printDocuments.Filter.AddNot().AddExists(m.PrintDocument.Media);
+
+            foreach (PrintDocument printDocument in printDocuments)
             {
-                this.logger.LogInformation("Begin");
-
-                var scheduler = new AutomatedAgents(session).System;
-                session.SetUser(scheduler);
-
-                var printDocuments = new PrintDocuments(session).Extent();
-                printDocuments.Filter.AddNot().AddExists(M.PrintDocument.Media);
-
-                foreach (PrintDocument printDocument in printDocuments)
+                var printable = printDocument.PrintableWherePrintDocument;
+                if (printable == null)
                 {
-                    var printable = printDocument.PrintableWherePrintDocument;
-                    if (printable == null)
-                    {
-                        this.logger.LogWarning($"PrintDocument with id {printDocument.Id} has no Printable object");
-                        continue;
-                    }
-
-                    try
-                    {
-                        printable.Print();
-
-                        if (printable.ExistPrintDocument)
-                        {
-                            this.logger.LogInformation($"Printed {printable.PrintDocument.Media.FileName}");
-                        }
-
-                        session.Derive();
-                        session.Commit();
-                    }
-                    catch (Exception e)
-                    {
-                        session.Rollback();
-                        exitCode = ExitCode.Error;
-
-                        this.logger.LogError(e, $"Could not print {printable.ToString()}");
-                    }
+                    this.Logger.Warn($"PrintDocument with id {printDocument.Id} has no Printable object");
+                    continue;
                 }
 
-                this.logger.LogInformation("End");
+                try
+                {
+                    printable.Print();
+
+                    if (printable.ExistPrintDocument)
+                    {
+                        this.Logger.Info($"Printed {printable.PrintDocument.Media.FileName}");
+                    }
+
+                    session.Derive();
+                    session.Commit();
+                }
+                catch (Exception e)
+                {
+                    session.Rollback();
+                    exitCode = ExitCode.Error;
+
+                    this.Logger.Error(e, $"Could not print {printable}");
+                }
             }
+
+            this.Logger.Info("End");
 
             return exitCode;
         }

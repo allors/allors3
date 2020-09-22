@@ -34,7 +34,7 @@ namespace Allors.Server
 
         public SyncResponse Build()
         {
-            var m = ((DatabaseScope) this.session.Database.Scope()).M;
+            var m = ((IDatabaseScope) this.session.Database.Scope()).M;
             var objects = this.session.Instantiate(this.syncRequest.Objects);
 
             // Prefetch

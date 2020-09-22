@@ -17,7 +17,7 @@ namespace Allors.Domain
         {
             var key = $"{type}.{roleType}";
 
-            var stickies = ((DatabaseScope) @this.Database.Scope()).StickyService;
+            var stickies = @this.Database.Scope().StickyService;
             var cache = stickies.Get<T>(key);
             if (cache == null)
             {

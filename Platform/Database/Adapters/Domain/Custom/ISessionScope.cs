@@ -2,16 +2,12 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the Default type.</summary>
+//------------------------------------------------------------------------------------------------
 
 namespace Allors
 {
-    using Domain;
-    using Services;
-
-    public abstract partial class SessionScope : ISessionScope
+    public interface ISessionScope : ISessionLifecycle
     {
-        public abstract void OnInit(ISession session);
-
-        public User User { get; set; }
     }
 }

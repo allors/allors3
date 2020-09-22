@@ -12,10 +12,8 @@ namespace Tests
     using Allors;
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
     using Allors.Services;
-    using Microsoft.Extensions.DependencyInjection;
     using Moq;
     using ObjectFactory = Allors.ObjectFactory;
 
@@ -43,9 +41,9 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => ((DatabaseScope) this.Session.Database.Scope()).TimeService;
+        public ITimeService TimeService => ((IDatabaseScope) this.Session.Database.Scope()).TimeService;
 
-        public IDerivationService DerivationService => ((DatabaseScope) this.Session.Database.Scope()).DerivationService;
+        public IDerivationService DerivationService => ((IDatabaseScope) this.Session.Database.Scope()).DerivationService;
 
         public TimeSpan? TimeShift
         {

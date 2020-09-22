@@ -10,13 +10,13 @@ namespace Allors
     using Microsoft.AspNetCore.Http;
     using Services;
 
-    public partial class DefaultDatabaseScope : DatabaseScope 
+    public partial class DefaultDatabaseScope : IDatabaseScope 
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
         public DefaultDatabaseScope(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
 
-        public override void OnInit(IDatabase database)
+        public void OnInit(IDatabase database)
         {
             this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
 
@@ -33,6 +33,23 @@ namespace Allors
             this.TreeService = new TreeService();
         }
 
-        public override ISessionScope CreateSessionScope() => new DefaultSessionScope(this.httpContextAccessor);
+        public M M { get; private set; }
+        public IBarcodeService BarcodeService { get; private set; }
+        public ICacheService CacheService { get; private set; }
+        public IDerivationService DerivationService { get; private set; }
+        public IExtentService ExtentService { get; private set; }
+        public IFetchService FetchService { get; private set; }
+        public IMailService MailService { get; private set; }
+        public IPasswordService PasswordService { get; private set; }
+        public ISingletonService SingletonService { get; private set; }
+        public IStickyService StickyService { get; private set; }
+        public ITimeService TimeService { get; private set; }
+        public ITreeService TreeService { get; private set; }
+
+        public ISessionLifecycle CreateSessionScope() => new DefaultSessionScope(this.httpContextAccessor);
+
+        public void Dispose()
+        {
+        }
     }
 }

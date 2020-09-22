@@ -14,8 +14,6 @@ namespace Tests
     using Allors;
     using Allors.Data;
     using Allors.Domain;
-    using Allors.Meta;
-    using Moq;
     using Xunit;
 
     public class TreeTests : DomainTest

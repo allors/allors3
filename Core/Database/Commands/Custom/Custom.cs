@@ -7,42 +7,29 @@ namespace Commands
 {
     using Allors;
     using Allors.Domain;
-    using Allors.Services;
-
     using McMaster.Extensions.CommandLineUtils;
-
-    using Microsoft.Extensions.Logging;
+    using NLog;
 
     [Command(Description = "Execute custom code")]
     public class Custom
     {
-        private readonly IDatabaseService databaseService;
+        public Program Parent { get; set; }
 
-        private readonly ILogger<Custom> logger;
-
-        public Custom(IDatabaseService databaseService, ILogger<Custom> logger)
-        {
-            this.databaseService = databaseService;
-            this.logger = logger;
-        }
-
-        private Commands Parent { get; set; }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         public int OnExecute(CommandLineApplication app)
         {
-            using (var session = this.databaseService.Database.CreateSession())
-            {
-                this.logger.LogInformation("Begin");
+            using var session = this.Parent.Database.CreateSession();
+            this.Logger.Info("Begin");
 
-                var scheduler = new AutomatedAgents(session).System;
-                session.SetUser(scheduler);
+            var scheduler = new AutomatedAgents(session).System;
+            session.Scope().User = scheduler;
 
-                // Custom code
-                session.Derive();
-                session.Commit();
+            // Custom code
+            session.Derive();
+            session.Commit();
 
-                this.logger.LogInformation("End");
-            }
+            this.Logger.Info("End");
 
             return ExitCode.Success;
         }

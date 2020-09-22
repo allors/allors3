@@ -19,9 +19,11 @@ namespace Allors.Server.Tests
     using Allors.Meta;
     using Server;
     using Allors.Services;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
+    using ISession = Allors.ISession;
     using ObjectFactory = Allors.ObjectFactory;
 
     public abstract class ApiTest : IDisposable
@@ -41,17 +43,14 @@ namespace Allors.Server.Tests
 
             var configuration = configurationBuilder.Build();
 
-            this.ObjectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(User));
-
-            var services = new ServiceCollection();
-            services.AddAllors();
-            var serviceProvider = services.BuildServiceProvider();
-
-            var database = new Database(serviceProvider, new Configuration
-            {
-                ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                ObjectFactory = this.ObjectFactory,
-            });
+            var metaPopulation = new MetaBuilder().Build();
+            var database = new Database(
+                new DefaultDatabaseScope(),
+                new Configuration
+                {
+                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
+                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
+                });
 
             this.HttpClientHandler = new HttpClientHandler();
             this.HttpClient = new HttpClient(this.HttpClientHandler)
@@ -66,10 +65,10 @@ namespace Allors.Server.Tests
             this.Session = database.CreateSession();
         }
 
+        public M M => this.Session.Database.Scope().M;
+
         public IConfigurationRoot Configuration { get; set; }
-
-        protected ObjectFactory ObjectFactory { get; }
-
+        
         protected ISession Session { get; private set; }
 
         protected HttpClient HttpClient { get; set; }
