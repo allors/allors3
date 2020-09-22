@@ -13,7 +13,7 @@ namespace Allors.Domain
         where TObject : class, UniquelyIdentifiable
     {
         public UniquelyIdentifiableSticky(ISession session)
-            : base(session, session.Meta().UniquelyIdentifiable.UniqueId)
+            : base(session, session.Database.Scope().M.UniquelyIdentifiable.UniqueId)
         {
         }
     }

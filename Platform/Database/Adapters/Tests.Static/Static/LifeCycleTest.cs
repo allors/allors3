@@ -35,7 +35,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1 = this.Session.Create<C1>();
                 var strategy = c1.Strategy;
@@ -53,7 +53,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 int[] runs = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
 
@@ -99,7 +99,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1A = C1.Create(this.Session);
 
@@ -123,7 +123,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1A = C1.Create(this.Session);
 
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1A = C1.Create(this.Session);
 
@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 // Object
                 var anObject = C1.Create(this.Session);
@@ -2983,7 +2983,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var secondSession = this.CreateSession();
 
@@ -3084,7 +3084,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var anObject = C1.Create(this.Session);
                 var id = anObject.Strategy.ObjectId;
@@ -3147,7 +3147,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var anObject = C1.Create(this.Session);
                 var id = anObject.Strategy.ObjectId;
@@ -3507,7 +3507,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 int[] runs = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
 
@@ -3696,7 +3696,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 //// Commit + Commit
 
@@ -3963,7 +3963,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 const int ObjectCount = 10;
                 var allorsObjects = this.Session.Create(m.Company.ObjectType, ObjectCount);
@@ -3990,7 +3990,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var obj = this.Session.Create<C1>();
 
@@ -4059,7 +4059,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 // TODO: Move to other tests
                 var withoutValueRoles = ClassWithoutUnitRoles.Create(this.Session);
@@ -4080,7 +4080,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1A = C1.Create(this.Session);
                 var c2A = C2.Create(this.Session);
@@ -4129,7 +4129,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 if (this.Session is ISession)
                 {
@@ -4211,7 +4211,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 // don't garbage collect populations
                 var populations = new List<IDatabase>();
@@ -4242,7 +4242,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1a = this.Session.Create(m.C1.ObjectType);
                 Assert.Equal(m.C1.ObjectType, c1a.Strategy.Class);
@@ -4285,7 +4285,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
                     c1A.C1AllorsString = "1";
@@ -4309,7 +4309,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
                     c1A.C1AllorsString = "1";
@@ -4373,7 +4373,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
                     var c2A = C2.Create(this.Session);
@@ -4440,7 +4440,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2one2one, new IPropertyType[] { m.C2.C2AllorsString })
@@ -4510,7 +4510,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2one2one, new IPropertyType[] { m.C2.C2AllorsString })
@@ -4549,7 +4549,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
                     var c2A = C2.Create(this.Session);
@@ -4612,7 +4612,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
 
@@ -4648,7 +4648,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2one2manies, new IPropertyType[] { m.C2.C2AllorsString })
@@ -4685,7 +4685,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
                     var c2A = C2.Create(this.Session);
@@ -4752,7 +4752,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1A = C1.Create(this.Session);
 
@@ -4787,7 +4787,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C1.C1C2many2manies, new IPropertyType[] { m.C2.C2AllorsString })
@@ -4826,7 +4826,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1a = C1.Create(this.Session);
                     var c1b = C1.Create(this.Session);
@@ -4888,7 +4888,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c2A = C2.Create(this.Session);
 
@@ -4923,7 +4923,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder().WithRule(m.C2.C1WhereC1C2one2one.RoleType, new IPropertyType[] { m.C1.C1AllorsString }).Build();
 
@@ -4960,7 +4960,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c1a = C1.Create(this.Session);
                     var c1b = C1.Create(this.Session);
@@ -5030,7 +5030,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c2A = C2.Create(this.Session);
 
@@ -5065,7 +5065,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder().WithRule(m.C2.C1sWhereC1C2many2many, new IPropertyType[] { m.C1.C1AllorsString }).Build();
 
@@ -5102,7 +5102,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var c2A = C2.Create(this.Session);
 
@@ -5138,7 +5138,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.C2.C1sWhereC1C2many2one, new IPropertyType[] { m.C1.C1AllorsString })

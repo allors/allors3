@@ -60,9 +60,11 @@ namespace Allors.Server
         [HttpGet("/media/{idString}/{*name}")]
         public virtual IActionResult RedirectOrNotFound(string idString, string name)
         {
+            var m = ((IDatabaseScope) this.Session.Database.Scope()).M;
+
             if (Guid.TryParse(idString, out var id))
             {
-                var media = new Medias(this.Session).FindBy(M.Media.UniqueId, id);
+                var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
                     return this.RedirectToAction(nameof(Get), new { idString = media.UniqueId.ToString("N"), revisionString = media.Revision?.ToString("N") });
@@ -78,9 +80,11 @@ namespace Allors.Server
         [HttpGet("/media/{idString}/{revisionString}/{*name}")]
         public virtual IActionResult Get(string idString, string revisionString, string name)
         {
+            var m = ((IDatabaseScope) this.Session.Database.Scope()).M;
+
             if (Guid.TryParse(idString, out var id))
             {
-                var media = new Medias(this.Session).FindBy(M.Media.UniqueId, id);
+                var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
                     if (media.MediaContent?.Data == null)

@@ -13,7 +13,7 @@ namespace Allors
         protected ObjectsBase(ISession session)
         {
             this.Session = session;
-            this.M = this.Session.Meta();
+            this.M = this.Session.Database.Scope().M;
         }
 
         public M M { get; }

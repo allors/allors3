@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Derivations;
-
     public abstract partial class ObjectOnDerive
     {
         public IDerivation Derivation { get; set; }

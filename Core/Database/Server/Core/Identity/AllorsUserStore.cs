@@ -177,10 +177,12 @@ namespace Allors.Security
 
         public async Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
+            var m = this.database.Scope().M;
+
             cancellationToken.ThrowIfCancellationRequested();
             using (var session = this.database.CreateSession())
             {
-                var user = new Users(session).FindBy(M.User.NormalizedUserName, normalizedUserName);
+                var user = new Users(session).FindBy(m.User.NormalizedUserName, normalizedUserName);
                 return user?.AsIdentityUser();
             }
         }
@@ -233,11 +235,13 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            var m = this.database.Scope().M;
+
             using (var session = this.database.CreateSession())
             {
                 var extent = new Logins(session).Extent();
-                extent.Filter.AddEquals(M.Login.Provider, loginProvider);
-                extent.Filter.AddEquals(M.Login.Key, providerKey);
+                extent.Filter.AddEquals(m.Login.Provider, loginProvider);
+                extent.Filter.AddEquals(m.Login.Key, providerKey);
 
                 var user = extent.FirstOrDefault()?.UserWhereLogin;
                 return user?.AsIdentityUser();
@@ -258,11 +262,14 @@ namespace Allors.Security
         public async Task RemoveLoginAsync(IdentityUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var m = this.database.Scope().M;
+
             using (var session = this.database.CreateSession())
             {
                 var extent = new Logins(session).Extent();
-                extent.Filter.AddEquals(M.Login.Provider, loginProvider);
-                extent.Filter.AddEquals(M.Login.Key, providerKey);
+                extent.Filter.AddEquals(m.Login.Provider, loginProvider);
+                extent.Filter.AddEquals(m.Login.Key, providerKey);
 
                 var login = extent.FirstOrDefault();
                 login?.Delete();
@@ -316,13 +323,15 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            var m = this.database.Scope().M;
+
             using (var session = this.database.CreateSession())
             {
                 var extent = new IdentityClaims(session).Extent();
-                extent.Filter.AddEquals(M.IdentityClaim.Type, claim.Type);
-                extent.Filter.AddEquals(M.IdentityClaim.ValueType, claim.ValueType);
-                extent.Filter.AddEquals(M.IdentityClaim.Value, claim.Value);
-                extent.Filter.AddEquals(M.IdentityClaim.Issuer, claim.Issuer);
+                extent.Filter.AddEquals(m.IdentityClaim.Type, claim.Type);
+                extent.Filter.AddEquals(m.IdentityClaim.ValueType, claim.ValueType);
+                extent.Filter.AddEquals(m.IdentityClaim.Value, claim.Value);
+                extent.Filter.AddEquals(m.IdentityClaim.Issuer, claim.Issuer);
 
                 var users = extent.ToArray().Select(v => v.UserWhereIdentityClaim);
                 return users.Select(v => v.AsIdentityUser()).ToArray();
@@ -412,9 +421,12 @@ namespace Allors.Security
         public async Task<IdentityUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var m = this.database.Scope().M;
+
             using (var session = this.database.CreateSession())
             {
-                var user = new Users(session).FindBy(M.User.NormalizedUserEmail, normalizedEmail);
+                var user = new Users(session).FindBy(m.User.NormalizedUserEmail, normalizedEmail);
                 return user?.AsIdentityUser();
             }
         }

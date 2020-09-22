@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters.Npgsql
                 foreach (var marker in this.Markers)
                 {
                     init();
-                    var m = this.Session.Meta();
+                    var m = this.Session.Database.Scope().M;
 
                     this.Populate();
                     this.Session.Commit();
@@ -132,7 +132,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 init();
                 this.Populate();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 this.c1B.C1AllorsString = "a";
                 this.c1C.C1AllorsString = "b";
@@ -196,7 +196,7 @@ namespace Allors.Database.Adapters.Npgsql
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Meta();
+                var m = this.Session.Database.Scope().M;
 
                 var c1A = C1.Create(this.Session);
                 var c1B = C1.Create(this.Session);

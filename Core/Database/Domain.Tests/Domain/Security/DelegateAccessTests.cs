@@ -8,7 +8,6 @@ namespace Tests
     using System.Linq;
     using Allors;
     using Allors.Domain;
-    using Allors.Meta;
     using Xunit;
 
     public class DelegateAccessTests : DomainTest

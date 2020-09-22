@@ -34,6 +34,7 @@ namespace Allors.Server
 
         public SyncResponse Build()
         {
+            var m = ((IDatabaseScope) this.session.Database.Scope()).M;
             var objects = this.session.Instantiate(this.syncRequest.Objects);
 
             // Prefetch
@@ -45,7 +46,8 @@ namespace Allors.Server
 
                 var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
                 prefetchPolicyBuilder.WithWorkspaceRules(prefetchClass);
-                prefetchPolicyBuilder.WithSecurityRules(prefetchClass);
+                prefetchPolicyBuilder.WithSecurityRules(prefetchClass, m);
+
                 var prefetcher = prefetchPolicyBuilder.Build();
 
                 this.session.Prefetch(prefetcher, prefetchObjects);

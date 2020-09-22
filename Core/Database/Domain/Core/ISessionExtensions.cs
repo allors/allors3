@@ -7,15 +7,14 @@
 namespace Allors
 {
     using System;
+    using Domain;
     using Domain.Derivations;
-    using Allors.Services;
-    using Microsoft.Extensions.DependencyInjection;
 
     public static partial class ISessionExtensions
     {
         public static IValidation Derive(this ISession session, bool throwExceptionOnError = true)
         {
-            var derivationService = session.ServiceProvider.GetRequiredService<IDerivationService>();
+            var derivationService = session.Database.Scope().DerivationService;
             var derivation = derivationService.CreateDerivation(session);
             var validation = derivation.Derive();
             if (throwExceptionOnError && validation.HasErrors)
@@ -30,7 +29,7 @@ namespace Allors
         {
             var now = DateTime.UtcNow;
 
-            var timeService = session.ServiceProvider.GetRequiredService<ITimeService>();
+            var timeService = session.Database.Scope().TimeService;
             var timeShift = timeService.Shift;
             if (timeShift != null)
             {

@@ -9,8 +9,6 @@
 namespace Tests
 {
     using Allors.Data;
-    using Allors.Meta;
-
     using Xunit;
 
     public class FilterTests : DomainTest

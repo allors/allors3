@@ -1,4 +1,4 @@
-﻿// <copyright file="Load.cs" company="Allors bvba">
+// <copyright file="Load.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,47 +7,33 @@ namespace Commands
 {
     using System.IO;
     using System.Xml;
-
-    using Allors.Services;
-
     using McMaster.Extensions.CommandLineUtils;
-
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
+    using NLog;
 
     [Command(Description = "Load the population from file")]
     public class Load
     {
-        private readonly IConfiguration configuration;
+        public Program Parent { get; set; }
 
-        private readonly IDatabaseService databaseService;
-
-        private readonly ILogger<Load> logger;
-
-        public Load(IConfiguration configuration, IDatabaseService databaseService, ILogger<Load> logger)
-        {
-            this.configuration = configuration;
-            this.databaseService = databaseService;
-            this.logger = logger;
-        }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [Option("-f", Description = "File to load (default is population.xml)")]
         public string FileName { get; set; } = "population.xml";
 
         public int OnExecute(CommandLineApplication app)
         {
-            this.logger.LogInformation("Begin");
+            this.Logger.Info("Begin");
 
-            var fileName = this.FileName ?? this.configuration["populationFile"];
+            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"];
             var fileInfo = new FileInfo(fileName);
 
             using (var reader = XmlReader.Create(fileInfo.FullName))
             {
-                this.logger.LogInformation("Loading {file}", fileInfo.FullName);
-                this.databaseService.Database.Load(reader);
+                this.Logger.Info("Loading {file}", fileInfo.FullName);
+                this.Parent.Database.Load(reader);
             }
 
-            this.logger.LogInformation("End");
+            this.Logger.Info("End");
             return ExitCode.Success;
         }
     }

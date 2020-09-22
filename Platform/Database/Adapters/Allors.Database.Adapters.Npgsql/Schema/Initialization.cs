@@ -252,7 +252,7 @@ $@"CREATE TABLE {tableName}(
 
 )";
 
-                            using (var command = new NpgsqlCommand(sql.ToString(), connection))
+                            using (var command = new NpgsqlCommand(sql, connection))
                             {
                                 command.ExecuteNonQuery();
                             }

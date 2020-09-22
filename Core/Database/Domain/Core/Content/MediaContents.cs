@@ -6,7 +6,6 @@
 namespace Allors.Domain
 {
     using System.Collections.Generic;
-    using System.IO;
     using HeyRed.Mime;
 
     public partial class MediaContents

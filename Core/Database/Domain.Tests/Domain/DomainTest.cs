@@ -12,10 +12,8 @@ namespace Tests
     using Allors;
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
     using Allors.Services;
-    using Microsoft.Extensions.DependencyInjection;
     using Moq;
     using ObjectFactory = Allors.ObjectFactory;
 
@@ -23,38 +21,15 @@ namespace Tests
     {
         public DomainTest(bool populate = true)
         {
-#if ALLORS_DERIVATION_DEBUG
-            var derivationPersistent = true;
-#else
-            var environmentVariable = Environment.GetEnvironmentVariable("ALLORS_DERIVATION");
-            var derivationPersistent = environmentVariable?.ToLowerInvariant().Equals("persistent") == true;
-#endif
-
-            derivationPersistent = false;
-
-            var services = new ServiceCollection();
-            if (derivationPersistent)
-            {
-                services.AddAllors((session) => new Allors.Domain.Derivations.Persistent.Derivation(session, new DerivationConfig { MaxCycles = 10, MaxIterations = 10, MaxPreparations = 10 }));
-            }
-            else
-            {
-                services.AddAllors((session) => new Allors.Domain.Derivations.Default.Derivation(session, new DerivationConfig { MaxCycles = 10, MaxIterations = 10, MaxPreparations = 10 }));
-            }
-
             this.MetaPopulation = new MetaBuilder().Build();
             this.M = new M(this.MetaPopulation);
-
-            var serviceProvider = services.BuildServiceProvider();
             var database = new Database(
-                serviceProvider,
+                new DefaultDatabaseScope(), 
                 new Configuration
                 {
-                    Meta = M,
                     ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
                 });
 
-            serviceProvider.GetRequiredService<IDatabaseService>().Database = database;
             this.Setup(database, populate);
         }
 
@@ -66,9 +41,9 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.ServiceProvider.GetRequiredService<ITimeService>();
+        public ITimeService TimeService => ((IDatabaseScope) this.Session.Database.Scope()).TimeService;
 
-        public IDerivationService DerivationService => this.Session.ServiceProvider.GetRequiredService<IDerivationService>();
+        public IDerivationService DerivationService => ((IDatabaseScope) this.Session.Database.Scope()).DerivationService;
 
         public TimeSpan? TimeShift
         {

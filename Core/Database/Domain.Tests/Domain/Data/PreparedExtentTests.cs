@@ -7,12 +7,7 @@ namespace Tests
 {
     using System.Collections.Generic;
     using Allors;
-    using Allors.Data;
     using Allors.Domain;
-    using Allors.Services;
-
-    using Microsoft.Extensions.DependencyInjection;
-
     using Xunit;
 
     [Collection("Api")]
@@ -23,7 +18,7 @@ namespace Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.ServiceProvider.GetRequiredService<IExtentService>();
+            var extentService = ((IDatabaseScope) this.Session.Database.Scope()).ExtentService;
             var organizationByName = extentService.Get(PreparedExtents.ByName);
 
             var arguments = new Dictionary<string, string>

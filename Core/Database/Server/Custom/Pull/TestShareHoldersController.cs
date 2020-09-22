@@ -11,7 +11,7 @@ namespace Allors.Server.Controllers
     using Allors.Meta;
     using Server;
     using Allors.Services;
-
+    using Data;
     using Microsoft.AspNetCore.Mvc;
 
     public class TestShareHoldersController : Controller
@@ -30,12 +30,17 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
+            var m = ((IDatabaseScope) this.Session.Database.Scope()).M;
+
             try
             {
-                var acls = new WorkspaceAccessControlLists(this.Session.GetUser());
+                var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
                 var response = new PullResponseBuilder(acls, this.TreeService);
-                var organisation = new Organisations(this.Session).FindBy(M.Organisation.Owner, this.Session.GetUser());
-                response.AddObject("root", organisation, M.Organisation.AngularShareholders);
+                var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.Scope().User);
+                response.AddObject("root", organisation, new[] {
+                    new Node(m.Organisation.Shareholders)
+                        .Add(m.Person.Photo),
+                });
                 return this.Ok(response.Build());
             }
             catch (Exception e)

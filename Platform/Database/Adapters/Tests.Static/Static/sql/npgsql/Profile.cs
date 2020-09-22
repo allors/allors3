@@ -12,7 +12,6 @@ namespace Allors.Database.Adapters.Npgsql
     using Domain;
     using global::Npgsql;
     using Meta;
-    using Microsoft.Extensions.DependencyInjection;
     using ObjectFactory = Allors.ObjectFactory;
 
     public class Profile : Adapters.Profile
@@ -47,10 +46,9 @@ namespace Allors.Database.Adapters.Npgsql
         public override IDatabase CreateDatabase()
         {
             var metaPopulation = new MetaBuilder().Build();
-            var m = new M(metaPopulation);
-            return new Database(new ServiceCollection().BuildServiceProvider(), new Configuration
+            var scope = new DatabaseScope();
+            return new Database(scope, new Configuration
             {
-                Meta = m,
                 ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 ConnectionString = this.ConnectionString,
                 ConnectionFactory = this.connectionFactory,

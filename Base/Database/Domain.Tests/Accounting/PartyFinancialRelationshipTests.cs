@@ -86,5 +86,15 @@ namespace Allors.Domain
 
             Assert.True(partyFinancial.AmountOverDue == 0);
         }
+
+        [Fact]
+        public void DerivePartyFinancialRelationCreated()
+        {
+            var customer = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
+
+            this.Session.Derive();
+
+            Assert.Equal(this.InternalOrganisation, customer.PartyFinancialRelationshipsWhereFinancialParty.First().InternalOrganisation);
+        }
     }
 }

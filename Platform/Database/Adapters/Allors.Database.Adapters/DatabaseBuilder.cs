@@ -14,15 +14,15 @@ namespace Allors.Database.Adapters
 
     public class DatabaseBuilder
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly IDatabaseLifecycle scope;
         private readonly IConfiguration configuration;
         private readonly ObjectFactory objectFactory;
         private readonly IsolationLevel? isolationLevel;
         private readonly int? commandTimeout;
 
-        public DatabaseBuilder(IServiceProvider serviceProvider, IConfiguration configuration, ObjectFactory objectFactory, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
+        public DatabaseBuilder(IDatabaseLifecycle scope, IConfiguration configuration, ObjectFactory objectFactory, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
         {
-            this.serviceProvider = serviceProvider;
+            this.scope = scope;
             this.configuration = configuration;
             this.objectFactory = objectFactory;
             this.isolationLevel = isolationLevel;
@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters
 
                 case "NPGSQL":
 
-                    return new Npgsql.Database(this.serviceProvider, new Npgsql.Configuration
+                    return new Npgsql.Database(this.scope, new Npgsql.Configuration
                     {
                         ConnectionString = connectionString,
                         ObjectFactory = this.objectFactory,
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters
                 case "SQLCLIENT":
                 default:
 
-                    return new SqlClient.Database(this.serviceProvider, new SqlClient.Configuration
+                    return new SqlClient.Database(this.scope, new SqlClient.Configuration
                     {
                         ConnectionString = connectionString,
                         ObjectFactory = this.objectFactory,

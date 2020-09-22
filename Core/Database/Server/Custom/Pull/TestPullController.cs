@@ -31,7 +31,7 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var acls = new WorkspaceAccessControlLists(this.Session.GetUser());
+                var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
                 var response = new PullResponseBuilder(acls, this.TreeService);
                 return this.Ok(response.Build());
             }

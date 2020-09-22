@@ -52,7 +52,7 @@ namespace Allors.Server.Controllers
                     {
                         using (var session = this.DatabaseService.Database.CreateSession())
                         {
-                            var acls = new WorkspaceAccessControlLists(session.GetUser());
+                            var acls = new WorkspaceAccessControlLists(session.Scope().User);
                             var response = new PullResponseBuilder(acls, this.TreeService);
 
                             if (request.P != null)

@@ -12,8 +12,6 @@ namespace Tests
 
     using Allors.Data;
     using Allors.Domain;
-    using Allors.Meta;
-    using Allors.Protocol.Data;
     using Xunit;
     using Extent = Allors.Data.Extent;
 

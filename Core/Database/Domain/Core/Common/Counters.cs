@@ -5,10 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
-
-    using Allors;
-
     public partial class Counters
     {
         private UniquelyIdentifiableSticky<Counter> cache;
