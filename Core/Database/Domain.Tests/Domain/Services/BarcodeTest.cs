@@ -10,8 +10,10 @@ namespace Tests
     using Allors.Services;
     using Xunit;
 
-    public class BarcodeTest : DomainTest
+    public class BarcodeTest : DomainTest, IClassFixture<Fixture>
     {
+        public BarcodeTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Default()
         {

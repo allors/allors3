@@ -8,8 +8,12 @@
 
 namespace Tests
 {
-    public class NamedConstantTest : DomainTest
+    using Xunit;
+
+    public class NamedConstantTest : DomainTest, IClassFixture<Fixture>
     {
+        public NamedConstantTest(Fixture fixture) : base(fixture) { }
+
         // TODO: Create tests
 
         // [Fact]

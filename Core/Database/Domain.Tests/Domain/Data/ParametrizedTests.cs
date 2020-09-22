@@ -13,8 +13,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class ParametrizedTests : DomainTest
+    public class ParametrizedTests : DomainTest, IClassFixture<Fixture>
     {
+        public ParametrizedTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void EqualsWithParameters()
         {

@@ -13,8 +13,10 @@ namespace Tests
     using Allors.Meta;
     using Xunit;
 
-    public class PermissionTests : DomainTest
+    public class PermissionTests : DomainTest, IClassFixture<Fixture>
     {
+        public PermissionTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         // [Fact]

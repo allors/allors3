@@ -13,8 +13,10 @@ namespace Tests
     using Allors.Domain.Derivations.Errors;
     using Xunit;
 
-    public class UserGroupTests : DomainTest
+    public class UserGroupTests : DomainTest, IClassFixture<Fixture>
     {
+        public UserGroupTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

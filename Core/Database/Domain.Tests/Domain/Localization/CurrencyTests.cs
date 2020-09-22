@@ -10,8 +10,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class CurrencyTests : DomainTest
+    public class CurrencyTests : DomainTest, IClassFixture<Fixture>
     {
+        public CurrencyTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenCurrencyWhenValidatingThenRequiredRelationsMustExist()
         {

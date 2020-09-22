@@ -9,8 +9,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class InitTest : DomainTest
+    public class InitTest : DomainTest, IClassFixture<Fixture>
     {
+        public InitTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Init()
         {

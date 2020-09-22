@@ -12,8 +12,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class VersioningTests : DomainTest
+    public class VersioningTests : DomainTest, IClassFixture<Fixture>
     {
+        public VersioningTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void InitialNothing()
         {

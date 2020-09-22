@@ -10,8 +10,10 @@ namespace Tests
     using Allors.Meta;
     using Xunit;
 
-    public class AccessControlListTests : DomainTest
+    public class AccessControlListTests : DomainTest, IClassFixture<Fixture>
     {
+        public AccessControlListTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

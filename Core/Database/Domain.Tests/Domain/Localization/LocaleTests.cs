@@ -9,8 +9,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class LocaleTests : DomainTest
+    public class LocaleTests : DomainTest, IClassFixture<Fixture>
     {
+        public LocaleTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenLocale_WhenDeriving_ThenRequiredRelationsMustExist()
         {

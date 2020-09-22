@@ -12,8 +12,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class DomainDerivationTest : DomainTest
+    public class DomainDerivationTest : DomainTest, IClassFixture<Fixture>
     {
+        public DomainDerivationTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Derive()
         {

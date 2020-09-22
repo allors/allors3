@@ -18,21 +18,19 @@ namespace Tests
 
     public class DomainTest : IDisposable
     {
-        public DomainTest(bool populate = true)
+        public DomainTest(Fixture fixture, bool populate = true)
         {
-            this.MetaPopulation = new MetaBuilder().Build();
-            this.M = new M(this.MetaPopulation);
             var database = new Database(
                 new DefaultDatabaseScope(), 
                 new Configuration
                 {
-                    ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
+                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
+
+            this.M = database.Scope().M;
 
             this.Setup(database, populate);
         }
-
-        public MetaPopulation MetaPopulation { get; }
 
         public M M { get; }
 

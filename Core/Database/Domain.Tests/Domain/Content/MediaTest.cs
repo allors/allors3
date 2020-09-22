@@ -11,8 +11,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class MediaTest : ContentTests
+    public class MediaTest : ContentTests, IClassFixture<Fixture>
     {
+        public MediaTest(Fixture fixture) : base(fixture) {}
+
         [Fact]
         public void DefaultValues()
         {

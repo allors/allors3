@@ -9,8 +9,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class LocalisedTextTests : DomainTest
+    public class LocalisedTextTests : DomainTest, IClassFixture<Fixture>
     {
+        public LocalisedTextTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenLocalisedTextWhenValidatingThenRequiredRelationsMustExist()
         {

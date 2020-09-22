@@ -9,8 +9,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class DefaultDerivationLogTests : DomainTest
+    public class DefaultDerivationLogTests : DomainTest, IClassFixture<Fixture>
     {
+        public DefaultDerivationLogTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void DeletedUserinterfaceable()
         {

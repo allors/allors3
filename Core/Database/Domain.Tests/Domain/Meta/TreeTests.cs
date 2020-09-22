@@ -15,8 +15,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class TreeTests : DomainTest
+    public class TreeTests : DomainTest, IClassFixture<Fixture>
     {
+        public TreeTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Resolve()
         {

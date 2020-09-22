@@ -11,8 +11,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class PathTests : DomainTest
+    public class PathTests : DomainTest, IClassFixture<Fixture>
     {
+        public PathTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void One2ManyWithPropertyTypes()
         {

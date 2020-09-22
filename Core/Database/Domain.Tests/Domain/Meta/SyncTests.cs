@@ -10,8 +10,10 @@ namespace Tests
 {
     using Xunit;
 
-    public class SyncTests : DomainTest
+    public class SyncTests : DomainTest, IClassFixture<Fixture>
     {
+        public SyncTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void IsSync()
         {

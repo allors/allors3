@@ -13,8 +13,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class CounterTest : DomainTest
+    public class CounterTest : DomainTest, IClassFixture<Fixture>
     {
+        public CounterTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Meta()
         {

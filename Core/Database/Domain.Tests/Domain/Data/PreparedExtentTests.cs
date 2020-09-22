@@ -10,9 +10,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    [Collection("Api")]
-    public class PreparedExtentTests : DomainTest
+    public class PreparedExtentTests : DomainTest, IClassFixture<Fixture>
     {
+        public PreparedExtentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public async void WithParameter()
         {

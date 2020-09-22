@@ -13,8 +13,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class RequiredTest : DomainTest
+    public class RequiredTest : DomainTest, IClassFixture<Fixture>
     {
+        public RequiredTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void OnPostBuild()
         {

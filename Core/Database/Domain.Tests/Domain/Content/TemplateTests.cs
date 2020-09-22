@@ -14,8 +14,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class TemplateTests : DomainTest
+    public class TemplateTests : DomainTest, IClassFixture<Fixture>
     {
+        public TemplateTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Render()
         {

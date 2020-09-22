@@ -9,8 +9,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class CacheTest : DomainTest
+    public class CacheTest : DomainTest, IClassFixture<Fixture>
     {
+        public CacheTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Default()
         {

@@ -11,8 +11,10 @@ namespace Tests
     using Allors.Data;
     using Xunit;
 
-    public class FilterTests : DomainTest
+    public class FilterTests : DomainTest, IClassFixture<Fixture>
     {
+        public FilterTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Type()
         {

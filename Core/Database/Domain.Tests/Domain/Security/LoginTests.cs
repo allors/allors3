@@ -12,8 +12,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class LoginTests : DomainTest
+    public class LoginTests : DomainTest, IClassFixture<Fixture>
     {
+        public LoginTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

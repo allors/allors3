@@ -12,8 +12,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class PersonTests : DomainTest
+    public class PersonTests : DomainTest, IClassFixture<Fixture>
     {
+        public PersonTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void NoRequiredFields()
         {

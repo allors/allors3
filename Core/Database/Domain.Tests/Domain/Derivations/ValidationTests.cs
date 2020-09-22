@@ -13,8 +13,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class ValidationTests : DomainTest
+    public class ValidationTests : DomainTest, IClassFixture<Fixture>
     {
+        public ValidationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void AssertIsUniqueTest()
         {

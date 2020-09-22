@@ -8,8 +8,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class BuilderTest : DomainTest
+    public class BuilderTest : DomainTest, IClassFixture<Fixture>
     {
+        public BuilderTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void BaseOnPostBuild()
         {

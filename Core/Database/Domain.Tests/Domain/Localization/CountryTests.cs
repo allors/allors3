@@ -9,8 +9,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class CountryTests : DomainTest
+    public class CountryTests : DomainTest, IClassFixture<Fixture>
     {
+        public CountryTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenCountryWhenValidatingThenRequiredRelationsMustExist()
         {

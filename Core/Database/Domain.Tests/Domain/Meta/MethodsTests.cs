@@ -11,8 +11,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class MethodsTests : DomainTest
+    public class MethodsTests : DomainTest, IClassFixture<Fixture>
     {
+        public MethodsTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void ClassMethod()
         {

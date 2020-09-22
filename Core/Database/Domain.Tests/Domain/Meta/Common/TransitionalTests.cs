@@ -12,8 +12,10 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class TransitionalTests : DomainTest
+    public class TransitionalTests : DomainTest, IClassFixture<Fixture>
     {
+        public TransitionalTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void SingleObjectState()
         {
