@@ -132,7 +132,8 @@ namespace Allors.Domain
                 }
 
                 // If disbursements are not matched at invoice level
-                if (purchaseInvoice.AmountPaid > 0)
+                if (!purchaseInvoice.PurchaseInvoiceState.IsRevising
+                    && purchaseInvoice.AmountPaid != 0)
                 {
                     if (purchaseInvoice.AmountPaid >= decimal.Round(purchaseInvoice.TotalIncVat, 2))
                     {

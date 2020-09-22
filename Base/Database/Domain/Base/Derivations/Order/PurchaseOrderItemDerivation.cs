@@ -40,6 +40,20 @@ namespace Allors.Domain
                     purchaseOrderItem.StoredInFacility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
                 }
 
+                purchaseOrderItem.DeriveIsReceivable();
+
+                if (!purchaseOrderItem.ExistPurchaseOrderItemShipmentState)
+                {
+                    if (purchaseOrderItem.IsReceivable)
+                    {
+                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).Na;
+                    }
+                    else
+                    {
+                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).NotReceived;
+                    }
+                }
+
                 // States
                 var states = new PurchaseOrderItemStates(purchaseOrderItem.Session());
 
@@ -156,7 +170,7 @@ namespace Allors.Domain
                 if (purchaseOrderItem.IsValid)
                 {
                     // ShipmentState
-                    if (purchaseOrderItem.ExistPart)
+                    if (purchaseOrderItem.IsReceivable)
                     {
                         var quantityReceived = 0M;
                         foreach (ShipmentReceipt shipmentReceipt in purchaseOrderItem.ShipmentReceiptsWhereOrderItem)
@@ -167,15 +181,22 @@ namespace Allors.Domain
                         purchaseOrderItem.QuantityReceived = quantityReceived;
                     }
 
-                    if (purchaseOrderItem.QuantityReceived == 0)
+                    if (!purchaseOrderItem.IsReceivable)
                     {
-                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).NotReceived;
+                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).Na;
                     }
                     else
                     {
-                        purchaseOrderItem.PurchaseOrderItemShipmentState = purchaseOrderItem.QuantityReceived < purchaseOrderItem.QuantityOrdered ?
-                            purchaseOrderItemShipmentStates.PartiallyReceived :
-                            purchaseOrderItemShipmentStates.Received;
+                        if (purchaseOrderItem.QuantityReceived == 0 && purchaseOrderItem.IsReceivable)
+                        {
+                            purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).NotReceived;
+                        }
+                        else
+                        {
+                            purchaseOrderItem.PurchaseOrderItemShipmentState = purchaseOrderItem.QuantityReceived < purchaseOrderItem.QuantityOrdered ?
+                                purchaseOrderItemShipmentStates.PartiallyReceived :
+                                purchaseOrderItemShipmentStates.Received;
+                        }
                     }
 
                     // PaymentState
@@ -198,7 +219,8 @@ namespace Allors.Domain
                     }
 
                     // PurchaseOrderItem States
-                    if (purchaseOrderItem.PurchaseOrderItemShipmentState.IsReceived)
+                    if (purchaseOrderItem.PurchaseOrderItemState.IsInProcess
+                        && (purchaseOrderItem.PurchaseOrderItemShipmentState.IsReceived || purchaseOrderItem.PurchaseOrderItemShipmentState.IsNa))
                     {
                         purchaseOrderItem.PurchaseOrderItemState = purchaseOrderItemStates.Completed;
                     }
@@ -258,7 +280,7 @@ namespace Allors.Domain
                     purchaseOrderItem.AddDeniedPermission(deletePermission);
                 }
 
-                if (!purchaseOrderItem.PurchaseOrderItemShipmentState.IsNotReceived)
+                if (!purchaseOrderItem.PurchaseOrderItemShipmentState.IsNotReceived && !purchaseOrderItem.PurchaseOrderItemShipmentState.IsNa)
                 {
                     var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
 

@@ -85,11 +85,6 @@ namespace Allors.Domain
                 this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).Created;
             }
 
-            if (!this.ExistPurchaseOrderItemShipmentState)
-            {
-                this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Strategy.Session).NotReceived;
-            }
-
             if (!this.ExistPurchaseOrderItemPaymentState)
             {
                 this.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Strategy.Session).NotPaid;
@@ -418,13 +413,6 @@ namespace Allors.Domain
                     }
 
                     shipmentItem.SerialisedItem = serialisedItem;
-
-                    // HACK: DerivedRoles (WIP)
-                    var serialisedItemDeriveRoles = serialisedItem;
-                    serialisedItemDeriveRoles.PurchaseOrder = order;
-                    serialisedItemDeriveRoles.SuppliedBy = order.TakenViaSupplier;
-                    serialisedItem.RemoveAssignedPurchasePrice();
-                    serialisedItemDeriveRoles.PurchasePrice = this.TotalExVat;
                 }
 
                 if (shipment.ShipToParty is InternalOrganisation internalOrganisation)
@@ -446,6 +434,16 @@ namespace Allors.Domain
         public void BaseReject(OrderItemReject method) => this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).Rejected;
 
         public void BaseReopen(OrderItemReopen method) => this.PurchaseOrderItemState = this.PreviousPurchaseOrderItemState;
+
+        public void BaseDeriveIsReceivable(PurchaseOrderItemDeriveIsReceivable method)
+        {
+            if (!method.Result.HasValue)
+            {
+                this.IsReceivable = this.ExistPart && this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem);
+
+                method.Result = true;
+            }
+        }
 
         public void Sync(Order order) => this.SyncedOrder = order;
     }

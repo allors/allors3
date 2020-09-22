@@ -35,8 +35,13 @@ namespace Allors.Domain
                     serialisedItem.Name = serialisedItem.PartWhereSerialisedItem.Name;
                 }
 
-                serialisedItem.PurchasePrice = serialisedItem.AssignedPurchasePrice ?? serialisedItem.PurchaseOrderItemsWhereSerialisedItem.LastOrDefault()?.UnitPrice ?? 0M;
-                serialisedItem.SuppliedBy = serialisedItem.AssignedSuppliedBy ?? serialisedItem.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
+                serialisedItem.DerivePurchaseOrder();
+                serialisedItem.DerivePurchaseInvoice();
+                serialisedItem.DerivePurchasePrice();
+
+                serialisedItem.SuppliedBy = serialisedItem.AssignedSuppliedBy ??
+                    serialisedItem.PurchaseOrder?.TakenViaSupplier ??
+                    serialisedItem.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
 
                 serialisedItem.SuppliedByPartyName = serialisedItem.ExistSuppliedBy ? serialisedItem.SuppliedBy.PartyName : string.Empty;
                 serialisedItem.OwnedByPartyName = serialisedItem.ExistOwnedBy ? serialisedItem.OwnedBy.PartyName : string.Empty;

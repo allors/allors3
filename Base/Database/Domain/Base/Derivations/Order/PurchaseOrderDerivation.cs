@@ -79,13 +79,24 @@ namespace Allors.Domain
 
             bool CanRevise(PurchaseOrder purchaseOrder)
             {
-                if ((purchaseOrder.PurchaseOrderState.IsSent || purchaseOrder.PurchaseOrderState.IsCompleted)
-                    && purchaseOrder.PurchaseOrderShipmentState.IsNotReceived)
+                if ((purchaseOrder.PurchaseOrderState.IsInProcess || purchaseOrder.PurchaseOrderState.IsSent || purchaseOrder.PurchaseOrderState.IsCompleted)
+                    && (purchaseOrder.PurchaseOrderShipmentState.IsNotReceived || purchaseOrder.PurchaseOrderShipmentState.IsNa))
                 {
                     if (!purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder)
                     {
                         return true;
                     }
+                }
+
+                return false;
+            }
+
+            bool IsReceivable(PurchaseOrder purchaseOrder)
+            {
+                if (purchaseOrder.PurchaseOrderState.IsSent
+                    && purchaseOrder.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).IsReceivable))
+                {
+                    return true;
                 }
 
                 return false;
@@ -161,7 +172,6 @@ namespace Allors.Domain
                 // PurchaseOrder Shipment State
                 if (validOrderItems.Any())
                 {
-                    // var receivable = validOrderItems.Where(v => purchaseOrder.PurchaseOrderState.IsSent && v.PurchaseOrderItemState.IsInProcess && !v.PurchaseOrderItemShipmentState.IsReceived);
                     if ((validOrderItems.Any(v => v.ExistPart) && validOrderItems.Where(v => v.ExistPart).All(v => v.PurchaseOrderItemShipmentState.IsReceived)) ||
                         (validOrderItems.Any(v => !v.ExistPart) && validOrderItems.Where(v => !v.ExistPart).All(v => v.PurchaseOrderItemShipmentState.IsReceived)))
                     {
@@ -170,6 +180,10 @@ namespace Allors.Domain
                     else if (validOrderItems.All(v => v.PurchaseOrderItemShipmentState.IsNotReceived))
                     {
                         purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.NotReceived;
+                    }
+                    else if (validOrderItems.All(v => v.PurchaseOrderItemShipmentState.IsNa))
+                    {
+                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Na;
                     }
                     else
                     {
@@ -191,7 +205,8 @@ namespace Allors.Domain
                     }
 
                     // PurchaseOrder OrderState
-                    if (purchaseOrder.PurchaseOrderShipmentState.IsReceived)
+                    if (purchaseOrder.PurchaseOrderState.IsSent
+                        && (purchaseOrder.PurchaseOrderShipmentState.IsReceived || purchaseOrder.PurchaseOrderShipmentState.IsNa))
                     {
                         purchaseOrder.PurchaseOrderState = new PurchaseOrderStates(purchaseOrder.Strategy.Session).Completed;
                     }
@@ -285,6 +300,15 @@ namespace Allors.Domain
                     purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise, Operations.Execute));
                 }
 
+                if (purchaseOrder.IsReceivable)
+                {
+                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive, Operations.Execute));
+                }
+                else
+                {
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive, Operations.Execute));
+                }
+
                 var deletePermission = new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.ObjectType, purchaseOrder.Meta.Delete, Operations.Execute);
                 if (IsDeletable(purchaseOrder))
                 {
@@ -295,7 +319,7 @@ namespace Allors.Domain
                     purchaseOrder.AddDeniedPermission(deletePermission);
                 }
 
-                if (!purchaseOrder.PurchaseOrderShipmentState.IsNotReceived)
+                if (!purchaseOrder.PurchaseOrderShipmentState.IsNotReceived && !purchaseOrder.PurchaseOrderShipmentState.IsNa)
                 {
                     purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Reject, Operations.Execute));
                     purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Cancel, Operations.Execute));

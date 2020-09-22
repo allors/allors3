@@ -87,13 +87,27 @@ namespace Allors.Domain
         {
             get
             {
-                if ((this.PurchaseOrderState.IsSent || this.PurchaseOrderState.IsCompleted)
-                    && this.PurchaseOrderShipmentState.IsNotReceived)
+                if ((this.PurchaseOrderState.IsInProcess || this.PurchaseOrderState.IsSent || this.PurchaseOrderState.IsCompleted)
+                    && (this.PurchaseOrderShipmentState.IsNotReceived || this.PurchaseOrderShipmentState.IsNa))
                 {
                     if (!this.ExistPurchaseInvoicesWherePurchaseOrder)
                     {
                         return true;
                     }
+                }
+
+                return false;
+            }
+        }
+
+        private bool IsReceivable
+        {
+            get
+            {
+                if (this.PurchaseOrderState.IsSent
+                    && this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).IsReceivable))
+                {
+                    return true;
                 }
 
                 return false;
@@ -487,7 +501,8 @@ namespace Allors.Domain
         {
             var session = this.Session();
 
-            if (this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).ExistPart))
+            if (this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).ExistPart
+                && ((PurchaseOrderItem)v).IsReceivable))
             {
                 var shipment = new PurchaseShipmentBuilder(session)
                     .WithShipmentMethod(new ShipmentMethods(session).Ground)
@@ -533,18 +548,12 @@ namespace Allors.Domain
                             shipmentItem.SerialisedItem = serialisedItem;
 
                             // HACK: DerivedRoles (WIP)
-                            var serialisedItemDeriveRoles = serialisedItem;
-                            serialisedItemDeriveRoles.PurchaseOrder = this;
-                            serialisedItem.RemoveAssignedPurchasePrice();
-                            serialisedItemDeriveRoles.PurchasePrice = orderItem.TotalExVat;
                             serialisedItem.AcquiredDate = orderItem.PurchaseOrderWherePurchaseOrderItem.OrderDate;
 
                             if (serialisedItem.ExistAcquiredDate && serialisedItem.ExistAcquisitionYear)
                             {
                                 serialisedItem.RemoveAcquisitionYear();
                             }
-
-                            serialisedItem.AssignedSuppliedBy = this.TakenViaSupplier;
 
                             if (this.OrderedBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).PurchaseshipmentReceive))
                             {
@@ -563,12 +572,6 @@ namespace Allors.Domain
                         shipment.Receive();
                     }
                 }
-            }
-
-            foreach (PurchaseOrderItem orderItem in this.ValidOrderItems.Where(v => !((PurchaseOrderItem)v).ExistPart))
-            {
-                var orderItemDerivedRoles = orderItem;
-                orderItemDerivedRoles.QuantityReceived = 1;
             }
         }
 
