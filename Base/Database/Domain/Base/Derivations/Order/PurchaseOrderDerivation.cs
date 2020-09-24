@@ -178,7 +178,7 @@ namespace Allors.Domain
                         {
                             purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Received;
                         }
-                        else if (validOrderItems.All(v => v.PurchaseOrderItemShipmentState.IsNotReceived))
+                        else if (validOrderItems.Where(v => v.IsReceivable).All(v => v.PurchaseOrderItemShipmentState.IsNotReceived))
                         {
                             purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.NotReceived;
                         }
