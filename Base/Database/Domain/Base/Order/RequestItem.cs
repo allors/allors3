@@ -11,12 +11,10 @@ namespace Allors.Domain
 
     public partial class RequestItem
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.RequestItem, M.RequestItem.RequestItemState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.RequestItem, this.M.RequestItem.RequestItemState),
+        };
 
         public bool IsValid => !(this.RequestItemState.IsCancelled || this.RequestItemState.IsRejected);
 

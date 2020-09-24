@@ -7,19 +7,18 @@
 namespace Allors.Meta
 {
     using System;
+    using Protocol.Data;
 
     /// <summary>
     /// A <see cref="IPropertyType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>
-    public interface IPropertyType : IOperandType, IComparable
+    public interface IPropertyType : IOperandType
     {
         string Name { get; }
 
         string SingularName { get; }
 
         string PluralName { get; }
-
-        string PropertyName { get; }
 
         IObjectType ObjectType { get; }
 

@@ -25,7 +25,7 @@ namespace Allors.Data
             new Predicate
             {
                 Kind = PredicateKind.Exists,
-                PropertyType = this.PropertyType?.Id,
+                PropertyType = this.PropertyType?.Save(),
                 Parameter = this.Parameter,
             };
 

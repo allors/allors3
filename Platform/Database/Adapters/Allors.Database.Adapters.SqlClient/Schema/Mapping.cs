@@ -242,8 +242,8 @@ namespace Allors.Database.Adapters.SqlClient
                     var roleType = relationType.RoleType;
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
-                        this.ColumnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularPropertyName);
-                        this.UnescapedColumnNameByRelationType[relationType] = associationType.SingularPropertyName;
+                        this.ColumnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularName);
+                        this.UnescapedColumnNameByRelationType[relationType] = associationType.SingularName;
                     }
                 }
 

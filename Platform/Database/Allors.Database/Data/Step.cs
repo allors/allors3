@@ -56,7 +56,7 @@ namespace Allors.Data
             new Protocol.Data.Step
             {
                 Include = this.Include?.Save(),
-                PropertyType = this.PropertyType.Id,
+                PropertyType = this.PropertyType.Save(),
                 Next = this.Next.Save(),
             };
 
@@ -73,7 +73,7 @@ namespace Allors.Data
         public override string ToString()
         {
             var name = new StringBuilder();
-            name.Append(this.PropertyType.PropertyName);
+            name.Append(this.PropertyType.Name);
             if (this.ExistNext)
             {
                 this.Next.ToStringAppendToName(name);
@@ -84,7 +84,7 @@ namespace Allors.Data
 
         private void ToStringAppendToName(StringBuilder name)
         {
-            name.Append("." + this.PropertyType.PropertyName);
+            name.Append("." + this.PropertyType.Name);
 
             if (this.ExistNext)
             {

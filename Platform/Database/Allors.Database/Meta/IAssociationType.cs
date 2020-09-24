@@ -13,11 +13,7 @@ namespace Allors.Meta
     /// </summary>
     public interface IAssociationType : IPropertyType
     {
-        string SingularPropertyName { get; }
-
         string SingularFullName { get; }
-
-        string PluralPropertyName { get; }
 
         string PluralFullName { get; }
 

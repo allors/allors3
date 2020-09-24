@@ -9,12 +9,10 @@ namespace Allors.Domain
 
     public partial class DropShipment
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.DropShipment, M.DropShipment.ShipmentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.DropShipment, this.M.DropShipment.ShipmentState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

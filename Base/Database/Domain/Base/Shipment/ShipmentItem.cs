@@ -10,16 +10,10 @@ namespace Allors.Domain
 {
     public partial class ShipmentItem
     {
-        #region Transitional
-
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-        {
-            new TransitionalConfiguration(M.ShipmentItem, M.ShipmentItem.ShipmentItemState),
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.ShipmentItem, this.M.ShipmentItem.ShipmentItemState),
         };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
-
-        #endregion Transitional
 
         public void BaseDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {

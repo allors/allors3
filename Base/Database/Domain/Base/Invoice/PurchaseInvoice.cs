@@ -15,18 +15,16 @@ namespace Allors.Domain
 
     public partial class PurchaseInvoice
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PurchaseInvoice, M.PurchaseInvoice.PurchaseInvoiceState),
-            };
-
         public bool IsDeletable =>
             (this.PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Strategy.Session).Created)
                 || this.PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Strategy.Session).Cancelled)
                 || this.PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Strategy.Session).Rejected))
             && this.ExistSalesInvoiceWherePurchaseInvoice;
 
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[]{
+            new TransitionalConfiguration(this.M.PurchaseInvoice, this.M.PurchaseInvoice.PurchaseInvoiceState),
+        };
 
         public InvoiceItem[] InvoiceItems => this.PurchaseInvoiceItems;
 
@@ -140,112 +138,112 @@ namespace Allors.Domain
 
             //foreach (var invoiceItem in validInvoiceItems)
             //{
-                //if (invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsRevising)
-                //{
-                //    invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.Revising;
-                //}
-                //else if (invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsCreated)
-                //{
-                //    else if (invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsAwaitingApproval)
-                //    {
-                //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.AwaitingApproval;
-                //    }
-                //    else if (invoiceItem.AmountPaid == 0)
-                //    {
-                //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.NotPaid;
-                //    }
-                //    else if (invoiceItem.ExistAmountPaid && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)
-                //    {
-                //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.Paid;
-                //    }
-                //    else
-                //    {
-                //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.PartiallyPaid;
-                //    }
-                //}
+            //if (invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsRevising)
+            //{
+            //    invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.Revising;
+            //}
+            //else if (invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsCreated)
+            //{
+            //    else if (invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsAwaitingApproval)
+            //    {
+            //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.AwaitingApproval;
+            //    }
+            //    else if (invoiceItem.AmountPaid == 0)
+            //    {
+            //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.NotPaid;
+            //    }
+            //    else if (invoiceItem.ExistAmountPaid && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)
+            //    {
+            //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.Paid;
+            //    }
+            //    else
+            //    {
+            //        invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.PartiallyPaid;
+            //    }
+            //}
 
-                //if (validInvoiceItems.Any())
-                //{
-                //    if (!this.PurchaseInvoiceState.IsCreated && !this.PurchaseInvoiceState.IsAwaitingApproval)
-                //    {
-                //        if (this.PurchaseInvoiceItems.All(v => v.PurchaseInvoiceItemState.IsPaid))
-                //        {
-                //            this.PurchaseInvoiceState = purchaseInvoiceStates.Paid;
-                //        }
-                //        else if (this.PurchaseInvoiceItems.All(v => v.PurchaseInvoiceItemState.IsNotPaid))
-                //        {
-                //            this.PurchaseInvoiceState = purchaseInvoiceStates.NotPaid;
-                //        }
-                //        else
-                //        {
-                //            this.PurchaseInvoiceState = purchaseInvoiceStates.PartiallyPaid;
-                //        }
-                //    }
-                //}
+            //if (validInvoiceItems.Any())
+            //{
+            //    if (!this.PurchaseInvoiceState.IsCreated && !this.PurchaseInvoiceState.IsAwaitingApproval)
+            //    {
+            //        if (this.PurchaseInvoiceItems.All(v => v.PurchaseInvoiceItemState.IsPaid))
+            //        {
+            //            this.PurchaseInvoiceState = purchaseInvoiceStates.Paid;
+            //        }
+            //        else if (this.PurchaseInvoiceItems.All(v => v.PurchaseInvoiceItemState.IsNotPaid))
+            //        {
+            //            this.PurchaseInvoiceState = purchaseInvoiceStates.NotPaid;
+            //        }
+            //        else
+            //        {
+            //            this.PurchaseInvoiceState = purchaseInvoiceStates.PartiallyPaid;
+            //        }
+            //    }
+            //}
 
-                //if (!this.PurchaseInvoiceState.IsCreated && !this.PurchaseInvoiceState.IsAwaitingApproval)
-                //{
-                //    foreach (var invoiceItem in validInvoiceItems)
-                //    {
-                //        if (invoiceItem.ExistSerialisedItem
-                //            && this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).PurchaseInvoiceConfirm))
-                //        {
-                //            if ((this.BilledFrom as InternalOrganisation)?.IsInternalOrganisation == false)
-                //            {
-                //                invoiceItem.SerialisedItem.Buyer = this.BilledTo;
-                //            }
+            //if (!this.PurchaseInvoiceState.IsCreated && !this.PurchaseInvoiceState.IsAwaitingApproval)
+            //{
+            //    foreach (var invoiceItem in validInvoiceItems)
+            //    {
+            //        if (invoiceItem.ExistSerialisedItem
+            //            && this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Session()).PurchaseInvoiceConfirm))
+            //        {
+            //            if ((this.BilledFrom as InternalOrganisation)?.IsInternalOrganisation == false)
+            //            {
+            //                invoiceItem.SerialisedItem.Buyer = this.BilledTo;
+            //            }
 
-                //            // who comes first?
-                //            // Item you purchased can be on sold via sales invoice even before purchase invoice is created and confirmed!!
-                //            if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem.Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false))
-                //            {
-                //                invoiceItem.SerialisedItem.OwnedBy = this.BilledTo;
-                //                invoiceItem.SerialisedItem.Ownership = new Ownerships(this.Session()).Own;
-                //            }
-                //        }
-                //    }
-                //}
+            //            // who comes first?
+            //            // Item you purchased can be on sold via sales invoice even before purchase invoice is created and confirmed!!
+            //            if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem.Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false))
+            //            {
+            //                invoiceItem.SerialisedItem.OwnedBy = this.BilledTo;
+            //                invoiceItem.SerialisedItem.Ownership = new Ownerships(this.Session()).Own;
+            //            }
+            //        }
+            //    }
+            //}
 
-                //// If disbursements are not matched at invoice level
-                //if (this.AmountPaid > 0)
-                //{
-                //    if (this.AmountPaid >= decimal.Round(this.TotalIncVat, 2))
-                //    {
-                //        this.PurchaseInvoiceState = purchaseInvoiceStates.Paid;
-                //    }
-                //    else
-                //    {
-                //        this.PurchaseInvoiceState = purchaseInvoiceStates.PartiallyPaid;
-                //    }
+            //// If disbursements are not matched at invoice level
+            //if (this.AmountPaid > 0)
+            //{
+            //    if (this.AmountPaid >= decimal.Round(this.TotalIncVat, 2))
+            //    {
+            //        this.PurchaseInvoiceState = purchaseInvoiceStates.Paid;
+            //    }
+            //    else
+            //    {
+            //        this.PurchaseInvoiceState = purchaseInvoiceStates.PartiallyPaid;
+            //    }
 
-                //    foreach (var invoiceItem in validInvoiceItems)
-                //    {
-                //        if (this.AmountPaid >= decimal.Round(this.TotalIncVat, 2))
-                //        {
-                //            invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.Paid;
-                //        }
-                //        else
-                //        {
-                //            invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.PartiallyPaid;
-                //        }
-                //    }
-                //}
+            //    foreach (var invoiceItem in validInvoiceItems)
+            //    {
+            //        if (this.AmountPaid >= decimal.Round(this.TotalIncVat, 2))
+            //        {
+            //            invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.Paid;
+            //        }
+            //        else
+            //        {
+            //            invoiceItem.PurchaseInvoiceItemState = purchaseInvoiceItemStates.PartiallyPaid;
+            //        }
+            //    }
+            //}
 
-                //this.BaseOnDeriveInvoiceItems(derivation);
-                //this.BaseOnDeriveInvoiceTotals();
+            //this.BaseOnDeriveInvoiceItems(derivation);
+            //this.BaseOnDeriveInvoiceTotals();
 
-                //this.DeriveWorkflow();
+            //this.DeriveWorkflow();
 
-                //var singleton = this.Session().GetSingleton();
+            //var singleton = this.Session().GetSingleton();
 
-                //this.AddSecurityToken(new SecurityTokens(this.Session()).DefaultSecurityToken);
+            //this.AddSecurityToken(new SecurityTokens(this.Session()).DefaultSecurityToken);
 
-                //this.Sync(this.Session());
+            //this.Sync(this.Session());
 
-                //this.ResetPrintDocument();
-            }
+            //this.ResetPrintDocument();
+        }
 
-            public void BaseOnPostDerive(ObjectOnPostDerive method)
+        public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
             //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
             //if (this.IsDeletable)
@@ -534,7 +532,7 @@ namespace Allors.Domain
                             .Build();
                     }
 
-                    foreach(OrderItemBilling orderItemBilling in purchaseInvoiceItem.OrderItemBillingsWhereInvoiceItem)
+                    foreach (OrderItemBilling orderItemBilling in purchaseInvoiceItem.OrderItemBillingsWhereInvoiceItem)
                     {
                         foreach (ShipmentReceipt receipt in orderItemBilling.OrderItem.ShipmentReceiptsWhereOrderItem)
                         {

@@ -13,18 +13,12 @@ namespace Allors.Domain
 
     public partial class PurchaseOrderItem
     {
-        #region Transitional
-
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PurchaseOrderItem, M.PurchaseOrderItem.PurchaseOrderItemState),
-                new TransitionalConfiguration(M.PurchaseOrderItem, M.PurchaseOrderItem.PurchaseOrderItemShipmentState),
-                new TransitionalConfiguration(M.PurchaseOrderItem, M.PurchaseOrderItem.PurchaseOrderItemPaymentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
-
-        #endregion Transitional
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.PurchaseOrderItemState),
+            new TransitionalConfiguration(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.PurchaseOrderItemShipmentState),
+            new TransitionalConfiguration(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.PurchaseOrderItemPaymentState),
+        };
 
         public bool IsValid => !(this.PurchaseOrderItemState.IsCancelled || this.PurchaseOrderItemState.IsRejected);
 

@@ -8,7 +8,7 @@ namespace Allors.Meta
 {
     using System;
 
-    public interface IDomain : IMetaObject, IComparable
+    public interface IDomain : IMetaObject, IMetaIdentity, IComparable
     {
     }
 }

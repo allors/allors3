@@ -12,14 +12,17 @@ namespace Allors.Domain
 
     public class PartyFinancialRelationshipAmountDueDerivation : IDomainDerivation
     {
+        public PartyFinancialRelationshipAmountDueDerivation(M m) =>
+            this.Patterns = new Pattern[]
+            {
+                new ChangedConcreteRolePattern(m.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new ChangedConcreteRolePattern(m.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new ChangedRolePattern(m.Store.PaymentGracePeriod) { Steps =  new IPropertyType[] { m.Store.SalesInvoicesWhereStore, m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
+            };
+
         public Guid Id => new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96");
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new ChangedConcreteRolePattern(M.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-            new ChangedConcreteRolePattern(M.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-            new ChangedRolePattern(M.Store.PaymentGracePeriod) { Steps =  new IPropertyType[] { M.Store.SalesInvoicesWhereStore, M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } }
-        };
+        public IEnumerable<Pattern> Patterns { get; } 
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

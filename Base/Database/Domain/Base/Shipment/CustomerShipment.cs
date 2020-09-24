@@ -11,12 +11,10 @@ namespace Allors.Domain
 
     public partial class CustomerShipment
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.CustomerShipment, M.CustomerShipment.ShipmentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.CustomerShipment, this.M.CustomerShipment.ShipmentState),
+        };
 
         public bool CanShip
         {

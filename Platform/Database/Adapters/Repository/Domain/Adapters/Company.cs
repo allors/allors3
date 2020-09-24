@@ -23,16 +23,16 @@ namespace Allors.Repository
         [Id("08ab248d-bdb1-49c5-a2da-d6485f49239f")]
         [AssociationId("ad0ef93c-be37-48a6-97c6-fd252d66fbac")]
         [RoleId("f2b72cff-9208-41c0-9c5c-09ed0725f107")]
-        [Multiplicity(Multiplicity.ManyToOne)]
         #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
         public Person Manager { get; set; }
 
         #region Allors
         [Id("1a4087de-f116-4f79-9441-31faee8054f3")]
         [AssociationId("9c0ec4ba-9ef4-4d82-a94f-4984808c47cd")]
         [RoleId("978f3cdd-55d9-4086-b448-c313731604d8")]
-        [Multiplicity(Multiplicity.OneToMany)]
         #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
         public Person[] Employees { get; set; }
 
         #region Allors

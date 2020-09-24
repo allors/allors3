@@ -14,12 +14,10 @@ namespace Allors.Domain
 
     public partial class WorkTask
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-              {
-                new TransitionalConfiguration(M.WorkTask, M.WorkTask.WorkEffortState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.WorkTask, this.M.WorkTask.WorkEffortState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

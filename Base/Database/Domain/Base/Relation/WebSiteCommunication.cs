@@ -9,12 +9,10 @@ namespace Allors.Domain
 
     public partial class WebSiteCommunication
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.WebSiteCommunication, M.WebSiteCommunication.CommunicationEventState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.WebSiteCommunication, this.M.WebSiteCommunication.CommunicationEventState),
+        };
 
         public void BaseOnDerive(ObjectOnDerive method) { /*this.WorkItemDescription = $"Access website of {this.ToParty.PartyName} about {this.Subject}";*/ } 
     }

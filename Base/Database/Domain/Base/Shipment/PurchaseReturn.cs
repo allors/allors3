@@ -9,12 +9,10 @@ namespace Allors.Domain
 
     public partial class PurchaseReturn
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PurchaseReturn, M.PurchaseReturn.ShipmentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PurchaseReturn, this.M.PurchaseReturn.ShipmentState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

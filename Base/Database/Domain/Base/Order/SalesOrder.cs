@@ -16,15 +16,13 @@ namespace Allors.Domain
 
     public partial class SalesOrder
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderState),
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderShipmentState),
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderInvoiceState),
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderPaymentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderState),
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderShipmentState),
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderInvoiceState),
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderPaymentState),
+        };
 
         public int PaymentNetDays
         {

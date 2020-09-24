@@ -11,12 +11,10 @@ namespace Allors.Domain
 
     public partial class PickList
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PickList, M.PickList.PickListState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PickList, this.M.PickList.PickListState),
+        };
 
         public bool IsComplete
         {

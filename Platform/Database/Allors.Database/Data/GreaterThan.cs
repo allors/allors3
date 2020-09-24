@@ -26,7 +26,7 @@ namespace Allors.Data
             new Predicate
             {
                 Kind = PredicateKind.GreaterThan,
-                RoleType = this.RoleType?.Id,
+                RoleType = this.RoleType?.RelationType.Id,
                 Value = UnitConvert.ToString(this.Value),
                 Parameter = this.Parameter,
             };

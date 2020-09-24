@@ -18,11 +18,6 @@ namespace Allors.Domain
 
     public partial class SalesInvoice
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.SalesInvoice, M.SalesInvoice.SalesInvoiceState),
-            };
-
         private bool IsDeletable =>
                     this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting) &&
             this.SalesInvoiceItems.All(v => v.IsDeletable) &&
@@ -31,7 +26,10 @@ namespace Allors.Domain
             !this.ExistRepeatingSalesInvoiceWhereSource &&
             !this.IsRepeatingInvoice;
 
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.SalesInvoice, this.M.SalesInvoice.SalesInvoiceState),
+        };
 
         public int PaymentNetDays
         {

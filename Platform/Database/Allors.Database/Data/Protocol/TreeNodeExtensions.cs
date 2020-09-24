@@ -15,7 +15,7 @@ namespace Allors.Protocol.Data
             {
                 foreach (var childProtocolTreeNode in @this.Nodes)
                 {
-                    var childPropertyType = childProtocolTreeNode.PropertyType != null ? (IPropertyType)session.Database.ObjectFactory.MetaPopulation.Find(childProtocolTreeNode.PropertyType.Value) : null;
+                    var childPropertyType = childProtocolTreeNode.PropertyType.Load(session);
                     var childTreeNode = new Allors.Data.Node(childPropertyType);
                     node.Add(childTreeNode);
                     childProtocolTreeNode.Load(session, childTreeNode);

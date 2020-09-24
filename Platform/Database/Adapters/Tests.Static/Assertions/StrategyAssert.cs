@@ -99,7 +99,6 @@ namespace Allors.Database.Adapters
                 Assert.True(false, "Exist didn't threw an Exception for role " + roleType);
             }
         }
-        public static void RoleExistHasException(IObject allorsObject, IRoleClass roleClass) => RoleExistHasException(allorsObject, roleClass.RoleType);
 
         public static void RoleGetHasException(IObject allorsObject, IRoleType roleType)
         {
@@ -118,7 +117,6 @@ namespace Allors.Database.Adapters
                 Assert.True(false); // Fail
             }
         }
-        public static void RoleGetHasException(IObject allorsObject, IRoleClass roleClass) => RoleGetHasException(allorsObject, roleClass.RoleType);
 
         public static void RolesExistExclusive(IObject allorsObject, params IRoleType[] roleTypes)
         {

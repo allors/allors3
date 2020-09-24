@@ -33,7 +33,7 @@ namespace Allors.Data
             new Predicate
             {
                 Kind = PredicateKind.ContainedIn,
-                PropertyType = this.PropertyType?.Id,
+                PropertyType = this.PropertyType?.Save(),
                 Extent = this.Extent?.Save(),
                 Values = this.Objects.Select(v => v.Id.ToString()).ToArray(),
                 Parameter = this.Parameter,

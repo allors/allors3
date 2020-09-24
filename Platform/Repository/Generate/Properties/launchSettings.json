@@ -2,8 +2,8 @@
   "profiles": {
     "Allors.Generate.Cmd": {
       "commandName": "Project",
-      "commandLineArgs": "repository.csproj ../../../platform/repository/templates/meta.cs.stg ../../database/meta/generated",
-      "workingDirectory": "C:\\Users\\KoenVanExem\\source\\repos\\Allors\\allors3\\Core\\Repository\\Domain"
+      "commandLineArgs": "repository.csproj ../../../../repository/templates/meta.cs.stg ../../meta/generated",
+      "workingDirectory": "C:\\Users\\KoenVanExem\\source\\repos\\Allors\\allors3\\Platform\\Database\\Adapters\\Repository\\Domain"
     }
   }
 }

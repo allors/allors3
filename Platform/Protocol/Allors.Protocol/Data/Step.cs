@@ -9,7 +9,7 @@ namespace Allors.Protocol.Data
 
     public class Step
     {
-        public Guid? PropertyType { get; set; }
+        public PropertyType PropertyType { get; set; }
 
         public Step Next { get; set; }
 

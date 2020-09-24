@@ -105,10 +105,10 @@ namespace Allors.Meta
                 {
                     foreach (var toClass in toInterface.Classes)
                     {
-                        foreach (var toConcreteMethodType in toClass.ConcreteMethodTypes)
+                        foreach (var toConcreteMethodType in toClass.MethodClasses)
                         {
                             var fromClass = (Class)from.Find(toClass.Id);
-                            var fromConcreteMethodType = fromClass.ConcreteMethodTypes
+                            var fromConcreteMethodType = fromClass.MethodClasses
                                 .Single(v => v.MethodType.Id == toConcreteMethodType.MethodType.Id);
                         }
                     }

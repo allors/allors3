@@ -9,12 +9,10 @@ namespace Allors.Domain
 
     public partial class FaxCommunication
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.FaxCommunication, M.FaxCommunication.CommunicationEventState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.FaxCommunication, this.M.FaxCommunication.CommunicationEventState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Fax to {this.ToParty.PartyName} about {this.Subject}";
     }

@@ -14,14 +14,12 @@ namespace Allors.Domain
 
     public partial class QuoteItem
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.QuoteItem, M.QuoteItem.QuoteItemState),
-            };
-
         public decimal LineTotal => this.Quantity * this.UnitPrice;
 
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.QuoteItem, this.M.QuoteItem.QuoteItemState),
+        };
 
         public bool IsValid => !(this.QuoteItemState.IsCancelled || this.QuoteItemState.IsRejected);
 

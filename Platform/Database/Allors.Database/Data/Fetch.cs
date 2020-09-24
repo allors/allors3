@@ -66,10 +66,8 @@ namespace Allors.Data
             {
                 if (associationType.SingularName.ToLowerInvariant().Equals(lowerCasePropertyName) ||
                     associationType.SingularFullName.ToLowerInvariant().Equals(lowerCasePropertyName) ||
-                    associationType.SingularPropertyName.ToLowerInvariant().Equals(lowerCasePropertyName) ||
                     associationType.PluralName.ToLowerInvariant().Equals(lowerCasePropertyName) ||
-                    associationType.PluralFullName.ToLowerInvariant().Equals(lowerCasePropertyName) ||
-                    associationType.PluralPropertyName.ToLowerInvariant().Equals(lowerCasePropertyName))
+                    associationType.PluralFullName.ToLowerInvariant().Equals(lowerCasePropertyName))
                 {
                     return associationType;
                 }

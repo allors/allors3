@@ -9,12 +9,10 @@ namespace Allors.Domain
 
     public partial class RequestForProposal
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.RequestForProposal, M.RequestForProposal.RequestState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.RequestForProposal, this.M.RequestForProposal.RequestState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
 

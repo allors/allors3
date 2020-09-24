@@ -145,7 +145,7 @@ namespace Allors.Database.Adapters
                     Predicate = new Predicate
                     {
                         Kind = Protocol.Data.PredicateKind.Equals,
-                        PropertyType = m.C1.C1AllorsString.Id,
+                        PropertyType = new PropertyType { Kind = PropertyKind.Role, RelationType = m.C1.C1AllorsString.RelationType.Id },
                         Value = "ᴀbra",
                     },
                 };
