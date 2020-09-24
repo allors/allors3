@@ -46,11 +46,11 @@ namespace Allors.Domain
                 {
                     if (purchaseOrderItem.IsReceivable)
                     {
-                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).Na;
+                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).NotReceived;
                     }
                     else
                     {
-                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).NotReceived;
+                        purchaseOrderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(purchaseOrderItem.Strategy.Session).Na;
                     }
                 }
 
