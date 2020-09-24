@@ -499,8 +499,7 @@ namespace Allors.Domain
         {
             var session = this.Session();
 
-            if (this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).ExistPart
-                && ((PurchaseOrderItem)v).IsReceivable))
+            if (this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).IsReceivable))
             {
                 var shipment = new PurchaseShipmentBuilder(session)
                     .WithShipmentMethod(new ShipmentMethods(session).Ground)

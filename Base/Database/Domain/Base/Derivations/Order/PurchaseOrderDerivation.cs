@@ -172,22 +172,24 @@ namespace Allors.Domain
                 // PurchaseOrder Shipment State
                 if (validOrderItems.Any())
                 {
-                    if ((validOrderItems.Any(v => v.ExistPart) && validOrderItems.Where(v => v.ExistPart).All(v => v.PurchaseOrderItemShipmentState.IsReceived)) ||
-                        (validOrderItems.Any(v => !v.ExistPart) && validOrderItems.Where(v => !v.ExistPart).All(v => v.PurchaseOrderItemShipmentState.IsReceived)))
+                    if (validOrderItems.Any(v => v.IsReceivable))
                     {
-                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Received;
-                    }
-                    else if (validOrderItems.All(v => v.PurchaseOrderItemShipmentState.IsNotReceived))
-                    {
-                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.NotReceived;
-                    }
-                    else if (validOrderItems.All(v => v.PurchaseOrderItemShipmentState.IsNa))
-                    {
-                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Na;
+                        if (validOrderItems.Where(v => v.IsReceivable).All(v => v.PurchaseOrderItemShipmentState.IsReceived))
+                        {
+                            purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Received;
+                        }
+                        else if (validOrderItems.Where(v => v.IsReceivable).All(v => v.PurchaseOrderItemShipmentState.IsNotReceived))
+                        {
+                            purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.NotReceived;
+                        }
+                        else
+                        {
+                            purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.PartiallyReceived;
+                        }
                     }
                     else
                     {
-                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.PartiallyReceived;
+                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Na;
                     }
 
                     // PurchaseOrder Payment State
