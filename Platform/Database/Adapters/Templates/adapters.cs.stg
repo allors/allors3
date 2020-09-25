@@ -259,11 +259,11 @@ $endif$
 classRoleClass_Class() ::= <<
 $\n$
 $if(roleClass.ObjectType.IsUnit)$
-		virtual public $roleClass_ObjectType(roleClass)$ $roleClass.SingularName$
+		virtual public $roleClass$ $roleClass.SingularName$
 		{
 			get
 			{
-				return ($roleClass_ObjectType(roleClass)$) Strategy.GetUnitRole(Meta.$roleClass.Name$.RelationType);
+				return ($roleClass$) Strategy.GetUnitRole(Meta.$roleClass.Name$.RelationType);
 			}
 			set
 			{
@@ -284,7 +284,7 @@ $if(roleClass.ObjectType.IsUnit)$
 		}
 $else$
 $if(roleClass.IsMany)$
-		virtual public global::Allors.Extent<$roleClass_ObjectType(roleClass)$> $roleClass.PluralName$
+		virtual public global::Allors.Extent<$roleClass$> $roleClass.PluralName$
 		{
 			get
 			{
@@ -296,12 +296,12 @@ $if(roleClass.IsMany)$
 			}
 		}
 
-		virtual public void Add$roleClass.SingularName$ ($roleClass_ObjectType(roleClass)$ value)
+		virtual public void Add$roleClass.SingularName$ ($roleClass$ value)
 		{
 			Strategy.AddCompositeRole(Meta.$roleClass.Name$.RelationType, value);
 		}
 
-		virtual public void Remove$roleClass.SingularName$ ($roleClass_ObjectType(roleClass)$ value)
+		virtual public void Remove$roleClass.SingularName$ ($roleClass$ value)
 		{
 			Strategy.RemoveCompositeRole(Meta.$roleClass.Name$.RelationType, value);
 		}
@@ -319,11 +319,11 @@ $if(roleClass.IsMany)$
 			Strategy.RemoveCompositeRoles(Meta.$roleClass.Name$.RelationType);
 		}
 $else$
-		virtual public $roleClass_ObjectType(roleClass)$ $roleClass.SingularName$
+		virtual public $roleClass$ $roleClass.SingularName$
 		{
 			get
 			{
-				return ($roleClass_ObjectType(roleClass)$) Strategy.GetCompositeRole(Meta.$roleClass.Name$.RelationType);
+				return ($roleClass$) Strategy.GetCompositeRole(Meta.$roleClass.Name$.RelationType);
 			}
 			set
 			{

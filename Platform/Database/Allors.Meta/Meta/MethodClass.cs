@@ -47,7 +47,7 @@ namespace Allors.Meta
 
         public override string Name
         {
-            get => this.name;
+            get => this.name ?? this.MethodInterface.Name;
 
             set
             {
@@ -61,6 +61,10 @@ namespace Allors.Meta
                 this.MetaPopulation.Stale();
             }
         }
+
+        public override string FullName => this.MethodInterface != null
+            ? this.MethodInterface.FullName
+            : $"{this.Composite.Name}{this.Name}";
 
         public override Composite Composite => this.Class;
 

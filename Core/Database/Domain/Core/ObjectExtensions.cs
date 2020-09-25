@@ -15,7 +15,7 @@ namespace Allors
         public static void CoreOnPostBuild(this Allors.Domain.Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
-            foreach (var concreteRoleType in ((Class)@this.Strategy.Class).RoleClasses)
+            foreach (var concreteRoleType in ((Class)@this.Strategy.Class).RoleTypes)
             {
                 if (concreteRoleType.IsRequired)
                 {

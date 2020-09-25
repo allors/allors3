@@ -1,42 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Interface Name="Allors.Domain.User" Collapsed="true">
-    <Position X="7.5" Y="1.5" Width="2" />
-    <Members>
-      <Property Name="NotificationList" Hidden="true" />
-    </Members>
+    <Position X="7.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAQAGAAAAIAQAQCBAAAAA=</HashCode>
+      <HashCode>AACBAAAgAACAAAAAAAQAABAAAAHgAAAAAQAQCBICCAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.AccessControl">
-    <Position X="4.25" Y="1" Width="1.5" />
-    <AssociationLine Name="EffectiveWorkspacePermissions" Type="Allors.Domain.Permission" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+    <Position X="3.75" Y="1" Width="2.5" />
+    <AssociationLine Name="Subjects" Type="Allors.Domain.User" FixedFromPoint="true">
       <Path>
-        <Point X="4.25" Y="1.545" />
-        <Point X="3.682" Y="1.545" />
-        <Point X="3.682" Y="6.188" />
-        <Point X="4.25" Y="6.188" />
+        <Point X="6.25" Y="1.75" />
+        <Point X="7.5" Y="1.75" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_EffectivePermissions" Type="Allors.Domain.Permission" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.75" Y="2.329" />
+        <Point X="3.375" Y="2.329" />
+        <Point X="3.375" Y="5.763" />
+        <Point X="4.25" Y="5.763" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_EffectiveUsers" Type="Allors.Domain.User" FixedFromPoint="true">
+      <Path>
+        <Point X="6.25" Y="2.25" />
+        <Point X="7.5" Y="2.25" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAACAAAAAEAAAAAAQAAAAAIAAAAAQAAAAAAA=</HashCode>
+      <HashCode>AAAAAEAAAAAAAACAEAAAAAAAAAAAAIAAAAAAAAIAQAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="SubjectGroups" />
       <Property Name="Subjects" />
       <Property Name="Role" />
-      <Property Name="EffectivePermissions" />
-      <Property Name="EffectiveWorkspacePermissions" />
-      <Property Name="EffectiveUsers" />
+      <Property Name="_EffectivePermissions" />
+      <Property Name="_EffectiveUsers" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Permission">
     <Position X="4.25" Y="5.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -51,7 +59,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.UserGroup" Collapsed="true">
-    <Position X="7.5" Y="0.5" Width="2" />
+    <Position X="7.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAEAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
@@ -71,7 +79,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Object">
-    <Position X="0.5" Y="6" Width="2" />
+    <Position X="0.5" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAIAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
@@ -91,7 +99,35 @@
   <Interface Name="Allors.Domain.Person" Collapsed="true">
     <Position X="6.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QARBAEACAEAAAKCAMEAQAAQAACAAAAAAAAAACAQAAAg=</HashCode>
+      <HashCode>QAQBAEICQEAAAKCBMEAQAAQAACAAAAAAAAAACAQAAAg=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.PermissionAssociationRead">
+    <Position X="5.75" Y="7.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.PermissionMethodExecute">
+    <Position X="8.25" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.PermissionRoleRead">
+    <Position X="1.75" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.PermissionRoleWrite">
+    <Position X="3.75" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>

@@ -38,5 +38,7 @@ namespace Allors.Meta
                 this.MetaPopulation.Stale();
             }
         }
+
+        public override string FullName => $"{this.Composite.Name}{this.Name}";
     }
 }

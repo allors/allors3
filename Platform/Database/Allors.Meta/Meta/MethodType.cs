@@ -21,6 +21,10 @@ namespace Allors.Meta
         {
         }
 
+        public string[] WorkspaceNames { get; set; }
+
+        public bool Workspace => this.WorkspaceNames?.Length > 0;
+
         public abstract Guid Id { get; }
         public abstract string IdAsString { get; }
 
@@ -34,7 +38,7 @@ namespace Allors.Meta
 
         public override string DisplayName => this.Name;
 
-        public string FullName => this.Composite != null ? this.Composite.Name + this.Name : this.Name;
+        public abstract string FullName { get; }
 
         /// <summary>
         /// Gets the validation name.

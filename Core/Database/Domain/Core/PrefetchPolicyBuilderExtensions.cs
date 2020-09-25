@@ -18,7 +18,7 @@ namespace Allors
         public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, Class @class)
         {
             // TODO: Cache
-            foreach (var roleType in @class.RoleTypes.Where(v => v.Workspace))
+            foreach (var roleType in @class.RoleTypes.Where(v => v.RelationType.Workspace))
             {
                 @this.WithRule(roleType);
             }

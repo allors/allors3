@@ -36,7 +36,7 @@ namespace Allors
                 {
                     { "Database/Templates/meta.cs.stg", "Database/Domain/generated/meta" },
                     { "Database/Templates/domain.cs.stg", "Database/Domain/generated/domain" },
-                    //{ "Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/generated" },
+                    { "Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/generated" },
                 };
 
             string[,] workspace =
@@ -68,9 +68,6 @@ namespace Allors
                 }
             }
 
-            var workspaceTransformation = new WorkspaceTransformation();
-            var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation, "Default");
-
             for (var i = 0; i < workspace.GetLength(0); i++)
             {
                 var template = workspace[i, 0];
@@ -80,7 +77,7 @@ namespace Allors
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(workspaceMetaPopulation, template, output);
+                var log = Generate.Execute(metaPopulation, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;

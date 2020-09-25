@@ -177,7 +177,6 @@ build_interface(interface) ::= <<
             {
                 SingularName = "$interface.SingularName$",
                 $if(interface.AttributeByName.Plural)$PluralName = "$interface.AttributeByName.Plural.Value$",$endif$
-                $if(interface.XmlDoc)$XmlDoc = @"$interface.XmlDoc.VerbatimValue$",$endif$
                 $if(interface.AttributeByName.Synced)$AssignedIsSynced = $interface.AttributeByName.Synced.Value$$endif$
             };
 >>
@@ -189,7 +188,6 @@ build_class(class) ::= <<
                 SingularName = "$class.SingularName$",
                 PluralName = "$class.PluralName$",
                 $if(class.WorkspaceNames)$WorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
-                $if(class.XmlDoc)$XmlDoc = @"$class.XmlDoc.VerbatimValue$",$endif$
                 $if(class.AttributeByName.Synced)$AssignedIsSynced = $class.AttributeByName.Synced.Value$$endif$
             };
 >>
@@ -212,7 +210,6 @@ relation(property) ::= <<
             {
                 AssignedOrigin = Origin.$property.Origin$,
 $if(property.WorkspaceNames)$		        WorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
-$if(property.XmlDoc)$		    XmlDoc = @"$property.XmlDoc.VerbatimValue$",$endif$
 $if(property.AttributeByName.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$property.AttributeByName.Multiplicity.Value$,$endif$
 $if(property.AttributeByName.Derived)$		        IsDerived = $property.AttributeByName.Derived.Value$,$endif$
 $if(property.AttributeByName.Synced)$		    IsSynced = $property.AttributeByName.Synced.Value$,$endif$
@@ -245,7 +242,6 @@ method(method) ::= <<
             {
                 Name = "$method.Name$",
 $if(method.WorkspaceNames)$		        WorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
-$if(method.XmlDoc)$		        XmlDoc = @"$method.XmlDoc.VerbatimValue$",$endif$
             };
         }
 >>
