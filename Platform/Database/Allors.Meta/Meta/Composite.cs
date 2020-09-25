@@ -353,16 +353,24 @@ namespace Allors.Meta
         {
             roleTypes.Clear();
 
-            if (roleTypesByAssociationObjectType.TryGetValue(this, out var classRoleTypes))
+            if (roleTypesByAssociationObjectType.TryGetValue(this, out var directRoleTypes))
             {
-                roleTypes.UnionWith(classRoleTypes);
+                roleTypes.UnionWith(directRoleTypes);
             }
 
             foreach (var superType in this.Supertypes)
             {
-                if (roleTypesByAssociationObjectType.TryGetValue(superType, out var superTypeRoleTypes))
+                if (roleTypesByAssociationObjectType.TryGetValue(superType, out var inheritedRoleTypes))
                 {
-                    roleTypes.UnionWith(superTypeRoleTypes);
+                    if (this.IsInterface)
+                    {
+                        roleTypes.UnionWith(inheritedRoleTypes);
+                    }
+                    else
+                    {
+                        var roleClasses = inheritedRoleTypes.Select(v => v.RelationType.RoleClassBy((Class)this));
+                        roleTypes.UnionWith(roleClasses);
+                    }
                 }
             }
 
@@ -381,16 +389,24 @@ namespace Allors.Meta
         {
             methodTypes.Clear();
 
-            if (methodTypeByClass.TryGetValue(this, out var classMethodTypes))
+            if (methodTypeByClass.TryGetValue(this, out var directMethodTypes))
             {
-                methodTypes.UnionWith(classMethodTypes);
+                methodTypes.UnionWith(directMethodTypes);
             }
 
             foreach (var superType in this.Supertypes)
             {
-                if (methodTypeByClass.TryGetValue(superType, out var superTypeMethodTypes))
+                if (methodTypeByClass.TryGetValue(superType, out var inheritedMethodTypes))
                 {
-                    methodTypes.UnionWith(superTypeMethodTypes);
+                    if (this.IsInterface)
+                    {
+                        methodTypes.UnionWith(inheritedMethodTypes);
+                    }
+                    else
+                    {
+                        var methodClasses = inheritedMethodTypes.Select(v => v.MethodClassBy((Class)this));
+                        methodTypes.UnionWith(methodClasses);
+                    }
                 }
             }
 

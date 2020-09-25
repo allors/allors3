@@ -9,7 +9,7 @@ namespace Allors.Meta
     using System;
     using System.Linq;
 
-    public sealed partial class Inheritance : MetaObjectBase
+    public sealed partial class Inheritance : MetaObjectBase, IComparable
     {
         private Composite subtype;
 
@@ -57,6 +57,25 @@ namespace Allors.Meta
 
                 return "unknown inheritance";
             }
+        }
+
+        public override bool Equals(object other) => this.Subtype.Id.Equals((other as Inheritance)?.Subtype.Id) && this.Supertype.Id.Equals((other as Inheritance)?.Supertype.Id);
+
+        public override int GetHashCode() => this.Subtype.Id.GetHashCode() ^ this.Supertype.Id.GetHashCode();
+        
+        /// <summary>
+        /// Compares the current instance with another object of the same type.
+        /// </summary>
+        /// <param name="otherObject">An object to compare with this instance.</param>
+        /// <returns>
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="obj"/>. Zero This instance is equal to <paramref name="obj"/>. Greater than zero This instance is greater than <paramref name="obj"/>.
+        /// </returns>
+        /// <exception cref="T:System.ArgumentException">
+        /// <paramref name="otherObject"/> is not the same type as this instance. </exception>
+        public int CompareTo(object otherObject)
+        {
+            var other = otherObject as Inheritance;
+            return string.CompareOrdinal($"{this.Subtype.Id}{this.Supertype.Id}", $"{other?.Subtype.Id}{other?.Supertype.Id}");
         }
 
         /// <summary>

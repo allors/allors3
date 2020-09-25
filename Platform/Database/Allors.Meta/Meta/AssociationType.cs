@@ -125,25 +125,21 @@ namespace Allors.Meta
         /// </summary>
         /// <value><c>true</c> if this instance is one; otherwise, <c>false</c>.</value>
         public bool IsOne => !this.IsMany;
-     
+
+        public override bool Equals(object other) => this.RelationType.Id.Equals((other as AssociationType)?.RelationType.Id);
+
+        public override int GetHashCode() => this.RelationType.Id.GetHashCode();
+
         /// <summary>
         /// Compares the current instance with another object of the same type.
         /// </summary>
-        /// <param name="obj">An object to compare with this instance.</param>
+        /// <param name="other">An object to compare with this instance.</param>
         /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="obj"/>. Zero This instance is equal to <paramref name="obj"/>. Greater than zero This instance is greater than <paramref name="obj"/>.
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="other"/>. Zero This instance is equal to <paramref name="other"/>. Greater than zero This instance is greater than <paramref name="other"/>.
         /// </returns>
         /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="obj"/> is not the same type as this instance. </exception>
-        public int CompareTo(object obj)
-        {
-            if (obj is AssociationType that)
-            {
-                return this.RelationType.Id.CompareTo(that.RelationType.Id);
-            }
-
-            return -1;
-        }
+        /// <paramref name="other"/> is not the same type as this instance. </exception>
+        public int CompareTo(object other) => this.RelationType.Id.CompareTo((other as AssociationType)?.RelationType.Id);
 
         /// <summary>
         /// Get the value of the association on this object.

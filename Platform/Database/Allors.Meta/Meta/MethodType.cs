@@ -11,11 +11,11 @@ namespace Allors.Meta
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    public abstract partial class MethodType : OperandType, IMethodType
+    public abstract partial class MethodType : OperandType, IMethodType, IComparable
     {
         private static readonly IReadOnlyDictionary<Class, MethodClass> EmptyMethodClassByAssociationTypeClass = new ReadOnlyDictionary<Class, MethodClass>(new Dictionary<Class, MethodClass>());
 
-        private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass;
+        private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
 
         protected MethodType(MetaPopulation metaPopulation) : base(metaPopulation)
         {
@@ -51,6 +51,21 @@ namespace Allors.Meta
 
                 return "unknown method type";
             }
+        }
+
+        public IReadOnlyDictionary<Class, MethodClass> MethodClassByClass
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedMethodClassByClass;
+            }
+        }
+
+        public MethodClass MethodClassBy(Class @class)
+        {
+            this.MethodClassByClass.TryGetValue(@class, out var methodClass);
+            return methodClass;
         }
 
         /// <summary>
@@ -94,6 +109,19 @@ namespace Allors.Meta
             }
         }
 
-        public bool Equals(IMetaIdentity other) => this.Id.Equals(other?.Id);
+        public override bool Equals(object other) => this.Id.Equals((other as MethodType)?.Id);
+
+        public override int GetHashCode() => this.Id.GetHashCode();
+
+        /// <summary>
+        /// Compares the current instance with another object of the same type.
+        /// </summary>
+        /// <param name="other">An object to compare with this instance.</param>
+        /// <returns>
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="obj"/>. Zero This instance is equal to <paramref name="obj"/>. Greater than zero This instance is greater than <paramref name="obj"/>.
+        /// </returns>
+        /// <exception cref="T:System.ArgumentException">
+        /// <paramref name="other"/> is not the same type as this instance. </exception>
+        public int CompareTo(object other) => this.Id.CompareTo((other as MethodType)?.Id);
     }
 }

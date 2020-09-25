@@ -40,10 +40,15 @@ namespace Allors.Meta
 
         public override ObjectType ObjectType
         {
-            get => this.objectType;
+            get => this.objectType ?? this.RoleInterface?.ObjectType;
 
             set
             {
+                if (this.ExistRoleInterface)
+                {
+                    throw new ArgumentException("ObjectType is readonly when ExistRoleInterface");
+                }
+
                 this.MetaPopulation.AssertUnlocked();
                 this.objectType = value;
                 this.MetaPopulation.Stale();
