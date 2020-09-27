@@ -98,7 +98,7 @@ namespace Allors.Domain
             }
         }
 
-        private bool IsReceivable
+        public bool IsReceivable
         {
             get
             {
@@ -388,13 +388,13 @@ namespace Allors.Domain
             //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise, Operations.Execute));
             //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.SetReadyForProcessing, Operations.Execute));
 
-            //    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+            //    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
             //    foreach (Permission permission in this.Session().Extent<Permission>())
             //    {
             //        if (permission.ConcreteClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
             //        {
-            //            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+            //            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
             //        }
             //    }
 
@@ -439,7 +439,7 @@ namespace Allors.Domain
                 if (this.ExistOrderNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

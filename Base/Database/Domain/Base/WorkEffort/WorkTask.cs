@@ -52,7 +52,7 @@ namespace Allors.Domain
                 if (this.ExistWorkEffortNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images["Barcode"] = barcode;
                 }

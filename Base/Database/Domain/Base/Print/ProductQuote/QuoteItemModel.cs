@@ -17,6 +17,7 @@ namespace Allors.Domain.Print.ProductQuoteModel
         public QuoteItemModel(QuoteItem item, Dictionary<string, byte[]> imageByImageName)
         {
             var session = item.Strategy.Session;
+            var m = session.Database.Scope().M;
 
             var product = item.Product;
             var serialisedItem = item.SerialisedItem;
@@ -59,7 +60,7 @@ namespace Allors.Domain.Print.ProductQuoteModel
                 this.IdentificationNumber = serialisedItem.ItemNumber;
                 this.Year = serialisedItem.ManufacturingYear.ToString();
 
-                var hoursType = new SerialisedItemCharacteristicTypes(session).FindBy(M.SerialisedItemCharacteristicType.Name,"Hours");
+                var hoursType = new SerialisedItemCharacteristicTypes(session).FindBy(m.SerialisedItemCharacteristicType.Name,"Hours");
                 var hoursCharacteristic = serialisedItem.SerialisedItemCharacteristics.FirstOrDefault(v => v.SerialisedItemCharacteristicType.Equals(hoursType));
                 if (hoursCharacteristic != null)
                 {

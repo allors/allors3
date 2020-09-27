@@ -76,6 +76,8 @@ namespace Allors.Domain
             SerialisedItemSoldOn[] serialisedItemSoldOns,
             bool collectiveWorkEffortInvoice)
         {
+            var m = session.Database.Scope().M;
+
             var postalAddress1 = new PostalAddressBuilder(session)
                     .WithAddress1(address)
                     .WithPostalCode(postalCode)
@@ -103,7 +105,7 @@ namespace Allors.Domain
                 .WithIsInternalOrganisation(true)
                 .WithTaxNumber(taxNumber)
                 .WithName(name)
-                .WithPreferredCurrency(new Currencies(session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithPreferredCurrency(new Currencies(session).FindBy(m.Currency.IsoCode, "EUR"))
                 .WithInvoiceSequence(new InvoiceSequences(session).EnforcedSequence)
                 .WithFiscalYearStartMonth(01)
                 .WithFiscalYearStartDay(01)

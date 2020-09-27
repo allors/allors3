@@ -11,8 +11,10 @@ namespace Allors.Domain
     using Resources;
     using Xunit;
 
-    public class PurchaseOrderTests : DomainTest
+    public class PurchaseOrderTests : DomainTest, IClassFixture<Fixture>
     {
+        public PurchaseOrderTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPurchaseOrderBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {

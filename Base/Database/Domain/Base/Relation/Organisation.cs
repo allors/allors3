@@ -25,18 +25,18 @@ namespace Allors.Domain
                     .Build();
 
                 return new PrefetchPolicyBuilder()
-                    .WithRule(M.Organisation.RequestCounter.RoleType)
-                    .WithRule(M.Organisation.QuoteCounter.RoleType)
-                    .WithRule(M.Organisation.PurchaseInvoiceCounter.RoleType)
-                    .WithRule(M.Organisation.PurchaseOrderCounter.RoleType)
-                    .WithRule(M.Organisation.SubAccountCounter.RoleType)
-                    .WithRule(M.Organisation.IncomingShipmentCounter.RoleType)
-                    .WithRule(M.Organisation.WorkEffortCounter.RoleType)
-                    .WithRule(M.Organisation.InvoiceSequence.RoleType)
+                    .WithRule(M.Organisation.RequestCounter)
+                    .WithRule(M.Organisation.QuoteCounter)
+                    .WithRule(M.Organisation.PurchaseInvoiceCounter)
+                    .WithRule(M.Organisation.PurchaseOrderCounter)
+                    .WithRule(M.Organisation.SubAccountCounter)
+                    .WithRule(M.Organisation.IncomingShipmentCounter)
+                    .WithRule(M.Organisation.WorkEffortCounter)
+                    .WithRule(M.Organisation.InvoiceSequence)
                     .WithRule(M.Organisation.ContactsUserGroup)
                     .WithRule(M.Organisation.OrganisationContactRelationshipsWhereOrganisation, organisationContactRelationshipPrefetch)
-                    .WithRule(M.Organisation.PartyContactMechanisms.RoleType, partyContactMechanismePrefetch)
-                    .WithRule(M.Organisation.CurrentContacts.RoleType)
+                    .WithRule(M.Organisation.PartyContactMechanisms, partyContactMechanismePrefetch)
+                    .WithRule(M.Organisation.CurrentContacts)
                     .Build();
             }
         }

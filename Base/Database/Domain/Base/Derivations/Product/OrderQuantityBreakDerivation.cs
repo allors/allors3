@@ -11,16 +11,15 @@ namespace Allors.Domain
     using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public class OrderQuantityBreakDerivation : IDomainDerivation
+    public class OrderQuantityBreakDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("CFEBA3D7-4B3F-4E56-80CA-E84228DAE2E9");
+        public OrderQuantityBreakDerivation(M m) : base(m, new Guid("CFEBA3D7-4B3F-4E56-80CA-E84228DAE2E9")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.OrderValue.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.OrderQuantityBreak.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var orderQuantityBreak in matches.Cast<OrderQuantityBreak>())
             {

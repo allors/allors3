@@ -8,8 +8,10 @@ namespace Allors
 {
     using Xunit;
 
-    public class SandboxTests : DomainTest
+    public class SandboxTests : DomainTest, IClassFixture<Fixture>
     {
+        public SandboxTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Dummy()
         {

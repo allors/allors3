@@ -12,20 +12,19 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class PurchaseOrderDerivation : IDomainDerivation
+    public class PurchaseOrderDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("C98B629B-12F8-4297-B6DA-FB0C36C56C39");
+        public PurchaseOrderDerivation(M m) : base(m, new Guid("C98B629B-12F8-4297-B6DA-FB0C36C56C39")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.PurchaseOrder.Class),
+                new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderState),
+                new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderItems),
+                new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] {M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
+                new ChangedRolePattern(M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] {M.InternalOrganisation.ActiveSuppliers, M.Organisation.PurchaseOrdersWhereOrderedBy}},
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.PurchaseOrder.Class),
-            new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderState),
-            new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderItems),
-            new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] {M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
-            new ChangedRolePattern(M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] {M.InternalOrganisation.ActiveSuppliers, M.Organisation.PurchaseOrdersWhereOrderedBy}},
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             bool NeedsApprovalLevel1(PurchaseOrder purchaseOrder)
             {
@@ -329,13 +328,13 @@ namespace Allors.Domain
                     purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise, Operations.Execute));
                     purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.SetReadyForProcessing, Operations.Execute));
 
-                    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
                     foreach (Permission permission in purchaseOrder.Session().Extent<Permission>())
                     {
                         if (permission.ConcreteClassPointer == purchaseOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
                         {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }
                     }
 

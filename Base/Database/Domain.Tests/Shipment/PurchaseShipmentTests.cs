@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PurchaseShipmentTests : DomainTest
+    public class PurchaseShipmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public PurchaseShipmentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPurchaseShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {

@@ -14,7 +14,7 @@ namespace Allors.Domain
     {
         public PrefetchPolicy PrefetchPolicy => new PrefetchPolicyBuilder()
             .WithRule(M.Person.OrganisationContactRelationshipsWhereContact)
-            .WithRule(M.Person.PartyContactMechanisms.RoleType)
+            .WithRule(M.Person.PartyContactMechanisms)
             .WithRule(M.Person.TimeSheetWhereWorker)
             .WithRule(M.Person.EmploymentsWhereEmployee)
             .Build();

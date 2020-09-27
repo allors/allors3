@@ -20,11 +20,12 @@ namespace Allors.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithOrganisationInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
             var internalOrganisations = @this.Session.Extent<Organisation>();
             // Organisation of type Internal Organisation
-            internalOrganisations.Filter.AddEquals(M.Organisation.IsInternalOrganisation.RoleType, true);
+            internalOrganisations.Filter.AddEquals(m.Organisation.IsInternalOrganisation, true);
 
             // Filter out the sellerOrganisation
             var shipToCustomer = internalOrganisations.Except(new List<Organisation> { sellerOrganisation }).FirstOrDefault();
@@ -128,10 +129,11 @@ namespace Allors.Domain.TestPopulation
         public static SalesOrderBuilder WithPersonInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
             var faker = @this.Session.Faker();
+            var m = @this.Session.Database.Scope().M;
 
             var internalOrganisations = @this.Session.Extent<Organisation>();
             // Organisation of type Internal Organisation
-            internalOrganisations.Filter.AddEquals(M.Organisation.IsInternalOrganisation.RoleType, true);
+            internalOrganisations.Filter.AddEquals(m.Organisation.IsInternalOrganisation, true);
             // Filter out the sellerOrganisation
             var shipToCustomer = internalOrganisations.Except(new List<Organisation> { sellerOrganisation }).FirstOrDefault();
 

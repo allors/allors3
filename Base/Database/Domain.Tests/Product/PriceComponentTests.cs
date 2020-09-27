@@ -10,8 +10,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class PriceComponentTests : DomainTest
+    public class PriceComponentTests : DomainTest, IClassFixture<Fixture>
     {
+        public PriceComponentTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
         {

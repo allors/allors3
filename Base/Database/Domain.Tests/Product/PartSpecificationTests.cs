@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PartSpecificationTests : DomainTest
+    public class PartSpecificationTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartSpecificationTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenConstraintSpecification_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

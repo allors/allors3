@@ -13,8 +13,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class RepeatingSalesInvoiceTests : DomainTest
+    public class RepeatingSalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
+        public RepeatingSalesInvoiceTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenRepeatingSalesInvoice_WhenDeriving_ThenFrequencyIsEitherMontlyOrWeekly()
         {
@@ -122,7 +124,7 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(MetaRepeatingSalesInvoice.Instance.DayOfWeek, validation.Errors.First().RoleTypes);
+            Assert.Contains(M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
@@ -188,7 +190,7 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(MetaRepeatingSalesInvoice.Instance.DayOfWeek, validation.Errors.First().RoleTypes);
+            Assert.Contains(M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
 
             repeatingInvoice.RemoveDayOfWeek();
 
@@ -250,7 +252,7 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(MetaRepeatingSalesInvoice.Instance.DayOfWeek, validation.Errors.First().RoleTypes);
+            Assert.Contains(M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
         }
 
         [Fact]

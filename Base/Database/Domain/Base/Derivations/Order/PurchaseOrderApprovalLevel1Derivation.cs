@@ -10,13 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class PurchaseOrderApprovalLevel1Derivation : IDomainDerivation
+    public class PurchaseOrderApprovalLevel1Derivation : DomainDerivation
     {
-        public Guid Id => new Guid("C2585A88-209B-4C1D-9781-04138F4CFBF7");
-
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.PurchaseOrderApprovalLevel1.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public PurchaseOrderApprovalLevel1Derivation(M m) : base(m, new Guid("C2585A88-209B-4C1D-9781-04138F4CFBF7")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.PurchaseOrderApprovalLevel1.Class)
+            };
+        
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var purchaseOrderApproval in matches.Cast<PurchaseOrderApprovalLevel1>())
             {

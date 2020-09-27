@@ -65,9 +65,6 @@ namespace Allors
                 }
             }
 
-            var workspaceTransformation = new WorkspaceTransformation();
-            var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation, "Default");
-
             for (var i = 0; i < workspace.GetLength(0); i++)
             {
                 var template = workspace[i, 0];
@@ -77,7 +74,7 @@ namespace Allors
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(workspaceMetaPopulation, template, output);
+                var log = Generate.Execute(metaPopulation, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;

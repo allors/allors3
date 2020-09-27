@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class CostCenterCategoryTests : DomainTest
+    public class CostCenterCategoryTests : DomainTest, IClassFixture<Fixture>
     {
+        public CostCenterCategoryTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenCostCenterCategory_WhenDeriving_ThenRequiredRelationsMustExist()
         {

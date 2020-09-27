@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class DesiredProductFeatureTests : DomainTest
+    public class DesiredProductFeatureTests : DomainTest, IClassFixture<Fixture>
     {
+        public DesiredProductFeatureTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenDesiredProductFeature_WhenDeriving_ThenRequiredRelationsMustExist()
         {

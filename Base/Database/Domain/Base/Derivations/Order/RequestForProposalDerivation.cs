@@ -10,13 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class RequestForProposalDerivation : IDomainDerivation
+    public class RequestForProposalDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("E2C5250C-5C18-4720-BBFE-859AC31D8D49");
+        public RequestForProposalDerivation(M m) : base(m, new Guid("E2C5250C-5C18-4720-BBFE-859AC31D8D49")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.RequestForProposal.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.RequestForProposal.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var requestForProposal in matches.Cast<RequestForProposal>())
             {

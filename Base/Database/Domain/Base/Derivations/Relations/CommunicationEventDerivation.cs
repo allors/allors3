@@ -10,22 +10,21 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class CommunicationEventDerivation : IDomainDerivation
+    public class CommunicationEventDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("6ABC8FDF-B4BC-40A2-9396-04292779E5F5");
+        public CommunicationEventDerivation(M m) : base(m, new Guid("6ABC8FDF-B4BC-40A2-9396-04292779E5F5")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.CommunicationEvent.Interface),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.CommunicationEvent.Interface),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
             foreach (var communicationEventExtension in matches.Cast<CommunicationEvent>())
             {
-                if (!communicationEventExtension.ExistOwner && communicationEventExtension.Strategy.Session.GetUser() is Person owner)
+                if (!communicationEventExtension.ExistOwner && communicationEventExtension.Strategy.Session.Scope().User is Person owner)
                 {
                     communicationEventExtension.Owner = owner;
                 }

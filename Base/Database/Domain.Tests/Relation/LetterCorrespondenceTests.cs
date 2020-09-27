@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class LetterCorrespondenceTests : DomainTest
+    public class LetterCorrespondenceTests : DomainTest, IClassFixture<Fixture>
     {
+        public LetterCorrespondenceTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenLetterCorrespondenceIsBuild_WhenDeriving_ThenStatusIsSet()
         {

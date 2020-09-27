@@ -10,7 +10,7 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class SalesInvoiceItemTests : DomainTest
+    public class SalesInvoiceItemTests : DomainTest, IClassFixture<Fixture>
     {
         private Part finishedGood;
         private NonUnifiedGood good;
@@ -32,7 +32,7 @@ namespace Allors.Domain
         private SalesInvoice invoice;
         private VatRate vatRate21;
 
-        public SalesInvoiceItemTests()
+        public SalesInvoiceItemTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 

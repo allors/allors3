@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class FaxCommunicationDerivation : IDomainDerivation
+    public class FaxCommunicationDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("A6D89A8A-641F-4D11-8E92-CC10A7A2A89E");
+        public FaxCommunicationDerivation(M m) : base(m, new Guid("A6D89A8A-641F-4D11-8E92-CC10A7A2A89E")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.FaxCommunication.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.FaxCommunication.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var faxCommunication in matches.Cast<FaxCommunication>())
             {

@@ -13,8 +13,10 @@ namespace Allors.Domain
     using Bogus.DataSets;
     using Xunit;
 
-    public class QuoteTests : DomainTest
+    public class QuoteTests : DomainTest, IClassFixture<Fixture>
     {
+        public QuoteTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenProductQuote_WhenDeriving_ThenRequiredRelationsMustExist()
         {

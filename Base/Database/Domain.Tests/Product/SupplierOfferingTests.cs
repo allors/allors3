@@ -12,8 +12,10 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class SupplierOfferingTests : DomainTest
+    public class SupplierOfferingTests : DomainTest, IClassFixture<Fixture>
     {
+        public SupplierOfferingTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenSupplierOffering_WhenDeriving_ThenRequiredRelationsMustExist()
         {

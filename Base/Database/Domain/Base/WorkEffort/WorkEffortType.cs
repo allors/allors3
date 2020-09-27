@@ -9,8 +9,11 @@ namespace Allors.Domain
 
     public partial class WorkEffortType
     {
-        private bool IsDeletable =>
-            !this.ExistMaintenanceAgreementsWhereWorkEffortType;
+        // TODO: Martien
+        //private bool IsDeletable => 
+        //    !this.ExistMaintenanceAgreementsWhereWorkEffortType;
+
+        private bool IsDeletable => false;
 
         public void BaseOnDerive(ObjectOnDerive method)
         {

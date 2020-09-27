@@ -6,8 +6,12 @@
 
 namespace Allors.Domain
 {
-    public class ChartOfAccountsImportTests : DomainTest
+    using Xunit;
+
+    public class ChartOfAccountsImportTests : DomainTest, IClassFixture<Fixture>
     {
+        public ChartOfAccountsImportTests(Fixture fixture) : base(fixture) { }
+
         // TODO: Import
         // [Fact]
         // public void GivenGeneralLedgerAccountXml_WhenImported_ThenGeneralLedgerAccountIsCreated()

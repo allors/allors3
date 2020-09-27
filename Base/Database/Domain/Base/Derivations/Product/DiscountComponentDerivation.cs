@@ -12,16 +12,15 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class DiscountComponentDerivation : IDomainDerivation
+    public class DiscountComponentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D");
+        public DiscountComponentDerivation(M m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.DiscountComponent.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.DiscountComponent.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

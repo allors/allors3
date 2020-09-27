@@ -11,17 +11,16 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class InvoiceItemsTotalIncVatDerivation : IDomainDerivation
+    public class InvoiceItemsTotalIncVatDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4");
+        public InvoiceItemsTotalIncVatDerivation(M m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
+            this.Patterns = new Pattern[]
+            {
+                new ChangedConcreteRolePattern(M.SalesInvoiceItem.TotalIncVat),
+                new ChangedConcreteRolePattern(M.PurchaseInvoiceItem.TotalIncVat),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new ChangedConcreteRolePattern(M.SalesInvoiceItem.TotalIncVat),
-            new ChangedConcreteRolePattern(M.PurchaseInvoiceItem.TotalIncVat),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var invoiceItem in matches.Cast<InvoiceItem>())
             {

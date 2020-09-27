@@ -9,8 +9,11 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class EstimatedProductCostTests : DomainTest
+    public class EstimatedProductCostTests : DomainTest, IClassFixture<Fixture>
     {
+        public EstimatedProductCostTests(Fixture fixture) : base(fixture) { }
+
+
         [Fact]
         public void GivenEstimatedLaborCost_WhenDeriving_ThenRequiredRelationsMustExist()
         {

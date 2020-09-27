@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class FeeTests : DomainTest
+    public class FeeTests : DomainTest, IClassFixture<Fixture>
     {
+        public FeeTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenFee_WhenDeriving_ThenRequiredRelationsMustExist()
         {

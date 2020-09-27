@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class RequirementTests : DomainTest
+    public class RequirementTests : DomainTest, IClassFixture<Fixture>
     {
+        public RequirementTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenCustomerRequirement_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

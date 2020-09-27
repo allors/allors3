@@ -19,7 +19,7 @@ namespace Allors.Domain
 
             var full = new[] { Operations.Read, Operations.Write, Operations.Execute };
 
-            foreach (ObjectType @class in this.session.Database.MetaPopulation.Classes)
+            foreach (ObjectType @class in this.session.Database.MetaPopulation.DatabaseClasses)
             {
                 security.GrantAdministrator(@class, full);
                 security.Grantemployee(@class, Operations.Read);

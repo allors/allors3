@@ -12,14 +12,14 @@ namespace Allors.Domain
     using Resources;
     using Xunit;
 
-    public class PurchaseOrderItemTests : DomainTest
+    public class PurchaseOrderItemTests : DomainTest, IClassFixture<Fixture>
     {
         private Part finishedGood;
         private SupplierOffering currentPurchasePrice;
         private PurchaseOrder order;
         private Organisation supplier;
 
-        public PurchaseOrderItemTests()
+        public PurchaseOrderItemTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 
@@ -419,14 +419,14 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class PurchaseOrderItemSecurityTests : DomainTest
+    public class PurchaseOrderItemSecurityTests : DomainTest, IClassFixture<Fixture>
     {
         private Part finishedGood;
         private SupplierOffering currentPurchasePrice;
         private PurchaseOrder order;
         private Organisation supplier;
 
-        public PurchaseOrderItemSecurityTests()
+        public PurchaseOrderItemSecurityTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 

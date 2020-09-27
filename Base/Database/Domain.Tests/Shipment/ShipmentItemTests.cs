@@ -13,8 +13,10 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class ShipmentItemTests : DomainTest
+    public class ShipmentItemTests : DomainTest, IClassFixture<Fixture>
     {
+        public ShipmentItemTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenPurchaseShipmentItemForNonSerialisedNotFromPurchaseOrder_WhenDerived_ThenUnitPurchasePriceIsRequired()
         {
@@ -36,13 +38,15 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(MetaShipmentItem.Instance.UnitPurchasePrice, validation.Errors.First().RoleTypes);
+            Assert.Contains(M.ShipmentItem.UnitPurchasePrice, validation.Errors.First().RoleTypes);
         }
     }
 
     [Trait("Category", "Security")]
-    public class ShipmentItemSecurityTests : DomainTest
+    public class ShipmentItemSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public ShipmentItemSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

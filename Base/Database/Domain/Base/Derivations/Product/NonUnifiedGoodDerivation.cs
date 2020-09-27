@@ -12,13 +12,15 @@ namespace Allors.Domain
     using Allors.Meta;
     using Derivations;
 
-    public class NonUnifiedGoodDerivation : IDomainDerivation
+    public class NonUnifiedGoodDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C");
+        public NonUnifiedGoodDerivation(M m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.OrderValue.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.NonUnifiedGood.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

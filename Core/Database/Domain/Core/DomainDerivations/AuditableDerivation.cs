@@ -10,20 +10,16 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class AuditableDerivation : IDomainDerivation
+    public class AuditableDerivation : DomainDerivation
     {
-        public AuditableDerivation(M m) =>
+        public AuditableDerivation(M m) : base(m, new Guid("a310ed3b-2129-4bee-8457-ae3c8441597f")) =>
             this.Patterns = new[]
             {
                 new CreatedPattern(m.Auditable.Interface),
                 // new ChangedPattern(M.Auditable.Interface)
             };
 
-        public Guid Id => new Guid("a310ed3b-2129-4bee-8457-ae3c8441597f");
-
-        public IEnumerable<Pattern> Patterns { get; }
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var auditable in matches.Cast<Auditable>())
             {

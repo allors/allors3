@@ -10,13 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class RequestForInformationDerivation : IDomainDerivation
+    public class RequestForInformationDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("5BCE8864-6EC2-4672-A29D-CA49A6C49718");
+        public RequestForInformationDerivation(M m) : base(m, new Guid("5BCE8864-6EC2-4672-A29D-CA49A6C49718")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.RequestForInformation.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.RequestForInformation.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var requestForInformation in matches.Cast<RequestForInformation>())
             {
@@ -35,8 +37,6 @@ namespace Allors.Domain
                     requestForInformation.AddDeniedPermission(deletePermission);
                 }
             }
-
-
         }
     }
 }

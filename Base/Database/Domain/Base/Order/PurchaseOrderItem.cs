@@ -336,14 +336,14 @@ namespace Allors.Domain
 
             //if (!this.PurchaseOrderItemShipmentState.IsNotReceived)
             //{
-            //    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+            //    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
             //    foreach (Permission permission in this.Session().Extent<Permission>())
             //    {
             //        if (permission.ConcreteClassPointer == this.strategy.Class.Id
             //            && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
             //        {
-            //            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+            //            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
             //        }
             //    }
 

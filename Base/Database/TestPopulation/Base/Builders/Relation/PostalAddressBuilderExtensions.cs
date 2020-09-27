@@ -13,6 +13,7 @@ namespace Allors.Domain.TestPopulation
     {
         public static PostalAddressBuilder WithDefaults(this PostalAddressBuilder @this)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
             @this.WithAddress1(faker.Address.StreetAddress());
@@ -20,7 +21,7 @@ namespace Allors.Domain.TestPopulation
             @this.WithAddress3(faker.Address.BuildingNumber());
             @this.WithPostalCode(faker.Address.ZipCode());
             @this.WithLocality(faker.Address.City());
-            @this.WithCountry(new Countries(@this.Session).FindBy(M.Country.IsoCode, faker.Address.CountryCode()));
+            @this.WithCountry(new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.Address.CountryCode()));
             @this.WithLatitude(faker.Address.Latitude());
             @this.WithLongitude(faker.Address.Longitude());
 

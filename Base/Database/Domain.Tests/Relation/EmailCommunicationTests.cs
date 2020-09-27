@@ -10,8 +10,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class EmailCommunicationTests : DomainTest
+    public class EmailCommunicationTests : DomainTest, IClassFixture<Fixture>
     {
+        public EmailCommunicationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenEmailCommunicationIsBuild_WhenDeriving_ThenStatusIsSet()
         {

@@ -9,8 +9,10 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class WorkEffortInventoryAssignmentTests : DomainTest
+    public class WorkEffortInventoryAssignmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public WorkEffortInventoryAssignmentTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenWorkEffort_WhenAddingInventoryAssignment_ThenInventoryConsumptionCreated()
         {

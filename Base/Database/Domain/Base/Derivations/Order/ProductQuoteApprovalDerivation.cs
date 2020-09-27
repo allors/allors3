@@ -12,13 +12,15 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class ProductQuoteApprovalDerivation : IDomainDerivation
+    public class ProductQuoteApprovalDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("102A7185-6BF4-4804-B978-A2D6A782461A");
+        public ProductQuoteApprovalDerivation(M m) : base(m, new Guid("102A7185-6BF4-4804-B978-A2D6A782461A")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.ProductQuoteApproval.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.ProductQuoteApproval.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var productQuoteApproval in matches.Cast<ProductQuoteApproval>())
             {

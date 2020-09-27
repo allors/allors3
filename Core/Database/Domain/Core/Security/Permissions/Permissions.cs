@@ -18,27 +18,30 @@ namespace Allors.Domain
         {
             var permissionCache = this.Session.GetCache<PermissionCache, PermissionCache>(() => new PermissionCache(this.Session));
 
-            var permissionCacheEntry = permissionCache.PermissionCacheEntryByClassId[@class.Id];
-
-            long id = 0;
-            switch (operation)
+            if (permissionCache.PermissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
             {
-                case Operations.Read:
-                    id = operandType is RoleType roleType ?
-                        permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[roleType.RelationType.Id] :
-                        permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId[((AssociationType)operandType).RelationType.Id];
-                    break;
+                long id = 0;
+                switch (operation)
+                {
+                    case Operations.Read:
+                        id = operandType is RoleType roleType ?
+                            permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[roleType.RelationType.Id] :
+                            permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId[((AssociationType)operandType).RelationType.Id];
+                        break;
 
-                case Operations.Write:
-                    id = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId[((RoleType)operandType).RelationType.Id];
-                    break;
+                    case Operations.Write:
+                        id = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId[((RoleType)operandType).RelationType.Id];
+                        break;
 
-                default:
-                    id = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[((RoleType)operandType).RelationType.Id];
-                    break;
+                    default:
+                        id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[((MethodType)operandType).Id];
+                        break;
+                }
+
+                return (Permission)this.Session.Instantiate(id);
             }
 
-            return (Permission)this.Session.Instantiate(id);
+            return null;
         }
 
         public void Sync()

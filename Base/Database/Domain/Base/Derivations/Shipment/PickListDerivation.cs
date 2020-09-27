@@ -10,17 +10,16 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class PickListDerivation : IDomainDerivation
+    public class PickListDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("8D9F3C91-DBA7-44AA-AA60-C1A58CAFDF0D");
+        public PickListDerivation(M m) : base(m, new Guid("8D9F3C91-DBA7-44AA-AA60-C1A58CAFDF0D")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.PickList.Class),
+                new ChangedRolePattern(M.PickList.Picker),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.PickList.Class),
-            new ChangedRolePattern(M.PickList.Picker),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var pickLists in matches.Cast<PickList>())
             {

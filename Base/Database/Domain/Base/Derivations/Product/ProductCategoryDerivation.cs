@@ -10,18 +10,17 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class ProductCategoryDerivation : IDomainDerivation
+    public class ProductCategoryDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1");
+        public ProductCategoryDerivation(M m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(m.ProductCategory.Class),
+                new ChangedRolePattern(m.ProductCategory.PrimaryParent),
+                new ChangedRolePattern(m.ProductCategory.SecondaryParents),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.ProductCategory.Class),
-            new ChangedRolePattern(M.ProductCategory.PrimaryParent),
-            new ChangedRolePattern(M.ProductCategory.SecondaryParents),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

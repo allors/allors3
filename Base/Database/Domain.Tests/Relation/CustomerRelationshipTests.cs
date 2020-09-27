@@ -13,8 +13,10 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class CustomerRelationshipTests : DomainTest
+    public class CustomerRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
+        public CustomerRelationshipTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenCustomerRelationship_WhenDerivingWithout_ThenAmountDueIsZero()
         {

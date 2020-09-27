@@ -10,8 +10,10 @@ namespace Allors.Domain
     using Resources;
     using Xunit;
 
-    public class SingletonTests : DomainTest
+    public class SingletonTests : DomainTest, IClassFixture<Fixture>
     {
+        public SingletonTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenGeneralLedgerAccount_WhenDeriving_ThenRequiredRelationsMustExist()
         {

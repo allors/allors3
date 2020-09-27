@@ -8,19 +8,17 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public class ShipmentReceiptDerivation : IDomainDerivation
+    public class ShipmentReceiptDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("BE525828-2AAC-4996-98A0-08293485D7DD");
+        public ShipmentReceiptDerivation(M m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.ShipmentReceipt.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.ShipmentReceipt.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var shipmentReceipt in matches.Cast<ShipmentReceipt>())
             {

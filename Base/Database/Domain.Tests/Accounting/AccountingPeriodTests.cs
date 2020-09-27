@@ -1,4 +1,4 @@
-﻿// <copyright file="AccountingPeriodTests.cs" company="Allors bvba">
+// <copyright file="AccountingPeriodTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class AccountingPeriodTests : DomainTest
+    public class AccountingPeriodTests : DomainTest, IClassFixture<Fixture>
     {
+        public AccountingPeriodTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenAccountingPeriod_WhenDeriving_ThenRequiredRelationsMustExist()
         {

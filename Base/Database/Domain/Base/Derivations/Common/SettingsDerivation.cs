@@ -10,13 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class SettingsDerivation : IDomainDerivation
+    public class SettingsDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("48BC48B2-1614-4E79-984C-E1BFC14C0C22");
+        public SettingsDerivation(M m) : base(m, new Guid("48BC48B2-1614-4E79-984C-E1BFC14C0C22")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.Settings.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Settings.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var settings in matches.Cast<Settings>())
             {

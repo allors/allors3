@@ -28,7 +28,7 @@ namespace Allors.Domain
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
             }
 
-            if (!@this.ExistOwner && @this.Strategy.Session.GetUser() is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Session.Scope().User is Person owner)
             {
                 @this.Owner = owner;
             }
@@ -95,26 +95,28 @@ namespace Allors.Domain
 
         public static void BaseOnPostDerive(this WorkEffort @this, ObjectOnPostDerive method)
         {
+            var m = @this.Strategy.Session.Database.Scope().M;
+
             if (!@this.CanInvoice)
             {
-                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, MetaWorkEffort.Instance.Invoice, Operations.Execute));
+                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Invoice, Operations.Execute));
             }
             else
             {
-                @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, MetaWorkEffort.Instance.Invoice, Operations.Execute));
+                @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Invoice, Operations.Execute));
             }
 
-            var completePermission = new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, MetaWorkEffort.Instance.Complete, Operations.Execute);
+            var completePermission = new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute);
 
             if (@this.ServiceEntriesWhereWorkEffort.Any(v => !v.ExistThroughDate))
             {
-                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, MetaWorkEffort.Instance.Complete, Operations.Execute));
+                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute));
             }
             else
             {
                 if(@this.WorkEffortState.IsInProgress)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, MetaWorkEffort.Instance.Complete, Operations.Execute));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute));
                 }
             }
         }
@@ -172,6 +174,8 @@ namespace Allors.Domain
 
         private static void VerifyWorkEffortPartyAssignments(this WorkEffort @this, IDerivation derivation)
         {
+            var m = @this.Strategy.Session.Database.Scope().M;
+
             var existingAssignmentRequired = @this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true;
             var existingAssignments = @this.WorkEffortPartyAssignmentsWhereAssignment.ToArray();
 
@@ -197,7 +201,7 @@ namespace Allors.Domain
                         {
                             var message = $"No Work Effort Party Assignment matches Worker: {worker}, Facility: {facility}" +
                                 $", Work Effort: {@this}, From: {from}, Through {through}";
-                            derivation.Validation.AddError(@this, M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment, message);
+                            derivation.Validation.AddError(@this, m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment, message);
                         }
                         else if (worker != null) // Sync a new WorkEffortPartyAssignment
                         {

@@ -12,16 +12,15 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class SurchargeComponentDerivation : IDomainDerivation
+    public class SurchargeComponentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891");
+        public SurchargeComponentDerivation(M m) : base(m, new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.SurchargeComponent.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.SurchargeComponent.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

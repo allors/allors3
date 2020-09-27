@@ -9,14 +9,14 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class SupplierRelationshipTests : DomainTest
+    public class SupplierRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
         private Person contact;
         private Organisation supplier;
         private SupplierRelationship supplierRelationship;
         private OrganisationContactRelationship organisationContactRelationship;
 
-        public SupplierRelationshipTests()
+        public SupplierRelationshipTests(Fixture fixture) : base(fixture)
         {
             this.contact = new PersonBuilder(this.Session).WithLastName("contact").Build();
             this.supplier = new OrganisationBuilder(this.Session)

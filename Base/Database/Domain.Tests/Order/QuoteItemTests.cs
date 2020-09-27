@@ -13,8 +13,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class QuoteItemTests : DomainTest
+    public class QuoteItemTests : DomainTest, IClassFixture<Fixture>
     {
+        public QuoteItemTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSerialisedItem_WhenDerived_ThenSerialisedItemAvailabilityIsChanged()
         {

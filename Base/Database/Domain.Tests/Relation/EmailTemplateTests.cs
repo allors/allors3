@@ -10,8 +10,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class EmailTemplateTests : DomainTest
+    public class EmailTemplateTests : DomainTest, IClassFixture<Fixture>
     {
+        public EmailTemplateTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void WhenEmailTemplateDescriptionIsNull()
         {

@@ -10,7 +10,7 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class SalesOrderItemPricingTests : DomainTest
+    public class SalesOrderItemPricingTests : DomainTest, IClassFixture<Fixture>
     {
         private ProductCategory productCategory;
         private ProductCategory ancestorProductCategory;
@@ -38,7 +38,7 @@ namespace Allors.Domain
         private SalesOrder order;
         private VatRate vatRate21;
 
-        public SalesOrderItemPricingTests()
+        public SalesOrderItemPricingTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 

@@ -10,8 +10,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class OrderRequirementCommitmentTests : DomainTest
+    public class OrderRequirementCommitmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public OrderRequirementCommitmentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOrderRequirementCommitment_WhenDeriving_ThenRequiredRelationsMustExist()
         {

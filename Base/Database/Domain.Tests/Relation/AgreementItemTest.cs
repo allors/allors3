@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class AgreementItemTest : DomainTest
+    public class AgreementItemTest : DomainTest, IClassFixture<Fixture>
     {
+        public AgreementItemTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenAgreementExhibit_WhenDeriving_ThenDescriptionIsRequired()
         {

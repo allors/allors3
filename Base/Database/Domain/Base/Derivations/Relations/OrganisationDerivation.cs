@@ -10,19 +10,18 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class OrganisationDerivation : IDomainDerivation
+    public class OrganisationDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA");
+        public OrganisationDerivation(M m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.Organisation.Class),
+                new CreatedPattern(M.SupplierRelationship.Class){Steps = new IPropertyType[]{M.SupplierRelationship.InternalOrganisation}, OfType = M.Organisation.Class},
+                new ChangedRolePattern(M.Employment.Employer){Steps = new IPropertyType[]{M.Employment.Employer}},
+                new ChangedRolePattern(M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{M.SupplierRelationship.InternalOrganisation}, OfType = M.Organisation.Class},
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.Organisation.Class),
-            new CreatedPattern(M.SupplierRelationship.Class){Steps = new IPropertyType[]{M.SupplierRelationship.InternalOrganisation}, OfType = M.Organisation.Class},
-            new ChangedRolePattern(M.Employment.Employer){Steps = new IPropertyType[]{M.Employment.Employer}},
-            new ChangedRolePattern(M.SupplierRelationship.FromDate.RoleType) {Steps = new IPropertyType[]{M.SupplierRelationship.InternalOrganisation}, OfType = M.Organisation.Class},
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var session = cycle.Session;
 

@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PartyContactMechanismTests : DomainTest
+    public class PartyContactMechanismTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartyContactMechanismTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPartyContactMechanism_WhenDeriving_ThenRequiredRelationsMustExist()
         {

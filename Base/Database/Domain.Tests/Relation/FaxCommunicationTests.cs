@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class FaxCommunicationTests : DomainTest
+    public class FaxCommunicationTests : DomainTest, IClassFixture<Fixture>
     {
+        public FaxCommunicationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenFaxCommunicationIsBuild_WhenDeriving_ThenStatusIsSet()
         {

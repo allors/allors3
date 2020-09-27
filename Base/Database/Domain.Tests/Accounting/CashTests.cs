@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class CashTests : DomainTest
+    public class CashTests : DomainTest, IClassFixture<Fixture>
     {
+        public CashTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenCashPaymentMethod_WhenDeriving_ThenGeneralLedgerAccountAndJournalAtMostOne()
         {

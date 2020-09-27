@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class SerialisedItemCharacteristicTypeDerivation : IDomainDerivation
+    public class SerialisedItemCharacteristicTypeDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("D24124E7-12FF-4F12-AC46-364D91570028");
+        public SerialisedItemCharacteristicTypeDerivation(M m) : base(m, new Guid("D24124E7-12FF-4F12-AC46-364D91570028")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.SerialisedItemCharacteristicType.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.SerialisedItemCharacteristicType.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var serialisedItemCharacteristicType in matches.Cast<SerialisedItemCharacteristicType>())
             {

@@ -9,8 +9,10 @@ namespace Allors.Domain
     using System;
     using Xunit;
 
-    public class SalesInvoicePrintTests : DomainTest
+    public class SalesInvoicePrintTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesInvoicePrintTests(Fixture fixture) : base(fixture) { }
+        
         //[Fact]
         //public void GivenSalesInvoice_WhenCreatingPrintModel_ThenPrintModelIsNotNull()
         //{

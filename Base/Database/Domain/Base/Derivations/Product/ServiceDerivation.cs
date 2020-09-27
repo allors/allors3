@@ -8,21 +8,17 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
-    public class ServiceDerivation : IDomainDerivation
+    public class ServiceDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("8A24C272-EE5E-416D-B840-DFF2C82C47F4");
+        public ServiceDerivation(M m) : base(m, new Guid("8A24C272-EE5E-416D-B840-DFF2C82C47F4")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(m.Service.Interface),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.Service.Interface),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var serviceExtension in matches.Cast<Service>())
             {

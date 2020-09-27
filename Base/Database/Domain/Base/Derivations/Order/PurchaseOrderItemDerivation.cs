@@ -12,18 +12,17 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class PurchaseOrderItemDerivation : IDomainDerivation
+    public class PurchaseOrderItemDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957");
+        public PurchaseOrderItemDerivation(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.PurchaseOrderItem.Class),
+                new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState),
+                // new ChangedRolePattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.PurchaseOrderItem.Class),
-            new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState),
-            // new ChangedRolePattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
             var session = cycle.Session;
@@ -40,7 +39,8 @@ namespace Allors.Domain
                     purchaseOrderItem.StoredInFacility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
                 }
 
-                purchaseOrderItem.DeriveIsReceivable();
+                // TODO: Martien
+                //purchaseOrderItem.DeriveIsReceivable();
 
                 if (!purchaseOrderItem.ExistPurchaseOrderItemShipmentState)
                 {
@@ -282,18 +282,18 @@ namespace Allors.Domain
 
                 if (!purchaseOrderItem.PurchaseOrderItemShipmentState.IsNotReceived && !purchaseOrderItem.PurchaseOrderItemShipmentState.IsNa)
                 {
-                    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+                    var deniablePermissionByOperandType = new Dictionary<OperandType, Permission>();
 
                     foreach (Permission permission in purchaseOrderItem.Session().Extent<Permission>())
                     {
                         if (permission.ConcreteClassPointer == purchaseOrderItem.Strategy.Class.Id
                             && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
                         {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+                            deniablePermissionByOperandType.Add(permission.OperandType, permission);
                         }
                     }
 
-                    foreach (var keyValuePair in deniablePermissionByOperandTypeId)
+                    foreach (var keyValuePair in deniablePermissionByOperandType)
                     {
                         purchaseOrderItem.AddDeniedPermission(keyValuePair.Value);
                     }

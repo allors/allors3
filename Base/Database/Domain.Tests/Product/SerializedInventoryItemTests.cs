@@ -10,8 +10,10 @@ namespace Allors.Domain
     using Xunit;
     using System.Linq;
 
-    public class SerialisedInventoryItemTests : DomainTest
+    public class SerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
     {
+        public SerialisedInventoryItemTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenInventoryItem_WhenDeriving_ThenRequiredRelationsMustExist()
         {

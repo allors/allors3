@@ -9,12 +9,9 @@ namespace Allors.Domain
     using Bogus;
     using Xunit;
 
-    public class DemoTests : DomainTest
+    public class DemoTests : DomainTest, IClassFixture<Fixture>
     {
-        public DemoTests()
-            : base(false)
-        {
-        }
+        public DemoTests(Fixture fixture) : base(fixture, false) { }
 
         [Fact]
         public void TestPopulate()

@@ -13,8 +13,10 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class TimeEntryTests : DomainTest
+    public class TimeEntryTests : DomainTest, IClassFixture<Fixture>
     {
+        public TimeEntryTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenTimeEntry_WhenDeriving_ThenRequiredRelationsMustExist()
         {

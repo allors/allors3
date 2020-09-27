@@ -15,6 +15,7 @@ namespace Allors.Domain.TestPopulation
     {
         public static SerialisedItemBuilder WithDefaults(this SerialisedItemBuilder @this, Organisation internalOrganisation)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
             var availability = faker.Random.ListItem(@this.Session.Extent<SerialisedItemAvailability>());
@@ -51,11 +52,11 @@ namespace Allors.Domain.TestPopulation
 
             @this.WithBuyer(internalOrganisation);
             @this.WithSeller(internalOrganisation);
-            @this.OwnedBy = (availability.IsSold ? new Organisations(@this.Session).FindBy(M.Organisation.IsInternalOrganisation, false) : internalOrganisation) ?? internalOrganisation;
+            @this.OwnedBy = (availability.IsSold ? new Organisations(@this.Session).FindBy(m.Organisation.IsInternalOrganisation, false) : internalOrganisation) ?? internalOrganisation;
 
             if (availability.IsInRent)
             {
-                @this.WithRentedBy(new Organisations(@this.Session).FindBy(M.Organisation.IsInternalOrganisation, false));
+                @this.WithRentedBy(new Organisations(@this.Session).FindBy(m.Organisation.IsInternalOrganisation, false));
                 @this.WithRentalFromDate(faker.Date.Between(start: acquiredDate, end: acquiredDate.AddDays(10)));
                 @this.WithRentalThroughDate(faker.Date.Future(refDate: acquiredDate.AddYears(2)));
                 @this.WithExpectedReturnDate(faker.Date.Between(start: acquiredDate.AddYears(2).AddDays(1), end: acquiredDate.AddYears(2).AddDays(10)));

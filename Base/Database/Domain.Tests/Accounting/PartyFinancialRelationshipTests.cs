@@ -10,8 +10,10 @@ namespace Allors.Domain
     using Allors.Domain.TestPopulation;
     using Xunit;
 
-    public class PartyFinancialRelationshipTests : DomainTest
+    public class PartyFinancialRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartyFinancialRelationshipTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void DeriveOpenOrderAmount()
         {

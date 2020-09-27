@@ -10,13 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class CatalogueDerivation : IDomainDerivation
+    public class CatalogueDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8");
+        public CatalogueDerivation(M m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.Catalogue.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Catalogue.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var catalogue in matches.Cast<Catalogue>())
             {

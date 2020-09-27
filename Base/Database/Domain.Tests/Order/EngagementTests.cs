@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class EngagementTests : DomainTest
+    public class EngagementTests : DomainTest, IClassFixture<Fixture>
     {
+        public EngagementTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenEngagement_WhenDeriving_ThenDescriptionIsRequired()
         {

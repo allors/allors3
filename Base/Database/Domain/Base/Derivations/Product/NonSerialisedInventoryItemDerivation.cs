@@ -10,33 +10,32 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class NonSerialisedInventoryItemDerivation : IDomainDerivation
+    public class NonSerialisedInventoryItemDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE");
-
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.NonSerialisedInventoryItem.Class),
-            new CreatedPattern(M.InventoryItemTransaction.Class)
+        public NonSerialisedInventoryItemDerivation(M m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
+            this.Patterns = new Pattern[]
             {
-                Steps = new IPropertyType[]
+                new CreatedPattern(M.NonSerialisedInventoryItem.Class),
+                new CreatedPattern(M.InventoryItemTransaction.Class)
                 {
-                    M.InventoryItemTransaction.Part,
-                    M.Part.InventoryItemsWherePart
+                    Steps = new IPropertyType[]
+                    {
+                        M.InventoryItemTransaction.Part,
+                        M.Part.InventoryItemsWherePart
+                    },
+                    OfType = M.NonSerialisedInventoryItem.Class
                 },
-                OfType = M.NonSerialisedInventoryItem.Class
-            },
-            new ChangedAssociationPattern(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem),
-            new ChangedRolePattern(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
-            {
-                Steps = new IPropertyType[]
+                new ChangedAssociationPattern(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem),
+                new ChangedRolePattern(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
                 {
-                    M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem
-                }
-            },
-        };
+                    Steps = new IPropertyType[]
+                    {
+                        M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem
+                    }
+                },
+            };
 
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var nonSerialisedInventoryItem in matches.Cast<NonSerialisedInventoryItem>())
             {

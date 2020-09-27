@@ -11,12 +11,9 @@ namespace Allors.Domain
     using Xunit;
 
     [Trait("Category", "Security")]
-    public class SetupTests : DomainTest
+    public class SetupTests : DomainTest, IClassFixture<Fixture>
     {
-        public SetupTests()
-            : base(false)
-        {
-        }
+        public SetupTests(Fixture fixture) : base(fixture, false) { }
 
         [Fact]
         public void Twice()

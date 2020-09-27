@@ -11,8 +11,10 @@ namespace Allors.Domain
     using Xunit;
 
     [Trait("Category", "Security")]
-    public class EmployeeSecurityTests : DomainTest
+    public class EmployeeSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public EmployeeSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

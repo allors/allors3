@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PhoneCommunicationTests : DomainTest
+    public class PhoneCommunicationTests : DomainTest, IClassFixture<Fixture>
     {
+        public PhoneCommunicationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPhoneCommunication_WhenDeriving_ThenRequiredRelationsMustExist()
         {

@@ -12,16 +12,15 @@ namespace Allors.Domain
     using Derivations;
     using Resources;
 
-    public class BasePriceDerivation : IDomainDerivation
+    public class BasePriceDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("499B0F1E-F653-4DB6-82D0-190C9738DA5A");
+        public BasePriceDerivation(M m) : base(m, new Guid("499B0F1E-F653-4DB6-82D0-190C9738DA5A")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.BasePrice.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.BasePrice.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

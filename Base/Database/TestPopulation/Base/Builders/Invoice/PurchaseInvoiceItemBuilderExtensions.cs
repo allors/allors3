@@ -32,11 +32,12 @@ namespace Allors.Domain.TestPopulation
 
         public static PurchaseInvoiceItemBuilder WithProductItemDefaults(this PurchaseInvoiceItemBuilder @this)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
             var unifiedGoodExtent = @this.Session.Extent<UnifiedGood>();
-            unifiedGoodExtent.Filter.AddEquals(M.UnifiedGood.InventoryItemKind.RoleType, new InventoryItemKinds(@this.Session).Serialised);
+            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Session).Serialised);
             var serializedProduct = unifiedGoodExtent.First();
 
             @this.WithDescription(faker.Lorem.Sentences(2));
@@ -53,11 +54,12 @@ namespace Allors.Domain.TestPopulation
 
         public static PurchaseInvoiceItemBuilder WithPartItemDefaults(this PurchaseInvoiceItemBuilder @this)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
 
             var unifiedGoodExtent = @this.Session.Extent<UnifiedGood>();
-            unifiedGoodExtent.Filter.AddEquals(M.UnifiedGood.InventoryItemKind.RoleType, new InventoryItemKinds(@this.Session).Serialised);
+            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Session).Serialised);
             var serializedPart = unifiedGoodExtent.First();
 
             @this.WithDescription(faker.Lorem.Sentences(2));

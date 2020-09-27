@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class AddendumTest : DomainTest
+    public class AddendumTest : DomainTest, IClassFixture<Fixture>
     {
+        public AddendumTest(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenAddendum_WhenDeriving_ThenDescriptionIsRequired()
         {

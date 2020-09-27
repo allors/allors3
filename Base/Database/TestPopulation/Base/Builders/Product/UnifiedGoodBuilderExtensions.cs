@@ -13,11 +13,12 @@ namespace Allors.Domain.TestPopulation
     {
         public static UnifiedGoodBuilder WithNonSerialisedDefaults(this UnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
             var dutchLocale = new Locales(@this.Session).DutchNetherlands;
 
-            var nonSerialisedProductType = new ProductTypes(@this.Session).FindBy(M.ProductType.Name, "nonSerialisedProductType");
+            var nonSerialisedProductType = new ProductTypes(@this.Session).FindBy(m.ProductType.Name, "nonSerialisedProductType");
 
             if (nonSerialisedProductType == null)
             {
@@ -79,11 +80,12 @@ namespace Allors.Domain.TestPopulation
 
         public static UnifiedGoodBuilder WithSerialisedDefaults(this UnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
             var dutchLocale = new Locales(@this.Session).DutchNetherlands;
 
-            var nonSerialisedProductType = new ProductTypes(@this.Session).FindBy(M.ProductType.Name, "nonSerialisedProductType");
+            var nonSerialisedProductType = new ProductTypes(@this.Session).FindBy(m.ProductType.Name, "nonSerialisedProductType");
 
             if (nonSerialisedProductType == null)
             {

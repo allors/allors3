@@ -11,16 +11,15 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class PaymentDerivation : IDomainDerivation
+    public class PaymentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("4C7D0834-A7F2-4ED6-AC58-9B2DFD719ED9");
+        public PaymentDerivation(M m) : base(m, new Guid("4C7D0834-A7F2-4ED6-AC58-9B2DFD719ED9")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.Payment.Interface)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[]
-        {
-            new CreatedPattern(M.Payment.Interface)
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var paymentExtension in matches.Cast<Payment>())
             {

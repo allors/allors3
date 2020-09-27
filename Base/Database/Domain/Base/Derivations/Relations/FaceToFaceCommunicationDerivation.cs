@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class FaceToFaceCommunicationDerivation : IDomainDerivation
+    public class FaceToFaceCommunicationDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("165A1691-F94C-40D2-B183-EFC764582784");
+        public FaceToFaceCommunicationDerivation(M m) : base(m, new Guid("165A1691-F94C-40D2-B183-EFC764582784")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.FaceToFaceCommunication.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.FaceToFaceCommunication.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var faceToFaceCommunication in matches.Cast<FaceToFaceCommunication>())
             {

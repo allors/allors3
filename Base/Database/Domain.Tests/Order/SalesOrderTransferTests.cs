@@ -13,8 +13,10 @@ namespace Allors.Domain
 
     using Xunit;
 
-    public class SalesOrderTransferTests : DomainTest
+    public class SalesOrderTransferTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesOrderTransferTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenSalesOrderForItemsThatAreAvailable_WhenShipped_ThenOrderIsCompleted()
         {
@@ -2683,8 +2685,10 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class SalesOrderTransferSecurityTests : DomainTest
+    public class SalesOrderTransferSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesOrderTransferSecurityTests(Fixture fixture) : base(fixture) { }
+        
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

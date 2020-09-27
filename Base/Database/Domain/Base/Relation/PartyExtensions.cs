@@ -203,8 +203,10 @@ namespace Allors.Domain
                 return false;
             }
 
+            var m = @this.Strategy.Session.Database.Scope().M;
+
             var customerRelationships = @this.CustomerRelationshipsWhereCustomer;
-            customerRelationships.Filter.AddEquals(M.CustomerRelationship.InternalOrganisation, internalOrganisation);
+            customerRelationships.Filter.AddEquals(m.CustomerRelationship.InternalOrganisation, internalOrganisation);
 
             return customerRelationships.Any(relationship => relationship.FromDate.Date <= date
                                                              && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
@@ -212,20 +214,22 @@ namespace Allors.Domain
 
         public static CustomerShipment BaseGetPendingCustomerShipmentForStore(this Party @this, PostalAddress address, Store store, ShipmentMethod shipmentMethod)
         {
+            var m = @this.Strategy.Session.Database.Scope().M;
+
             var shipments = @this.ShipmentsWhereShipToParty;
             if (address != null)
             {
-                shipments.Filter.AddEquals(M.Shipment.ShipToAddress, address);
+                shipments.Filter.AddEquals(m.Shipment.ShipToAddress, address);
             }
 
             if (store != null)
             {
-                shipments.Filter.AddEquals(M.Shipment.Store, store);
+                shipments.Filter.AddEquals(m.Shipment.Store, store);
             }
 
             if (shipmentMethod != null)
             {
-                shipments.Filter.AddEquals(M.Shipment.ShipmentMethod, shipmentMethod);
+                shipments.Filter.AddEquals(m.Shipment.ShipmentMethod, shipmentMethod);
             }
 
             foreach (CustomerShipment shipment in shipments)

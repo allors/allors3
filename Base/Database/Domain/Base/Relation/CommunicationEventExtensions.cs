@@ -16,7 +16,7 @@ namespace Allors.Domain
         {
             //var derivation = method.Derivation;
 
-            //if (!@this.ExistOwner && @this.Strategy.Session.GetUser() is Person owner)
+            //if (!@this.ExistOwner && @this.Strategy.Session.Scope().User is Person owner)
             //{
             //    @this.Owner = owner;
             //}

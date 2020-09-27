@@ -10,17 +10,16 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class SupplierRelationshipDerivation : IDomainDerivation
+    public class SupplierRelationshipDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5");
+        public SupplierRelationshipDerivation(M m) : base(m, new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.SupplierRelationship.Class),
+                new ChangedConcreteRolePattern(M.SupplierRelationship.FromDate),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.SupplierRelationship.Class),
-            new ChangedConcreteRolePattern(M.SupplierRelationship.FromDate),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (SupplierRelationship supplierRelationship in matches.Cast<SupplierRelationship>())
             {

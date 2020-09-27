@@ -10,12 +10,12 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class InternalOrganisationTests : DomainTest
+    public class InternalOrganisationTests : DomainTest, IClassFixture<Fixture>
     {
         private OwnBankAccount ownBankAccount;
         private WebAddress billingAddress;
 
-        public InternalOrganisationTests()
+        public InternalOrganisationTests(Fixture fixture) : base(fixture)
         {
             this.ownBankAccount = this.Session.Extent<OwnBankAccount>().First;
 

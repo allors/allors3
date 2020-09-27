@@ -12,18 +12,17 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class SalesOrderDerivation : IDomainDerivation
+    public class SalesOrderDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("CC43279A-22B4-499E-9ADA-33364E30FBD4");
-
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
+        public SalesOrderDerivation(M m) : base(m, new Guid("CC43279A-22B4-499E-9ADA-33364E30FBD4")) =>
+            this.Patterns = new Pattern[]
+            {
                 new CreatedPattern(M.SalesOrder.Class),
                 new ChangedRolePattern(M.SalesOrder.SalesOrderState),
                 new ChangedRolePattern(M.SalesOrder.SalesOrderItems)
-        };
+            };
 
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
             var session = cycle.Session;
@@ -373,13 +372,13 @@ namespace Allors.Domain
                     salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reject, Operations.Execute));
                     salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Cancel, Operations.Execute));
 
-                    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
                     foreach (Permission permission in salesOrder.Session().Extent<Permission>())
                     {
                         if (permission.ConcreteClassPointer == salesOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
                         {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }
                     }
 

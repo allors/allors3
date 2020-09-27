@@ -10,8 +10,10 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class ShipmentReceiptTests : DomainTest
+    public class ShipmentReceiptTests : DomainTest, IClassFixture<Fixture>
     {
+        public ShipmentReceiptTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenShipmentReceiptBuilderWhenBuildThenPostBuildRelationsMustExist()
         {

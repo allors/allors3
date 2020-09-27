@@ -13,8 +13,10 @@ namespace Allors.Domain
     using Bogus.DataSets;
     using Xunit;
 
-    public class RequestTests : DomainTest
+    public class RequestTests : DomainTest, IClassFixture<Fixture>
     {
+        public RequestTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenIssuerWithoutRequestNumberPrefix_WhenDeriving_ThenSortableRequestNumberIsSet()
         {

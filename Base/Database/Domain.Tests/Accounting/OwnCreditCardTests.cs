@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class OwnCreditCardTests : DomainTest
+    public class OwnCreditCardTests : DomainTest, IClassFixture<Fixture>
     {
+        public OwnCreditCardTests(Fixture fixture) : base(fixture) { }
+        
         [Fact]
         public void GivenOwnCreditCard_WhenDeriving_ThenCreditCardRelationMustExist()
         {

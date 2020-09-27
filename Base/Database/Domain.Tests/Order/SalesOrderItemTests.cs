@@ -9,7 +9,7 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class SalesOrderItemTests : DomainTest
+    public class SalesOrderItemTests : DomainTest, IClassFixture<Fixture>
     {
         private ProductCategory productCategory;
         private ProductCategory ancestorProductCategory;
@@ -36,7 +36,7 @@ namespace Allors.Domain
         private SalesOrder order;
         private VatRate vatRate21;
 
-        public SalesOrderItemTests()
+        public SalesOrderItemTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 
@@ -1241,7 +1241,7 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class SalesOrderItemSecurityTests : DomainTest
+    public class SalesOrderItemSecurityTests : DomainTest, IClassFixture<Fixture>
     {
         private ProductCategory productCategory;
         private ProductCategory ancestorProductCategory;
@@ -1270,7 +1270,7 @@ namespace Allors.Domain
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        public SalesOrderItemSecurityTests()
+        public SalesOrderItemSecurityTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 

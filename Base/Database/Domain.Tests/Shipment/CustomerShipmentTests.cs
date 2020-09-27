@@ -13,8 +13,10 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class CustomerShipmentTests : DomainTest
+    public class CustomerShipmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public CustomerShipmentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenCustomerShipment_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
@@ -1352,8 +1354,10 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class CustomerShipmentSecurityTests : DomainTest
+    public class CustomerShipmentSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public CustomerShipmentSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

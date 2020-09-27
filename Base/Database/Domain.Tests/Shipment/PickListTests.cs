@@ -10,8 +10,10 @@ namespace Allors.Domain
     using Allors.Meta;
     using Xunit;
 
-    public class PickListTests : DomainTest
+    public class PickListTests : DomainTest, IClassFixture<Fixture>
     {
+        public PickListTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPickListBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
@@ -624,8 +626,10 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class PickListSecurityTests : DomainTest
+    public class PickListSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public PickListSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
