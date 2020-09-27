@@ -19,7 +19,7 @@ namespace Allors.Domain
 
         public IReadOnlyDictionary<Guid, long> AssociationReadPermissionIdByRelationTypeId { get; }
 
-        public IReadOnlyDictionary<Guid, long> MethodExecutePermissionIdByRelationTypeId { get; }
+        public IReadOnlyDictionary<Guid, long> MethodExecutePermissionIdByMethodTypeId { get; }
 
         public PermissionCacheEntry(IGrouping<Guid, Permission> permissionsByClassId)
         {
@@ -27,7 +27,7 @@ namespace Allors.Domain
             this.RoleReadPermissionIdByRelationTypeId = permissionsByClassId.OfType<RoleReadPermission>().ToDictionary(v=>v.RelationTypePointer, v => v.Id);
             this.RoleWritePermissionIdByRelationTypeId = permissionsByClassId.OfType<RoleWritePermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
             this.AssociationReadPermissionIdByRelationTypeId = permissionsByClassId.OfType<AssociationReadPermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
-            this.MethodExecutePermissionIdByRelationTypeId = permissionsByClassId.OfType<MethodExecutePermission>().ToDictionary(v => v.MethodTypePointer, v => v.Id);
+            this.MethodExecutePermissionIdByMethodTypeId = permissionsByClassId.OfType<MethodExecutePermission>().ToDictionary(v => v.MethodTypePointer, v => v.Id);
         }
     }
 }

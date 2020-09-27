@@ -7,150 +7,141 @@
 namespace Allors.Domain
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Allors;
     using Allors.Meta;
 
     public partial class Permissions
     {
         // TODO: Cache permissions
-        public Permission Get(Class @class, OperandType operand, Operations operation)
+        public Permission Get(Class @class, OperandType operandType, Operations operation)
         {
-            var extent = this.Extent();
-            extent.Filter.AddEquals(this.Meta.ConcreteClassPointer, @class.Id);
-            extent.Filter.AddEquals(this.Meta.OperandTypePointer, operand.Id);
-            extent.Filter.AddEquals(this.Meta.OperationEnum, operation);
+            var permissionCache = this.Session.GetCache<PermissionCache, PermissionCache>(() => new PermissionCache(this.Session));
 
-            return extent.First;
+            var permissionCacheEntry = permissionCache.PermissionCacheEntryByClassId[@class.Id];
+
+            long id = 0;
+            switch (operation)
+            {
+                case Operations.Read:
+                    id = operandType is RoleType roleType ?
+                        permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[roleType.RelationType.Id] :
+                        permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId[((AssociationType)operandType).RelationType.Id];
+                    break;
+
+                case Operations.Write:
+                    id = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId[((RoleType)operandType).RelationType.Id];
+                    break;
+
+                default:
+                    id = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[((RoleType)operandType).RelationType.Id];
+                    break;
+            }
+
+            return (Permission)this.Session.Instantiate(id);
         }
 
         public void Sync()
         {
-            var permissionByOperationByConcreteClassByOperandType = new Dictionary<OperandType, Dictionary<ObjectType, Dictionary<Operations, Permission>>>();
-
-            foreach (Permission permission in new Permissions(this.Session).Extent())
-            {
-                if (permission.OperandType == null || !permission.ExistConcreteClass || !permission.ExistOperation)
-                {
-                    permission.Delete();
-                    continue;
-                }
-
-                if (!permissionByOperationByConcreteClassByOperandType.TryGetValue(permission.OperandType, out var permissionByOperationByConcreteClass))
-                {
-                    permissionByOperationByConcreteClass = new Dictionary<ObjectType, Dictionary<Operations, Permission>>();
-                    permissionByOperationByConcreteClassByOperandType[permission.OperandType] = permissionByOperationByConcreteClass;
-                }
-
-                if (!permissionByOperationByConcreteClass.TryGetValue(permission.ConcreteClass, out var permissionByOperation))
-                {
-                    permissionByOperation = new Dictionary<Operations, Permission>();
-                    permissionByOperationByConcreteClass.Add(permission.ConcreteClass, permissionByOperation);
-                }
-
-                permissionByOperation[permission.Operation] = permission;
-            }
-
             var domain = (MetaPopulation)this.Session.Database.ObjectFactory.MetaPopulation;
-            foreach (var relationType in domain.RelationTypes)
+
+            var permissionCache = new PermissionCache(this.Session);
+            var permissionIds = new HashSet<long>();
+
+            // Create new permissions
+            foreach (var @class in domain.Classes)
             {
+                if (permissionCache.PermissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
                 {
-                    // AssociationType
-                    var associationType = relationType.AssociationType;
-                    permissionByOperationByConcreteClassByOperandType.TryGetValue(associationType, out var permissionByOperationByConcreteClass);
-
-                    if (associationType.RelationType.RoleType.ObjectType is Composite composite)
+                    // existing class
+                    foreach (var roleType in @class.DatabaseRoleTypes)
                     {
-                        foreach (var concreteClass in composite.Classes)
+                        var relationTypeId = roleType.RelationType.Id;
                         {
-                            Dictionary<Operations, Permission> permissionByOperation = null;
-                            permissionByOperationByConcreteClass?.TryGetValue(concreteClass, out permissionByOperation);
-
-                            Operations[] operations = { Operations.Read };
-                            foreach (var operation in operations)
+                            if (!permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(relationTypeId,
+                                out var permissionId))
                             {
-                                Permission permission = null;
-                                permissionByOperation?.TryGetValue(operation, out permission);
-
-                                if (permission == null)
-                                {
-                                    permission = new PermissionBuilder(this.Session).Build();
-                                }
-
-                                permission.Sync(concreteClass, associationType, operation);
+                                permissionId = new RoleReadPermissionBuilder(this.Session)
+                                    .WithConcreteClassPointer(@class.Id)
+                                    .WithRelationTypePointer(relationTypeId)
+                                    .Build()
+                                    .Id;
                             }
+
+                            permissionIds.Add(permissionId);
+                        }
+
+                        {
+                            if (!permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(relationTypeId, out var permissionId))
+                            {
+                                permissionId = new RoleWritePermissionBuilder(this.Session)
+                                    .WithConcreteClassPointer(@class.Id)
+                                    .WithRelationTypePointer(relationTypeId)
+                                    .Build()
+                                    .Id;
+                            }
+
+                            permissionIds.Add(permissionId);
                         }
                     }
-                }
 
-                {
-                    // RoleType
-                    var roleType = relationType.RoleType;
-                    permissionByOperationByConcreteClassByOperandType.TryGetValue(roleType, out var permissionByOperationByConcreteClass);
-
-                    foreach (var concreteClass in roleType.RelationType.AssociationType.ObjectType.Classes)
+                    foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
-                        Dictionary<Operations, Permission> permissionByOperation = null;
-                        if (permissionByOperationByConcreteClass != null)
+                        var relationTypeId = associationType.RelationType.Id;
+                        if (!permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId.TryGetValue(relationTypeId, out var permissionId))
                         {
-                            permissionByOperationByConcreteClass.TryGetValue(concreteClass, out permissionByOperation);
+                            permissionId = new AssociationReadPermissionBuilder(this.Session)
+                                .WithConcreteClassPointer(@class.Id)
+                                .WithRelationTypePointer(relationTypeId)
+                                .Build()
+                                .Id;
                         }
 
-                        var operations = new[] { Operations.Read, Operations.Write };
+                        permissionIds.Add(permissionId);
+                    }
 
-                        foreach (var operation in operations)
+                    foreach (var methodType in @class.MethodTypes)
+                    {
+                        if (!permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
                         {
-                            Permission permission = null;
-                            if (permissionByOperation != null)
-                            {
-                                permissionByOperation.TryGetValue(operation, out permission);
-                            }
-
-                            if (operation == Operations.Write && roleType.RelationType.IsDerived)
-                            {
-                                if (permission != null)
-                                {
-                                    permission.Delete();
-                                }
-                            }
-                            else
-                            {
-                                if (permission == null)
-                                {
-                                    permission = new PermissionBuilder(this.Session).Build();
-                                }
-
-                                permission.Sync(concreteClass, roleType, operation);
-                            }
+                            permissionId = new MethodExecutePermissionBuilder(this.Session)
+                                .WithConcreteClassPointer(@class.Id)
+                                .WithMethodTypePointer(methodType.Id)
+                                .Build()
+                                .Id;
                         }
+
+                        permissionIds.Add(permissionId);
+                    }
+                }
+                else
+                {
+                    // new class
+                    foreach (var roleType in @class.DatabaseRoleTypes)
+                    {
+                        var relationTypeId = roleType.RelationType.Id;
+
+                        permissionIds.Add(new RoleReadPermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new RoleWritePermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                    }
+
+                    foreach (var associationType in @class.DatabaseAssociationTypes)
+                    {
+                        var relationTypeId = associationType.RelationType.Id;
+                        permissionIds.Add(new AssociationReadPermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                    }
+
+                    foreach (var methodType in @class.MethodTypes)
+                    {
+                        permissionIds.Add(new MethodExecutePermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
                     }
                 }
             }
 
-            foreach (var methodType in domain.MethodTypes)
+            // Delete obsolete permissions
+            foreach (var permissionToDelete in new Permissions(this.Session).Extent().Where(v => !permissionIds.Contains(v.Id)))
             {
-                permissionByOperationByConcreteClassByOperandType.TryGetValue(methodType, out var permissionByOperationByConcreteClass);
-
-                foreach (var concreteClass in methodType.ObjectType.Classes)
-                {
-                    Dictionary<Operations, Permission> permissionByOperation = null;
-                    if (permissionByOperationByConcreteClass != null)
-                    {
-                        permissionByOperationByConcreteClass.TryGetValue(concreteClass, out permissionByOperation);
-                    }
-
-                    Permission permission = null;
-                    if (permissionByOperation != null)
-                    {
-                        permissionByOperation.TryGetValue(Operations.Execute, out permission);
-                    }
-
-                    if (permission == null)
-                    {
-                        permission = new PermissionBuilder(this.Session).Build();
-                    }
-
-                    permission.Sync(concreteClass, methodType, Operations.Execute);
-                }
+                permissionToDelete.Delete();
             }
         }
 

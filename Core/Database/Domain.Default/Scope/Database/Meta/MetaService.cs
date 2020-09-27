@@ -22,18 +22,16 @@ namespace Allors.Services
             this.requiredRoleTypesByClass = metaPopulation.DatabaseClasses
                 .ToDictionary(
                     v => v,
-                    v => ((Class)v).RoleClasses
+                    v => ((Class)v).RoleTypes
                           .Where(concreteRoleType => concreteRoleType.IsRequired)
-                          .Select(concreteRoleType => concreteRoleType.RoleType)
                           .ToArray());
 
 
             this.uniqueRoleTypesByClass = metaPopulation.DatabaseClasses
                 .ToDictionary(
                     v => v,
-                    v => ((Class)v).RoleClasses
+                    v => ((Class)v).RoleTypes
                         .Where(concreteRoleType => concreteRoleType.IsUnique)
-                        .Select(concreteRoleType => concreteRoleType.RoleType)
                         .ToArray());
 
             this.builderTypeByClass = metaPopulation.DatabaseClasses.

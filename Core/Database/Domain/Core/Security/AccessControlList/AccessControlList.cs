@@ -29,6 +29,10 @@ namespace Allors.Domain
             this.Object = (Object)@object;
             this.classId = this.Object.Strategy.Class.Id;
 
+            var session = @object.Strategy.Session;
+            var permissionCache = session.GetCache<PermissionCache, PermissionCache>(() => new PermissionCache(session));
+            this.permissionCacheEntry = permissionCache.PermissionCacheEntryByClassId[this.classId];
+
             this.lazyLoaded = false;
         }
 
@@ -99,7 +103,7 @@ namespace Allors.Domain
         {
             if (this.Object != null)
             {
-                if (this.permissionCacheEntry.MethodExecutePermissionIdByRelationTypeId.TryGetValue(methodType.Id, out var permissionId))
+                if (this.permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
                 {
                     return this.IsPermitted(permissionId);
                 }

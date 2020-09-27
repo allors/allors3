@@ -66,11 +66,13 @@ namespace Allors.Meta
             }
         }
 
-        public MethodClass MethodClassBy(Class @class)
-        {
-            this.MethodClassByClass.TryGetValue(@class, out var methodClass);
-            return methodClass;
-        }
+        public MethodClass MethodClassBy(Class @class) =>
+            this switch
+            {
+                MethodClass methodClass => methodClass,
+                MethodInterface methodInterface => this.MethodClassByClass[@class],
+                _ => null,
+            };
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
