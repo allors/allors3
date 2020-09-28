@@ -12,6 +12,8 @@ namespace Allors.Meta
 
     public sealed partial class Interface : Composite, IInterface
     {
+        private string[] derivedWorkspaceNames;
+
         private HashSet<Composite> derivedDirectSubtypes;
 
         private HashSet<Composite> derivedSubtypes;
@@ -25,10 +27,15 @@ namespace Allors.Meta
 
         private Type clrType;
 
-        internal Interface(MetaPopulation metaPopulation, Guid id)
-            : base(metaPopulation, id)
+        internal Interface(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => metaPopulation.OnInterfaceCreated(this);
+
+        public override string[] WorkspaceNames
         {
-            metaPopulation.OnInterfaceCreated(this);
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceNames;
+            }
         }
 
         #region Exist
@@ -124,6 +131,13 @@ namespace Allors.Meta
         }
 
         internal void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.Name];
+
+        internal void DeriveWorkspaceNames() =>
+            this.derivedWorkspaceNames = this
+                .RoleTypes.SelectMany(v => v.RelationType.WorkspaceNames)
+                .Union(this.AssociationTypes.SelectMany(v=>v.RelationType.WorkspaceNames))
+                .Union(this.MethodTypes.SelectMany(v=>v.WorkspaceNames))
+                .ToArray();
 
         /// <summary>
         /// Derive direct sub type derivations.

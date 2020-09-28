@@ -10,6 +10,7 @@ namespace Allors.Repository
     using Allors.Repository.Attributes;
     using static Workspaces;
 
+    [Workspace(Default)]
     public partial class Person : Addressable, Deletable
     {
         #region inherited properties
@@ -25,7 +26,7 @@ namespace Allors.Repository
         #region Allors
         [Id("adf83a86-878d-4148-a9fc-152f56697136")]
         #endregion
-        [Workspace(Default)]
+        [Workspace(Default, Test)]
         public DateTime BirthDate { get; set; }
 
         #region Allors
@@ -36,6 +37,24 @@ namespace Allors.Repository
         [Derived]
         public string FullName { get; set; }
 
+        #region Allors
+        [Id("0521122D-1C45-41DC-804C-330FE81136C6")]
+        [Size(256)]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Local)]
+        [Derived]
+        public string LocalFullName { get; set; }
+
+        #region Allors
+        [Id("0521122D-1C45-41DC-804C-330FE81136C6")]
+        [Size(256)]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Working)]
+        [Derived]
+        public string WorkingFullName { get; set; }
+        
         #region Allors
         [Id("105CF367-F076-45F8-8E2A-2431BB2D65C7")]
         [Size(256)]

@@ -21,6 +21,7 @@ namespace Allors.Meta
         }
 
         public override Guid Id { get; }
+
         public override string IdAsString { get; }
 
 

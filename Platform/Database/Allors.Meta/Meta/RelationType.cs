@@ -28,6 +28,9 @@ namespace Allors.Meta
         private bool isSynced;
         private bool isIndexed;
 
+        private string[] assignedWorkspaceNames;
+        private string[] derivedWorkspaceNames;
+
         private IReadOnlyDictionary<Class, RoleClass> derivedRoleClassByAssociationTypeClass = EmptyRoleClassByAssociationTypeClass;
 
         public RelationType(Composite associationTypeComposite, Guid id)
@@ -50,19 +53,30 @@ namespace Allors.Meta
             this.MetaPopulation.OnRelationTypeCreated(this);
         }
 
+        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
+
         public Guid Id { get; }
 
         public string IdAsString { get; }
 
-        public string[] WorkspaceNames
+        public string[] AssignedWorkspaceNames
         {
-            get => this.workspaceNames ?? Array.Empty<string>();
+            get => this.assignedWorkspaceNames;
 
             set
             {
                 this.MetaPopulation.AssertUnlocked();
-                this.workspaceNames = value;
+                this.assignedWorkspaceNames = value;
                 this.MetaPopulation.Stale();
+            }
+        }
+
+        public string[] WorkspaceNames
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceNames;
             }
         }
 
@@ -295,6 +309,22 @@ namespace Allors.Meta
                 this.multiplicity = this.AssignedMultiplicity;
             }
         }
+
+        internal void DeriveWorkspaceNames() =>
+            this.derivedWorkspaceNames = this.assignedWorkspaceNames != null ?
+                this.assignedWorkspaceNames.Intersect(this.AssociationType.ObjectType switch
+                {
+                    Interface @interface => @interface.Classes.SelectMany(v => v.WorkspaceNames),
+                    Class @class => @class.WorkspaceNames,
+                    _ => Array.Empty<string>()
+                }).Intersect(this.RoleType.ObjectType switch
+                {
+                    Unit unit => unit.WorkspaceNames,
+                    Interface @interface => @interface.Classes.SelectMany(v => v.WorkspaceNames),
+                    Class @class => @class.WorkspaceNames,
+                    _ => Array.Empty<string>()
+                }).ToArray() :
+                Array.Empty<string>();
 
         /// <summary>
         /// Validates this. instance.

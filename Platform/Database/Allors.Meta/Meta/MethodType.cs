@@ -10,6 +10,7 @@ namespace Allors.Meta
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Data;
 
     public abstract partial class MethodType : OperandType, IMethodType, IComparable
     {
@@ -17,28 +18,40 @@ namespace Allors.Meta
 
         private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
 
-        private string[] workspaceNames;
+        private string[] assignedWorkspaceNames;
+        private string[] derivedWorkspaceNames;
 
         protected MethodType(MetaPopulation metaPopulation) : base(metaPopulation)
         {
         }
 
-        public string[] WorkspaceNames
+        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
+
+        public string[] AssignedWorkspaceNames
         {
-            get => this.workspaceNames ?? Array.Empty<string>();
+            get => this.assignedWorkspaceNames;
 
             set
             {
                 this.MetaPopulation.AssertUnlocked();
-                this.workspaceNames = value;
+                this.assignedWorkspaceNames = value;
                 this.MetaPopulation.Stale();
+            }
+        }
+
+        public string[] WorkspaceNames
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceNames;
             }
         }
 
         public abstract Guid Id { get; }
         public abstract string IdAsString { get; }
 
-        public override Origin Origin => Origin.Local;
+        public override Origin Origin => Origin.Remote;
 
         IComposite IMethodType.ObjectType => this.Composite;
 
@@ -109,6 +122,23 @@ namespace Allors.Meta
             else
             {
                 this.derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
+            }
+        }
+
+        internal void DeriveWorkspaceNames()
+        {
+            this.derivedWorkspaceNames = this.assignedWorkspaceNames?.Length > 0 ?
+                (this.Composite switch
+                {
+                    Interface @interface => @interface.Classes.SelectMany(v => v.WorkspaceNames).ToArray(),
+                    Class @class => @class.WorkspaceNames,
+                    _ => Array.Empty<string>()
+                }).Intersect(this.assignedWorkspaceNames).ToArray()
+                : Array.Empty<string>();
+
+            foreach (var methodClass in this.MethodClassByClass.Values)
+            {
+                methodClass.DeriveWorkspaceNames();
             }
         }
 

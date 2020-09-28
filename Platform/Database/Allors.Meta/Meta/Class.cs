@@ -8,18 +8,40 @@ namespace Allors.Meta
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public sealed partial class Class : Composite, IClass
     {
-        private readonly Class[] classes;
+        private string[] assignedWorkspaceNames;
+        private string[] derivedWorkspaceNames;
 
+        private readonly Class[] classes;
         private Type clrType;
 
         internal Class(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id)
         {
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
+        }
+
+        public string[] AssignedWorkspaceNames
+        {
+            get => this.assignedWorkspaceNames;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.assignedWorkspaceNames = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public override string[] WorkspaceNames
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceNames;
+            }
         }
 
         // TODO: Review
@@ -38,6 +60,12 @@ namespace Allors.Meta
         public override IEnumerable<Composite> Subtypes => new[] { this };
 
         public override IEnumerable<Composite> DatabaseSubtypes => this.Origin == Origin.Remote ? this.Subtypes : Array.Empty<Composite>();
+
+        internal void DeriveWorkspaceNames(HashSet<string> workspaceNames)
+        {
+            this.derivedWorkspaceNames = this.assignedWorkspaceNames ?? Array.Empty<string>();
+            workspaceNames.UnionWith(this.derivedWorkspaceNames);
+        }
 
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType);
 

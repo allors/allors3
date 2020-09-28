@@ -15,20 +15,7 @@ namespace Allors
     {
         private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
 
-        static int Main(string[] args)
-        {
-            switch (args.Length)
-            {
-                case 0:
-                    return Default();
-                case 2:
-                    return Generate.Execute(MetaBuilder.Build(), args[0], args[1]).ErrorOccured ? 1 : 0;
-                default:
-                    return 1;
-            }
-        }
-
-        private static int Default()
+        static int Main()
         {
             string[,] database =
                 {
@@ -65,6 +52,8 @@ namespace Allors
                 }
             }
 
+            var workspaceName = "Default";
+
             for (var i = 0; i < workspace.GetLength(0); i++)
             {
                 var template = workspace[i, 0];
@@ -74,7 +63,7 @@ namespace Allors
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(metaPopulation, template, output);
+                var log = Generate.Execute(metaPopulation, template, output, workspaceName);
                 if (log.ErrorOccured)
                 {
                     return 1;

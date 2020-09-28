@@ -187,7 +187,7 @@ build_class(class) ::= <<
                 AssignedOrigin = Allors.Origin.$class.Origin$,
                 SingularName = "$class.SingularName$",
                 PluralName = "$class.PluralName$",
-                $if(class.WorkspaceNames)$WorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
+                $if(class.WorkspaceNames)$AssignedWorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
                 $if(class.AttributeByName.Synced)$AssignedIsSynced = $class.AttributeByName.Synced.Value$$endif$
             };
 >>
@@ -209,7 +209,7 @@ relation(property) ::= <<
             relationTypes.$property.DefiningType.SingularName$$property.RoleSingularName$ = new RelationType(objectTypes.$property.DefiningType.SingularName$, new System.Guid("$property.AttributeByName.Id.Value$"))
             {
                 AssignedOrigin = Origin.$property.Origin$,
-$if(property.WorkspaceNames)$		        WorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
+$if(property.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
 $if(property.AttributeByName.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$property.AttributeByName.Multiplicity.Value$,$endif$
 $if(property.AttributeByName.Derived)$		        IsDerived = $property.AttributeByName.Derived.Value$,$endif$
 $if(property.AttributeByName.Synced)$		    IsSynced = $property.AttributeByName.Synced.Value$,$endif$
@@ -241,7 +241,7 @@ method(method) ::= <<
             methodTypes.$method.DefiningType.SingularName$$method.Name$ = new $if(composite.IsClass)$MethodClass$else$MethodInterface$endif$(objectTypes.$method.DefiningType.SingularName$, new System.Guid("$method.AttributeByName.Id.Value$"))
             {
                 Name = "$method.Name$",
-$if(method.WorkspaceNames)$		        WorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
+$if(method.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
             };
         }
 >>

@@ -12,8 +12,6 @@ namespace Allors.Meta
 
     public abstract partial class Composite : ObjectType, IComposite
     {
-        private string[] workspaceNames;
-
         private bool assignedIsSynced;
         private bool isSynced;
 
@@ -27,26 +25,12 @@ namespace Allors.Meta
         private HashSet<AssociationType> derivedDatabaseAssociationTypes;
         private HashSet<RoleType> derivedDatabaseRoleTypes;
 
-        private IReadOnlyDictionary<string, AssociationType[]> derivedWorkspaceAssociationTypesByWorkspaceName;
-        private IReadOnlyDictionary<string, RoleType[]> derivedWorkspaceRoleTypesByWorkspaceName;
-        private IReadOnlyDictionary<string, MethodType[]> derivedWorkspaceMethodTypesByWorkspaceName;
-
         protected Composite(MetaPopulation metaPopulation, Guid id)
             : base(metaPopulation, id)
         {
         }
 
-        public string[] WorkspaceNames
-        {
-            get => this.workspaceNames ?? Array.Empty<string>();
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.workspaceNames = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
         public override Origin Origin => this.AssignedOrigin;
 
@@ -305,30 +289,75 @@ namespace Allors.Meta
 
         public IClass ExclusiveDatabaseClass => this.ExistExclusiveDatabaseClass ? this.DatabaseClasses.Single() : null;
 
-        public IReadOnlyDictionary<string, AssociationType[]> WorkspaceAssociationTypesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceAssociationTypesByWorkspaceName
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedWorkspaceAssociationTypesByWorkspaceName;
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.AssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 
-        public IReadOnlyDictionary<string, RoleType[]> WorkspaceRoleTypesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<AssociationType>> WorkspaceExclusiveAssociationTypesByWorkspaceName
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedWorkspaceRoleTypesByWorkspaceName;
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.ExclusiveAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceRoleTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.RoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 
-        public IReadOnlyDictionary<string, MethodType[]> WorkspaceMethodTypesByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceCompositeRoleTypesByWorkspaceName
         {
             get
             {
                 this.MetaPopulation.Derive();
-                return this.derivedWorkspaceMethodTypesByWorkspaceName;
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.RoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveCompositeRoleTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.ExclusiveRoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceMethodTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<Composite>> WorkspaceSubtypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.Subtypes.Where(w => w.WorkspaceNames.Contains(v)));
             }
         }
 
@@ -421,11 +450,34 @@ namespace Allors.Meta
 
             this.derivedRoleTypes = new HashSet<RoleType>(roleTypes);
             this.derivedDatabaseRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Remote));
-            this.derivedWorkspaceRoleTypesByWorkspaceName = this.WorkspaceNames
-                .ToDictionary(v => v, v => roleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).ToArray());
-
         }
 
+        /// <summary>
+        /// Derive association types.
+        /// </summary>
+        /// <param name="associationTypes">The associations.</param>
+        /// <param name="relationTypesByRoleObjectType">AssociationTypes grouped by the ObjectType of the Role.</param>
+        internal void DeriveAssociationTypes(HashSet<AssociationType> associationTypes, Dictionary<ObjectType, HashSet<AssociationType>> relationTypesByRoleObjectType)
+        {
+            associationTypes.Clear();
+
+            if (relationTypesByRoleObjectType.TryGetValue(this, out var classAssociationTypes))
+            {
+                associationTypes.UnionWith(classAssociationTypes);
+            }
+
+            foreach (var superType in this.Supertypes)
+            {
+                if (relationTypesByRoleObjectType.TryGetValue(superType, out var interfaceAssociationTypes))
+                {
+                    associationTypes.UnionWith(interfaceAssociationTypes);
+                }
+            }
+
+            this.derivedAssociationTypes = new HashSet<AssociationType>(associationTypes);
+            this.derivedDatabaseAssociationTypes = new HashSet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Remote));
+        }
+        
         /// <summary>
         /// Derive method types.
         /// </summary>
@@ -459,39 +511,8 @@ namespace Allors.Meta
             }
 
             this.derivedMethodTypes = new HashSet<MethodType>(methodTypes);
-            this.derivedWorkspaceMethodTypesByWorkspaceName = this.WorkspaceNames
-                .ToDictionary(v => v, v => methodTypes.Where(w => w.WorkspaceNames.Contains(v)).ToArray());
-
         }
-
-        /// <summary>
-        /// Derive association types.
-        /// </summary>
-        /// <param name="associationTypes">The associations.</param>
-        /// <param name="relationTypesByRoleObjectType">AssociationTypes grouped by the ObjectType of the Role.</param>
-        internal void DeriveAssociationTypes(HashSet<AssociationType> associationTypes, Dictionary<ObjectType, HashSet<AssociationType>> relationTypesByRoleObjectType)
-        {
-            associationTypes.Clear();
-
-            if (relationTypesByRoleObjectType.TryGetValue(this, out var classAssociationTypes))
-            {
-                associationTypes.UnionWith(classAssociationTypes);
-            }
-
-            foreach (var superType in this.Supertypes)
-            {
-                if (relationTypesByRoleObjectType.TryGetValue(superType, out var interfaceAssociationTypes))
-                {
-                    associationTypes.UnionWith(interfaceAssociationTypes);
-                }
-            }
-
-            this.derivedAssociationTypes = new HashSet<AssociationType>(associationTypes);
-            this.derivedDatabaseAssociationTypes = new HashSet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Remote));
-            this.derivedWorkspaceAssociationTypesByWorkspaceName = this.WorkspaceNames
-                .ToDictionary(v => v, v => associationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).ToArray());
-        }
-
+        
         internal void DeriveIsSynced() => this.isSynced = this.assignedIsSynced || this.derivedSupertypes.Any(v => v.assignedIsSynced);
 
         /// <summary>

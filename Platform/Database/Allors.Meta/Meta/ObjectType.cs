@@ -74,6 +74,8 @@ namespace Allors.Meta
 
         public abstract Type ClrType { get; }
 
+        public abstract string[] WorkspaceNames { get; }
+
         /// <summary>
         /// Gets the validation name.
         /// </summary>

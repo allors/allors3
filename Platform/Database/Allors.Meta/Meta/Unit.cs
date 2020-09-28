@@ -124,6 +124,8 @@ namespace Allors.Meta
             }
         }
 
+        public override string[] WorkspaceNames => this.MetaPopulation.WorkspaceNames;
+
         public override Origin Origin => Origin.Remote;
     }
 }
