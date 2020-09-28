@@ -1,4 +1,4 @@
-﻿// <copyright file="Upgrade.cs" company="Allors bvba">
+// <copyright file="Upgrade.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,14 +11,10 @@ namespace Commands
     using System.Linq;
     using System.Xml;
     using Allors.Domain;
-    using Allors.Services;
-
     using McMaster.Extensions.CommandLineUtils;
+    using NLog;
 
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-
-    [Command(Description = "Upgrade population from file")]
+    [Command(Description = "Add file contents to the index")]
     public class Upgrade
     {
         private readonly HashSet<Guid> excludedObjectTypes = new HashSet<Guid>
@@ -32,32 +28,19 @@ namespace Commands
         private readonly HashSet<Guid> movedRelationTypes = new HashSet<Guid>
         {
         };
+        
+        public Program Parent { get; set; }
 
-        private readonly IConfiguration configuration;
-
-        private readonly IDatabaseService databaseService;
-
-        private readonly ILogger<Upgrade> logger;
-
-        private readonly DirectoryInfo dataPath;
-
-        public Upgrade(IConfiguration configuration, IDatabaseService databaseService, ILogger<Upgrade> logger)
-        {
-            this.configuration = configuration;
-            this.dataPath = new DirectoryInfo(".").GetAncestorSibling(configuration["datapath"]);
-            this.databaseService = databaseService;
-            this.logger = logger;
-        }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [Option("-f", Description = "File to load")]
         public string FileName { get; set; } = "population.xml";
 
         public int OnExecute(CommandLineApplication app)
         {
-            this.logger.LogInformation("Begin");
+            var fileInfo = new FileInfo(this.FileName);
 
-            var fileName = this.FileName ?? this.configuration["populationFile"];
-            var fileInfo = new FileInfo(fileName);
+            this.Logger.Info("Begin");
 
             var notLoadedObjectTypeIds = new HashSet<Guid>();
             var notLoadedRelationTypeIds = new HashSet<Guid>();
@@ -66,7 +49,7 @@ namespace Commands
 
             using (var reader = XmlReader.Create(fileInfo.FullName))
             {
-                this.databaseService.Database.ObjectNotLoaded += (sender, args) =>
+                this.Parent.Database.ObjectNotLoaded += (sender, args) =>
                 {
                     if (!this.excludedObjectTypes.Contains(args.ObjectTypeId))
                     {
@@ -79,7 +62,7 @@ namespace Commands
                     }
                 };
 
-                this.databaseService.Database.RelationNotLoaded += (sender, args) =>
+                this.Parent.Database.RelationNotLoaded += (sender, args) =>
                 {
                     if (!this.excludedRelationTypes.Contains(args.RelationTypeId))
                     {
@@ -90,8 +73,8 @@ namespace Commands
                     }
                 };
 
-                this.logger.LogInformation("Loading {file}", fileInfo.FullName);
-                this.databaseService.Database.Load(reader);
+                this.Logger.Info("Loading {file}", fileInfo.FullName);
+                this.Parent.Database.Load(reader);
             }
 
             if (notLoadedObjectTypeIds.Count > 0)
@@ -99,7 +82,7 @@ namespace Commands
                 var notLoaded = notLoadedObjectTypeIds
                     .Aggregate("Could not load following ObjectTypeIds: ", (current, objectTypeId) => current + "- " + objectTypeId);
 
-                this.logger.LogError(notLoaded);
+                this.Logger.Error(notLoaded);
                 return 1;
             }
 
@@ -108,13 +91,13 @@ namespace Commands
                 var notLoaded = notLoadedRelationTypeIds
                     .Aggregate("Could not load following RelationTypeIds: ", (current, relationTypeId) => current + "- " + relationTypeId);
 
-                this.logger.LogError(notLoaded);
+                this.Logger.Error(notLoaded);
                 return 1;
             }
 
-            using (var session = this.databaseService.Database.CreateSession())
+            using (var session = this.Parent.Database.CreateSession())
             {
-                new Allors.Upgrade(session, this.dataPath).Execute();
+                new Allors.Upgrade(session, this.Parent.DataPath).Execute();
                 session.Commit();
 
                 new Permissions(session).Sync();
@@ -123,7 +106,7 @@ namespace Commands
                 session.Commit();
             }
 
-            this.logger.LogInformation("End");
+            this.Logger.Info("End");
             return ExitCode.Success;
         }
     }
