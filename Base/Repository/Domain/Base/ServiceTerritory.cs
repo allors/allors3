@@ -33,8 +33,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("a268313d-db1e-44e1-9fb1-7135d1157083")]
-        [AssociationId("348c497e-7907-4409-b7b1-d77ebfd46258")]
-        [RoleId("a23c1a3d-2a76-46b3-a26c-d5c5a66ebe0a")]
         #endregion
         [Required]
         [Size(256)]

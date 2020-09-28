@@ -255,8 +255,6 @@ namespace Allors.Repository
         #region Versioning
         #region Allors
         [Id("275CFF8F-AD72-4237-AEBD-158A72650D25")]
-        [AssociationId("730A672E-41F6-4BAB-B918-9A7852B4E50E")]
-        [RoleId("1E1B3E3B-C471-47EB-AB96-C01165E39FB4")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
@@ -265,8 +263,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("9BF20468-BF1D-410D-8D83-EBA561A5F066")]
-        [AssociationId("B503EBD6-E4A8-4E5D-8005-1823079BEF2D")]
-        [RoleId("DAD9D684-9821-48BD-9829-C9F5BE1E740A")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
@@ -276,8 +272,6 @@ namespace Allors.Repository
         
         #region Allors
         [Id("8FB7635C-6C06-43E8-9B6C-A760C7205804")]
-        [AssociationId("A1D28C43-6C7B-4872-878C-75E91285AB9A")]
-        [RoleId("D338444E-1D92-47A2-9A27-83296C93482E")]
         #endregion
         [Required]
         [Workspace]
@@ -285,8 +279,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("124181AE-3BB2-42E2-A27B-D9B811824282")]
-        [AssociationId("E85FE7C7-0B10-4ABB-AD84-1B920DB767E2")]
-        [RoleId("5E5718DC-1060-4BF1-9E76-B2D2927E028D")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
@@ -295,8 +287,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("98D13035-810F-4550-8EDE-8514FDFD275D")]
-        [AssociationId("4B77E890-1061-49E0-AE29-A28EB0C6A52E")]
-        [RoleId("18376FC8-224A-4F16-BBC8-006B04F8C184")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
@@ -305,8 +295,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("980631CB-CC72-4264-87E5-B65DC6ABBB4D")]
-        [AssociationId("53B3AFB0-D926-477D-9591-D537B00CCCBD")]
-        [RoleId("0CCF23A0-F65B-469B-9886-3E554A02A353")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Derived]
@@ -315,8 +303,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("1c8bf2e3-6794-47c8-990c-f124d47653fb")]
-        [AssociationId("d60f70d2-a17e-47d9-bccc-7971f5ef776d")]
-        [RoleId("d0f185d6-1ae2-40bf-a95e-6fde7ae10fa9")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
@@ -325,8 +311,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("2cc74901-cda5-4185-bcd8-d51c745a8437")]
-        [AssociationId("896a4589-4caf-4cd2-8365-c4200b12f519")]
-        [RoleId("baa30557-79ff-406d-b374-9d32519b2de7")]
         #endregion
         [Indexed]
         [Required]
@@ -336,8 +320,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4cc8bc02-8305-4bd3-b0c7-e9b3ecaf4bd2")]
-        [AssociationId("c2be4896-2eae-40fa-9300-b548741407f2")]
-        [RoleId("a26de636-8efa-4df4-b56d-225ac25f31a8")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Derived]
@@ -346,8 +328,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("813633df-c6cb-44a6-9fdf-579aa8180ebd")]
-        [AssociationId("4e4c1ca5-43e1-4567-8f1e-636197ca72b7")]
-        [RoleId("e5c40212-c5c5-44a1-8f18-f5d3dbeec9ca")]
         #endregion
         [Size(256)]
         [Workspace]
@@ -355,8 +335,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("a5318bd4-da7d-48bd-9d41-00c3261caa09")]
-        [AssociationId("baae72eb-acf3-4dce-b480-fce90e124de3")]
-        [RoleId("6458017c-a4bf-4815-a486-66d654f3801a")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
@@ -365,8 +343,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("d0ac426e-4775-4f2f-8055-08cb84e8e9bd")]
-        [AssociationId("e8677033-8927-4a52-b210-9a98558625ba")]
-        [RoleId("8e2fd09a-eda9-47e2-8908-2527e947ffd1")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
@@ -375,8 +351,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("c79070fc-2c7d-440b-80ce-f86796c59a14")]
-        [AssociationId("8bb86356-0b10-4e77-bbbb-d4d33230c3a9")]
-        [RoleId("8c72ca39-b408-4623-8a90-54c3b3630e6b")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
@@ -386,8 +360,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("1bf7b758-2b58-4f82-a6a1-a8d5991d3d9d")]
-        [AssociationId("240a4c51-86f3-47c7-a28d-7c8fd7b5d68e")]
-        [RoleId("08655bdf-9abb-404d-a4d4-739896199bc3")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]

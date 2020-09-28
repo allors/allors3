@@ -45,8 +45,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("EEAB1D40-6E68-43B9-A236-AB5F84880E19")]
-        [AssociationId("A2EEB714-EC08-467C-928B-489080101030")]
-        [RoleId("C062AE16-F464-4659-B5AF-CAED48BC2558")]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion

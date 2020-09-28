@@ -37,8 +37,6 @@ namespace Allors.Repository
         #region Versioning
         #region Allors
         [Id("276bfe6d-ac6c-4036-9849-51f50ddb8d55")]
-        [AssociationId("c42f941b-a6e2-49f2-b5d5-ae86b3d52493")]
-        [RoleId("70b54993-cf19-4f33-ba59-bbe8c6ccaa6a")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
@@ -47,8 +45,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("c948d6ae-6a64-41de-b86d-3d194cfccebf")]
-        [AssociationId("8fb40421-a4de-48c9-ad2f-fd87113868c8")]
-        [RoleId("f12ab47e-143e-448b-b9f1-16ca4b786c6f")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]

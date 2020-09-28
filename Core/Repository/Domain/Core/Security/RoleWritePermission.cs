@@ -26,8 +26,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("86675DEA-D9F0-4930-99EC-13F2137CFB45")]
-        [AssociationId("86BD17A1-0034-4AC0-B405-C7B557E34BBA")]
-        [RoleId("2F3BE01F-DCDE-47C0-8F49-46A8B0E0FC83")]
         [Indexed]
         #endregion
         [Required]
