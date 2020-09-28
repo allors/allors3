@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("084abb92-31fd-46e6-ab85-9a7a88c9d72b")]
@@ -18,7 +19,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party[] Parties { get; set; }
 
         #region Allors

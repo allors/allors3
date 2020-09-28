@@ -26,7 +26,7 @@ namespace Allors.Data
         public string Parameter { get; set; }
 
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || this.HasMissingArguments(parameters);
-      
+
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.HasMissingArguments(parameters);
 
         public Predicate Save() =>

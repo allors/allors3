@@ -6,8 +6,9 @@
 namespace Allors.Repository
 {
     using System;
-    using System.Runtime.InteropServices.ComTypes;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+
 
     #region Allors
     [Id("3a5dcec7-308f-48c7-afee-35d38415aa0b")]
@@ -24,7 +25,7 @@ namespace Allors.Repository
         public Address Address { get; set; }
 
         #endregion
-        
+
         #region Allors
         [Id("2cfea5d4-e893-4264-a966-a68716839acd")]
         [Size(-1)]
@@ -35,7 +36,7 @@ namespace Allors.Repository
         [Id("49b96f79-c33d-4847-8c64-d50a6adb4985")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Person[] Employees { get; set; }
 
         #region Allors
@@ -85,7 +86,7 @@ namespace Allors.Repository
         [Id("dbef262d-7184-4b98-8f1f-cf04e884bb92")]
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         #endregion
         public Person Manager { get; set; }
 
@@ -94,7 +95,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -102,14 +103,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Person Owner { get; set; }
 
         #region Allors
         [Id("15f33fa4-c878-45a0-b40c-c5214bce350b")]
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         #endregion
         public Person[] Shareholders { get; set; }
 
@@ -122,7 +123,7 @@ namespace Allors.Repository
         #region Allors
         [Id("D3DB6E8C-9C10-47BA-92B1-45F5DDFFA5CC")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public Person CycleOne { get; set; }
@@ -130,7 +131,7 @@ namespace Allors.Repository
         #region Allors
         [Id("C6CCA1C5-5799-4517-87F5-095DA0EEEC64")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         public Person[] CycleMany { get; set; }
@@ -140,7 +141,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Data OneData { get; set; }
 
         #region Allors
@@ -148,14 +149,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Data[] ManyDatas { get; set; }
 
         #region Allors
         [Id("BC94072C-8F69-45AE-AED0-C056758F78F3")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool JustDidIt { get; set; }
 
         #region inherited methods
@@ -177,11 +178,11 @@ namespace Allors.Repository
         #endregion
 
         [Id("1869873F-F2F0-4D03-A0F9-7DC73491C117")]
-        [Workspace]
+        [Workspace(Default)]
         public void JustDoIt() { }
 
         [Id("2CD2FF48-93FC-4C7D-BF2F-3F411D0DF7C3")]
-        [Workspace]
+        [Workspace(Default)]
         public void ToggleCanWrite() { }
     }
 }

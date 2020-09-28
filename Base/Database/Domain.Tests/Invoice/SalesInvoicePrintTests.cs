@@ -12,7 +12,7 @@ namespace Allors.Domain
     public class SalesInvoicePrintTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesInvoicePrintTests(Fixture fixture) : base(fixture) { }
-        
+
         //[Fact]
         //public void GivenSalesInvoice_WhenCreatingPrintModel_ThenPrintModelIsNotNull()
         //{

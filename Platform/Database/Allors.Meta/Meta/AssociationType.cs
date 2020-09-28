@@ -79,7 +79,7 @@ namespace Allors.Meta
         /// </summary>
         /// <value>The full name.</value>
         public string FullName => this.IsMany ? this.PluralName : this.SingularName;
-        
+
         /// <summary>
         /// Gets the singular name when using <see cref="Where"/>.
         /// </summary>
@@ -151,7 +151,7 @@ namespace Allors.Meta
         /// The association value.
         /// </returns>
         public object Get(IStrategy strategy) => strategy.GetAssociation(this.RelationType);
-        
+
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </summary>

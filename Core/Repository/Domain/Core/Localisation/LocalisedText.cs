@@ -7,6 +7,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("020f5d4d-4a59-4d7b-865a-d72fc70e4d97")]
@@ -26,7 +29,7 @@ namespace Allors.Repository
         [Id("50dc85f0-3d22-4bc1-95d9-153674b89f7a")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Text { get; set; }
 
         #region inherited methods

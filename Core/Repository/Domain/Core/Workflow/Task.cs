@@ -8,6 +8,9 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("84eb0e6e-68e1-478c-a35f-6036d45792be")]
@@ -20,7 +23,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         WorkItem WorkItem { get; set; }
 
         #region Allors
@@ -29,7 +32,7 @@ namespace Allors.Repository
         #endregion
         [Size(512)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         string Title { get; set; }
 
         #region Allors
@@ -37,7 +40,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         DateTime DateCreated { get; set; }
 
         #region Allors
@@ -45,14 +48,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         DateTime DateDue { get; set; }
 
         #region Allors
         [Id("5ad0b9f5-669c-4b05-8c97-89b59a227da2")]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime DateClosed { get; set; }
 
         #region Allors
@@ -61,7 +64,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         User[] Participants { get; set; }
 
         #region Allors
@@ -70,7 +73,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         User Performer { get; set; }
     }
 }

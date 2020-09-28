@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("E30A6B10-069B-45CB-9D74-4DA9E77DE465")]
@@ -34,7 +36,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public IUnitOfMeasure UnitOfMeasure { get; set; }
 
         #region inherited methods
@@ -58,7 +60,7 @@ namespace Allors.Repository
         #region Allors
         [Id("0F9165C3-32FE-48C0-A62E-8277592314B9")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Delete() { }
     }
 }

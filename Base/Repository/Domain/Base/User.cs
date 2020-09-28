@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Attributes;
+    using static Workspaces;
+
 
     public partial interface User : Localised
     {
@@ -14,7 +16,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         UserProfile UserProfile { get; set; }
     }
 }

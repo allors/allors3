@@ -177,7 +177,7 @@ namespace Allors.Database.Adapters
                 {
                     init();
                     var m = this.Session.Database.Scope().M;
-                    
+
                     var otherPopulation = this.CreatePopulation();
                     using (var otherSession = otherPopulation.CreateSession())
                     {

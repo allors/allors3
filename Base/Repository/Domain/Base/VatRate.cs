@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("a5e29ca1-80de-4de4-9085-b69f21550b5a")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatCalculationMethod VatCalculationMethod { get; set; }
 
         #region Allors
@@ -35,7 +36,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatReturnBox[] VatReturnBoxes { get; set; }
 
         #region Allors
@@ -44,7 +45,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Rate { get; set; }
 
         #region Allors
@@ -52,7 +53,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount VatPayableAccount { get; set; }
 
         #region Allors
@@ -60,7 +61,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Organisation TaxAuthority { get; set; }
 
         #region Allors
@@ -68,7 +69,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatRateUsage VatRateUsage { get; set; }
 
         #region Allors
@@ -76,7 +77,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatRatePurchaseKind VatRatePurchaseKind { get; set; }
 
         #region Allors
@@ -84,7 +85,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatTariff VatTariff { get; set; }
 
         #region Allors
@@ -92,7 +93,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency PaymentFrequency { get; set; }
 
         #region Allors
@@ -100,7 +101,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount VatToPayAccount { get; set; }
 
         #region Allors
@@ -108,7 +109,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public EuSalesListType EuSalesListType { get; set; }
 
         #region Allors
@@ -116,7 +117,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount VatToReceiveAccount { get; set; }
 
         #region Allors
@@ -124,13 +125,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount VatReceivableAccount { get; set; }
 
         #region Allors
         [Id("e6242c51-98f9-408d-9dd8-07e3c639c82e")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool ReverseCharge { get; set; }
 
         #region inherited methods

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("5E5FE517-4AF6-4977-9E15-8D377E518F03")]
@@ -21,7 +22,7 @@ namespace Allors.Repository
         [Id("87EAE8DA-47CF-405E-BFA0-799C87284CC9")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         /* SerialisedInventoryItemState InventoryStrategy Items
@@ -35,7 +36,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemState[] AvailableToPromiseSerialisedStates { get; set; }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemState[] OnHandSerialisedStates { get; set; }
 
         /* NonSerialisedInventoryItemState InventoryStrategy Items
@@ -60,7 +61,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemState[] AvailableToPromiseNonSerialisedStates { get; set; }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemState[] OnHandNonSerialisedStates { get; set; }
 
         #region inheritedMethods

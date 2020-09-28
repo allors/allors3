@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("38A75CAC-6669-4118-B72F-057C86693D95")]
@@ -48,7 +49,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public PurchaseInvoice PurchaseInvoice { get; set; }
 

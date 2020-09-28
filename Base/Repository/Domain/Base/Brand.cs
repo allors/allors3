@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("0a7ac589-946b-4d49-b7e0-7e0b9bc90111")]
@@ -25,21 +27,21 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Media LogoImage { get; set; }
 
         #region Allors
         [Id("C603F7EA-5201-464A-B657-BE23D42EF6DB")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
         [Id("852D8EF7-8ABD-4125-84E3-84DCF96014AC")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         [MediaType("text/markdown")]
         public string Description { get; set; }
 
@@ -48,7 +50,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedDescriptions { get; set; }
 
         #region Allors
@@ -56,7 +58,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Model[] Models { get; set; }
 
         #region inherited methods

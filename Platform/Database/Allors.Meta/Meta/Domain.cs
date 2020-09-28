@@ -43,7 +43,7 @@ namespace Allors.Meta
                 this.MetaPopulation.Stale();
             }
         }
-        
+
         public IEnumerable<Domain> DirectSuperdomains => this.directSuperdomains;
 
         public IEnumerable<Domain> Superdomains
@@ -87,7 +87,7 @@ namespace Allors.Meta
         public override bool Equals(object other) => this.Id.Equals((other as Domain)?.Id);
 
         public override int GetHashCode() => this.Id.GetHashCode();
-        
+
         /// <summary>
         /// Compares the current instance with another object of the same type.
         /// </summary>
@@ -98,7 +98,7 @@ namespace Allors.Meta
         /// <exception cref="T:System.ArgumentException">
         /// <paramref name="other"/> is not the same type as this instance. </exception>
         public int CompareTo(object other) => this.Id.CompareTo((other as Domain)?.Id);
-        
+
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </summary>

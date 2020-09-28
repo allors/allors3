@@ -9,6 +9,9 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("60065f5d-a3c2-4418-880d-1026ab607319")]
@@ -29,7 +32,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public User[] Members { get; set; }
 
         #region Allors

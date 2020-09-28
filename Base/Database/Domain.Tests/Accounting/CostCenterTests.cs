@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class CostCenterTests : DomainTest, IClassFixture<Fixture>
     {
         public CostCenterTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenCostCenter_WhenDeriving_ThenRequiredRelationsMustExist()
         {

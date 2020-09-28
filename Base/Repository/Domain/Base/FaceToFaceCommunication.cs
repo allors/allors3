@@ -7,6 +7,8 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("d0f9fc0d-a3c5-46cc-ab00-4c724995fc14")]
@@ -93,7 +95,7 @@ namespace Allors.Repository
         [Id("95ae979f-d549-4ea1-87f0-46aa55e4b14a")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Location { get; set; }
 
         #region Versioning
@@ -102,7 +104,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public FaceToFaceCommunicationVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -110,7 +112,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public FaceToFaceCommunicationVersion[] AllVersions { get; set; }
         #endregion
 

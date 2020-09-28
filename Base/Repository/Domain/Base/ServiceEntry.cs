@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("4a4a0548-b75f-4a79-89aa-f5c242121f11")]
@@ -19,21 +20,21 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         EngagementItem EngagementItem { get; set; }
 
         #region Allors
         [Id("9b04b715-376f-4c39-b78b-f92af6b4ffc1")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         bool IsBillable { get; set; }
 
         #region Allors
         [Id("a6ae42bd-babf-44e1-bdc0-cc403e56e43e")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -41,14 +42,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffort WorkEffort { get; set; }
 
         #region Allors
         [Id("6c8b3267-4896-467b-80ad-07153adbf704")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         Guid DerivationTrigger { get; set; }
     }
 }

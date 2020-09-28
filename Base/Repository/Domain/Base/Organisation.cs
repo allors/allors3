@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("3a5dcec7-308f-48c7-afee-35d38415aa0b")]
@@ -187,7 +188,7 @@ namespace Allors.Repository
         public VatRegime VatRegime { get; set; }
 
         public IrpfRegime IrpfRegime { get; set; }
-        
+
         public PaymentMethod DefaultPaymentMethod { get; set; }
 
         public Locale Locale { get; set; }
@@ -258,7 +259,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -266,15 +267,15 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationVersion[] AllVersions { get; set; }
         #endregion
-        
+
         #region Allors
         [Id("8FB7635C-6C06-43E8-9B6C-A760C7205804")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool IsManufacturer { get; set; }
 
         #region Allors
@@ -306,7 +307,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LegalForm LegalForm { get; set; }
 
         #region Allors
@@ -315,7 +316,7 @@ namespace Allors.Repository
         [Indexed]
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -330,7 +331,7 @@ namespace Allors.Repository
         [Id("813633df-c6cb-44a6-9fdf-579aa8180ebd")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string TaxNumber { get; set; }
 
         #region Allors
@@ -338,7 +339,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public IndustryClassification[] IndustryClassifications { get; set; }
 
         #region Allors
@@ -346,7 +347,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public CustomOrganisationClassification[] CustomClassifications { get; set; }
 
         #region Allors
@@ -355,7 +356,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationContactRelationship[] CurrentOrganisationContactRelationships { get; set; }
 
         #region Allors
@@ -364,7 +365,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationContactRelationship[] InactiveOrganisationContactRelationships { get; set; }
 
         #region inherited methods

@@ -12,7 +12,7 @@ namespace Allors.Domain
     using DataUtils;
     using HeyRed.Mime;
     using Meta;
-    
+
     public class MediaDerivation : DomainDerivation
     {
         public MediaDerivation(M m) : base(m, new Guid("436E574A-FE3E-46ED-8AD2-A59CACC2C9C4")) =>

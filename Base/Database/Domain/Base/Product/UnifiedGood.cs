@@ -36,7 +36,7 @@ namespace Allors.Domain
                                     !this.ExistPartBillOfMaterialsWhereComponentPart &&
                                     !this.ExistInventoryItemTransactionsWherePart &&
                                     !this.ExistSerialisedItems;
-                                    
+
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

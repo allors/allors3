@@ -9,6 +9,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("1ee19062-e36d-4836-b0e6-928a3957bd57")]
@@ -136,7 +137,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseInvoiceItemState PurchaseInvoiceItemState { get; set; }
         #endregion
         #endregion
@@ -147,7 +148,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseInvoiceItemVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -155,7 +156,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseInvoiceItemVersion[] AllVersions { get; set; }
         #endregion
 
@@ -165,7 +166,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrderItem PurchaseOrderItem { get; set; }
 
         #region Allors
@@ -174,7 +175,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InvoiceItemType InvoiceItemType { get; set; }
 
         #region Allors
@@ -182,7 +183,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Part Part { get; set; }
 
         #region Allors
@@ -190,7 +191,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product ObsoleteProduct { get; set; }
 
         #region Allors
@@ -198,7 +199,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
         #region inherited methods
@@ -225,19 +226,19 @@ namespace Allors.Repository
         #region Allors
         [Id("EE82F184-2FFD-4B9C-A0C5-556A76737591")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Reject() { }
 
         #region Allors
         [Id("f75e58d0-af6e-41d5-a606-d28ae53f63c8")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Revise() { }
 
         #region Allors
         [Id("eedc34ce-d944-435d-bc67-c57d695a6102")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void FinishRevising() { }
     }
 }

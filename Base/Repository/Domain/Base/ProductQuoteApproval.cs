@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("C547102C-F665-45FF-81B0-F610CF4690F2")]
@@ -48,7 +49,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public ProductQuote ProductQuote { get; set; }
 

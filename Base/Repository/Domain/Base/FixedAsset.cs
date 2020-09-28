@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("4a3efb9c-1556-4e57-bb59-f09d297e607e")]
@@ -19,7 +21,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string Name { get; set; }
 
         #region Allors
@@ -27,26 +29,26 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedText[] LocalisedNames { get; set; }
 
         #region Allors
         [Id("51133e4d-5135-4991-9f2f-8df9762fac78")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime LastServiceDate { get; set; }
 
         #region Allors
         [Id("54cf9225-9204-43ee-9984-7fd8b2cbf8bc")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime AcquiredDate { get; set; }
 
         #region Allors
         [Id("725c6b7d-68ed-4576-8b17-eac4e9f4db83")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         [MediaType("text/markdown")]
         string Description { get; set; }
 
@@ -55,7 +57,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedText[] LocalisedDescriptions { get; set; }
 
         #region Allors
@@ -68,13 +70,13 @@ namespace Allors.Repository
         #region Allors
         [Id("ead0e86a-dfc7-45b0-9865-b973175c4567")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime NextServiceDate { get; set; }
 
         #region Allors
         [Id("822F98D5-D9B2-44DA-B097-911244609066")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         string Keywords { get; set; }
 
@@ -83,7 +85,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedText[] LocalisedKeywords { get; set; }
 
         #region Allors
@@ -91,7 +93,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Media[] PublicElectronicDocuments { get; set; }
 
         #region Allors
@@ -99,7 +101,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedMedia[] PublicLocalisedElectronicDocuments { get; set; }
 
         #region Allors
@@ -107,7 +109,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Media[] PrivateElectronicDocuments { get; set; }
 
         #region Allors
@@ -115,7 +117,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
     }
 }

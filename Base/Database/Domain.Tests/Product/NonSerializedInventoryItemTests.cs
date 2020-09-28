@@ -16,7 +16,7 @@ namespace Allors.Domain
     public class NonSerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
     {
         public NonSerialisedInventoryItemTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenInventoryItem_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

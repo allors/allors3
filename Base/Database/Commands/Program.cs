@@ -70,7 +70,7 @@ namespace Commands
         }
 
         public DirectoryInfo DataPath => new DirectoryInfo(".").GetAncestorSibling(this.Configuration["datapath"]);
-        
+
         public IDatabase Database
         {
             get
@@ -78,7 +78,7 @@ namespace Commands
                 if (this.database == null)
                 {
                     var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
-                    this.database =  databaseBuilder.Build();
+                    this.database = databaseBuilder.Build();
                 }
 
                 return this.database;

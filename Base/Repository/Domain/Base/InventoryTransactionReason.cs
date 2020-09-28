@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("8ff46109-8ae7-4da5-a1f9-f19d4cf4e27e")]
@@ -37,7 +38,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool IsManualEntryAllowed { get; set; }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Allors.Repository
         [Id("8F42A67D-7951-4450-8D31-7A4CBE864656")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public bool IncreasesQuantityCommittedOut { get; set; }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace Allors.Repository
         [Id("15D50828-0A4B-4589-914F-85EE9D7D13A3")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public bool IncreasesQuantityExpectedIn { get; set; }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Allors.Repository
         [Id("C7AD0CE1-D5D4-4E2A-9E36-006BBB4E82AA")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public bool IncreasesQuantityOnHand { get; set; }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemState DefaultNonSerialisedInventoryItemState { get; set; }
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemState DefaultSerialisedInventoryItemState { get; set; }
 
         #region inherited methods
@@ -118,7 +119,7 @@ namespace Allors.Repository
         #region Allors
         [Id("DC221B1A-893D-40A0-9088-2D8422593F11")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Delete() { }
     }
 }

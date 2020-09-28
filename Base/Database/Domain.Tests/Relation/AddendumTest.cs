@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class AddendumTest : DomainTest, IClassFixture<Fixture>
     {
         public AddendumTest(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenAddendum_WhenDeriving_ThenDescriptionIsRequired()
         {

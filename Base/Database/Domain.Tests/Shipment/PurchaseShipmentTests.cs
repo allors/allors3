@@ -135,7 +135,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenShipToWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.IncomingShipmentNumberPrefix= "prefix-";
+            this.InternalOrganisation.IncomingShipmentNumberPrefix = "prefix-";
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 

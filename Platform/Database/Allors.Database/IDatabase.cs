@@ -28,7 +28,7 @@ namespace Allors
         /// </summary>
         [Obsolete]
         event RelationNotLoadedEventHandler RelationNotLoaded;
-        
+
         IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Allors
         IMetaPopulation MetaPopulation { get; }
 
         IDatabaseLifecycle Lifecycle { get; }
-        
+
         /// <summary>
         /// Initializes the database. If this population is persistent then
         /// all existing objects will be deleted.

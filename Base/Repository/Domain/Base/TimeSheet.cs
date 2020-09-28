@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("02E8DA1B-0551-411E-BDFA-52F053EC7D4A")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Person Worker { get; set; }
 
         #region Allors
@@ -35,7 +36,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public TimeEntry[] TimeEntries { get; set; }
 
         #region inherited methods

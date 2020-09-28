@@ -14,7 +14,7 @@ namespace Allors.Domain
     public class PurchaseInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
         public PurchaseInvoiceTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenPurchaseInvoice_WhenDeriving_ThenRequiredRelationsMustExist()
         {

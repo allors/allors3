@@ -43,7 +43,7 @@ namespace Allors.Database.Adapters
 
             int largeArraySize;
             LargeArraySize = int.TryParse(Environment.GetEnvironmentVariable("LargeArraySize"), out largeArraySize) ? largeArraySize : DefaultLargeArraySize;
-            
+
             bool extraMarkers;
             ExtraMarkers = bool.TryParse(Environment.GetEnvironmentVariable("ExtraMarkers"), out extraMarkers) ? extraMarkers : DefaultExtraMarkers;
 

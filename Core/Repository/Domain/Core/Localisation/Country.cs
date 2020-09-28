@@ -7,6 +7,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("c22bf60e-6428-4d10-8194-94f7be396f28")]
@@ -26,7 +29,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Currency Currency { get; set; }
 
         #region Allors
@@ -35,7 +38,7 @@ namespace Allors.Repository
         [Required]
         [Unique]
         [Size(2)]
-        [Workspace]
+        [Workspace(Default)]
         public string IsoCode { get; set; }
 
         #region Allors
@@ -45,7 +48,7 @@ namespace Allors.Repository
         [Unique]
         [Size(256)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -53,7 +56,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedNames { get; set; }
 
         #region inherited methods

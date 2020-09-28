@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("F838CABD-3769-47D8-8623-66D2723B5D1B")]
@@ -100,7 +101,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoiceItemState SalesInvoiceItemState { get; set; }
 
         #region Allors
@@ -108,7 +109,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ProductFeature[] ProductFeatures { get; set; }
 
         #region Allors
@@ -116,7 +117,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product Product { get; set; }
 
         #region Allors
@@ -131,7 +132,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemAvailability NextSerialisedItemAvailability { get; set; }
 
         #region Allors
@@ -139,7 +140,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public InvoiceItemType InvoiceItemType { get; set; }
 
         #region inherited methods

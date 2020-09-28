@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class JournalTests : DomainTest, IClassFixture<Fixture>
     {
         public JournalTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenJournal_WhenDeriving_ThenDescriptionMustExist()
         {

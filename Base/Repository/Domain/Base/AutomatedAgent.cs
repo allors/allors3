@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     public partial class AutomatedAgent : Party, Versioned
     {
@@ -121,7 +123,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public AutomatedAgentVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -129,7 +131,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public AutomatedAgentVersion[] AllVersions { get; set; }
         #endregion
 

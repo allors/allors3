@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class CreditCardTests : DomainTest, IClassFixture<Fixture>
     {
         public CreditCardTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenCreditCard_WhenDeriving_ThenRequiredRelationsMustExist()
         {

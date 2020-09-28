@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("3A39A249-7AF8-413D-8EC1-EE395A216A29")]
@@ -50,21 +52,21 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public AccountingPeriod Parent { get; set; }
 
         #region Allors
         [Id("A4FA1929-2614-4C49-AAE1-7983343F25FF")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool Active { get; set; }
 
         #region Allors
         [Id("BA03A49E-3D5B-454C-8B36-C425B72694C8")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int PeriodNumber { get; set; }
 
         #region Allors
@@ -73,7 +75,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency Frequency { get; set; }
 
         #region inherited methods

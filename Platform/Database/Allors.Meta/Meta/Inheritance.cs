@@ -62,7 +62,7 @@ namespace Allors.Meta
         public override bool Equals(object other) => this.Subtype.Id.Equals((other as Inheritance)?.Subtype.Id) && this.Supertype.Id.Equals((other as Inheritance)?.Supertype.Id);
 
         public override int GetHashCode() => this.Subtype.Id.GetHashCode() ^ this.Supertype.Id.GetHashCode();
-        
+
         /// <summary>
         /// Compares the current instance with another object of the same type.
         /// </summary>

@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("F3D6AC19-E987-4C01-B582-A4567B7818A9")]
@@ -17,7 +18,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Part Part { get; set; }
 
         #region Allors
@@ -25,7 +26,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string Name { get; set; }
 
         #region Allors
@@ -33,7 +34,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Lot Lot { get; set; }
 
         #region Allors
@@ -42,7 +43,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         UnitOfMeasure UnitOfMeasure { get; set; }
 
         #region Allors
@@ -51,7 +52,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         Facility Facility { get; set; }
     }
 }

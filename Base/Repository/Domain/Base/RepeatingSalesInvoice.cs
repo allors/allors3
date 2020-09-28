@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("2439F72A-A435-4070-9A11-EDCDF679FCC9")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoice Source { get; set; }
 
         #region Allors
@@ -36,7 +37,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency Frequency { get; set; }
 
         #region Allors
@@ -44,27 +45,27 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public DayOfWeek DayOfWeek { get; set; }
 
         #region Allors
         [Id("6BDEBD8A-6993-477B-83A4-F7CC52FBD677")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime NextExecutionDate { get; set; }
 
         #region Allors
         [Id("7BA2A639-17BA-4296-813E-DEB76F056B87")]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime PreviousExecutionDate { get; set; }
 
         #region Allors
         [Id("6CC66FEB-8126-437B-8372-4B8EC7827FB6")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime FinalExecutionDate { get; set; }
 
         #region Allors
@@ -73,7 +74,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoice[] SalesInvoices { get; set; }
 
         #region inherited methods

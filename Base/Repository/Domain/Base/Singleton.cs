@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     public partial class Singleton : Auditable
     {
@@ -26,7 +27,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public Settings Settings { get; set; }
 
         #region Allors
@@ -39,7 +40,7 @@ namespace Allors.Repository
         #region Allors
         [Id("CDB21C6E-CEE4-4E2B-839E-CA2F414B4EF9")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.OneToOne)]
         public NonUnifiedPartBarcodePrint NonUnifiedPartBarcodePrint { get; set; }
 

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("a8fdc91c-492b-4916-b272-04669ae8afe2")]
@@ -35,7 +36,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Rate { get; set; }
 
         #region Allors
@@ -43,7 +44,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Organisation TaxAuthority { get; set; }
 
         #region Allors
@@ -51,7 +52,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency PaymentFrequency { get; set; }
 
         #region inherited methods

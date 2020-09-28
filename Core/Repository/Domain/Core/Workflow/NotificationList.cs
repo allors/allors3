@@ -7,6 +7,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("b6579993-4ff1-4853-b048-1f8e67419c00")]
@@ -21,7 +24,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public Notification[] Notifications { get; set; }
 
         #region Allors
@@ -30,7 +33,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public Notification[] UnconfirmedNotifications { get; set; }
 
         #region Allors
@@ -39,7 +42,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public Notification[] ConfirmedNotifications { get; set; }
 
         #region inherited methods

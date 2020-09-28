@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("ac18c87b-683c-4529-9171-d23e73c583d4")]
@@ -25,21 +26,21 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort WorkEffort { get; set; }
 
         #region Allors
         [Id("98BF1DDB-F0B7-48B6-9CFA-FD1832B4C0AC")]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime FromDate { get; set; }
 
         #region Allors
         [Id("651B674C-44AA-41D4-979D-958EBC3FEC5D")]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime ThroughDate { get; set; }
 
         #region Allors
@@ -48,7 +49,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Rate { get; set; }
 
         #region Allors
@@ -57,7 +58,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public RateType RateType { get; set; }
 
         #region Allors
@@ -65,7 +66,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Cost { get; set; }
 
         #region Allors
@@ -73,7 +74,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency Frequency { get; set; }
 
         #region Allors
@@ -81,7 +82,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortPartyAssignment WorkEffortPartyAssignment { get; set; }
 
         #region inherited methods

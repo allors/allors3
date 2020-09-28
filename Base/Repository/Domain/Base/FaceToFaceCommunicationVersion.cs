@@ -7,6 +7,8 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("12DB12F5-88CC-46D2-A664-28797C143D92")]
@@ -81,7 +83,7 @@ namespace Allors.Repository
         [Id("2B614B23-A909-423F-A80F-7D13F062E3F7")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Location { get; set; }
 
         #region inherited methods

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("E42FCDBF-5DEF-4743-BDE8-4028AC6A00A5")]
@@ -103,7 +104,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Salutation Salutation { get; set; }
 
         #region Allors
@@ -112,7 +113,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public PersonClassification[] PersonClassifications { get; set; }
 
         #region Allors
@@ -120,14 +121,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Citizenship Citizenship { get; set; }
 
         #region Allors
         [Id("1EB80365-57C9-4C63-B7A3-A1A956C098B1")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string GivenName { get; set; }
 
         #region Allors
@@ -135,20 +136,20 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PersonalTitle[] Titles { get; set; }
 
         #region Allors
         [Id("4E7EEAE8-AA25-49ED-858D-ABB9F63FEF9C")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string MothersMaidenName { get; set; }
 
         #region Allors
         [Id("DCF909FD-CB0D-4808-8637-2280164F2808")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime BirthDate { get; set; }
 
         #region Allors
@@ -157,7 +158,7 @@ namespace Allors.Repository
         [Indexed]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Height { get; set; }
 
         #region Allors
@@ -165,7 +166,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PersonTraining[] PersonTrainings { get; set; }
 
         #region Allors
@@ -173,14 +174,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public GenderType Gender { get; set; }
 
         #region Allors
         [Id("B18564AD-D2A6-46CB-989F-8777E8AE7191")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public int Weight { get; set; }
 
         #region Allors
@@ -188,13 +189,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Hobby[] Hobbies { get; set; }
 
         #region Allors
         [Id("B9C6121A-FE18-4FD9-BC47-05716061B7A8")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int TotalYearsWorkExperience { get; set; }
 
         #region Allors
@@ -202,7 +203,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Passport[] Passports { get; set; }
 
         #region Allors
@@ -210,7 +211,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public MaritalStatus MaritalStatus { get; set; }
 
         #region Allors
@@ -218,27 +219,27 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Media Picture { get; set; }
 
         #region Allors
         [Id("3B0FDE6C-31C0-4633-8083-B01D5EEB7FF1")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SocialSecurityNumber { get; set; }
 
         #region Allors
         [Id("34104E71-74E3-4BFD-ADE5-CE4BD79A8A0A")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime DeceasedDate { get; set; }
 
         #region Allors
         [Id("7F28B1AB-7978-444C-9CB6-3E11F739234C")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Function { get; set; }
 
         #region inherited methods

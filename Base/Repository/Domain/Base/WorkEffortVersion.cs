@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region
     [Id("E86A7C06-1376-42C0-B901-2F64C6D0B1A6")]
@@ -24,45 +25,45 @@ namespace Allors.Repository
         #region Allors
         [Id("C8F73224-717F-4E55-99BC-23507CDE4967")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string Name { get; set; }
 
         #region Allors
         [Id("33ECA579-D79A-488F-A9E5-B760C6DD2E29")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
         [Id("4C4240A5-528B-497F-8846-AA7C99942C82")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Priority Priority { get; set; }
 
         #region Allors
         [Id("35A7A9A0-00C2-4548-BA8F-DCBDFDFD577E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffortPurpose[] WorkEffortPurposes { get; set; }
 
         #region Allors
         [Id("1744851E-CD98-4F34-AFD1-B1096E4DC23E")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ActualCompletion { get; set; }
 
         #region Allors
         [Id("9415C622-BE7B-4927-9E72-D14D663BDDE6")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ScheduledStart { get; set; }
 
         #region Allors
         [Id("379F481B-D393-4FCE-9754-C5743A938524")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ScheduledCompletion { get; set; }
 
         #region Allors
@@ -70,7 +71,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal ActualHours { get; set; }
 
         #region Allors
@@ -78,41 +79,41 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal EstimatedHours { get; set; }
 
         #region Allors
         [Id("1D7C6E6B-C871-4BC9-A0DE-77611BAC9F4A")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffort[] Precendencies { get; set; }
 
         #region Allors
         [Id("0954D5B6-228B-46F7-9929-99AEAC303F0D")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Facility Facility { get; set; }
 
         #region Allors
         [Id("AF35EA36-E0F3-45F9-A865-1820576DBDEB")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         Deliverable[] DeliverablesProduced { get; set; }
 
         #region Allors
         [Id("2185ECCD-1FA7-401D-9FF3-24601A587E62")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ActualStart { get; set; }
 
         #region Allors
         [Id("DC486C30-23A6-4996-B6F2-990D994B5678")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffort[] Children { get; set; }
 
         #region Allors
@@ -125,27 +126,27 @@ namespace Allors.Repository
         [Id("96DEF640-D70D-47F0-AE44-FD4C084F8128")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffortType WorkEffortType { get; set; }
 
         #region Allors
         [Id("AC3B999B-A4C9-4BFD-A666-6AD131DB6D37")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         Requirement[] RequirementFulfillments { get; set; }
 
         #region Allors
         [Id("CF1F73FA-0517-4D5C-81B9-35EE1243309F")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string SpecialTerms { get; set; }
 
         #region Allors
         [Id("B0E17757-358A-4490-82A7-3CC54C8302B2")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffort[] Concurrencies { get; set; }
     }
 }

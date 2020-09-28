@@ -203,7 +203,7 @@ namespace Allors.Domain
             //    {
             //        @this.FiscalYearStartDay = 1;
             //    }
-        
+
         }
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)

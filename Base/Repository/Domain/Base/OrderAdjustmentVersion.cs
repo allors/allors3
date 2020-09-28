@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("A5627D2B-3E75-41B7-86BB-642C12714471")]
@@ -15,7 +16,7 @@ namespace Allors.Repository
         #region Allors
         [Id("F894196C-EF00-473B-BC09-EDDDFE5500CF")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Precision(19)]
         [Scale(2)]
         decimal Amount { get; set; }
@@ -23,7 +24,7 @@ namespace Allors.Repository
         #region Allors
         [Id("C9703601-2F24-4D5D-83B6-14411D872435")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Precision(19)]
         [Scale(2)]
         decimal Percentage { get; set; }

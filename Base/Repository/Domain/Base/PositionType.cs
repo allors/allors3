@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("4d599ed2-c5e3-4c1d-8128-6ff61f9072c3")]
@@ -28,7 +29,7 @@ namespace Allors.Repository
         [Id("08ca7d83-ca74-4cc1-9d8a-6cc254c7bd5b")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
@@ -36,7 +37,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Responsibility[] Responsibilities { get; set; }
 
         #region Allors
@@ -44,14 +45,14 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal BenefitPercentage { get; set; }
 
         #region Allors
         [Id("8e8e40ff-d11d-4805-abde-845a1b3f1241")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Title { get; set; }
 
         #region Allors
@@ -59,7 +60,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PositionTypeRate PositionTypeRate { get; set; }
 
         #region inherited methods

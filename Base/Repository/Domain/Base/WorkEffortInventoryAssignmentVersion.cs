@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("D4BF9E21-4EB5-4ED0-A9BF-3FE01E585AC7")]
@@ -34,7 +35,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItem InventoryItem { get; set; }
 
         /// <summary>
@@ -55,19 +56,19 @@ namespace Allors.Repository
         [Id("F5E0881D-E239-4B21-8E7A-C380E96E2A26")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Quantity { get; set; }
 
         #region Allors
         [Id("A1A024D4-B20F-44E1-84F0-1EBFEB962DE2")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal AssignedBillableQuantity { get; set; }
 
         #region Allors
         [Id("5e6511de-2845-4306-8c68-57e1cabbe092")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal DerivedBillableQuantity { get; set; }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItemTransaction[] InventoryItemTransactions { get; set; }
 
         #region inherited methods

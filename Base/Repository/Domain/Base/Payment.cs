@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("9f20a35c-d814-4690-a96f-2bcd25f6c6a2")]
@@ -20,7 +21,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal Amount { get; set; }
 
         #region Allors
@@ -28,14 +29,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PaymentMethod PaymentMethod { get; set; }
 
         #region Allors
         [Id("7afc9649-43c9-4a60-a298-27361ba59765")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         DateTime EffectiveDate { get; set; }
 
         #region Allors
@@ -43,7 +44,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party Sender { get; set; }
 
         #region Allors
@@ -51,14 +52,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PaymentApplication[] PaymentApplications { get; set; }
 
         #region Allors
         [Id("f49e4d28-12a9-4575-818b-b475bec0c9d1")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string ReferenceNumber { get; set; }
 
         #region Allors
@@ -66,7 +67,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party Receiver { get; set; }
     }
 }

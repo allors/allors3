@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("d8611e48-b0ba-4037-a992-09e3e26c6d5d")]
@@ -29,14 +30,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
         [Id("5A052D80-CD0D-4C95-9281-4DD59A3BE26B")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Catalogue[] Catalogues { get; set; }
 
         #region Allors
@@ -60,14 +61,14 @@ namespace Allors.Repository
         [Id("3a837bae-993a-4765-8d4f-b690bf65dc79")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string OutgoingShipmentNumberPrefix { get; set; }
 
         #region Allors
         [Id("4927a65d-a9d3-4fad-afce-1ec8679d3a55")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int PaymentGracePeriod { get; set; }
 
         #region Allors
@@ -75,14 +76,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Media LogoImage { get; set; }
 
         #region Allors
         [Id("555c3b9a-7556-4fdf-a431-6d18a6ae7cbd")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int PaymentNetDays { get; set; }
 
         #region Allors
@@ -90,7 +91,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Facility DefaultFacility { get; set; }
 
         #region Allors
@@ -98,7 +99,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -107,7 +108,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal CreditLimit { get; set; }
 
         #region Allors
@@ -116,7 +117,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public ShipmentMethod DefaultShipmentMethod { get; set; }
 
         #region Allors
@@ -125,14 +126,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Carrier DefaultCarrier { get; set; }
 
         #region Allors
         [Id("3e378f04-0d14-4b03-b8e2-b58da3039184")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SalesInvoiceNumberPrefix { get; set; }
 
         #region Allors
@@ -146,7 +147,7 @@ namespace Allors.Repository
         [Id("22CB75F8-CDF0-4D20-ABF5-79B43ADA30FD")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string CreditNoteNumberPrefix { get; set; }
 
         #region Allors
@@ -177,7 +178,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public PaymentMethod DefaultCollectionMethod { get; set; }
 
         #region Allors
@@ -192,7 +193,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PaymentMethod[] CollectionMethods { get; set; }
 
         #region Allors
@@ -207,7 +208,7 @@ namespace Allors.Repository
         [Id("e00e948e-6fc3-43fd-a49b-008fc6d6133f")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SalesOrderNumberPrefix { get; set; }
 
         #region Allors
@@ -216,56 +217,56 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public BillingProcess BillingProcess { get; set; }
 
         #region Allors
         [Id("ECA0A308-BB12-419C-8E10-67BDCC7D37E6")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool IsImmediatelyPicked { get; set; }
 
         #region Allors
         [Id("7A014C3C-F593-4528-AE32-EE4BE55D76A4")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool IsImmediatelyPacked { get; set; }
 
         #region Allors
         [Id("1136BB3C-905C-411B-AFED-FBE04BE132BD")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool IsAutomaticallyShipped { get; set; }
 
         #region Allors
         [Id("8D639C6A-B8C1-4FFA-867F-95B75B4A6807")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool AutoGenerateCustomerShipment { get; set; }
 
         #region Allors
         [Id("B3E6A681-E883-4FD5-82E4-F5A94F3F5148")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool AutoGenerateShipmentPackage { get; set; }
 
         #region Allors
         [Id("CE31A755-7053-4A27-A0AE-7C38AFA03E2F")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool UseCreditNoteSequence { get; set; }
 
         #region Allors
         [Id("3CECAB0B-A766-474E-9DB1-D6B93E02FF41")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool SerialisedInventoryItemStore { get; set; }
 
         #region inherited methods

@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("cd66a79f-c4b8-4c33-b6ec-1928809b6b88")]
@@ -102,7 +103,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public TransferVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -110,7 +111,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public TransferVersion[] AllVersions { get; set; }
         #endregion
 

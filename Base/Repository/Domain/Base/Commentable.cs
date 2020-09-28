@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("fdd52472-e863-4e91-bb01-1dada2acc8f6")]
@@ -16,7 +18,7 @@ namespace Allors.Repository
         [Id("d800f9a2-fadd-45f1-8731-4dac177c6b1b")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         [MediaType("text/markdown")]
         string Comment { get; set; }
 
@@ -25,7 +27,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedText[] LocalisedComments { get; set; }
     }
 }

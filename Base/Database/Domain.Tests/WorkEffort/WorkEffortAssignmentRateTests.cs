@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class WorkEffortAssignmentRateTests : DomainTest, IClassFixture<Fixture>
     {
         public WorkEffortAssignmentRateTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenWorkEffort_WhenAddingRates_ThenRateForPartyIsNotAllowed()
         {

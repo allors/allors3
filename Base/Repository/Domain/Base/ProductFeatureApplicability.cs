@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("003433eb-a0c6-454d-8517-0c03e9be3e96")]
@@ -31,7 +32,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Product AvailableFor { get; set; }
 
         #region Allors
@@ -40,7 +41,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public ProductFeature ProductFeature { get; set; }
 
         #region Allors
@@ -49,7 +50,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public ProductFeatureApplicabilityKind ProductFeatureApplicabilityKind { get; set; }
 
         #region inherited methods

@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class CashTests : DomainTest, IClassFixture<Fixture>
     {
         public CashTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenCashPaymentMethod_WhenDeriving_ThenGeneralLedgerAccountAndJournalAtMostOne()
         {

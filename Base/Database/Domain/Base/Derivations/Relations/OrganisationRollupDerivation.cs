@@ -17,7 +17,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(M.OrganisationRollUp.Class),
             };
-        
+
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var organisationRollUp in matches.Cast<OrganisationRollUp>())

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0819F7F9-4B4F-4197-AFD6-3DAEABF60AAF")]
@@ -35,7 +36,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Part Part { get; set; }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace Allors.Repository
         [Id("12DFE479-59FF-449C-AD10-B003DD38B37D")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItemTransaction[] InventoryItemTransactions { get; set; }
 
         #region inherited methods

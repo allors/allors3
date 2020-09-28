@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("7D9E6DE4-E73D-42BE-B658-729309129A53")]
@@ -16,25 +18,25 @@ namespace Allors.Repository
         [Id("4e8eceff-aec2-44f8-9820-4e417ed904c1")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string BarCode { get; set; }
 
         #region Allors
         [Id("DDECD426-40C7-4D17-A225-2C46B47F0C89")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal ReplacementValue { get; set; }
 
         #region Allors
         [Id("E25F1487-6F08-4DC5-9838-BAE4FF990ADA")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int LifeTime { get; set; }
 
         #region Allors
         [Id("D96B2474-B8AE-40F4-9D86-4CA09E2B6965")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int DepreciationYears { get; set; }
 
         #region Allors
@@ -42,7 +44,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Product[] ProductSubstitutions { get; set; }
 
         #region Allors
@@ -50,7 +52,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Product[] ProductIncompatibilities { get; set; }
     }
 }

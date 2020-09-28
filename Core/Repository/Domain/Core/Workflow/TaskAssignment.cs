@@ -7,6 +7,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("4092d0b4-c6f4-4b81-b023-66be3f4c90bd")]
@@ -25,7 +28,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public User User { get; set; }
 
@@ -41,7 +44,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public Task Task { get; set; }
 

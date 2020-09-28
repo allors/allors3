@@ -7,6 +7,8 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("1e67320b-9680-4477-bf1b-70ccd24ab758")]
@@ -93,7 +95,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public TelecommunicationsNumber FaxNumber { get; set; }
 
         #region Versioning
@@ -102,7 +104,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public FaxCommunicationVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -110,7 +112,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public FaxCommunicationVersion[] AllVersions { get; set; }
         #endregion
 

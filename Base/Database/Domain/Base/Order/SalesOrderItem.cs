@@ -816,4 +816,4 @@ namespace Allors.Domain
         //this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
         //}
     }
-    }
+}

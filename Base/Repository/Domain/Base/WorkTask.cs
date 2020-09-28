@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("76911215-A288-4B0D-BECE-83E7A617B847")]
@@ -128,7 +129,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public bool SendNotification { get; set; }
 
         #region Allors
@@ -136,7 +137,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public bool SendReminder { get; set; }
 
         #region Allors
@@ -144,7 +145,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime RemindAt { get; set; }
 
         #region Versioning
@@ -153,7 +154,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public WorkTaskVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -161,7 +162,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public WorkTaskVersion[] AllVersions { get; set; }
         #endregion
 

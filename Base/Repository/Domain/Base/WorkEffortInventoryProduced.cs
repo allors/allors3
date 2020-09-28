@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0E74304B-1B18-41E7-A20B-3DC1E46A8504")]
@@ -37,7 +38,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Part Part { get; set; }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace Allors.Repository
         [Id("1B1F154E-5C33-4E9C-9318-4BACC7827A9E")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItemTransaction[] InventoryItemTransactions { get; set; }
 
         #region Versioning
@@ -80,7 +81,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortInventoryProducedVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -88,7 +89,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortInventoryProducedVersion[] AllVersions { get; set; }
         #endregion
 

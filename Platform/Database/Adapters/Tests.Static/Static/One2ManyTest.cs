@@ -1021,7 +1021,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 var m = this.Session.Database.Scope().M;
-                
+
                 foreach (var mark in this.Markers)
                 {
                     var from = C1.Create(this.Session);
@@ -1355,7 +1355,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 var m = this.Session.Database.Scope().M;
-                
+
                 foreach (var mark in this.Markers)
                 {
                     var from = C1.Create(this.Session);
@@ -1671,7 +1671,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 var m = this.Session.Database.Scope().M;
-                
+
                 foreach (var mark in this.Markers)
                 {
                     var from = C3.Create(this.Session);

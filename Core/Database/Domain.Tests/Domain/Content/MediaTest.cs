@@ -13,7 +13,7 @@ namespace Tests
 
     public class MediaTest : ContentTests, IClassFixture<Fixture>
     {
-        public MediaTest(Fixture fixture) : base(fixture) {}
+        public MediaTest(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DefaultValues()

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("05964e28-2c1d-4837-a887-2255f157e889")]
@@ -93,7 +94,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress PostalAddress { get; set; }
 
         #region Versioning
@@ -102,7 +103,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public LetterCorrespondenceVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -110,7 +111,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public LetterCorrespondenceVersion[] AllVersions { get; set; }
         #endregion
 

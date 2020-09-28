@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("A34F6226-7837-4905-9125-61CD00A07BF4")]
@@ -25,7 +26,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemCharacteristicType SerialisedItemCharacteristicType { get; set; }
 
         #region Allors
@@ -33,7 +34,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Value { get; set; }
 
         #region Allors
@@ -41,7 +42,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedValues { get; set; }
 
         #region inherited methods

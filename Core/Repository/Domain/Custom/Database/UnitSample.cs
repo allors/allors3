@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("4e501cd6-807c-4f10-b60b-acd1d80042cd")]
@@ -24,44 +25,44 @@ namespace Allors.Repository
         #region Allors
         [Id("24771d5b-f920-4820-aff7-ea6391b4a45c")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public byte[] AllorsBinary { get; set; }
 
         #region Allors
         [Id("4d6a80f5-0fa7-4867-91f8-37aa92b6707b")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime AllorsDateTime { get; set; }
 
         #region Allors
         [Id("5a788ebe-65e9-4d5e-853a-91bb4addabb5")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool AllorsBoolean { get; set; }
 
         #region Allors
         [Id("74a35820-ef8c-4373-9447-6215ee8279c0")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public double AllorsDouble { get; set; }
 
         #region Allors
         [Id("b817ba76-876e-44ea-8e5a-51d552d4045e")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int AllorsInteger { get; set; }
 
         #region Allors
         [Id("c724c733-972a-411c-aecb-e865c2628a90")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(256)]
         public string AllorsString { get; set; }
 
         #region Allors
         [Id("ed58ae4c-24e0-4dd1-8b1c-0909df1e0fcd")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public Guid AllorsUnique { get; set; }
 
         #region Allors
@@ -69,7 +70,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal AllorsDecimal { get; set; }
 
         #region Allors

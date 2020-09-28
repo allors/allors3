@@ -13,7 +13,7 @@ namespace Allors.Domain
     {
         public SalesOrderPrintTests(Fixture fixture) : base(fixture)
         {
-          
+
         }
 
         //[Fact]

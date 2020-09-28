@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("cdd79e23-a132-48b0-b88f-a03bd029f49d")]
@@ -34,7 +36,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public FacilityType FacilityType { get; set; }
 
         #region Allors
@@ -42,7 +44,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Facility ParentFacility { get; set; }
 
         #region Allors
@@ -50,13 +52,13 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal SquareFootage { get; set; }
 
         #region Allors
         [Id("2df0999d-97cb-4c76-9f3e-076376e60e38")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         public string Description { get; set; }
 
@@ -65,7 +67,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanism[] FacilityContactMechanisms { get; set; }
 
         #region Allors
@@ -73,7 +75,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -81,7 +83,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation Owner { get; set; }
 
         #region inherited methods

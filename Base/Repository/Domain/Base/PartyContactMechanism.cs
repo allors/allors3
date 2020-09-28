@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     // TODO: Rename to ContactMechanism
     #region Allors
@@ -42,7 +43,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanismPurpose[] ContactPurposes { get; set; }
 
         #region Allors
@@ -51,20 +52,20 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanism ContactMechanism { get; set; }
 
         #region Allors
         [Id("eb412c34-7127-4b37-8831-5280b9ed1885")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool UseAsDefault { get; set; }
 
         #region Allors
         [Id("f859fd15-4359-4de1-9927-75b6e443ffab")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool NonSolicitationIndicator { get; set; }
 
         #region inherited methods

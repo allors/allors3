@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System;
     using Adapters;
     using Xunit;
-    
+
     public class ChangesTest : Adapters.ChangesTest, IClassFixture<Fixture<ChangesTest>>
     {
         private readonly Adapters.Profile profile;

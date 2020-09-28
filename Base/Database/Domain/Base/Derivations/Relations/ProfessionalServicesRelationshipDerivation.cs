@@ -17,7 +17,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(M.ProfessionalServicesRelationship.Class),
             };
-        
+
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var professionalServicesRelationship in matches.Cast<ProfessionalServicesRelationship>())

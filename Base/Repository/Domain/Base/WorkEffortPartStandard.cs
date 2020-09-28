@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("a12e5d28-e431-48d3-bbb1-8a2f5e3c4991")]
@@ -30,7 +31,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Part Part { get; set; }
 
         #region Allors
@@ -38,13 +39,13 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal EstimatedCost { get; set; }
 
         #region Allors
         [Id("ec3e9aee-c39b-46a1-9968-af914f9057f3")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         #region Allors
@@ -52,7 +53,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string PartDisplayName { get; set; }
 
         #region inherited methods

@@ -267,7 +267,7 @@ namespace Allors.Domain
 
                     deletable.Delete();
 
-                    if(!contactmechanism.ExistPartyContactMechanismsWhereContactMechanism)
+                    if (!contactmechanism.ExistPartyContactMechanismsWhereContactMechanism)
                     {
                         contactmechanism.Delete();
                     }

@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("15B7482D-17F1-4184-9C57-222D41215553")]
@@ -35,14 +36,14 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public PickListState PickListState { get; set; }
 
         #region Allors
         [Id("C793C53B-23DB-44E1-8BAB-B62E3C65FD5F")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime CreationDate { get; set; }
 
         #region Allors
@@ -50,7 +51,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PickListItem[] PickListItems { get; set; }
 
         #region Allors
@@ -58,7 +59,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Person Picker { get; set; }
 
         #region Allors
@@ -66,7 +67,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party ShipToParty { get; set; }
 
         #region Allors
@@ -74,7 +75,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Store Store { get; set; }
 
         #region inherited methods

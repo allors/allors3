@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class OwnBankAccountTests : DomainTest, IClassFixture<Fixture>
     {
         public OwnBankAccountTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenOwnBankAccount_WhenDeriving_ThenBankAccountRelationMustExist()
         {

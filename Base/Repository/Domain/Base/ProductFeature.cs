@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("d3c5a482-e17a-4e37-84eb-55a035e80f2f")]
@@ -17,7 +18,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         EstimatedProductCost[] EstimatedProductCosts { get; set; }
 
         #region Allors
@@ -26,14 +27,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PriceComponent[] BasePrices { get; set; }
 
         #region Allors
         [Id("b75855b8-c921-4d60-8ea0-650a0f574f7f")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -41,7 +42,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         ProductFeature[] DependentFeatures { get; set; }
 
         #region Allors
@@ -49,7 +50,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         ProductFeature[] IncompatibleFeatures { get; set; }
 
         #region Allors
@@ -57,7 +58,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         VatRate VatRate { get; set; }
     }
 }

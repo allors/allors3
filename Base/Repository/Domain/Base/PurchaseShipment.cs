@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("2bf859c6-de64-476f-a437-5eb57a778262")]
@@ -101,7 +102,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseShipmentVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -109,7 +110,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseShipmentVersion[] AllVersions { get; set; }
         #endregion
 
@@ -140,7 +141,7 @@ namespace Allors.Repository
         #region Allors
         [Id("B1A110DB-2F5F-41B7-A325-B37EC24BDD9E")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Receive() { }
     }
 }

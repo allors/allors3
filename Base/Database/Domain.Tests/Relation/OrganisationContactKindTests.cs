@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class OrganisationContactKindTests : DomainTest, IClassFixture<Fixture>
     {
         public OrganisationContactKindTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenOrganisationContactKind_WhenDeriving_ThenRequiredRelationsMustExist()
         {

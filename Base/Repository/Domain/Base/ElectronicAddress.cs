@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("5cd86f69-e09b-4150-a2a6-2eed4c72b426")]
@@ -17,7 +19,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string ElectronicAddressString { get; set; }
     }
 }

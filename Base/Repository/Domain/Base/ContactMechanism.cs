@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("b033f9c9-c799-485c-a199-914a9e9119d9")]
@@ -16,7 +18,7 @@ namespace Allors.Repository
         [Id("3c4ab373-8ff4-44ef-a97d-d8a27513f69c")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -30,7 +32,7 @@ namespace Allors.Repository
         [Id("E1DF1F98-5366-46CF-8A32-FB2ED04986AC")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         ContactMechanismType ContactMechanismType { get; set; }
     }
 }

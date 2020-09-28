@@ -9,6 +9,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("5FCC8E66-A011-494E-BEFC-CDDE4BEFA144")]
@@ -23,7 +24,7 @@ namespace Allors.Repository
         public Guid ConcreteClassPointer { get; set; }
 
         #endregion
-        
+
         #region Allors
         [Id("45F604A0-E451-4E83-BE9D-23625929604A")]
         [Indexed]

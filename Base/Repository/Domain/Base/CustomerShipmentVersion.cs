@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("EB27ECDA-EE0D-4BC5-8FB1-88CF8501D7B0")]
@@ -76,14 +78,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public ShipmentState ShipmentState { get; set; }
 
         #region Allors
         [Id("BC2DC6F6-143E-42DA-BFA8-B65A213D61AB")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool ReleasedManually { get; set; }
 
         #region Allors
@@ -91,21 +93,21 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PaymentMethod PaymentMethod { get; set; }
 
         #region Allors
         [Id("02055EF3-C530-404C-A814-930E325F4763")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool WithoutCharges { get; set; }
 
         #region Allors
         [Id("61370BA4-FC62-4B1C-A846-1E0DB65E8713")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool HeldManually { get; set; }
 
         #region Allors
@@ -115,7 +117,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal ShipmentValue { get; set; }
 
         #region inherited methods

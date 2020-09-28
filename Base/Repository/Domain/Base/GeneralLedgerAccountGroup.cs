@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("4a600c96-b813-46fc-8674-06bd3f85eae4")]
@@ -24,7 +26,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccountGroup Parent { get; set; }
 
         #region Allors
@@ -32,7 +34,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region inherited methods

@@ -17,7 +17,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(M.PurchaseOrderApprovalLevel1.Class)
             };
-        
+
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var purchaseOrderApproval in matches.Cast<PurchaseOrderApprovalLevel1>())

@@ -12,7 +12,7 @@ namespace Allors.Domain
     public class PaymentApplicationTests : DomainTest, IClassFixture<Fixture>
     {
         public PaymentApplicationTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenPaymentApplication_WhenDeriving_ThenRequiredRelationsMustExist()
         {

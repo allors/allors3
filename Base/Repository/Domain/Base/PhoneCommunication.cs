@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("fcdf4f00-d6f4-493f-a430-89789a3cdef6")]
@@ -91,7 +92,7 @@ namespace Allors.Repository
         #region Allors
         [Id("50a8225e-7094-4572-8074-a5df4a50b0bd")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool LeftVoiceMail { get; set; }
 
         #region Allors
@@ -99,7 +100,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public TelecommunicationsNumber PhoneNumber { get; set; }
 
         #region Versioning
@@ -108,7 +109,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PhoneCommunicationVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -116,7 +117,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PhoneCommunicationVersion[] AllVersions { get; set; }
         #endregion
 

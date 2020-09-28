@@ -18,7 +18,7 @@ namespace Allors.Domain
             DateTime date)
         {
             var m = salesOrder.Strategy.Session.Database.Scope().M;
-            
+
             var productBasePrice = 0M;
             var productDiscount = 0M;
             var productSurcharge = 0M;

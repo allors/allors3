@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class PartSpecificationTests : DomainTest, IClassFixture<Fixture>
     {
         public PartSpecificationTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenConstraintSpecification_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

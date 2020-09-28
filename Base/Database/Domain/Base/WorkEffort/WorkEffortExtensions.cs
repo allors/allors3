@@ -114,7 +114,7 @@ namespace Allors.Domain
             }
             else
             {
-                if(@this.WorkEffortState.IsInProgress)
+                if (@this.WorkEffortState.IsInProgress)
                 {
                     @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute));
                 }

@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0bdfb093-35af-4c87-9c1c-05ed9dae6df6")]
@@ -30,14 +31,14 @@ namespace Allors.Repository
         [Id("3F3D9387-0758-4559-B33F-0C7B352B171C")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime FromDate { get; set; }
 
         #region Allors
         [Id("2A49EA68-DB8F-4186-9D7E-FE2CC1AFD6F5")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime ThroughDate { get; set; }
 
         #region Allors
@@ -46,7 +47,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
         #region Allors
@@ -55,7 +56,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Party Party { get; set; }
 
         #region Allors
@@ -63,7 +64,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Facility Facility { get; set; }
 
         #region Allors
@@ -71,7 +72,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortAssignmentRate[] AssignmentRates { get; set; }
 
         #region inherited methods

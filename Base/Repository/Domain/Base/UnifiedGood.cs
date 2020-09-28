@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("76C7C629-AA80-48F7-8D66-0A4F3BB5AE38")]
@@ -143,7 +144,7 @@ namespace Allors.Repository
         [Id("f1509899-4ca0-43db-ba4d-a003d823ced7")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Guid DerivationTrigger { get; set; }
 
         #region inherited methods

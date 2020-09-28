@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0d8a85a8-4e76-457d-9594-84ee38c4e66f")]
@@ -34,7 +35,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SalesOrder From { get; set; }
 
         #region Allors
@@ -43,7 +44,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public SalesOrder To { get; set; }
 
         #region Allors
@@ -52,7 +53,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region inherited methods

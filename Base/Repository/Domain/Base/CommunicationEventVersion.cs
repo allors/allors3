@@ -7,6 +7,8 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("8407B4DF-88BF-43E5-89DA-999A32B16CF5")]
@@ -20,14 +22,14 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         CommunicationEventState CommunicationEventState { get; set; }
 
         #region Allors
         [Id("A4FD08D4-8665-4740-A3D0-04A7DF1B019E")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Comment { get; set; }
 
         #region Allors
@@ -35,25 +37,25 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         User CreatedBy { get; set; }
 
         #region Allors
         [Id("763B74F2-5CBA-4868-A405-CAE9283175AE")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime CreationDate { get; set; }
 
         #region Allors
         [Id("07F06A16-BB1E-48D8-919B-4DFF31A1F4FD")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime LastModifiedDate { get; set; }
 
         #region Allors
         [Id("9D549ABA-3EB6-44C1-BB29-BEF13A50D41E")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ScheduledStart { get; set; }
 
         #region Allors
@@ -62,7 +64,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party FromParty { get; set; }
 
         #region Allors
@@ -71,7 +73,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party ToParty { get; set; }
 
         #region Allors
@@ -79,7 +81,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         ContactMechanism[] ContactMechanisms { get; set; }
 
         #region Allors
@@ -88,13 +90,13 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party[] InvolvedParties { get; set; }
 
         #region Allors
         [Id("5E653B50-7BC1-4D0A-BA2F-965A8FC4AD6C")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime InitialScheduledStart { get; set; }
 
         #region Allors
@@ -102,19 +104,19 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         CommunicationEventPurpose[] EventPurposes { get; set; }
 
         #region Allors
         [Id("D0E28A3B-0136-453B-A4A5-3117C47F7F1E")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ScheduledEnd { get; set; }
 
         #region Allors
         [Id("37C90ED0-40BA-4210-88E2-8539EAB440A9")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ActualEnd { get; set; }
 
         #region Allors
@@ -122,20 +124,20 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffort[] WorkEfforts { get; set; }
 
         #region Allors
         [Id("FB90D1C1-0A0D-4C31-BF4C-4D0CA255231C")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
         [Id("B5188C59-241A-4695-9C3D-A162D44A7240")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime InitialScheduledEnd { get; set; }
 
         #region Allors
@@ -143,7 +145,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Subject { get; set; }
 
         #region Allors
@@ -151,7 +153,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Media[] Documents { get; set; }
 
         #region Allors
@@ -159,7 +161,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Case Case { get; set; }
 
         #region Allors
@@ -167,7 +169,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Priority Priority { get; set; }
 
         #region Allors
@@ -175,13 +177,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Person Owner { get; set; }
 
         #region Allors
         [Id("4081E134-3D15-474F-9C0E-8E7C20CE5EB2")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ActualStart { get; set; }
 
         #region Allors
@@ -189,7 +191,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         bool SendNotification { get; set; }
 
         #region Allors
@@ -197,7 +199,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         bool SendReminder { get; set; }
 
         #region Allors
@@ -205,7 +207,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         DateTime RemindAt { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Memory
         {
             this.profile.Dispose();
         }
-        
+
         public override IObject[] CreateArray(ObjectType objectType, int count)
         {
             return this.profile.CreateArray(objectType, count);

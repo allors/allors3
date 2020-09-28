@@ -7,6 +7,8 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("EB4F71AE-3BA1-4421-82AB-11F6F3E8C4D5")]
@@ -82,7 +84,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public EmailAddress FromEmail { get; set; }
 
         #region Allors
@@ -91,7 +93,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public EmailAddress ToEmail { get; set; }
 
         #region Allors
@@ -99,7 +101,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public EmailTemplate EmailTemplate { get; set; }
 
         #region inherited methods

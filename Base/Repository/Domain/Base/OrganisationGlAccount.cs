@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("59f3100c-da48-4b4c-a302-1a75e37216a6")]
@@ -30,7 +31,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product Product { get; set; }
 
         #region Allors
@@ -39,7 +40,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
@@ -47,7 +48,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount SubsidiaryOf { get; set; }
 
         #region Allors
@@ -55,7 +56,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party Party { get; set; }
 
         #region Allors
@@ -63,7 +64,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool HasBankStatementTransactions { get; set; }
 
         #region Allors
@@ -71,7 +72,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ProductCategory ProductCategory { get; set; }
 
         #region Allors
@@ -80,7 +81,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount GeneralLedgerAccount { get; set; }
 
         #region inherited methods

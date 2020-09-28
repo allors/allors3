@@ -14,6 +14,6 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.WebSiteCommunication, this.M.WebSiteCommunication.CommunicationEventState),
         };
 
-        public void BaseOnDerive(ObjectOnDerive method) { /*this.WorkItemDescription = $"Access website of {this.ToParty.PartyName} about {this.Subject}";*/ } 
+        public void BaseOnDerive(ObjectOnDerive method) { /*this.WorkItemDescription = $"Access website of {this.ToParty.PartyName} about {this.Subject}";*/ }
     }
 }

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("27A26380-7007-4A18-8054-D7A446604452")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PartCategory PrimaryParent { get; set; }
 
         #region Allors
@@ -35,7 +36,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         [Derived]
         public PartCategory[] PrimaryAncestors { get; set; }
 
@@ -44,7 +45,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PartCategory[] SecondaryParents { get; set; }
 
         #region Allors
@@ -53,7 +54,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PartCategory[] Children { get; set; }
 
         #region Allors
@@ -62,7 +63,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PartCategory[] Descendants { get; set; }
 
         #region Allors
@@ -70,7 +71,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -78,14 +79,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedNames { get; set; }
 
         #region Allors
         [Id("9D3D6A2A-3CA8-4A1F-B736-60268EF8F73B")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
@@ -93,7 +94,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedDescriptions { get; set; }
 
         #region Allors
@@ -101,7 +102,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Media CategoryImage { get; set; }
 
         #region Allors
@@ -109,7 +110,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Part[] Parts { get; set; }
 
         #region inherited methods

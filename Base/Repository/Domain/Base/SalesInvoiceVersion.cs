@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0982A8D9-4F69-4F4A-A7C2-2AC7ABBE9924")]
@@ -87,7 +88,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation BilledFrom { get; set; }
 
         #region Allors
@@ -95,7 +96,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanism BilledFromContactMechanism { get; set; }
 
         #region Allors
@@ -103,7 +104,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Person BilledFromContactPerson { get; set; }
 
         #region Allors
@@ -111,7 +112,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party BillToCustomer { get; set; }
 
         #region Allors
@@ -127,7 +128,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanism BillToContactMechanism { get; set; }
 
         #region Allors
@@ -135,7 +136,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Person BillToContactPerson { get; set; }
 
         #region Allors
@@ -143,7 +144,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party ShipToCustomer { get; set; }
 
         #region Allors
@@ -158,7 +159,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress ShipToAddress { get; set; }
 
         #region Allors
@@ -166,7 +167,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Person ShipToContactPerson { get; set; }
 
         #region Allors
@@ -174,7 +175,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party BillToEndCustomer { get; set; }
 
         #region Allors
@@ -182,7 +183,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanism BillToEndCustomerContactMechanism { get; set; }
 
         #region Allors
@@ -190,7 +191,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Person BillToEndCustomerContactPerson { get; set; }
 
         #region Allors
@@ -198,7 +199,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party ShipToEndCustomer { get; set; }
 
         #region Allors
@@ -206,7 +207,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress ShipToEndCustomerAddress { get; set; }
 
         #region Allors
@@ -214,7 +215,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Person ShipToEndCustomerContactPerson { get; set; }
 
         #region Allors
@@ -222,7 +223,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoiceState SalesInvoiceState { get; set; }
 
         #region Allors
@@ -230,7 +231,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal TotalListPrice { get; set; }
 
         #region Allors
@@ -238,7 +239,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoiceType SalesInvoiceType { get; set; }
 
         #region Allors
@@ -246,7 +247,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PaymentMethod PaymentMethod { get; set; }
 
         #region Allors
@@ -254,7 +255,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoiceItem[] SalesInvoiceItems { get; set; }
 
         #region Allors
@@ -262,7 +263,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SalesChannel SalesChannel { get; set; }
 
         #region Allors
@@ -271,7 +272,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party[] Customers { get; set; }
 
         #region Allors
@@ -279,13 +280,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Store Store { get; set; }
 
         #region Allors
         [Id("4D8D082D-2A8A-4D9B-9580-57E9A8166A57")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int PaymentDays { get; set; }
 
         #region Allors
@@ -297,7 +298,7 @@ namespace Allors.Repository
         [Id("906EB925-D04D-44F6-9E1C-13438200C1F4")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public VatClause DerivedVatClause { get; set; }
 
         #region inherited methods

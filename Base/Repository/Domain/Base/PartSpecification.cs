@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0091574c-edac-4376-8d03-c7e2c2d8132f")]
@@ -64,7 +65,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PartSpecificationState PartSpecificationState { get; set; }
         #endregion
         #endregion
@@ -75,7 +76,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PartSpecificationVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -83,7 +84,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PartSpecificationVersion[] AllVersions { get; set; }
         #endregion
 

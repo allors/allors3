@@ -543,7 +543,7 @@ namespace Allors.Domain
         {
             if (this.IsDeletable)
             {
-                foreach(OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
@@ -562,7 +562,7 @@ namespace Allors.Domain
 
         public void BaseCancel(OrderCancel method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Cancelled;
 
-        public void BaseSetReadyForPosting(SalesOrderSetReadyForPosting  method)
+        public void BaseSetReadyForPosting(SalesOrderSetReadyForPosting method)
         {
             var orderThreshold = this.Store.OrderThreshold;
             var partyFinancial = this.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, this.TakenBy));
@@ -746,7 +746,7 @@ namespace Allors.Domain
                     .WithCurrency(this.Currency)
                     .Build();
 
-                foreach(OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
                 {
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))

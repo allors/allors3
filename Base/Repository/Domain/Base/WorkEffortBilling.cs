@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("15c8c72b-f551-41b0-86c8-80f02424ec4c")]
@@ -21,7 +22,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort WorkEffort { get; set; }
 
         #region Allors
@@ -37,7 +38,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InvoiceItem InvoiceItem { get; set; }
 
         #region inherited methods

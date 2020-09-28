@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("894BE589-D536-4FEB-8B94-8E127A170F80")]
@@ -15,7 +16,7 @@ namespace Allors.Repository
         #region Allors
         [Id("bc2b9253-868b-45a2-97d7-50f671b3d857")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         string DisplayName { get; set; }
 
@@ -27,7 +28,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         Facility DefaultFacility { get; set; }
 
@@ -43,7 +44,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Party ManufacturedBy { get; set; }
 
         #region Allors
@@ -51,7 +52,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         [Derived]
         Party[] SuppliedBy { get; set; }
 
@@ -60,13 +61,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Brand Brand { get; set; }
 
         #region Allors
         [Id("DCDC68FD-B69B-4320-8224-0B304EBDD62C")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(10)]
         string HsCode { get; set; }
 
@@ -75,19 +76,19 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Model Model { get; set; }
 
         #region Allors
         [Id("8dc701e0-1f66-44ee-acc6-9726aa7d5853")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         int ReorderLevel { get; set; }
 
         #region Allors
         [Id("a093c852-cba8-43ff-9572-fd8c6cd53638")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         int ReorderQuantity { get; set; }
 
         #region Allors
@@ -96,7 +97,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         InventoryItemKind InventoryItemKind { get; set; }
 
         #region Allors
@@ -104,7 +105,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         ProductType ProductType { get; set; }
 
         #region Allors
@@ -112,7 +113,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         SerialisedItem[] SerialisedItems { get; set; }
 
         #region Allors
@@ -120,7 +121,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         SerialisedItemCharacteristic[] SerialisedItemCharacteristics { get; set; }
 
         #region Allors
@@ -128,7 +129,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         PartWeightedAverage PartWeightedAverage { get; set; }
 
         #region Allors
@@ -138,7 +139,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal QuantityOnHand { get; set; }
 
         #region Allors
@@ -148,7 +149,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal AvailableToPromise { get; set; }
 
         #region Allors
@@ -158,7 +159,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal QuantityCommittedOut { get; set; }
 
         #region Allors
@@ -168,7 +169,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal QuantityExpectedIn { get; set; }
 
         #region Allors

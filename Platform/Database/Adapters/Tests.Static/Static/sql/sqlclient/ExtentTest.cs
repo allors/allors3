@@ -22,7 +22,7 @@ namespace Allors.Database.Adapters.SqlClient
         public override void Dispose() => this.profile.Dispose();
 
         protected override ISession CreateSession() => this.profile.CreateSession();
-        
+
         [Fact]
         public override void SortOne()
         {

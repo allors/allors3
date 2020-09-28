@@ -28,7 +28,7 @@ namespace Commands
         private readonly HashSet<Guid> movedRelationTypes = new HashSet<Guid>
         {
         };
-        
+
         public Program Parent { get; set; }
 
         public Logger Logger => LogManager.GetCurrentClassLogger();

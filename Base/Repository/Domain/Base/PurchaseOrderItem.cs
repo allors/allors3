@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("ab648bd0-6e31-4ab0-a9ee-cf4a6f02033d")]
@@ -144,7 +145,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         [Derived]
         public PurchaseOrderItemState PurchaseOrderItemState { get; set; }
         #endregion
@@ -172,7 +173,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrderItemShipmentState PurchaseOrderItemShipmentState { get; set; }
         #endregion
 
@@ -199,7 +200,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrderItemPaymentState PurchaseOrderItemPaymentState { get; set; }
         #endregion
 
@@ -211,7 +212,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrderItemVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -219,7 +220,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrderItemVersion[] AllVersions { get; set; }
         #endregion
 
@@ -229,7 +230,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public InvoiceItemType InvoiceItemType { get; set; }
 
         #region Allors
@@ -239,7 +240,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityReceived { get; set; }
 
         #region Allors
@@ -247,7 +248,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Part Part { get; set; }
 
         #region Allors
@@ -255,7 +256,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Facility StoredInFacility { get; set; }
 
         #region Allors
@@ -263,28 +264,28 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
         #region Allors
         [Id("5FE65A7F-F7EC-4910-AED7-35C88DED80C7")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SerialNumber { get; set; }
 
         #region Allors
         [Id("56E8D200-1D63-4619-B617-CFA95B9CE07A")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool CanInvoice { get; set; }
 
         #region Allors
         [Id("ca16e968-9fa1-4e95-9405-f44271a2f724")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool IsReceivable { get; set; }
 
         #region inherited methods
@@ -319,7 +320,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("10FCCE86-96CC-440F-903A-2BB909373DC0")]
-        [Workspace]
+        [Workspace(Default)]
         #endregion
         public void QuickReceive() { }
     }

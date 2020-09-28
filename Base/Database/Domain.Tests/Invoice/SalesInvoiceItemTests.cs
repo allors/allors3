@@ -1880,7 +1880,7 @@ namespace Allors.Domain
             Assert.Equal(0, item1.TotalSurcharge);
         }
 
- 
+
         [Fact]
         public void GiveninvoiceItem_WhenPartialPaymentIsReceived_ThenInvoiceItemStateIsSetToPartiallyPaid()
         {

@@ -7,6 +7,8 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("6C726DED-C081-46D7-8DCF-F0A376943531")]
@@ -18,7 +20,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         User CreatedBy { get; set; }
 
         #region Allors
@@ -26,19 +28,19 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         User LastModifiedBy { get; set; }
 
         #region Allors
         [Id("C1BA5015-21DD-49A9-AE0F-E70F4035CCA6")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime CreationDate { get; set; }
 
         #region Allors
         [Id("94EB2712-25E1-415B-9657-2DFD460B7969")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime LastModifiedDate { get; set; }
     }
 }

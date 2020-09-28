@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("7d2d9452-f250-47c3-81e0-4e1c0655cc86")]
@@ -23,14 +24,14 @@ namespace Allors.Repository
         [Id("1ecbdb5f-5fb7-492d-9e08-df3aa322371d")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
         [Id("93cfed3d-ae24-4a07-becf-34cdc3cdef3e")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         public string Description { get; set; }
 
@@ -39,7 +40,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortFixedAssetStandard[] WorkEffortFixedAssetStandards { get; set; }
 
         #region Allors
@@ -47,7 +48,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortPartStandard[] WorkEffortPartStandards { get; set; }
 
         #region Allors
@@ -55,7 +56,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortSkillStandard[] WorkEffortSkillStandards { get; set; }
 
         #region Allors
@@ -63,7 +64,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortType[] Children { get; set; }
 
         #region Allors
@@ -71,7 +72,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public FixedAsset FixedAssetToRepair { get; set; }
 
         #region Allors
@@ -79,7 +80,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortType[] Dependencies { get; set; }
 
         #region Allors
@@ -87,7 +88,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal StandardWorkHours { get; set; }
 
         #region Allors
@@ -95,7 +96,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product ProductToProduce { get; set; }
 
         #region Allors
@@ -103,7 +104,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Deliverable DeliverableToProduce { get; set; }
 
         #region inherited methods

@@ -7,11 +7,13 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("3021de37-fd9a-4ba1-b7e9-2ba56d4cd03e")]
     #endregion
-    public partial class AgreementProductApplicability: Period
+    public partial class AgreementProductApplicability : Period
     {
         #region inherited properties
 
@@ -29,7 +31,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Agreement Agreement { get; set; }
 
         #region Allors
@@ -37,7 +39,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public AgreementItem AgreementItem { get; set; }
 
         #region Allors
@@ -46,7 +48,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Product Product { get; set; }
 
         #region inherited methods

@@ -19,6 +19,8 @@ namespace Allors.Meta
     {
         private static readonly IReadOnlyDictionary<Class, RoleClass> EmptyRoleClassByAssociationTypeClass = new ReadOnlyDictionary<Class, RoleClass>(new Dictionary<Class, RoleClass>());
 
+        private string[] workspaceNames;
+
         private Multiplicity assignedMultiplicity;
         private Multiplicity multiplicity;
 
@@ -52,9 +54,17 @@ namespace Allors.Meta
 
         public string IdAsString { get; }
 
-        public bool Workspace => this.WorkspaceNames != null;
+        public string[] WorkspaceNames
+        {
+            get => this.workspaceNames ?? Array.Empty<string>();
 
-        public string[] WorkspaceNames { get; set; }
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.workspaceNames = value;
+                this.MetaPopulation.Stale();
+            }
+        }
 
         public override Origin Origin => this.AssignedOrigin;
 
@@ -224,7 +234,7 @@ namespace Allors.Meta
         /// </summary>
         /// <value>The validation name.</value>
         public override string ValidationName => "relation type" + this.Name;
-        
+
         public override bool Equals(object other) => this.Id.Equals((other as RelationType)?.Id);
 
         public override int GetHashCode() => this.Id.GetHashCode();

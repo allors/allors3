@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class ChartOfAccountsTests : DomainTest, IClassFixture<Fixture>
     {
         public ChartOfAccountsTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenChartOfAccounts_WhenDeriving_ThenRequiredRelationsMustExist()
         {

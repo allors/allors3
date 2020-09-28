@@ -7,7 +7,7 @@
 namespace Allors.Domain.TestPopulation
 {
     using Allors.Domain;
- 
+
     public static partial class PostalAddressExtensions
     {
         public static string DisplayName(this PostalAddress @this)

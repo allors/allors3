@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("93960be2-f676-4e7f-9efb-f99c92303059")]
@@ -18,7 +20,7 @@ namespace Allors.Repository
         [Required]
         [Precision(8)]
         [Scale(6)]
-        [Workspace]
+        [Workspace(Default)]
         double Latitude { get; set; }
 
         #region Allors
@@ -27,7 +29,7 @@ namespace Allors.Repository
         [Required]
         [Precision(9)]
         [Scale(6)]
-        [Workspace]
+        [Workspace(Default)]
         double Longitude { get; set; }
     }
 }

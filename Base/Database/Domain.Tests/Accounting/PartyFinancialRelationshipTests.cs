@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class PartyFinancialRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
         public PartyFinancialRelationshipTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void DeriveOpenOrderAmount()
         {

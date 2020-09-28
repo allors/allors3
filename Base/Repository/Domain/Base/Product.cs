@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("56b79619-d04a-4924-96e8-e3e7be9faa09")]
@@ -17,13 +18,13 @@ namespace Allors.Repository
         #region Allors
         [Id("05a2e95a-e5f1-45bc-a8ca-4ebfad3290b5")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime SupportDiscontinuationDate { get; set; }
 
         #region Allors
         [Id("0b283eb9-2972-47ae-80d8-1a7aa8f77673")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime SalesDiscontinuationDate { get; set; }
 
         #region Allors
@@ -45,7 +46,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Product ProductComplement { get; set; }
 
         #region Allors
@@ -53,20 +54,20 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Product[] Variants { get; set; }
 
         #region Allors
         [Id("74fc9be0-8677-463c-b3b6-f0e7bb7478ba")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime IntroductionDate { get; set; }
 
         #region Allors
         [Id("c018edeb-54e0-43d5-9bbd-bf68df1364de")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         [Indexed]
         EstimatedProductCost[] EstimatedProductCosts { get; set; }
 
@@ -75,7 +76,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Product[] ProductObsolescences { get; set; }
 
         #region Allors
@@ -83,7 +84,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         VatRate VatRate { get; set; }
 
         #region Allors
@@ -92,7 +93,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PriceComponent[] BasePrices { get; set; }
     }
 }

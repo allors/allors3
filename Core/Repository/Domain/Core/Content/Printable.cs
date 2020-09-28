@@ -6,6 +6,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("61207a42-3199-4249-baa4-9dd11dc0f5b1")]
@@ -17,13 +20,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         PrintDocument PrintDocument { get; set; }
 
         #region Allors
         [Id("55903F87-8D6B-4D99-9E0D-C3B74064C81F")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         void Print();
     }
 }

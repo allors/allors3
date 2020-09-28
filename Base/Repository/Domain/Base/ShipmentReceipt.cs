@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("48d14522-5fa8-44a8-ba4c-e2ddfc18e069")]
@@ -25,7 +26,7 @@ namespace Allors.Repository
         [Id("0c4eee66-ff66-49fa-9a06-4ce3848a6d3c")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string ItemDescription { get; set; }
 
         #region Allors
@@ -34,7 +35,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItem InventoryItem { get; set; }
 
         // Set this when invent does not exist. On deriving it will create an InventoryItemTransaction for this Facility.
@@ -44,14 +45,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Facility Facility { get; set; }
 
         #region Allors
         [Id("87f84720-1233-4779-be9d-4b0a12ba19cd")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string RejectionReason { get; set; }
 
         #region Allors
@@ -59,7 +60,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrderItem OrderItem { get; set; }
 
         #region Allors
@@ -68,7 +69,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityRejected { get; set; }
 
         #region Allors
@@ -77,14 +78,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public ShipmentItem ShipmentItem { get; set; }
 
         #region Allors
         [Id("ecdd6b27-3bcf-4f61-8e21-f829503aeeb0")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime ReceivedDateTime { get; set; }
 
         #region Allors
@@ -93,7 +94,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityAccepted { get; set; }
 
         #region inherited methods

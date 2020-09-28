@@ -14,7 +14,7 @@ namespace Allors.Data
         {
             if (@this.Dependencies?.Length > 0)
             {
-                if(parameters == null)
+                if (parameters == null)
                 {
                     return true;
                 }

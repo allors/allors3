@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("21C27A88-F99A-4871-B9D3-00C78F648574")]
@@ -45,14 +46,14 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal PreviousQuantityOnHand { get; set; }
 
         #region Allors
         [Id("B3800237-4D03-4228-955D-7E573CEE47FA")]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         public NonSerialisedInventoryItemState NonSerialisedInventoryItemState { get; set; }
 

@@ -17,7 +17,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(M.PriceComponent.Interface),
             };
-        
+
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var priceComponentExtensions in matches.Cast<PriceComponent>())

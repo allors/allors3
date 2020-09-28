@@ -39,7 +39,7 @@ namespace Tests
         {
             var filter = new Extent(M.Person.ObjectType)
             {
-                Predicate = new Equals { Dependencies = new[] { "useFirstname" }, PropertyType = M.Person.FirstName, Value = "John"},
+                Predicate = new Equals { Dependencies = new[] { "useFirstname" }, PropertyType = M.Person.FirstName, Value = "John" },
             };
 
             var arguments = new Dictionary<string, string>();

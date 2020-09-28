@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class PriceComponentTests : DomainTest, IClassFixture<Fixture>
     {
         public PriceComponentTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
         {

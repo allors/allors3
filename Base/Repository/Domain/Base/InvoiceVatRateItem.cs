@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("6e380347-21e3-4a00-819f-ed11e6882d03")]
@@ -24,7 +25,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal BaseAmount { get; set; }
 
         #region Allors
@@ -32,7 +33,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatRate[] VatRates { get; set; }
 
         #region Allors
@@ -40,7 +41,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal VatAmount { get; set; }
 
         #region inherited methods

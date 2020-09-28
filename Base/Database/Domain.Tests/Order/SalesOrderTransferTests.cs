@@ -16,7 +16,7 @@ namespace Allors.Domain
     public class SalesOrderTransferTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderTransferTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenSalesOrderForItemsThatAreAvailable_WhenShipped_ThenOrderIsCompleted()
         {
@@ -2688,7 +2688,7 @@ namespace Allors.Domain
     public class SalesOrderTransferSecurityTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderTransferSecurityTests(Fixture fixture) : base(fixture) { }
-        
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

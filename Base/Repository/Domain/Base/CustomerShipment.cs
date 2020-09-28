@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("9301efcb-2f08-4825-aa60-752c031e4697")]
@@ -101,7 +103,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public CustomerShipmentVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -109,7 +111,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public CustomerShipmentVersion[] AllVersions { get; set; }
         #endregion
 
@@ -150,7 +152,7 @@ namespace Allors.Repository
         #region Allors
         [Id("5FD4DD2D-51CC-46CD-B1C3-138CE68A9580")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Hold() { }
 
         #region Allors
@@ -161,25 +163,25 @@ namespace Allors.Repository
         #region Allors
         [Id("7464BD56-E36A-4938-886F-1D8C61A062E2")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Cancel() { }
 
         #region Allors
         [Id("113C76E1-25E7-4CD2-9D82-1DAE38441DE9")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Continue() { }
 
         #region Allors
         [Id("370CC546-6502-4416-9DFF-3A3D8510E5D4")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Pick() { }
 
         #region Allors
         [Id("CB596594-7253-4B2E-8A00-71C062147CD8")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Ship() { }
 
         #region Allors

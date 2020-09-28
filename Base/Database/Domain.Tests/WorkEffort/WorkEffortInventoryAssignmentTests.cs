@@ -12,7 +12,7 @@ namespace Allors.Domain
     public class WorkEffortInventoryAssignmentTests : DomainTest, IClassFixture<Fixture>
     {
         public WorkEffortInventoryAssignmentTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenWorkEffort_WhenAddingInventoryAssignment_ThenInventoryConsumptionCreated()
         {

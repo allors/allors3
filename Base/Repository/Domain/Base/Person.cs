@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     public partial class Person : Party, Deletable, Versioned
     {
@@ -119,7 +120,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PersonVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -127,7 +128,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PersonVersion[] AllVersions { get; set; }
         #endregion
 
@@ -136,7 +137,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Salutation Salutation { get; set; }
 
         #region Allors
@@ -145,7 +146,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal YTDCommission { get; set; }
 
         #region Allors
@@ -154,14 +155,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PersonClassification[] PersonClassifications { get; set; }
 
         #region Allors
         [Id("539b51e6-dd15-481c-86d3-ceb84588c078")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         [Indexed]
         public Citizenship Citizenship { get; set; }
 
@@ -171,14 +172,14 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal LastYearsCommission { get; set; }
 
         #region Allors
         [Id("634130cf-b466-4ed3-9036-a4a20566c344")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string GivenName { get; set; }
 
         #region Allors
@@ -186,20 +187,20 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PersonalTitle[] Titles { get; set; }
 
         #region Allors
         [Id("6f7b0a7f-0b8e-4fbe-b248-b7b90fb18613")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string MothersMaidenName { get; set; }
 
         #region Allors
         [Id("7bcba7fd-6419-4324-8a11-c56bd46581a1")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime BirthDate { get; set; }
 
         #region Allors
@@ -208,7 +209,7 @@ namespace Allors.Repository
         [Indexed]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Height { get; set; }
 
         #region Allors
@@ -216,7 +217,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PersonTraining[] PersonTrainings { get; set; }
 
         #region Allors
@@ -224,28 +225,28 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GenderType Gender { get; set; }
 
         #region Allors
         [Id("d48c94ea-5106-44a2-8eda-959e03480960")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public int Weight { get; set; }
 
         #region Allors
         [Id("ee6e4476-b1fa-431f-add3-30afe199cdd1")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         [Indexed]
         public Hobby[] Hobbies { get; set; }
 
         #region Allors
         [Id("eeb16852-431b-4b84-983d-559e64af6dfb")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int TotalYearsWorkExperience { get; set; }
 
         #region Allors
@@ -253,7 +254,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Passport[] Passports { get; set; }
 
         #region Allors
@@ -261,7 +262,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public MaritalStatus MaritalStatus { get; set; }
 
         #region Allors
@@ -269,27 +270,27 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Media Picture { get; set; }
 
         #region Allors
         [Id("fefb8dc2-cfe5-4078-b3a9-8c4622047c34")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SocialSecurityNumber { get; set; }
 
         #region Allors
         [Id("ffda06c0-7dff-42fa-abd5-1ed6fa8c43da")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime DeceasedDate { get; set; }
 
         #region Allors
         [Id("996809E3-994B-4189-B3A8-77CC1BB99B0A")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Function { get; set; }
 
         #region Allors
@@ -298,7 +299,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationContactRelationship[] CurrentOrganisationContactRelationships { get; set; }
 
         #region Allors
@@ -307,7 +308,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationContactRelationship[] InactiveOrganisationContactRelationships { get; set; }
 
         #region Allors
@@ -316,7 +317,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public ContactMechanism[] CurrentOrganisationContactMechanisms { get; set; }
 
         #region inherited methods

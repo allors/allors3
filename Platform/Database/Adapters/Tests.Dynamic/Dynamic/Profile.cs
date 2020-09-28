@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters
         public MetaPopulation MetaPopulation { get; }
 
         public M M { get; set; }
-        
+
         public IObject[] CreateArray(ObjectType objectType, int count)
         {
             var type = objectType.ClrType;

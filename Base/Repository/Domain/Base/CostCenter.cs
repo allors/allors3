@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("2ab70094-5481-4ecc-ae15-cb2131fbc2f1")]
@@ -27,7 +29,7 @@ namespace Allors.Repository
         [Id("2a2125fd-c715-4a0f-8c1a-c1207f02a494")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
@@ -35,7 +37,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount InternalTransferGlAccount { get; set; }
 
         #region Allors
@@ -43,7 +45,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public CostCenterCategory[] CostCenterCategories { get; set; }
 
         #region Allors
@@ -51,7 +53,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrganisationGlAccount RedistributedCostsGlAccount { get; set; }
 
         #region Allors
@@ -59,19 +61,19 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
         [Id("d7e01e38-d271-4c9c-847e-d26d9d4957af")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool Active { get; set; }
 
         #region Allors
         [Id("e6332140-65e7-4475-aea1-a80424640696")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool UseGlAccountOfBooking { get; set; }
 
         #region inherited methods

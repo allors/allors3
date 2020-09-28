@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+
 
     #region Allors
     [Id("355AEFD2-F5B2-499A-81D2-DD9C9F62832C")]
@@ -25,7 +27,7 @@ namespace Allors.Repository
         #endregion
         [Size(-1)]
         [MediaType("text/markdown")]
-        [Workspace]
+        [Workspace(Default)]
         public string Markdown { get; set; }
 
         #region inherited methods

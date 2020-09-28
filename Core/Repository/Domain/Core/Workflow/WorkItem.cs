@@ -7,6 +7,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("fbea29c6-6109-4163-a088-9f0b4deac896")]
@@ -19,7 +22,7 @@ namespace Allors.Repository
         [Indexed]
         [Size(-1)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string WorkItemDescription { get; set; }
     }
 }

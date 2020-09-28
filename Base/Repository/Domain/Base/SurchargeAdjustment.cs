@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("70468d86-b8a0-4aff-881e-fca2386f64da")]
@@ -40,7 +41,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SurchargeAdjustmentVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -48,7 +49,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public SurchargeAdjustmentVersion[] AllVersions { get; set; }
         #endregion
 

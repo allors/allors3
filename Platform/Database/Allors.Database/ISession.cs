@@ -158,7 +158,7 @@ namespace Allors
         void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<IStrategy> strategies);
 
         void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<IObject> objects);
-        
+
         /// <summary>
         /// Instantiate a strategy.
         /// This method is primarily used by <see cref="IWorkspace"/>s.

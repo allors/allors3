@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("21f09e4c-7b3f-4152-8822-8c485011759c")]
@@ -35,7 +36,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryTransactionReason[] InventoryTransactionReasonsToCreate { get; set; }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryTransactionReason[] InventoryTransactionReasonsToCancel { get; set; }
 
         #region inherited methods

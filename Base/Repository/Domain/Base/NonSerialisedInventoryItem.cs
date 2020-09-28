@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("5b294591-e20a-4bad-940a-27ae7b2f8770")]
@@ -75,7 +76,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemState NonSerialisedInventoryItemState { get; set; }
         #endregion
         #endregion
@@ -86,7 +87,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -94,7 +95,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemVersion[] AllVersions { get; set; }
         #endregion
 
@@ -105,7 +106,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityOnHand { get; set; }
 
         #region Allors
@@ -115,7 +116,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal AvailableToPromise { get; set; }
 
         #region Allors
@@ -125,7 +126,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityCommittedOut { get; set; }
 
         #region Allors
@@ -135,7 +136,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityExpectedIn { get; set; }
 
         #region Allors
@@ -145,7 +146,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal PreviousQuantityOnHand { get; set; }
 
         #region Allors
@@ -153,7 +154,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItemState InventoryItemState { get; set; }
 
         #region Allors
@@ -161,7 +162,7 @@ namespace Allors.Repository
         [Indexed]
         [Size(256)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public string PartLocation { get; set; }
 
         #region inherited methods

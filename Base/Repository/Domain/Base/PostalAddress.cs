@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("d54b4bba-a84c-4826-85ba-7340714035c7")]
@@ -45,21 +46,21 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Address1 { get; set; }
 
         #region Allors
         [Id("9475dd68-43f7-4195-bf57-8ce82333980e")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Address2 { get; set; }
 
         #region Allors
         [Id("5440794c-8569-46fb-a5cb-42dc523e1264")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Address3 { get; set; }
 
         #region Allors
@@ -73,21 +74,21 @@ namespace Allors.Repository
         [Id("2edd7f54-5596-46c1-9f8a-813c947d95fb")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string PostalCode { get; set; }
 
         #region Allors
         [Id("7166cc1b-1f00-4cef-9875-8092cd4a76a0")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Locality { get; set; }
 
         #region Allors
         [Id("d92c5fd4-68e9-402b-b540-86053df1b70d")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Region { get; set; }
 
         #region Allors
@@ -95,7 +96,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Country Country { get; set; }
 
         #region inherited methods

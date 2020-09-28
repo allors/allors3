@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("2E6F43A2-3D1D-401B-86BF-7DE63FC9FF3E")]
@@ -30,7 +31,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Rate { get; set; }
 
         #region Allors
@@ -39,7 +40,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public RateType RateType { get; set; }
 
         #region Allors
@@ -47,7 +48,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Cost { get; set; }
 
         #region Allors
@@ -55,14 +56,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PriceComponent[] GoverningPriceComponents { get; set; }
 
         #region Allors
         [Id("6943FC0E-9A7C-4024-90A9-D0848C148AEF")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string ChangeReason { get; set; }
 
         #region Allors
@@ -70,7 +71,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency Frequency { get; set; }
 
         #region inherited methods

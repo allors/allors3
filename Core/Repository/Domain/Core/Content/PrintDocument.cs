@@ -6,6 +6,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("6161594B-8ACF-4DFA-AE6D-A9BC96040714")]
@@ -24,7 +27,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Media Media { get; set; }
 
         #region inherited methods

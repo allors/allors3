@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("f3ef0124-e867-4da2-9323-80fbe1f214c2")]
@@ -17,7 +18,7 @@ namespace Allors.Repository
         #region Allors
         [Id("7D6B04D2-062C-45B8-96AB-DC41A3DECAF8")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         string InternalComment { get; set; }
 
@@ -40,7 +41,7 @@ namespace Allors.Repository
         #region Allors
         [Id("454f28cf-bf52-4465-83e4-e871ec36c491")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         [Precision(19)]
         [Scale(2)]
@@ -49,14 +50,14 @@ namespace Allors.Repository
         #region Allors
         [Id("6da42dec-ba03-4615-badb-9113a82ff2f7")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         string Description { get; set; }
 
         #region Allors
         [Id("70f92965-d99a-4a6a-bc27-029eec7b5c2d")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         PurchaseOrder CorrespondingPurchaseOrder { get; set; }
@@ -64,7 +65,7 @@ namespace Allors.Repository
         #region Allors
         [Id("8f06f480-ff7e-4e34-bb7e-6f1271dcc551")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Derived]
         [Required]
         [Precision(19)]
@@ -75,35 +76,35 @@ namespace Allors.Repository
         [Id("9674f349-3fcc-495c-b7eb-27b5b580597c")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         [Indexed]
         QuoteItem QuoteItem { get; set; }
 
         #region Allors
         [Id("9dc87cdb-a35f-4a48-9f99-bf0fe07cad5c")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime AssignedDeliveryDate { get; set; }
 
         #region Allors
         [Id("a1769a74-d832-4ade-be59-a98b17033ca1")]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         DateTime DeliveryDate { get; set; }
 
         #region Allors
         [Id("b82c7b21-5ade-40b6-ba5d-62b6384eaaec")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         [Indexed]
         SalesTerm[] SalesTerms { get; set; }
 
         #region Allors
         [Id("ce398ebb-3b1e-476e-afd5-d32518542b70")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         string ShippingInstruction { get; set; }
 
@@ -111,7 +112,7 @@ namespace Allors.Repository
         [Id("dadeac55-1586-47ce-9983-2113179e275d")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace]
+        [Workspace(Default)]
         [Indexed]
         OrderItem[] Associations { get; set; }
 
@@ -121,7 +122,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         IrpfRegime IrpfRegime { get; set; }
 
         #region Allors
@@ -129,7 +130,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         IrpfRegime AssignedIrpfRegime { get; set; }
 
         #region Allors
@@ -138,7 +139,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         IrpfRate IrpfRate { get; set; }
 
         #region Allors
@@ -148,7 +149,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(5)]
-        [Workspace]
+        [Workspace(Default)]
         decimal UnitIrpf { get; set; }
 
         #region Allors
@@ -158,7 +159,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal TotalIrpf { get; set; }
 
         #region Allors
@@ -172,7 +173,7 @@ namespace Allors.Repository
         #region Allors
         [Id("feeed27a-c421-476c-b233-02d2fb9db76d")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         string Message { get; set; }
 
@@ -180,31 +181,31 @@ namespace Allors.Repository
         [Id("4d816419-3acf-4b1a-9bb7-b14de1ca2e3c")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Guid DerivationTrigger { get; set; }
 
         #region Allors
         [Id("5368A2C3-9ADF-46A3-9AC0-9C4A03DEAF9A")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         void Cancel();
 
         #region Allors
         [Id("29D93AE6-FD73-408F-A8F0-CD05D96CF102")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         void Reject();
 
         #region Allors
         [Id("DA334EDA-0CD3-4AB4-89C5-41C69D596C7C")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         void Approve();
 
         #region Allors
         [Id("540e9b1b-db95-44c2-961f-0faeef176b2d")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         void Reopen();
     }
 }

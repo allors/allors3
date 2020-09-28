@@ -9,6 +9,9 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("fd397adf-40b4-4ef8-b449-dd5a24273df3")]
@@ -37,7 +40,7 @@ namespace Allors.Repository
         [Required]
         [Unique]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string IsoCode { get; set; }
 
         #region inherited methods

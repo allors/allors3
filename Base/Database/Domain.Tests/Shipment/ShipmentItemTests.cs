@@ -16,7 +16,7 @@ namespace Allors.Domain
     public class ShipmentItemTests : DomainTest, IClassFixture<Fixture>
     {
         public ShipmentItemTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenPurchaseShipmentItemForNonSerialisedNotFromPurchaseOrder_WhenDerived_ThenUnitPurchasePriceIsRequired()
         {

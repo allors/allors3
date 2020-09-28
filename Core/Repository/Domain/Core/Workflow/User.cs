@@ -8,6 +8,9 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("a0309c3b-6f80-4777-983e-6e69800df5be")]
@@ -18,7 +21,7 @@ namespace Allors.Repository
         [Id("5e8ab257-1a1c-4448-aacc-71dbaaba525b")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string UserName { get; set; }
 
         #region Allors
@@ -33,7 +36,7 @@ namespace Allors.Repository
         [Id("DCE0EA9D-105B-4E46-A22E-9B02C28DA8DB")]
         [Size(256)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string InUserPassword { get; set; }
 
         #region Allors
@@ -46,7 +49,7 @@ namespace Allors.Repository
         [Id("c1ae3652-5854-4b68-9890-a954067767fc")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string UserEmail { get; set; }
 
         #region Allors
@@ -123,7 +126,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         NotificationList NotificationList { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace Allors.Domain
     public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesInvoiceTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenSalesInvoice_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

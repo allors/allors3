@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("d900e278-7add-4e90-8bea-0a65d03f4fa7")]
@@ -24,13 +25,13 @@ namespace Allors.Repository
         #region Allors
         [Id("4888a06a-fcf5-42a7-a1c3-721d3abaa755")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime ExpirationDate { get; set; }
 
         #region Allors
         [Id("8680f7e2-c5f1-43af-a127-68ac8404fbf4")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         #region Allors
@@ -38,7 +39,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string LotNumber { get; set; }
 
         #region inherited methods

@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("e76a0a2b-6b19-4696-9b03-fc759ac60c8b")]
@@ -29,7 +30,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal AverageCost { get; set; }
 
         #region inherited methods

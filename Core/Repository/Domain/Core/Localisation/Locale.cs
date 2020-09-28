@@ -7,6 +7,9 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("45033ae6-85b5-4ced-87ce-02518e6c27fd")]
@@ -24,7 +27,7 @@ namespace Allors.Repository
         [Id("2a2c6f77-e6a2-4eab-bfe3-5d35a8abd7f7")]
         [Size(256)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -33,7 +36,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Language Language { get; set; }
 
         #region Allors
@@ -42,7 +45,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Country Country { get; set; }
 
         #region inherited methods

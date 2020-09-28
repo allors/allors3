@@ -35,7 +35,7 @@ namespace Allors.Database.Adapters.SqlClient
         public void Dispose() => this.profile.Dispose();
 
         #region Population
-        #pragma warning disable IDE1006
+#pragma warning disable IDE1006
         protected C1 c1A;
         protected C1 c1B;
         protected C1 c1C;
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters.SqlClient
         protected C4 c4B;
         protected C4 c4C;
         protected C4 c4D;
-        #pragma warning restore IDE1006
+#pragma warning restore IDE1006
         #endregion
 
         protected Database Database => (Database)this.Profile.Database;

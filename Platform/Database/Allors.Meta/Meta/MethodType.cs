@@ -17,13 +17,23 @@ namespace Allors.Meta
 
         private IReadOnlyDictionary<Class, MethodClass> derivedMethodClassByClass = EmptyMethodClassByAssociationTypeClass;
 
+        private string[] workspaceNames;
+
         protected MethodType(MetaPopulation metaPopulation) : base(metaPopulation)
         {
         }
 
-        public string[] WorkspaceNames { get; set; }
+        public string[] WorkspaceNames
+        {
+            get => this.workspaceNames ?? Array.Empty<string>();
 
-        public bool Workspace => this.WorkspaceNames?.Length > 0;
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.workspaceNames = value;
+                this.MetaPopulation.Stale();
+            }
+        }
 
         public abstract Guid Id { get; }
         public abstract string IdAsString { get; }

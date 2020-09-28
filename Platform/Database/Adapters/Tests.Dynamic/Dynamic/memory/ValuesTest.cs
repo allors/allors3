@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters.Memory
 
     using Xunit;
 
-    
+
     public class ValuesTest : Adapters.ValuesTest
     {
         private readonly Profile profile = new Profile();

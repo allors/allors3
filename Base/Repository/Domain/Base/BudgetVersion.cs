@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("7FBECB76-27B6-44E3-BD08-FCBB6998B525")]
@@ -19,27 +21,27 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         BudgetState BudgetState { get; set; }
 
         #region Allors
         [Id("90AA323B-3DB8-483B-AA70-1667F66B92E0")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         DateTime FromDate { get; set; }
 
         #region Allors
         [Id("0161AEB3-9955-4D04-B57B-FEFE4EE65A10")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime ThroughDate { get; set; }
 
         #region Allors
         [Id("A29FBF93-FBDF-4E54-9044-F26452BB096B")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Comment { get; set; }
 
         #region Allors
@@ -47,7 +49,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -55,14 +57,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         BudgetRevision[] BudgetRevisions { get; set; }
 
         #region Allors
         [Id("02C70BA0-971A-417B-A9E1-E82DDE76173F")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string BudgetNumber { get; set; }
 
         #region Allors
@@ -70,7 +72,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         BudgetReview[] BudgetReviews { get; set; }
 
         #region Allors
@@ -78,7 +80,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         BudgetItem[] BudgetItems { get; set; }
     }
 }

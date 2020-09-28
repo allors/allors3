@@ -17,7 +17,7 @@ namespace Allors.Domain.Print.WorkTaskModel
 
             this.Name = assignment.FixedAsset?.Name;
             this.Comment = assignment.FixedAsset?.Comment?.Split('\n');
-            
+
             if (assignment.FixedAsset is SerialisedItem serialisedItem)
             {
                 this.CustomerReferenceNumber = serialisedItem.CustomerReferenceNumber;

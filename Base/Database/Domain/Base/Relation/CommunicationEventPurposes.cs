@@ -50,7 +50,7 @@ namespace Allors.Domain
         protected override void BaseSetup(Setup setup)
         {
             var dutchLocale = new Locales(this.Session).DutchNetherlands;
-            
+
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);
 

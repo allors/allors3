@@ -22,10 +22,6 @@ namespace Allors.Meta
             metaPopulation.OnClassCreated(this);
         }
 
-        public bool Workspace => this.WorkspaceNames != null;
-
-        public string[] WorkspaceNames { get; set; }
-
         // TODO: Review
         public RoleType[] DelegatedAccessRoleTypes { get; set; }
 

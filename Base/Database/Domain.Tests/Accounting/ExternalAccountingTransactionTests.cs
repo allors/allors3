@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class ExternalAccountingTransactionTests : DomainTest, IClassFixture<Fixture>
     {
         public ExternalAccountingTransactionTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenTaxDue_WhenDeriving_ThenRequiredRelationsMustExist()
         {

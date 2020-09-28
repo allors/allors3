@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("d35c33c3-ca15-4b70-b20d-c51ed068626a")]
@@ -48,7 +49,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public ShipmentItemState ShipmentItemState { get; set; }
         #endregion
 
@@ -58,7 +59,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Quantity { get; set; }
 
         #region Allors
@@ -68,7 +69,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityShipped { get; set; }
 
         #region Allors
@@ -78,7 +79,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityPicked { get; set; }
 
         #region Allors
@@ -86,14 +87,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Part Part { get; set; }
 
         #region Allors
         [Id("19c691ae-f849-451e-ac7e-ea84f4a9b51a")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string ContentsDescription { get; set; }
 
         #region Allors
@@ -101,7 +102,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Document[] Documents { get; set; }
 
         #region Allors
@@ -109,7 +110,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ShipmentItem[] InResponseToShipmentItems { get; set; }
 
         #region Allors
@@ -117,7 +118,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
         #region Allors
@@ -125,7 +126,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItem[] ReservedFromInventoryItems { get; set; }
 
         #region Allors
@@ -133,7 +134,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Facility StoredInFacility { get; set; }
 
         #region Allors
@@ -141,7 +142,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ProductFeature[] ProductFeatures { get; set; }
 
         #region Allors
@@ -149,7 +150,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Good Good { get; set; }
 
         #region Allors
@@ -157,7 +158,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemAvailability NextSerialisedItemAvailability { get; set; }
 
         #region Allors
@@ -166,7 +167,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Synced]
-        [Workspace]
+        [Workspace(Default)]
         public Shipment SyncedShipment { get; set; }
 
         /// <summary>
@@ -178,14 +179,14 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal UnitPurchasePrice { get; set; }
 
         #region Allors
         [Id("f02f4cb4-1050-4304-9f9b-182a123d3dd2")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Guid DerivationTrigger { get; set; }
 
         #region inherited methods

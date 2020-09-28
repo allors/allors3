@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("27b6630a-35d0-4352-9223-b5b6c8d7496b")]
@@ -61,7 +62,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PickListState PickListState { get; set; }
         #endregion
         #endregion
@@ -72,7 +73,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public PickListVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -80,7 +81,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PickListVersion[] AllVersions { get; set; }
         #endregion
 
@@ -89,7 +90,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PickListItem[] PickListItems { get; set; }
 
         #region Allors
@@ -97,7 +98,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Person Picker { get; set; }
 
         #region Allors
@@ -105,7 +106,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party ShipToParty { get; set; }
 
         #region Allors
@@ -113,31 +114,31 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Store Store { get; set; }
 
         #region Allors
         [Id("46CB3076-14AE-48C1-8C9F-F4EFB4B060EB")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Hold() { }
 
         #region Allors
         [Id("F3D35303-BA28-4CF0-B393-7E7D76F5B86D")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Continue() { }
 
         #region Allors
         [Id("8753A40E-FAA1-44E7-86B1-6CA6712989B5")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Cancel() { }
 
         #region Allors
         [Id("CA2ADD8E-C43E-4C95-A8A4-B279FEE4CB0A")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void SetPicked() { }
 
         #region inherited methods

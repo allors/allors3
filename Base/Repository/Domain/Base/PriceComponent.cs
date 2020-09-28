@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("383589fb-f410-4d22-ade6-aa5126fdef18")]
@@ -18,7 +19,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         Party PricedBy { get; set; }
 
         #region Allors
@@ -26,7 +27,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         GeographicBoundary GeographicBoundary { get; set; }
 
         #region Allors
@@ -34,7 +35,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal Rate { get; set; }
 
         #region Allors
@@ -42,7 +43,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PartyClassification PartyClassification { get; set; }
 
         #region Allors
@@ -50,7 +51,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         OrderQuantityBreak OrderQuantityBreak { get; set; }
 
         #region Allors
@@ -58,7 +59,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Product Product { get; set; }
 
         #region Allors
@@ -66,7 +67,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Part Part { get; set; }
 
         #region Allors
@@ -74,7 +75,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         ProductFeature ProductFeature { get; set; }
 
         #region Allors
@@ -82,14 +83,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         AgreementPricingProgram AgreementPricingProgram { get; set; }
 
         #region Allors
         [Id("8c32a2ca-a0c7-4c92-9b65-91d8b5ccee94")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -98,7 +99,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Currency Currency { get; set; }
 
         #region Allors
@@ -106,7 +107,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         OrderKind OrderKind { get; set; }
 
         #region Allors
@@ -114,7 +115,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         OrderValue OrderValue { get; set; }
 
         #region Allors
@@ -122,7 +123,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal Price { get; set; }
 
         #region Allors
@@ -130,7 +131,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         ProductCategory ProductCategory { get; set; }
 
         #region Allors
@@ -138,7 +139,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         SalesChannel SalesChannel { get; set; }
     }
 }

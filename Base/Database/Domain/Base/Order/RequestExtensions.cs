@@ -11,7 +11,7 @@ namespace Allors.Domain
     {
         public static bool IsDeletable(this Request @this) =>
             // EmailAddress is used whith anonymous request form website
-            !@this.ExistEmailAddress 
+            !@this.ExistEmailAddress
             && (@this.RequestState.Equals(new RequestStates(@this.Strategy.Session).Submitted)
                 || @this.RequestState.Equals(new RequestStates(@this.Strategy.Session).Cancelled)
                 || @this.RequestState.Equals(new RequestStates(@this.Strategy.Session).Rejected))

@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("974DCB55-4D12-460F-A45D-9EBCCA54DA0B")]
@@ -28,7 +30,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
@@ -36,7 +38,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -44,13 +46,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedNames { get; set; }
 
         #region Allors
         [Id("72EFFC9B-3233-4E3A-AB7F-1E0FAA386DB9")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         [MediaType("text/markdown")]
         public string Description { get; set; }
@@ -60,7 +62,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public LocalisedText[] LocalisedDescriptions { get; set; }
 
         #region Allors
@@ -68,7 +70,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Media CatalogueImage { get; set; }
 
         #region Allors
@@ -76,7 +78,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ProductCategory[] ProductCategories { get; set; }
 
         #region Allors
@@ -84,7 +86,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public CatScope CatScope { get; set; }
         #region inherited methods

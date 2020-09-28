@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("41D19E80-8ABB-4515-AA44-3E0AF1146AE7")]
@@ -49,7 +50,7 @@ namespace Allors.Repository
         [Id("1AB4364F-2DAA-4EC0-BF2E-77CAF2E354CD")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool AvailableForSale { get; set; }
     }
 }

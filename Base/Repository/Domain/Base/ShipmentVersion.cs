@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("F76BB372-D433-4479-8324-3A232AC50A25")]
@@ -19,7 +20,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         ShipmentState ShipmentState { get; set; }
 
         #region Allors
@@ -27,7 +28,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         ShipmentMethod ShipmentMethod { get; set; }
 
         #region Allors
@@ -35,7 +36,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         string ShipmentNumber { get; set; }
 
         #region Allors
@@ -43,7 +44,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Party ShipFromParty { get; set; }
 
         #region Allors
@@ -51,7 +52,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         PostalAddress ShipFromAddress { get; set; }
 
         #region Allors
@@ -59,14 +60,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Person ShipFromContactPerson { get; set; }
 
         #region Allors
         [Id("D32E5998-6193-47AF-AEAA-F754FCCD9879")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Facility ShipFromFacility { get; set; }
 
         #region Allors
@@ -74,7 +75,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Party ShipToParty { get; set; }
 
         #region Allors
@@ -82,21 +83,21 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         PostalAddress ShipToAddress { get; set; }
 
         #region Allors
         [Id("15E1AB0C-18E4-4C7C-96AF-E27FACEAF6EC")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Person ShipToContactPerson { get; set; }
 
         #region Allors
         [Id("365A1590-E9B5-4183-9C6D-485E23C4D84E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Facility ShipToFacility { get; set; }
 
         #region Allors
@@ -104,7 +105,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         Document[] Documents { get; set; }
 
         #region Allors
@@ -112,7 +113,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         ShipmentItem[] ShipmentItems { get; set; }
 
         #region Allors
@@ -120,19 +121,19 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         decimal EstimatedShipCost { get; set; }
 
         #region Allors
         [Id("E7BAFA23-3DE0-472B-B1D3-08CF54CD2F6C")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime EstimatedShipDate { get; set; }
 
         #region Allors
         [Id("0F39AB42-3546-4AAB-8950-92A1CFE74812")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime LatestCancelDate { get; set; }
 
         #region Allors
@@ -140,20 +141,20 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Carrier Carrier { get; set; }
 
         #region Allors
         [Id("F216F24A-286B-4C64-9673-AFA8D499FD25")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime EstimatedReadyDate { get; set; }
 
         #region Allors
         [Id("7147BB41-5937-416E-8F90-A8AFAB2E48FD")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string HandlingInstruction { get; set; }
 
         #region Allors
@@ -161,7 +162,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         Store Store { get; set; }
 
         #region Allors
@@ -169,7 +170,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         ShipmentPackage[] ShipmentPackages { get; set; }
 
         #region Allors
@@ -177,13 +178,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         ShipmentRouteSegment[] ShipmentRouteSegments { get; set; }
 
         #region Allors
         [Id("7A302883-FC2E-483A-9A60-FFD783453770")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         DateTime EstimatedArrivalDate { get; set; }
     }
 }

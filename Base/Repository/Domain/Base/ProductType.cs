@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("6451E06E-747E-4F58-98F5-2F9DC5D787B5")]
@@ -28,7 +29,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemCharacteristicType[] SerialisedItemCharacteristicTypes { get; set; }
 
         #region Allors
@@ -36,7 +37,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region inherited methods

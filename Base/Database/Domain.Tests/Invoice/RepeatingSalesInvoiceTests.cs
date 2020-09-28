@@ -16,7 +16,7 @@ namespace Allors.Domain
     public class RepeatingSalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
         public RepeatingSalesInvoiceTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenRepeatingSalesInvoice_WhenDeriving_ThenFrequencyIsEitherMontlyOrWeekly()
         {

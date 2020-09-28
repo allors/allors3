@@ -74,9 +74,9 @@ namespace Tests
             new Permissions(this.Session).Sync();
             var permissions = new Permissions(this.Session).Extent().ToArray();
 
-            Assert.Empty(permissions.Where(v=> v.OperandType is AssociationType associationType && associationType.RoleType.ObjectType.IsUnit));
+            Assert.Empty(permissions.Where(v => v.OperandType is AssociationType associationType && associationType.RoleType.ObjectType.IsUnit));
         }
-        
+
         [Fact]
         public void WhenSyncingPermissionsThenObsolotePermissionsAreDeleted()
         {

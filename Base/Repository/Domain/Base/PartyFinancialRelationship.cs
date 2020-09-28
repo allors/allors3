@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("8F6C4557-AED7-4063-B05F-16573424FC51")]
@@ -38,7 +39,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Party FinancialParty { get; set; }
 
         #region Allors
@@ -47,7 +48,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
@@ -57,7 +58,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal YTDRevenue { get; set; }
 
         #region Allors
@@ -67,13 +68,13 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal LastYearsRevenue { get; set; }
 
         #region Allors
         [Id("52863081-34b7-48e2-a7ff-c6bd67172350")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool ExcludeFromDunning { get; set; }
 
         #region Allors
@@ -83,7 +84,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal OpenOrderAmount { get; set; }
 
         #region Allors
@@ -91,7 +92,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PaymentMethod DefaultPaymentMethod { get; set; }
 
         #region Allors
@@ -107,7 +108,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal AmountOverDue { get; set; }
 
         #region Allors
@@ -115,7 +116,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public DunningType DunningType { get; set; }
 
         #region Allors
@@ -125,13 +126,13 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal AmountDue { get; set; }
 
         #region Allors
         [Id("af50ade8-5964-4963-819d-c87689c6434e")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime LastReminderDate { get; set; }
 
         #region Allors
@@ -139,20 +140,20 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal CreditLimit { get; set; }
 
         #region Allors
         [Id("e3a06a1c-998a-4871-8f0e-2f166eac6c7b")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int SubAccountNumber { get; set; }
 
         #region Allors
         [Id("ee871786-8840-404d-9b41-932a9f59be13")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime BlockedForDunning { get; set; }
 
         #region inherited methods

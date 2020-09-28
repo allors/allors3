@@ -157,7 +157,7 @@ namespace Allors.Database.Adapters
         }
 
         public Class[] GetClasses(RelationType relationType) => ((Composite)relationType.RoleType.ObjectType).Classes.ToArray();
-        
+
         public RelationType[] GetBinaryRoles(Composite type)
         {
             var roleList = new List<RelationType>();

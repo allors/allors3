@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("B0A09032-FEC1-4047-8264-8DBD68C281A0")]
@@ -33,13 +34,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public RequirementState RequirementState { get; set; }
 
         #region Allors
         [Id("5719FF6E-EEC1-4465-A9B0-6B0779CFE2B4")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime RequiredByDate { get; set; }
 
         #region Allors
@@ -47,7 +48,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public RequirementType RequirementType { get; set; }
 
         #region Allors
@@ -55,14 +56,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party Authorizer { get; set; }
 
         #region Allors
         [Id("86DF3995-B405-4A26-934C-40C47DFA48D9")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Reason { get; set; }
 
         #region Allors
@@ -70,7 +71,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public Requirement[] Children { get; set; }
 
         #region Allors
@@ -78,7 +79,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party NeededFor { get; set; }
 
         #region Allors
@@ -86,7 +87,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party Originator { get; set; }
 
         #region Allors
@@ -94,7 +95,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Facility Facility { get; set; }
 
         #region Allors
@@ -102,7 +103,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party ServicedBy { get; set; }
 
         #region Allors
@@ -110,7 +111,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal EstimatedBudget { get; set; }
 
         #region Allors
@@ -118,13 +119,13 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
         [Id("571C92CC-F79E-49D9-BCE4-DDADDABD7F6B")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         #region inherited methods

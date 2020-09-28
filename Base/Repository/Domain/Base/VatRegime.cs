@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("69db99bc-97f7-4e2e-903c-74afb55992af")]
@@ -32,7 +33,7 @@ namespace Allors.Repository
         #region Allors
         [Id("2071cc28-c8bf-43dc-a5e5-ec5735756dfa")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public VatRate VatRate { get; set; }
@@ -40,7 +41,7 @@ namespace Allors.Repository
         #region Allors
         [Id("00A91056-1F2D-462F-8A81-6DA277AD86E1")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public VatClause VatClause { get; set; }
@@ -48,7 +49,7 @@ namespace Allors.Repository
         #region Allors
         [Id("a037f9f0-1aff-4ad0-8ee9-36ae4609d398")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public OrganisationGlAccount GeneralLedgerAccount { get; set; }

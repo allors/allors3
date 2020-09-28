@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("C3A647C2-1073-4D8B-99EB-AE5293AADB6B")]
@@ -41,7 +42,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Dimension Dimension { get; set; }
 
         #region Allors
@@ -49,7 +50,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Value { get; set; }
 
         #region inherited methods

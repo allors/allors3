@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("CD97F8F9-C0E8-4E5F-8516-3F9FE6A4F0FC")]
@@ -109,7 +110,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SalesOrderItemState SalesOrderItemState { get; set; }
 
         #region Allors
@@ -117,7 +118,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SalesOrderItemShipmentState SalesOrderItemShipmentState { get; set; }
 
         #region Allors
@@ -125,7 +126,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SalesOrderItemInvoiceState SalesOrderItemInvoiceState { get; set; }
 
         #region Allors
@@ -133,13 +134,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SalesOrderItemPaymentState SalesOrderItemPaymentState { get; set; }
 
         #region Allors
         [Id("519B172B-C966-411A-852F-7486667975CB")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Derived]
         [Precision(19)]
         [Scale(2)]
@@ -150,7 +151,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public OrderItem[] OrderedWithFeatures { get; set; }
 
         #region Allors
@@ -158,7 +159,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
         #region Allors
@@ -166,7 +167,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItem ReservedFromSerialisedInventoryItem { get; set; }
 
         #region Allors
@@ -174,7 +175,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public NonSerialisedInventoryItem ReservedFromNonSerialisedInventoryItem { get; set; }
 
         #region Allors
@@ -190,7 +191,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemAvailability NextSerialisedItemAvailability { get; set; }
 
         #region Allors
@@ -199,7 +200,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityShipped { get; set; }
 
         #region Allors
@@ -207,7 +208,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress ShipFromAddress { get; set; }
 
         #region Allors
@@ -216,7 +217,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress ShipToAddress { get; set; }
 
         #region Allors
@@ -233,7 +234,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party ShipToParty { get; set; }
 
         #region Allors
@@ -241,7 +242,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress AssignedShipToAddress { get; set; }
 
         #region Allors
@@ -249,7 +250,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityReturned { get; set; }
 
         #region Allors
@@ -258,7 +259,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityReserved { get; set; }
 
         #region Allors
@@ -266,7 +267,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Party AssignedShipToParty { get; set; }
 
         #region Allors
@@ -275,7 +276,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityPendingShipment { get; set; }
 
         #region Allors
@@ -283,7 +284,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product Product { get; set; }
 
         #region Allors
@@ -291,7 +292,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public ProductFeature ProductFeature { get; set; }
 
         #region Allors
@@ -300,7 +301,7 @@ namespace Allors.Repository
         [Derived]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityRequestsShipping { get; set; }
 
         #region inherited methods

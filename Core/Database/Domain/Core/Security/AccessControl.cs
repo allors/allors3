@@ -20,7 +20,7 @@ namespace Allors.Domain
 
             var permissions = this.Role?.Permissions.ToArray();
             this.EffectivePermissions = permissions;
-            
+
             // TODO: Workspace
             //this.EffectiveWorkspacePermissionIds = string.Join(",", this.EffectivePermissions.Where(v => v.OperandType.Workspace).Select(v => v.Id));
 

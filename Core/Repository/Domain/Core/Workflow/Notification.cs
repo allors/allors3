@@ -9,6 +9,9 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("73dcdc68-7571-4ed1-86db-77c914fe2f62")]
@@ -32,7 +35,7 @@ namespace Allors.Repository
         #region Allors
         [Id("50b1be30-d6a9-49e8-84da-a47647e443f0")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public bool Confirmed { get; set; }
 
@@ -40,7 +43,7 @@ namespace Allors.Repository
         [Id("70292962-9e0e-4b57-a710-c8ac34f65b11")]
         [Size(1024)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public string Title { get; set; }
 
@@ -48,7 +51,7 @@ namespace Allors.Repository
         [Id("e83600fc-5411-4c72-9903-80a3741a9165")]
         [Size(-1)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
@@ -56,7 +59,7 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public DateTime DateCreated { get; set; }
 
@@ -81,7 +84,7 @@ namespace Allors.Repository
         #region Allors
         [Id("B445FC66-27AF-4D45-ADA8-4F1409EBBE72")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Confirm() { }
     }
 }

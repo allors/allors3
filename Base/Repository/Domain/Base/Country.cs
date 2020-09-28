@@ -9,6 +9,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     public partial class Country : GeographicBoundary, CityBound
     {
@@ -31,33 +33,33 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatRate[] VatRates { get; set; }
 
         #region Allors
         [Id("2ecb8cfb-011d-4c31-a9cd-ed5a13ae23a4")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int IbanLength { get; set; }
 
         #region Allors
         [Id("6553ee71-66dd-45f2-9de9-5656b011d2fc")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool EuMemberState { get; set; }
 
         #region Allors
         [Id("7f0adb03-db73-44f2-a4a2-ece00f4908a2")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string TelephoneCode { get; set; }
 
         #region Allors
         [Id("a2aa65d7-e0ef-4f6f-a194-9aeb49a1d898")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string IbanRegex { get; set; }
 
         #region Allors
@@ -65,14 +67,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatForm VatForm { get; set; }
 
         #region Allors
         [Id("c231ce68-bf03-4122-8699-c3c6473ab90a")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string UriExtension { get; set; }
 
         #region inherited methods

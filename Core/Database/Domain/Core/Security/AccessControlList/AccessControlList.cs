@@ -72,7 +72,7 @@ namespace Allors.Domain
 
             return false;
         }
-        
+
         public bool CanWrite(IRoleType roleType)
         {
             if (this.Object != null)

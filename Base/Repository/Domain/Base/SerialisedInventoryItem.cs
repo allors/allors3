@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("4a70cbb3-6e23-4118-a07d-d611de9297de")]
@@ -74,7 +75,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemState SerialisedInventoryItemState { get; set; }
         #endregion
 
@@ -84,7 +85,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -92,7 +93,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemVersion[] AllVersions { get; set; }
         #endregion
 
@@ -101,7 +102,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
         #region Allors
@@ -109,7 +110,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedInventoryItemState InventoryItemState { get; set; }
 
         #region Allors
@@ -117,7 +118,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         #region inherited methods

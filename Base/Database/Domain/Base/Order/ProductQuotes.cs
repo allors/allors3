@@ -27,7 +27,7 @@ namespace Allors.Domain
             var approve = this.Meta.Approve;
             var send = this.Meta.Send;
             var accept = this.Meta.Accept;
-            var revise= this.Meta.Revise;
+            var revise = this.Meta.Revise;
             var reopen = this.Meta.Reopen;
             var reject = this.Meta.Reject;
             var order = this.Meta.Order;

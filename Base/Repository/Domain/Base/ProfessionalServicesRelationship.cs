@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("a6f772e6-8f2c-4180-bbf9-2e5ab0f0efc8")]
@@ -34,7 +35,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Person Professional { get; set; }
 
         #region Allors
@@ -43,7 +44,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Organisation ProfessionalServicesProvider { get; set; }
 
         #region inherited methods

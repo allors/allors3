@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("6a7e45b2-36b2-4d2e-a29c-0cc13851766f")]
@@ -36,7 +38,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Person Employee { get; set; }
 
         #region Allors
@@ -45,7 +47,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation Employer { get; set; }
 
         #region Allors
@@ -53,7 +55,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public PayrollPreference[] PayrollPreferences { get; set; }
 
         #region Allors
@@ -61,7 +63,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public EmploymentTerminationReason EmploymentTerminationReason { get; set; }
 
         #region Allors
@@ -69,7 +71,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public EmploymentTermination EmploymentTermination { get; set; }
 
         #region inherited methods

@@ -17,7 +17,7 @@ namespace Allors.Domain.Derivations.Errors
         }
 
         public DerivationErrorGeneric(IValidation validation, DerivationRelation relation, string message, params object[] messageParam)
-            : this(validation, relation != null ? new[] { relation } : Array.Empty <DerivationRelation>(), message, messageParam)
+            : this(validation, relation != null ? new[] { relation } : Array.Empty<DerivationRelation>(), message, messageParam)
         {
         }
 

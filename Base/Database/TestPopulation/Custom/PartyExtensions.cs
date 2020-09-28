@@ -7,7 +7,7 @@
 namespace Allors.Domain.TestPopulation
 {
     using Allors.Domain;
- 
+
     public static partial class PartyExtensions
     {
         public static string DisplayName(this Party @this)

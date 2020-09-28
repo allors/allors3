@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("3a3e6acf-48f4-4a33-848c-0c77cb18693a")]
@@ -50,7 +51,7 @@ namespace Allors.Repository
         #region Allors
         [Id("AC3D9D14-E660-4513-BD76-F3325F1675C4")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public void Delete() { }
     }
 }

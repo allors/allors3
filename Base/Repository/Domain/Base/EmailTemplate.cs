@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("c78a49b1-9918-4f15-95f3-c537c82f59fd")]
@@ -24,21 +26,21 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
         [Id("8bb431b6-a6ea-48d0-ad78-975ec26b470f")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string BodyTemplate { get; set; }
 
         #region Allors
         [Id("f05fc608-5dcd-4d7d-b472-5b84c2a195a4")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string SubjectTemplate { get; set; }
 
         #region inherited methods

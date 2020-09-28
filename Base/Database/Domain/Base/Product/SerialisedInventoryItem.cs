@@ -65,48 +65,48 @@ namespace Allors.Domain
 
         public void BaseOnDeriveQuantity(IDerivation derivation)
         {
-        //    this.Quantity = 0;
+            //    this.Quantity = 0;
 
-        //    foreach (InventoryItemTransaction inventoryTransaction in this.InventoryItemTransactionsWhereInventoryItem)
-        //    {
-        //        var reason = inventoryTransaction.Reason;
+            //    foreach (InventoryItemTransaction inventoryTransaction in this.InventoryItemTransactionsWhereInventoryItem)
+            //    {
+            //        var reason = inventoryTransaction.Reason;
 
-        //        if (reason.IncreasesQuantityOnHand == true)
-        //        {
-        //            this.Quantity += (int)inventoryTransaction.Quantity;
-        //        }
-        //        else if (reason.IncreasesQuantityOnHand == false)
-        //        {
-        //            this.Quantity -= (int)inventoryTransaction.Quantity;
-        //        }
-        //    }
+            //        if (reason.IncreasesQuantityOnHand == true)
+            //        {
+            //            this.Quantity += (int)inventoryTransaction.Quantity;
+            //        }
+            //        else if (reason.IncreasesQuantityOnHand == false)
+            //        {
+            //            this.Quantity -= (int)inventoryTransaction.Quantity;
+            //        }
+            //    }
 
-        //    foreach (PickListItem pickListItem in this.PickListItemsWhereInventoryItem)
-        //    {
-        //        if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
-        //        {
-        //            foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
-        //            {
-        //                if (!itemIssuance.ShipmentItem.ShipmentItemState.Shipped)
-        //                {
-        //                    this.Quantity -= (int)pickListItem.QuantityPicked;
-        //                }
-        //            }
-        //        }
-        //    }
+            //    foreach (PickListItem pickListItem in this.PickListItemsWhereInventoryItem)
+            //    {
+            //        if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
+            //        {
+            //            foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+            //            {
+            //                if (!itemIssuance.ShipmentItem.ShipmentItemState.Shipped)
+            //                {
+            //                    this.Quantity -= (int)pickListItem.QuantityPicked;
+            //                }
+            //            }
+            //        }
+            //    }
 
-        //    foreach (ShipmentReceipt shipmentReceipt in this.ShipmentReceiptsWhereInventoryItem)
-        //    {
-        //        // serialised items are handled via InventoryItemTransactions
-        //        if (shipmentReceipt.ExistShipmentItem && !shipmentReceipt.ShipmentItem.Part.InventoryItemKind.IsSerialised)
-        //        {
-        //            var purchaseShipment = (PurchaseShipment)shipmentReceipt.ShipmentItem.ShipmentWhereShipmentItem;
-        //            if (purchaseShipment.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Received))
-        //            {
-        //                this.Quantity += (int)shipmentReceipt.QuantityAccepted;
-        //            }
-        //        }
-        //    }
+            //    foreach (ShipmentReceipt shipmentReceipt in this.ShipmentReceiptsWhereInventoryItem)
+            //    {
+            //        // serialised items are handled via InventoryItemTransactions
+            //        if (shipmentReceipt.ExistShipmentItem && !shipmentReceipt.ShipmentItem.Part.InventoryItemKind.IsSerialised)
+            //        {
+            //            var purchaseShipment = (PurchaseShipment)shipmentReceipt.ShipmentItem.ShipmentWhereShipmentItem;
+            //            if (purchaseShipment.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Received))
+            //            {
+            //                this.Quantity += (int)shipmentReceipt.QuantityAccepted;
+            //            }
+            //        }
+            //    }
         }
 
         public void BaseDelete(DeletableDelete method)

@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("734be1c9-e6af-49b7-8fe8-331cd7036e2e")]
@@ -16,7 +18,7 @@ namespace Allors.Repository
         [Id("85cd1bbd-f2ad-454f-8f04-cdea48ce6196")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string TermValue { get; set; }
 
         #region Allors
@@ -25,14 +27,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         TermType TermType { get; set; }
 
         #region Allors
         [Id("d9a68cc0-8fea-4610-9853-f1fca33cbc9a")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
     }
 }

@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("2C8554EF-7B0E-47A3-AC66-E6CB50E20DF9")]
@@ -25,7 +26,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
         #region Allors
@@ -34,7 +35,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrderItem PurchaseOrderItem { get; set; }
 
         #region Allors
@@ -43,14 +44,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public PurchaseOrder PurchaseOrder { get; set; }
 
         #region Allors
         [Id("346A4EC3-16F7-45EB-9BD6-949EDB86BCFF")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public int Quantity { get; set; }
 
         #region Allors
@@ -58,7 +59,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(4)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal AssignedUnitSellingPrice { get; set; }
 
         #region Allors
@@ -68,7 +69,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal UnitPurchasePrice { get; set; }
 
         #region Allors
@@ -78,7 +79,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal UnitSellingPrice { get; set; }
 
         #region inherited methods

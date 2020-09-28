@@ -10,7 +10,7 @@ namespace Allors
     using Microsoft.AspNetCore.Http;
     using Services;
 
-    public class DefaultDatabaseScope : IDatabaseScope 
+    public class DefaultDatabaseScope : IDatabaseScope
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 

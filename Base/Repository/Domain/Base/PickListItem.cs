@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("7fec090e-3d4a-4ec7-895f-4b30d01f59bb")]
@@ -25,7 +26,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InventoryItem InventoryItem { get; set; }
 
         #region Allors
@@ -34,7 +35,7 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal Quantity { get; set; }
 
         #region Allors
@@ -43,7 +44,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public decimal QuantityPicked { get; set; }
 
         #region inherited methods

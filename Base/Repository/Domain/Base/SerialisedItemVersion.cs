@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("485C8073-22B6-402B-B0F0-479764CFB67A")]
@@ -33,7 +34,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemState SerialisedItemState { get; set; }
 
         #region Allors
@@ -41,13 +42,13 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemAvailability SerialisedItemAvailability { get; set; }
 
         #region Allors
         [Id("76B16EB6-4526-4024-B29A-F51AAB49F20E")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public string SerialNumber { get; set; }
 
         #region Allors
@@ -55,7 +56,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public SerialisedItemCharacteristic[] SerialisedItemCharacteristics { get; set; }
 
         #region Allors
@@ -63,37 +64,37 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Ownership Ownership { get; set; }
 
         #region Allors
         [Id("25178972-F921-47CA-B32D-D63CCF9A4AC8")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int AcquisitionYear { get; set; }
 
         #region Allors
         [Id("59266D15-C7B2-4BFD-8470-0517B634AA50")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int ManufacturingYear { get; set; }
 
         #region Allors
         [Id("03D549E9-0DCD-4674-A789-8D9CB6CF0377")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal PurchasePrice { get; set; }
 
         #region Allors
         [Id("D7B6361C-2387-4838-BBB1-B6F001D9E2B4")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal ExpectedSalesPrice { get; set; }
 
         #region Allors
         [Id("8AA2ED2E-BB4D-489A-81BD-9B5075AFC7CA")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(-1)]
         public string InternalComment { get; set; }
 
@@ -101,7 +102,7 @@ namespace Allors.Repository
         [Id("53857cc0-5fcb-43ee-960d-a9d0c2189b18")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool AvailableForSale { get; set; }
 
         #region Allors
@@ -109,7 +110,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation Seller { get; set; }
 
         #region Allors
@@ -117,7 +118,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party SuppliedBy { get; set; }
 
         #region Allors
@@ -125,7 +126,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party OwnedBy { get; set; }
 
         #region Allors
@@ -133,25 +134,25 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public Party RentedBy { get; set; }
 
         #region Allors
         [Id("b128557f-63b3-4626-b6a4-e53dce6ddf67")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool OnQuote { get; set; }
 
         #region Allors
         [Id("c470b360-d7aa-4ce6-bc69-43d8829e5405")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool OnSalesOrder { get; set; }
 
         #region Allors
         [Id("98ff5b83-6cae-4c5e-9137-f8ef9545b189")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool OnWorkEffort { get; set; }
 
         #region inherited methods

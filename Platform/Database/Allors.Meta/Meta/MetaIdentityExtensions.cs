@@ -21,7 +21,7 @@ namespace Allors.Meta
             {
                 if (validationLog.ExistId(@this.Id))
                 {
-                    var message = "id " + @this+ " is already in use";
+                    var message = "id " + @this + " is already in use";
                     validationLog.AddError(message, @this, ValidationKind.Unique, "IMetaObject.Id");
                 }
                 else

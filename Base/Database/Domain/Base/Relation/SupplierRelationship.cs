@@ -64,15 +64,15 @@ namespace Allors.Domain
         {
             //var derivation = method.Derivation;
 
-           // this.BaseOnDeriveInternalOrganisationSupplier(derivation);
-          //  this.BaseOnDeriveMembership(derivation);
+            // this.BaseOnDeriveInternalOrganisationSupplier(derivation);
+            //  this.BaseOnDeriveMembership(derivation);
 
             //this.Parties = new Party[] { this.Supplier, this.InternalOrganisation };
         }
 
         public void BaseOnDeriveInternalOrganisationSupplier()
         {
-            
+
         }
 
         public void BaseOnDeriveMembership()

@@ -9,6 +9,9 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
+
 
     #region Allors
     [Id("da5b86a3-4f33-4c0d-965d-f4fbc1179374")]
@@ -29,7 +32,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public Guid Revision { get; set; }
 
         #region Allors
@@ -38,7 +41,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public MediaContent MediaContent { get; set; }
 
         #region Allors
@@ -46,28 +49,28 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Size(1024)]
-        [Workspace]
+        [Workspace(Default)]
         public string InType { get; set; }
 
         #region Allors
         [Id("18236718-1835-430C-A936-7EC461EEE2CF")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public byte[] InData { get; set; }
 
         #region Allors
         [Id("79B04065-F13B-43B3-B86E-F3ADBBAAF0C4")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string InDataUri { get; set; }
 
         #region Allors
         [Id("E03239E9-2039-49DC-9615-36CEA3C971D3")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string InFileName { get; set; }
 
         #region Allors
@@ -75,7 +78,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
@@ -83,7 +86,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Size(1024)]
-        [Workspace]
+        [Workspace(Default)]
         [Derived]
         public string Type { get; set; }
 
@@ -93,9 +96,9 @@ namespace Allors.Repository
         [Indexed]
         [Size(256)]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public string FileName { get; set; }
-        
+
         #region inherited methods
         public void OnBuild() { }
 

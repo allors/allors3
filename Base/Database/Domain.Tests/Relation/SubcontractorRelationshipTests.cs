@@ -16,7 +16,7 @@ namespace Allors.Domain
         private Organisation subcontractor;
         private SubContractorRelationship subContractorRelationship;
         private OrganisationContactRelationship organisationContactRelationship;
-        
+
         public SubContractorRelationshipTests(Fixture fixture) : base(fixture)
         {
             this.subcontractor = this.InternalOrganisation.CreateSubContractor(this.Session.Faker());

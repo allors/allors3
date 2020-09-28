@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("6c255f71-ce18-4d51-b0d9-e402ec0e570e")]
@@ -38,14 +39,14 @@ namespace Allors.Repository
         [Id("31ccabaf-1d31-4b35-93a4-8c18c813c3cd")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string CountryCode { get; set; }
 
         #region Allors
         [Id("2eabf6bb-48f9-431a-b05b-b892c88db821")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string AreaCode { get; set; }
 
         #region Allors
@@ -53,7 +54,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(40)]
-        [Workspace]
+        [Workspace(Default)]
         public string ContactNumber { get; set; }
 
         #region inherited methods

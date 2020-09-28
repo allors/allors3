@@ -11,7 +11,7 @@ namespace Allors.Domain
     public class ProductCategoryTests : DomainTest, IClassFixture<Fixture>
     {
         public ProductCategoryTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenProductCategory_WhenDeriving_ThenRequiredRelationsMustExist()
         {

@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class ShipmentReceiptTests : DomainTest, IClassFixture<Fixture>
     {
         public ShipmentReceiptTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenShipmentReceiptBuilderWhenBuildThenPostBuildRelationsMustExist()
         {

@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("2b162153-f74d-4f97-b97c-48f04749b216")]
@@ -36,7 +37,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Organisation Supplier { get; set; }
 
         #region Allors
@@ -45,26 +46,26 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
         [Id("7C5FDA1C-CE16-45C5-80DB-D89E2E9FB273")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool NeedsApproval { get; set; }
 
         #region Allors
         [Id("EC58B25E-D84A-402D-873B-A48E1E59365D")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal ApprovalThresholdLevel1 { get; set; }
 
         #region Allors
         [Id("3ABDE14F-EEC1-4B45-9846-7896ABC27FBB")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public decimal ApprovalThresholdLevel2 { get; set; }
 
         #region inherited methods

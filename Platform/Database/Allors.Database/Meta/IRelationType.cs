@@ -24,7 +24,7 @@ namespace Allors.Meta
 
         bool IsIndexed { get; }
 
-        bool IsDerived { get;  }
+        bool IsDerived { get; }
 
         bool IsSynced { get; }
     }

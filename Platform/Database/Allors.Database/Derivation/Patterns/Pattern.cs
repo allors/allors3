@@ -12,6 +12,6 @@ namespace Allors
     {
         public IPropertyType[] Steps { get; set; }
 
-        public IComposite OfType { get; set; } 
+        public IComposite OfType { get; set; }
     }
 }

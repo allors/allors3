@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("B5E190E1-F05F-420E-915C-0E5553D88109")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Organisation Supplier { get; set; }
 
         #region Allors
@@ -36,7 +37,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
@@ -45,7 +46,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public TimeFrequency Frequency { get; set; }
 
         #region Allors
@@ -53,27 +54,27 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public DayOfWeek DayOfWeek { get; set; }
 
         #region Allors
         [Id("506127E5-0E94-44A4-9274-09E3D6C0103F")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime NextExecutionDate { get; set; }
 
         #region Allors
         [Id("E95ED423-E581-4B3C-8DCA-9E8882B26FED")]
         #endregion
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime PreviousExecutionDate { get; set; }
 
         #region Allors
         [Id("B258B677-E0D0-4D22-9148-598960EA60A9")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public DateTime FinalExecutionDate { get; set; }
 
         #region inherited methods

@@ -8,6 +8,8 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
+    using static Workspaces;
 
     #region Allors
     [Id("1a0e396b-69bd-4e77-a602-3d7f7938fd74")]
@@ -28,7 +30,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product DefaultCostUnit { get; set; }
 
         #region Allors
@@ -36,14 +38,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public CostCenter DefaultCostCenter { get; set; }
 
         #region Allors
         [Id("08bb53f7-9b27-4079-bb9b-d8ff96f89b42")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         public string Description { get; set; }
 
         #region Allors
@@ -52,21 +54,21 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccountType GeneralLedgerAccountType { get; set; }
 
         #region Allors
         [Id("2e6545f8-5fcf-4129-99f6-1f41280cd02d")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool CashAccount { get; set; }
 
         #region Allors
         [Id("3fc28997-124c-4e16-9c4d-128314e6395c")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool CostCenterAccount { get; set; }
 
         #region Allors
@@ -75,21 +77,21 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public DebitCreditConstant Side { get; set; }
 
         #region Allors
         [Id("5f797e0d-05aa-4dfb-a826-157ac6cdb0a9")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool BalanceSheetAccount { get; set; }
 
         #region Allors
         [Id("7f2e28ea-124a-45fa-9ed3-e3c2b0bb1822")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool ReconciliationAccount { get; set; }
 
         #region Allors
@@ -97,21 +99,21 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string Name { get; set; }
 
         #region Allors
         [Id("9b679f99-d678-4ec0-8ab1-e02eaabe6658")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool CostCenterRequired { get; set; }
 
         #region Allors
         [Id("a3aa445f-2aae-41be-8024-7b4a7e0a76ed")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool CostUnitRequired { get; set; }
 
         #region Allors
@@ -128,14 +130,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public CostCenter[] CostCentersAllowed { get; set; }
 
         #region Allors
         [Id("bfe446ee-f9ff-462f-bb45-9bf52d61daa4")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool CostUnitAccount { get; set; }
 
         #region Allors
@@ -143,7 +145,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string AccountNumber { get; set; }
 
         #region Allors
@@ -151,14 +153,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Product[] CostUnitsAllowed { get; set; }
 
         #region Allors
         [Id("e433abed-8f41-4a23-8e5b-e597bb6a14d2")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool Protected { get; set; }
 
         #region inherited methods

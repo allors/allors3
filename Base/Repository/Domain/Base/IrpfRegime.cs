@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("c56a909e-ab7b-4b60-abb9-2a9cfec16e43")]
@@ -38,7 +39,7 @@ namespace Allors.Repository
         #region Allors
         [Id("bee6ea26-43c8-44b3-bcbf-68b942c26d1c")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public IrpfRate IrpfRate { get; set; }
@@ -49,7 +50,7 @@ namespace Allors.Repository
         #region Allors
         [Id("a33a4f2c-ad70-4455-8cd6-68606d39446d")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public OrganisationGlAccount PurchaseGeneralLedgerAccount { get; set; }
@@ -60,7 +61,7 @@ namespace Allors.Repository
         #region Allors
         [Id("337192f2-085f-4c56-b492-c9c69138c125")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public OrganisationGlAccount SalesGeneralLedgerAccount { get; set; }

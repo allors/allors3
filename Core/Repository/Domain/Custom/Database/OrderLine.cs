@@ -1,4 +1,4 @@
-﻿// <copyright file="OrderLine.cs" company="Allors bvba">
+// <copyright file="OrderLine.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+
 
     #region
     [Id("721008C3-C87C-40AB-966B-094E1271ED5F")]
@@ -31,7 +33,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public OrderLineVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -39,7 +41,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public OrderLineVersion[] AllVersions { get; set; }
         #endregion
 

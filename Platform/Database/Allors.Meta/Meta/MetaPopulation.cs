@@ -30,12 +30,18 @@ namespace Allors.Meta
         private bool isStale;
         private bool isDeriving;
 
+        private string[] workspaceNames;
+
         private Composite[] derivedComposites;
 
         private Composite[] derivedDatabaseComposites;
         private Interface[] derivedDatabaseInterfaces;
         private Class[] derivedDatabaseClasses;
         private RelationType[] derivedDatabaseRelationTypes;
+
+        private Dictionary<string, Composite[]> derivedWorkspaceCompositesByWorkspaceName;
+        private Dictionary<string, RelationType[]> derivedWorkspaceRelationTypesByWorkspaceName;
+        private Dictionary<string, MethodType[]> derivedWorkspaceMethodTypesByWorkspaceName;
 
         public MetaPopulation()
         {
@@ -53,6 +59,18 @@ namespace Allors.Meta
             this.methodTypes = new List<MethodType>();
 
             this.metaObjectById = new Dictionary<Guid, MetaObjectBase>();
+        }
+
+        public string[] WorkspaceNames
+        {
+            get => this.workspaceNames ?? Array.Empty<string>();
+
+            set
+            {
+                this.AssertUnlocked();
+                this.workspaceNames = value;
+                this.Stale();
+            }
         }
 
         public bool IsBound { get; private set; }
@@ -147,6 +165,33 @@ namespace Allors.Meta
             {
                 this.Derive();
                 return this.derivedDatabaseRelationTypes;
+            }
+        }
+
+        public IReadOnlyDictionary<string, Composite[]> WorkspaceCompositesByWorkspaceName
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedWorkspaceCompositesByWorkspaceName;
+            }
+        }
+
+        public IReadOnlyDictionary<string, RelationType[]> WorkspaceRelationTypesByWorkspaceName
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedWorkspaceRelationTypesByWorkspaceName;
+            }
+        }
+
+        public IReadOnlyDictionary<string, MethodType[]> WorkspaceMethodTypesByWorkspaceName
+        {
+            get
+            {
+                this.Derive();
+                return this.derivedWorkspaceMethodTypesByWorkspaceName;
             }
         }
 
@@ -357,6 +402,14 @@ namespace Allors.Meta
                     this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Remote).ToArray();
                     this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Remote).ToArray();
 
+                    // Workspace
+                    this.derivedWorkspaceCompositesByWorkspaceName = this.WorkspaceNames
+                        .ToDictionary(v => v, v => this.derivedComposites.Where(w => w.WorkspaceNames.Contains(v)).ToArray());
+                    this.derivedWorkspaceRelationTypesByWorkspaceName = this.WorkspaceNames
+                        .ToDictionary(v => v, v => this.relationTypes.Where(w => w.WorkspaceNames.Contains(v)).ToArray());
+                    this.derivedWorkspaceMethodTypesByWorkspaceName = this.WorkspaceNames
+                        .ToDictionary(v => v, v => this.methodTypes.Where(w => w.WorkspaceNames.Contains(v)).ToArray());
+
                     // DirectSupertypes
                     foreach (var type in this.derivedComposites)
                     {
@@ -524,7 +577,7 @@ namespace Allors.Meta
         internal void OnRoleInterfaceCreated(RoleInterface roleInterface) => this.Stale();
 
         internal void OnRoleClassCreated(RoleClass roleClass) => this.Stale();
-        
+
         internal void OnMethodInterfaceCreated(MethodInterface methodInterface)
         {
             this.methodTypes.Add(methodInterface);

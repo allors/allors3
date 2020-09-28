@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class WorkTaskTests : DomainTest, IClassFixture<Fixture>
     {
         public WorkTaskTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenWorkTask_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

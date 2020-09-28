@@ -18,7 +18,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(M.OrderValue.Class),
             };
-        
+
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var orderValue in matches.Cast<OrderValue>())

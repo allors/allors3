@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("55DE0F4F-2ABD-4943-8319-39DC5D51B0D7")]
@@ -16,7 +17,7 @@ namespace Allors.Repository
         [Id("80CE30EE-71CF-4E74-8D40-C0BCD9239A9C")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         string Identification { get; set; }
 
         #region Allors
@@ -25,7 +26,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         ProductIdentificationType ProductIdentificationType { get; set; }
     }
 }

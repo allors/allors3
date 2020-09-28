@@ -13,7 +13,7 @@ namespace Allors.Domain
     public class GeneralLedgerAccountTests : DomainTest, IClassFixture<Fixture>
     {
         public GeneralLedgerAccountTests(Fixture fixture) : base(fixture) { }
-        
+
         [Fact]
         public void GivenGeneralLedgerAccount_WhenDeriving_ThenRequiredRelationsMustExist()
         {

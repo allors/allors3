@@ -17,7 +17,7 @@ namespace Allors.Domain
             if (!string.IsNullOrWhiteSpace(accessControl.EffectiveWorkspacePermissionIds))
             {
                 this.EffectiveWorkspacePermissionIds = new HashSet<long>(accessControl.EffectiveWorkspacePermissionIds.Split(',').Select(long.Parse));
-                
+
             }
             else
             {

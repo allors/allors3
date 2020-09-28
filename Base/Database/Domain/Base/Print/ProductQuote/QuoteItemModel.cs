@@ -60,7 +60,7 @@ namespace Allors.Domain.Print.ProductQuoteModel
                 this.IdentificationNumber = serialisedItem.ItemNumber;
                 this.Year = serialisedItem.ManufacturingYear.ToString();
 
-                var hoursType = new SerialisedItemCharacteristicTypes(session).FindBy(m.SerialisedItemCharacteristicType.Name,"Hours");
+                var hoursType = new SerialisedItemCharacteristicTypes(session).FindBy(m.SerialisedItemCharacteristicType.Name, "Hours");
                 var hoursCharacteristic = serialisedItem.SerialisedItemCharacteristics.FirstOrDefault(v => v.SerialisedItemCharacteristicType.Equals(hoursType));
                 if (hoursCharacteristic != null)
                 {

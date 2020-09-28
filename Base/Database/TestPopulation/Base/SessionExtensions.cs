@@ -10,6 +10,6 @@ namespace Allors
 
     public static class SessionExtensions
     {
-        public static Faker Faker(this ISession @this) => ((dynamic) @this.Database.Scope()).Faker;
+        public static Faker Faker(this ISession @this) => ((dynamic)@this.Database.Scope()).Faker;
     }
 }

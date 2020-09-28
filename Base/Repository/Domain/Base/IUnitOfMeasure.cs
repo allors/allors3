@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("b7215af5-97d6-42b0-9f6f-c1fccb2bc695")]
@@ -16,7 +17,7 @@ namespace Allors.Repository
         [Id("650F5B49-B4DA-4A34-938C-DF5EE2446298")]
         #endregion
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         string Abbreviation { get; set; }
 
         #region Allors
@@ -24,14 +25,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         LocalisedText[] LocalisedAbbreviations { get; set; }
 
         #region Allors
         [Id("22d65b11-5d96-4632-9e95-72e30b885942")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -45,7 +46,7 @@ namespace Allors.Repository
         #region Allors
         [Id("D35B0EDF-4196-4FE9-8DAA-8B93AEE3B70D")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string Symbol { get; set; }
     }
 }
