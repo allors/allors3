@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Singletons
     {
         protected override void BasePrepare(Setup setup)

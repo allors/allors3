@@ -8,8 +8,6 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
-    using Resources;
 
     public partial class RepeatingPurchaseInvoice
     {

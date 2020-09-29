@@ -6,7 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
     using System.Linq;
 

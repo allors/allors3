@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-    using Resources;
-
     public partial class BasePrice
     {
         public void BaseDelete(DeletableDelete method)

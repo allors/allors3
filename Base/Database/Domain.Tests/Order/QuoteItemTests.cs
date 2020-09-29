@@ -7,10 +7,7 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Domain.Derivations.Default;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
-
     using Xunit;
 
     public class QuoteItemTests : DomainTest, IClassFixture<Fixture>

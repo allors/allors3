@@ -9,7 +9,6 @@ namespace Allors.Repository
     using System;
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
 
     #region Allors

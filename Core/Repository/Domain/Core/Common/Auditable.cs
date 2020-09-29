@@ -8,7 +8,6 @@ namespace Allors.Repository
     using System;
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
     #region Allors
     [Id("6C726DED-C081-46D7-8DCF-F0A376943531")]

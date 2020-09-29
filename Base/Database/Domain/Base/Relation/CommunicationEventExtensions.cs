@@ -5,11 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Allors.Meta;
-    using Resources;
-
     public static partial class CommunicationEventExtensions
     {
         public static void BaseOnDerive(this CommunicationEvent @this, ObjectOnDerive method)

@@ -7,7 +7,6 @@
 namespace Allors
 {
     using System;
-    using Domain;
     using Domain.Derivations;
 
     public static partial class ISessionExtensions

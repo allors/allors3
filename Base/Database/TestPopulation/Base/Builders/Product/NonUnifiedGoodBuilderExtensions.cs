@@ -6,8 +6,6 @@
 
 namespace Allors.Domain.TestPopulation
 {
-    using Allors.Meta;
-
     public static partial class NonUnifiedGoodBuilderExtensions
     {
         public static NonUnifiedGoodBuilder WithNonSerialisedPartDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)

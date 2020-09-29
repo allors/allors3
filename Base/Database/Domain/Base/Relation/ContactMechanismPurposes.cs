@@ -7,8 +7,6 @@ namespace Allors.Domain
 {
     using System;
 
-    using Allors.Meta;
-
     public partial class ContactMechanismPurposes
     {
         private static readonly Guid RegisteredOfficeId = new Guid("8F99BE32-3817-4371-8317-8F1EF5CA2CDB");

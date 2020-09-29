@@ -14,6 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("72c07e8a-03f5-4da8-ab37-236333d4f74e")]
     #endregion
+    [Workspace(Default)]
     public partial class C2 : Object, DerivationCounted, I2
     {
         #region inherited properties

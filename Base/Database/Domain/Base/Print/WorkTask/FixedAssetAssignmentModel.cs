@@ -4,7 +4,6 @@
 // </copyright>
 
 using System.Linq;
-using Allors.Meta;
 
 namespace Allors.Domain.Print.WorkTaskModel
 {

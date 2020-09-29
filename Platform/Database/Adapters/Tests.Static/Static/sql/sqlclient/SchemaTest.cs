@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Adapters.SqlClient
 {
-    using System;
-    using Meta;
     using Xunit;
 
     public class SchemaTest : Adapters.Sql.SchemaTest, IClassFixture<Fixture<SchemaTest>>

@@ -15,10 +15,13 @@ namespace Tests
     {
         public Workspace Workspace { get; set; }
 
-        public Test()
+        public M M { get; }
+
+        protected Test()
         {
-            var objectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(User));
-            this.Workspace = new Workspace(objectFactory);
+            var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
+            this.Workspace = new Workspace(objectFactory, new WorkspaceScope());
+            this.M = this.Workspace.Scope().M;
         }
 
         public void Dispose()

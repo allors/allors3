@@ -6,8 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     /// <summary>
     /// A MailboxAddress is a address in a mailbox in the postoffice.
     /// </summary>

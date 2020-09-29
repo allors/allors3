@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using Xunit;
-    using System;
     using Adapters;
 
     public class RelationExtentTest : Adapters.RelationExtentTest, IClassFixture<Fixture<RelationExtentTest>>

@@ -9,8 +9,6 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    using Resources;
-
     public partial class AssociationReadPermission
     {
         public ObjectType ConcreteClass

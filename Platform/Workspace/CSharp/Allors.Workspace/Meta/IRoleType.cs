@@ -6,33 +6,27 @@
 
 namespace Allors.Workspace.Meta
 {
+    using System;
+
     /// <summary>
     /// A <see cref="IRoleType"/> defines the role side of a relation.
     /// This is also called the 'passive' side.
     /// RoleTypes can have composite and unit <see cref="ObjectType"/>s.
     /// </summary>
-    public interface IRoleType : IPropertyType
+    public interface IRoleType : IPropertyType, IComparable
     {
-        IAssociationType AssociationType { get; }
-
-        IRelationType RelationType { get; }
-
-        string PropertyName { get; }
-
-        string SingularPropertyName { get; }
-
-        string PluralPropertyName { get; }
-
         string SingularFullName { get; }
 
         string PluralFullName { get; }
+
+        IAssociationType AssociationType { get; }
+
+        IRelationType RelationType { get; }
 
         int? Size { get; }
 
         int? Precision { get; }
 
         int? Scale { get; }
-        bool IsRequired { get; }
-        string DisplayName { get; }
     }
 }

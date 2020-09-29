@@ -6,8 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-    using Resources;
     using Xunit;
 
     public class SingletonTests : DomainTest, IClassFixture<Fixture>

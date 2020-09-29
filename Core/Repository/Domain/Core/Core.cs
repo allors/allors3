@@ -5,7 +5,6 @@
 // <summary>Defines the Extent type.</summary>
 
 using Allors.Repository.Attributes;
-using static Workspaces;
 
 [Domain("770538dd-7b19-4694-bdce-cf04dcf9cf62")]
 public struct Core

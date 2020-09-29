@@ -14,6 +14,9 @@ namespace Allors.Meta
 
     public sealed partial class MethodClass : MethodType, IMethodClass
     {
+        private string[] assignedWorkspaceNames;
+        private string[] derivedWorkspaceNames;
+
         private string name;
         private Class @class;
 
@@ -44,6 +47,33 @@ namespace Allors.Meta
         public MethodInterface MethodInterface { get; }
 
         public bool ExistMethodInterface => this.MethodInterface != null;
+
+        public string[] AssignedWorkspaceNames
+        {
+            get => this.assignedWorkspaceNames;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.assignedWorkspaceNames = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public override string[] WorkspaceNames
+        {
+            get
+            {
+                if (this.ExistMethodInterface)
+                {
+                    return this.MethodInterface.WorkspaceNames;
+                }
+
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceNames;
+            }
+        }
+
 
         public override string Name
         {
@@ -83,6 +113,13 @@ namespace Allors.Meta
         }
 
         public IList<Action<object, object>> Actions { get; private set; }
+
+        protected internal override void DeriveWorkspaceNames() =>
+            this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
+                ? this.assignedWorkspaceNames.Intersect(this.Composite.WorkspaceNames).ToArray()
+                : Array.Empty<string>();
+
+        public void ResetDerivedWorkspaceNames() => this.derivedWorkspaceNames = null;
 
         public void Bind(List<Domain> sortedDomains, MethodInfo[] extensionMethods, Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>> actionByMethodInfoByType)
         {

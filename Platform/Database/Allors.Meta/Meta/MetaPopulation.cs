@@ -171,6 +171,26 @@ namespace Allors.Meta
             }
         }
 
+        public IReadOnlyDictionary<string, IEnumerable<Interface>> WorkspaceInterfacesByWorkspaceName
+        {
+            get
+            {
+                this.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.Interfaces.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<Class>> WorkspaceClassesByWorkspaceName
+        {
+            get
+            {
+                this.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.Classes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
         public IReadOnlyDictionary<string, IEnumerable<RelationType>> WorkspaceRelationTypesByWorkspaceName
         {
             get

@@ -15,10 +15,14 @@ namespace Tests.Mock
     {
         public Workspace Workspace { get; set; }
 
+        public M M { get; }
+
         public MockTest()
         {
-            var objectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(User));
-            this.Workspace = new Workspace(objectFactory);
+            var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
+            this.Workspace = new Workspace(objectFactory, new WorkspaceScope());
+
+            this.M = this.Workspace.Scope().M;
         }
 
         public void Dispose()

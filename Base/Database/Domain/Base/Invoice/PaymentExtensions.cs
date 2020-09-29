@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-    using Resources;
-
     public static partial class PaymentExtensions
     {
         public static void BaseOnBuild(this Payment @this, ObjectOnBuild method)

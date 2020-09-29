@@ -5,7 +5,6 @@
 
 namespace Allors.Domain.TestPopulation
 {
-    using Allors.Meta;
     using Bogus;
 
     public static partial class OrganisationBuilderExtensions

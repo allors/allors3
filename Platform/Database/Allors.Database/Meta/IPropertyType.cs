@@ -6,9 +6,6 @@
 
 namespace Allors.Meta
 {
-    using System;
-    using Protocol.Data;
-
     /// <summary>
     /// A <see cref="IPropertyType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>

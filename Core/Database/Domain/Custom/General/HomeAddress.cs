@@ -6,8 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     /// <summary>
     /// A HomeAddress is a fysical address with a street/number and a place.
     /// </summary>

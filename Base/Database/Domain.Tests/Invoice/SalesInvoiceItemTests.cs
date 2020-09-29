@@ -7,7 +7,6 @@
 namespace Allors.Domain
 {
     using System;
-    using Allors.Meta;
     using Xunit;
 
     public class SalesInvoiceItemTests : DomainTest, IClassFixture<Fixture>

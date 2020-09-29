@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Data;
     using Allors.Workspace.Meta;
@@ -25,7 +24,7 @@ namespace Allors.Workspace.Data
             {
                 Kind = ExtentKind.Except,
                 Operands = this.Operands.Select(v => v.ToJson()).ToArray(),
-                Sorting = this.Sorting.Select(v => new Protocol.Data.Sort { Descending = v.Descending, RoleType = v.RoleType.Id }).ToArray(),
+                Sorting = this.Sorting.Select(v => new Protocol.Data.Sort { Descending = v.Descending, RoleType = v.RoleType.RelationType.Id }).ToArray(),
             };
     }
 }

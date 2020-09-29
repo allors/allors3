@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using System.Security;
     using Allors.Workspace.Meta;
 
     public interface IWorkspaceObject

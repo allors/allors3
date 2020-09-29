@@ -29,7 +29,7 @@ namespace Tests.Remote
                     {
                         Fetch = new Fetch
                         {
-                            Include = new UserNodeBuilder(v => v.Person_Address()),
+                            Include = new UserNodeBuilder(M,v => v.Person_Address()),
                         },
                     },
                 },

@@ -6,7 +6,6 @@
 namespace Allors
 {
     using Bogus;
-    using Microsoft.Extensions.DependencyInjection;
 
     public static class SessionExtensions
     {

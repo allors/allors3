@@ -308,6 +308,7 @@ namespace Allors.Meta
                     .ToDictionary(v => v, v => this.ExclusiveAssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
+
         public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceRoleTypesByWorkspaceName
         {
             get
@@ -330,6 +331,39 @@ namespace Allors.Meta
             }
         }
 
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.ExclusiveRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithRemoteOriginByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.ExclusiveRoleTypes.Where(w => w.Origin == Origin.Remote && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithLocalOrWorkingOriginByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.ExclusiveRoleTypes.Where(w => (w.Origin == Origin.Local || w.Origin == Origin.Working) && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
         public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveCompositeRoleTypesByWorkspaceName
         {
             get
@@ -340,7 +374,7 @@ namespace Allors.Meta
                         v => this.ExclusiveRoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
-
+       
         public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceMethodTypesByWorkspaceName
         {
             get
@@ -348,6 +382,26 @@ namespace Allors.Meta
                 this.MetaPopulation.Derive();
                 return this.WorkspaceNames
                     .ToDictionary(v => v, v => this.MethodTypes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<Interface>> WorkspaceDirectSupertypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.DirectSupertypes.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<Interface>> WorkspaceSupertypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.Supertypes.Where(w => w.WorkspaceNames.Contains(v)));
             }
         }
 
@@ -361,6 +415,16 @@ namespace Allors.Meta
             }
         }
 
+        public IReadOnlyDictionary<string, IEnumerable<Composite>> WorkspaceRelatedCompositesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.RelatedComposites.Where(w => w.WorkspaceNames.Contains(v)));
+            }
+        }
+        
         public bool ExistSupertype(IInterface @interface)
         {
             this.MetaPopulation.Derive();

@@ -8,7 +8,6 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Xml;
-    using Allors.Meta;
 
     /// <summary>
     /// Xml tag definitions and utility methods for Xml Serialization.

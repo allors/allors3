@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors;
-
     public partial class LT32
     {
     }

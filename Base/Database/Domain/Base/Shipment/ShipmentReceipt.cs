@@ -5,10 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Linq;
-
-    using Allors.Meta;
-
     public partial class ShipmentReceipt
     {
         public void BaseOnBuild(ObjectOnBuild method)

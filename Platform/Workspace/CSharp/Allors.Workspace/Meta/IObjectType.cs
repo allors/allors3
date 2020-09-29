@@ -8,12 +8,8 @@ namespace Allors.Workspace.Meta
 {
     using System;
 
-    public interface IObjectType : IMetaObject, IComparable
+    public interface IObjectType : IMetaObject, IMetaIdentity, IComparable
     {
-        string SingularName { get; }
-
-        string PluralName { get; }
-
         bool IsUnit { get; }
 
         bool IsComposite { get; }
@@ -22,7 +18,11 @@ namespace Allors.Workspace.Meta
 
         bool IsClass { get; }
 
+        string SingularName { get; }
+
         string Name { get; }
+
+        string PluralName { get; }
 
         Type ClrType { get; }
     }

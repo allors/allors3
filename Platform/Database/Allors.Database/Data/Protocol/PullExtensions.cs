@@ -6,8 +6,6 @@
 namespace Allors.Protocol.Data
 {
     using System.Linq;
-
-    using Allors.Data;
     using Allors.Meta;
 
     public static class PullExtensions

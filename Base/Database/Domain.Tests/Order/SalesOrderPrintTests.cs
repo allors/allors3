@@ -6,7 +6,6 @@
 
 namespace Allors.Domain
 {
-    using System;
     using Xunit;
 
     public class SalesOrderPrintTests : DomainTest, IClassFixture<Fixture>

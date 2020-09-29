@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Data;
@@ -30,7 +31,20 @@ namespace Allors.Workspace.Data
             {
                 Kind = PredicateKind.ContainedIn,
                 Dependencies = this.Dependencies,
-                PropertyType = this.PropertyType?.Id,
+                PropertyType = this.PropertyType switch
+                {
+                    IAssociationType associationType => new PropertyType
+                    {
+                        RelationType = associationType.RelationType.Id,
+                        Kind = PropertyKind.Association,
+                    },
+                    IRoleType roleType => new PropertyType
+                    {
+                        RelationType = roleType.RelationType.Id,
+                        Kind = PropertyKind.Role,
+                    },
+                    _ => throw new Exception($"Unknown property type {this.PropertyType}"),
+                },
                 Extent = this.Extent?.ToJson(),
                 Values = this.Objects?.Select(v => v.Id.ToString()).ToArray(),
                 Parameter = this.Parameter,

@@ -3,14 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using Resources;
-
 namespace Allors.Domain
 {
     using System;
-    using System.Linq;
     using System.Text;
-    using Allors.Meta;
 
     public partial class QuoteItem
     {

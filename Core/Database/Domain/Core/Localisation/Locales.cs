@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Locales
     {
         public const string EnglishGreatBritainName = "en-GB";

@@ -6,8 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     using Xunit;
 
     public class EmailTemplateTests : DomainTest, IClassFixture<Fixture>

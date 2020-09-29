@@ -7,8 +7,6 @@
 
 namespace Allors.Domain.TestPopulation
 {
-    using Allors.Meta;
-
     public static partial class PostalAddressBuilderExtensions
     {
         public static PostalAddressBuilder WithDefaults(this PostalAddressBuilder @this)

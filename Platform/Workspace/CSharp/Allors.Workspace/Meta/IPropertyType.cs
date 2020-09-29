@@ -6,8 +6,6 @@
 
 namespace Allors.Workspace.Meta
 {
-    using System;
-
     /// <summary>
     /// A <see cref="IPropertyType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.
     /// </summary>
@@ -24,5 +22,7 @@ namespace Allors.Workspace.Meta
         bool IsOne { get; }
 
         bool IsMany { get; }
+
+        //object Get(IStrategy strategy);
     }
 }

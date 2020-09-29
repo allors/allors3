@@ -5,7 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
 
     public class SetupConfigurationTests : DomainTest, IClassFixture<Fixture>

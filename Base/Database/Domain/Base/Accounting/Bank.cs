@@ -6,9 +6,6 @@
 namespace Allors.Domain
 {
     using System.Text.RegularExpressions;
-
-    using Allors.Meta;
-
     using Resources;
 
     public partial class Bank

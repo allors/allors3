@@ -7,10 +7,6 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
-    using System.Text;
-
-    using Allors.Meta;
-    using Resources;
 
     public partial class SerialisedItem
     {

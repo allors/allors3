@@ -6,7 +6,6 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using System.Text;
 
     public static partial class PartExtensions
     {

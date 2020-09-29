@@ -7,7 +7,6 @@
 namespace Allors.Domain.TestPopulation
 {
     using System.Linq;
-    using Allors.Meta;
 
     public static partial class SalesInvoiceItemBuilderExtensions
     {

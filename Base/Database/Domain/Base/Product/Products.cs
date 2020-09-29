@@ -7,8 +7,6 @@ namespace Allors.Domain
 {
     using System;
 
-    using Allors.Meta;
-
     public partial class Products
     {
         private static decimal BaseCatalogPrice(

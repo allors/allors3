@@ -8,7 +8,6 @@
 
 namespace Allors.R1.Development.Resources
 {
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;

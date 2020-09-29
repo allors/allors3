@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Globalization;
-
     public partial class ShipmentPackage
     {
         public decimal TotalQuantity

@@ -10,7 +10,6 @@ namespace Allors.Domain.Print.ProductQuoteModel
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using Allors.Meta;
 
     public class QuoteItemModel
     {

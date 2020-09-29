@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
-    using System;
     using Xunit;
 
     public class RelationExtentTest : Adapters.RelationExtentTest, IClassFixture<Fixture<RelationExtentTest>>

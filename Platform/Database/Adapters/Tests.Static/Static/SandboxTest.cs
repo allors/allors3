@@ -10,7 +10,6 @@ namespace Allors.Database.Adapters
     using Allors;
     using Allors.Data;
     using Allors.Domain;
-    using Allors.Meta;
     using Allors.Protocol.Data;
     using Xunit;
     using Extent = Data.Extent;

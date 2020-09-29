@@ -9,7 +9,6 @@ namespace Allors.Workspace
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Remote.Push;
-    using Allors.Protocol.Remote.Sync;
     using Allors.Workspace.Meta;
 
     public class Session : ISession
@@ -20,9 +19,15 @@ namespace Allors.Workspace
         private readonly Dictionary<long, ISessionObject> sessionObjectById = new Dictionary<long, ISessionObject>();
         private readonly Dictionary<long, ISessionObject> newSessionObjectById = new Dictionary<long, ISessionObject>();
 
-        public Session(Workspace workspace) => this.workspace = workspace;
+        public Session(Workspace workspace, ISessionLifecycle scope)
+        {
+            this.workspace = workspace;
+            this.Lifecycle = scope;
+        }
 
         public bool HasChanges => this.newSessionObjectById.Count > 0 || this.sessionObjectById.Values.Any(v => v.HasChanges);
+
+        public ISessionLifecycle Lifecycle { get; }
 
         public IWorkspace Workspace => this.workspace;
 

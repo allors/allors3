@@ -7,7 +7,6 @@ namespace Allors.Domain
 {
     using System.Linq;
     using Allors;
-    using Allors.Meta;
     using Xunit;
 
     [Trait("Category", "Security")]

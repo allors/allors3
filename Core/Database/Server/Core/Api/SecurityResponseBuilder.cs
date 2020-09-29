@@ -5,6 +5,9 @@
 
 namespace Allors.Server
 {
+    using System;
+    using System.Data;
+    using System.Diagnostics;
     using System.Linq;
     using Allors.Domain;
     using Allors.Protocol.Remote.Security;
@@ -43,15 +46,47 @@ namespace Allors.Server
                 var permissionIds = this.securityRequest.Permissions;
                 var permissions = this.session.Instantiate(permissionIds)
                     .Cast<Permission>()
-                    .Where(v => v.OperandType.Workspace);
+                    .Where(v => v switch
+                    {
+                        RoleReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                        RoleWritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                        AssociationReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                        MethodExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
+                        _ => throw new Exception(),
+                    });
 
                 securityResponse.Permissions = permissions.Select(v =>
-                    new[]
+                    v switch
                     {
-                        v.Strategy.ObjectId.ToString(),
-                        v.ConcreteClassPointer.ToString("D"),
-                        v.OperandTypePointer.ToString("D"),
-                        v.OperationEnum.ToString(),
+                        RoleReadPermission permission => new[]
+                        {
+                            permission.Strategy.ObjectId.ToString(),
+                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.RelationTypePointer.ToString("D"),
+                            Operations.Read.ToString(),
+                        },
+                        RoleWritePermission permission => new[]
+                        {
+                            permission.Strategy.ObjectId.ToString(),
+                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.RelationTypePointer.ToString("D"),
+                            Operations.Write.ToString(),
+                        },
+                        AssociationReadPermission permission => new[]
+                        {
+                            permission.Strategy.ObjectId.ToString(),
+                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.RelationTypePointer.ToString("D"),
+                            Operations.Read.ToString(),
+                        },
+                        MethodExecutePermission permission => new[]
+                        {
+                            permission.Strategy.ObjectId.ToString(),
+                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.MethodTypePointer.ToString("D"),
+                            Operations.Execute.ToString(),
+                        },
+                        _ => throw new Exception(),
                     }).ToArray();
             }
 

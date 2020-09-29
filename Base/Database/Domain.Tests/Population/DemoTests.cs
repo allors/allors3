@@ -6,7 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Bogus;
     using Xunit;
 
     public class DemoTests : DomainTest, IClassFixture<Fixture>

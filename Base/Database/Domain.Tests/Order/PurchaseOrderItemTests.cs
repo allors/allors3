@@ -8,7 +8,6 @@ namespace Allors.Domain
 {
     using System.Collections.Generic;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Resources;
     using Xunit;
 

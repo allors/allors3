@@ -7,9 +7,6 @@
 
 namespace Allors.Domain
 {
-    using System.Linq;
-    using System.Text;
-
     public static partial class InventoryItemExtensions
     {
         public static void BaseOnBuild(this InventoryItem @this, ObjectOnBuild method)

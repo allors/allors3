@@ -21,9 +21,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Allors;
-    using Adapters;
     using Allors.Meta;
-    using Xunit;
 
     public class ExtentTest : Adapters.ExtentTest
     {

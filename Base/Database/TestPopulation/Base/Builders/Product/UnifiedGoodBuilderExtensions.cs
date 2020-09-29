@@ -7,7 +7,6 @@
 namespace Allors.Domain.TestPopulation
 {
     using System;
-    using Allors.Meta;
 
     public static partial class UnifiedGoodBuilderExtensions
     {

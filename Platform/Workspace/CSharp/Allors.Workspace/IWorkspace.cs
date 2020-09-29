@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using System;
     using Allors.Protocol.Remote.Pull;
     using Allors.Protocol.Remote.Sync;
     using Domain;
@@ -14,7 +13,11 @@ namespace Allors.Workspace
 
     public interface IWorkspace
     {
+        IWorkspaceLifecycle Lifecycle { get; }
+
         IObjectFactory ObjectFactory { get; }
+
+        ISession CreateSession();
 
         SyncRequest Diff(PullResponse response);
 

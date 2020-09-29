@@ -7,8 +7,6 @@ namespace Allors.Domain
 {
     using System.Collections.Generic;
 
-    using Allors.Meta;
-
     public partial class Countries
     {
         private Sticky<string, Country> countryByIsoCode;

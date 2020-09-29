@@ -9,8 +9,6 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    using Resources;
-
     public partial class MethodExecutePermission
     {
         public ObjectType ConcreteClass

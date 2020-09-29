@@ -12,8 +12,6 @@ namespace Allors.Repository.Domain
     using System.IO;
     using System.Linq;
     using System.Reflection;
-
-    using Allors.Meta;
     using Allors.Repository.Roslyn;
 
     using Inflector;

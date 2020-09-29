@@ -8,12 +8,12 @@ namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
 
     #region Allors
     [Id("4092d0b4-c6f4-4b81-b023-66be3f4c90bd")]
     #endregion
+    [Workspace(Default)]
     public partial class TaskAssignment : Deletable, Object
     {
         #region inherited properties

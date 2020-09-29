@@ -5,8 +5,6 @@
 
 namespace Allors.Meta
 {
-    using System.Linq;
-
     public abstract partial class OperandType : MetaObjectBase, IOperandType
     {
         protected OperandType(MetaPopulation metaPopulation)

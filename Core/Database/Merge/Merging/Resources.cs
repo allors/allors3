@@ -10,7 +10,6 @@ namespace Allors.R1.Development.Resources
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Runtime.InteropServices.ComTypes;
 
     public class Merger
     {

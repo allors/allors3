@@ -7,7 +7,6 @@
 namespace Allors
 {
     using System.Collections.Generic;
-    using System.Threading;
     using Allors.Meta;
 
     /// <summary>

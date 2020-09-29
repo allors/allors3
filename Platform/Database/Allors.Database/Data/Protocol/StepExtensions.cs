@@ -5,8 +5,6 @@
 
 namespace Allors.Protocol.Data
 {
-    using Allors.Meta;
-
     public static class StepExtensions
     {
         public static Allors.Data.Step Load(this Step @this, ISession session) =>

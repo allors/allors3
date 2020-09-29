@@ -5,14 +5,9 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Allors.Meta;
     using Allors.Services;
-
-    using Microsoft.Extensions.DependencyInjection;
 
     public partial class ProductQuote
     {

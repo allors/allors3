@@ -8,9 +8,6 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
-
-    using Allors.Meta;
-
     using Xunit;
 
     public class RepeatingSalesInvoiceTests : DomainTest, IClassFixture<Fixture>

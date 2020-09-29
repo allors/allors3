@@ -14,13 +14,12 @@ namespace Tests
         [Fact]
         public void Class()
         {
-            var builder = new OrganisationNodeBuilder(organisation =>
+            var builder = new OrganisationNodeBuilder(M, organisation =>
             {
                 organisation.Manager(manage =>
                 {
                     manage.Photo();
-                    manage.NotificationList(notificationList => notificationList.UnconfirmedNotifications());
-                    manage.TaskAssignmentsWhereUser(taskAssignment => taskAssignment.Task());
+                    manage.Address(address => address.HomeAddress_AddressablesWhereAddress());
                 });
             });
 
@@ -34,18 +33,16 @@ namespace Tests
             Assert.Equal(3, managerNode.Nodes.Length);
 
             var photoNode = managerNode.Nodes[0];
-            var notificatinListNode = managerNode.Nodes[1];
-            var taskAssignmentsWhereUserNode = managerNode.Nodes[2];
+            var addressNode = managerNode.Nodes[1];
 
             Assert.Equal(M.Person.Photo, photoNode.PropertyType);
-            Assert.Equal(M.Person.NotificationList, notificatinListNode.PropertyType);
-            Assert.Equal(M.Person.TaskAssignmentsWhereUser, taskAssignmentsWhereUserNode.PropertyType);
+            Assert.Equal(M.Person.Address, addressNode.PropertyType);
         }
 
         [Fact]
         public void Interface()
         {
-            var builder = new DeletableNodeBuilder(deletable =>
+            var builder = new DeletableNodeBuilder(M, deletable =>
             {
                 deletable.Media_MediaContent();
             });

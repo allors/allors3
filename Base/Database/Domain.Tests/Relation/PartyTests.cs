@@ -9,7 +9,6 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
     public class PartyTests : DomainTest, IClassFixture<Fixture>

@@ -6,12 +6,10 @@
 
 namespace Allors
 {
-    using System;
     using System.IO;
     using System.Linq;
     using Allors.Domain;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Bogus;
 
     public static class SingletonExtensions

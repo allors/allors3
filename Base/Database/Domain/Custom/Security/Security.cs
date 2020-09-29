@@ -5,7 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Collections.Generic;
     using Allors.Meta;
 
     public partial class Security

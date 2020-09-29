@@ -11,7 +11,6 @@ namespace Allors.Domain
     using System.Text;
     using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
     public class UnifiedGoodDerivation : DomainDerivation
     {

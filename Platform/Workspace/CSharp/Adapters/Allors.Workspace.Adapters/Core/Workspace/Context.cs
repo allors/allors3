@@ -25,7 +25,7 @@ namespace Allors.Workspace
             this.workspace = workspace;
 
             // TODO: remove cast
-            this.Session = new Session((Workspace)this.workspace);
+            this.Session = new Session((Workspace)this.workspace, workspace.Lifecycle.CreateSessionScope());
         }
 
         public Session Session { get; }

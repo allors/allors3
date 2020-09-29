@@ -1,5 +1,3 @@
-using System;
-
 namespace Allors.Repository
 {
     using Attributes;

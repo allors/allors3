@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public static partial class OrderAdjustmentExtensions
     {
         public static void BaseOnPreDerive(this OrderAdjustment @this, ObjectOnPreDerive method)

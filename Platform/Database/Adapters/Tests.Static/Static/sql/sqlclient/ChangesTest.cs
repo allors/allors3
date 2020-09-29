@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
-    using System;
     using Xunit;
 
     public class ChangesTest : Adapters.ChangesTest, IClassFixture<Fixture<ChangesTest>>

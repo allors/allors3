@@ -6,9 +6,13 @@
 namespace Allors.Meta
 {
     using System;
+    using System.Linq;
 
     public sealed partial class MethodInterface : MethodType, IMethodInterface
     {
+        private string[] assignedWorkspaceNames;
+        private string[] derivedWorkspaceNames;
+
         private string name;
 
         public MethodInterface(Interface @interface, Guid id) : base(@interface.MetaPopulation)
@@ -28,6 +32,28 @@ namespace Allors.Meta
         public Interface Interface { get; }
         public override Composite Composite => this.Interface;
 
+        public string[] AssignedWorkspaceNames
+        {
+            get => this.assignedWorkspaceNames;
+
+            set
+            {
+                this.MetaPopulation.AssertUnlocked();
+                this.assignedWorkspaceNames = value;
+                this.MetaPopulation.Stale();
+            }
+        }
+
+        public override string[] WorkspaceNames
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedWorkspaceNames;
+            }
+        }
+
+
         public override string Name
         {
             get => this.name;
@@ -41,5 +67,17 @@ namespace Allors.Meta
         }
 
         public override string FullName => $"{this.Composite.Name}{this.Name}";
+
+        protected internal override void DeriveWorkspaceNames()
+        {
+            this.derivedWorkspaceNames = this.assignedWorkspaceNames != null
+                ? this.assignedWorkspaceNames.Intersect(this.Composite.Classes.SelectMany(v => v.WorkspaceNames)).ToArray()
+                : Array.Empty<string>();
+
+            foreach (var methodClass in this.MethodClassByClass.Values)
+            {
+                methodClass.ResetDerivedWorkspaceNames();
+            }
+        }
     }
 }

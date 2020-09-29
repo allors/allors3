@@ -7,9 +7,7 @@
 namespace Allors
 {
     using Bogus;
-    using Meta;
     using Microsoft.AspNetCore.Http;
-    using Services;
 
     public class FakerDatabaseScope : DefaultDatabaseScope
     {

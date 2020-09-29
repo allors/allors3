@@ -7,7 +7,6 @@ namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
     /// <summary>
     /// A <see cref="Task"/> that can be approved or rejected.

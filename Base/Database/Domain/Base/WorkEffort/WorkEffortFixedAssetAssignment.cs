@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Resources;
-
     public partial class WorkEffortFixedAssetAssignment
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)

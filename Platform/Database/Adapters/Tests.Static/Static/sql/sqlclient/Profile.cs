@@ -12,7 +12,6 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Text;
     using Adapters;
     using Caching;
-    using Debug;
     using Domain;
     using Meta;
     using ObjectFactory = Allors.ObjectFactory;

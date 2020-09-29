@@ -5,9 +5,6 @@
 
 namespace Allors.Meta
 {
-    using System;
-    using System.Linq;
-
     /// <summary>
     /// Base class for Meta objects.
     /// </summary>

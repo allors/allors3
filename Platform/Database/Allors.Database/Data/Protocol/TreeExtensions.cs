@@ -6,7 +6,6 @@
 namespace Allors.Protocol.Data
 {
     using System.Collections.Generic;
-    using Allors.Meta;
 
     public static class TreeExtensions
     {

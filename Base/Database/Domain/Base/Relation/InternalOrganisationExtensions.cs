@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
-    using Allors.Meta;
-
     public static partial class InternalOrganisationExtensions
     {
         public static void BaseOnPostBuild(this InternalOrganisation @this, ObjectOnPostBuild method)

@@ -19,8 +19,8 @@ namespace Tests.Mock
         [Fact]
         public void UnitGet()
         {
-            this.Workspace.Sync(Fixture.LoadData);
-            var session = new Session(this.Workspace);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
+            var session = this.Workspace.CreateSession();
 
             var koen = session.Get(1) as Person;
 
@@ -50,12 +50,12 @@ namespace Tests.Mock
         [Fact]
         public void UnitSet()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session1 = new Session(this.Workspace);
+            var session1 = this.Workspace.CreateSession();
             var martien1 = session1.Get(3) as Person;
 
-            var session2 = new Session(this.Workspace);
+            var session2 = this.Workspace.CreateSession();
             var martien2 = session2.Get(3) as Person;
 
             martien2.FirstName = "Martinus";
@@ -73,9 +73,9 @@ namespace Tests.Mock
         [Fact]
         public void HasChanges()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session = new Session(this.Workspace);
+            var session = this.Workspace.CreateSession();
             var martien = session.Get(3) as Person;
             var acme = session.Get(101) as Organisation;
 
@@ -117,8 +117,8 @@ namespace Tests.Mock
         [Fact]
         public void UnitSave()
         {
-            this.Workspace.Sync(Fixture.LoadData);
-            var session = new Session(this.Workspace);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
+            var session = this.Workspace.CreateSession();
 
             var koen = session.Get(1) as Person;
             var patrick = session.Get(2) as Person;
@@ -138,8 +138,8 @@ namespace Tests.Mock
             Assert.Equal("1001", savedKoen.V);
             Assert.Equal(2, savedKoen.Roles.Length);
 
-            var savedKoenFirstName = savedKoen.Roles.First(v => v.T == M.Person.FirstName.IdAsString);
-            var savedKoenLastName = savedKoen.Roles.First(v => v.T == M.Person.LastName.IdAsString);
+            var savedKoenFirstName = savedKoen.Roles.First(v => v.T == M.Person.FirstName.RelationType.IdAsString);
+            var savedKoenLastName = savedKoen.Roles.First(v => v.T == M.Person.LastName.RelationType.IdAsString);
 
             Assert.Equal("K", savedKoenFirstName.S);
             Assert.Null(savedKoenFirstName.A);
@@ -153,8 +153,8 @@ namespace Tests.Mock
             Assert.Equal("1003", savedMartien.V);
             Assert.Equal(2, savedMartien.Roles.Length);
 
-            var savedMartienFirstName = savedMartien.Roles.First(v => v.T == M.Person.FirstName.IdAsString);
-            var savedMartienMiddleName = savedMartien.Roles.First(v => v.T == M.Person.MiddleName.IdAsString);
+            var savedMartienFirstName = savedMartien.Roles.First(v => v.T == M.Person.FirstName.RelationType.IdAsString);
+            var savedMartienMiddleName = savedMartien.Roles.First(v => v.T == M.Person.MiddleName.RelationType.IdAsString);
 
             Assert.Equal("Martinus", savedMartienFirstName.S);
             Assert.Null(savedMartienFirstName.A);
@@ -167,8 +167,8 @@ namespace Tests.Mock
         [Fact]
         public void OneGet()
         {
-            this.Workspace.Sync(Fixture.LoadData);
-            var session = new Session(this.Workspace);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
+            var session = this.Workspace.CreateSession();
 
             var koen = session.Get(1) as Person;
             var patrick = session.Get(2) as Person;
@@ -190,11 +190,11 @@ namespace Tests.Mock
         [Fact]
         public void OneSet()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session1 = new Session(this.Workspace);
+            var session1 = this.Workspace.CreateSession();
 
-            var session2 = new Session(this.Workspace);
+            var session2 = this.Workspace.CreateSession();
 
             var koen1 = session1.Get(1) as Person;
             var patrick1 = session1.Get(2) as Person;
@@ -236,8 +236,8 @@ namespace Tests.Mock
         [Fact]
         public void OneSave()
         {
-            this.Workspace.Sync(Fixture.LoadData);
-            var session = new Session(this.Workspace);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
+            var session = this.Workspace.CreateSession();
 
             var koen = session.Get(1) as Person;
             var patrick = session.Get(2) as Person;
@@ -261,8 +261,8 @@ namespace Tests.Mock
             Assert.Equal("1101", savedAcme.V);
             Assert.Equal(2, savedAcme.Roles.Length);
 
-            var savedAcmeOwner = savedAcme.Roles.First(v => v.T == M.Organisation.Owner.IdAsString);
-            var savedAcmeManager = savedAcme.Roles.First(v => v.T == M.Organisation.Manager.IdAsString);
+            var savedAcmeOwner = savedAcme.Roles.First(v => v.T == M.Organisation.Owner.RelationType.IdAsString);
+            var savedAcmeManager = savedAcme.Roles.First(v => v.T == M.Organisation.Manager.RelationType.IdAsString);
 
             Assert.Equal("3", savedAcmeOwner.S);
             Assert.Null(savedAcmeOwner.A);
@@ -276,7 +276,7 @@ namespace Tests.Mock
             Assert.Equal("1102", savedOcme.V);
             Assert.Single(savedOcme.Roles);
 
-            var savedOcmeOwner = savedOcme.Roles.First(v => v.T == M.Organisation.Owner.IdAsString);
+            var savedOcmeOwner = savedOcme.Roles.First(v => v.T == M.Organisation.Owner.RelationType.IdAsString);
 
             Assert.Null(savedOcmeOwner.S);
             Assert.Null(savedOcmeOwner.A);
@@ -286,8 +286,8 @@ namespace Tests.Mock
         [Fact]
         public void ManyGet()
         {
-            this.Workspace.Sync(Fixture.LoadData);
-            var session = new Session(this.Workspace);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
+            var session = this.Workspace.CreateSession();
 
             var koen = (Person)session.Get(1);
             var patrick = (Person)session.Get(2);
@@ -315,11 +315,11 @@ namespace Tests.Mock
         [Fact]
         public void ManySet()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session1 = new Session(this.Workspace);
+            var session1 = this.Workspace.CreateSession();
 
-            var session2 = new Session(this.Workspace);
+            var session2 = this.Workspace.CreateSession();
 
             var koen1 = session1.Get(1) as Person;
             var patrick1 = session1.Get(2) as Person;
@@ -364,9 +364,9 @@ namespace Tests.Mock
         [Fact]
         public void ManySaveWithExistingObjects()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session = new Session(this.Workspace);
+            var session = this.Workspace.CreateSession();
 
             var koen = session.Get(1) as Person;
             var patrick = session.Get(2) as Person;
@@ -390,7 +390,7 @@ namespace Tests.Mock
             Assert.Equal("1101", savedAcme.V);
             Assert.Single(savedAcme.Roles);
 
-            var savedAcmeEmployees = savedAcme.Roles.First(v => v.T == M.Organisation.Employees.IdAsString);
+            var savedAcmeEmployees = savedAcme.Roles.First(v => v.T == M.Organisation.Employees.RelationType.IdAsString);
 
             Assert.Null(savedAcmeEmployees.S);
             Assert.Empty(savedAcmeEmployees.A);
@@ -403,7 +403,7 @@ namespace Tests.Mock
             Assert.Equal("1102", savedOcme.V);
             Assert.Single(savedOcme.Roles);
 
-            var savedOcmeEmployees = savedOcme.Roles.First(v => v.T == M.Organisation.Employees.IdAsString);
+            var savedOcmeEmployees = savedOcme.Roles.First(v => v.T == M.Organisation.Employees.RelationType.IdAsString);
 
             Assert.Null(savedOcmeEmployees.S);
             Assert.Equal(2, savedOcmeEmployees.A.Length);
@@ -418,7 +418,7 @@ namespace Tests.Mock
             Assert.Equal("1103", savedIcme.V);
             Assert.Single(savedIcme.Roles);
 
-            var savedIcmeEmployees = savedIcme.Roles.First(v => v.T == M.Organisation.Employees.IdAsString);
+            var savedIcmeEmployees = savedIcme.Roles.First(v => v.T == M.Organisation.Employees.RelationType.IdAsString);
 
             Assert.Null(savedIcmeEmployees.S);
             Assert.Equal(3, savedIcmeEmployees.A.Length);
@@ -431,9 +431,9 @@ namespace Tests.Mock
         [Fact]
         public void ManySaveWithNewObjects()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session = new Session(this.Workspace);
+            var session = this.Workspace.CreateSession();
 
             var martien = session.Get(3) as Person;
 
@@ -461,10 +461,10 @@ namespace Tests.Mock
                 Assert.Equal(M.Person.Class.IdAsString, savedMathijs.T);
                 Assert.Equal(2, savedMathijs.Roles.Length);
 
-                var savedMathijsFirstName = savedMathijs.Roles.First(v => v.T == M.Person.FirstName.IdAsString);
+                var savedMathijsFirstName = savedMathijs.Roles.First(v => v.T == M.Person.FirstName.RelationType.IdAsString);
                 Assert.Equal("Mathijs", savedMathijsFirstName.S);
 
-                var savedMathijsLastName = savedMathijs.Roles.First(v => v.T == M.Person.LastName.IdAsString);
+                var savedMathijsLastName = savedMathijs.Roles.First(v => v.T == M.Person.LastName.RelationType.IdAsString);
                 Assert.Equal("Verwer", savedMathijsLastName.S);
             }
 
@@ -474,11 +474,11 @@ namespace Tests.Mock
                 Assert.Equal(M.Organisation.Class.IdAsString, savedAcme2.T);
                 Assert.Equal(3, savedAcme2.Roles.Length);
 
-                var savedAcme2Manager = savedAcme2.Roles.First(v => v.T == M.Organisation.Manager.IdAsString);
+                var savedAcme2Manager = savedAcme2.Roles.First(v => v.T == M.Organisation.Manager.RelationType.IdAsString);
 
                 Assert.Equal(mathijs.NewId.ToString(), savedAcme2Manager.S);
 
-                var savedAcme2Employees = savedAcme2.Roles.First(v => v.T == M.Organisation.Employees.IdAsString);
+                var savedAcme2Employees = savedAcme2.Roles.First(v => v.T == M.Organisation.Employees.RelationType.IdAsString);
 
                 Assert.Null(savedAcme2Employees.S);
                 Assert.Contains(mathijs.NewId?.ToString(), savedAcme2Employees.A);
@@ -491,11 +491,11 @@ namespace Tests.Mock
                 Assert.Equal(M.Organisation.Class.IdAsString, savedAcme3.T);
                 Assert.Equal(3, savedAcme3.Roles.Length);
 
-                var savedAcme3Manager = savedAcme3.Roles.First(v => v.T == M.Organisation.Manager.IdAsString);
+                var savedAcme3Manager = savedAcme3.Roles.First(v => v.T == M.Organisation.Manager.RelationType.IdAsString);
 
                 Assert.Equal("3", savedAcme3Manager.S);
 
-                var savedAcme3Employees = savedAcme3.Roles.First(v => v.T == M.Organisation.Employees.IdAsString);
+                var savedAcme3Employees = savedAcme3.Roles.First(v => v.T == M.Organisation.Employees.RelationType.IdAsString);
 
                 Assert.Null(savedAcme3Employees.S);
                 Assert.Contains("3", savedAcme3Employees.A);
@@ -506,9 +506,9 @@ namespace Tests.Mock
         [Fact]
         public void SyncWithNewObjects()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session = new Session(this.Workspace);
+            var session = this.Workspace.CreateSession();
 
             var martien = session.Get(3) as Person;
 
@@ -541,9 +541,9 @@ namespace Tests.Mock
         [Fact]
         public void Onsaved()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session = new Session(this.Workspace);
+            var session = this.Workspace.CreateSession();
 
             var pushResponse = new PushResponse();
 
@@ -605,9 +605,9 @@ namespace Tests.Mock
         [Fact]
         public void Get()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
-            var session = new Session(this.Workspace);
+            var session = this.Workspace.CreateSession();
 
             var acme = (Organisation)session.Create(M.Organisation.Class);
 

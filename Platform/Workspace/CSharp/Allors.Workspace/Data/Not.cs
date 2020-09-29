@@ -5,8 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    using System.Collections.Generic;
-
     using Allors.Protocol.Data;
 
     public class Not : ICompositePredicate

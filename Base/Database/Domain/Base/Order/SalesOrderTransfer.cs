@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class SalesOrderTransfer
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)

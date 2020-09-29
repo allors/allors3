@@ -9,10 +9,10 @@ namespace Allors.Repository
     using Allors.Repository.Attributes;
     using static Workspaces;
 
-
     #region Allors
     [Id("3a5dcec7-308f-48c7-afee-35d38415aa0b")]
     #endregion
+    [Workspace(Default)]
     public partial class Organisation : Addressable, Deletable, UniquelyIdentifiable
     {
         #region inherited properties

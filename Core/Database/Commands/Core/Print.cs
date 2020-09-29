@@ -8,7 +8,6 @@ namespace Commands
     using System;
     using Allors;
     using Allors.Domain;
-    using Allors.Meta;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 

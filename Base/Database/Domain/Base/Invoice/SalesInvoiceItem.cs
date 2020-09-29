@@ -6,9 +6,6 @@
 namespace Allors.Domain
 {
     using System;
-    using System.Text;
-    using Allors.Meta;
-    using Resources;
 
     public partial class SalesInvoiceItem
     {

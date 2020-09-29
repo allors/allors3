@@ -55,6 +55,16 @@ namespace Allors.Meta
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
+        public IReadOnlyDictionary<string, IEnumerable<RoleClass>> WorkspaceRoleClassesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v, v => this.RoleClassByAssociationTypeClass.Values.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
         public Guid Id { get; }
 
         public string IdAsString { get; }

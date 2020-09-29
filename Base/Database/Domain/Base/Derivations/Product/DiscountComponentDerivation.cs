@@ -10,7 +10,6 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
     public class DiscountComponentDerivation : DomainDerivation
     {

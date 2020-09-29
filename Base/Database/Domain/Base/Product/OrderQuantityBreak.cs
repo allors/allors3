@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class OrderQuantityBreak
     {
         public void BaseOnDerive(ObjectOnDerive method)

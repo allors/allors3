@@ -8,12 +8,12 @@ namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
 
     #region Allors
     [Id("45033ae6-85b5-4ced-87ce-02518e6c27fd")]
     #endregion
+    [Workspace(Default)]
     public partial class Locale : Object
     {
         #region inherited properties

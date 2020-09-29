@@ -7,7 +7,6 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
     public class WorkEffortPartyAssignmentTests : DomainTest, IClassFixture<Fixture>

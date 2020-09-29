@@ -9,7 +9,6 @@ namespace Allors.Database.Adapters.SqlClient
     using Allors;
     using Adapters;
     using Allors.Domain;
-    using Allors.Meta;
     using Xunit;
 
     public class SqlClientTest : IDisposable, IClassFixture<Fixture<SqlClientTest>>

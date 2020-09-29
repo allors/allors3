@@ -164,7 +164,7 @@ namespace Allors.Server
             {
                 var composite = (Composite)obj.Strategy.Class;
                 // TODO: Cach
-                var roleTypes = composite.RoleTypes.Where(v => v.Workspace);
+                var roleTypes = composite.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
                 var acl = this.acls[obj];
 
                 var roleType = (IRoleType)this.metaPopulation.Find(Guid.Parse(pushRequestRole.T));

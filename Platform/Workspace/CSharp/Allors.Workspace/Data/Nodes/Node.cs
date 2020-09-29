@@ -5,10 +5,12 @@
 
 namespace Allors.Workspace.Data
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using Allors.Workspace.Meta;
+    using Protocol.Data;
 
     public class Node
     {
@@ -40,7 +42,21 @@ namespace Allors.Workspace.Data
         {
             var data = new Protocol.Data.Node
             {
-                PropertyType = this.PropertyType.Id,
+                PropertyType = this.PropertyType switch
+                {
+                    IAssociationType associationType => new PropertyType
+                    {
+                        RelationType = associationType.RelationType.Id,
+                        Kind = PropertyKind.Association,
+                    },
+                    IRoleType roleType => new PropertyType
+                    {
+                        RelationType = roleType.RelationType.Id,
+                        Kind = PropertyKind.Role,
+                    },
+                    _ => throw new Exception($"Unknown property type {this.PropertyType}"),
+                },
+
                 Nodes = this.Nodes.Select(v => v.ToData()).ToArray(),
             };
 

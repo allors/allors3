@@ -8,12 +8,12 @@ namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
 
     #region Allors
     [Id("6c20422e-cb3e-4402-bb40-dacaf584405e")]
     #endregion
+    [Workspace(Default)]
     public partial class MediaContent : Deletable, Object
     {
         #region inherited properties

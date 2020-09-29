@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Linq;
-
     public partial class SalesOrderItemInventoryAssignment
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)

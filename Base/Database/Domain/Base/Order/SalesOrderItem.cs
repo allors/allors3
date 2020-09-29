@@ -6,11 +6,6 @@
 namespace Allors.Domain
 {
     using System;
-    using Resources;
-    using System.Linq;
-    using Allors.Meta;
-    using System.Text;
-    using System.Collections.Generic;
 
     public partial class SalesOrderItem
     {

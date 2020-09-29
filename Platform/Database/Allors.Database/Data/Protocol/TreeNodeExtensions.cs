@@ -5,8 +5,6 @@
 
 namespace Allors.Protocol.Data
 {
-    using Allors.Meta;
-
     public static class TreeNodeExtensions
     {
         public static void Load(this Node @this, ISession session, Allors.Data.Node node)

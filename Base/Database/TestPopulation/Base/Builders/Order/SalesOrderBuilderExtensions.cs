@@ -8,7 +8,6 @@ namespace Allors.Domain.TestPopulation
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
 
     public static partial class SalesOrderBuilderExtensions
     {

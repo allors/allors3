@@ -9,7 +9,6 @@ namespace Allors.Domain
     using System;
     using System.Linq;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Resources;
     using Xunit;
 

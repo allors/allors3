@@ -6,8 +6,6 @@
 
 namespace Allors.Meta
 {
-    using System;
-
     public sealed partial class RoleInterface : RoleType, IRoleInterface
     {
         private ObjectType objectType;

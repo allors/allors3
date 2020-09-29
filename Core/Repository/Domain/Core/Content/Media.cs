@@ -10,12 +10,12 @@ namespace Allors.Repository
 
     using Allors.Repository.Attributes;
     using static Workspaces;
-    using static Workspaces;
 
 
     #region Allors
     [Id("da5b86a3-4f33-4c0d-965d-f4fbc1179374")]
     #endregion
+    [Workspace(Default)]
     public partial class Media : UniquelyIdentifiable, Deletable, Object
     {
         #region inherited properties

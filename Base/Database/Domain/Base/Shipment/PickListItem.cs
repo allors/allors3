@@ -5,10 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Linq;
-    using Allors.Meta;
-    using Resources;
-
     public partial class PickListItem
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)

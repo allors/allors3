@@ -6,8 +6,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     /// <summary>
     /// A Place is a fysical location somewhere on earth, defined as a postalcode/city and a country.
     /// </summary>

@@ -18,7 +18,7 @@ namespace Tests.Mock
         [Fact]
         public void Load()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
 
             object Value(IWorkspaceObject @object, IRoleType roleType) => @object.Roles.First(v => v.RoleType == roleType).Value;
 
@@ -37,7 +37,7 @@ namespace Tests.Mock
         [Fact]
         public void Diff()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -57,7 +57,7 @@ namespace Tests.Mock
         [Fact]
         public void DiffVersion()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -79,7 +79,7 @@ namespace Tests.Mock
         [Fact]
         public void DiffAccessControl()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -101,7 +101,7 @@ namespace Tests.Mock
         [Fact]
         public void DiffChangeDeniedPermission()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -123,7 +123,7 @@ namespace Tests.Mock
         [Fact]
         public void DiffAddDeniedPermission()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -145,7 +145,7 @@ namespace Tests.Mock
         [Fact]
         public void DiffRemoveDeniedPermission()
         {
-            this.Workspace.Sync(Fixture.LoadData);
+            this.Workspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =

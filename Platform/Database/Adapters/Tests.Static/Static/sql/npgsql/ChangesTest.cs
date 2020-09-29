@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    using System;
     using Adapters;
     using Xunit;
 

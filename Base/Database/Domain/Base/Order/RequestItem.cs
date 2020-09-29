@@ -3,12 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using Resources;
-
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class RequestItem
     {
         // TODO: Cache

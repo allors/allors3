@@ -7,7 +7,6 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Bogus;
     using Xunit;
 
     [Trait("Category", "Security")]
