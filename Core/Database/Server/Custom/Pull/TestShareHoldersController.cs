@@ -16,10 +16,10 @@ namespace Allors.Server.Controllers
 
     public class TestShareHoldersController : Controller
     {
-        public TestShareHoldersController(ISessionService sessionService, ITreeService treeService)
+        public TestShareHoldersController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
-            this.TreeService = treeService;
+            this.TreeService = this.Session.Database.Scope().TreeService;
         }
 
         private ISession Session { get; }

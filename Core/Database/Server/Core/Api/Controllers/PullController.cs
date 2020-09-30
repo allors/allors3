@@ -19,13 +19,16 @@ namespace Allors.Server.Controllers
     [Route("allors/pull")]
     public class PullController : ControllerBase
     {
-        public PullController(IDatabaseService databaseService, IPolicyService policyService, IExtentService extentService, IFetchService fetchService, ITreeService treeService, ILogger<PullController> logger)
+        public PullController(IDatabaseService databaseService, IPolicyService policyService, ILogger<PullController> logger)
         {
             this.DatabaseService = databaseService;
             this.PolicyService = policyService;
-            this.ExtentService = extentService;
-            this.FetchService = fetchService;
-            this.TreeService = treeService;
+
+            var scope = this.DatabaseService.Database.Scope();
+
+            this.ExtentService = scope.ExtentService;
+            this.FetchService = scope.FetchService;
+            this.TreeService = scope.TreeService;
             this.Logger = logger;
         }
 

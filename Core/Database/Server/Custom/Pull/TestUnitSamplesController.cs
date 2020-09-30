@@ -16,10 +16,10 @@ namespace Allors.Server.Controllers
 
     public class TestUnitSamplesController : Controller
     {
-        public TestUnitSamplesController(ISessionService sessionService, ITreeService treeService)
+        public TestUnitSamplesController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
-            this.TreeService = treeService;
+            this.TreeService = this.Session.Database.Scope().TreeService;
         }
 
         private ISession Session { get; }

@@ -29,6 +29,8 @@ namespace Allors
             {
                 this.User = (User)session.Instantiate(userId) ?? new AutomatedAgents(session).Guest;
             }
+
+            this.User ??= new AutomatedAgents(session).Guest;
         }
 
         public void Dispose()

@@ -7,6 +7,7 @@ namespace Allors.Workspace
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Allors.Protocol.Remote.Pull;
     using Allors.Protocol.Remote.Sync;
@@ -34,8 +35,10 @@ namespace Allors.Workspace
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
+
+            this.Lifecycle.OnInit(this);
         }
-        
+
         public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
@@ -139,7 +142,10 @@ namespace Allors.Workspace
                 {
                     var id = long.Parse(syncResponsePermission[0]);
                     var @class = (IClass)this.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponsePermission[1]));
-                    var operandType = (IOperandType)this.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponsePermission[2]));
+                    var metaObject = this.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponsePermission[2]));
+                    IOperandType operandType = (metaObject as IRelationType)?.RoleType;
+                    operandType ??= metaObject as IMethodType;
+                    
                     Enum.TryParse(syncResponsePermission[3], out Operations operation);
 
                     var permission = new Permission(id, @class, operandType, operation);

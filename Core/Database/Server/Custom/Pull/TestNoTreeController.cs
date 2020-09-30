@@ -13,10 +13,10 @@ namespace Allors.Server.Controllers
 
     public class TestNoTreeController : Controller
     {
-        public TestNoTreeController(ISessionService sessionService, ITreeService treeService)
+        public TestNoTreeController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
-            this.TreeService = treeService;
+            this.TreeService = this.Session.Database.Scope().TreeService;
         }
 
         private ISession Session { get; }

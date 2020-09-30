@@ -14,10 +14,10 @@ namespace Allors.Server.Controllers
 
     public class TestHomeController : Controller
     {
-        public TestHomeController(ISessionService sessionService, ITreeService treeService)
+        public TestHomeController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
-            this.TreeService = treeService;
+            this.TreeService = this.Session.Database.Scope().TreeService;
         }
 
         private ISession Session { get; }

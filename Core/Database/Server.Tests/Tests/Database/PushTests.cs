@@ -59,19 +59,19 @@ namespace Allors.Server.Tests
                 Objects = new[]
                 {
                     new PushRequestObject
-                {
-                                                                                  I = organisationId,
-                                                                                  V = organisationVersion,
-                                                                                  Roles = new[]
-                                                                                      {
-                                                                                          new PushRequestRole
-                                                                                              {
-                                                                                                  T = M.Organisation.Name.PropertyName,
-                                                                                                  S = "Acme"
-                                                                                              },
-                                                                                      },
-                                                                                  },
-                                                          },
+                    {
+                        I = organisationId,
+                        V = organisationVersion,
+                        Roles = new[]
+                        {
+                            new PushRequestRole
+                            {
+                              T = M.Organisation.Name.RelationType.IdAsString,
+                              S = "Acme"
+                            },
+                        },
+                    },
+                },
             };
             var response = await this.PostAsJsonAsync(uri, pushRequest);
 

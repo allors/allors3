@@ -130,7 +130,7 @@ namespace Allors.Workspace
             {
                 if (this.NewId == null)
                 {
-                    var workspaceRole = this.WorkspaceObject.Roles?.FirstOrDefault(v => v.RoleType == roleType);
+                    var workspaceRole = this.WorkspaceObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
                     if (workspaceRole?.Value != null)
                     {
                         if (roleType.ObjectType.IsUnit)
@@ -306,7 +306,7 @@ namespace Allors.Workspace
             {
                 if (this.NewId == null)
                 {
-                    var workspaceRole = this.WorkspaceObject.Roles?.FirstOrDefault(v => v.RoleType == roleType);
+                    var workspaceRole = this.WorkspaceObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
                     if (workspaceRole?.Value != null)
                     {
                         if (roleType.ObjectType.IsUnit)
@@ -372,7 +372,7 @@ namespace Allors.Workspace
                         }
                         else
                         {
-                            var workspaceRole = this.WorkspaceObject.Roles.FirstOrDefault(v => v.RoleType == roleType);
+                            var workspaceRole = this.WorkspaceObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
                             if (workspaceRole?.Value == null)
                             {
                                 pushRequestRole.A = roleIds;

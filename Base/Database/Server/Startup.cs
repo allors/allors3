@@ -36,12 +36,11 @@ namespace Allors.Server
             services.AddSingleton(this.Configuration);
 
             // Allors
-            services.AddAllors();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPolicyService, PolicyService>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddScoped<ISessionService, SessionService>();
             services.AddSingleton<IExtentService, ExtentService>();
-            /* Uncomment next line to enable derivation logging */
-            /* services.AddDerivationLogging(); */
 
             services.AddCors(options =>
             {
@@ -79,7 +78,7 @@ namespace Allors.Server
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
-            var databaseBuilder = new DatabaseBuilder(app.ApplicationServices, this.Configuration, new ObjectFactory(MetaPopulation.Instance, typeof(User)));
+            var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             databaseService.Database = databaseBuilder.Build();
             databaseService.Database.RegisterDerivations();
 

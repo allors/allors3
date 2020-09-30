@@ -17,7 +17,7 @@ namespace Allors.Workspace
         internal WorkspaceRole(IMetaPopulation metaPopulation, SyncResponseRole syncResponseRole)
         {
             var value = syncResponseRole.V;
-            this.RoleType = (IRoleType)metaPopulation.Find(Guid.Parse(syncResponseRole.T));
+            this.RoleType = ((IRelationType)metaPopulation.Find(Guid.Parse(syncResponseRole.T))).RoleType;
 
             var objectType = this.RoleType.ObjectType;
             if (objectType.IsUnit)

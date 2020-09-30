@@ -23,6 +23,8 @@ namespace Allors.Workspace
         {
             this.workspace = workspace;
             this.Lifecycle = scope;
+
+            this.Lifecycle.OnInit(this);
         }
 
         public bool HasChanges => this.newSessionObjectById.Count > 0 || this.sessionObjectById.Values.Any(v => v.HasChanges);

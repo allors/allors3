@@ -16,10 +16,10 @@ namespace Allors.Server.Controllers
 
     public class PeopleSheetController : Controller
     {
-        public PeopleSheetController(ISessionService sessionService, ITreeService treeService)
+        public PeopleSheetController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
-            this.TreeService = treeService;
+            this.TreeService = this.Session.Database.Scope().TreeService;
         }
 
         private ISession Session { get; }

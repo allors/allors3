@@ -16,10 +16,10 @@ namespace Allors.Server.Controllers
 
     public class OrganisationsController : Controller
     {
-        public OrganisationsController(ISessionService sessionService, ITreeService treeService)
+        public OrganisationsController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
-            this.TreeService = treeService;
+            this.TreeService = this.Session.Database.Scope().TreeService;
         }
 
         public ITreeService TreeService { get; }

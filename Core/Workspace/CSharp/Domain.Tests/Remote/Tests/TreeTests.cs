@@ -16,7 +16,7 @@ namespace Tests.Remote
     public class TreeTests : RemoteTest
     {
         [Fact]
-        public void Users()
+        public async void Users()
         {
             var context = new Context(this.Database, this.Workspace);
 
@@ -35,7 +35,7 @@ namespace Tests.Remote
                 },
             };
 
-            var result = context.Load(pull).Result;
+            var result = await context.Load(pull);
 
             var users = result.GetCollection<User>();
 

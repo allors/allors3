@@ -19,8 +19,6 @@ namespace Allors.Meta
     {
         private static readonly IReadOnlyDictionary<Class, RoleClass> EmptyRoleClassByAssociationTypeClass = new ReadOnlyDictionary<Class, RoleClass>(new Dictionary<Class, RoleClass>());
 
-        private string[] workspaceNames;
-
         private Multiplicity assignedMultiplicity;
         private Multiplicity multiplicity;
 
@@ -304,7 +302,10 @@ namespace Allors.Meta
             }
             else
             {
-                this.derivedRoleClassByAssociationTypeClass = EmptyRoleClassByAssociationTypeClass;
+                this.derivedRoleClassByAssociationTypeClass = new Dictionary<Class, RoleClass>
+                {
+                    {(Class)this.AssociationType.ObjectType, (RoleClass)this.RoleType}
+                };
             }
         }
 
