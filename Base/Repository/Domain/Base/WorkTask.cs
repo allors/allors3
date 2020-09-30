@@ -1,3 +1,4 @@
+
 // <copyright file="WorkTask.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
@@ -60,7 +61,15 @@ namespace Allors.Repository
 
         public decimal TotalCost { get; set; }
 
+        public decimal TotalLabourRevenue { get; set; }
+
+        public decimal TotalMaterialRevenue { get; set; }
+
+        public decimal TotalSubContractedRevenue { get; set; }
+
         public decimal TotalRevenue { get; set; }
+
+        public decimal GrandTotal { get; set; }
 
         public WorkEffort[] Precendencies { get; set; }
 
