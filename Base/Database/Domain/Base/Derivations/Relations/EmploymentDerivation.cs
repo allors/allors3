@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class EmploymentDerivation : IDomainDerivation
+    public class EmploymentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("F0587A19-E7CF-40FF-B715-5A6021525326");
+        public EmploymentDerivation(M m) : base(m, new Guid("F0587A19-E7CF-40FF-B715-5A6021525326")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.Employment.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.Employment.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var employment in matches.Cast<Employment>())
             {

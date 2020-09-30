@@ -5,15 +5,11 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class EngineeringChange
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.EngineeringChange, M.EngineeringChange.CurrentObjectState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.EngineeringChange, this.M.EngineeringChange.CurrentObjectState),
+        };
     }
 }

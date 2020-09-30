@@ -37,9 +37,9 @@ namespace Allors.Domain
             config.Deny(this.ObjectType, writtenOff, send, cancelInvoice, writeOff, credit, setPaid, delete, reopen);
             config.Deny(this.ObjectType, cancelled, send, cancelInvoice, writeOff, credit, setPaid, delete);
 
-            var except = new HashSet<IOperandType>
+            var except = new HashSet<OperandType>
             {
-                this.Meta.ElectronicDocuments.RoleType,
+                this.Meta.ElectronicDocuments,
                 this.Meta.Print,
                 this.Meta.Credit,
             };

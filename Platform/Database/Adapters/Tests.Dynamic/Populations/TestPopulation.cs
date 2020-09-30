@@ -234,7 +234,7 @@ namespace Allors.Database.Adapters
             this.C4B.S1234AllorsDateTime = new DateTime(2000, 1, 1, 0, 0, 4, DateTimeKind.Utc);
             this.C4C.S1234AllorsDateTime = new DateTime(2000, 1, 1, 0, 0, 5, DateTimeKind.Utc);
             this.C4D.S1234AllorsDateTime = new DateTime(2000, 1, 1, 0, 0, 5, DateTimeKind.Utc);
-            
+
             // Float
             this.C1B.C1AllorsDouble = 1;
             this.C1C.C1AllorsDouble = 2;

@@ -5,15 +5,11 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class CapitalBudget
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.CapitalBudget, M.CapitalBudget.BudgetState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[]{
+            new TransitionalConfiguration(this.M.CapitalBudget, this.M.CapitalBudget.BudgetState),
+        };
     }
 }

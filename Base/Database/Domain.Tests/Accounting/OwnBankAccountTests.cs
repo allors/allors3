@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class OwnBankAccountTests : DomainTest
+    public class OwnBankAccountTests : DomainTest, IClassFixture<Fixture>
     {
+        public OwnBankAccountTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOwnBankAccount_WhenDeriving_ThenBankAccountRelationMustExist()
         {

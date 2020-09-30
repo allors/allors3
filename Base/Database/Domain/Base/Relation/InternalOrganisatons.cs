@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class InternalOrganisations
     {
         protected override void BasePrepare(Setup setup)

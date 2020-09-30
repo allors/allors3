@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class CustomerReturnDerivation : IDomainDerivation
+    public class CustomerReturnDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("F43BD748-619E-4A3C-A002-21AD436EA764");
+        public CustomerReturnDerivation(M m) : base(m, new Guid("F43BD748-619E-4A3C-A002-21AD436EA764")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.CustomerReturn.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.CustomerReturn.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var customerReturn in matches.Cast<CustomerReturn>())
             {

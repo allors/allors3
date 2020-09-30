@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class SurchargeAdjustmentTests : DomainTest
+    public class SurchargeAdjustmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public SurchargeAdjustmentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSurchargeAdjustment_WhenDeriving_ThenRequiredRelationsMustExist()
         {

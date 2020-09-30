@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\Platform\Database\Allors.Meta\Meta*\**\*.cs" />
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
   </ItemGroup>
 

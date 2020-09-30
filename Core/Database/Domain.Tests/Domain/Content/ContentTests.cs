@@ -11,7 +11,7 @@ namespace Tests
 
     public abstract class ContentTests : DomainTest, IClassFixture<Fixture>
     {
-        protected ContentTests(Fixture fixture) : base(fixture) {}
+        protected ContentTests(Fixture fixture) : base(fixture) { }
 
         protected static byte[] GetByteArray() => GetByteArray("Some string");
 

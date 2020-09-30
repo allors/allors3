@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class LetterCorrespondence
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.LetterCorrespondence, M.LetterCorrespondence.CommunicationEventState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.LetterCorrespondence, this.M.LetterCorrespondence.CommunicationEventState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Letter to {this.ToParty.PartyName} about {this.Subject}";
     }

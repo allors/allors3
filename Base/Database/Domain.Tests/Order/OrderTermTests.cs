@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class OrderTermTests : DomainTest
+    public class OrderTermTests : DomainTest, IClassFixture<Fixture>
     {
+        public OrderTermTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOrderTerm_WhenDeriving_ThenDescriptionIsRequired()
         {

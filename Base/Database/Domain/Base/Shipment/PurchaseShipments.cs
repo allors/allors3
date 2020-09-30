@@ -18,9 +18,9 @@ namespace Allors.Domain
             var received = new ShipmentStates(this.Session).Received;
             var cancelled = new ShipmentStates(this.Session).Cancelled;
 
-            var except = new HashSet<IOperandType>
+            var except = new HashSet<OperandType>
             {
-                this.Meta.ElectronicDocuments.RoleType,
+                this.Meta.ElectronicDocuments,
             };
 
             config.Deny(this.ObjectType, cancelled, Operations.Execute, Operations.Write);

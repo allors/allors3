@@ -9,8 +9,6 @@ namespace Allors.Workspace
     using Allors.Protocol.Remote.Sync;
     using Allors.Workspace.Meta;
     using System.Linq;
-    using Domain;
-    using Protocol;
     using Protocol.Remote;
 
     public class WorkspaceObject : IWorkspaceObject

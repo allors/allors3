@@ -40,6 +40,10 @@ namespace Allors.Repository.Domain
 
         public abstract Interface[] Interfaces { get; }
 
+        public bool IsClass => this is Class;
+
+        public bool IsInterface => this is Interface;
+
         public Dictionary<string, Attribute> AttributeByName { get; }
 
         public Dictionary<string, Attribute[]> AttributesByName { get; }

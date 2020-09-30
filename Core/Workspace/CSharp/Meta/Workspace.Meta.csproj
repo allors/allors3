@@ -5,4 +5,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Platform\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Platform\Workspace\CSharp\Allors.Workspace.Meta\Meta*\**\*.cs" />
+  </ItemGroup>
 </Project>

@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public static partial class AgreementTermExtensions
     {
         public static void BaseOnDerive(this AgreementTerm @this, ObjectOnDerive method)

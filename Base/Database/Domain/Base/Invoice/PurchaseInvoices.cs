@@ -47,9 +47,9 @@ namespace Allors.Domain
                 config.Deny(this.ObjectType, revising, cancel, reject, approve, confirm, reopen, createSalesInvoice, delete, setPaid, revise);
             }
 
-            var except = new HashSet<IOperandType>
+            var except = new HashSet<OperandType>
             {
-                this.Meta.ElectronicDocuments.RoleType,
+                this.Meta.ElectronicDocuments,
                 this.Meta.Print,
             };
 

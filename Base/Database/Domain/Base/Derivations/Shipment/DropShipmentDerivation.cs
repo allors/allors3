@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class DropShipmentDerivation : IDomainDerivation
+    public class DropShipmentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("1B7E3857-425A-4946-AB63-15AEE196350D");
+        public DropShipmentDerivation(M m) : base(m, new Guid("1B7E3857-425A-4946-AB63-15AEE196350D")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.DropShipment.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.DropShipment.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var dropShipment in matches.Cast<DropShipment>())
             {

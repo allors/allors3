@@ -6,8 +6,6 @@
 namespace Allors
 {
     using System;
-    using System.Collections.Generic;
-
     using Allors.Meta;
 
     public abstract class ObjectBuilder : IObjectBuilder

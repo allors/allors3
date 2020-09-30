@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class PurchaseInvoiceApprovalDerivation : IDomainDerivation
+    public class PurchaseInvoiceApprovalDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("5F1021C3-39B5-4BAB-936D-F7203F04281F");
+        public PurchaseInvoiceApprovalDerivation(M m) : base(m, new Guid("5F1021C3-39B5-4BAB-936D-F7203F04281F")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.PurchaseInvoiceApproval.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[]
-        {
-            new CreatedPattern(M.PurchaseInvoiceApproval.Class)
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var purchaseInvoiceApproval in matches.Cast<PurchaseInvoiceApproval>())
             {

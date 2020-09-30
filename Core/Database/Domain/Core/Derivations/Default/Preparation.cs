@@ -26,7 +26,7 @@ namespace Allors.Domain.Derivations.Default
             // Initialization
             if (domainAccumulatedChangeSet == null && changeSet.Created.Any())
             {
-                var newObjects = changeSet.Created.Select(v=>(Object)v.GetObject());
+                var newObjects = changeSet.Created.Select(v => (Object)v.GetObject());
                 foreach (var newObject in newObjects)
                 {
                     newObject.OnInit();
@@ -36,7 +36,7 @@ namespace Allors.Domain.Derivations.Default
             // ChangedObjects
             var changedObjectIds = new HashSet<long>(changeSet.Associations);
             changedObjectIds.UnionWith(changeSet.Roles);
-            changedObjectIds.UnionWith(changeSet.Created.Select(v=>v.ObjectId));
+            changedObjectIds.UnionWith(changeSet.Created.Select(v => v.ObjectId));
 
             this.Objects = new HashSet<Object>(derivation.Session.Instantiate(changedObjectIds).Cast<Object>());
             this.Objects.ExceptWith(this.Iteration.Cycle.Derivation.DerivedObjects);

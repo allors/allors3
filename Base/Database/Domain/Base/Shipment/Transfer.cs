@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Transfer
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.Transfer, M.Transfer.ShipmentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.Transfer, this.M.Transfer.ShipmentState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

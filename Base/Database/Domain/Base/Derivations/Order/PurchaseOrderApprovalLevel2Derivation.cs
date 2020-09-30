@@ -8,17 +8,17 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
-    public class PurchaseOrderApprovalLevel2Derivation : IDomainDerivation
+    public class PurchaseOrderApprovalLevel2Derivation : DomainDerivation
     {
-        public Guid Id => new Guid("5AE4FAD8-8BF0-4EB0-8051-5564E874ED10");
+        public PurchaseOrderApprovalLevel2Derivation(M m) : base(m, new Guid("5AE4FAD8-8BF0-4EB0-8051-5564E874ED10")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.PurchaseOrderApprovalLevel2.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.PurchaseOrderApprovalLevel2.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var purchaseOrderApprovalLevel2 in matches.Cast<PurchaseOrderApprovalLevel2>())
             {

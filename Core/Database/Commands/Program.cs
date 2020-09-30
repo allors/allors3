@@ -17,7 +17,6 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
 
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
     using NLog;
     using ObjectFactory = Allors.ObjectFactory;
 
@@ -70,15 +69,16 @@ namespace Commands
         }
 
         public DirectoryInfo DataPath => new DirectoryInfo(".").GetAncestorSibling(this.Configuration["datapath"]);
-        
+
         public IDatabase Database
         {
             get
             {
                 if (this.database == null)
                 {
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
-                    this.database =  databaseBuilder.Build();
+                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
+                    this.database = databaseBuilder.Build();
+                    this.database.RegisterDerivations();
                 }
 
                 return this.database;

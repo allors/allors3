@@ -6,7 +6,6 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
 
     public partial class Proposal
     {
@@ -16,12 +15,10 @@ namespace Allors.Domain
              || this.QuoteState.Equals(new QuoteStates(this.Strategy.Session).Rejected))
          && this.QuoteItems.All(v => v.IsDeletable);
 
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.Proposal, M.Proposal.QuoteState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.Proposal, this.M.Proposal.QuoteState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
 

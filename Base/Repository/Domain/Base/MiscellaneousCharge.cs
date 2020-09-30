@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0be4eedc-a33a-4ded-9c30-5798851b3a3f")]
@@ -37,22 +38,18 @@ namespace Allors.Repository
         #region Versioning
         #region Allors
         [Id("276bfe6d-ac6c-4036-9849-51f50ddb8d55")]
-        [AssociationId("c42f941b-a6e2-49f2-b5d5-ae86b3d52493")]
-        [RoleId("70b54993-cf19-4f33-ba59-bbe8c6ccaa6a")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public MiscellaneousChargeVersion CurrentVersion { get; set; }
 
         #region Allors
         [Id("c948d6ae-6a64-41de-b86d-3d194cfccebf")]
-        [AssociationId("8fb40421-a4de-48c9-ad2f-fd87113868c8")]
-        [RoleId("f12ab47e-143e-448b-b9f1-16ca4b786c6f")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public MiscellaneousChargeVersion[] AllVersions { get; set; }
         #endregion
 

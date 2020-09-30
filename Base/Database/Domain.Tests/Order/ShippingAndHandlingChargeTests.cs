@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class ShippingAndHandlingChargeTests : DomainTest
+    public class ShippingAndHandlingChargeTests : DomainTest, IClassFixture<Fixture>
     {
+        public ShippingAndHandlingChargeTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenShippingAndHandlingCharge_WhenDeriving_ThenRequiredRelationsMustExist()
         {

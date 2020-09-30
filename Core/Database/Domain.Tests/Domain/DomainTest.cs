@@ -21,7 +21,7 @@ namespace Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseScope(), 
+                new DefaultDatabaseScope(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),

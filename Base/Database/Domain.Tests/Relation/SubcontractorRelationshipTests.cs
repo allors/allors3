@@ -10,14 +10,14 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class SubContractorRelationshipTests : DomainTest
+    public class SubContractorRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
         private Person contact;
         private Organisation subcontractor;
         private SubContractorRelationship subContractorRelationship;
         private OrganisationContactRelationship organisationContactRelationship;
 
-        public SubContractorRelationshipTests()
+        public SubContractorRelationshipTests(Fixture fixture) : base(fixture)
         {
             this.subcontractor = this.InternalOrganisation.CreateSubContractor(this.Session.Faker());
 

@@ -7,6 +7,18 @@ namespace Allors.Domain
 {
     public static partial class SessionExtension
     {
-        public static Singleton GetSingleton(this ISession @this) => (Singleton)@this.Instantiate(@this.Database.Scope().SingletonService.Id);
+        public static Singleton GetSingleton(this ISession @this)
+        {
+            var singletonService = @this.Database.Scope().SingletonService;
+
+            var singleton = (Singleton)@this.Instantiate(singletonService.Id);
+            if (singleton == null)
+            {
+                singleton = new Singletons(@this).Extent().First;
+                singletonService.Id = singleton?.Id ?? 0;
+            }
+
+            return singleton;
+        }
     }
 }

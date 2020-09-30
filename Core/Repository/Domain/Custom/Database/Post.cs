@@ -22,8 +22,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("D8714378-149D-4E4B-8A18-0D8622BCD32D")]
-        [AssociationId("65E038C6-FE61-4B34-9BF3-39F12FBA62FB")]
-        [RoleId("5CA8FB0F-D756-4F3B-A85E-DA610F8CECD6")]
         #endregion
         [Required]
         public int Counter { get; set; }

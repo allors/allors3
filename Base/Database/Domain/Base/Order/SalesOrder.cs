@@ -6,25 +6,19 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
     using Allors.Services;
-    using Microsoft.Extensions.DependencyInjection;
-    using Resources;
 
     public partial class SalesOrder
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderState),
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderShipmentState),
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderInvoiceState),
-                new TransitionalConfiguration(M.SalesOrder, M.SalesOrder.SalesOrderPaymentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderState),
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderShipmentState),
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderInvoiceState),
+            new TransitionalConfiguration(this.M.SalesOrder, this.M.SalesOrder.SalesOrderPaymentState),
+        };
 
         public int PaymentNetDays
         {
@@ -509,13 +503,13 @@ namespace Allors.Domain
         //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reject, Operations.Execute));
         //        this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Cancel, Operations.Execute));
 
-        //        var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+        //        var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
         //        foreach (Permission permission in this.Session().Extent<Permission>())
         //        {
         //            if (permission.ConcreteClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
         //            {
-        //                deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+        //                deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
         //            }
         //        }
 
@@ -545,7 +539,7 @@ namespace Allors.Domain
         {
             if (this.IsDeletable)
             {
-                foreach(OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
@@ -564,7 +558,7 @@ namespace Allors.Domain
 
         public void BaseCancel(OrderCancel method) => this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Cancelled;
 
-        public void BaseSetReadyForPosting(SalesOrderSetReadyForPosting  method)
+        public void BaseSetReadyForPosting(SalesOrderSetReadyForPosting method)
         {
             var orderThreshold = this.Store.OrderThreshold;
             var partyFinancial = this.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, this.TakenBy));
@@ -748,7 +742,7 @@ namespace Allors.Domain
                     .WithCurrency(this.Currency)
                     .Build();
 
-                foreach(OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
                 {
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -868,7 +862,7 @@ namespace Allors.Domain
                 if (this.ExistOrderNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

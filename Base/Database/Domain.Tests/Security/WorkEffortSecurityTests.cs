@@ -6,12 +6,13 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
     [Trait("Category", "Security")]
-    public class WorkEffortSecurityTests : DomainTest
+    public class WorkEffortSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public WorkEffortSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

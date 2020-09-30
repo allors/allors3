@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class PriceComponentDerivation : IDomainDerivation
+    public class PriceComponentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028");
-
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
+        public PriceComponentDerivation(M m) : base(m, new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028")) =>
+            this.Patterns = new Pattern[]
+            {
                 new CreatedPattern(M.PriceComponent.Interface),
-        };
+            };
 
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var priceComponentExtensions in matches.Cast<PriceComponent>())
             {

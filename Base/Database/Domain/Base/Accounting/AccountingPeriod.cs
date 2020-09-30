@@ -7,16 +7,12 @@ namespace Allors.Domain
 {
     using System.Text;
 
-    using Allors.Meta;
-
     public partial class AccountingPeriod
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.AccountingPeriod, M.AccountingPeriod.BudgetState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[]{
+            new TransitionalConfiguration(this.M.AccountingPeriod, this.M.AccountingPeriod.BudgetState),
+        };
 
         public AccountingPeriod AddNextMonth() => this.BaseAddNextMonth();
 
@@ -51,7 +47,7 @@ namespace Allors.Domain
         {
             var allPeriods = new AccountingPeriods(this.Strategy.Session).Extent();
             allPeriods.Filter.AddEquals(this.Meta.Frequency, new TimeFrequencies(this.Strategy.Session).Month);
-            allPeriods.AddSort(this.Meta.FromDate.RoleType, SortDirection.Descending);
+            allPeriods.AddSort(this.Meta.FromDate, SortDirection.Descending);
 
             var mostRecentMonth = allPeriods.First;
 

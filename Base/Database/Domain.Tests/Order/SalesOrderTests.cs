@@ -8,12 +8,12 @@ namespace Allors.Domain
 {
     using System.Linq;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
-
     using Xunit;
 
-    public class SalesOrderTests : DomainTest
+    public class SalesOrderTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesOrderTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSalesOrderBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
@@ -2715,8 +2715,10 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class SalesOrderSecurityTests : DomainTest
+    public class SalesOrderSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesOrderSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

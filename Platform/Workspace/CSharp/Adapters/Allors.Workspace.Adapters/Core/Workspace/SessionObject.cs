@@ -9,11 +9,9 @@ namespace Allors.Workspace
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Sockets;
     using Allors.Protocol.Remote.Push;
     using Allors.Workspace.Meta;
     using Domain;
-    using Protocol;
     using Protocol.Data;
 
     public class SessionObject : ISessionObject
@@ -351,7 +349,7 @@ namespace Allors.Workspace
                 var roleType = keyValuePair.Key;
                 var roleValue = keyValuePair.Value;
 
-                var pushRequestRole = new PushRequestRole { T = roleType.IdAsString };
+                var pushRequestRole = new PushRequestRole { T = roleType.RelationType.IdAsString };
 
                 if (roleType.ObjectType.IsUnit)
                 {

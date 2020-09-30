@@ -9,12 +9,13 @@ namespace Allors.Domain
     using System;
     using System.Linq;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Resources;
     using Xunit;
 
-    public class SalesInvoiceTests : DomainTest
+    public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesInvoiceTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSalesInvoice_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
@@ -1072,8 +1073,10 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class SalesInvoiceSecurityTests : DomainTest
+    public class SalesInvoiceSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public SalesInvoiceSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
-    using System;
     using Xunit;
 
     public class One2OneTest : Adapters.One2OneTest, IClassFixture<Fixture<One2OneTest>>

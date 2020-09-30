@@ -28,6 +28,8 @@ namespace Tests.Remote
 
         public RemoteDatabase Database { get; set; }
 
+        public M M { get; }
+
         public RemoteTest()
         {
             var client = new HttpClient()
@@ -36,9 +38,10 @@ namespace Tests.Remote
             };
 
             this.Database = new RemoteDatabase(client);
+            var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
+            this.Workspace = new Workspace(objectFactory, new WorkspaceScope());
 
-            var objectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(User));
-            this.Workspace = new Workspace(objectFactory);
+            this.M = this.Workspace.Scope().M;
 
             this.Init();
         }

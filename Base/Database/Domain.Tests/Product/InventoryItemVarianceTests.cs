@@ -6,12 +6,13 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using System.Linq;
     using Xunit;
 
-    public class InventoryItemTransactionTests : DomainTest
+    public class InventoryItemTransactionTests : DomainTest, IClassFixture<Fixture>
     {
+        public InventoryItemTransactionTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenInventoryItem_WhenPositiveVariance_ThenQuantityOnHandIsRaised()
         {

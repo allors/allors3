@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class CommunicationEventTests : DomainTest
+    public class CommunicationEventTests : DomainTest, IClassFixture<Fixture>
     {
+        public CommunicationEventTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenCommunicationEvent_WhenInProgress_ThenCurrentObjectStateIsInProgress()
         {

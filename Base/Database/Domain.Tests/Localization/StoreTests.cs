@@ -9,11 +9,12 @@
 namespace Allors.Domain
 {
     using System;
-    using Allors.Meta;
     using Xunit;
 
-    public class StoreTests : DomainTest
+    public class StoreTests : DomainTest, IClassFixture<Fixture>
     {
+        public StoreTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenStore_WhenDeriving_ThenRequiredRelationsMustExist()
         {

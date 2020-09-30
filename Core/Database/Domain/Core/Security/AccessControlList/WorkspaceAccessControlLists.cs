@@ -36,7 +36,7 @@ namespace Allors.Domain
             }
         }
 
-         private Dictionary<AccessControl, HashSet<long>> EffectivePermissionsByAccessControl()
+        private Dictionary<AccessControl, HashSet<long>> EffectivePermissionsByAccessControl()
         {
             var session = this.User.Session();
 

@@ -14,8 +14,6 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using Xunit;
-
 namespace Allors.Database.Adapters
 {
     using System;
@@ -23,7 +21,6 @@ namespace Allors.Database.Adapters
     using System.Globalization;
     using System.Linq;
     using Allors;
-    using Adapters;
     using Allors.Meta;
     using Xunit;
 

@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class AgreementTest : DomainTest
+    public class AgreementTest : DomainTest, IClassFixture<Fixture>
     {
+        public AgreementTest(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenClientAgreement_WhenDeriving_ThenRequiredRelationsMustExist()
         {

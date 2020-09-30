@@ -6,11 +6,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
 
-    public class PaymentApplicationTests : DomainTest
+    public class PaymentApplicationTests : DomainTest, IClassFixture<Fixture>
     {
+        public PaymentApplicationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPaymentApplication_WhenDeriving_ThenRequiredRelationsMustExist()
         {

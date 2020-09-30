@@ -6,14 +6,13 @@
 
 namespace Allors.Domain
 {
-    using System;
     using Xunit;
 
-    public class SalesOrderPrintTests : DomainTest
+    public class SalesOrderPrintTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderPrintTests()
+        public SalesOrderPrintTests(Fixture fixture) : base(fixture)
         {
-          
+
         }
 
         //[Fact]

@@ -8,10 +8,8 @@ namespace Allors.Meta
 {
     using System;
 
-    public interface IObjectType : IMetaObject, IComparable
+    public interface IObjectType : IMetaObject, IMetaIdentity, IComparable
     {
-        string SingularName { get; }
-
         bool IsUnit { get; }
 
         bool IsComposite { get; }
@@ -19,6 +17,8 @@ namespace Allors.Meta
         bool IsInterface { get; }
 
         bool IsClass { get; }
+
+        string SingularName { get; }
 
         string Name { get; }
 

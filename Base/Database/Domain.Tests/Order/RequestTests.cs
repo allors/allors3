@@ -7,14 +7,12 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Domain.Derivations.Default;
-    using Allors.Domain.TestPopulation;
-    using Allors.Meta;
-    using Bogus.DataSets;
     using Xunit;
 
-    public class RequestTests : DomainTest
+    public class RequestTests : DomainTest, IClassFixture<Fixture>
     {
+        public RequestTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenIssuerWithoutRequestNumberPrefix_WhenDeriving_ThenSortableRequestNumberIsSet()
         {

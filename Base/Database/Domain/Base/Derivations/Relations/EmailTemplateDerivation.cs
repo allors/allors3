@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class EmailTemplateDerivation : IDomainDerivation
+    public class EmailTemplateDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("334F4D84-D343-4FD7-9F74-2FF0617DE747");
+        public EmailTemplateDerivation(M m) : base(m, new Guid("334F4D84-D343-4FD7-9F74-2FF0617DE747")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.EmailTemplate.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.EmailTemplate.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (EmailTemplate emailTemplate in matches.Cast<EmailTemplate>())
             {

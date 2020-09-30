@@ -30,9 +30,9 @@ namespace Allors.Domain
             var ship = this.Meta.Ship;
             var delete = this.Meta.Delete;
 
-            var except = new HashSet<IOperandType>
+            var except = new HashSet<OperandType>
             {
-                this.Meta.ElectronicDocuments.RoleType,
+                this.Meta.ElectronicDocuments,
             };
 
             config.Deny(this.ObjectType, onHold, pick, setPacked, ship, hold, delete);

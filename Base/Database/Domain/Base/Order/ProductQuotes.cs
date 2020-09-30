@@ -27,7 +27,7 @@ namespace Allors.Domain
             var approve = this.Meta.Approve;
             var send = this.Meta.Send;
             var accept = this.Meta.Accept;
-            var revise= this.Meta.Revise;
+            var revise = this.Meta.Revise;
             var reopen = this.Meta.Reopen;
             var reject = this.Meta.Reject;
             var order = this.Meta.Order;
@@ -43,9 +43,9 @@ namespace Allors.Domain
             config.Deny(this.ObjectType, rejected, setReadyForProcessing, approve, reject, order, send, accept, cancel, revise);
             config.Deny(this.ObjectType, cancelled, setReadyForProcessing, cancel, reject, order, send, accept, approve, revise);
 
-            var except = new HashSet<IOperandType>
+            var except = new HashSet<OperandType>
             {
-                this.Meta.ElectronicDocuments.RoleType,
+                this.Meta.ElectronicDocuments,
                 this.Meta.Print,
             };
 

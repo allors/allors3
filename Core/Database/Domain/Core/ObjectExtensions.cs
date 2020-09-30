@@ -15,7 +15,7 @@ namespace Allors
         public static void CoreOnPostBuild(this Allors.Domain.Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
-            foreach (var concreteRoleType in ((Class)@this.Strategy.Class).RoleClasses)
+            foreach (var concreteRoleType in ((Class)@this.Strategy.Class).RoleTypes)
             {
                 if (concreteRoleType.IsRequired)
                 {
@@ -54,7 +54,7 @@ namespace Allors
         }
 
 
-        public static T Clone<T>(this T @this, params IRoleType[] deepClone) where T: IObject
+        public static T Clone<T>(this T @this, params IRoleType[] deepClone) where T : IObject
         {
             var strategy = @this.Strategy;
             var session = strategy.Session;
@@ -72,7 +72,7 @@ namespace Allors
                 }
             }
 
-            foreach(var roleType in deepClone)
+            foreach (var roleType in deepClone)
             {
                 var relationType = roleType.RelationType;
                 if (roleType.IsOne)
@@ -85,7 +85,7 @@ namespace Allors
                 }
                 else
                 {
-                    foreach(IObject role in strategy.GetCompositeRoles(relationType))
+                    foreach (IObject role in strategy.GetCompositeRoles(relationType))
                     {
                         clone.Strategy.AddCompositeRole(relationType, role.Clone());
                     }

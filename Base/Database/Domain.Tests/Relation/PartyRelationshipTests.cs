@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PartyRelationshipTests : DomainTest
+    public class PartyRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartyRelationshipTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOrganisationContactRelationship_WhenRelationshipPeriodIsNotValid_ThenContactIsNotInCustomerContactUserGroup()
         {

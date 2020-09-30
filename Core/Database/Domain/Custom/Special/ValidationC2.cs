@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class ValidationC2
     {
         public void CustomOnDerive(ObjectOnDerive method)

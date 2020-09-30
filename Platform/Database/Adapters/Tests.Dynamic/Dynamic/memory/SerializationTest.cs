@@ -24,9 +24,7 @@ namespace Allors.Database.Adapters.Memory
     using Allors;
     using Allors.Meta;
 
-    using Xunit;
 
-    
     public class SerializationTest : Adapters.SerializationTest
     {
         private readonly Profile profile = new Profile();

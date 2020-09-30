@@ -5,16 +5,16 @@
 
 namespace Allors.Domain.TestPopulation
 {
-    using Allors.Meta;
     using Bogus;
 
     public static partial class OrganisationBuilderExtensions
     {
         public static OrganisationBuilder WithDefaults(this OrganisationBuilder @this)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
-            var euCountry = new Countries(@this.Session).FindBy(M.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
+            var euCountry = new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
             @this.WithName(faker.Company.CompanyName());
             @this.WithEuListingState(euCountry);
@@ -74,10 +74,11 @@ namespace Allors.Domain.TestPopulation
 
         public static OrganisationBuilder WithInternalOrganisationDefaults(this OrganisationBuilder @this)
         {
+            var m = @this.Session.Database.Scope().M;
             var faker = @this.Session.Faker();
 
             var company = faker.Company;
-            var euCountry = new Countries(@this.Session).FindBy(M.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
+            var euCountry = new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
             @this.WithName(company.CompanyName());
             @this.WithEuListingState(euCountry);

@@ -25,14 +25,14 @@ namespace Allors.Database.Adapters.Memory
     {
         private IDatabase database;
         private IDatabase database2;
-      
+
         public override void Dispose()
         {
             base.Dispose();
             this.database = null;
             this.database2 = null;
         }
-        
+
         public override IDatabase GetDatabase() => this.database;
 
         public override IDatabase GetDatabase2() => this.database2;

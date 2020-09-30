@@ -6,10 +6,9 @@
 namespace Allors
 {
     using Bogus;
-    using Microsoft.Extensions.DependencyInjection;
 
     public static class SessionExtensions
     {
-        public static Faker Faker(this ISession @this) => @this.ServiceProvider.GetRequiredService<Faker>();
+        public static Faker Faker(this ISession @this) => ((dynamic)@this.Database.Scope()).Faker;
     }
 }

@@ -8,20 +8,18 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
     using Resources;
 
-    public class PickListItemDerivation : IDomainDerivation
+    public class PickListItemDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("7E5843FB-7D25-4D41-833B-077C1B83AAD1");
+        public PickListItemDerivation(M m) : base(m, new Guid("7E5843FB-7D25-4D41-833B-077C1B83AAD1")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.PickListItem.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.PickListItem.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var pickListItems in matches.Cast<PickListItem>())
             {

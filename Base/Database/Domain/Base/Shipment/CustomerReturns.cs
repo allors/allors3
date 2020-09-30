@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class CustomerReturns
     {
         protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.ShipmentState);

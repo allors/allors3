@@ -6,6 +6,8 @@
 namespace Allors.Repository
 {
     using Attributes;
+    using static Workspaces;
+
 
     #region Allors
     [Id("B34B917C-EB2D-49FE-B45E-C7C6F7FE5A6A")]
@@ -14,13 +16,11 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("CD884022-9A53-4E59-A466-FB76946CF3C6")]
-        [AssociationId("CD8AEEE3-1723-4339-8F6B-1FD6A1B83F82")]
-        [RoleId("7DEAC0DA-A10D-4B3A-8B28-E37FE3A105C3")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Size(-1)]
-        [Workspace]
-        string SearchString{ get; set; }
+        [Workspace(Default)]
+        string SearchString { get; set; }
     }
 }

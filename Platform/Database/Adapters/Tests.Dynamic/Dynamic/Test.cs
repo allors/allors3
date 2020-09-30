@@ -24,7 +24,6 @@ namespace Allors.Database.Adapters
     using System.Xml;
 
     using Allors;
-    using Adapters;
     using Allors.Meta;
 
     public abstract class Test : IDisposable
@@ -157,7 +156,7 @@ namespace Allors.Database.Adapters
         }
 
         public Class[] GetClasses(RelationType relationType) => ((Composite)relationType.RoleType.ObjectType).Classes.ToArray();
-        
+
         public RelationType[] GetBinaryRoles(Composite type)
         {
             var roleList = new List<RelationType>();

@@ -10,22 +10,21 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class SalesOrderTransferDerivation : IDomainDerivation
+    public class SalesOrderTransferDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("7E5895C6-712C-42F9-8B1C-964D8B8CBC1D");
+        public SalesOrderTransferDerivation(M m) : base(m, new Guid("7E5895C6-712C-42F9-8B1C-964D8B8CBC1D")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.SalesOrderTransfer.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.SalesOrderTransfer.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var salesOrderTransfer in matches.Cast<SalesOrderTransfer>())
             {
                 if (salesOrderTransfer.ExistFrom && salesOrderTransfer.ExistInternalOrganisation && !salesOrderTransfer.ExistTo)
                 {
-                    var acl = new AccessControlLists(cycle.Session.GetUser())[salesOrderTransfer.From];
+                    var acl = new AccessControlLists(cycle.Session.Scope().User)[salesOrderTransfer.From];
                     if (!acl.CanExecute(M.SalesOrder.DoTransfer))
                     {
                         cycle.Validation.AddError($"{salesOrderTransfer} {salesOrderTransfer.Meta.To} No rights to transfer salesorder");

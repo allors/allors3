@@ -116,15 +116,7 @@ namespace Allors
         /// </summary>
         /// <param name="extent">The extent.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator IObject[](Extent extent)
-        {
-            if (extent == null)
-            {
-                return null;
-            }
-
-            return extent.ToArray();
-        }
+        public static implicit operator IObject[](Extent extent) => extent?.ToArray();
 
         /// <summary>
         /// Adds an item to the <see cref="T:System.Collections.IList"></see>.

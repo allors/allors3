@@ -14,12 +14,14 @@ namespace Allors.Domain
     {
         public static void BaseMonthly(ISession session)
         {
+            var m = session.Database.Scope().M;
+
             var customers = new Parties(session).Extent();
-            customers.Filter.AddEquals(M.Party.CollectiveWorkEffortInvoice, true);
+            customers.Filter.AddEquals(m.Party.CollectiveWorkEffortInvoice, true);
 
             var workTasks = new WorkTasks(session).Extent();
-            workTasks.Filter.AddEquals(M.WorkEffort.WorkEffortState, new WorkEffortStates(session).Completed);
-            workTasks.Filter.AddContainedIn(M.WorkEffort.Customer, (Extent)customers);
+            workTasks.Filter.AddEquals(m.WorkEffort.WorkEffortState, new WorkEffortStates(session).Completed);
+            workTasks.Filter.AddContainedIn(m.WorkEffort.Customer, (Extent)customers);
 
             var workTasksByCustomer = workTasks.Select(v => v.Customer).Distinct()
                 .ToDictionary(v => v, v => v.WorkEffortsWhereCustomer.Where(w => w.WorkEffortState.Equals(new WorkEffortStates(session).Completed)).ToArray());
@@ -153,9 +155,9 @@ namespace Allors.Domain
             config.Deny(this.ObjectType, completed, cancel, reopen, complete);
             config.Deny(this.ObjectType, finished, cancel, reopen, complete, invoice, revise);
 
-            var except = new HashSet<IOperandType>
+            var except = new HashSet<OperandType>
             {
-                this.Meta.ElectronicDocuments.RoleType,
+                this.Meta.ElectronicDocuments,
                 this.Meta.Print,
             };
 

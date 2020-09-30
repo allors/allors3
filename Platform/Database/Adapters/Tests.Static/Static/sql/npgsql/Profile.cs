@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters.Npgsql
                 CacheFactory = this.cacheFactory,
             });
         }
-        
+
         public void DropTable(string tableName)
         {
             using (var connection = this.CreateConnection())

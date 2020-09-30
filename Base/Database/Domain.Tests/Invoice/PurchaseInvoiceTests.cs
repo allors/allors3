@@ -7,12 +7,13 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Resources;
     using Xunit;
 
-    public class PurchaseInvoiceTests : DomainTest
+    public class PurchaseInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
+        public PurchaseInvoiceTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPurchaseInvoice_WhenDeriving_ThenRequiredRelationsMustExist()
         {
@@ -144,8 +145,10 @@ namespace Allors.Domain
 
 
     [Trait("Category", "Security")]
-    public class PurchaseInvoiceSecurityTests : DomainTest
+    public class PurchaseInvoiceSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public PurchaseInvoiceSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

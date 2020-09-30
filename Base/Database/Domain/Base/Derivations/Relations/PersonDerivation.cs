@@ -11,16 +11,15 @@ namespace Allors.Domain
     using System.Text;
     using Allors.Meta;
 
-    public class PersonDerivation : IDomainDerivation
+    public class PersonDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10");
+        public PersonDerivation(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.Person.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.Person.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var person in matches.Cast<Person>())
             {

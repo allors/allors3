@@ -8,11 +8,12 @@ namespace Allors.Domain
 {
     using System.Linq;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Xunit;
 
-    public class PartWeightedAverageTests : DomainTest
+    public class PartWeightedAverageTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartWeightedAverageTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenNonSerialisedUnifiedGood_WhenPurchased_ThenAverageCostIsCalculated()
         {

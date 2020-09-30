@@ -23,7 +23,6 @@ namespace Allors.Database.Adapters.SqlClient
 
         protected override ISession CreateSession() => this.profile.CreateSession();
 
-
         [Fact]
         public override void SortOne()
         {

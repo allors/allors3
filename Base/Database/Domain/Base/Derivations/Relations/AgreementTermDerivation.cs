@@ -11,16 +11,15 @@ namespace Allors.Domain
     using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public class AgreementTermDerivation : IDomainDerivation
+    public class AgreementTermDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC");
+        public AgreementTermDerivation(M m) : base(m, new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.AgreementTerm.Interface),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.AgreementTerm.Interface),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var agreementTerm in matches.Cast<AgreementTerm>())
             {

@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PostalAddressGeographicBoundaryTests : DomainTest
+    public class PostalAddressGeographicBoundaryTests : DomainTest, IClassFixture<Fixture>
     {
+        public PostalAddressGeographicBoundaryTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenGeographicBoundary_WhenDeriving_ThenRequiredRelationsMustExist()
         {

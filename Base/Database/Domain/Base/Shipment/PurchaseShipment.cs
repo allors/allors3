@@ -6,16 +6,13 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
 
     public partial class PurchaseShipment
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PurchaseShipment, M.PurchaseShipment.ShipmentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PurchaseShipment, this.M.PurchaseShipment.ShipmentState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

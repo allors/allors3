@@ -3,14 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Text;
-
 namespace Allors.Domain
 {
-    using System.Linq;
-
-    using Allors.Meta;
-
     public partial class NonUnifiedGood
     {
         private bool IsDeletable => !this.ExistPart &&

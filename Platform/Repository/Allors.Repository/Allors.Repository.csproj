@@ -3,10 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\Database\Allors.Database\Multiplicity.cs" Link="Allors\Multiplicity.cs" />
-    <Compile Include="..\..\Database\Allors.Database\Origin.cs" Link="Allors\Origin.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Buildalyzer.Workspaces" Version="3.0.1" />
     <PackageReference Include="Inflector.NetStandard" Version="1.2.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -16,8 +12,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Allors\" />
   </ItemGroup>
 </Project>

@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Parties
     {
         protected override void BasePrepare(Setup setup)

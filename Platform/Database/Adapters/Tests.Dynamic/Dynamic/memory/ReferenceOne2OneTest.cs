@@ -22,11 +22,8 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Allors;
-    using Adapters;
     using Allors.Meta;
 
-    using Xunit;
-    
     public class ReferenceOne2OneTest : Adapters.ReferenceOne2OneTest
     {
         private readonly Profile profile = new Profile();

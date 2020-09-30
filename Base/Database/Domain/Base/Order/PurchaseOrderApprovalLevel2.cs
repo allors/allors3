@@ -5,10 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public partial class PurchaseOrderApprovalLevel2
     {
         public void BaseApprove(PurchaseOrderApprovalLevel2Approve method)

@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("00022659-5830-4A1F-A463-C135D5B65992")]
@@ -79,20 +80,16 @@ namespace Allors.Repository
 
         #region Allors
         [Id("D691FA00-ADDF-41DF-8586-4FEDE646DDF7")]
-        [AssociationId("FF10126C-6B7B-4799-A7B7-AACB7FCABD8A")]
-        [RoleId("E56889A9-DC2B-4833-9807-F6C73759FC8A")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public bool LeftVoiceMail { get; set; }
 
         #region Allors
         [Id("1CEE575B-0954-4A05-A337-24D025E0A156")]
-        [AssociationId("9EB873B9-DBD4-4658-BA67-997DAB857471")]
-        [RoleId("E6F82CC0-AB60-4945-93EB-07B47FD73F4A")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public TelecommunicationsNumber PhoneNumber { get; set; }
 
         #region inherited methods

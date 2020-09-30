@@ -9,8 +9,6 @@ namespace Allors.Database.Adapters
 
     using Allors;
     using Allors.Domain;
-    using Allors.Meta;
-
     using Xunit;
 
     public abstract class RelationExtentTest : IDisposable

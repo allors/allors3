@@ -7,8 +7,6 @@ namespace Allors.Domain
 {
     using System;
 
-    using Allors.Meta;
-
     public partial class Settingses
     {
         protected override void BasePrepare(Setup setup)

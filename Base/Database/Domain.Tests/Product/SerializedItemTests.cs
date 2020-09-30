@@ -12,8 +12,10 @@ namespace Allors.Domain
     using Resources;
     using System.Collections.Generic;
 
-    public class SerialisedItemTests : DomainTest
+    public class SerialisedItemTests : DomainTest, IClassFixture<Fixture>
     {
+        public SerialisedItemTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSerializedItem_WhenAddingWithSameSerialNumber_ThenError()
         {

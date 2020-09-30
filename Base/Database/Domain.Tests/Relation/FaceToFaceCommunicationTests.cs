@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class FaceToFaceCommunicationTests : DomainTest
+    public class FaceToFaceCommunicationTests : DomainTest, IClassFixture<Fixture>
     {
+        public FaceToFaceCommunicationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenFaceToFaceCommunicationIsBuild_WhenDeriving_ThenStatusIsSet()
         {
@@ -81,8 +83,10 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class FaceToFaceCommunicationSecurityTests : DomainTest
+    public class FaceToFaceCommunicationSecurityTests : DomainTest, IClassFixture<Fixture>
     {
+        public FaceToFaceCommunicationSecurityTests(Fixture fixture) : base(fixture) { }
+
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]

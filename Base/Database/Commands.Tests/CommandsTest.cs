@@ -1,6 +1,5 @@
 namespace Commands.Tests
 {
-    using System;
     using Xunit;
 
     public class CommandsTest

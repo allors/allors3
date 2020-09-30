@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class PurchaseShipmentTests : DomainTest
+    public class PurchaseShipmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public PurchaseShipmentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPurchaseShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
@@ -133,7 +135,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenShipToWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.IncomingShipmentNumberPrefix= "prefix-";
+            this.InternalOrganisation.IncomingShipmentNumberPrefix = "prefix-";
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 

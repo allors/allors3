@@ -5,11 +5,9 @@
 
 namespace Allors.Protocol.Data
 {
-    using System;
-
     public class Node
     {
-        public Guid? PropertyType { get; set; }
+        public PropertyType PropertyType { get; set; }
 
         public Node[] Nodes { get; set; }
     }

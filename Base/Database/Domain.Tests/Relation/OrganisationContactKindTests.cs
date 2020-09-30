@@ -10,8 +10,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class OrganisationContactKindTests : DomainTest
+    public class OrganisationContactKindTests : DomainTest, IClassFixture<Fixture>
     {
+        public OrganisationContactKindTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOrganisationContactKind_WhenDeriving_ThenRequiredRelationsMustExist()
         {

@@ -7,16 +7,12 @@ namespace Allors.Domain
 {
     using System.Linq;
 
-    using Allors.Meta;
-
     public partial class RequestForQuote
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.RequestForQuote, M.RequestForQuote.RequestState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.RequestForQuote, this.M.RequestForQuote.RequestState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
 

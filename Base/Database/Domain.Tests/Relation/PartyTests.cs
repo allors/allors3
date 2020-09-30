@@ -9,11 +9,12 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
-    public class PartyTests : DomainTest
+    public class PartyTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartyTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPartyWithOpenOrders_WhenDeriving_ThenOpenOrderAmountIsUpdated()
         {

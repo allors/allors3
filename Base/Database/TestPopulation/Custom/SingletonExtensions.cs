@@ -6,18 +6,18 @@
 
 namespace Allors
 {
-    using System;
     using System.IO;
     using System.Linq;
     using Allors.Domain;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Bogus;
 
     public static class SingletonExtensions
     {
         public static void Full(this Singleton @this, DirectoryInfo dataPath, Faker faker)
         {
+            var m = @this.Strategy.Session.Database.Scope().M;
+
             var dutchLocale = new Locales(@this.Session()).DutchNetherlands;
             @this.AddAdditionalLocale(dutchLocale);
 
@@ -27,10 +27,10 @@ namespace Allors
 
             @this.Session().Derive();
 
-            var euro = new Currencies(@this.Session()).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(@this.Session()).FindBy(m.Currency.IsoCode, "EUR");
 
-            var be = new Countries(@this.Session()).FindBy(M.Country.IsoCode, "BE");
-            var us = new Countries(@this.Session()).FindBy(M.Country.IsoCode, "US");
+            var be = new Countries(@this.Session()).FindBy(m.Country.IsoCode, "BE");
+            var us = new Countries(@this.Session()).FindBy(m.Country.IsoCode, "US");
 
             var allorsLogo = dataPath + @"\www\admin\images\logo.png";
 
@@ -451,7 +451,7 @@ line2")
                     .Build();
             }
 
-            var anOrganisation = new Organisations(@this.Session()).FindBy(M.Organisation.IsInternalOrganisation, false);
+            var anOrganisation = new Organisations(@this.Session()).FindBy(m.Organisation.IsInternalOrganisation, false);
 
             var item = new SerialisedItemBuilder(@this.Session())
                 .WithSerialNumber("112")

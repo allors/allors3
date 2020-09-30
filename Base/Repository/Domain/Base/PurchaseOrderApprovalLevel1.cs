@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("1D7EE206-1EF9-479D-8458-B44C2CB131AA")]
@@ -46,12 +47,10 @@ namespace Allors.Repository
 
         #region Allors
         [Id("230DE3B0-637D-4311-AF2B-A909134F710E")]
-        [AssociationId("D28D41C7-1BA5-48CF-B9C6-DE73EF3F13D2")]
-        [RoleId("4B899ECF-F36B-480E-B35C-1593AE8D162B")]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Required]
         public PurchaseOrder PurchaseOrder { get; set; }
 

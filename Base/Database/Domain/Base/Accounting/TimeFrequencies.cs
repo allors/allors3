@@ -6,7 +6,6 @@
 namespace Allors.Domain
 {
     using System;
-    using Meta;
 
     public partial class TimeFrequencies
     {

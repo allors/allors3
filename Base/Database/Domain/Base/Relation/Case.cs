@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Case
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.Case, M.Case.CaseState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.Case, this.M.Case.CaseState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

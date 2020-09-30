@@ -6,17 +6,16 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     public partial interface Version
     {
         #region Allors
         [Id("561C7A91-5232-453F-BA26-9B84D871ECC9")]
-        [AssociationId("DD8E700B-1E1D-4A69-8262-F38C971B730D")]
-        [RoleId("F19CFCEA-5D55-4F22-9F46-820C2F63A9B4")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace]
+        [Workspace(Default)]
         User LastModifiedBy { get; set; }
     }
 }

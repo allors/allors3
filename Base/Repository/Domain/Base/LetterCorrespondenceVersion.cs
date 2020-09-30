@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("A298A2F8-4D4A-4CBA-B929-75DC5AA9E3D4")]
@@ -80,12 +81,10 @@ namespace Allors.Repository
 
         #region Allors
         [Id("14536536-13D9-4340-9F2E-6ECA15D337F2")]
-        [AssociationId("E728A709-525D-49A2-BDBE-36FA4E281118")]
-        [RoleId("F4043DF9-FACB-4C37-97EB-753409FBA012")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public PostalAddress PostalAddress { get; set; }
 
         #region inherited methods

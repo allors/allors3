@@ -5,14 +5,9 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Allors.Meta;
     using Allors.Services;
-
-    using Microsoft.Extensions.DependencyInjection;
 
     public partial class ProductQuote
     {
@@ -24,12 +19,10 @@ namespace Allors.Domain
               && !this.ExistSalesOrderWhereQuote
               && this.QuoteItems.All(v => v.IsDeletable);
 
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.ProductQuote, M.ProductQuote.QuoteState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[]{
+            new TransitionalConfiguration(M.ProductQuote, M.ProductQuote.QuoteState),
+        };
 
         private bool BaseNeedsApproval => false;
 
@@ -78,7 +71,7 @@ namespace Allors.Domain
                 if (this.ExistQuoteNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
@@ -533,7 +526,7 @@ namespace Allors.Domain
                         .WithAssignedIrpfRegime(quoteItem.AssignedIrpfRegime)
                         .WithProduct(quoteItem.Product)
                         .WithSerialisedItem(quoteItem.SerialisedItem)
-                        .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session()).Sold) 
+                        .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session()).Sold)
                         .WithProductFeature(quoteItem.ProductFeature)
                         .WithQuantityOrdered(quoteItem.Quantity)
                         .WithInternalComment(quoteItem.InternalComment)

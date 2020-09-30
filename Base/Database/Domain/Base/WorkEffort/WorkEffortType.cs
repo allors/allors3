@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class WorkEffortType
     {
         public void BaseOnDerive(ObjectOnDerive method)

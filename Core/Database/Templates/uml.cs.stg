@@ -44,9 +44,9 @@ composite(meta,composite) ::= <<
 
 roleType(roleType) ::= <<
 $if(roleType.IsOne)$
-			$nullableName(roleType)$ $prefix(roleType)$$roleType.SingularPropertyName$ {set;}
+			$nullableName(roleType)$ $prefix(roleType)$$roleType.SingularName$ {set;}
 $else$
-			$nullableName(roleType)$[] $prefix(roleType)$$roleType.PluralPropertyName$ {set;}
+			$nullableName(roleType)$[] $prefix(roleType)$$roleType.PluralName$ {set;}
 $endif$
 >>
 

@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Linq;
-
     public static class PriceComponentExtensions
     {
         public static void BaseOnDerive(this PriceComponent @this, ObjectOnDerive method)

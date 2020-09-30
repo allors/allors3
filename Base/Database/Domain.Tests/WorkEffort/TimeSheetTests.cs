@@ -9,8 +9,10 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class TimeSheetTests : DomainTest
+    public class TimeSheetTests : DomainTest, IClassFixture<Fixture>
     {
+        public TimeSheetTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenTimeSheet_WhenDeriving_ThenRequiredRelationsMustExist()
         {

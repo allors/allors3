@@ -25,10 +25,6 @@ namespace Allors.Repository.Domain
 
         public string Id => ((dynamic)this.AttributeByName.Get(AttributeNames.Id))?.Value;
 
-        public string AssociationId => ((dynamic)this.AttributeByName.Get(AttributeNames.AssociationId))?.Value;
-
-        public string RoleId => ((dynamic)this.AttributeByName.Get(AttributeNames.RoleId))?.Value;
-
         public string[] WorkspaceNames
         {
             get

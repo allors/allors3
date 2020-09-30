@@ -5,8 +5,6 @@
 
 namespace Allors
 {
-    using System.Linq;
-
     using Allors.Meta;
     using Domain;
 

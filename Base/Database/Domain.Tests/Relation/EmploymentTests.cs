@@ -8,13 +8,13 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class EmploymentTests : DomainTest
+    public class EmploymentTests : DomainTest, IClassFixture<Fixture>
     {
         private Person employee;
         private InternalOrganisation internalOrganisation;
         private Employment employment;
 
-        public EmploymentTests()
+        public EmploymentTests(Fixture fixture) : base(fixture)
         {
             this.employee = new PersonBuilder(this.Session).WithLastName("slave").Build();
 

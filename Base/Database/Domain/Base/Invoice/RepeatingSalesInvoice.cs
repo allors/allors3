@@ -7,10 +7,6 @@ namespace Allors.Domain
 {
     using System;
 
-    using Allors.Meta;
-
-    using Resources;
-
     public partial class RepeatingSalesInvoice
     {
         public void BaseOnPreDerive(ObjectOnPreDerive method)

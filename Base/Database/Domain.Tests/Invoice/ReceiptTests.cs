@@ -6,17 +6,16 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
 
-    public class ReceiptTests : DomainTest
+    public class ReceiptTests : DomainTest, IClassFixture<Fixture>
     {
         private Singleton singleton;
         private Part finishedGood;
         private Good good;
         private Organisation billToCustomer;
 
-        public ReceiptTests()
+        public ReceiptTests(Fixture fixture) : base(fixture)
         {
             var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
 
@@ -154,7 +153,7 @@ namespace Allors.Domain
 
             var derivationLog = this.Session.Derive(false);
             Assert.True(derivationLog.HasErrors);
-            Assert.Contains(M.Receipt.Amount.RoleType, derivationLog.Errors[0].RoleTypes);
+            Assert.Contains(M.Receipt.Amount, derivationLog.Errors[0].RoleTypes);
         }
 
         private void InstantiateObjects(ISession session)

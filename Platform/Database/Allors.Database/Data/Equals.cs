@@ -29,7 +29,7 @@ namespace Allors.Data
             new Predicate
             {
                 Kind = PredicateKind.Equals,
-                PropertyType = this.PropertyType.Id,
+                PropertyType = this.PropertyType.Save(),
                 Object = this.Object?.Id.ToString(),
                 Value = UnitConvert.ToString(this.Value),
                 Parameter = this.Parameter,

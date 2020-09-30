@@ -18,7 +18,7 @@ namespace Allors.Domain.Derivations.Default
         private bool guard;
 
         private Properties properties;
-    
+
         public Derivation(ISession session, DerivationConfig config = null)
         {
             this.Config = config ?? new DerivationConfig();

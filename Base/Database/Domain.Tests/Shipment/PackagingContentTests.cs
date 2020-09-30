@@ -6,11 +6,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
 
-    public class PackagingContentTests : DomainTest
+    public class PackagingContentTests : DomainTest, IClassFixture<Fixture>
     {
+        public PackagingContentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPackingingContent_WhenDeriving_ThenAssertQuantityPackedIsNotGreaterThanQuantityShipped()
         {

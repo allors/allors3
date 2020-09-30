@@ -35,7 +35,7 @@ namespace Tests
                     var accessList = acls[aco];
 
                     // Then
-                    Assert.False(accessList.CanExecute(M.Organisation.JustDoIt));
+                    Assert.False(accessList.CanExecute(this.M.Organisation.JustDoIt));
                 }
 
                 session.Rollback();
@@ -279,15 +279,10 @@ namespace Tests
             }
         }
 
-        private Permission FindPermission(ObjectType objectType, RoleType roleType, Operations operation)
+        private Permission FindPermission(RoleType roleType, Operations operation)
         {
-            var permissions = this.Session.Extent<Permission>();
-            permissions.Filter.AddEquals(M.Permission.ConcreteClassPointer, objectType.Id);
-            permissions.Filter.AddEquals(M.Permission.OperandTypePointer, roleType.Id);
-            permissions.Filter.AddEquals(M.Permission.OperationEnum, operation);
-            return permissions.First;
+            var objectType = (Class)roleType.AssociationType.ObjectType;
+            return new Permissions(this.Session).Get(objectType, roleType, operation);
         }
-
-        private Permission FindPermission(RoleType roleType, Operations operation) => this.FindPermission(roleType.AssociationType.ObjectType, roleType, operation);
     }
 }

@@ -13,20 +13,19 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class SalesOrderItemDerivation : IDomainDerivation
+    public class SalesOrderItemDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41");
+        public SalesOrderItemDerivation(M m) : base(m, new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.SalesOrderItem.Class),
+                new ChangedRolePattern(M.SalesOrderItem.SalesOrderItemState),
+                new ChangedConcreteRolePattern(M.SalesOrderItem.QuantityOrdered),
+                new ChangedRolePattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
+                new ChangedRolePattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.SalesOrderItem.Class),
-            new ChangedRolePattern(M.SalesOrderItem.SalesOrderItemState),
-            new ChangedConcreteRolePattern(M.SalesOrderItem.QuantityOrdered),
-            new ChangedRolePattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
-            new ChangedRolePattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
-        };
-    
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
             var session = cycle.Session;
@@ -392,14 +391,14 @@ namespace Allors.Domain
 
                 if (!salesOrderItem.SalesOrderItemInvoiceState.NotInvoiced || !salesOrderItem.SalesOrderItemShipmentState.NotShipped)
                 {
-                    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
                     foreach (Permission permission in salesOrderItem.Session().Extent<Permission>())
                     {
                         if (permission.ConcreteClassPointer == salesOrderItem.Strategy.Class.Id
                             && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
                         {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }
                     }
 

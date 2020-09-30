@@ -6,27 +6,16 @@
 namespace Allors.Domain
 {
     using System;
-    using Resources;
-    using System.Linq;
-    using Allors.Meta;
-    using System.Text;
-    using System.Collections.Generic;
 
     public partial class SalesOrderItem
     {
-        #region Transitional
-
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-        {
-            new TransitionalConfiguration(M.SalesOrderItem, M.SalesOrderItem.SalesOrderItemState),
-            new TransitionalConfiguration(M.SalesOrderItem, M.SalesOrderItem.SalesOrderItemShipmentState),
-            new TransitionalConfiguration(M.SalesOrderItem, M.SalesOrderItem.SalesOrderItemInvoiceState),
-            new TransitionalConfiguration(M.SalesOrderItem, M.SalesOrderItem.SalesOrderItemPaymentState),
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.SalesOrderItem, this.M.SalesOrderItem.SalesOrderItemState),
+            new TransitionalConfiguration(this.M.SalesOrderItem, this.M.SalesOrderItem.SalesOrderItemShipmentState),
+            new TransitionalConfiguration(this.M.SalesOrderItem, this.M.SalesOrderItem.SalesOrderItemInvoiceState),
+            new TransitionalConfiguration(this.M.SalesOrderItem, this.M.SalesOrderItem.SalesOrderItemPaymentState),
         };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
-
-        #endregion Transitional
 
         public bool IsValid => !(this.SalesOrderItemState.IsCancelled || this.SalesOrderItemState.IsRejected);
 
@@ -653,14 +642,14 @@ namespace Allors.Domain
 
         //    if (!this.SalesOrderItemInvoiceState.NotInvoiced || !this.SalesOrderItemShipmentState.NotShipped)
         //    {
-        //        var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+        //        var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
         //        foreach (Permission permission in this.Session().Extent<Permission>())
         //        {
         //            if (permission.ConcreteClassPointer == this.strategy.Class.Id
         //                && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
         //            {
-        //                deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+        //                deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
         //            }
         //        }
 
@@ -822,4 +811,4 @@ namespace Allors.Domain
         //this.GrandTotal = this.TotalIncVat - this.TotalIrpf;
         //}
     }
-    }
+}

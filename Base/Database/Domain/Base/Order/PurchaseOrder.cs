@@ -5,24 +5,18 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
     using Allors.Services;
-    using Microsoft.Extensions.DependencyInjection;
-    using Resources;
 
     public partial class PurchaseOrder
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PurchaseOrder, M.PurchaseOrder.PurchaseOrderState),
-                new TransitionalConfiguration(M.PurchaseOrder, M.PurchaseOrder.PurchaseOrderShipmentState),
-                new TransitionalConfiguration(M.PurchaseOrder, M.PurchaseOrder.PurchaseOrderPaymentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PurchaseOrder, this.M.PurchaseOrder.PurchaseOrderState),
+            new TransitionalConfiguration(this.M.PurchaseOrder, this.M.PurchaseOrder.PurchaseOrderShipmentState),
+            new TransitionalConfiguration(this.M.PurchaseOrder, this.M.PurchaseOrder.PurchaseOrderPaymentState),
+        };
 
         private bool NeedsApprovalLevel1
         {
@@ -100,7 +94,7 @@ namespace Allors.Domain
             }
         }
 
-        private bool IsReceivable
+        public bool IsReceivable
         {
             get
             {
@@ -390,13 +384,13 @@ namespace Allors.Domain
             //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise, Operations.Execute));
             //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.SetReadyForProcessing, Operations.Execute));
 
-            //    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+            //    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
             //    foreach (Permission permission in this.Session().Extent<Permission>())
             //    {
             //        if (permission.ConcreteClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
             //        {
-            //            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+            //            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
             //        }
             //    }
 
@@ -441,7 +435,7 @@ namespace Allors.Domain
                 if (this.ExistOrderNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

@@ -21,8 +21,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("27D0ABFD-EBA0-46FE-812C-C67D8E3D12D0")]
-        [AssociationId("07B1D5C3-5027-44C2-B2BA-6AC8631CF238")]
-        [RoleId("90CFF1BA-25CC-48A2-B554-46EB5152E644")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
@@ -30,8 +28,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4616201B-7C52-4C5D-B390-4D9C0A8CADAD")]
-        [AssociationId("A82C0D55-DE39-46F5-824C-59FF7A9BA48A")]
-        [RoleId("97B9CB7A-EA14-4869-B7BB-4893911F89D8")]
         #endregion
         [Required]
         public int Counter { get; set; }

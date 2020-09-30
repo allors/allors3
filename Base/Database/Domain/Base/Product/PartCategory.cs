@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     public partial class PartCategory
     {
         public override string ToString() => this.Name;

@@ -10,13 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class SingletonDerivation : IDomainDerivation
+    public class SingletonDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b");
+        public SingletonDerivation(M m) : base(m, new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.Singleton.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[] { new CreatedPattern(M.Singleton.Class) };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var singleton in matches.Cast<Singleton>())
             {

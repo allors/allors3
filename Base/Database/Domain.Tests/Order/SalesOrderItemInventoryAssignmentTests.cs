@@ -9,13 +9,13 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class SalesOrderItemInventoryAssignmentTests : DomainTest
+    public class SalesOrderItemInventoryAssignmentTests : DomainTest, IClassFixture<Fixture>
     {
         private readonly InventoryTransactionReasons reasons;
         private readonly SalesOrderItem salesOrderItem;
         private readonly Part part;
 
-        public SalesOrderItemInventoryAssignmentTests()
+        public SalesOrderItemInventoryAssignmentTests(Fixture fixture) : base(fixture)
         {
             this.reasons = new InventoryTransactionReasons(this.Session);
 

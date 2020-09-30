@@ -11,7 +11,7 @@ namespace Allors.Protocol.Data
     {
         public PredicateKind Kind { get; set; }
 
-        public Guid? PropertyType { get; set; }
+        public PropertyType PropertyType { get; set; }
 
         public Guid? RoleType { get; set; }
 

@@ -9,7 +9,7 @@ namespace Allors
 {
     using Meta;
 
-    public class DatabaseScope : IDatabaseLifecycle
+    public class DatabaseScope : IDatabaseScope
     {
         public void OnInit(IDatabase database) => this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
 

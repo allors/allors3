@@ -60,14 +60,14 @@ namespace Allors.Database.Adapters
                                         var role = this.GetSession().Create(roleClass);
                                         IObject[] roles = this.CreateRoles(relationType, role);
                                         new DifferentAssociationSameRole(this).Test(
-                                            relationType, 
-                                            associations, 
-                                            role, 
-                                            roles, 
-                                            emptyRoles, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            assertRepeat, 
+                                            relationType,
+                                            associations,
+                                            role,
+                                            roles,
+                                            emptyRoles,
+                                            transactionFlag,
+                                            repeat,
+                                            assertRepeat,
                                             testRepeat);
                                     }
 
@@ -78,29 +78,29 @@ namespace Allors.Database.Adapters
                                         // Many RoleTypes With Same ObjectType
                                         IObject[] roles = this.CreateRolesWithSameClass(relationType, roleClass);
                                         new DifferentAssociationSameRolesByOne(this).Test(
-                                            relationType, 
-                                            associations, 
-                                            roles, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            assertRepeat, 
+                                            relationType,
+                                            associations,
+                                            roles,
+                                            transactionFlag,
+                                            repeat,
+                                            assertRepeat,
                                             testRepeat);
                                         new DifferentAssociationDifferentRolesByOne(this).Test(
-                                            relationType, 
-                                            associations, 
-                                            roles, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            testRepeat, 
+                                            relationType,
+                                            associations,
+                                            roles,
+                                            transactionFlag,
+                                            repeat,
+                                            testRepeat,
                                             assertRepeat);
                                         new DifferentAssociationOverlappingRolesByOne(this).Test(
-                                            relationType, 
-                                            associations, 
-                                            roles, 
-                                            emptyRoles, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            testRepeat, 
+                                            relationType,
+                                            associations,
+                                            roles,
+                                            emptyRoles,
+                                            transactionFlag,
+                                            repeat,
+                                            testRepeat,
                                             assertRepeat);
                                     }
 
@@ -192,14 +192,14 @@ namespace Allors.Database.Adapters
                                         var role = this.GetSession().Create(roleType);
                                         IObject[] allRoles = this.CreateRoles(relationType, role);
                                         new SameAssociationSameRole(this).Test(
-                                            relationType, 
-                                            association, 
-                                            role, 
-                                            allRoles, 
-                                            emptyRoles, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            testRepeat, 
+                                            relationType,
+                                            association,
+                                            role,
+                                            allRoles,
+                                            emptyRoles,
+                                            transactionFlag,
+                                            repeat,
+                                            testRepeat,
                                             assertRepeat);
                                     }
 
@@ -213,23 +213,23 @@ namespace Allors.Database.Adapters
                                         IObject[] rolesOtherDatabase =
                                             this.CreateRolesWithSameClass(this.GetSession2(), relationType, roleClass);
                                         new SameAssociationSameRolesByOne(this).Test(
-                                            relationType, 
-                                            association, 
-                                            allRoles, 
-                                            emptyRoles, 
-                                            rolesOtherDatabase, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            testRepeat, 
+                                            relationType,
+                                            association,
+                                            allRoles,
+                                            emptyRoles,
+                                            rolesOtherDatabase,
+                                            transactionFlag,
+                                            repeat,
+                                            testRepeat,
                                             assertRepeat);
                                         new SameAssociationSameRolesByAll(this).Test(
-                                            relationType, 
-                                            association, 
-                                            allRoles, 
-                                            emptyRoles, 
-                                            transactionFlag, 
-                                            repeat, 
-                                            testRepeat, 
+                                            relationType,
+                                            association,
+                                            allRoles,
+                                            emptyRoles,
+                                            transactionFlag,
+                                            repeat,
+                                            testRepeat,
                                             assertRepeat);
                                     }
 

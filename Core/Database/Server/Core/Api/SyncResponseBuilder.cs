@@ -55,7 +55,7 @@ namespace Allors.Server
 
             SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType)
             {
-                var syncResponseRole = new SyncResponseRole { T = roleType.IdAsString };
+                var syncResponseRole = new SyncResponseRole { T = roleType.RelationType.IdAsString };
 
                 if (roleType.ObjectType.IsUnit)
                 {
@@ -94,7 +94,7 @@ namespace Allors.Server
                         V = v.Strategy.ObjectVersion.ToString(),
                         T = v.Strategy.Class.IdAsString,
                         // TODO: Cache
-                        R = @class.RoleTypes.Where(v=>v.Workspace)
+                        R = @class.RoleTypes.Where(v=>v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w.RelationType))
                             .Select(w => CreateSyncResponseRole(v, w))
                             .ToArray(),

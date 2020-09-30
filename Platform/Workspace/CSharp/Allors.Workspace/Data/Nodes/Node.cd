@@ -1,21 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Allors.Workspace.Data.Node">
-    <Position X="1.5" Y="2.5" Width="1.5" />
+    <Position X="1.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIgAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAACBAAAAAA=</HashCode>
-      <FileName>Data\Nodes\Tree.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Interface Name="Allors.Workspace.Data.INode">
-    <Position X="1.5" Y="0.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
-      <FileName>Data\Nodes\INode.cs</FileName>
+      <FileName>Data\Nodes\Node.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Property Name="PropertyType" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
       <Property Name="Nodes" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Interface Name="Allors.Workspace.Data.IPropertyPredicate">
+    <Position X="1.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Data\IPropertyPredicate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
       <Property Name="PropertyType" />
     </ShowAsAssociation>
   </Interface>

@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System.Diagnostics;
-    using Allors.Meta;
-
     public partial class PostalAddress
     {
         public bool IsPostalAddress => true;

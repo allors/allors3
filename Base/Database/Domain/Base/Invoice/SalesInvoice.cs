@@ -5,24 +5,12 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Allors.Meta;
     using Allors.Services;
-
-    using Microsoft.Extensions.DependencyInjection;
-
-    using Resources;
 
     public partial class SalesInvoice
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.SalesInvoice, M.SalesInvoice.SalesInvoiceState),
-            };
-
         private bool IsDeletable =>
                     this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting) &&
             this.SalesInvoiceItems.All(v => v.IsDeletable) &&
@@ -31,7 +19,10 @@ namespace Allors.Domain
             !this.ExistRepeatingSalesInvoiceWhereSource &&
             !this.IsRepeatingInvoice;
 
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.SalesInvoice, this.M.SalesInvoice.SalesInvoiceState),
+        };
 
         public int PaymentNetDays
         {
@@ -1047,7 +1038,7 @@ namespace Allors.Domain
                 if (this.ExistInvoiceNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

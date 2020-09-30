@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
-    using Allors.Meta;
-
     public static partial class InternalOrganisationExtensions
     {
         public static void BaseOnPostBuild(this InternalOrganisation @this, ObjectOnPostBuild method)
@@ -203,7 +200,7 @@ namespace Allors.Domain
             //    {
             //        @this.FiscalYearStartDay = 1;
             //    }
-        
+
         }
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)

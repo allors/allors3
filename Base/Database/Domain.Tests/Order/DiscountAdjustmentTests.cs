@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class DiscountAdjustmentTests : DomainTest
+    public class DiscountAdjustmentTests : DomainTest, IClassFixture<Fixture>
     {
+        public DiscountAdjustmentTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenDiscountAdjustment_WhenDeriving_ThenRequiredRelationsMustExist()
         {

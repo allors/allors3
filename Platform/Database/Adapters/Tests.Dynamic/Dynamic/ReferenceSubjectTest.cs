@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters
         //int associationCount = 4;
         //int roleCount = 15;
         //int roleGroupCount = 5;
-        
+
         // Quick
         private const int AssociationCount = 3;
         private const int RoleCount = 8;

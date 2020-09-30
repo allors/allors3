@@ -22,10 +22,8 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Allors;
-    using Adapters;
     using Allors.Meta;
-    using Xunit;
-    
+
     public class LifeCycleTest : Adapters.LifeCycleTest
     {
         private readonly Profile profile = new Profile();

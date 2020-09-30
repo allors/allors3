@@ -10,11 +10,12 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
-    public class NonSerialisedInventoryItemTests : DomainTest
+    public class NonSerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
     {
+        public NonSerialisedInventoryItemTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenInventoryItem_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

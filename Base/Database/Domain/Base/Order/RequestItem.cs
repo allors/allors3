@@ -3,20 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using Resources;
-
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class RequestItem
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.RequestItem, M.RequestItem.RequestItemState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.RequestItem, this.M.RequestItem.RequestItemState),
+        };
 
         public bool IsValid => !(this.RequestItemState.IsCancelled || this.RequestItemState.IsRejected);
 

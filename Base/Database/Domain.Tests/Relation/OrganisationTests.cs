@@ -10,8 +10,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class OrganisationTests : DomainTest
+    public class OrganisationTests : DomainTest, IClassFixture<Fixture>
     {
+        public OrganisationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOrganisation_WhenDeriving_ThenRequiredRelationsMustExist()
         {

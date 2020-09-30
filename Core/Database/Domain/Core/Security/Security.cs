@@ -15,7 +15,7 @@ namespace Allors.Domain
     {
         private static readonly Operations[] ReadWriteExecute = { Operations.Read, Operations.Write, Operations.Execute };
 
-        private readonly Dictionary<Guid, Dictionary<Guid, Permission>> deniablePermissionByOperandTypeIdByObjectTypeId;
+        private readonly Dictionary<Guid, Dictionary<OperandType, Permission>> deniablePermissionByOperandTypeByObjectTypeId;
         private readonly Dictionary<Guid, Dictionary<OperandType, Permission>> executePermissionsByObjectTypeId;
         private readonly Dictionary<ObjectType, IObjects> objectsByObjectType;
         private readonly Dictionary<Guid, Dictionary<OperandType, Permission>> readPermissionsByObjectTypeId;
@@ -48,11 +48,11 @@ namespace Allors.Domain
             this.writePermissionsByObjectTypeId = new Dictionary<Guid, Dictionary<OperandType, Permission>>();
             this.executePermissionsByObjectTypeId = new Dictionary<Guid, Dictionary<OperandType, Permission>>();
 
-            this.deniablePermissionByOperandTypeIdByObjectTypeId = new Dictionary<Guid, Dictionary<Guid, Permission>>();
+            this.deniablePermissionByOperandTypeByObjectTypeId = new Dictionary<Guid, Dictionary<OperandType, Permission>>();
 
             foreach (Permission permission in session.Extent<Permission>())
             {
-                if (!permission.ExistConcreteClassPointer || !permission.ExistOperandTypePointer || !permission.ExistOperation)
+                if (!permission.ExistConcreteClassPointer || !permission.ExistOperation)
                 {
                     throw new Exception("Permission " + permission + " has no concrete class, operand type and/or operation");
                 }
@@ -61,12 +61,12 @@ namespace Allors.Domain
 
                 if (permission.Operation != Operations.Read)
                 {
-                    var operandType = permission.OperandTypePointer;
+                    var operandType = permission.OperandType;
 
-                    if (!this.deniablePermissionByOperandTypeIdByObjectTypeId.TryGetValue(objectId, out var deniablePermissionByOperandTypeId))
+                    if (!this.deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectId, out var deniablePermissionByOperandTypeId))
                     {
-                        deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
-                        this.deniablePermissionByOperandTypeIdByObjectTypeId[objectId] = deniablePermissionByOperandTypeId;
+                        deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
+                        this.deniablePermissionByOperandTypeByObjectTypeId[objectId] = deniablePermissionByOperandTypeId;
                     }
 
                     deniablePermissionByOperandTypeId.Add(operandType, permission);
@@ -166,11 +166,11 @@ namespace Allors.Domain
 
         public void Deny(ObjectType objectType, ObjectState objectState, IEnumerable<OperandType> operandTypes)
         {
-            if (this.deniablePermissionByOperandTypeIdByObjectTypeId.TryGetValue(objectType.Id, out var deniablePermissionByOperandTypeId))
+            if (this.deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectType.Id, out var deniablePermissionByOperandTypeId))
             {
                 foreach (var operandType in operandTypes)
                 {
-                    if (deniablePermissionByOperandTypeId.TryGetValue(operandType.Id, out var permission))
+                    if (deniablePermissionByOperandTypeId.TryGetValue(operandType, out var permission))
                     {
                         objectState.AddDeniedPermission(permission);
                     }
@@ -249,7 +249,7 @@ namespace Allors.Domain
             }
         }
 
-        public void Grant(Guid roleId, ObjectType objectType, RoleClass concreteRoleType, params Operations[] operations) => this.Grant(roleId, objectType, concreteRoleType.RoleType, operations);
+        public void Grant(Guid roleId, ObjectType objectType, RoleClass concreteRoleType, params Operations[] operations) => this.Grant(roleId, objectType, concreteRoleType, operations);
 
         public void Grant(Guid roleId, ObjectType objectType, OperandType operandType, params Operations[] operations)
         {

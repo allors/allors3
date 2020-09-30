@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Adapters
 {
-    using Meta;
-
     public abstract class Configuration
     {
         public IObjectFactory ObjectFactory { get; set; }

@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters
         protected static readonly bool[] TrueFalse = { true, false };
 
         #region Population
-        #pragma warning disable IDE1006
+#pragma warning disable IDE1006
         protected C1 c1A;
         protected C1 c1B;
         protected C1 c1C;
@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters
         protected C4 c4B;
         protected C4 c4C;
         protected C4 c4D;
-        #pragma warning restore IDE1006
+#pragma warning restore IDE1006
         #endregion
 
         protected abstract IProfile Profile { get; }

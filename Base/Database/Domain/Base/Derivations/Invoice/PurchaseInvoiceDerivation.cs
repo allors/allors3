@@ -8,20 +8,18 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
     using Resources;
 
-    public class PurchaseInvoiceDerivation : IDomainDerivation
+    public class PurchaseInvoiceDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("7F6A083E-1409-4158-B302-603F0973A98C");
+        public PurchaseInvoiceDerivation(M m) : base(m, new Guid("7F6A083E-1409-4158-B302-603F0973A98C")) =>
+            this.Patterns = new[]
+            {
+                new CreatedPattern(M.PurchaseInvoice.Class)
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new[]
-        {
-            new CreatedPattern(M.PurchaseInvoice.Class)
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var purchaseInvoice in matches.Cast<PurchaseInvoice>())
             {

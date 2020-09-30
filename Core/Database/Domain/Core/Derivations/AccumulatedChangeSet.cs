@@ -37,7 +37,7 @@ namespace Allors.Domain.Derivations
         public IDictionary<long, ISet<IRoleType>> RoleTypesByAssociation { get; }
 
         public IDictionary<long, ISet<IAssociationType>> AssociationTypesByRole { get; }
-        
+
         public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
             (from kvp in this.RoleTypesByAssociation
              from value in kvp.Value
@@ -49,7 +49,7 @@ namespace Allors.Domain.Derivations
              from value in kvp.Value
              group kvp.Key by value)
                    .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
-        
+
         public void Add(IChangeSet changeSet)
         {
             this.Created.UnionWith(changeSet.Created);

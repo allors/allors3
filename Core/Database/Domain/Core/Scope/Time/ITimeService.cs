@@ -10,5 +10,7 @@ namespace Allors.Services
     public interface ITimeService
     {
         TimeSpan? Shift { get; set; }
+
+        DateTime Now();
     }
 }

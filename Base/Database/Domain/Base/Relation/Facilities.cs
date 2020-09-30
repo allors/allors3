@@ -5,8 +5,6 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class Facilities
     {
         protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.FacilityType);

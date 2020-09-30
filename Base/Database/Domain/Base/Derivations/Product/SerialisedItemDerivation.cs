@@ -13,16 +13,15 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class SerialisedItemDerivation : IDomainDerivation
+    public class SerialisedItemDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA");
+        public SerialisedItemDerivation(M m) : base(m, new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.SerialisedItem.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.SerialisedItem.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
@@ -35,9 +34,10 @@ namespace Allors.Domain
                     serialisedItem.Name = serialisedItem.PartWhereSerialisedItem.Name;
                 }
 
-                serialisedItem.DerivePurchaseOrder();
-                serialisedItem.DerivePurchaseInvoice();
-                serialisedItem.DerivePurchasePrice();
+                // TODO: Martien
+                //serialisedItem.DerivePurchaseOrder();
+                //serialisedItem.DerivePurchaseInvoice();
+                //serialisedItem.DerivePurchasePrice();
 
                 serialisedItem.SuppliedBy = serialisedItem.AssignedSuppliedBy ??
                     serialisedItem.PurchaseOrder?.TakenViaSupplier ??
@@ -70,7 +70,7 @@ namespace Allors.Domain
                             || v.Assignment.WorkEffortState.IsInProgress);
 
                 this.DeriveProductCharacteristics(serialisedItem);
-                
+
                 serialisedItem.DeriveDisplayProductCategories();
             }
         }

@@ -5,8 +5,6 @@
 
 namespace Allors.Protocol.Data
 {
-    using Allors.Meta;
-
     public static class TreeNodeExtensions
     {
         public static void Load(this Node @this, ISession session, Allors.Data.Node node)
@@ -15,7 +13,7 @@ namespace Allors.Protocol.Data
             {
                 foreach (var childProtocolTreeNode in @this.Nodes)
                 {
-                    var childPropertyType = childProtocolTreeNode.PropertyType != null ? (IPropertyType)session.Database.ObjectFactory.MetaPopulation.Find(childProtocolTreeNode.PropertyType.Value) : null;
+                    var childPropertyType = childProtocolTreeNode.PropertyType.Load(session);
                     var childTreeNode = new Allors.Data.Node(childPropertyType);
                     node.Add(childTreeNode);
                     childProtocolTreeNode.Load(session, childTreeNode);

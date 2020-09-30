@@ -7,12 +7,13 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Resources;
     using Xunit;
 
-    public class PurchaseOrderTests : DomainTest
+    public class PurchaseOrderTests : DomainTest, IClassFixture<Fixture>
     {
+        public PurchaseOrderTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPurchaseOrderBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {

@@ -61,8 +61,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("9f24fc51-8568-4ffc-b47a-c5c317d00954")]
-        [AssociationId("77d762d7-4676-4b02-8319-11600c4314f3")]
-        [RoleId("6e74ef8d-d748-4142-8073-afbf5534c43f")]
         [Size(256)]
         #endregion
         public string C4AllorsString { get; set; }

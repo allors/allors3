@@ -64,8 +64,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4e158d75-d0b5-4cb7-ad41-e8ed3002d175")]
-        [AssociationId("6f2a83eb-17e9-408e-b18b-9bb2b9a3e812")]
-        [RoleId("4fac2dd3-8711-4115-96b9-a38f62e2d093")]
         #endregion
         [Indexed]
         [Size(256)]
@@ -73,8 +71,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("58870c93-b066-47b7-95f7-5411a46dbc7e")]
-        [AssociationId("31925ed6-e66c-4718-963f-c8a71d566fe8")]
-        [RoleId("eee42775-b172-4fde-9042-a0f9b2224ec3")]
         #endregion
         [Size(-1)]
         public string Description { get; set; }

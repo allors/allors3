@@ -5,18 +5,13 @@
 
 namespace Allors.Domain
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Allors.Meta;
-    using Resources;
-
     public static partial class CommunicationEventExtensions
     {
         public static void BaseOnDerive(this CommunicationEvent @this, ObjectOnDerive method)
         {
             //var derivation = method.Derivation;
 
-            //if (!@this.ExistOwner && @this.Strategy.Session.GetUser() is Person owner)
+            //if (!@this.ExistOwner && @this.Strategy.Session.Scope().User is Person owner)
             //{
             //    @this.Owner = owner;
             //}

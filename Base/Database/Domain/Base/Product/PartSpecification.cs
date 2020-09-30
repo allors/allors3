@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class PartSpecification
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PartSpecification, M.PartSpecification.PartSpecificationState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PartSpecification, this.M.PartSpecification.PartSpecificationState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {

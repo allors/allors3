@@ -6,15 +6,14 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-    using Resources;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
-    public class TimeEntryTests : DomainTest
+    public class TimeEntryTests : DomainTest, IClassFixture<Fixture>
     {
+        public TimeEntryTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenTimeEntry_WhenDeriving_ThenRequiredRelationsMustExist()
         {

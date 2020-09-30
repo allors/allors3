@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class EmailCommunication
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.EmailCommunication, M.EmailCommunication.CommunicationEventState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.EmailCommunication, this.M.EmailCommunication.CommunicationEventState),
+        };
 
         public void BaseOnDerive(ObjectOnDerive method)
         {

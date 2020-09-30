@@ -6,11 +6,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
 
-    public class PartTests : DomainTest
+    public class PartTests : DomainTest, IClassFixture<Fixture>
     {
+        public PartTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPart_WhenBuild_ThenPostBuildRelationsMustExist()
         {

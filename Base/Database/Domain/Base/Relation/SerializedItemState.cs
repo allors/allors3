@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     public partial class GenderType
     {
-        public bool IsMale=> this.Equals(new GenderTypes(this.Strategy.Session).Male);
+        public bool IsMale => this.Equals(new GenderTypes(this.Strategy.Session).Male);
 
         public bool IsFemale => this.Equals(new GenderTypes(this.Strategy.Session).Female);
 

@@ -8,20 +8,18 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
 
-    public class OrganisationContactRelationshipDateDerivation : IDomainDerivation
+    public class OrganisationContactRelationshipDateDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("A00B983C-6766-406F-B137-19430890547A");
+        public OrganisationContactRelationshipDateDerivation(M m) : base(m, new Guid("A00B983C-6766-406F-B137-19430890547A")) =>
+            this.Patterns = new Pattern[]
+            {
+                new ChangedConcreteRolePattern(M.OrganisationContactRelationship.FromDate),
+                new ChangedConcreteRolePattern(M.OrganisationContactRelationship.ThroughDate),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new ChangedConcreteRolePattern(M.OrganisationContactRelationship.FromDate),
-            new ChangedConcreteRolePattern(M.OrganisationContactRelationship.ThroughDate),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var session = cycle.Session;
 

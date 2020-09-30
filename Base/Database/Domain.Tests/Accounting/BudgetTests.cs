@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class BudgetTests : DomainTest
+    public class BudgetTests : DomainTest, IClassFixture<Fixture>
     {
+        public BudgetTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOperatingBudget_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {

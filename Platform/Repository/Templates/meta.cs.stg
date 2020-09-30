@@ -45,29 +45,16 @@ $repository.Interfaces:{interface|              public Interface $interface.Sing
 $repository.Classes:{class|              public Class $class.SingularName$;}; separator="\n"$
         }
 
-        internal class RoleTypes
+        internal class RelationTypes
         {
-$repository.Composites:{composite|$define_roles(composite)$}; separator="\n"$
+$repository.Composites:{composite|$define_relationTypes(composite)$}; separator="\n"$
         }
 
-        internal class RoleClasses
+         internal class RoleClasses
         {
 $repository.Classes:{class|$define_roleClasses(class)$}; separator="\n"$
 
-            RoleClass Lookup(Class @class, RoleType roleType)
-            {
-                foreach (var concreteRoleType in roleType.RelationType.ConcreteRoleTypes)
-                {
-                    if (concreteRoleType.Class == @class)
-                    {
-                        return concreteRoleType;
-                    }
-                }
-
-                throw new System.Exception();
-            }
-
-            internal RoleClasses(ObjectTypes objectTypes, RoleTypes roleTypes)
+            internal RoleClasses(ObjectTypes objectTypes, RelationTypes relationTypes)
             {
 $repository.Classes:{class|$assign_roleClasses(class)$}; separator="\n"$
             }
@@ -82,7 +69,7 @@ $repository.Composites:{composite|$define_methods(composite)$}; separator="\n"$
             var meta =  new MetaPopulation();
             var domains = new Domains();
             var objectTypes = new ObjectTypes();
-            var roleTypes = new RoleTypes();
+            var relationTypes = new RelationTypes();
             var methodTypes = new MethodTypes();
 
             this.BuildDomains(meta, domains);
@@ -91,12 +78,12 @@ $repository.Composites:{composite|$define_methods(composite)$}; separator="\n"$
             this.BuildInterfaces(meta, domains, objectTypes);
             this.BuildClasses(meta, domains, objectTypes);
             this.BuildInheritances(meta, domains, objectTypes);
-            this.BuildRelationTypes(meta, domains, objectTypes, roleTypes);
+            this.BuildRelationTypes(meta, domains, objectTypes, relationTypes);
             this.BuildMethodTypes(meta, domains, objectTypes, methodTypes);
 
-            var roleClasses = new RoleClasses(objectTypes, roleTypes);
+            var roleClasses = new RoleClasses(objectTypes, relationTypes);
 
-$repository.Domains:{assembly|              this.Build$assembly.Name$(meta, domains, objectTypes, roleTypes, methodTypes, roleClasses);}; separator="\n"$
+$repository.Domains:{assembly|             this.Build$assembly.Name$(meta, domains, objectTypes, relationTypes, methodTypes, roleClasses);}; separator="\n"$
 
             return meta;
         }
@@ -131,7 +118,7 @@ $repository.Classes:{class|$build_class(class)$}; separator="\n"$
 $repository.Composites:{composite|$inheritance(composite)$}; separator="\n"$
 		}
 
-		private void BuildRelationTypes(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RoleTypes roleTypes)
+		private void BuildRelationTypes(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes)
 		{
 $repository.Composites:{composite|$build_relations(composite)$}; separator="\n"$
 		}
@@ -148,8 +135,8 @@ $repository.Composites:{composite|$methods(composite)$}; separator="\n"$
 }
 >>
 
-define_roles(composite) ::= <<
-$composite.DefinedProperties:{property|             public RoleType $property.DefiningType.SingularName$$property.RoleSingularName$;}; separator="\n"$
+define_relationTypes(composite) ::= <<
+$composite.DefinedProperties:{property|             public RelationType $property.DefiningType.SingularName$$property.RoleSingularName$;}; separator="\n"$
 >>
 
 define_roleClasses(class) ::= <<
@@ -157,7 +144,7 @@ $class.ImplementedProperties:{property|             public RoleClass $class.Sing
 >>
 
 assign_roleClasses(class) ::= <<
-$class.ImplementedProperties:{property|                 this.$class.SingularName$$property.RoleSingularName$ = Lookup(objectTypes.$class.SingularName$, roleTypes.$property.DefiningProperty.DefiningType.SingularName$$property.DefiningProperty.RoleSingularName$);}; separator="\n"$
+$class.ImplementedProperties:{property|                 this.$class.SingularName$$property.RoleSingularName$ = relationTypes.$property.DefiningProperty.DefiningType.SingularName$$property.DefiningProperty.RoleSingularName$.RoleClassBy(objectTypes.$class.SingularName$);}; separator="\n"$
 >>
 
 define_methods(composite) ::= <<
@@ -190,7 +177,6 @@ build_interface(interface) ::= <<
             {
                 SingularName = "$interface.SingularName$",
                 $if(interface.AttributeByName.Plural)$PluralName = "$interface.AttributeByName.Plural.Value$",$endif$
-                $if(interface.XmlDoc)$XmlDoc = @"$interface.XmlDoc.VerbatimValue$",$endif$
                 $if(interface.AttributeByName.Synced)$AssignedIsSynced = $interface.AttributeByName.Synced.Value$$endif$
             };
 >>
@@ -201,8 +187,7 @@ build_class(class) ::= <<
                 AssignedOrigin = Allors.Origin.$class.Origin$,
                 SingularName = "$class.SingularName$",
                 PluralName = "$class.PluralName$",
-                $if(class.WorkspaceNames)$WorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
-                $if(class.XmlDoc)$XmlDoc = @"$class.XmlDoc.VerbatimValue$",$endif$
+                $if(class.WorkspaceNames)$AssignedWorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
                 $if(class.AttributeByName.Synced)$AssignedIsSynced = $class.AttributeByName.Synced.Value$$endif$
             };
 >>
@@ -211,7 +196,7 @@ inheritance(composite) ::= <<$composite.ImplementedInterfaces:{implementedInterf
 build_inheritance(composite, implementedInterface) ::= <<            new Inheritance(meta){ Subtype = objectTypes.$composite.SingularName$, Supertype = objectTypes.$implementedInterface.SingularName$};>>
 
 build_relations(composite) ::= <<
-$composite.DefinedProperties:{property|     this.Build$property.DefiningType.SingularName$$property.RoleSingularName$(meta, domains, objectTypes, roleTypes);}; separator="\n"$
+$composite.DefinedProperties:{property|                 this.Build$property.DefiningType.SingularName$$property.RoleSingularName$(meta, domains, objectTypes, relationTypes);}; separator="\n"$
 >>
 
 relations(composite) ::= <<
@@ -219,21 +204,16 @@ $composite.DefinedProperties:{property|$relation(property)$}; separator="\n"$
 >>
 
 relation(property) ::= <<
-        private void Build$property.DefiningType.SingularName$$property.RoleSingularName$(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RoleTypes roleTypes)
+        private void Build$property.DefiningType.SingularName$$property.RoleSingularName$(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes)
         {
-            roleTypes.$property.DefiningType.SingularName$$property.RoleSingularName$ = new RelationType(meta, new System.Guid("$property.AttributeByName.Id.Value$"), new System.Guid("$property.AttributeByName.AssociationId.Value$"), new System.Guid("$property.AttributeByName.RoleId.Value$"))
+            relationTypes.$property.DefiningType.SingularName$$property.RoleSingularName$ = new RelationType(objectTypes.$property.DefiningType.SingularName$, new System.Guid("$property.AttributeByName.Id.Value$"))
             {
                 AssignedOrigin = Origin.$property.Origin$,
-$if(property.WorkspaceNames)$		        WorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
-$if(property.XmlDoc)$		    XmlDoc = @"$property.XmlDoc.VerbatimValue$",$endif$
+$if(property.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
 $if(property.AttributeByName.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$property.AttributeByName.Multiplicity.Value$,$endif$
 $if(property.AttributeByName.Derived)$		        IsDerived = $property.AttributeByName.Derived.Value$,$endif$
 $if(property.AttributeByName.Synced)$		    IsSynced = $property.AttributeByName.Synced.Value$,$endif$
 $if(property.AttributeByName.Indexed)$		        IsIndexed = $property.AttributeByName.Indexed.Value$,$endif$
-                AssociationType =
-                {
-                    ObjectType = objectTypes.$property.DefiningType.SingularName$,
-                },
                 RoleType =
                 {
                     ObjectType = objectTypes.$property.Type.SingularName$,
@@ -246,7 +226,7 @@ $if(property.AttributeByName.Precision)$		        Precision = $property.Attribut
 $if(property.AttributeByName.Scale)$		        Scale = $property.AttributeByName.Scale.Value$,$endif$
 $if(property.AttributeByName.MediaType)$		        MediaType = "$property.AttributeByName.MediaType.Value$",$endif$
                 },
-            }.RoleType;
+            };
         }
 >>
 
@@ -258,12 +238,10 @@ methods(composite) ::= <<$composite.DefinedMethods:{method|$method(method)$}; se
 method(method) ::= <<
         private void Build$method.DefiningType.SingularName$$method.Name$(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, MethodTypes methodTypes)
         {
-            methodTypes.$method.DefiningType.SingularName$$method.Name$ = new MethodType(meta, new System.Guid("$method.AttributeByName.Id.Value$"))
+            methodTypes.$method.DefiningType.SingularName$$method.Name$ = new $if(composite.IsClass)$MethodClass$else$MethodInterface$endif$(objectTypes.$method.DefiningType.SingularName$, new System.Guid("$method.AttributeByName.Id.Value$"))
             {
-                ObjectType = objectTypes.$method.DefiningType.SingularName$,
                 Name = "$method.Name$",
-$if(method.WorkspaceNames)$		        WorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
-$if(method.XmlDoc)$		        XmlDoc = @"$method.XmlDoc.VerbatimValue$",$endif$
+$if(method.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
             };
         }
 >>

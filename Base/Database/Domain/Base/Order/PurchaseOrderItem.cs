@@ -6,25 +6,15 @@
 namespace Allors.Domain
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Allors.Meta;
 
     public partial class PurchaseOrderItem
     {
-        #region Transitional
-
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PurchaseOrderItem, M.PurchaseOrderItem.PurchaseOrderItemState),
-                new TransitionalConfiguration(M.PurchaseOrderItem, M.PurchaseOrderItem.PurchaseOrderItemShipmentState),
-                new TransitionalConfiguration(M.PurchaseOrderItem, M.PurchaseOrderItem.PurchaseOrderItemPaymentState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
-
-        #endregion Transitional
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.PurchaseOrderItemState),
+            new TransitionalConfiguration(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.PurchaseOrderItemShipmentState),
+            new TransitionalConfiguration(this.M.PurchaseOrderItem, this.M.PurchaseOrderItem.PurchaseOrderItemPaymentState),
+        };
 
         public bool IsValid => !(this.PurchaseOrderItemState.IsCancelled || this.PurchaseOrderItemState.IsRejected);
 
@@ -342,14 +332,14 @@ namespace Allors.Domain
 
             //if (!this.PurchaseOrderItemShipmentState.IsNotReceived)
             //{
-            //    var deniablePermissionByOperandTypeId = new Dictionary<Guid, Permission>();
+            //    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
             //    foreach (Permission permission in this.Session().Extent<Permission>())
             //    {
             //        if (permission.ConcreteClassPointer == this.strategy.Class.Id
             //            && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
             //        {
-            //            deniablePermissionByOperandTypeId.Add(permission.OperandTypePointer, permission);
+            //            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
             //        }
             //    }
 

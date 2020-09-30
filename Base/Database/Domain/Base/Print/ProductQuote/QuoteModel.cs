@@ -59,7 +59,7 @@ namespace Allors.Domain.Print.ProductQuoteModel
 
         public string IrpfRate { get; }
 
-        public string TotalIrpf{ get; }
+        public string TotalIrpf { get; }
 
         public string TotalIncVat { get; }
 

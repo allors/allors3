@@ -7,14 +7,12 @@ namespace Allors.Domain
 {
     using System;
     using System.Linq;
-    using System.Text;
-    using Allors.Meta;
 
     public partial class Person
     {
         public PrefetchPolicy PrefetchPolicy => new PrefetchPolicyBuilder()
             .WithRule(M.Person.OrganisationContactRelationshipsWhereContact)
-            .WithRule(M.Person.PartyContactMechanisms.RoleType)
+            .WithRule(M.Person.PartyContactMechanisms)
             .WithRule(M.Person.TimeSheetWhereWorker)
             .WithRule(M.Person.EmploymentsWhereEmployee)
             .Build();

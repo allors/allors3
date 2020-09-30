@@ -7,19 +7,14 @@ namespace Allors.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
     using Allors.Services;
-
-    using Microsoft.Extensions.DependencyInjection;
 
     public partial class WorkTask
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-              {
-                new TransitionalConfiguration(M.WorkTask, M.WorkTask.WorkEffortState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.WorkTask, this.M.WorkTask.WorkEffortState),
+        };
 
         public void BaseOnBuild(ObjectOnBuild method)
         {
@@ -54,7 +49,7 @@ namespace Allors.Domain
                 if (this.ExistWorkEffortNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.ServiceProvider.GetRequiredService<IBarcodeService>();
+                    var barcodeService = session.Database.Scope().BarcodeService;
                     var barcode = barcodeService.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images["Barcode"] = barcode;
                 }

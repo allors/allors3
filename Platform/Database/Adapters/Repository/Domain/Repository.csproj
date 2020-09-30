@@ -3,8 +3,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Allors.Database\Multiplicity.cs" Link="Allors\Multiplicity.cs" />
-    <Compile Include="..\..\..\Allors.Database\Origin.cs" Link="Allors\Origin.cs" />
     <Compile Include="..\..\..\..\Repository\Domain\Attributes*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
   </ItemGroup>
 </Project>

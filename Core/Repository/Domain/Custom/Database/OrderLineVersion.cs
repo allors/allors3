@@ -28,8 +28,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("0B9340C2-CE9B-48C7-A476-6D73B8829944")]
-        [AssociationId("566324B9-A7B5-4C1D-AC89-2E228C603684")]
-        [RoleId("2C78F740-1D90-44BB-AFE6-3360399A1150")]
         #endregion
         public decimal Amount { get; set; }
 

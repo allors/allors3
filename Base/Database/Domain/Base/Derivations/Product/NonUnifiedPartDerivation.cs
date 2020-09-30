@@ -10,19 +10,18 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class NonUnifiedPartDerivation : IDomainDerivation
+    public class NonUnifiedPartDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3");
+        public NonUnifiedPartDerivation(M m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.NonUnifiedPart.Class),
+                new CreatedPattern(M.InventoryItemTransaction.Class) {Steps = new IPropertyType[]{M.InventoryItemTransaction.Part}, OfType = M.NonUnifiedPart.Class},
+                new ChangedRolePattern(M.InventoryItemTransaction.Part) { OfType = M.NonUnifiedPart.Class},
+                new ChangedRolePattern(M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{M.NonSerialisedInventoryItem.Part },OfType = M.NonUnifiedPart.Class},
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.NonUnifiedPart.Class),
-            new CreatedPattern(M.InventoryItemTransaction.Class) {Steps = new IPropertyType[]{M.InventoryItemTransaction.Part}, OfType = M.NonUnifiedPart.Class},
-            new ChangedRolePattern(M.InventoryItemTransaction.Part) { OfType = M.NonUnifiedPart.Class},
-            new ChangedRolePattern(M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{M.NonSerialisedInventoryItem.Part.RoleType },OfType = M.NonUnifiedPart.Class},
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var nonUnifiedPart in matches.Cast<NonUnifiedPart>())
             {

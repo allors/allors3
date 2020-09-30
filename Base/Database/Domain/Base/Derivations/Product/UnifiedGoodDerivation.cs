@@ -11,19 +11,17 @@ namespace Allors.Domain
     using System.Text;
     using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
-    public class UnifiedGoodDerivation : IDomainDerivation
+    public class UnifiedGoodDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("B1C14106-C300-453D-989B-81E05767CFC4");
+        public UnifiedGoodDerivation(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.UnifiedGood.Class),
+                new CreatedPattern(M.InventoryItemTransaction.Class){Steps = new IPropertyType[]{M.InventoryItemTransaction.Part}, OfType = M.UnifiedGood.Class},
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.UnifiedGood.Class),
-            new CreatedPattern(M.InventoryItemTransaction.Class){Steps = new IPropertyType[]{M.InventoryItemTransaction.Part}, OfType = M.UnifiedGood.Class},
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var unifiedGood in matches.Cast<UnifiedGood>())
             {

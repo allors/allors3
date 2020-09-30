@@ -8,8 +8,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class ExternalAccountingTransactionTests : DomainTest
+    public class ExternalAccountingTransactionTests : DomainTest, IClassFixture<Fixture>
     {
+        public ExternalAccountingTransactionTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenTaxDue_WhenDeriving_ThenRequiredRelationsMustExist()
         {

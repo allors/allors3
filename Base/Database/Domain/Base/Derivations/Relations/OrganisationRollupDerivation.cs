@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class OrganisationRollupDerivation : IDomainDerivation
+    public class OrganisationRollupDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("F34E1F40-B1DD-4F0D-A87C-78F44ACF8512");
+        public OrganisationRollupDerivation(M m) : base(m, new Guid("F34E1F40-B1DD-4F0D-A87C-78F44ACF8512")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.OrganisationRollUp.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.OrganisationRollUp.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var organisationRollUp in matches.Cast<OrganisationRollUp>())
             {

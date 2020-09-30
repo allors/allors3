@@ -5,11 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Xunit;
 
-    public class SetupConfigurationTests : DomainTest
+    public class SetupConfigurationTests : DomainTest, IClassFixture<Fixture>
     {
+        public SetupConfigurationTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSetConfiguration_WhenApplied_ThenCountryEuMemberStateIsSet()
         {

@@ -6,30 +6,34 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("97758A8A-CA98-4119-B354-386643075B19")]
     #endregion
-    [Workspace("Default")]
+    [Workspace(Default, Test)]
     [Origin(Origin.Local)]
-    public partial class WorkspacePerson 
+    public partial class WorkspacePerson
     {
         #region Allors
         [Id("137E321E-537E-44B7-AEEB-3D1F772AB8D9")]
-        [AssociationId("F9A069CD-F8F9-4A57-926D-7880D42631BE")]
-        [RoleId("BE6087FE-F7F8-42E1-A22F-3989F7BBBBE9")]
         #endregion
-        [Workspace]
+        [Workspace(Default, Test)]
         [Origin(Origin.Local)]
         public string FirstName { get; set; }
 
         #region Allors
         [Id("05B2117E-B714-4A2A-A793-8BC7D2A2EF33")]
-        [AssociationId("5FBF966A-97FD-4739-B2A4-178C1853A207")]
-        [RoleId("B22E7AC0-22D1-4B50-8937-28739AB5DEEC")]
         #endregion
-        [Workspace]
+        [Workspace(Default, Test)]
         [Origin(Origin.Local)]
         public string LastName { get; set; }
+
+        #region Allors
+        [Id("95429c41-f951-4f38-a15f-ca0e8777fae9")]
+        #endregion
+        [Workspace(Default, Test)]
+        [Origin(Origin.Working)]
+        public string FullName { get; set; }
     }
 }

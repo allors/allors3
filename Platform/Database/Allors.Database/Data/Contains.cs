@@ -26,7 +26,7 @@ namespace Allors.Data
             new Predicate
             {
                 Kind = PredicateKind.Contains,
-                PropertyType = this.PropertyType?.Id,
+                PropertyType = this.PropertyType?.Save(),
                 Object = this.Object?.Id.ToString(),
                 Parameter = this.Parameter,
             };

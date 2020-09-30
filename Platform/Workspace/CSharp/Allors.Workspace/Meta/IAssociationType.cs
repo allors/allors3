@@ -13,15 +13,13 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IAssociationType : IPropertyType
     {
-        string SingularPropertyName { get; }
-
         string SingularFullName { get; }
-
-        string PluralPropertyName { get; }
 
         string PluralFullName { get; }
 
         IRelationType RelationType { get; }
+
+        new IComposite ObjectType { get; }
 
         IRoleType RoleType { get; }
     }

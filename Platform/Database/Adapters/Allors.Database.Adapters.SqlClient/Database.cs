@@ -47,7 +47,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 throw new Exception("Services is missing");
             }
-            
+
             this.ObjectFactory = configuration.ObjectFactory;
             if (!this.ObjectFactory.MetaPopulation.IsValid)
             {

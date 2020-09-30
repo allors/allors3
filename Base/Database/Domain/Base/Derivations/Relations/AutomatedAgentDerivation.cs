@@ -10,16 +10,15 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class AutomatedAgentDerivation : IDomainDerivation
+    public class AutomatedAgentDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("98237B56-E163-4FFC-84E7-2BB8E60BBEB8");
+        public AutomatedAgentDerivation(M m) : base(m, new Guid("98237B56-E163-4FFC-84E7-2BB8E60BBEB8")) =>
+            this.Patterns = new Pattern[]
+            {
+                new CreatedPattern(M.AutomatedAgent.Class),
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new CreatedPattern(M.AutomatedAgent.Class),
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var automatedAgent in matches.Cast<AutomatedAgent>())
             {

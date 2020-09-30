@@ -7,6 +7,8 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
+
 
     #region Allors
     [Id("fbea29c6-6109-4163-a088-9f0b4deac896")]
@@ -15,13 +17,11 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("7e6d392b-00e7-4095-8525-d9f4ef8cfaa3")]
-        [AssociationId("b20f1b54-87a4-4fc2-91db-8848d6d40ad1")]
-        [RoleId("cf456f4d-8c76-4bfe-9996-89b660c9b153")]
         [Derived]
         [Indexed]
         [Size(-1)]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         string WorkItemDescription { get; set; }
     }
 }

@@ -12,10 +12,10 @@ namespace Allors.Domain
     using DataUtils;
     using HeyRed.Mime;
     using Meta;
-    
-    public class MediaDerivation : IDomainDerivation
+
+    public class MediaDerivation : DomainDerivation
     {
-        public MediaDerivation(M m) =>
+        public MediaDerivation(M m) : base(m, new Guid("436E574A-FE3E-46ED-8AD2-A59CACC2C9C4")) =>
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(m.Media.Class),
@@ -25,11 +25,7 @@ namespace Allors.Domain
                 new ChangedRolePattern(m.Media.InFileName),
             };
 
-        public Guid Id => new Guid("436E574A-FE3E-46ED-8AD2-A59CACC2C9C4");
-
-        public IEnumerable<Pattern> Patterns { get; }
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var media in matches.Cast<Media>())
             {

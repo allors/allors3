@@ -26,14 +26,14 @@ namespace Allors.Data
         public string Parameter { get; set; }
 
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || this.HasMissingArguments(parameters);
-      
+
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.HasMissingArguments(parameters);
 
         public Predicate Save() =>
             new Predicate
             {
                 Kind = PredicateKind.ContainedIn,
-                PropertyType = this.PropertyType?.Id,
+                PropertyType = this.PropertyType?.Save(),
                 Extent = this.Extent?.Save(),
                 Values = this.Objects.Select(v => v.Id.ToString()).ToArray(),
                 Parameter = this.Parameter,

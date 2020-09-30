@@ -21,9 +21,11 @@ namespace Allors.Workspace
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
-        public Workspace(ObjectFactory objectFactory)
+        public Workspace(ObjectFactory objectFactory, IWorkspaceLifecycle scope)
         {
             this.ObjectFactory = objectFactory;
+            this.Lifecycle = scope;
+
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
 
@@ -33,6 +35,8 @@ namespace Allors.Workspace
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
         }
+        
+        public IWorkspaceLifecycle Lifecycle { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
 
@@ -41,6 +45,10 @@ namespace Allors.Workspace
         internal Dictionary<long, AccessControl> AccessControlById { get; }
 
         internal Dictionary<long, Permission> PermissionById { get; }
+
+        ISession IWorkspace.CreateSession() => this.CreateSession();
+
+        public Session CreateSession() => new Session(this, this.Lifecycle.CreateSessionScope());
 
         public SyncRequest Diff(PullResponse response)
         {
@@ -217,7 +225,7 @@ namespace Allors.Workspace
 
         internal IEnumerable<IWorkspaceObject> Get(IComposite objectType)
         {
-            var classes = new HashSet<IClass>(objectType.Classes);
+            var classes = new HashSet<IClass>(objectType.DatabaseClasses);
             return this.workspaceObjectById.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
 

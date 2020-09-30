@@ -12,8 +12,6 @@ namespace Allors.Repository.Domain
     using System.IO;
     using System.Linq;
     using System.Reflection;
-
-    using Allors.Meta;
     using Allors.Repository.Roslyn;
 
     using Inflector;
@@ -70,8 +68,6 @@ namespace Allors.Repository.Domain
                 foreach (var property in composite.DefinedProperties)
                 {
                     this.CheckId(ids, property.Id, $"{composite.SingularName}.{property.RoleName}", "id");
-                    this.CheckId(ids, property.AssociationId, $"{composite.SingularName}.{property.RoleName}", "association id");
-                    this.CheckId(ids, property.RoleId, $"{composite.SingularName}.{property.RoleName}", "role id");
                 }
 
                 foreach (var method in composite.DefinedMethods)

@@ -16,7 +16,7 @@ namespace Commands
         public Program Parent { get; set; }
 
         public Logger Logger => LogManager.GetCurrentClassLogger();
-        
+
         [Option("-f", Description = "File to save")]
         public string FileName { get; set; } = "population.xml";
 

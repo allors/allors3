@@ -6,12 +6,13 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
     using Resources;
     using Xunit;
 
-    public class GeneralLedgerAccountTests : DomainTest
+    public class GeneralLedgerAccountTests : DomainTest, IClassFixture<Fixture>
     {
+        public GeneralLedgerAccountTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenGeneralLedgerAccount_WhenDeriving_ThenRequiredRelationsMustExist()
         {

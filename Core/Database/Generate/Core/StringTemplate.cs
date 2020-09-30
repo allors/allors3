@@ -32,6 +32,7 @@ namespace Allors.Development.Repository.Generation
         private const string ObjectTypeKey = "objectType";
         private const string RelationTypeKey = "relationType";
         private const string MethodTypeKey = "methodType";
+        private const string WorkspaceNameKey = "workspaceName";
 
         private readonly FileInfo fileInfo;
 
@@ -65,7 +66,7 @@ namespace Allors.Development.Repository.Generation
 
         public override string ToString() => this.Name;
 
-        internal void Generate(MetaPopulation metaPopulation, DirectoryInfo outputDirectory, Log log)
+        internal void Generate(MetaPopulation metaPopulation, string workspaceName, DirectoryInfo outputDirectory, Log log)
         {
             var validation = metaPopulation.Validate();
             if (validation.ContainsErrors)
@@ -87,6 +88,10 @@ namespace Allors.Development.Repository.Generation
 
                 var configurationTemplate = templateGroup.GetInstanceOf(TemplateConfiguration);
                 configurationTemplate.Add(MetaKey, metaPopulation);
+                if (!string.IsNullOrWhiteSpace(workspaceName))
+                {
+                    configurationTemplate.Add(WorkspaceNameKey, workspaceName);
+                }
 
                 var configurationXml = new XmlDocument();
                 configurationXml.LoadXml(configurationTemplate.Render());
@@ -99,6 +104,10 @@ namespace Allors.Development.Repository.Generation
                     var output = generation.GetAttribute(OutputKey);
 
                     template.Add(MetaKey, metaPopulation);
+                    if (!string.IsNullOrWhiteSpace(workspaceName))
+                    {
+                        template.Add(WorkspaceNameKey, workspaceName);
+                    }
 
                     if (generation.HasAttribute(InputKey))
                     {

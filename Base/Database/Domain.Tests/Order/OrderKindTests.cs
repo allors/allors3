@@ -10,8 +10,10 @@ namespace Allors.Domain
 {
     using Xunit;
 
-    public class OrderKindTests : DomainTest
+    public class OrderKindTests : DomainTest, IClassFixture<Fixture>
     {
+        public OrderKindTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenOrderKind_WhenDeriving_ThenRequiredRelationsMustExist()
         {

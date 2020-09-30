@@ -10,14 +10,21 @@ namespace Allors.Workspace.Meta
 
     public interface IComposite : IObjectType
     {
-        IEnumerable<IAssociationType> AssociationTypes { get; }
+        IEnumerable<IAssociationType> DatabaseAssociationTypes { get; }
 
-        IEnumerable<IRoleType> RoleTypes { get; }
+        IEnumerable<IRoleType> DatabaseRoleTypes { get; }
 
-        IEnumerable<IInterface> DirectSupertypes { get; }
+        bool ExistDatabaseClass { get; }
 
-        IEnumerable<IInterface> Supertypes { get; }
+        IEnumerable<IClass> DatabaseClasses { get; }
 
+        bool ExistExclusiveDatabaseClass { get; }
+
+        IClass ExclusiveDatabaseClass { get; }
+
+        bool IsSynced { get; }
+
+        // TODO: change to HasSuperType
         bool ExistSupertype(IInterface @interface);
 
         bool ExistAssociationType(IAssociationType association);
@@ -25,17 +32,5 @@ namespace Allors.Workspace.Meta
         bool ExistRoleType(IRoleType roleType);
 
         bool IsAssignableFrom(IComposite objectType);
-
-        bool ExistClass { get; }
-
-        IEnumerable<IClass> Classes { get; }
-
-        bool ExistExclusiveClass { get; }
-
-        IClass ExclusiveClass { get; }
-
-        bool IsSynced { get; }
-
-        bool AssignedIsSynced { get; set; }
     }
 }

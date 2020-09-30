@@ -7,8 +7,6 @@ namespace Allors.Domain
 {
     using System;
 
-    using Allors.Meta;
-
     public partial class Products
     {
         private static decimal BaseCatalogPrice(
@@ -17,6 +15,8 @@ namespace Allors.Domain
             Product product,
             DateTime date)
         {
+            var m = salesOrder.Strategy.Session.Database.Scope().M;
+
             var productBasePrice = 0M;
             var productDiscount = 0M;
             var productSurcharge = 0M;
@@ -59,7 +59,7 @@ namespace Allors.Domain
 
             foreach (var priceComponent in priceComponents)
             {
-                if (priceComponent.Strategy.Class.Equals(M.DiscountComponent.ObjectType) || priceComponent.Strategy.Class.Equals(M.SurchargeComponent.ObjectType))
+                if (priceComponent.Strategy.Class.Equals(m.DiscountComponent.ObjectType) || priceComponent.Strategy.Class.Equals(m.SurchargeComponent.ObjectType))
                 {
                     if (PriceComponents.BaseIsApplicable(new PriceComponents.IsApplicable
                     {
@@ -70,7 +70,7 @@ namespace Allors.Domain
                         SalesInvoice = salesInvoice,
                     }))
                     {
-                        if (priceComponent.Strategy.Class.Equals(M.DiscountComponent.ObjectType))
+                        if (priceComponent.Strategy.Class.Equals(m.DiscountComponent.ObjectType))
                         {
                             var discountComponent = (DiscountComponent)priceComponent;
                             decimal discount;
@@ -88,7 +88,7 @@ namespace Allors.Domain
                             }
                         }
 
-                        if (priceComponent.Strategy.Class.Equals(M.SurchargeComponent.ObjectType))
+                        if (priceComponent.Strategy.Class.Equals(m.SurchargeComponent.ObjectType))
                         {
                             var surchargeComponent = (SurchargeComponent)priceComponent;
                             decimal surcharge;

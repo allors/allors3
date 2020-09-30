@@ -55,8 +55,8 @@ namespace Allors.Database.Adapters.Npgsql
 
         public IDictionary<IRoleType, ISet<long>> AssociationsByRoleType => this.associationsByRoleType ??=
             (from kvp in this.RoleTypesByAssociation
-            from value in kvp.Value
-            group kvp.Key by value)
+             from value in kvp.Value
+             group kvp.Key by value)
                 .ToDictionary(grp => grp.Key, grp => new HashSet<long>(grp) as ISet<long>);
 
         public IDictionary<IAssociationType, ISet<long>> RolesByAssociationType => this.rolesByAssociationType ??=

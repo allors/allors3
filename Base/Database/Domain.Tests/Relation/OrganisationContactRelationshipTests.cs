@@ -7,16 +7,15 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
-    public class OrganisationContactRelationshipTests : DomainTest
+    public class OrganisationContactRelationshipTests : DomainTest, IClassFixture<Fixture>
     {
         private OrganisationContactRelationship organisationContactRelationship;
         private Organisation organisation;
         private Person contact;
 
-        public OrganisationContactRelationshipTests()
+        public OrganisationContactRelationshipTests(Fixture fixture) : base(fixture)
         {
             this.organisation = (Organisation)this.InternalOrganisation.ActiveCustomers.FirstOrDefault(v => v.GetType().Name == typeof(Organisation).Name);
             this.organisationContactRelationship = this.organisation.OrganisationContactRelationshipsWhereOrganisation.FirstOrDefault();

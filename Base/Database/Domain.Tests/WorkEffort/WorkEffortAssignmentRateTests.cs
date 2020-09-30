@@ -1,4 +1,4 @@
-﻿// <copyright file="WorkEffortAssignmentRateTests.cs" company="Allors bvba">
+// <copyright file="WorkEffortAssignmentRateTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,11 +7,12 @@
 namespace Allors.Domain
 {
     using System.Linq;
-    using Allors.Meta;
     using Xunit;
 
-    public class WorkEffortAssignmentRateTests : DomainTest
+    public class WorkEffortAssignmentRateTests : DomainTest, IClassFixture<Fixture>
     {
+        public WorkEffortAssignmentRateTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenWorkEffort_WhenAddingRates_ThenRateForPartyIsNotAllowed()
         {

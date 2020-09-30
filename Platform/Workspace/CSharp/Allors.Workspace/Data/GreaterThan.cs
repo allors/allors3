@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    using System.Collections.Generic;
     using Allors.Protocol.Data;
     using Allors.Workspace.Meta;
 
@@ -26,7 +25,7 @@ namespace Allors.Workspace.Data
             {
                 Kind = PredicateKind.GreaterThan,
                 Dependencies = this.Dependencies,
-                RoleType = this.RoleType?.Id,
+                RoleType = this.RoleType?.RelationType.Id,
                 Value = UnitConvert.ToString(this.Value),
                 Parameter = this.Parameter,
             };

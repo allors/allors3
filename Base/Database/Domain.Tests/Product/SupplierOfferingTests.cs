@@ -6,14 +6,14 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Linq;
     using Allors.Domain.TestPopulation;
-    using Allors.Meta;
     using Xunit;
 
-    public class SupplierOfferingTests : DomainTest
+    public class SupplierOfferingTests : DomainTest, IClassFixture<Fixture>
     {
+        public SupplierOfferingTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenSupplierOffering_WhenDeriving_ThenRequiredRelationsMustExist()
         {

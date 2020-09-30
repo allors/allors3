@@ -25,7 +25,7 @@ namespace Allors.Workspace.Data
             {
                 Kind = PredicateKind.Like,
                 Dependencies = this.Dependencies,
-                RoleType = this.RoleType?.Id,
+                RoleType = this.RoleType?.RelationType.Id,
                 Value = UnitConvert.ToString(this.Value),
                 Parameter = this.Parameter,
             };

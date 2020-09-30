@@ -10,18 +10,17 @@ namespace Allors.Domain
     using System.Linq;
     using Meta;
 
-    public class PartyFinancialRelationshipAmountDueDerivation : IDomainDerivation
+    public class PartyFinancialRelationshipAmountDueDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96");
+        public PartyFinancialRelationshipAmountDueDerivation(M m) : base(m, new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96")) =>
+            this.Patterns = new Pattern[]
+            {
+                new ChangedConcreteRolePattern(m.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new ChangedConcreteRolePattern(m.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new ChangedRolePattern(m.Store.PaymentGracePeriod) { Steps =  new IPropertyType[] { m.Store.SalesInvoicesWhereStore, m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
+            };
 
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
-        {
-            new ChangedConcreteRolePattern(M.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-            new ChangedConcreteRolePattern(M.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } },
-            new ChangedRolePattern(M.Store.PaymentGracePeriod) { Steps =  new IPropertyType[] { M.Store.SalesInvoicesWhereStore, M.SalesInvoice.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } }
-        };
-
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var partyFinancialRelationship in matches.Cast<PartyFinancialRelationship>())
             {

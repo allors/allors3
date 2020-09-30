@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class FaceToFaceCommunication
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.FaceToFaceCommunication, M.FaceToFaceCommunication.CommunicationEventState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.FaceToFaceCommunication, this.M.FaceToFaceCommunication.CommunicationEventState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Meeting with {this.ToParty.PartyName} about {this.Subject}";
     }

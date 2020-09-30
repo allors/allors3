@@ -5,16 +5,12 @@
 
 namespace Allors.Domain
 {
-    using Allors.Meta;
-
     public partial class PhoneCommunication
     {
-        public static readonly TransitionalConfiguration[] StaticTransitionalConfigurations =
-            {
-                new TransitionalConfiguration(M.PhoneCommunication, M.PhoneCommunication.CommunicationEventState),
-            };
-
-        public TransitionalConfiguration[] TransitionalConfigurations => StaticTransitionalConfigurations;
+        // TODO: Cache
+        public TransitionalConfiguration[] TransitionalConfigurations => new[] {
+            new TransitionalConfiguration(this.M.PhoneCommunication, this.M.PhoneCommunication.CommunicationEventState),
+        };
 
         //public void BaseOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Call to {this.ToParty?.PartyName} about {this.Subject}";
     }

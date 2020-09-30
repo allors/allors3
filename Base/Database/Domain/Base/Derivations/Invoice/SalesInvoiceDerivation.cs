@@ -11,17 +11,16 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class SalesInvoiceDerivation : IDomainDerivation
+    public class SalesInvoiceDerivation : DomainDerivation
     {
-        public Guid Id => new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30");
-
-        public IEnumerable<Pattern> Patterns { get; } = new Pattern[]
+        public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
+            this.Patterns = new Pattern[]
         {
             new CreatedPattern(M.SalesInvoice.Class),
             new ChangedRolePattern(M.SalesInvoice.SalesInvoiceItems),
         };
 
-        public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var session = cycle.Session;
             var validation = cycle.Validation;

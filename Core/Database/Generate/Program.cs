@@ -7,7 +7,6 @@ namespace Allors
 {
     using System;
     using System.IO;
-
     using Allors.Development.Repository.Tasks;
     using Meta;
 
@@ -15,39 +14,23 @@ namespace Allors
     {
         private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
 
-        private static int Main(string[] args)
-        {
-            switch (args.Length)
-            {
-                case 0:
-                    return Default();
-
-                case 2:
-                    return Generate.Execute(MetaBuilder.Build(), args[0], args[1]).ErrorOccured ? 1 : 0;
-
-                default:
-                    return 1;
-            }
-        }
-
-        private static int Default()
+        private static int Main()
         {
             string[,] database =
                 {
                     { "Database/Templates/meta.cs.stg", "Database/Domain/generated/meta" },
                     { "Database/Templates/domain.cs.stg", "Database/Domain/generated/domain" },
-                    //{ "Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/generated" },
+                    { "Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/generated" },
                 };
 
             string[,] workspace =
             {
                 //{ "Workspace/Csharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/generated" },
-                //{ "Workspace/Csharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
-                //{ "Workspace/Csharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
+                { "Workspace/Csharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
+                { "Workspace/Csharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
                 //{ "Workspace/Typescript/templates/meta.ts.stg", "Workspace/Typescript/libs/meta/generated/src" },
                 //{ "Workspace/Typescript/templates/domain.ts.stg", "Workspace/Typescript/libs/domain/generated/src" },
-
             };
 
             var metaPopulation = MetaBuilder.Build();
@@ -68,8 +51,7 @@ namespace Allors
                 }
             }
 
-            var workspaceTransformation = new WorkspaceTransformation();
-            var workspaceMetaPopulation = workspaceTransformation.Transform(metaPopulation, "Default");
+            var workspaceName = "Default";
 
             for (var i = 0; i < workspace.GetLength(0); i++)
             {
@@ -80,7 +62,7 @@ namespace Allors
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(workspaceMetaPopulation, template, output);
+                var log = Generate.Execute(metaPopulation, template, output, workspaceName);
                 if (log.ErrorOccured)
                 {
                     return 1;

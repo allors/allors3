@@ -5,9 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
-    using System.Linq;
-
     public static partial class QuoteExtensions
     {
         public static void BaseOnBuild(this Quote @this, ObjectOnBuild method)
