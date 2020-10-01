@@ -9,51 +9,51 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    public partial class RoleWritePermission
+    public partial class ExecutePermission
     {
         public ObjectType ConcreteClass
         {
-            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ConcreteClassPointer);
+            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {
                 if (value == null)
                 {
-                    this.RemoveConcreteClassPointer();
+                    this.RemoveClassPointer();
                 }
                 else
                 {
-                    this.ConcreteClassPointer = value.Id;
+                    this.ClassPointer = value.Id;
                 }
             }
         }
 
         public bool ExistConcreteClass => this.ConcreteClass != null;
 
-        public bool ExistOperandType => this.ExistRelationTypePointer;
+        public bool ExistOperandType => this.ExistMethodTypePointer;
 
         public bool ExistOperation => true;
 
-        public OperandType OperandType => this.RelationType.RoleType;
+        public OperandType OperandType => this.MethodType;
 
-        public RelationType RelationType
+        public MethodType MethodType
         {
-            get => (RelationType)this.Strategy.Session.Database.MetaPopulation.Find(this.RelationTypePointer);
+            get => (MethodType)this.Strategy.Session.Database.MetaPopulation.Find(this.MethodTypePointer);
 
             set
             {
                 if (value == null)
                 {
-                    this.RemoveRelationTypePointer();
+                    this.RemoveMethodTypePointer();
                 }
                 else
                 {
-                    this.RelationTypePointer = value.Id;
+                    this.MethodTypePointer = value.Id;
                 }
             }
         }
 
-        public Operations Operation => Operations.Write;
+        public Operations Operation => Operations.Execute;
 
         public void CoreOnPreDerive(ObjectOnPreDerive method)
         {

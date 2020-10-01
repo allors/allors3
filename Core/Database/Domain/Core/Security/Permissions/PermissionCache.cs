@@ -17,7 +17,7 @@ namespace Allors.Domain
             session.Prefetch(this.PrefetchPolicy(session), permissions);
 
             this.PermissionCacheEntryByClassId = permissions
-                .GroupBy(v => v.ConcreteClassPointer)
+                .GroupBy(v => v.ClassPointer)
                 .ToDictionary(
                     v => v.Key,
                     w => new PermissionCacheEntry(w));
@@ -28,7 +28,7 @@ namespace Allors.Domain
             // TODO: Cache
             var m = session.Database.Scope().M;
             return new PrefetchPolicyBuilder()
-                .WithRule(m.Permission.ConcreteClassPointer)
+                .WithRule(m.Permission.ClassPointer)
                 .Build();
         }
 

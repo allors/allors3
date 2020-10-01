@@ -20,6 +20,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Required]
-        public Guid ConcreteClassPointer { get; set; }
+        public Guid ClassPointer { get; set; }
     }
 }

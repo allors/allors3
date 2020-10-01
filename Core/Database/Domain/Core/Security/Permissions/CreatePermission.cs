@@ -9,51 +9,34 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    public partial class AssociationReadPermission
+    public partial class CreatePermission
     {
         public ObjectType ConcreteClass
         {
-            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ConcreteClassPointer);
+            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {
                 if (value == null)
                 {
-                    this.RemoveConcreteClassPointer();
+                    this.RemoveClassPointer();
                 }
                 else
                 {
-                    this.ConcreteClassPointer = value.Id;
+                    this.ClassPointer = value.Id;
                 }
             }
         }
 
         public bool ExistConcreteClass => this.ConcreteClass != null;
 
-        public bool ExistOperandType => this.ExistRelationTypePointer;
+        public bool ExistOperandType => true;
 
         public bool ExistOperation => true;
 
-        public OperandType OperandType => this.RelationType.AssociationType;
+        public OperandType OperandType => null;
 
-        public RelationType RelationType
-        {
-            get => (RelationType)this.Strategy.Session.Database.MetaPopulation.Find(this.RelationTypePointer);
-
-            set
-            {
-                if (value == null)
-                {
-                    this.RemoveRelationTypePointer();
-                }
-                else
-                {
-                    this.RelationTypePointer = value.Id;
-                }
-            }
-        }
-
-        public Operations Operation => Operations.Read;
+        public Operations Operation => Operations.Create;
 
         public void CoreOnPreDerive(ObjectOnPreDerive method)
         {

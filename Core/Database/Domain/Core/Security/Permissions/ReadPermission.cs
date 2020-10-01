@@ -9,21 +9,21 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    public partial class RoleReadPermission
+    public partial class ReadPermission
     {
         public ObjectType ConcreteClass
         {
-            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ConcreteClassPointer);
+            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {
                 if (value == null)
                 {
-                    this.RemoveConcreteClassPointer();
+                    this.RemoveClassPointer();
                 }
                 else
                 {
-                    this.ConcreteClassPointer = value.Id;
+                    this.ClassPointer = value.Id;
                 }
             }
         }

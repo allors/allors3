@@ -33,7 +33,7 @@ namespace Allors.Workspace
                 else
                 {
                     this.Value = value != null
-                        ? value.Split(Encoding.Separator).Select(long.Parse).ToArray()
+                        ? value.Split(Encoding.SeparatorChar).Select(long.Parse).ToArray()
                         : Array.Empty<long>();
                 }
             }

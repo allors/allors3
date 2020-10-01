@@ -24,10 +24,9 @@ namespace Allors.Domain
         public PermissionCacheEntry(IGrouping<Guid, Permission> permissionsByClassId)
         {
             this.ClassId = permissionsByClassId.Key;
-            this.RoleReadPermissionIdByRelationTypeId = permissionsByClassId.OfType<RoleReadPermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
-            this.RoleWritePermissionIdByRelationTypeId = permissionsByClassId.OfType<RoleWritePermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
-            this.AssociationReadPermissionIdByRelationTypeId = permissionsByClassId.OfType<AssociationReadPermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
-            this.MethodExecutePermissionIdByMethodTypeId = permissionsByClassId.OfType<MethodExecutePermission>().ToDictionary(v => v.MethodTypePointer, v => v.Id);
+            this.RoleReadPermissionIdByRelationTypeId = permissionsByClassId.OfType<ReadPermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
+            this.RoleWritePermissionIdByRelationTypeId = permissionsByClassId.OfType<WritePermission>().ToDictionary(v => v.RelationTypePointer, v => v.Id);
+            this.MethodExecutePermissionIdByMethodTypeId = permissionsByClassId.OfType<ExecutePermission>().ToDictionary(v => v.MethodTypePointer, v => v.Id);
         }
     }
 }

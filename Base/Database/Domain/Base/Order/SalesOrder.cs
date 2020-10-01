@@ -507,7 +507,7 @@ namespace Allors.Domain
 
         //        foreach (Permission permission in this.Session().Extent<Permission>())
         //        {
-        //            if (permission.ConcreteClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
+        //            if (permission.ClassPointer == this.strategy.Class.Id && permission.Operation == Operations.Write)
         //            {
         //                deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
         //            }

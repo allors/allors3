@@ -332,7 +332,7 @@ namespace Allors.Domain
 
                     foreach (Permission permission in purchaseOrder.Session().Extent<Permission>())
                     {
-                        if (permission.ConcreteClassPointer == purchaseOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
+                        if (permission.ClassPointer == purchaseOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
                         {
                             deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }

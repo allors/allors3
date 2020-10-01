@@ -11,21 +11,21 @@ namespace Allors.Repository
     using Allors.Repository.Attributes;
 
     #region Allors
-    [Id("5FCC8E66-A011-494E-BEFC-CDDE4BEFA144")]
+    [Id("0716C285-841C-419B-A8C4-A67BFA585CDA")]
     #endregion
-    public partial class AssociationReadPermission : Permission
+    public partial class ReadPermission : Permission
     {
         #region inherited properties
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
-        public Guid ConcreteClassPointer { get; set; }
+        public Guid ClassPointer { get; set; }
 
         #endregion
 
         #region Allors
-        [Id("45F604A0-E451-4E83-BE9D-23625929604A")]
+        [Id("88A27D41-E97E-4446-86D7-2E2FC10C5004")]
         [Indexed]
         #endregion
         [Required]

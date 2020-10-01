@@ -7,6 +7,8 @@ namespace Allors.Protocol.Remote
 {
     public abstract class Encoding
     {
-        public const char Separator = '|';
+        public const char SeparatorChar = '|';
+
+        public static readonly string Separator = SeparatorChar.ToString();
     }
 }

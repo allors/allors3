@@ -12,9 +12,9 @@ namespace Allors.Domain
     public enum Operations
     {
         /// <summary>
-        /// No operation.
+        /// Create.
         /// </summary>
-        None = 0,
+        Create = 0,
 
         /// <summary>
         /// Read a relation (get).

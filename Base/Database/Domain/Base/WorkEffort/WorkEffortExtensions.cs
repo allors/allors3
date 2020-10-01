@@ -356,15 +356,15 @@ namespace Allors.Domain
         {
             if (!method.Result.HasValue)
             {
-                ((WorkEffortDerivedRoles)@this).TotalLabourRevenue = Math.Round(@this.BillableTimeEntries().Sum(v => v.BillingAmount), 2);
-                ((WorkEffortDerivedRoles)@this).TotalMaterialRevenue = Math.Round(@this.WorkEffortInventoryAssignmentsWhereAssignment.Where(v => v.DerivedBillableQuantity > 0).Sum(v => v.DerivedBillableQuantity.Value * v.UnitSellingPrice), 2);
-                ((WorkEffortDerivedRoles)@this).TotalSubContractedRevenue = Math.Round(@this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment.Sum(v => v.Quantity * v.UnitSellingPrice), 2);
+                @this.TotalLabourRevenue = Math.Round(@this.BillableTimeEntries().Sum(v => v.BillingAmount), 2);
+                @this.TotalMaterialRevenue = Math.Round(@this.WorkEffortInventoryAssignmentsWhereAssignment.Where(v => v.DerivedBillableQuantity > 0).Sum(v => v.DerivedBillableQuantity.Value * v.UnitSellingPrice), 2);
+                @this.TotalSubContractedRevenue = Math.Round(@this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment.Sum(v => v.Quantity * v.UnitSellingPrice), 2);
                 var totalRevenue = Math.Round(@this.TotalLabourRevenue + @this.TotalMaterialRevenue + @this.TotalSubContractedRevenue, 2);
 
                 method.Result = true;
 
-                ((WorkEffortDerivedRoles)@this).GrandTotal = totalRevenue;
-                ((WorkEffortDerivedRoles)@this).TotalRevenue = @this.Customer.Equals(@this.ExecutedBy) ? 0M : totalRevenue;
+                @this.GrandTotal = totalRevenue;
+                @this.TotalRevenue = @this.Customer.Equals(@this.ExecutedBy) ? 0M : totalRevenue;
             }
         }
     }

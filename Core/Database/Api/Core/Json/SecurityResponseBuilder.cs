@@ -48,41 +48,33 @@ namespace Allors.Server
                     .Cast<Permission>()
                     .Where(v => v switch
                     {
-                        RoleReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                        RoleWritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                        AssociationReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                        MethodExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
+                        ReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                        WritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                        ExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
                         _ => throw new Exception(),
                     });
 
                 securityResponse.Permissions = permissions.Select(v =>
                     v switch
                     {
-                        RoleReadPermission permission => new[]
+                        ReadPermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.ClassPointer.ToString("D"),
                             permission.RelationTypePointer.ToString("D"),
                             Operations.Read.ToString(),
                         },
-                        RoleWritePermission permission => new[]
+                        WritePermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.ClassPointer.ToString("D"),
                             permission.RelationTypePointer.ToString("D"),
                             Operations.Write.ToString(),
                         },
-                        AssociationReadPermission permission => new[]
+                        ExecutePermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClassPointer.ToString("D"),
-                            permission.RelationTypePointer.ToString("D"),
-                            Operations.Read.ToString(),
-                        },
-                        MethodExecutePermission permission => new[]
-                        {
-                            permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClassPointer.ToString("D"),
+                            permission.ClassPointer.ToString("D"),
                             permission.MethodTypePointer.ToString("D"),
                             Operations.Execute.ToString(),
                         },

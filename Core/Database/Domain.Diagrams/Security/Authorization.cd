@@ -42,9 +42,9 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Permission">
-    <Position X="4.25" Y="5.25" Width="1.75" />
+    <Position X="4.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -90,7 +90,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.AutomatedAgent" Collapsed="true">
-    <Position X="8.75" Y="3.25" Width="1.5" />
+    <Position X="8.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
@@ -99,35 +99,35 @@
   <Interface Name="Allors.Domain.Person" Collapsed="true">
     <Position X="6.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAQBAEICQEAAAKCBMEAQAAQAACAAAAAAAAAACAQAAAg=</HashCode>
+      <HashCode>QAQBAEICQEAAAKCBMEAQAAQAACAAAAAAAAIACAQAEAg=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Domain.AssociationReadPermission">
-    <Position X="5.25" Y="7.5" Width="2.25" />
+  <Interface Name="Allors.Domain.ReadPermission">
+    <Position X="3.25" Y="7.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Domain.MethodExecutePermission">
-    <Position X="7.75" Y="7.5" Width="2" />
+  <Interface Name="Allors.Domain.ExecutePermission">
+    <Position X="7.25" Y="7.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Domain.RoleReadPermission">
-    <Position X="1.25" Y="7.5" Width="1.75" />
+  <Interface Name="Allors.Domain.WritePermission">
+    <Position X="5.25" Y="7.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Domain.RoleWritePermission">
-    <Position X="3.25" Y="7.5" Width="1.75" />
+  <Interface Name="Allors.Domain.CreatePermission">
+    <Position X="1.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>

@@ -38,6 +38,16 @@ partial class Build
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
+    Target CoreDatabaseTestApi => _ => _
+        .DependsOn(CoreGenerate)
+        .Executes(() =>
+        {
+            DotNetTest(s => s
+                .SetProjectFile(Paths.CoreDatabaseApiTests)
+                .SetLogger("trx;LogFileName=CoreDatabaseApi.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
+        });
+
     Target CorePublishCommands => _ => _
         .DependsOn(CoreGenerate)
         .Executes(() =>
@@ -145,6 +155,7 @@ partial class Build
 
     Target CoreDatabaseTest => _ => _
         .DependsOn(CoreDatabaseTestDomain)
+        .DependsOn(CoreDatabaseTestApi)
         .DependsOn(CoreDatabaseTestServer);
 
     Target CoreWorkspaceTypescriptTest => _ => _
