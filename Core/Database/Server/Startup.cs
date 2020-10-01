@@ -37,6 +37,7 @@ namespace Allors.Server
 
             // Allors
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddScoped<ISessionService, SessionService>();
 

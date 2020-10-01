@@ -30,7 +30,7 @@ namespace Tests
 
             Assert.Equal(M.Organisation.Manager, managerNode.PropertyType);
 
-            Assert.Equal(3, managerNode.Nodes.Length);
+            Assert.Equal(2, managerNode.Nodes.Length);
 
             var photoNode = managerNode.Nodes[0];
             var addressNode = managerNode.Nodes[1];

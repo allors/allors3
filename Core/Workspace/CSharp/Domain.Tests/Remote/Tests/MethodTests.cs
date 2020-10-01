@@ -13,7 +13,7 @@ namespace Tests.Remote
     using Nito.AsyncEx;
     using Xunit;
 
-    public class MethofTests : RemoteTest
+    public class MethodTests : RemoteTest
     {
         [Fact]
         public void Call() =>

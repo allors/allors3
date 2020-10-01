@@ -22,10 +22,16 @@ namespace Allors.Domain
             this.EffectivePermissions = permissions;
 
             // TODO: Workspace
-            //this.EffectiveWorkspacePermissionIds = string.Join(",", this.EffectivePermissions.Where(v => v.OperandType.Workspace).Select(v => v.Id));
+            this.EffectiveWorkspacePermissionIds = string.Join(",", this.EffectivePermissions.Where(v => v switch
+            {
+                RoleReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                RoleWritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                AssociationReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                MethodExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
+            }).Select(v => v.Id));
 
             // Invalidate cache
             this.CacheId = Guid.NewGuid();
         }
-    }
+}
 }
