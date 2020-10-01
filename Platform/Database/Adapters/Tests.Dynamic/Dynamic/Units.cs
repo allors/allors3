@@ -34,10 +34,7 @@ namespace Allors.Database.Adapters
 
         private static readonly TestValueGenerator Generator = new TestValueGenerator();
 
-        public Units(Units different)
-        {
-            this.Boolean = !different.Boolean;
-        }
+        public Units(Units different) => this.Boolean = !different.Boolean;
 
         public Units(bool generate)
         {

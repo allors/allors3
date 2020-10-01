@@ -1,13 +1,16 @@
-// <copyright file="PullExtentTests.cs" company="Allors bvba">
+// <copyright file="ContentTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the ContentTests type.</summary>
 
-namespace Allors.Server.Tests
+namespace Tests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors;
+    using Allors.Api.Json;
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Protocol.Data;
@@ -15,38 +18,24 @@ namespace Allors.Server.Tests
     using Allors.Protocol.Remote.Pull;
     using Xunit;
 
-    [Collection("Api")]
-    public class PullExtentTests : ApiTest
+    public class PullTests : ApiTest, IClassFixture<Fixture>
     {
-        private Func<IAccessControlList, string> PrintAccessControls =>
-            acl =>
-            {
-                var orderedAcls = acl.AccessControls.OrderBy(v => v).Select(v => v.Id.ToString()).ToArray();
-                return orderedAcls.Any() ? string.Join(Encoding.Separator, orderedAcls) : null;
-            };
-
-        private Func<IAccessControlList, string> PrintDeniedPermissions =>
-            acl =>
-            {
-                var orderedDeniedPermissions = acl.DeniedPermissionIds.OrderBy(v => v).Select(v => v.ToString()).ToArray();
-                return orderedDeniedPermissions.Any() ? string.Join(Encoding.Separator, orderedDeniedPermissions) : null;
-            };
+        public PullTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void WithDeniedPermissions()
+        public void WithDeniedPermissions()
         {
-            await this.SignIn(this.Administrator);
+            var m = this.M;
+            var user = this.SetUser("jane@example.com");
 
             var data = new DataBuilder(this.Session).WithString("First").Build();
-            var permission = new Permissions(this.Session).Extent().First(v => v.ConcreteClass == M.Data.Class);
+            var permissions = new Permissions(this.Session).Extent();
+            var permission = permissions.First(v => Equals(v.ConcreteClass, this.M.Data.Class));
             data.AddDeniedPermission(permission);
 
             this.Session.Commit();
 
-            var uri = new Uri(@"allors/pull", UriKind.Relative);
-
-            var extent = new Allors.Data.Extent(M.Data.ObjectType);
-
+            var extent = new Allors.Data.Extent(m.Data.ObjectType);
             var pullRequest = new PullRequest
             {
                 P = new[]
@@ -58,8 +47,8 @@ namespace Allors.Server.Tests
                 },
             };
 
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.NamedCollections["Datas"];
 
@@ -75,7 +64,7 @@ namespace Allors.Server.Tests
 
             var @object = objects[0];
 
-            var acls = new AccessControlLists(this.Administrator);
+            var acls = new AccessControlLists(user);
             var acl = acls[data];
 
             Assert.Equal(4, @object.Length);
@@ -89,11 +78,7 @@ namespace Allors.Server.Tests
         [Fact]
         public async void WithExtentRef()
         {
-            await this.SignIn(this.Administrator);
-
-            this.Session.Commit();
-
-            var uri = new Uri(@"allors/pull", UriKind.Relative);
+            this.SetUser("jane@example.com");
 
             var pullRequest = new PullRequest
             {
@@ -107,11 +92,8 @@ namespace Allors.Server.Tests
                   },
             };
 
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
-
-            Assert.True(response.IsSuccessStatusCode);
-
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var pullResponse = api.Pull(pullRequest);
 
             var organisations = pullResponse.NamedCollections["Organisations"];
 
@@ -121,11 +103,7 @@ namespace Allors.Server.Tests
         [Fact]
         public async void WithFetchRef()
         {
-            await this.SignIn(this.Administrator);
-
-            this.Session.Commit();
-
-            var uri = new Uri(@"allors/pull", UriKind.Relative);
+            this.SetUser("jane@example.com");
 
             var pullRequest = new PullRequest
             {
@@ -139,11 +117,8 @@ namespace Allors.Server.Tests
                   },
             };
 
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
-
-            Assert.True(response.IsSuccessStatusCode);
-
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var pullResponse = api.Pull(pullRequest);
 
             var organisations = pullResponse.NamedCollections["Organisations"];
 
@@ -153,10 +128,11 @@ namespace Allors.Server.Tests
         [Fact]
         public async void WithoutDeniedPermissions()
         {
-            await this.SignIn(this.Administrator);
+            var user = this.SetUser("jane@example.com");
 
             var data = new DataBuilder(this.Session).WithString("First").Build();
 
+            this.Session.Derive();
             this.Session.Commit();
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
@@ -174,8 +150,8 @@ namespace Allors.Server.Tests
                       },
             };
 
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.NamedCollections["Datas"];
 
@@ -191,7 +167,7 @@ namespace Allors.Server.Tests
 
             var @object = objects[0];
 
-            var acls = new AccessControlLists(this.Administrator);
+            var acls = new AccessControlLists(user);
             var acl = acls[data];
 
             Assert.Equal(3, @object.Length);
@@ -204,13 +180,12 @@ namespace Allors.Server.Tests
         [Fact]
         public async void WithResult()
         {
-            await this.SignIn(this.Administrator);
+            var user = this.SetUser("jane@example.com");
 
             var data = new DataBuilder(this.Session).WithString("First").Build();
 
+            this.Session.Derive();
             this.Session.Commit();
-
-            var uri = new Uri(@"allors/pull", UriKind.Relative);
 
             var extent = new Allors.Data.Extent(M.Data.ObjectType);
 
@@ -229,8 +204,8 @@ namespace Allors.Server.Tests
                       },
             };
 
-            var response = await this.PostAsJsonAsync(uri, pullRequest);
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.NamedCollections["Datas"];
 
@@ -246,7 +221,7 @@ namespace Allors.Server.Tests
 
             var @object = objects[0];
 
-            var acls = new AccessControlLists(this.Administrator);
+            var acls = new AccessControlLists(user);
             var acl = acls[data];
 
             Assert.Equal(3, @object.Length);

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Api.Json.Sync
 {
     using System.Linq;
     using Allors.Domain;
@@ -12,6 +12,7 @@ namespace Allors.Server
     using Protocol;
     using Protocol.Data;
     using Protocol.Remote;
+    using Server;
 
     public class SyncResponseBuilder
     {

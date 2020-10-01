@@ -14,21 +14,12 @@ namespace Allors.Server
     {
         private readonly IAccessControlLists acls;
 
-        internal PermissionsWriter(IAccessControlLists acls)
-        {
-            this.acls = acls;
-        }
+        internal PermissionsWriter(IAccessControlLists acls) => this.acls = acls;
 
         public string Write(IObject @object)
         {
             var deniedPermissionIds = this.acls[@object].DeniedPermissionIds;
-            if (deniedPermissionIds == null)
-            {
-                return null;
-            }
-
-            var sortedPermissionIds = string.Join(Encoding.Separator, deniedPermissionIds.OrderBy(v => v));
-            return sortedPermissionIds;
+            return deniedPermissionIds == null ? null : string.Join(Encoding.Separator, deniedPermissionIds.OrderBy(v => v));
         }
     }
 }

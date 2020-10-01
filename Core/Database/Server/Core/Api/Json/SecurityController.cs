@@ -10,7 +10,7 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Protocol.Remote.Security;
     using Allors.Services;
-
+    using Api.Json.Security;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

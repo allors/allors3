@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the ISessionExtension type.</summary>
 
-namespace Allors.Server
+namespace Allors.Api.Json.Pull
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Services;
+    using Server;
     using Extent = Allors.Extent;
 
     public class PullInstantiate

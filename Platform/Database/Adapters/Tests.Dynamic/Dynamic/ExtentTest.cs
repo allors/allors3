@@ -140,9 +140,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private Class[] GetTestTypes()
-        {
-            return this.GetMetaPopulation().Classes.ToArray();
-        }
+        private Class[] GetTestTypes() => this.GetMetaPopulation().Classes.ToArray();
     }
 }

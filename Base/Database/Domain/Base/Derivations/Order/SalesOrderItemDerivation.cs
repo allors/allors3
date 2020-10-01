@@ -76,7 +76,7 @@ namespace Allors.Domain
 
                 if (salesOrderItem.SalesOrderItemState.IsInProcess
                     && salesOrderItem.ExistPreviousReservedFromNonSerialisedInventoryItem
-                    && salesOrderItem.ReservedFromNonSerialisedInventoryItem != salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem)
+                    && !Equals(salesOrderItem.ReservedFromNonSerialisedInventoryItem, salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem))
                 {
                     validation.AddError($"{salesOrderItem} {salesOrderItem.Meta.ReservedFromNonSerialisedInventoryItem} {ErrorMessages.ReservedFromNonSerialisedInventoryItem}");
                 }

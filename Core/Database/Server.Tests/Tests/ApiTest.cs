@@ -75,7 +75,7 @@ namespace Allors.Server.Tests
 
         protected HttpClientHandler HttpClientHandler { get; set; }
 
-        protected User Administrator => new Users(this.Session).GetUser("administrator");
+        protected User Administrator => new Users(this.Session).GetUser("jane@example.com");
 
         public void Dispose()
         {

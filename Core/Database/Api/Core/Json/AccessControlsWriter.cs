@@ -14,10 +14,7 @@ namespace Allors.Server
     {
         private readonly IAccessControlLists acls;
 
-        internal AccessControlsWriter(IAccessControlLists acls)
-        {
-            this.acls = acls;
-        }
+        internal AccessControlsWriter(IAccessControlLists acls) => this.acls = acls;
 
         public string Write(IObject @object)
         {

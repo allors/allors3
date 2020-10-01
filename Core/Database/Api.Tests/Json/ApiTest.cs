@@ -8,11 +8,13 @@ namespace Tests
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using Allors;
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
+    using Allors.Protocol.Remote;
     using Allors.Services;
 
     public class ApiTest : IDisposable
@@ -33,7 +35,7 @@ namespace Tests
 
         public M M { get; }
 
-        public virtual Config Config { get; } = new Config { SetupSecurity = false };
+        public virtual Config Config { get; } = new Config { SetupSecurity = true };
 
         public ISession Session { get; private set; }
 
@@ -68,6 +70,22 @@ namespace Tests
                 this.Session.Commit();
             }
         }
+
+        protected User SetUser(string userName) => this.Session.Scope().User = new Users(this.Session).FindBy(this.M.User.UserName, userName);
+
+        protected Func<IAccessControlList, string> PrintAccessControls =>
+            acl =>
+            {
+                var orderedAcls = acl.AccessControls.OrderBy(v => v).Select(v => v.Id.ToString()).ToArray();
+                return orderedAcls.Any() ? string.Join(Encoding.Separator, orderedAcls) : null;
+            };
+
+        protected Func<IAccessControlList, string> PrintDeniedPermissions =>
+            acl =>
+            {
+                var orderedDeniedPermissions = acl.DeniedPermissionIds.OrderBy(v => v).Select(v => v.ToString()).ToArray();
+                return orderedDeniedPermissions.Any() ? string.Join(Encoding.Separator, orderedDeniedPermissions) : null;
+            };
 
         protected Stream GetResource(string name)
         {

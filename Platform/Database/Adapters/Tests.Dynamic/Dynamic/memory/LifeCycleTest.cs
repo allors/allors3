@@ -28,59 +28,26 @@ namespace Allors.Database.Adapters.Memory
     {
         private readonly Profile profile = new Profile();
 
-        public LifeCycleTest()
-        {
-            this.profile.Init();
-        }
+        public LifeCycleTest() => this.profile.Init();
 
-        public override void Dispose()
-        {
-            this.profile.Dispose();
-        }
+        public override void Dispose() => this.profile.Dispose();
 
-        public override IObject[] CreateArray(ObjectType objectType, int count)
-        {
-            return this.profile.CreateArray(objectType, count);
-        }
+        public override IObject[] CreateArray(ObjectType objectType, int count) => this.profile.CreateArray(objectType, count);
 
-        public override IDatabase CreateMemoryPopulation()
-        {
-            return this.profile.CreateMemoryDatabase();
-        }
+        public override IDatabase CreateMemoryPopulation() => this.profile.CreateMemoryDatabase();
 
-        public override MetaPopulation GetMetaPopulation()
-        {
-            return (MetaPopulation)this.profile.GetDatabase().MetaPopulation;
-        }
+        public override MetaPopulation GetMetaPopulation() => (MetaPopulation)this.profile.GetDatabase().MetaPopulation;
 
-        public override MetaPopulation GetMetaPopulation2()
-        {
-            return (MetaPopulation)this.profile.GetDatabase2().MetaPopulation;
-        }
+        public override MetaPopulation GetMetaPopulation2() => (MetaPopulation)this.profile.GetDatabase2().MetaPopulation;
 
-        public override IDatabase GetPopulation()
-        {
-            return this.profile.GetDatabase();
-        }
+        public override IDatabase GetPopulation() => this.profile.GetDatabase();
 
-        public override IDatabase GetPopulation2()
-        {
-            return this.profile.GetDatabase2();
-        }
+        public override IDatabase GetPopulation2() => this.profile.GetDatabase2();
 
-        public override ISession GetSession()
-        {
-            return this.profile.GetSession();
-        }
+        public override ISession GetSession() => this.profile.GetSession();
 
-        public override ISession GetSession2()
-        {
-            return this.profile.GetSession2();
-        }
+        public override ISession GetSession2() => this.profile.GetSession2();
 
-        public override bool IsRollbackSupported()
-        {
-            return this.profile.IsRollbackSupported();
-        }
+        public override bool IsRollbackSupported() => this.profile.IsRollbackSupported();
     }
 }

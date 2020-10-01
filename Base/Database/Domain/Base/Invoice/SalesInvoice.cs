@@ -44,7 +44,7 @@ namespace Allors.Domain
 
                 var now = this.Session().Now();
                 var customerRelationship = this.BillToCustomer?.CustomerRelationshipsWhereCustomer
-                    .FirstOrDefault(v => v.InternalOrganisation == this.BilledFrom
+                    .FirstOrDefault(v => Equals(v.InternalOrganisation, this.BilledFrom)
                       && v.FromDate <= now
                       && (!v.ExistThroughDate || v.ThroughDate >= now));
 
@@ -735,17 +735,11 @@ namespace Allors.Domain
             }
         }
 
-        public void BaseWriteOff(SalesInvoiceWriteOff method)
-        {
-            this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).WrittenOff;
-        }
+        public void BaseWriteOff(SalesInvoiceWriteOff method) => this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).WrittenOff;
 
         public void BaseReopen(SalesInvoiceReopen method) => this.SalesInvoiceState = this.PreviousSalesInvoiceState;
 
-        public void BaseCancelInvoice(SalesInvoiceCancelInvoice method)
-        {
-            this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).Cancelled;
-        }
+        public void BaseCancelInvoice(SalesInvoiceCancelInvoice method) => this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).Cancelled;
 
         public SalesInvoice BaseCopy(SalesInvoiceCopy method)
         {

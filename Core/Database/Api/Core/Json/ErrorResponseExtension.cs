@@ -7,12 +7,10 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Allors.Domain;
     using Allors.Protocol.Remote;
     using Domain.Derivations;
 
-    public static class ErrorResponseExtensions
+    public static class ResponseExtensions
     {
         public static void AddDerivationErrors(this Response @this, IValidation validation)
         {

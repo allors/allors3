@@ -32,24 +32,12 @@ namespace Allors.Database.Adapters
         private const int RoleCount = 8;
         private const int RoleGroupCount = 4;
 
-        public override int GetAssociationCount()
-        {
-            return AssociationCount;
-        }
+        public override int GetAssociationCount() => AssociationCount;
 
-        public override int GetRoleCount()
-        {
-            return RoleCount;
-        }
+        public override int GetRoleCount() => RoleCount;
 
-        public override int GetRoleGroupCount()
-        {
-            return RoleGroupCount;
-        }
+        public override int GetRoleGroupCount() => RoleGroupCount;
 
-        public override int GetRolesPerGroup()
-        {
-            return this.GetRoleCount() / this.GetRoleGroupCount();
-        }
+        public override int GetRolesPerGroup() => this.GetRoleCount() / this.GetRoleGroupCount();
     }
 }

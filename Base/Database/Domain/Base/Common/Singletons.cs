@@ -7,9 +7,6 @@ namespace Allors.Domain
 {
     public partial class Singletons
     {
-        protected override void BasePrepare(Setup setup)
-        {
-            setup.AddDependency(this.ObjectType, M.SerialisedItemSoldOn.ObjectType);
-        }
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.SerialisedItemSoldOn.ObjectType);
     }
 }

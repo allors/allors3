@@ -3,64 +3,58 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Tests
+namespace Tests
 {
     using System;
-
+    using Allors;
+    using Allors.Api.Json;
     using Allors.Domain;
     using Allors.Protocol.Remote.Sync;
-    using Meta;
-    using Protocol;
     using Xunit;
 
-    [Collection("Api")]
-    public class SyncTests : ApiTest
+    public class SyncTests : ApiTest, IClassFixture<Fixture>
     {
-        [Fact]
-        public async void DeletedObject()
-        {
-            await this.SignIn(this.Administrator);
+        public SyncTests(Fixture fixture) : base(fixture) { }
 
-            var organisation = new OrganisationBuilder(this.Session).Build();
+        [Fact]
+        public void DeletedObject()
+        {
+            this.SetUser("jane@example.com");
+
+            var organisation = new OrganisationBuilder(this.Session).WithName("Acme").Build();
+            this.Session.Derive();
             this.Session.Commit();
 
-            var uri = new Uri(@"allors/sync", UriKind.Relative);
+            organisation.Strategy.Delete();
+            this.Session.Derive();
+            this.Session.Commit();
 
             var syncRequest = new SyncRequest
             {
                 Objects = new[] { organisation.Id.ToString() },
             };
-            var response = await this.PostAsJsonAsync(uri, syncRequest);
 
-            organisation.Strategy.Delete();
-
-            this.Session.Commit();
-
-            response = await this.PostAsJsonAsync(uri, syncRequest);
-            var syncResponse = await this.ReadAsAsync<SyncResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.Objects);
         }
 
         [Fact]
-        public async void ExistingObject()
+        public void ExistingObject()
         {
-            await this.SignIn(this.Administrator);
+            this.SetUser("jane@example.com");
 
             var people = new People(this.Session).Extent();
             var person = people[0];
-
-            var uri = new Uri(@"allors/sync", UriKind.Relative);
 
             var syncRequest = new SyncRequest
             {
                 Objects = new[] { person.Id.ToString() },
             };
-            var response = await this.PostAsJsonAsync(uri, syncRequest);
 
-            Assert.True(response.IsSuccessStatusCode);
-
-            var syncResponse = await this.ReadAsAsync<SyncResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var syncResponse = api.Sync(syncRequest);
 
             Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
@@ -72,26 +66,25 @@ namespace Allors.Server.Tests
 
 
         [Fact]
-        public async void WithoutAccessControl()
+        public void WithoutAccessControl()
         {
-            var user = new Users(this.Session).GetUser("noacl");
-            await this.SignIn(user);
+            new AutomatedAgentBuilder(this.Session).WithUserName("noacl").Build();
+            this.Session.Derive();
+            this.Session.Commit();
+
+            this.SetUser("noacl");
 
             var people = new People(this.Session).Extent();
             var person = people[0];
-
-            var uri = new Uri(@"allors/sync", UriKind.Relative);
 
             var syncRequest = new SyncRequest
             {
                 Objects = new[] { person.Id.ToString() },
             };
-            var response = await this.PostAsJsonAsync(uri, syncRequest);
 
-            Assert.True(response.IsSuccessStatusCode);
-
-            var syncResponse = await this.ReadAsAsync<SyncResponse>(response);
-
+            var api = new Api(this.Session, "Default");
+            var syncResponse = api.Sync(syncRequest);
+            
             Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 

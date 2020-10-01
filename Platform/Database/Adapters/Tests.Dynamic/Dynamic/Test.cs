@@ -59,29 +59,17 @@ namespace Allors.Database.Adapters
             }
         }
 
-        public virtual int[] GetRepeats()
-        {
-            return this.repeats;
-        }
+        public virtual int[] GetRepeats() => this.repeats;
 
-        public virtual int[] GetAssertRepeats()
-        {
-            return this.assertRepeats;
-        }
+        public virtual int[] GetAssertRepeats() => this.assertRepeats;
 
-        public virtual int[] GetTestRepeats()
-        {
-            return this.testRepeats;
-        }
+        public virtual int[] GetTestRepeats() => this.testRepeats;
 
         public abstract IObject[] CreateArray(ObjectType objectType, int count);
 
         public abstract IDatabase CreateMemoryPopulation();
 
-        public virtual bool[] GetBooleanFlags()
-        {
-            return this.boolFlags;
-        }
+        public virtual bool[] GetBooleanFlags() => this.boolFlags;
 
         public abstract bool IsRollbackSupported();
 

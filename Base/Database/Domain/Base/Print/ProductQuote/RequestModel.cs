@@ -11,10 +11,7 @@ namespace Allors.Domain.Print.ProductQuoteModel
 
     public class RequestModel
     {
-        public RequestModel(Quote quote, Dictionary<string, byte[]> imageByImageName)
-        {
-            this.Number = quote.Request?.RequestNumber;
-        }
+        public RequestModel(Quote quote, Dictionary<string, byte[]> imageByImageName) => this.Number = quote.Request?.RequestNumber;
 
         public string Number { get; }
     }

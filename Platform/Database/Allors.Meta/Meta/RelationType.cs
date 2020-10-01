@@ -183,7 +183,7 @@ namespace Allors.Meta
         public RoleClass RoleClassBy(Class @class) =>
             this.RoleType switch
             {
-                RoleClass roleClass when this.AssociationType.ObjectType == @class => roleClass,
+                RoleClass roleClass when Equals(this.AssociationType.ObjectType, @class) => roleClass,
                 RoleInterface roleInterface when this.RoleClassByAssociationTypeClass.ContainsKey(@class) => this.RoleClassByAssociationTypeClass[@class],
                 _ => null,
             };

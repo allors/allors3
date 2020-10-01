@@ -167,7 +167,7 @@ namespace Allors.Domain
             // rate before uplift
             var costRate = billingRate;
 
-            if (useInternalRate && this.WorkEffort.Customer != this.WorkEffort.ExecutedBy)
+            if (useInternalRate && !Equals(this.WorkEffort.Customer, this.WorkEffort.ExecutedBy))
             {
                 billingRate = Math.Round(billingRate * (1 + this.strategy.Session.GetSingleton().Settings.InternalLabourSurchargePercentage / 100), 2);
             }

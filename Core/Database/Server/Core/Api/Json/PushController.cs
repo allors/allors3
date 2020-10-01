@@ -9,7 +9,8 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Protocol.Remote.Push;
     using Allors.Services;
-
+    using Api.Json;
+    using Api.Json.Push;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -18,14 +19,17 @@ namespace Allors.Server
     [Route("allors/push")]
     public class PushController : ControllerBase
     {
-        public PushController(IDatabaseService databaseService, IPolicyService policyService, ILogger<PushController> logger)
+        public PushController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<PushController> logger)
         {
             this.DatabaseService = databaseService;
+            this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
             this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
+
+        public IWorkspaceService WorkspaceService { get; }
 
         private IPolicyService PolicyService { get; }
 
@@ -34,23 +38,19 @@ namespace Allors.Server
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<PushResponse> Post([FromBody]PushRequest request) =>
+        public ActionResult<PushResponse> Post([FromBody]PushRequest pushRequest) =>
             this.PolicyService.PushPolicy.Execute(
                 () =>
                 {
                     try
                     {
-                        using (var session = this.DatabaseService.Database.CreateSession())
-                        {
-                            var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                            var responseBuilder = new PushResponseBuilder(session, request, acls);
-                            var response = responseBuilder.Build();
-                            return response;
-                        }
+                        using var session = this.DatabaseService.Database.CreateSession();
+                        var api = new Api(session, this.WorkspaceService.Name);
+                        return api.Push(pushRequest);
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "PushRequest {request}", request);
+                        this.Logger.LogError(e, "PushRequest {request}", pushRequest);
                         throw;
                     }
                 });

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Api.Json.Pull
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace Allors.Server
     using Allors.Protocol.Remote.Pull;
     using Protocol;
     using Allors.Services;
+    using Server;
 
     public class PullResponseBuilder
     {

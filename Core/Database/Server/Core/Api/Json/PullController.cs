@@ -10,7 +10,7 @@ namespace Allors.Server.Controllers
     using Allors.Protocol.Data;
     using Allors.Protocol.Remote.Pull;
     using Allors.Services;
-
+    using Api.Json;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -19,9 +19,10 @@ namespace Allors.Server.Controllers
     [Route("allors/pull")]
     public class PullController : ControllerBase
     {
-        public PullController(IDatabaseService databaseService, IPolicyService policyService, ILogger<PullController> logger)
+        public PullController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<PullController> logger)
         {
             this.DatabaseService = databaseService;
+            this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
 
             var scope = this.DatabaseService.Database.Scope();
@@ -33,6 +34,8 @@ namespace Allors.Server.Controllers
         }
 
         private IDatabaseService DatabaseService { get; }
+
+        public IWorkspaceService WorkspaceService { get; }
 
         private IExtentService ExtentService { get; }
 
@@ -53,32 +56,9 @@ namespace Allors.Server.Controllers
                 {
                     try
                     {
-                        using (var session = this.DatabaseService.Database.CreateSession())
-                        {
-                            var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                            var response = new PullResponseBuilder(acls, this.TreeService);
-
-                            if (request.P != null)
-                            {
-                                foreach (var p in request.P)
-                                {
-                                    var pull = p.Load(session);
-
-                                    if (pull.Object != null)
-                                    {
-                                        var pullInstantiate = new PullInstantiate(session, pull, acls, this.FetchService);
-                                        pullInstantiate.Execute(response);
-                                    }
-                                    else
-                                    {
-                                        var pullExtent = new PullExtent(session, pull, acls, this.ExtentService, this.FetchService);
-                                        pullExtent.Execute(response);
-                                    }
-                                }
-                            }
-
-                            return response.Build();
-                        }
+                        using var session = this.DatabaseService.Database.CreateSession();
+                        var api = new Api(session, this.WorkspaceService.Name);
+                        return api.Pull(request);
                     }
                     catch (Exception e)
                     {

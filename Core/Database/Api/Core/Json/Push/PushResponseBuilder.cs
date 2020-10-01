@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Api.Json.Push
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace Allors.Server
     using Allors.Meta;
     using Allors.Protocol.Remote.Push;
     using Protocol.Data;
+    using Server;
 
     public class PushResponseBuilder
     {

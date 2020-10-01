@@ -22,7 +22,7 @@ namespace Allors.Server.Tests
             var uri = new Uri("TestSession/UserName", UriKind.Relative);
             var response = await this.HttpClient.PostAsync(uri, null);
             var content = await response.Content.ReadAsStringAsync();
-            Assert.Equal("administrator", content);
+            Assert.Equal("jane@example.com", content);
         }
 
         [Fact]

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Api.Json.Invoke
 {
     using System;
     using System.Linq;
@@ -11,7 +11,7 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Protocol.Remote.Invoke;
-    using Protocol;
+    using Server;
 
     public class InvokeResponseBuilder
     {

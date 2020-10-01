@@ -30,10 +30,7 @@ namespace Allors.Domain
             this.Address = this.MainAddress;
         }
 
-        public void CustomJustDoIt(OrganisationJustDoIt method)
-        {
-            this.JustDidIt = true;
-        }
+        public void CustomJustDoIt(OrganisationJustDoIt method) => this.JustDidIt = true;
 
         public override string ToString() => this.Name;
     }

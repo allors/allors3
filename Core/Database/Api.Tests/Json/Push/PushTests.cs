@@ -3,33 +3,31 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Tests
+namespace Tests
 {
     using System;
+    using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Meta;
     using Allors.Protocol.Remote.Push;
-    using Protocol;
     using Xunit;
 
-    [Collection("Api")]
-    public class PushTests : ApiTest
+    public class PushTests : ApiTest, IClassFixture<Fixture>
     {
-        [Fact]
-        public async void WorkspaceNewObject()
-        {
-            await this.SignIn(this.Administrator);
+        public PushTests(Fixture fixture) : base(fixture) { }
 
-            var uri = new Uri(@"allors/push", UriKind.Relative);
+        [Fact]
+        public void WorkspaceNewObject()
+        {
+            this.SetUser("jane@example.com");
 
             var pushRequest = new PushRequest
             {
                 NewObjects = new[] { new PushRequestNewObject { T = M.Build.Class.IdAsString, NI = "-1" }, },
             };
 
-            var response = await this.PostAsJsonAsync(uri, pushRequest);
-            var pushResponse = await this.ReadAsAsync<PushResponse>(response);
-
+            var api = new Api(this.Session, "Default");
+            var pushResponse = api.Push(pushRequest);
+            
             this.Session.Rollback();
 
             var build = (Build)this.Session.Instantiate(pushResponse.NewObjects[0].I);
@@ -39,9 +37,9 @@ namespace Allors.Server.Tests
         }
 
         [Fact]
-        public async void DeletedObject()
+        public void DeletedObject()
         {
-            await this.SignIn(this.Administrator);
+            this.SetUser("jane@example.com");
 
             var organisation = new OrganisationBuilder(this.Session).Build();
             this.Session.Commit();
@@ -73,11 +71,9 @@ namespace Allors.Server.Tests
                     },
                 },
             };
-            var response = await this.PostAsJsonAsync(uri, pushRequest);
 
-            Assert.True(response.IsSuccessStatusCode);
-
-            var pushResponse = await this.ReadAsAsync<PushResponse>(response);
+            var api = new Api(this.Session, "Default");
+            var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
             Assert.Single(pushResponse.MissingErrors);

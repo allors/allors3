@@ -10,7 +10,8 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Protocol.Remote.Sync;
     using Allors.Services;
-
+    using Api.Json;
+    using Api.Json.Sync;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -19,14 +20,16 @@ namespace Allors.Server
     [Route("allors/sync")]
     public class SyncController : ControllerBase
     {
-        public SyncController(IDatabaseService databaseService, IPolicyService policyService, ILogger<SyncController> logger)
+        public SyncController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<SyncController> logger)
         {
             this.DatabaseService = databaseService;
+            this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
             this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
+        public IWorkspaceService WorkspaceService { get; }
 
         private IPolicyService PolicyService { get; }
 
@@ -35,23 +38,19 @@ namespace Allors.Server
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<SyncResponse> Post([FromBody]SyncRequest request) =>
+        public ActionResult<SyncResponse> Post([FromBody]SyncRequest syncRequest) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
                     try
                     {
-                        using (var session = this.DatabaseService.Database.CreateSession())
-                        {
-                            var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                            var responseBuilder = new SyncResponseBuilder(session, request, acls);
-                            var response = responseBuilder.Build();
-                            return response;
-                        }
+                        using var session = this.DatabaseService.Database.CreateSession();
+                        var api = new Api(session, this.WorkspaceService.Name);
+                        return api.Sync(syncRequest);
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "SyncRequest {request}", request);
+                        this.Logger.LogError(e, "SyncRequest {request}", syncRequest);
                         throw;
                     }
                 });
