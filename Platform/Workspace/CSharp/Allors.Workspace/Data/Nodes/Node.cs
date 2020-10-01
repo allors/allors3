@@ -42,21 +42,8 @@ namespace Allors.Workspace.Data
         {
             var data = new Protocol.Data.Node
             {
-                PropertyType = this.PropertyType switch
-                {
-                    IAssociationType associationType => new PropertyType
-                    {
-                        RelationType = associationType.RelationType.Id,
-                        Kind = PropertyKind.Association,
-                    },
-                    IRoleType roleType => new PropertyType
-                    {
-                        RelationType = roleType.RelationType.Id,
-                        Kind = PropertyKind.Role,
-                    },
-                    _ => throw new Exception($"Unknown property type {this.PropertyType}"),
-                },
-
+                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
+                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
                 Nodes = this.Nodes.Select(v => v.ToData()).ToArray(),
             };
 

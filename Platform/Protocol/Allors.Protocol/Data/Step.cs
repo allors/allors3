@@ -5,9 +5,13 @@
 
 namespace Allors.Protocol.Data
 {
+    using System;
+
     public class Step
     {
-        public PropertyType PropertyType { get; set; }
+        public Guid? AssociationType { get; set; }
+
+        public Guid? RoleType { get; set; }
 
         public Step Next { get; set; }
 

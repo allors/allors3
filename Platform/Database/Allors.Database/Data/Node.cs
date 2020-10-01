@@ -40,7 +40,8 @@ namespace Allors.Data
         public Protocol.Data.Node Save() =>
             new Protocol.Data.Node
             {
-                PropertyType = this.PropertyType.Save(),
+                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
+                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
                 Nodes = this.Nodes.Select(v => v.Save()).ToArray(),
             };
 

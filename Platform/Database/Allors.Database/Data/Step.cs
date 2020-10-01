@@ -56,7 +56,8 @@ namespace Allors.Data
             new Protocol.Data.Step
             {
                 Include = this.Include?.Save(),
-                PropertyType = this.PropertyType.Save(),
+                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
+                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
                 Next = this.Next.Save(),
             };
 

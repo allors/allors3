@@ -5,14 +5,21 @@
 
 namespace Allors.Protocol.Data
 {
+    using Meta;
+
     public static class StepExtensions
     {
-        public static Allors.Data.Step Load(this Step @this, ISession session) =>
-            new Allors.Data.Step
+        public static Allors.Data.Step Load(this Step @this, ISession session)
+        {
+            var metaPopulation = session.Database.ObjectFactory.MetaPopulation;
+            var propertyType = (IPropertyType)metaPopulation.FindAssociationType(@this.AssociationType) ?? metaPopulation.FindRoleType(@this.RoleType);
+
+            return new Allors.Data.Step
             {
-                PropertyType = @this.PropertyType?.Load(session),
+                PropertyType = propertyType,
                 Next = @this.Next?.Load(session),
                 Include = @this.Include?.Load(session),
             };
+        }
     }
 }

@@ -74,32 +74,30 @@ namespace Allors.Workspace.Local
         {
             try
             {
-                using (var session = this.Database.CreateSession())
+                using var session = this.Database.CreateSession();
+                var acls = new WorkspaceAccessControlLists(session.Scope().User);
+                var response = new PullResponseBuilder(acls, this.TreeService);
+
+                if (request.P != null)
                 {
-                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                    var response = new PullResponseBuilder(acls, this.TreeService);
-
-                    if (request.P != null)
+                    foreach (var p in request.P)
                     {
-                        foreach (var p in request.P)
-                        {
-                            var pull = p.Load(session);
+                        var pull = p.Load(session);
 
-                            if (pull.Object != null)
-                            {
-                                var pullInstantiate = new PullInstantiate(session, pull, acls, this.FetchService);
-                                pullInstantiate.Execute(response);
-                            }
-                            else
-                            {
-                                var pullExtent = new PullExtent(session, pull, acls, this.ExtentService, this.FetchService);
-                                pullExtent.Execute(response);
-                            }
+                        if (pull.Object != null)
+                        {
+                            var pullInstantiate = new PullInstantiate(session, pull, acls, this.FetchService);
+                            pullInstantiate.Execute(response);
+                        }
+                        else
+                        {
+                            var pullExtent = new PullExtent(session, pull, acls, this.ExtentService, this.FetchService);
+                            pullExtent.Execute(response);
                         }
                     }
-
-                    return Task.FromResult(response.Build());
                 }
+
+                return Task.FromResult(response.Build());
             }
             catch (Exception e)
             {
@@ -114,18 +112,16 @@ namespace Allors.Workspace.Local
         {
             try
             {
-                using (var session = this.Database.CreateSession())
+                using var session = this.Database.CreateSession();
+                var acls = new WorkspaceAccessControlLists(session.Scope().User);
+                var responseBuilder = new PushResponseBuilder(session, request, acls);
+                var response = responseBuilder.Build();
+                if (!response.HasErrors)
                 {
-                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                    var responseBuilder = new PushResponseBuilder(session, request, acls);
-                    var response = responseBuilder.Build();
-                    if (!response.HasErrors)
-                    {
-                        session.Commit();
-                    }
-
-                    return Task.FromResult(response);
+                    session.Commit();
                 }
+
+                return Task.FromResult(response);
             }
             catch (Exception e)
             {
@@ -138,13 +134,11 @@ namespace Allors.Workspace.Local
         {
             try
             {
-                using (var session = this.Database.CreateSession())
-                {
-                    var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                    var responseBuilder = new SyncResponseBuilder(session, request, acls);
-                    var response = responseBuilder.Build();
-                    return Task.FromResult(response);
-                }
+                using var session = this.Database.CreateSession();
+                var acls = new WorkspaceAccessControlLists(session.Scope().User);
+                var responseBuilder = new SyncResponseBuilder(session, request, acls);
+                var response = responseBuilder.Build();
+                return Task.FromResult(response);
             }
             catch (Exception e)
             {
@@ -157,12 +151,10 @@ namespace Allors.Workspace.Local
         {
             try
             {
-                using (var session = this.Database.CreateSession())
-                {
-                    var responseBuilder = new SecurityResponseBuilder(session, request);
-                    var response = responseBuilder.Build();
-                    return Task.FromResult(response);
-                }
+                using var session = this.Database.CreateSession();
+                var responseBuilder = new SecurityResponseBuilder(session, request);
+                var response = responseBuilder.Build();
+                return Task.FromResult(response);
             }
             catch (Exception e)
             {
