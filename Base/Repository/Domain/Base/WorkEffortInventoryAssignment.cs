@@ -80,6 +80,7 @@ namespace Allors.Repository
         #region Allors
         [Id("be2b92ca-53d0-46c7-954d-6432590e1994")]
         #endregion
+        [Required]
         [Derived]
         [Workspace(Default)]
         public decimal DerivedBillableQuantity { get; set; }

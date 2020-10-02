@@ -51,13 +51,9 @@ namespace Allors.Domain
                 }
             }
 
-            if (this.ExistAssignedBillableQuantity)
-            {
-                this.DerivedBillableQuantity = this.AssignedBillableQuantity;
-            }
-
             this.CalculatePurchasePrice();
             this.CalculateSellingPrice();
+            this.CalculateBillableQuantity();
 
             if (this.ExistAssignment)
             {
@@ -70,6 +66,16 @@ namespace Allors.Domain
             var session = this.strategy.Session;
             var derivation = new Derivations.Default.Derivation(session);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(session).Consumption, true);
+        }
+
+        public void BaseCalculateBillableQuantity(WorkEffortInventoryAssignmentCalculateBillableQuantity method)
+        {
+            if (!method.Result.HasValue)
+            {
+                this.DerivedBillableQuantity = this.AssignedBillableQuantity ?? this.Quantity;
+
+                method.Result = true;
+            }
         }
 
         public void BaseCalculatePurchasePrice(WorkEffortInventoryAssignmentCalculatePurchasePrice method)
