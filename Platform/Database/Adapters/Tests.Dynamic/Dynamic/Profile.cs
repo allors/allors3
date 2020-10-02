@@ -46,7 +46,7 @@ namespace Allors.Database.Adapters
         }
 
         public IDatabase CreateMemoryDatabase() =>
-            new Database(new DatabaseScope(), new Memory.Configuration
+            new Database(new DatabaseInstance(), new Memory.Configuration
             {
                 ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(C1)),
             });

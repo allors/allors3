@@ -19,13 +19,9 @@ namespace Allors.Domain
 
         Object Object { get; }
 
-        bool CanRead(IPropertyType propertyType);
-
         bool CanRead(IRoleType roleType);
 
         bool CanWrite(IRoleType roleType);
-
-        bool CanRead(IAssociationType roleType);
 
         bool CanExecute(IMethodType methodType);
     }

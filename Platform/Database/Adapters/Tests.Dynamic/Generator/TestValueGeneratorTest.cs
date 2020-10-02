@@ -102,8 +102,8 @@ namespace Allors.Database.Adapters
             string value1 = this.testValueGenerator.GenerateString(0);
             string value2 = this.testValueGenerator.GenerateString(0);
 
-            Assert.Equal(0, value1.Count());
-            Assert.Equal(0, value2.Count());
+            Assert.Empty(value1);
+            Assert.Empty(value2);
             Assert.Equal(value1, value2);
 
             value1 = this.testValueGenerator.GenerateString(1);

@@ -11,26 +11,26 @@
     <Position X="3.75" Y="1" Width="2.5" />
     <AssociationLine Name="Subjects" Type="Allors.Domain.User" FixedFromPoint="true">
       <Path>
-        <Point X="6.25" Y="1.75" />
-        <Point X="7.5" Y="1.75" />
+        <Point X="6.25" Y="1.567" />
+        <Point X="7.5" Y="1.567" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="_EffectivePermissions" Type="Allors.Domain.Permission" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="3.75" Y="2.329" />
-        <Point X="3.375" Y="2.329" />
+        <Point X="3.75" Y="2.004" />
+        <Point X="3.375" Y="2.004" />
         <Point X="3.375" Y="5.763" />
         <Point X="4.25" Y="5.763" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="_EffectiveUsers" Type="Allors.Domain.User" FixedFromPoint="true">
       <Path>
-        <Point X="6.25" Y="2.25" />
-        <Point X="7.5" Y="2.25" />
+        <Point X="6.25" Y="1.944" />
+        <Point X="7.5" Y="1.944" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAAAAAACAEAAAAAAAAAAAAIAAAAAAAAIAQAA=</HashCode>
+      <HashCode>AAAAAEAAAAAAAACAEAAAAAAAAAAAAIAAAAAAAAIAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>

@@ -22,13 +22,13 @@ namespace Tests
         public ApiTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseScope(),
+                new DefaultDatabaseInstance(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = database.Scope().M;
+            this.M = database.State().M;
 
             this.Setup(database, populate);
         }
@@ -39,9 +39,9 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.Database.Scope().TimeService;
+        public ITimeService TimeService => this.Session.Database.State().TimeService;
 
-        public IDerivationService DerivationService => this.Session.Database.Scope().DerivationService;
+        public IDerivationService DerivationService => this.Session.Database.State().DerivationService;
 
         public TimeSpan? TimeShift
         {
@@ -71,7 +71,7 @@ namespace Tests
             }
         }
 
-        protected User SetUser(string userName) => this.Session.Scope().User = new Users(this.Session).FindBy(this.M.User.UserName, userName);
+        protected User SetUser(string userName) => this.Session.State().User = new Users(this.Session).FindBy(this.M.User.UserName, userName);
 
         protected Func<IAccessControlList, string> PrintAccessControls =>
             acl =>

@@ -10,6 +10,7 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Protocol.Remote.Invoke;
     using Allors.Services;
+    using Api.Json;
     using Api.Json.Invoke;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -19,14 +20,17 @@ namespace Allors.Server
     [Route("allors/invoke")]
     public class InvokeController : ControllerBase
     {
-        public InvokeController(IDatabaseService databaseService, IPolicyService policyService, ILogger<InvokeController> logger)
+        public InvokeController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<InvokeController> logger)
         {
             this.DatabaseService = databaseService;
+            this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
             this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
+
+        public IWorkspaceService WorkspaceService { get; }
 
         private IPolicyService PolicyService { get; }
 
@@ -35,23 +39,19 @@ namespace Allors.Server
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<InvokeResponse> Post(InvokeRequest request) =>
+        public ActionResult<InvokeResponse> Post(InvokeRequest invokeRequest) =>
             this.PolicyService.InvokePolicy.Execute(
                 () =>
                     {
                         try
                         {
-                            using (var session = this.DatabaseService.Database.CreateSession())
-                            {
-                                var acls = new WorkspaceAccessControlLists(session.Scope().User);
-                                var responseBuilder = new InvokeResponseBuilder(session, request, acls);
-                                var response = responseBuilder.Build();
-                                return response;
-                            }
+                            using var session = this.DatabaseService.Database.CreateSession();
+                            var api = new Api(session, this.WorkspaceService.Name);
+                            return api.Invoke(invokeRequest);
                         }
                         catch (Exception e)
                         {
-                            this.Logger.LogError(e, "InvokeRequest {request}", request);
+                            this.Logger.LogError(e, "InvokeRequest {request}", invokeRequest);
                             throw;
                         }
                     });

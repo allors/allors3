@@ -16,13 +16,16 @@ namespace Allors.Server.Controllers
 
     public class OrganisationsController : Controller
     {
-        public OrganisationsController(ISessionService sessionService)
+        public OrganisationsController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
+            this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeService = this.Session.Database.Scope().TreeService;
+            this.TreeCache = this.Session.Database.State().TreeCache;
         }
 
-        public ITreeService TreeService { get; }
+        public ITreeCache TreeCache { get; }
+
+        public IWorkspaceService WorkspaceService { get; }
 
         private ISession Session { get; }
 
@@ -30,8 +33,8 @@ namespace Allors.Server.Controllers
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
-            var response = new PullResponseBuilder(acls, this.TreeService);
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceService.Name, this.Session.State().User);
+            var response = new PullResponseBuilder(acls, this.TreeCache);
             var people = new Organisations(this.Session).Extent().ToArray();
             response.AddCollection("organisations", people, true);
             return this.Ok(response.Build());

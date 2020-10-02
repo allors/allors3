@@ -177,7 +177,7 @@ namespace Allors.Security
 
         public async Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            var m = this.database.Scope().M;
+            var m = this.database.State().M;
 
             cancellationToken.ThrowIfCancellationRequested();
             using (var session = this.database.CreateSession())
@@ -235,7 +235,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Scope().M;
+            var m = this.database.State().M;
 
             using (var session = this.database.CreateSession())
             {
@@ -263,7 +263,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Scope().M;
+            var m = this.database.State().M;
 
             using (var session = this.database.CreateSession())
             {
@@ -323,7 +323,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Scope().M;
+            var m = this.database.State().M;
 
             using (var session = this.database.CreateSession())
             {
@@ -422,7 +422,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Scope().M;
+            var m = this.database.State().M;
 
             using (var session = this.database.CreateSession())
             {

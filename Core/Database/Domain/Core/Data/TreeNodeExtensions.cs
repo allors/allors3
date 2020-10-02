@@ -27,7 +27,8 @@ namespace Allors.Data
             if (@object != null)
             {
                 var acl = acls[@object];
-                if (acl.CanRead(@this.PropertyType))
+                // TODO: Access check for AssociationType
+                if (@this.PropertyType is AssociationType || acl.CanRead((RoleType)@this.PropertyType))
                 {
                     if (@this.PropertyType is IRoleType roleType)
                     {

@@ -6,6 +6,7 @@
 namespace Allors.Domain
 {
     using System.Text;
+    using System.Linq;
 
     using Allors.Meta;
 
@@ -50,10 +51,12 @@ namespace Allors.Domain
                     iteration.Mark(role);
                 }
 
-                this.Strategy.Session.ClearCache<PermissionCache>();
+                this.DatabaseState().PermissionsCache.Clear();
             }
         }
 
+        public bool InWorkspace(string workspaceName) => this.ConcreteClass.WorkspaceNames.Contains(workspaceName);
+        
         public override string ToString()
         {
             var toString = new StringBuilder();

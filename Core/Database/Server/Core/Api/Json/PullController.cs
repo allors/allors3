@@ -25,11 +25,11 @@ namespace Allors.Server.Controllers
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
 
-            var scope = this.DatabaseService.Database.Scope();
+            var scope = this.DatabaseService.Database.State();
 
-            this.ExtentService = scope.ExtentService;
+            this.ExtentService = scope.PreparedExtentCache;
             this.FetchService = scope.FetchService;
-            this.TreeService = scope.TreeService;
+            this.TreeCache = scope.TreeCache;
             this.Logger = logger;
         }
 
@@ -37,7 +37,7 @@ namespace Allors.Server.Controllers
 
         public IWorkspaceService WorkspaceService { get; }
 
-        private IExtentService ExtentService { get; }
+        private IPreparedExtentCache ExtentService { get; }
 
         private IFetchService FetchService { get; }
 
@@ -45,7 +45,7 @@ namespace Allors.Server.Controllers
 
         private IPolicyService PolicyService { get; }
 
-        private ITreeService TreeService { get; }
+        private ITreeCache TreeCache { get; }
 
         [HttpPost]
         [Authorize]

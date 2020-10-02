@@ -11,7 +11,7 @@ namespace Allors
     {
         public static void RegisterDerivations(this @IDatabase @this)
         {
-            var m = @this.Scope().M;
+            var m = @this.State().M;
             var derivations = new IDomainDerivation[]
             {
                 new PersonFullNameDerivation(m),

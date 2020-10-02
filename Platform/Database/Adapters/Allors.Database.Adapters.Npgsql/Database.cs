@@ -38,10 +38,10 @@ namespace Allors.Database.Adapters.Npgsql
 
         private ICacheFactory cacheFactory;
 
-        public Database(IDatabaseLifecycle state, Configuration configuration)
+        public Database(IDatabaseInstanceLifecycle instance, Configuration configuration)
         {
-            this.Lifecycle = state;
-            if (this.Lifecycle == null)
+            this.InstanceLifecycle = instance;
+            if (this.InstanceLifecycle == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -92,14 +92,14 @@ namespace Allors.Database.Adapters.Npgsql
 
             this.DomainDerivationById = new Dictionary<Guid, IDomainDerivation>();
 
-            this.Lifecycle.OnInit(this);
+            this.InstanceLifecycle.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        public IDatabaseLifecycle Lifecycle { get; }
+        public IDatabaseInstanceLifecycle InstanceLifecycle { get; }
 
         public IConnectionFactory ConnectionFactory
         {
@@ -195,7 +195,7 @@ namespace Allors.Database.Adapters.Npgsql
                 throw new Exception(this.validationMessage);
             }
 
-            return new Session(this, connection, this.Lifecycle.CreateSessionScope());
+            return new Session(this, connection, this.InstanceLifecycle.CreateSessionInstance());
         }
 
         public void Init()

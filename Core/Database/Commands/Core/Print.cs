@@ -26,7 +26,7 @@ namespace Commands
             this.Logger.Info("Begin");
 
             var scheduler = new AutomatedAgents(session).System;
-            session.Scope().User = scheduler;
+            session.State().User = scheduler;
 
             var m = this.Parent.M;
             var printDocuments = new PrintDocuments(session).Extent();

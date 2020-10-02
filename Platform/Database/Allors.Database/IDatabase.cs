@@ -59,7 +59,7 @@ namespace Allors
         /// </summary>
         IMetaPopulation MetaPopulation { get; }
 
-        IDatabaseLifecycle Lifecycle { get; }
+        IDatabaseInstanceLifecycle InstanceLifecycle { get; }
 
         /// <summary>
         /// Initializes the database. If this population is persistent then

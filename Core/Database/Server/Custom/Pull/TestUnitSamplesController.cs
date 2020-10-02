@@ -16,16 +16,18 @@ namespace Allors.Server.Controllers
 
     public class TestUnitSamplesController : Controller
     {
-        public TestUnitSamplesController(ISessionService sessionService)
+        public TestUnitSamplesController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
+            this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeService = this.Session.Database.Scope().TreeService;
+            this.TreeCache = this.Session.Database.State().TreeCache;
         }
 
         private ISession Session { get; }
 
-        public ITreeService TreeService { get; }
+        public IWorkspaceService WorkspaceService { get; }
 
+        public ITreeCache TreeCache { get; }
 
         [HttpPost]
         public async Task<IActionResult> Pull([FromBody] TestUnitSamplesParams @params)
@@ -39,8 +41,8 @@ namespace Allors.Server.Controllers
                     this.Session.Commit();
                 }
 
-                var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
-                var responseBuilder = new PullResponseBuilder(acls, this.TreeService);
+                var acls = new WorkspaceAccessControlLists(WorkspaceService.Name, this.Session.State().User);
+                var responseBuilder = new PullResponseBuilder(acls, this.TreeCache);
 
                 switch (@params.Step)
                 {

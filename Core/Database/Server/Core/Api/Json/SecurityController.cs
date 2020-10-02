@@ -10,6 +10,7 @@ namespace Allors.Server
     using Allors.Domain;
     using Allors.Protocol.Remote.Security;
     using Allors.Services;
+    using Api.Json;
     using Api.Json.Security;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -19,14 +20,16 @@ namespace Allors.Server
     [Route("allors/security")]
     public class SecurityController : ControllerBase
     {
-        public SecurityController(IDatabaseService databaseService, IPolicyService policyService, ILogger<SecurityController> logger)
+        public SecurityController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<SecurityController> logger)
         {
             this.DatabaseService = databaseService;
+            this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
             this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
+        public IWorkspaceService WorkspaceService { get; }
 
         private IPolicyService PolicyService { get; }
 
@@ -35,22 +38,19 @@ namespace Allors.Server
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<SecurityResponse> Post([FromBody]SecurityRequest request) =>
+        public ActionResult<SecurityResponse> Post([FromBody]SecurityRequest securityRequest) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
                     try
                     {
-                        using (var session = this.DatabaseService.Database.CreateSession())
-                        {
-                            var responseBuilder = new SecurityResponseBuilder(session, request);
-                            var response = responseBuilder.Build();
-                            return response;
-                        }
+                        using var session = this.DatabaseService.Database.CreateSession();
+                        var api = new Api(session, this.WorkspaceService.Name);
+                        return api.Security(securityRequest);
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "SecurityRequest {request}", request);
+                        this.Logger.LogError(e, "SecurityRequest {request}", securityRequest);
                         throw;
                     }
                 });

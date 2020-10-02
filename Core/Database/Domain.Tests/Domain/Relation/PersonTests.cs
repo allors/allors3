@@ -21,7 +21,7 @@ namespace Tests
         {
             new PersonBuilder(this.Session).Build();
             var log = this.Session.Derive(false);
-            Assert.Equal(0, log.Errors.Length);
+            Assert.Empty(log.Errors);
         }
 
         [Fact]

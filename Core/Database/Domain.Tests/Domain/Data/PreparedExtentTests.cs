@@ -19,7 +19,7 @@ namespace Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.Database.Scope().ExtentService;
+            var extentService = this.Session.Database.State().PreparedExtentCache;
             var organizationByName = extentService.Get(PreparedExtents.ByName);
 
             var arguments = new Dictionary<string, string>

@@ -9,7 +9,7 @@ namespace Allors.Domain
     {
         public static void CoreOnDerive(this Auditable @this, ObjectOnDerive method)
         {
-            //var user = @this.Strategy.Session.Scope().User;
+            //var user = @this.Strategy.Session.State().User;
             //if (user != null)
             //{
             //    var derivation = method.Derivation;

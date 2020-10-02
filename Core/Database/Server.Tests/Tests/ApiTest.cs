@@ -45,7 +45,7 @@ namespace Allors.Server.Tests
 
             var metaPopulation = new MetaBuilder().Build();
             var database = new Database(
-                new DefaultDatabaseScope(),
+                new DefaultDatabaseInstance(),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
@@ -65,7 +65,7 @@ namespace Allors.Server.Tests
             this.Session = database.CreateSession();
         }
 
-        public M M => this.Session.Database.Scope().M;
+        public M M => this.Session.Database.State().M;
 
         public IConfigurationRoot Configuration { get; set; }
         

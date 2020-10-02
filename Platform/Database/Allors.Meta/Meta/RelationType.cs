@@ -12,7 +12,7 @@ namespace Allors.Meta
     using System.Linq;
 
     /// <summary>
-    /// A <see cref="RelationType"/> defines the state and behavior for
+    /// A <see cref="RelationType"/> defines the instance and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
     public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable

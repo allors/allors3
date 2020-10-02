@@ -12,9 +12,7 @@ namespace Tests
     using Allors;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Meta;
     using Allors.Protocol.Data;
-    using Allors.Protocol.Remote;
     using Allors.Protocol.Remote.Pull;
     using Xunit;
 
@@ -64,7 +62,7 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new AccessControlLists(user);
+            var acls = new DatabaseAccessControlLists(user);
             var acl = acls[data];
 
             Assert.Equal(4, @object.Length);
@@ -167,7 +165,7 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new AccessControlLists(user);
+            var acls = new DatabaseAccessControlLists(user);
             var acl = acls[data];
 
             Assert.Equal(3, @object.Length);
@@ -192,17 +190,17 @@ namespace Tests
             var pullRequest = new PullRequest
             {
                 P = new[]
-                      {
-                          new Pull
-                              {
-                                  Extent = extent.Save(),
-                                  Results = new[]
-                                                {
-                                                    new Result { Name = "Datas" },
-                                                },
-                              },
-                      },
-            };
+                {
+                    new Pull
+                    {
+                        Extent = extent.Save(),
+                        Results = new[]
+                        {
+                            new Result { Name = "Datas" },
+                        },
+                        },
+                    },
+                };
 
             var api = new Api(this.Session, "Default");
             var pullResponse = api.Pull(pullRequest);
@@ -221,7 +219,7 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new AccessControlLists(user);
+            var acls = new DatabaseAccessControlLists(user);
             var acl = acls[data];
 
             Assert.Equal(3, @object.Length);

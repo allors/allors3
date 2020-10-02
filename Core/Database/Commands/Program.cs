@@ -76,7 +76,7 @@ namespace Commands
             {
                 if (this.database == null)
                 {
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
+                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseInstance(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
                     this.database = databaseBuilder.Build();
                     this.database.RegisterDerivations();
                 }
@@ -85,7 +85,7 @@ namespace Commands
             }
         }
 
-        public M M => this.Database.Scope().M;
+        public M M => this.Database.State().M;
 
         public static int Main(string[] args)
         {

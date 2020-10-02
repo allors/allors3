@@ -16,22 +16,25 @@ namespace Allors.Server.Controllers
 
     public class PeopleSheetController : Controller
     {
-        public PeopleSheetController(ISessionService sessionService)
+        public PeopleSheetController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
+            this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeService = this.Session.Database.Scope().TreeService;
+            this.TreeCache = this.Session.Database.State().TreeCache;
         }
 
         private ISession Session { get; }
 
-        public ITreeService TreeService { get; }
+        public IWorkspaceService WorkspaceService { get; }
+
+        public ITreeCache TreeCache { get; }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
-            var response = new PullResponseBuilder(acls, this.TreeService);
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceService.Name, this.Session.State().User);
+            var response = new PullResponseBuilder(acls, this.TreeCache);
             var people = new People(this.Session).Extent().ToArray();
             response.AddCollection("people", people);
             return this.Ok(response.Build());

@@ -15,24 +15,27 @@ namespace Allors.Server.Controllers
 
     public class TestEmployeesController : Controller
     {
-        public TestEmployeesController(ISessionService sessionService)
+        public TestEmployeesController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
+            this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeService = this.Session.Database.Scope().TreeService;
+            this.TreeCache = this.Session.Database.State().TreeCache;
         }
 
         private ISession Session { get; }
 
-        public ITreeService TreeService { get; }
+        public ITreeCache TreeCache { get; }
+
+        public IWorkspaceService WorkspaceService { get; }
 
         [HttpPost]
         public IActionResult Pull()
         {
-            var m = ((IDatabaseScope) this.Session.Database.Scope()).M;
+            var m = ((IDatabaseInstance) this.Session.Database.State()).M;
 
-            var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
-            var response = new PullResponseBuilder(acls, this.TreeService);
-            var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.Scope().User);
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceService.Name, this.Session.State().User);
+            var response = new PullResponseBuilder(acls, this.TreeCache);
+            var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.State().User);
 
             response.AddObject("root", organisation, new[]
             {

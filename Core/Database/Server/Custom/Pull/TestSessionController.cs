@@ -13,22 +13,25 @@ namespace Allors.Server.Controllers
 
     public class TestSessionController : Controller
     {
-        public TestSessionController(ISessionService sessionService)
+        public TestSessionController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
+            this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeService = this.Session.Database.Scope().TreeService;
+            this.TreeCache = this.Session.Database.State().TreeCache;
         }
 
         private ISession Session { get; }
 
-        public ITreeService TreeService { get; }
+        public IWorkspaceService WorkspaceService { get; }
+
+        public ITreeCache TreeCache { get; }
 
         [HttpPost]
         [AllowAnonymous]
         [Authorize]
         public IActionResult UserName()
         {
-            var user = this.Session.Scope().User;
+            var user = this.Session.State().User;
             var result = user?.UserName;
             return this.Content(result);
         }

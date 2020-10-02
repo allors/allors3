@@ -16,11 +16,13 @@ namespace Allors.Api.Json.Security
     {
         private readonly ISession session;
         private readonly SecurityRequest securityRequest;
+        private readonly IAccessControlLists acls;
 
-        public SecurityResponseBuilder(ISession session, SecurityRequest securityRequest)
+        public SecurityResponseBuilder(IAccessControlLists acls, ISession session, SecurityRequest securityRequest)
         {
             this.session = session;
             this.securityRequest = securityRequest;
+            this.acls = acls;
         }
 
         public SecurityResponse Build()
@@ -37,7 +39,7 @@ namespace Allors.Api.Json.Security
                     {
                         I = v.Strategy.ObjectId.ToString(),
                         V = v.Strategy.ObjectVersion.ToString(),
-                        P = v.EffectiveWorkspacePermissionIds,
+                        P = string.Join(",", this.acls.EffectivePermissionIdsByAccessControl[v]),
                     }).ToArray();
             }
 

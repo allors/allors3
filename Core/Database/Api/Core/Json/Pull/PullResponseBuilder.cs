@@ -17,24 +17,22 @@ namespace Allors.Api.Json.Pull
 
     public class PullResponseBuilder
     {
-        private readonly AccessControlsWriter accessControlsWriter;
         private readonly IAccessControlLists acls;
+        private readonly ITreeCache treeCache;
+
         private readonly Dictionary<string, IList<IObject>> collectionsByName = new Dictionary<string, IList<IObject>>();
-        private readonly PermissionsWriter permissionsWriter;
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
-        private readonly HashSet<IObject> objects;
-        private readonly ITreeService treeService;
         private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
-        public PullResponseBuilder(User user, ITreeService treeService = null)
-            : this(new WorkspaceAccessControlLists(user), treeService)
-        {
-        }
+        private readonly HashSet<IObject> objects;
 
-        public PullResponseBuilder(IAccessControlLists acls, ITreeService treeService)
+        private readonly AccessControlsWriter accessControlsWriter;
+        private readonly PermissionsWriter permissionsWriter;
+
+        public PullResponseBuilder(IAccessControlLists acls, ITreeCache treeCache)
         {
             this.acls = acls;
-            this.treeService = treeService;
+            this.treeCache = treeCache;
 
             this.objects = new HashSet<IObject>();
             this.accessControlsWriter = new AccessControlsWriter(this.acls);
@@ -49,7 +47,7 @@ namespace Allors.Api.Json.Pull
             if (full && inputList.Count > 0)
             {
                 var @object = inputList.FirstOrDefault();
-                tree = @object?.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.treeService);
+                tree = @object?.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.treeCache);
             }
 
             this.AddCollection(name, inputList, tree);
@@ -101,7 +99,7 @@ namespace Allors.Api.Json.Pull
                 Node[] tree = null;
                 if (full)
                 {
-                    tree = @object.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.treeService);
+                    tree = @object.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.treeCache);
                 }
 
                 this.AddObject(name, @object, tree);

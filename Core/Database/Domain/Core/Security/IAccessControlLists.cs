@@ -11,7 +11,7 @@ namespace Allors.Domain
     {
         User User { get; }
 
-        IReadOnlyDictionary<AccessControl, HashSet<long>> EffectivePermissionIdsByAccessControl { get; set; }
+        IReadOnlyDictionary<AccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
 
         IAccessControlList this[IObject @object]
         {

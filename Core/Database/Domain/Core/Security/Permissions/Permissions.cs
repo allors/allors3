@@ -13,28 +13,20 @@ namespace Allors.Domain
 
     public partial class Permissions
     {
-        // TODO: Cache permissions
-        public Permission Get(Class @class, OperandType operandType, Operations operation)
+        public Permission Get(Class @class, RoleType roleType, Operations operation)
         {
-            var permissionCache = this.Session.GetCache<PermissionCache, PermissionCache>(() => new PermissionCache(this.Session));
-
-            if (permissionCache.PermissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
+            var permissionCacheEntry = this.Session.Database.State().PermissionsCache.Get(@class.Id);
+            if (permissionCacheEntry != null)
             {
                 long id = 0;
                 switch (operation)
                 {
                     case Operations.Read:
-                        id = operandType is RoleType roleType ?
-                            permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[roleType.RelationType.Id] :
-                            permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId[((AssociationType)operandType).RelationType.Id];
+                        id = permissionCacheEntry.RoleReadPermissionIdByRelationTypeId[roleType.RelationType.Id];
                         break;
 
                     case Operations.Write:
-                        id = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId[((RoleType)operandType).RelationType.Id];
-                        break;
-
-                    default:
-                        id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[((MethodType)operandType).Id];
+                        id = permissionCacheEntry.RoleWritePermissionIdByRelationTypeId[roleType.RelationType.Id];
                         break;
                 }
 
@@ -44,17 +36,35 @@ namespace Allors.Domain
             return null;
         }
 
+        public Permission Get(Class @class, MethodType methodType)
+        {
+            var permissionCacheEntry = this.Session.Database.State().PermissionsCache.Get(@class.Id);
+            if (permissionCacheEntry != null)
+            {
+                var id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[methodType.Id];
+                return (Permission)this.Session.Instantiate(id);
+            }
+
+            return null;
+        }
+
         public void Sync()
         {
-            var domain = (MetaPopulation)this.Session.Database.ObjectFactory.MetaPopulation;
+            var permissions = new Permissions(this.Session).Extent();
+            this.Session.Prefetch(this.DatabaseState().PrefetchPolicyCache.PermissionsWithClass, permissions);
 
-            var permissionCache = new PermissionCache(this.Session);
+            var permissionCacheEntryByClassId = permissions
+                .GroupBy(v => v.ClassPointer)
+                .ToDictionary(
+                    v => v.Key,
+                    w => new PermissionsCacheEntry(w));
+            
             var permissionIds = new HashSet<long>();
 
             // Create new permissions
-            foreach (var @class in domain.Classes)
+            foreach (var @class in this.DatabaseState().MetaPopulation.Classes)
             {
-                if (permissionCache.PermissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
+                if (permissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
                 {
                     // existing class
                     foreach (var roleType in @class.DatabaseRoleTypes)

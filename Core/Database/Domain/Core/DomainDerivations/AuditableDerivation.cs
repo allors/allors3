@@ -23,7 +23,7 @@ namespace Allors.Domain
         {
             foreach (var auditable in matches.Cast<Auditable>())
             {
-                var user = auditable.Strategy.Session.Scope().User;
+                var user = auditable.Strategy.Session.State().User;
                 if (user != null)
                 {
                     if (cycle.ChangeSet.Created.Contains(auditable.Strategy))

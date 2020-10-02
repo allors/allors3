@@ -17,7 +17,7 @@ namespace Tests
         [Fact]
         public void Default()
         {
-            var barcodeService = this.Session.Database.Scope().BarcodeService;
+            var barcodeService = this.Session.Database.State().BarcodeGenerator;
             var image = barcodeService.Generate("Allors", BarcodeType.CODE_128);
             File.WriteAllBytes("barcode.png", image);
         }

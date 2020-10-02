@@ -5,6 +5,7 @@
 
 namespace Allors.Domain
 {
+    using System.Linq;
     using System.Text;
 
     using Allors.Meta;
@@ -55,6 +56,8 @@ namespace Allors.Domain
 
         public Operations Operation => Operations.Read;
 
+        public bool InWorkspace(string workspaceName) => this.RelationType.WorkspaceNames.Contains(workspaceName);
+
         public void CoreOnPreDerive(ObjectOnPreDerive method)
         {
             var (iteration, changeSet, derivedObjects) = method;
@@ -67,7 +70,7 @@ namespace Allors.Domain
                     iteration.Mark(role);
                 }
 
-                this.Strategy.Session.ClearCache<PermissionCache>();
+                this.DatabaseState().PermissionsCache.Clear();
             }
         }
 

@@ -1,0 +1,111 @@
+// <copyright file="ContentTests.cs" company="Allors bvba">
+// Copyright (c) Allors bvba. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+// <summary>Defines the ContentTests type.</summary>
+
+namespace Tests
+{
+    using System.Linq;
+    using Allors.Api.Json;
+    using Allors.Domain;
+    using Allors.Protocol.Data;
+    using Allors.Protocol.Remote.Pull;
+    using Xunit;
+
+    public class PullWorkspaceTests : ApiTest, IClassFixture<Fixture>
+    {
+        public PullWorkspaceTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void SameWorkspace()
+        {
+            var m = this.M;
+            this.SetUser("jane@example.com");
+
+            var x1 = new WorkspaceXObject1Builder(this.Session).Build();
+
+            this.Session.Commit();
+
+            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var pullRequest = new PullRequest
+            {
+                P = new[]
+                {
+                    new Pull
+                    {
+                        Extent = extent.Save(),
+                    },
+                },
+            };
+
+            var api = new Api(this.Session, "X");
+            var pullResponse = api.Pull(pullRequest);
+            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
+
+            Assert.Single(wx1s);
+
+            var wx1 = wx1s.First();
+
+            Assert.Equal(x1, x1);
+        }
+
+        [Fact]
+        public void DifferentWorkspace()
+        {
+            var m = this.M;
+            this.SetUser("jane@example.com");
+
+            var x1 = new WorkspaceXObject1Builder(this.Session).Build();
+
+            this.Session.Commit();
+
+            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var pullRequest = new PullRequest
+            {
+                P = new[]
+                {
+                    new Pull
+                    {
+                        Extent = extent.Save(),
+                    },
+                },
+            };
+
+            var api = new Api(this.Session, "Y");
+            var pullResponse = api.Pull(pullRequest);
+            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
+
+            Assert.Empty(wx1s);
+        }
+
+        [Fact]
+        public void NoneWorkspace()
+        {
+            var m = this.M;
+            this.SetUser("jane@example.com");
+
+            var x1 = new WorkspaceXObject1Builder(this.Session).Build();
+
+            this.Session.Commit();
+
+            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var pullRequest = new PullRequest
+            {
+                P = new[]
+                {
+                    new Pull
+                    {
+                        Extent = extent.Save(),
+                    },
+                },
+            };
+
+            var api = new Api(this.Session, "None");
+            var pullResponse = api.Pull(pullRequest);
+            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
+
+            Assert.Empty(wx1s);
+        }
+    }
+}

@@ -12,22 +12,7 @@ namespace Allors.Domain
 
     public partial class Template
     {
-        public object Subject
-        {
-            get
-            {
-                var session = this.Strategy.Session;
-                var caches = session.GetCache<TemplateCacheEntry>();
-                caches.TryGetValue(this.Id, out var cache);
-                if (cache == null || !this.Media.Revision.Equals(cache.Revision))
-                {
-                    cache = new TemplateCacheEntry(this, this.CreateSubject());
-                    caches[this.Id] = cache;
-                }
-
-                return cache.Subject;
-            }
-        }
+        public object Object => this.DatabaseState().TemplateObjectCache.Get(this);
 
         public byte[] Render(object model, IDictionary<string, byte[]> images = null)
         {
@@ -38,7 +23,7 @@ namespace Allors.Domain
 
         public byte[] Render(IDictionary<string, object> model, IDictionary<string, byte[]> images = null)
         {
-            var subject = this.Subject;
+            var subject = this.Object;
 
             if (subject is OpenDocumentTemplate openDocumentTemplate)
             {
@@ -47,10 +32,5 @@ namespace Allors.Domain
 
             return null;
         }
-
-        private object CreateSubject() =>
-            this.TemplateType.IsOpenDocumentTemplate ?
-                new OpenDocumentTemplate(this.Media.MediaContent.Data, this.Arguments) :
-                null;
     }
 }

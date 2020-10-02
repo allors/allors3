@@ -18,10 +18,10 @@ namespace Allors.Database.Adapters.Memory
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
         private Session session;
 
-        public Database(IDatabaseLifecycle state, Configuration configuration)
+        public Database(IDatabaseInstanceLifecycle instance, Configuration configuration)
         {
-            this.Lifecycle = state;
-            if (this.Lifecycle == null)
+            this.InstanceLifecycle = instance;
+            if (this.InstanceLifecycle == null)
             {
                 throw new Exception("Services is missing");
             }
@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.DomainDerivationById = new Dictionary<Guid, IDomainDerivation>();
 
-            this.Lifecycle.OnInit(this);
+            this.InstanceLifecycle.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
@@ -53,11 +53,11 @@ namespace Allors.Database.Adapters.Memory
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
 
-        public IDatabaseLifecycle Lifecycle { get; }
+        public IDatabaseInstanceLifecycle InstanceLifecycle { get; }
 
         internal bool IsLoading { get; private set; }
 
-        protected virtual Session Session => this.session ??= new Session(this, this.Lifecycle.CreateSessionScope());
+        protected virtual Session Session => this.session ??= new Session(this, this.InstanceLifecycle.CreateSessionInstance());
 
         public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
 

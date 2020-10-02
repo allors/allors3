@@ -17,11 +17,11 @@ namespace Allors.Domain
     public class AccessControlList : IAccessControlList
     {
         private readonly Guid classId;
+        private readonly IPermissionsCacheEntry permissionsCacheEntry;
 
         private AccessControl[] accessControls;
         private HashSet<long> deniedPermissions;
         private bool lazyLoaded;
-        private PermissionCacheEntry permissionCacheEntry;
 
         internal AccessControlList(IAccessControlLists accessControlLists, IObject @object)
         {
@@ -30,8 +30,8 @@ namespace Allors.Domain
             this.classId = this.Object.Strategy.Class.Id;
 
             var session = @object.Strategy.Session;
-            var permissionCache = session.GetCache<PermissionCache, PermissionCache>(() => new PermissionCache(session));
-            this.permissionCacheEntry = permissionCache.PermissionCacheEntryByClassId[this.classId];
+            var permissionsCache = session.Database.State().PermissionsCache;
+            this.permissionsCacheEntry = permissionsCache.Get(this.classId);
 
             this.lazyLoaded = false;
         }
@@ -58,13 +58,11 @@ namespace Allors.Domain
 
         private IAccessControlLists AccessControlLists { get; }
 
-        bool IAccessControlList.CanRead(IPropertyType propertyType) => propertyType is IRoleType type ? this.CanRead(type) : this.CanRead((IAssociationType)propertyType);
-
         public bool CanRead(IRoleType roleType)
         {
             if (this.Object != null)
             {
-                if (this.permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
+                if (this.permissionsCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
                 {
                     return this.IsPermitted(permissionId);
                 }
@@ -77,20 +75,7 @@ namespace Allors.Domain
         {
             if (this.Object != null)
             {
-                if (this.permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
-                {
-                    return this.IsPermitted(permissionId);
-                }
-            }
-
-            return false;
-        }
-
-        public bool CanRead(IAssociationType roleType)
-        {
-            if (this.Object != null)
-            {
-                if (this.permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
+                if (this.permissionsCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
                 {
                     return this.IsPermitted(permissionId);
                 }
@@ -103,7 +88,7 @@ namespace Allors.Domain
         {
             if (this.Object != null)
             {
-                if (this.permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
+                if (this.permissionsCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
                 {
                     return this.IsPermitted(permissionId);
                 }
@@ -175,9 +160,6 @@ namespace Allors.Domain
                     .Distinct()
                     .Where(this.AccessControlLists.EffectivePermissionIdsByAccessControl.ContainsKey)
                     .ToArray();
-
-                var permissionCache = session.GetCache<PermissionCache, PermissionCache>(() => new PermissionCache(session));
-                this.permissionCacheEntry = permissionCache.PermissionCacheEntryByClassId[this.classId];
 
                 this.lazyLoaded = true;
             }

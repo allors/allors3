@@ -46,7 +46,7 @@ namespace Allors.Database.Adapters.Npgsql
         public override IDatabase CreateDatabase()
         {
             var metaPopulation = new MetaBuilder().Build();
-            var scope = new DatabaseScope();
+            var scope = new DatabaseInstance();
             return new Database(scope, new Configuration
             {
                 ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),

@@ -63,7 +63,8 @@ namespace Allors.Domain
         public static object Get(this Step step, IObject @object, IAccessControlLists acls)
         {
             var acl = acls[@object];
-            if (acl.CanRead(step.PropertyType))
+            // TODO: Access check for AssociationType
+            if (step.PropertyType is AssociationType || acl.CanRead((RoleType)step.PropertyType))
             {
                 if (step.ExistNext)
                 {
@@ -71,18 +72,18 @@ namespace Allors.Domain
 
                     if (currentValue != null)
                     {
-                        if (currentValue is IObject)
+                        if (currentValue is IObject value)
                         {
-                            return step.Next.Get((IObject)currentValue, acls);
+                            return step.Next.Get(value, acls);
                         }
 
                         var results = new HashSet<object>();
                         foreach (var item in (IEnumerable)currentValue)
                         {
                             var nextValueResult = step.Next.Get((IObject)item, acls);
-                            if (nextValueResult is HashSet<object>)
+                            if (nextValueResult is HashSet<object> set)
                             {
-                                results.UnionWith((HashSet<object>)nextValueResult);
+                                results.UnionWith(set);
                             }
                             else
                             {
@@ -105,7 +106,8 @@ namespace Allors.Domain
             var acl = acls[@object];
             if (step.ExistNext)
             {
-                if (acl.CanRead(step.PropertyType))
+                // TODO: Access check for AssociationType
+                if (step.PropertyType is AssociationType || acl.CanRead((RoleType)step.PropertyType))
                 {
                     if (step.PropertyType.Get(@object.Strategy) is IObject property)
                     {
@@ -169,17 +171,15 @@ namespace Allors.Domain
                 var associationType = (AssociationType)step.PropertyType;
                 if (associationType.IsMany)
                 {
-                    throw new NotSupportedException("AssociationType with muliplicity many");
+                    throw new NotSupportedException("AssociationType with multiplicity many");
                 }
 
-                if (acl.CanRead(associationType))
+                // TODO: Access check for AssociationType
+                if (associationType.Get(@object.Strategy) is IObject association)
                 {
-                    if (associationType.Get(@object.Strategy) is IObject association)
+                    if (step.ExistNext)
                     {
-                        if (step.ExistNext)
-                        {
-                            step.Next.Ensure(association, acls);
-                        }
+                        step.Next.Ensure(association, acls);
                     }
                 }
             }

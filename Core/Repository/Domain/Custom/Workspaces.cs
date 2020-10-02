@@ -7,5 +7,7 @@
 
 public static partial class Workspaces
 {
-    public const string Test = "Test";
+    public const string X = "X";
+
+    public const string Y = "Y";
 }

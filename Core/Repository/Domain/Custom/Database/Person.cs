@@ -26,7 +26,7 @@ namespace Allors.Repository
         #region Allors
         [Id("adf83a86-878d-4148-a9fc-152f56697136")]
         #endregion
-        [Workspace(Default, Test)]
+        [Workspace(Default)]
         public DateTime BirthDate { get; set; }
 
         #region Allors

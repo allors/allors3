@@ -5,7 +5,6 @@
 
 namespace Allors.Domain
 {
-    using System;
     using System.Linq;
 
     public partial class AccessControl
@@ -21,16 +20,9 @@ namespace Allors.Domain
             var permissions = this.Role?.Permissions.ToArray();
             this.EffectivePermissions = permissions;
 
-            // TODO: Workspace
-            this.EffectiveWorkspacePermissionIds = string.Join(",", this.EffectivePermissions.Where(v => v switch
-            {
-                ReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                WritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                ExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
-            }).Select(v => v.Id));
-
             // Invalidate cache
-            this.CacheId = Guid.NewGuid();
+            this.DatabaseState().EffectivePermissionCache.Clear(this.Id);
+            this.DatabaseState().WorkspaceEffectivePermissionCache.Clear(this.Id);
         }
-}
+    }
 }

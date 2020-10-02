@@ -19,11 +19,11 @@ namespace Allors.Api.Json.Pull
     {
         private readonly ISession session;
         private readonly Pull pull;
-        private readonly IExtentService extentService;
+        private readonly IPreparedExtentCache extentService;
         private readonly IFetchService fetchService;
         private readonly IAccessControlLists acls;
 
-        public PullExtent(ISession session, Pull pull, IAccessControlLists acls, IExtentService extentService, IFetchService fetchService)
+        public PullExtent(ISession session, Pull pull, IAccessControlLists acls, IPreparedExtentCache extentService, IFetchService fetchService)
         {
             this.session = session;
             this.pull = pull;

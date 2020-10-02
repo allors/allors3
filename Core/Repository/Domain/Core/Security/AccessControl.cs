@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("c4d93d5e-34c3-4731-9d37-47a8e801d9a8")]
     #endregion
-    public partial class AccessControl : UniquelyIdentifiable, Cachable, Deletable
+    public partial class AccessControl : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
 
@@ -22,8 +22,6 @@ namespace Allors.Repository
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Guid CacheId { get; set; }
         #endregion
 
         #region Allors
@@ -56,13 +54,6 @@ namespace Allors.Repository
         [Indexed]
         [Derived]
         public Permission[] EffectivePermissions { get; set; }
-
-        #region Allors
-        [Id("F61EB5F5-A25A-41CC-8957-95BBA61CE952")]
-        #endregion
-        [Size(-1)]
-        [Derived]
-        public string EffectiveWorkspacePermissionIds { get; set; }
 
         #region Allors
         [Id("50ecae85-e5a9-467e-99a3-78703d954b2f")]

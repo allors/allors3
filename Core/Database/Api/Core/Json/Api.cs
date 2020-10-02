@@ -7,12 +7,16 @@
 namespace Allors.Api.Json
 {
     using Domain;
+    using Invoke;
     using Protocol.Data;
+    using Protocol.Remote.Invoke;
     using Protocol.Remote.Pull;
     using Protocol.Remote.Push;
+    using Protocol.Remote.Security;
     using Protocol.Remote.Sync;
     using Pull;
     using Push;
+    using Security;
     using Server;
     using Services;
     using Sync;
@@ -24,25 +28,25 @@ namespace Allors.Api.Json
             this.Session = session;
             this.WorkspaceName = workspaceName;
 
-            this.TreeService = session.Database.Scope().TreeService;
-            this.FetchService = session.Database.Scope().FetchService;
-            this.ExtentService = session.Database.Scope().ExtentService;
+            this.TreeCache = session.Database.State().TreeCache;
+            this.FetchService = session.Database.State().FetchService;
+            this.ExtentService = session.Database.State().PreparedExtentCache;
         }
 
         public ISession Session { get; }
 
         public string WorkspaceName { get; }
 
-        public ITreeService TreeService { get; set; }
+        public ITreeCache TreeCache { get; set; }
 
         public IFetchService FetchService { get; set; }
 
-        public IExtentService ExtentService { get; set; }
+        public IPreparedExtentCache ExtentService { get; set; }
 
         public PullResponse Pull(PullRequest request)
         {
-            var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
-            var response = new PullResponseBuilder(acls, this.TreeService);
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
+            var response = new PullResponseBuilder(acls, this.TreeCache);
 
             if (request.P != null)
             {
@@ -68,17 +72,32 @@ namespace Allors.Api.Json
 
         public PushResponse Push(PushRequest pushRequest)
         {
-            var user = this.Session.Scope().User;
-            var acls = new WorkspaceAccessControlLists(user);
+            var user = this.Session.State().User;
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, user);
             var responseBuilder = new PushResponseBuilder(this.Session, pushRequest, acls);
             return responseBuilder.Build();
         }
 
         public SyncResponse Sync(SyncRequest syncRequest)
         {
-            var acls = new WorkspaceAccessControlLists(this.Session.Scope().User);
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
             var responseBuilder = new SyncResponseBuilder(this.Session, syncRequest, acls);
             return responseBuilder.Build();
+        }
+
+        public InvokeResponse Invoke(InvokeRequest invokeRequest)
+        {
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
+            var responseBuilder = new InvokeResponseBuilder(this.Session, invokeRequest, acls);
+            return responseBuilder.Build();
+        }
+
+        public SecurityResponse Security(SecurityRequest securityRequest)
+        {
+            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
+            var responseBuilder = new SecurityResponseBuilder(acls, this.Session, securityRequest);
+            var response = responseBuilder.Build();
+            return response;
         }
     }
 }

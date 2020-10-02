@@ -28,7 +28,7 @@ namespace Allors
         {
             // TODO: Cache
             var AccessControlPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.AccessControl.CacheId)
+                .WithRule(m.AccessControl.UniqueId)
                 .Build();
 
             var SecurityTokenPrefetchPolicy = new PrefetchPolicyBuilder()

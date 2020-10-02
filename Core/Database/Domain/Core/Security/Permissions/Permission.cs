@@ -20,5 +20,8 @@ namespace Allors.Domain
         OperandType OperandType { get; }
 
         Operations Operation { get; }
+
+        bool InWorkspace(string workspaceName);
+
     }
 }

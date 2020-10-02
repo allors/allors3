@@ -27,10 +27,10 @@ namespace Allors.Database.Adapters.Memory
 
         private long currentId;
 
-        internal Session(Database database, ISessionLifecycle scope)
+        internal Session(Database database, ISessionInstanceLifecycle scope)
         {
             this.MemoryDatabase = database;
-            this.Lifecycle = scope;
+            this.InstanceLifecycle = scope;
 
             this.busyCommittingOrRollingBack = false;
 
@@ -40,14 +40,14 @@ namespace Allors.Database.Adapters.Memory
 
             this.Reset();
 
-            this.Lifecycle.OnInit(this);
+            this.InstanceLifecycle.OnInit(this);
         }
 
         public IDatabase Population => this.MemoryDatabase;
 
         public IDatabase Database => this.MemoryDatabase;
 
-        public ISessionLifecycle Lifecycle { get; }
+        public ISessionInstanceLifecycle InstanceLifecycle { get; }
 
         public bool IsProfilingEnabled => false;
 

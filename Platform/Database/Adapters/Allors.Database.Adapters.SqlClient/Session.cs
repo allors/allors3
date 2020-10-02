@@ -19,18 +19,18 @@ namespace Allors.Database.Adapters.SqlClient
 
         private Dictionary<string, object> properties;
 
-        internal Session(Database database, Connection connection, ISessionLifecycle scope)
+        internal Session(Database database, Connection connection, ISessionInstanceLifecycle scope)
         {
             this.Database = database;
             this.Connection = connection;
-            this.Lifecycle = scope;
+            this.InstanceLifecycle = scope;
 
             this.State = new State();
 
             this.Prefetcher = new Prefetcher(this);
             this.Commands = new Commands(this, connection);
 
-            this.Lifecycle.OnInit(this);
+            this.InstanceLifecycle.OnInit(this);
         }
 
         public Connection Connection { get; }
@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         IDatabase ISession.Database => this.Database;
 
-        public ISessionLifecycle Lifecycle { get; set; }
+        public ISessionInstanceLifecycle InstanceLifecycle { get; set; }
 
         public Database Database { get; }
 

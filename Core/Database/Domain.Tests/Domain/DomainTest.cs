@@ -21,13 +21,13 @@ namespace Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseScope(),
+                new DefaultDatabaseInstance(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = database.Scope().M;
+            this.M = database.State().M;
 
             this.Setup(database, populate);
         }
@@ -38,9 +38,9 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.Database.Scope().TimeService;
+        public ITimeService TimeService => this.Session.Database.State().TimeService;
 
-        public IDerivationService DerivationService => this.Session.Database.Scope().DerivationService;
+        public IDerivationService DerivationService => this.Session.Database.State().DerivationService;
 
         public TimeSpan? TimeShift
         {
@@ -54,7 +54,7 @@ namespace Tests
             get
             {
                 var aclMock = new Mock<IAccessControlList>();
-                aclMock.Setup(acl => acl.CanRead(It.IsAny<IPropertyType>())).Returns(true);
+                aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleType>())).Returns(true);
                 aclMock.Setup(acl => acl.CanRead(It.IsAny<IRoleClass>())).Returns(true);
                 var aclsMock = new Mock<IAccessControlLists>();
                 aclsMock.Setup(acls => acls[It.IsAny<IObject>()]).Returns(aclMock.Object);

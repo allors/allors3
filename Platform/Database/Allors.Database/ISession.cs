@@ -23,7 +23,7 @@ namespace Allors
         /// <summary>
         /// The scope for this session.
         /// </summary>
-        ISessionLifecycle Lifecycle { get; }
+        ISessionInstanceLifecycle InstanceLifecycle { get; }
 
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,

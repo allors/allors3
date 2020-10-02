@@ -9,6 +9,8 @@ namespace Allors
 
     public interface IObjects : ISetup, ISecure
     {
+        ISession Session { get; }
+
         Composite ObjectType { get; }
     }
 }
