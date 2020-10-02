@@ -12,9 +12,9 @@ namespace Allors.Domain
 
     public class PermissionsCache : IPermissionsCache
     {
-        public PermissionsCache(IDatabaseInstance databaseInstance) => this.DatabaseInstance = databaseInstance;
+        public PermissionsCache(IDatabaseState databaseState) => this.DatabaseState = databaseState;
 
-        public IDatabaseInstance DatabaseInstance { get; }
+        public IDatabaseState DatabaseState { get; }
 
         private Dictionary<Guid, IPermissionsCacheEntry> PermissionCacheEntryByClassId { get; set; }
 
@@ -23,9 +23,9 @@ namespace Allors.Domain
             var permissionCacheEntryByClassId = this.PermissionCacheEntryByClassId;
             if (permissionCacheEntryByClassId == null)
             {
-                using var session = this.DatabaseInstance.Database.CreateSession();
+                using var session = this.DatabaseState.Database.CreateSession();
                 var permissions = new Permissions(session).Extent();
-                session.Prefetch(this.DatabaseInstance.PrefetchPolicyCache.PermissionsWithClass, permissions);
+                session.Prefetch(this.DatabaseState.PrefetchPolicyCache.PermissionsWithClass, permissions);
 
                 permissionCacheEntryByClassId = permissions
                     .GroupBy(v => v.ClassPointer)

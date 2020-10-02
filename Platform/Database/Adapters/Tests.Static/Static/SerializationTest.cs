@@ -58,7 +58,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var populationData = this.Database.Save();
                 var classesData = populationData.ToArray();
@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 using (var session = this.Database.CreateSession())
                 {
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters
 
         private void AssertPopulation(ISession session)
         {
-            var m = session.Database.Scope().M;
+            var m = session.Database.State().M;
 
             Assert.Equal(4, this.GetExtent(session, m.C1.ObjectType).Length);
             Assert.Equal(4, this.GetExtent(session, m.C2.ObjectType).Length);

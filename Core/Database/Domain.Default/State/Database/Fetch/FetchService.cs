@@ -14,19 +14,19 @@ namespace Allors.Services
    {
        private readonly ConcurrentDictionary<Guid, Fetch> fetchById;
 
-        public FetchService(IDatabaseInstance databaseInstance)
+        public FetchService(IDatabaseState databaseState)
         {
-            this.DatabaseInstance = databaseInstance;
+            this.DatabaseState = databaseState;
             this.fetchById = new ConcurrentDictionary<Guid, Fetch>();
         }
 
-        public IDatabaseInstance DatabaseInstance { get; }
+        public IDatabaseState DatabaseState { get; }
 
         public Fetch Get(Guid id)
         {
             if (!this.fetchById.TryGetValue(id, out var fetch))
             {
-                using var session = this.DatabaseInstance.Database.CreateSession();
+                using var session = this.DatabaseState.Database.CreateSession();
                 var m = session.Database.State().M;
 
                 var filter = new Extent(m.PreparedFetch.Class)

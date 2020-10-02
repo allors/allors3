@@ -12,7 +12,7 @@ namespace Allors.Meta
     public class ValidationError
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationError"/> class.
+        /// Initializes a new state of the <see cref="ValidationError"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="source">The source.</param>

@@ -42,7 +42,7 @@ namespace Allors.Server
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = OneYearInSeconds)]
         public virtual IActionResult Get(string idString, string revisionString, string name, int? w, int? q, string t, string b, string o)
         {
-            var m = ((IDatabaseInstance) this.Session.Database.State()).M;
+            var m = ((IDatabaseState) this.Session.Database.State()).M;
 
             this.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out var requestEtagValues);
             var requestEtag = requestEtagValues.FirstOrDefault();

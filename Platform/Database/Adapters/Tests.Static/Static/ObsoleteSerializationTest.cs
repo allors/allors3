@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var otherPopulation = this.CreatePopulation();
                 using (var otherSession = otherPopulation.CreateSession())
@@ -176,7 +176,7 @@ namespace Allors.Database.Adapters
                 foreach (var init in this.Inits)
                 {
                     init();
-                    var m = this.Session.Database.Scope().M;
+                    var m = this.Session.Database.State().M;
 
                     var otherPopulation = this.CreatePopulation();
                     using (var otherSession = otherPopulation.CreateSession())
@@ -218,7 +218,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var otherPopulation = this.CreatePopulation();
                 using (var otherSession = otherPopulation.CreateSession())
@@ -284,7 +284,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var otherPopulation = this.CreatePopulation();
                 using (var otherSession = otherPopulation.CreateSession())
@@ -322,7 +322,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var population = this.CreatePopulation();
                 var session = population.CreateSession();
@@ -365,7 +365,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var writeCultureInfo = new CultureInfo("en-US");
                 var readCultureInfo = new CultureInfo("en-GB");
@@ -408,7 +408,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var population = this.CreatePopulation();
                 var session = population.CreateSession();
@@ -456,7 +456,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var savePopulation = this.CreatePopulation();
                 var saveSession = savePopulation.CreateSession();
@@ -514,7 +514,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 using (var session = this.Population.CreateSession())
                 {
@@ -553,7 +553,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 using (var session = this.Population.CreateSession())
                 {
@@ -624,7 +624,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var writeCultureInfo = new CultureInfo("en-US");
                 var readCultureInfo = new CultureInfo("en-GB");
@@ -667,7 +667,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var otherPopulation = this.CreatePopulation();
                 var otherSession = otherPopulation.CreateSession();
@@ -722,7 +722,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -769,7 +769,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -834,7 +834,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -898,7 +898,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -967,7 +967,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1054,7 +1054,7 @@ namespace Allors.Database.Adapters
 
         private void AssertPopulation(ISession session)
         {
-            var m = session.Database.Scope().M;
+            var m = session.Database.State().M;
 
             Assert.Equal(4, this.GetExtent(session, m.C1.ObjectType).Length);
             Assert.Equal(4, this.GetExtent(session, m.C2.ObjectType).Length);

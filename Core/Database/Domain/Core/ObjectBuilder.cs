@@ -12,7 +12,7 @@ namespace Allors
     {
         public static object Build(ISession session, IClass @class)
         {
-            var metaService = session.Database.State().MetaService;
+            var metaService = session.Database.State().MetaCache;
             var builderType = metaService.GetBuilderType(@class);
             object[] parameters = { session };
             var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);

@@ -31,10 +31,8 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
-            var m = ((IDatabaseInstance) this.Session.Database.State()).M;
-
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceService.Name, this.Session.State().User);
-            var response = new PullResponseBuilder(acls, this.TreeCache);
+            var m = this.Session.Database.State().M;
+            var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
             var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.State().User);
             response.AddObject("root", organisation, new[] {
                 new Node(m.Organisation.Shareholders)

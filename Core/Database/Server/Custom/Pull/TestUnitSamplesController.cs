@@ -41,8 +41,7 @@ namespace Allors.Server.Controllers
                     this.Session.Commit();
                 }
 
-                var acls = new WorkspaceAccessControlLists(WorkspaceService.Name, this.Session.State().User);
-                var responseBuilder = new PullResponseBuilder(acls, this.TreeCache);
+                var responseBuilder = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
 
                 switch (@params.Step)
                 {

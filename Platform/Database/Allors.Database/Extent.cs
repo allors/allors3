@@ -259,7 +259,7 @@ namespace Allors
             private readonly IObject[] objects;
 
             /// <summary>
-            /// Initializes a new instance of the AllorsExtentConverted class.
+            /// Initializes a new state of the AllorsExtentConverted class.
             /// </summary>
             /// <param name="objects">The objects.</param>
             internal AllorsExtentConverted(IObject[] objects)
@@ -407,7 +407,7 @@ namespace Allors
             private readonly Extent extent;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExtentDebugView"/> class.
+            /// Initializes a new state of the <see cref="ExtentDebugView"/> class.
             /// </summary>
             /// <param name="extent">
             /// The extent.

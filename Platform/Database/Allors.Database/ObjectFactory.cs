@@ -39,7 +39,7 @@ namespace Allors
         private readonly Dictionary<IObjectType, ConstructorInfo> contructorInfoByObjectType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectFactory"/> class.
+        /// Initializes a new state of the <see cref="ObjectFactory"/> class.
         /// </summary>
         /// <param name="metaPopulation">
         /// The meta population.

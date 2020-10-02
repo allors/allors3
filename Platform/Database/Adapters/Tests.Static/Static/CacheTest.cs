@@ -172,7 +172,7 @@ namespace Allors.Database.Adapters
         {
             var database = this.CreateDatabase();
             database.Init();
-            var m = database.Scope().M;
+            var m = database.State().M;
 
             using (var session = database.CreateSession())
             {
@@ -210,7 +210,7 @@ namespace Allors.Database.Adapters
         {
             var database = this.CreateDatabase();
             database.Init();
-            var m = database.Scope().M;
+            var m = database.State().M;
 
             using (var session = database.CreateSession())
             {

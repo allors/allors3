@@ -23,10 +23,10 @@ namespace Allors.Database.Adapters.Npgsql
         }
 
         /// <summary>
-        /// Returns a String which represents the object instance.
+        /// Returns a String which represents the object state.
         /// </summary>
         /// <returns>
-        /// The string which represents the object instance.
+        /// The string which represents the object state.
         /// </returns>
         public override string ToString() => this.Name;
     }

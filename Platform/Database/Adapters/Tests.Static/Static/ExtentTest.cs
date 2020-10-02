@@ -66,7 +66,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -147,7 +147,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -224,7 +224,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useEnumerable in TrueFalse)
                 {
@@ -665,7 +665,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -764,7 +764,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -886,7 +886,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 this.Session.Commit();
 
@@ -1215,7 +1215,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -1314,7 +1314,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -1578,7 +1578,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -1691,7 +1691,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -1813,7 +1813,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -1892,7 +1892,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -2119,7 +2119,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -2283,7 +2283,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -2447,7 +2447,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -2680,7 +2680,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Like and any
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -2795,7 +2795,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Except + Union
                 var firstExtent = this.Session.Extent(m.C1.ObjectType);
@@ -2922,7 +2922,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var extent = this.Session.Extent(m.InterfaceWithoutConcreteClass.ObjectType);
 
@@ -2937,7 +2937,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -2993,7 +2993,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -3064,7 +3064,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -3132,7 +3132,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -3203,7 +3203,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // class
                 var firstExtent = this.Session.Extent(m.C1.ObjectType);
@@ -3280,7 +3280,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var extent = this.Session.Extent(m.C1.ObjectType);
                 extent.Filter.AddExists(m.C1.C1AllorsString);
@@ -3299,7 +3299,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class + Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -3397,7 +3397,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // class
                 var firstExtent = this.Session.Extent(m.C1.ObjectType);
@@ -3459,7 +3459,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 {
                     var extent = this.Session.Extent(m.C1.ObjectType);
@@ -3478,7 +3478,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -3535,7 +3535,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 this.Session.Commit();
 
@@ -3800,7 +3800,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -3886,7 +3886,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -4150,7 +4150,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -4414,7 +4414,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -4545,7 +4545,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C2.ObjectType);
@@ -4631,7 +4631,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -4839,7 +4839,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -4943,7 +4943,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -5056,7 +5056,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -5169,7 +5169,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -5226,7 +5226,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -5425,7 +5425,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -5673,7 +5673,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -5921,7 +5921,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -6007,7 +6007,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -6455,7 +6455,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 this.Session.Commit();
 
@@ -6711,7 +6711,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -6797,7 +6797,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7000,7 +7000,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7203,7 +7203,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -7246,7 +7246,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -7332,7 +7332,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7492,7 +7492,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -7652,7 +7652,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -7747,7 +7747,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -7842,7 +7842,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -7937,7 +7937,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -8352,7 +8352,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -8438,7 +8438,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -8726,7 +8726,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var firstExtent = this.Session.Extent(m.C1.ObjectType);
                 firstExtent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbra");
@@ -8757,7 +8757,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Dangling empty And behind Or
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -8856,7 +8856,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -8911,7 +8911,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Association (Amgiguous Name)
                 Extent<Company> parents = this.Session.Extent(m.Company.ObjectType);
@@ -8935,7 +8935,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -9021,7 +9021,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -9191,7 +9191,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -9420,7 +9420,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -9649,7 +9649,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -9848,7 +9848,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -10096,7 +10096,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -10339,7 +10339,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 // Equal 0
@@ -10581,7 +10581,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -10780,7 +10780,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -11028,7 +11028,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -11276,7 +11276,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 // Equal 0
@@ -11518,7 +11518,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -11881,7 +11881,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -12256,7 +12256,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -12633,7 +12633,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var flag in TrueFalse)
                 {
@@ -13007,7 +13007,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -13206,7 +13206,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -13454,7 +13454,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -13702,7 +13702,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 // Equal 0
@@ -13944,7 +13944,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // AllorsInteger
                 // Class
@@ -14211,7 +14211,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var exceptionThrown = false;
 
@@ -14237,7 +14237,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -14518,7 +14518,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -14571,7 +14571,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -14657,7 +14657,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -14861,7 +14861,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -14904,7 +14904,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -14990,7 +14990,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -15150,7 +15150,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Extent over Class
 
@@ -15259,7 +15259,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 foreach (var useOperator in this.UseOperator)
                 {
@@ -15390,7 +15390,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -15485,7 +15485,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -15589,7 +15589,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -15684,7 +15684,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -15707,7 +15707,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -16122,7 +16122,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
                 var extent = this.Session.Extent(m.C1.ObjectType);
@@ -16208,7 +16208,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -16496,7 +16496,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var sharedExtent = this.Session.Extent(m.C2.ObjectType);
                 sharedExtent.Filter.AddLike(m.C2.C2AllorsString, "%");
@@ -16516,7 +16516,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 this.c1B.C1AllorsString = "3";
                 this.c1C.C1AllorsString = "1";
@@ -16581,7 +16581,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 this.c1B.C1AllorsString = "a";
                 this.c1C.C1AllorsString = "b";
@@ -16645,7 +16645,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var c1A = C1.Create(this.Session);
                 var c1B = C1.Create(this.Session);
@@ -16700,7 +16700,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var extent = this.Session.Extent(m.I4.ObjectType);
                 Assert.Equal(4, extent.Count);
@@ -16715,7 +16715,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Class
 
@@ -16793,7 +16793,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -16821,7 +16821,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -16859,7 +16859,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -16909,7 +16909,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -16934,7 +16934,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -16959,7 +16959,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -17004,7 +17004,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -17029,7 +17029,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -17056,7 +17056,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -17081,7 +17081,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Wrong Parameters
                 var exceptionThrown = false;
@@ -17112,7 +17112,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // Sortcut
                 // Shortcut
@@ -17155,7 +17155,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // many2many contains
                 var c1 = C1.Create(this.Session);
@@ -17183,7 +17183,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // manymany contains
                 var c2 = C2.Create(this.Session);
@@ -17211,7 +17211,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 // many2many contains
                 var c1 = C1.Create(this.Session);

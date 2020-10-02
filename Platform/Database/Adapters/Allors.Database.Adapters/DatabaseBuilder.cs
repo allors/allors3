@@ -14,13 +14,13 @@ namespace Allors.Database.Adapters
 
     public class DatabaseBuilder
     {
-        private readonly IDatabaseInstanceLifecycle scope;
+        private readonly IDatabaseStateLifecycle scope;
         private readonly IConfiguration configuration;
         private readonly ObjectFactory objectFactory;
         private readonly IsolationLevel? isolationLevel;
         private readonly int? commandTimeout;
 
-        public DatabaseBuilder(IDatabaseInstanceLifecycle scope, IConfiguration configuration, ObjectFactory objectFactory, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
+        public DatabaseBuilder(IDatabaseStateLifecycle scope, IConfiguration configuration, ObjectFactory objectFactory, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
         {
             this.scope = scope;
             this.configuration = configuration;

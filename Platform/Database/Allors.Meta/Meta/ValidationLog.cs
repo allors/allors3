@@ -35,7 +35,7 @@ namespace Allors.Meta
         private readonly HashSet<string> relationTypeNames;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationLog"/> class.
+        /// Initializes a new state of the <see cref="ValidationLog"/> class.
         /// </summary>
         internal ValidationLog()
         {

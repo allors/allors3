@@ -40,7 +40,7 @@ namespace Allors.Database.Adapters.SqlClient
         private bool isClosed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RelationTypeOneXmlWriter"/> class.
+        /// Initializes a new state of the <see cref="RelationTypeOneXmlWriter"/> class.
         /// </summary>
         /// <param name="relationType">Type of the relation.</param>
         /// <param name="xmlWriter">The XML writer.</param>

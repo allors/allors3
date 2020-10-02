@@ -7,18 +7,18 @@ namespace Allors.Services
 {
     public partial class PrefetchPolicyCache : IPrefetchPolicyCache
     {
-        public PrefetchPolicyCache(IDatabaseInstance databaseInstance)
+        public PrefetchPolicyCache(IDatabaseState databaseState)
         {
-            this.DatabaseInstance = databaseInstance;
+            this.DatabaseState = databaseState;
 
-            var m = this.DatabaseInstance.M;
+            var m = this.DatabaseState.M;
 
             this.PermissionsWithClass = new PrefetchPolicyBuilder()
                     .WithRule(m.Permission.ClassPointer)
                     .Build();
         }
 
-        public IDatabaseInstance DatabaseInstance { get; }
+        public IDatabaseState DatabaseState { get; }
 
         public PrefetchPolicy PermissionsWithClass { get; }
     }

@@ -17,8 +17,6 @@ namespace Allors.Api.Json
     using Pull;
     using Push;
     using Security;
-    using Server;
-    using Services;
     using Sync;
 
     public class Api
@@ -27,26 +25,18 @@ namespace Allors.Api.Json
         {
             this.Session = session;
             this.WorkspaceName = workspaceName;
-
-            this.TreeCache = session.Database.State().TreeCache;
-            this.FetchService = session.Database.State().FetchService;
-            this.ExtentService = session.Database.State().PreparedExtentCache;
+            this.DatabaseState = session.Database.State();
         }
 
         public ISession Session { get; }
 
         public string WorkspaceName { get; }
 
-        public ITreeCache TreeCache { get; set; }
-
-        public IFetchService FetchService { get; set; }
-
-        public IPreparedExtentCache ExtentService { get; set; }
+        public IDatabaseState DatabaseState { get; set; }
 
         public PullResponse Pull(PullRequest request)
         {
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
-            var response = new PullResponseBuilder(acls, this.TreeCache);
+            var response = new PullResponseBuilder(this.Session, this.WorkspaceName);
 
             if (request.P != null)
             {
@@ -56,12 +46,12 @@ namespace Allors.Api.Json
 
                     if (pull.Object != null)
                     {
-                        var pullInstantiate = new PullInstantiate(this.Session, pull, acls, this.FetchService);
+                        var pullInstantiate = new PullInstantiate(this.Session, pull, response.AccessControlLists);
                         pullInstantiate.Execute(response);
                     }
                     else
                     {
-                        var pullExtent = new PullExtent(this.Session, pull, acls, this.ExtentService, this.FetchService);
+                        var pullExtent = new PullExtent(this.Session, pull, response.AccessControlLists);
                         pullExtent.Execute(response);
                     }
                 }

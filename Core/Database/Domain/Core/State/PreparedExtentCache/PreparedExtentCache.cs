@@ -14,19 +14,19 @@ namespace Allors.Services
     {
         private readonly ConcurrentDictionary<Guid, IExtent> extentById;
 
-        public PreparedExtentCache(IDatabaseInstance databaseInstance)
+        public PreparedExtentCache(IDatabaseState databaseState)
         {
-            this.DatabaseInstance = databaseInstance;
+            this.DatabaseState = databaseState;
             this.extentById = new ConcurrentDictionary<Guid, IExtent>();
         }
 
-        public IDatabaseInstance DatabaseInstance { get; }
+        public IDatabaseState DatabaseState { get; }
 
         public IExtent Get(Guid id)
         {
             if (!this.extentById.TryGetValue(id, out var extent))
             {
-                using var session = this.DatabaseInstance.Database.CreateSession();
+                using var session = this.DatabaseState.Database.CreateSession();
                 var m = session.Database.State().M;
 
                 var filter = new Extent(m.PreparedExtent.Class)

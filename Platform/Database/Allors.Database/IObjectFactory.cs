@@ -33,10 +33,10 @@ namespace Allors
         IMetaPopulation MetaPopulation { get; }
 
         /// <summary>
-        /// Create a new IObject instance.
+        /// Create a new IObject state.
         /// </summary>
         /// <param name="strategy">The strategy.</param>
-        /// <returns>a new instance.</returns>
+        /// <returns>a new state.</returns>
         IObject Create(IStrategy strategy);
 
         /// <summary>

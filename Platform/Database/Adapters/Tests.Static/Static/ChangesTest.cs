@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c = this.Session.Create(m.C3.ObjectType);
@@ -223,7 +223,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -406,7 +406,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -589,7 +589,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -834,7 +834,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var c1a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c1b = (C1)this.Session.Create(m.C1.ObjectType);
@@ -1079,7 +1079,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c = this.Session.Create(m.C3.ObjectType);
@@ -1120,7 +1120,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var a = (C1)this.Session.Create(m.C1.ObjectType);
                 var c = this.Session.Create(m.C3.ObjectType);

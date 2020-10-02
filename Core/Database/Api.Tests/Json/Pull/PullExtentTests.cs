@@ -13,9 +13,9 @@ namespace Tests
     using Allors.Protocol.Remote.Pull;
     using Xunit;
 
-    public class PullWorkspaceTests : ApiTest, IClassFixture<Fixture>
+    public class PullExtentTests : ApiTest, IClassFixture<Fixture>
     {
-        public PullWorkspaceTests(Fixture fixture) : base(fixture) { }
+        public PullExtentTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void SameWorkspace()
@@ -47,7 +47,7 @@ namespace Tests
 
             var wx1 = wx1s.First();
 
-            Assert.Equal(x1, x1);
+            Assert.Equal(x1.Id.ToString(), wx1);
         }
 
         [Fact]
@@ -103,9 +103,8 @@ namespace Tests
 
             var api = new Api(this.Session, "None");
             var pullResponse = api.Pull(pullRequest);
-            var wx1s = pullResponse.NamedCollections["WorkspaceXObject1s"];
 
-            Assert.Empty(wx1s);
+            Assert.Empty(pullResponse.NamedCollections);
         }
     }
 }

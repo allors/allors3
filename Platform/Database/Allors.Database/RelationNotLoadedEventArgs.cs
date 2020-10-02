@@ -22,7 +22,7 @@ namespace Allors
     public class RelationNotLoadedEventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RelationNotLoadedEventArgs"/> class.
+        /// Initializes a new state of the <see cref="RelationNotLoadedEventArgs"/> class.
         /// </summary>
         /// <param name="relationTypeId">The relation type id.</param>
         /// <param name="associationId">The association id.</param>

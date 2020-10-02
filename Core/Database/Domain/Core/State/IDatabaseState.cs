@@ -1,4 +1,4 @@
-// <copyright file="IDatabaseInstance.cs" company="Allors bvba">
+// <copyright file="IDatabaseState.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,13 +8,15 @@ namespace Allors
     using Meta;
     using Services;
 
-    public partial interface IDatabaseInstance : IDatabaseInstanceLifecycle
+    public partial interface IDatabaseState : IDatabaseStateLifecycle
     {
         IDatabase Database { get; }
 
         MetaPopulation MetaPopulation { get; }
 
         M M { get; }
+
+        IWorkspaceMetaCache WorkspaceMetaCache { get; set; }
 
         IPrefetchPolicyCache PrefetchPolicyCache { get; }
 
@@ -36,7 +38,7 @@ namespace Allors
 
         IMailService MailService { get; }
 
-        IMetaCache MetaService { get; }
+        IMetaCache MetaCache { get; }
 
         IPasswordService PasswordService { get; }
 

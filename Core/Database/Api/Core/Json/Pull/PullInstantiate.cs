@@ -24,15 +24,16 @@ namespace Allors.Api.Json.Pull
 
         private readonly IAccessControlLists acls;
 
-        private readonly IFetchService fetchService;
-
-        public PullInstantiate(ISession session, Pull pull, IAccessControlLists acls, IFetchService fetchService)
+        public PullInstantiate(ISession session, Pull pull, IAccessControlLists acls)
         {
             this.session = session;
             this.pull = pull;
-            this.fetchService = fetchService;
             this.acls = acls;
+
+            this.DatabaseState = session.Database.State();
         }
+
+        public IDatabaseState DatabaseState { get; set; }
 
         public void Execute(PullResponseBuilder response)
         {
@@ -59,7 +60,7 @@ namespace Allors.Api.Json.Pull
                         var fetch = result.Fetch;
                         if ((fetch == null) && result.FetchRef.HasValue)
                         {
-                            fetch = this.fetchService.Get(result.FetchRef.Value);
+                            fetch = this.DatabaseState.FetchService.Get(result.FetchRef.Value);
                         }
 
                         if (fetch != null)

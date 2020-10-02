@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters.SqlClient
         public override IDatabase CreateDatabase()
         {
             var metaPopulation = new MetaBuilder().Build();
-            var scope = new DatabaseInstance();
+            var scope = new DatabaseState();
             return new Database(scope, new Configuration
             {
                 ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),

@@ -35,7 +35,7 @@ namespace Allors.Api.Json.Sync
 
         public SyncResponse Build()
         {
-            var m = ((IDatabaseInstance) this.session.Database.State()).M;
+            var m = ((IDatabaseState) this.session.Database.State()).M;
             var objects = this.session.Instantiate(this.syncRequest.Objects);
 
             // Prefetch

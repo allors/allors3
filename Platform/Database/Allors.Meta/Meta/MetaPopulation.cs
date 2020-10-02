@@ -108,9 +108,9 @@ namespace Allors.Meta
         public IEnumerable<Composite> SortedComposites => this.Composites.OrderBy(v => v.Name);
 
         /// <summary>
-        /// Gets a value indicating whether this instance is valid.
+        /// Gets a value indicating whether this state is valid.
         /// </summary>
-        /// <value><c>true</c> if this instance is valid; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if this state is valid; otherwise, <c>false</c>.</value>
         public bool IsValid
         {
             get
@@ -250,7 +250,7 @@ namespace Allors.Meta
         IValidationLog IMetaPopulation.Validate() => this.Validate();
 
         /// <summary>
-        /// Validates this instance.
+        /// Validates this state.
         /// </summary>
         /// <returns>The Validate.</returns>
         public ValidationLog Validate()

@@ -79,7 +79,7 @@ namespace Allors.Server
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             // Allors
-            var databaseScope = new DefaultDatabaseInstance(httpContextAccessor);
+            var databaseScope = new DefaultDatabaseState(httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             var database = databaseBuilder.Build();
             database.RegisterDerivations();

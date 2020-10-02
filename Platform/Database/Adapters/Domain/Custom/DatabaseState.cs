@@ -9,11 +9,11 @@ namespace Allors
 {
     using Meta;
 
-    public class DatabaseInstance : IDatabaseInstance
+    public class DatabaseState : IDatabaseState
     {
         public void OnInit(IDatabase database) => this.M = new M((MetaPopulation)database.ObjectFactory.MetaPopulation);
 
-        public ISessionInstanceLifecycle CreateSessionInstance() => new SessionInstance();
+        public ISessionStateLifecycle CreateSessionInstance() => new SessionState();
 
         public M M { get; set; }
         public void Dispose() { }

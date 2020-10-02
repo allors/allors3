@@ -16,11 +16,11 @@ namespace Allors.Services
         private readonly IReadOnlyDictionary<IClass, RoleType[]> uniqueRoleTypesByClass;
         private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
 
-        public MetaCache(IDatabaseInstance databaseInstance)
+        public MetaCache(IDatabaseState databaseState)
         {
-            this.DatabaseInstance = databaseInstance;
+            this.DatabaseState = databaseState;
 
-            var database = this.DatabaseInstance.Database;
+            var database = this.DatabaseState.Database;
             var metaPopulation = database.MetaPopulation;
             var assembly = database.ObjectFactory.Assembly;
 
@@ -46,7 +46,7 @@ namespace Allors.Services
 
         }
 
-        public IDatabaseInstance DatabaseInstance { get; }
+        public IDatabaseState DatabaseState { get; }
 
         public RoleType[] GetRequiredRoleTypes(IClass @class) => this.requiredRoleTypesByClass[@class];
 

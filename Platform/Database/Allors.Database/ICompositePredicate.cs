@@ -131,21 +131,21 @@ namespace Allors
         ICompositePredicate AddGreaterThan(IRoleType role, object value);
 
         /// <summary>
-        /// Adds a Predicate that evaluates to true if the object under evaluation is an instance of the IObjectType.
+        /// Adds a Predicate that evaluates to true if the object under evaluation is an state of the IObjectType.
         /// </summary>
         /// <param name="objectType">the IObjectType.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddInstanceof(IComposite objectType);
 
         /// <summary>
-        /// Adds a Predicate that evaluates to true if the role of the object under evaluation is an instance of the IObjectType.
+        /// Adds a Predicate that evaluates to true if the role of the object under evaluation is an state of the IObjectType.
         /// </summary>
         /// <param name="role">the RoleType .</param>
         /// <param name="objectType">the IObjectType.</param>
         /// <returns>the composing CompositePredicate.</returns>
         ICompositePredicate AddInstanceof(IRoleType role, IComposite objectType);
         /// <summary>
-        /// Adds a Predicate that evaluates to true if the association of the object under evaluation is an instance of the IObjectType.
+        /// Adds a Predicate that evaluates to true if the association of the object under evaluation is an state of the IObjectType.
         /// </summary>
         /// <param name="association">the AssociationType.</param>
         /// <param name="objectType">the IObjectType.</param>

@@ -22,7 +22,7 @@ namespace Tests
         public ApiTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseInstance(),
+                new DefaultDatabaseState(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),

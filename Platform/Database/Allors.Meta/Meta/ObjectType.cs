@@ -98,14 +98,14 @@ namespace Allors.Meta
         public override int GetHashCode() => this.Id.GetHashCode();
 
         /// <summary>
-        /// Compares the current instance with another object of the same type.
+        /// Compares the current state with another object of the same type.
         /// </summary>
-        /// <param name="other">An object to compare with this instance.</param>
+        /// <param name="other">An object to compare with this state.</param>
         /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="obj"/>. Zero This instance is equal to <paramref name="obj"/>. Greater than zero This instance is greater than <paramref name="obj"/>.
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This state is less than <paramref name="obj"/>. Zero This state is equal to <paramref name="obj"/>. Greater than zero This state is greater than <paramref name="obj"/>.
         /// </returns>
         /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="other"/> is not the same type as this instance. </exception>
+        /// <paramref name="other"/> is not the same type as this state. </exception>
         public int CompareTo(object other) => this.Id.CompareTo((other as ObjectType)?.Id);
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Allors.Meta
         }
 
         /// <summary>
-        /// Validates this instance.
+        /// Validates this state.
         /// </summary>
         /// <param name="validationLog">The validation.</param>
         protected internal void Validate(ValidationLog validationLog)

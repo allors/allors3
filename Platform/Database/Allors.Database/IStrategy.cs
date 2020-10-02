@@ -39,10 +39,10 @@ namespace Allors
         long ObjectVersion { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is deleted.
+        /// Gets a value indicating whether this state is deleted.
         /// </summary>
         /// <value>
-        /// <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
+        /// <c>true</c> if this state is deleted; otherwise, <c>false</c>.
         /// </value>
         bool IsDeleted { get; }
 
@@ -61,7 +61,7 @@ namespace Allors
         IObject GetObject();
 
         /// <summary>
-        /// Deletes this instance.
+        /// Deletes this state.
         /// </summary>
         void Delete();
 

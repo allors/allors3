@@ -12,7 +12,7 @@ namespace Allors.Meta
     using System.Linq;
 
     /// <summary>
-    /// A <see cref="RelationType"/> defines the instance and behavior for
+    /// A <see cref="RelationType"/> defines the state and behavior for
     /// a set of <see cref="AssociationType"/>s and <see cref="RoleType"/>s.
     /// </summary>
     public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable
@@ -208,34 +208,34 @@ namespace Allors.Meta
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is many to many.
+        /// Gets a value indicating whether this state is many to many.
         /// </summary>
         /// <value>
-        ///  <c>true</c> if this instance is many to many; otherwise, <c>false</c>.
+        ///  <c>true</c> if this state is many to many; otherwise, <c>false</c>.
         /// </value>
         public bool IsManyToMany => this.AssociationType.IsMany && this.RoleType.IsMany;
 
         /// <summary>
-        /// Gets a value indicating whether this instance is many to one.
+        /// Gets a value indicating whether this state is many to one.
         /// </summary>
         /// <value>
-        ///  <c>true</c> if this instance is many to one; otherwise, <c>false</c>.
+        ///  <c>true</c> if this state is many to one; otherwise, <c>false</c>.
         /// </value>
         public bool IsManyToOne => this.AssociationType.IsMany && !this.RoleType.IsMany;
 
         /// <summary>
-        /// Gets a value indicating whether this instance is one to many.
+        /// Gets a value indicating whether this state is one to many.
         /// </summary>
         /// <value>
-        ///  <c>true</c> if this instance is one to many; otherwise, <c>false</c>.
+        ///  <c>true</c> if this state is one to many; otherwise, <c>false</c>.
         /// </value>
         public bool IsOneToMany => this.AssociationType.IsOne && this.RoleType.IsMany;
 
         /// <summary>
-        /// Gets a value indicating whether this instance is one to one.
+        /// Gets a value indicating whether this state is one to one.
         /// </summary>
         /// <value>
-        ///  <c>true</c> if this instance is one to one; otherwise, <c>false</c>.
+        ///  <c>true</c> if this state is one to one; otherwise, <c>false</c>.
         /// </value>
         public bool IsOneToOne => this.AssociationType.IsOne && !this.RoleType.IsMany;
 
@@ -262,14 +262,14 @@ namespace Allors.Meta
         public override int GetHashCode() => this.Id.GetHashCode();
 
         /// <summary>
-        /// Compares the current instance with another object of the same type.
+        /// Compares the current state with another object of the same type.
         /// </summary>
-        /// <param name="other">An object to compare with this instance.</param>
+        /// <param name="other">An object to compare with this state.</param>
         /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than <paramref name="obj"/>. Zero This instance is equal to <paramref name="obj"/>. Greater than zero This instance is greater than <paramref name="obj"/>.
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This state is less than <paramref name="obj"/>. Zero This state is equal to <paramref name="obj"/>. Greater than zero This state is greater than <paramref name="obj"/>.
         /// </returns>
         /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="other"/> is not the same type as this instance. </exception>
+        /// <paramref name="other"/> is not the same type as this state. </exception>
         public int CompareTo(object other) => this.Id.CompareTo((other as RelationType)?.Id);
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace Allors.Meta
                 Array.Empty<string>();
 
         /// <summary>
-        /// Validates this. instance.
+        /// Validates this. state.
         /// </summary>
         /// <param name="validationLog">The validation.</param>
         internal void Validate(ValidationLog validationLog)

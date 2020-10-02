@@ -49,7 +49,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var acme = Company.Create(this.Session, "Acme", 2);
                 var acne = Company.Create(this.Session, "Acne", 1);
@@ -114,7 +114,7 @@ namespace Allors.Database.Adapters
             {
                 init();
                 this.Populate();
-                var m = this.Session.Database.Scope().M;
+                var m = this.Session.Database.State().M;
 
                 var acme = Company.Create(this.Session, "Acme");
                 var acne = Company.Create(this.Session, "Acne");

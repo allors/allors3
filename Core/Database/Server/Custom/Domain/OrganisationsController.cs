@@ -33,8 +33,7 @@ namespace Allors.Server.Controllers
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceService.Name, this.Session.State().User);
-            var response = new PullResponseBuilder(acls, this.TreeCache);
+            var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
             var people = new Organisations(this.Session).Extent().ToArray();
             response.AddCollection("organisations", people, true);
             return this.Ok(response.Build());

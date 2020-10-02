@@ -45,7 +45,7 @@ namespace Allors.Server.Tests
 
             var metaPopulation = new MetaBuilder().Build();
             var database = new Database(
-                new DefaultDatabaseInstance(),
+                new DefaultDatabaseState(),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],

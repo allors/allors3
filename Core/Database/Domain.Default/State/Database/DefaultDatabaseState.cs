@@ -11,18 +11,19 @@ namespace Allors
     using Microsoft.AspNetCore.Http;
     using Services;
 
-    public class DefaultDatabaseInstance : IDatabaseInstance
+    public class DefaultDatabaseState : IDatabaseState
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public DefaultDatabaseInstance(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
+        public DefaultDatabaseState(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
 
         public void OnInit(IDatabase database)
         {
             this.Database = database;
             this.MetaPopulation = (MetaPopulation)database.ObjectFactory.MetaPopulation;
             this.M = new M(this.MetaPopulation);
-            this.MetaService = new MetaCache(this);
+            this.MetaCache = new MetaCache(this);
+            this.WorkspaceMetaCache = new WorkspaceMetaCache(this);
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
             this.PreparedExtentCache = new PreparedExtentCache(this);
             this.TreeCache = new TreeCache();
@@ -49,7 +50,13 @@ namespace Allors
 
         public M M { get; private set; }
 
+        public IMetaCache MetaCache { get; private set; }
+
+        public IWorkspaceMetaCache WorkspaceMetaCache { get; set; }
+
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
+
+        public ITreeCache TreeCache { get; private set; }
 
         public IPermissionsCache PermissionsCache { get; set; }
 
@@ -64,14 +71,12 @@ namespace Allors
         public IPreparedExtentCache PreparedExtentCache { get; private set; }
         public IFetchService FetchService { get; private set; }
         public IMailService MailService { get; private set; }
-        public IMetaCache MetaService { get; private set; }
         public IPasswordService PasswordService { get; private set; }
         public ISingletonService SingletonService { get; private set; }
         public IStickyService StickyService { get; private set; }
         public ITimeService TimeService { get; private set; }
-        public ITreeCache TreeCache { get; private set; }
 
-        public ISessionInstanceLifecycle CreateSessionInstance() => new DefaultSessionInstance(this.httpContextAccessor);
+        public ISessionStateLifecycle CreateSessionInstance() => new DefaultSessionState(this.httpContextAccessor);
 
         public void Dispose()
         {

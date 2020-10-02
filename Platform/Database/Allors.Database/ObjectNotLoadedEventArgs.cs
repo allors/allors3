@@ -23,7 +23,7 @@ namespace Allors
     public class ObjectNotLoadedEventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectNotLoadedEventArgs"/> class.
+        /// Initializes a new state of the <see cref="ObjectNotLoadedEventArgs"/> class.
         /// </summary>
         /// <param name="objectTypeId">The object type id.</param>
         /// <param name="objectId">The object id.</param>

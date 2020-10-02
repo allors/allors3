@@ -1,4 +1,4 @@
-// <copyright file="DefaultSessionInstance.cs" company="Allors bvba">
+// <copyright file="DefaultSessionState.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,11 +11,11 @@ namespace Allors
     using Domain;
     using Microsoft.AspNetCore.Http;
 
-    public class DefaultSessionInstance : ISessionInstance
+    public class DefaultSessionState : ISessionState
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public DefaultSessionInstance(IHttpContextAccessor httpContextAccessor) => this.httpContextAccessor = httpContextAccessor;
+        public DefaultSessionState(IHttpContextAccessor httpContextAccessor) => this.httpContextAccessor = httpContextAccessor;
 
         public User User { get; set; }
 

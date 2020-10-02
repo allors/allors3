@@ -17,10 +17,7 @@ namespace Allors.Api.Json.Pull
 
     public class PullResponseBuilder
     {
-        private readonly IAccessControlLists acls;
-        private readonly ITreeCache treeCache;
-
-        private readonly Dictionary<string, IList<IObject>> collectionsByName = new Dictionary<string, IList<IObject>>();
+        private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
         private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
@@ -29,68 +26,60 @@ namespace Allors.Api.Json.Pull
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
 
-        public PullResponseBuilder(IAccessControlLists acls, ITreeCache treeCache)
+        public PullResponseBuilder(ISession session, string workspaceName)
         {
-            this.acls = acls;
-            this.treeCache = treeCache;
+            this.Session = session;
+            var sessionState = session.State();
+            var databaseState = session.Database.State();
+
+            this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, sessionState.User);
+            this.TreeCache = databaseState.TreeCache;
+            this.WorkspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
 
             this.objects = new HashSet<IObject>();
-            this.accessControlsWriter = new AccessControlsWriter(this.acls);
-            this.permissionsWriter = new PermissionsWriter(this.acls);
+            this.accessControlsWriter = new AccessControlsWriter(this.AccessControlLists);
+            this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
         }
 
-        public void AddCollection(string name, IEnumerable<IObject> collection, bool full = false)
+        public ISession Session { get; }
+
+        public IAccessControlLists AccessControlLists { get; }
+
+        public IWorkspaceMetaCacheEntry WorkspaceMeta { get; }
+
+        public ITreeCache TreeCache { get; set; }
+
+        public void AddCollection(string name, in IEnumerable<IObject> collection, bool full = false)
         {
-            var inputList = (collection as IList<IObject>) ?? collection?.ToArray() ?? Array.Empty<IObject>();
-
-            Node[] tree = null;
-            if (full && inputList.Count > 0)
+            switch (collection)
             {
-                var @object = inputList.FirstOrDefault();
-                tree = @object?.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.treeCache);
+                case ICollection<IObject> asCollection:
+                    this.AddCollection(name, asCollection, null, full);
+                    break;
+                default:
+                    this.AddCollection(name, collection.ToArray(), null, full);
+                    break;
             }
-
-            this.AddCollection(name, inputList, tree);
         }
+
+        public void AddCollection(string name, in ICollection<IObject> collection, bool full = false) => this.AddCollection(name, collection, null, full);
 
         public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
         {
-            if (collection != null)
+            switch (collection)
             {
-                var list = collection as IList<IObject> ?? collection.ToArray();
-
-                // Prefetch
-                if (tree != null && list.Count > 0)
+                case ICollection<IObject> list:
+                    this.AddCollection(name, list, tree, false);
+                    break;
+                default:
                 {
-                    var session = list[0].Strategy.Session;
-                    var prefetchPolicy = tree.BuildPrefetchPolicy();
-                    session.Prefetch(prefetchPolicy, list);
-                }
-
-                if (this.collectionsByName.TryGetValue(name, out var existingIList))
-                {
-                    if (existingIList is List<IObject> existingList)
-                    {
-                        existingList.AddRange(list);
-                    }
-                    else
-                    {
-                        var newList = existingIList.Concat(list).ToArray();
-                        this.collectionsByName[name] = newList;
-                    }
-                }
-                else
-                {
-                    this.collectionsByName.Add(name, list);
-                }
-
-                foreach (var namedObject in list)
-                {
-                    this.objects.Add(namedObject);
-                    tree?.Resolve(namedObject, this.acls, this.objects);
+                    this.AddCollection(name, collection.ToArray(), tree, false);
+                    break;
                 }
             }
         }
+
+        public void AddCollection(string name, in ICollection<IObject> collection, Node[] tree) => this.AddCollection(name, collection, tree, false);
 
         public void AddObject(string name, IObject @object, bool full = false)
         {
@@ -99,7 +88,7 @@ namespace Allors.Api.Json.Pull
                 Node[] tree = null;
                 if (full)
                 {
-                    tree = @object.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.treeCache);
+                    tree = @object.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.TreeCache);
                 }
 
                 this.AddObject(name, @object, tree);
@@ -108,19 +97,24 @@ namespace Allors.Api.Json.Pull
 
         public void AddObject(string name, IObject @object, Node[] tree)
         {
-            if (@object != null)
+            if (this.WorkspaceMeta != null && @object != null)
             {
-                if (tree != null)
+                var classes = this.WorkspaceMeta.Classes;
+                if ( classes.Contains(@object.Strategy.Class))
                 {
-                    // Prefetch
-                    var session = @object.Strategy.Session;
-                    var prefetcher = tree.BuildPrefetchPolicy();
-                    session.Prefetch(prefetcher, @object);
-                }
 
-                this.objects.Add(@object);
-                this.objectByName[name] = @object;
-                tree?.Resolve(@object, this.acls, this.objects);
+                    if (tree != null)
+                    {
+                        // Prefetch
+                        var session = @object.Strategy.Session;
+                        var prefetcher = tree.BuildPrefetchPolicy();
+                        session.Prefetch(prefetcher, @object);
+                    }
+
+                    this.objects.Add(@object);
+                    this.objectByName[name] = @object;
+                    tree?.Resolve(@object, this.AccessControlLists, this.objects);
+                }
             }
         }
 
@@ -129,6 +123,69 @@ namespace Allors.Api.Json.Pull
             if (value != null)
             {
                 this.valueByName.Add(name, value);
+            }
+        }
+
+        private void AddCollection(string name, in ICollection<IObject> collection, Node[] tree, bool full)
+        {
+            if (this.WorkspaceMeta != null && collection.Count > 0)
+            {
+                if (full)
+                {
+                    if (tree != null)
+                    {
+                        throw new ArgumentException("tree must be null when full is true");
+                    }
+
+                    var @object = collection.First();
+                    tree = @object?.Strategy.Session.Database.FullTree(@object.Strategy.Class, this.TreeCache);
+                }
+
+                var classes = this.WorkspaceMeta.Classes;
+                this.collectionsByName.TryGetValue(name, out var existingCollection);
+
+                var filteredCollection = collection.Where(v => classes.Contains(v.Strategy.Class));
+
+                if (tree != null)
+                {
+                    var prefetchPolicy = tree.BuildPrefetchPolicy();
+
+                    ICollection<IObject> newCollection;
+
+                    if (existingCollection != null)
+                    {
+                        newCollection = filteredCollection.ToArray();
+                        this.Session.Prefetch(prefetchPolicy, newCollection);
+                        existingCollection.UnionWith(newCollection);
+                    }
+                    else
+                    {
+                        var newSet = new HashSet<IObject>(filteredCollection);
+                        newCollection = newSet;
+                        this.Session.Prefetch(prefetchPolicy, newCollection);
+                        this.collectionsByName.Add(name, newSet);
+                    }
+
+                    this.objects.UnionWith(newCollection);
+
+                    foreach (var newObject in newCollection)
+                    {
+                        tree.Resolve(newObject, this.AccessControlLists, this.objects);
+                    }
+                }
+                else
+                {
+                    if (existingCollection != null)
+                    {
+                        existingCollection.UnionWith(filteredCollection);
+                    }
+                    else
+                    {
+                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
+                        this.collectionsByName.Add(name, newWorkspaceCollection);
+                        this.objects.UnionWith(newWorkspaceCollection);
+                    }
+                }
             }
         }
 
@@ -152,7 +209,7 @@ namespace Allors.Api.Json.Pull
                 NamedValues = this.valueByName,
             };
 
-            pullResponse.AccessControls = this.acls.EffectivePermissionIdsByAccessControl.Keys
+            pullResponse.AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
                 .Select(v => new[]
                 {
                     v.Strategy.ObjectId.ToString(),

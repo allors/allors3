@@ -22,7 +22,7 @@ namespace Allors
     public class Extent<T> : IList, IList<T> where T : IObject // Extent<T> must also implement IList to be a DataSource during DataBinding.
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Extent{T}"/> class.
+        /// Initializes a new state of the <see cref="Extent{T}"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent.

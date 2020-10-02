@@ -19,18 +19,18 @@ namespace Allors.Api.Json.Pull
     {
         private readonly ISession session;
         private readonly Pull pull;
-        private readonly IPreparedExtentCache extentService;
-        private readonly IFetchService fetchService;
         private readonly IAccessControlLists acls;
 
-        public PullExtent(ISession session, Pull pull, IAccessControlLists acls, IPreparedExtentCache extentService, IFetchService fetchService)
+        public PullExtent(ISession session, Pull pull, IAccessControlLists acls)
         {
             this.session = session;
             this.pull = pull;
-            this.extentService = extentService;
-            this.fetchService = fetchService;
             this.acls = acls;
+
+            this.DatabaseState = session.Database.State();
         }
+
+        public IDatabaseState DatabaseState { get; }
 
         public void Execute(PullResponseBuilder response)
         {
@@ -39,7 +39,7 @@ namespace Allors.Api.Json.Pull
                 throw new Exception("Either an Extent or an ExtentRef is required.");
             }
 
-            var extent = this.pull.Extent ?? this.extentService.Get(this.pull.ExtentRef.Value);
+            var extent = this.pull.Extent ?? this.DatabaseState.PreparedExtentCache.Get(this.pull.ExtentRef.Value);
             var objects = extent.Build(this.session, this.pull.Parameters).ToArray();
 
             if (this.pull.Results != null)
@@ -53,7 +53,7 @@ namespace Allors.Api.Json.Pull
                         var fetch = result.Fetch;
                         if (fetch == null && result.FetchRef.HasValue)
                         {
-                            fetch = this.fetchService.Get(result.FetchRef.Value);
+                            fetch = this.DatabaseState.FetchService.Get(result.FetchRef.Value);
                         }
 
                         if (fetch != null)

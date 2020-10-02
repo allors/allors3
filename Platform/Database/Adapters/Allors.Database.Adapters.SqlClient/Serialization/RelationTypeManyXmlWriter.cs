@@ -50,7 +50,7 @@ namespace Allors.Database.Adapters.SqlClient
         private StringBuilder rolesStringBuilder;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RelationTypeManyXmlWriter"/> class.
+        /// Initializes a new state of the <see cref="RelationTypeManyXmlWriter"/> class.
         /// </summary>
         /// <param name="relationType">The relation type.</param>
         /// <param name="xmlWriter">The XML writer.</param>
