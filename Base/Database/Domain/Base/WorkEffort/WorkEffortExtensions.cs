@@ -91,6 +91,19 @@ namespace Allors.Domain
             }
 
             @this.DeriveCanInvoice();
+
+            foreach (WorkEffortInventoryAssignment inventoryAssignment in @this.WorkEffortInventoryAssignmentsWhereAssignment)
+            {
+                foreach (InventoryTransactionReason createReason in @this.WorkEffortState.InventoryTransactionReasonsToCreate)
+                {
+                    inventoryAssignment.SyncInventoryTransactions(derivation, inventoryAssignment.InventoryItem, inventoryAssignment.Quantity, createReason, false);
+                }
+
+                foreach (InventoryTransactionReason cancelReason in @this.WorkEffortState.InventoryTransactionReasonsToCancel)
+                {
+                    inventoryAssignment.SyncInventoryTransactions(derivation, inventoryAssignment.InventoryItem, inventoryAssignment.Quantity, cancelReason, true);
+                }
+            }
         }
 
         public static void BaseOnPostDerive(this WorkEffort @this, ObjectOnPostDerive method)

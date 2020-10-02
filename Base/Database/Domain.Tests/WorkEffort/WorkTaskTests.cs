@@ -10,10 +10,8 @@ namespace Allors.Domain
     using System.Linq;
     using Xunit;
 
-    public class WorkTaskTests : DomainTest, IClassFixture<Fixture>
+    public class WorkTaskTests : DomainTest
     {
-        public WorkTaskTests(Fixture fixture) : base(fixture) { }
-
         [Fact]
         public void GivenWorkTask_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
@@ -211,7 +209,7 @@ namespace Allors.Domain
             var employment = new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(organisation).Build();
 
             var salesOrderItem = salesOrder.SalesOrderItems.First;
-            (salesOrder).AddValidOrderItem(salesOrderItem);
+            ((SalesOrderDerivedRoles)salesOrder).AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
             var part1 = this.CreatePart("P1");
@@ -281,8 +279,10 @@ namespace Allors.Domain
             var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
             var employment = new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(organisation).Build();
 
+            this.Session.Derive(true);
+
             var salesOrderItem = salesOrder.SalesOrderItems.First;
-            (salesOrder).AddValidOrderItem(salesOrderItem);
+            ((SalesOrderDerivedRoles)salesOrder).AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
             var part1 = this.CreatePart("P1");
@@ -294,6 +294,8 @@ namespace Allors.Domain
             var inventoryAssignment1 = this.CreateInventoryAssignment(workOrder, part1, 11);
             var inventoryAssignment2 = this.CreateInventoryAssignment(workOrder, part2, 12);
             var inventoryAssignment3 = this.CreateInventoryAssignment(workOrder, part3, 13);
+
+            this.Session.Derive(true);
 
             //// Work Effort Time Entries
             var yesterday = DateTimeFactory.CreateDateTime(this.Session.Now().AddDays(-1));
@@ -647,6 +649,8 @@ namespace Allors.Domain
                 .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
                 .WithQuantity(quantity)
                 .Build();
+
+            this.Session.Derive();
 
             return new WorkEffortInventoryAssignmentBuilder(this.Session)
                 .WithAssignment(workOrder)
