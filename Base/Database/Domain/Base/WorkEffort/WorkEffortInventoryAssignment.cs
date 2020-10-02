@@ -10,19 +10,19 @@ namespace Allors.Domain
 
     public partial class WorkEffortInventoryAssignment
     {
-        //public void BaseOnPreDerive(ObjectOnPreDerive method)
-        //{
-        //    var (iteration, changeSet, derivedObjects) = method;
+        public void BaseOnPreDerive(ObjectOnPreDerive method)
+        {
+            var (iteration, changeSet, derivedObjects) = method;
 
-        //    if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-        //    {
-        //        if (this.ExistAssignment)
-        //        {
-        //            iteration.AddDependency(this.Assignment, this);
-        //            iteration.Mark(this.Assignment);
-        //        }
-        //    }
-        //}
+            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
+            {
+                if (this.ExistAssignment)
+                {
+                    iteration.AddDependency(this.Assignment, this);
+                    iteration.Mark(this.Assignment);
+                }
+            }
+        }
 
         public void BaseOnDerive(ObjectOnDerive method)
         {
@@ -31,16 +31,6 @@ namespace Allors.Domain
             var state = this.Assignment.WorkEffortState;
             var inventoryItemChanged = this.ExistCurrentVersion &&
                                        (!Equals(this.CurrentVersion.InventoryItem, this.InventoryItem));
-
-            foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
-            {
-                this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, createReason, false);
-            }
-
-            foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
-            {
-                this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, cancelReason, true);
-            }
 
             if (inventoryItemChanged)
             {
@@ -61,13 +51,9 @@ namespace Allors.Domain
                 }
             }
 
-            if (this.ExistAssignedBillableQuantity)
-            {
-                this.DerivedBillableQuantity = this.AssignedBillableQuantity;
-            }
-
             this.CalculatePurchasePrice();
             this.CalculateSellingPrice();
+            this.CalculateBillableQuantity();
 
             if (this.ExistAssignment)
             {
@@ -80,6 +66,16 @@ namespace Allors.Domain
             var session = this.strategy.Session;
             var derivation = new Derivations.Default.Derivation(session);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(session).Consumption, true);
+        }
+
+        public void BaseCalculateBillableQuantity(WorkEffortInventoryAssignmentCalculateBillableQuantity method)
+        {
+            if (!method.Result.HasValue)
+            {
+                this.DerivedBillableQuantity = this.AssignedBillableQuantity ?? this.Quantity;
+
+                method.Result = true;
+            }
         }
 
         public void BaseCalculatePurchasePrice(WorkEffortInventoryAssignmentCalculatePurchasePrice method)
@@ -127,7 +123,7 @@ namespace Allors.Domain
             }
         }
 
-        private void SyncInventoryTransactions(IDerivation derivation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
+        public void SyncInventoryTransactions(IDerivation derivation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
         {
             var adjustmentQuantity = 0M;
             var existingQuantity = 0M;
