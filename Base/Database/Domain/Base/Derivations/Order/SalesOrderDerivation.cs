@@ -376,7 +376,7 @@ namespace Allors.Domain
 
                     foreach (Permission permission in salesOrder.Session().Extent<Permission>())
                     {
-                        if (permission.ConcreteClassPointer == salesOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
+                        if (permission.ClassPointer == salesOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
                         {
                             deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }

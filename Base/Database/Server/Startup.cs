@@ -75,12 +75,16 @@ namespace Allors.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
-            var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
-            var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
-            databaseService.Database = databaseBuilder.Build();
-            databaseService.Database.RegisterDerivations();
+            // Allors
+            var databaseScope = new DefaultDatabaseScope(httpContextAccessor);
+            var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
+            var database = databaseBuilder.Build();
+            database.RegisterDerivations();
+
+            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = database;
+
 
             if (env.IsDevelopment())
             {

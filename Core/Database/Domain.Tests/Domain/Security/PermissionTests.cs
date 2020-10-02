@@ -84,7 +84,7 @@ namespace Tests
 
             var count = new Permissions(this.Session).Extent().Count;
 
-            var permission = new MethodExecutePermissionBuilder(this.Session).WithConcreteClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
+            var permission = new ExecutePermissionBuilder(this.Session).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
 
             new Permissions(this.Session).Sync();
 
@@ -94,7 +94,7 @@ namespace Tests
         [Fact]
         public void WhenSyncingPermissionsThenDanglingPermissionsAreDeleted()
         {
-            var permission = new RoleReadPermissionBuilder(this.Session).Build();
+            var permission = new ReadPermissionBuilder(this.Session).Build();
 
             new Permissions(this.Session).Sync();
 

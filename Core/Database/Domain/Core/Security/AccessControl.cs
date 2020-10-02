@@ -24,10 +24,9 @@ namespace Allors.Domain
             // TODO: Workspace
             this.EffectiveWorkspacePermissionIds = string.Join(",", this.EffectivePermissions.Where(v => v switch
             {
-                RoleReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                RoleWritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                AssociationReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                MethodExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
+                ReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                WritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
+                ExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
             }).Select(v => v.Id));
 
             // Invalidate cache

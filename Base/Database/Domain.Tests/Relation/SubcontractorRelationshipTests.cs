@@ -190,10 +190,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void GivenActiveSubContractorRelationship_WhenDeriving_ThenInternalOrganisationSuppliersContainsSupplier()
-        {
-            Assert.Contains(this.subcontractor, this.InternalOrganisation.ActiveSubContractors);
-        }
+        public void GivenActiveSubContractorRelationship_WhenDeriving_ThenInternalOrganisationSuppliersContainsSupplier() => Assert.Contains(this.subcontractor, this.InternalOrganisation.ActiveSubContractors);
 
         [Fact]
         public void GivenSubContractorRelationshipToCome_WhenDeriving_ThenInternalOrganisationSuppliersDosNotContainSupplier()

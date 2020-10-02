@@ -35,7 +35,7 @@ namespace Allors.Workspace
             if (value != null)
             {
                 foreach (var accessControlId in value
-                    .Split(Encoding.Separator)
+                    .Split(Encoding.SeparatorChar)
                     .Select(v => long.Parse(v))
                     .Where(v => !this.accessControlById.ContainsKey(v)))
                 {
@@ -51,7 +51,7 @@ namespace Allors.Workspace
             if (value != null)
             {
                 foreach (var permissionId in value
-                    .Split(Encoding.Separator)
+                    .Split(Encoding.SeparatorChar)
                     .Select(v => long.Parse(v))
                     .Where(v => !this.permissionById.ContainsKey(v)))
                 {

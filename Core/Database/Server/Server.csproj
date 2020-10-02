@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Platform\Database\Adapters\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
     <ProjectReference Include="..\..\..\Platform\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\Api\Api.csproj" />
     <ProjectReference Include="..\Domain.Default\Domain.Default.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />

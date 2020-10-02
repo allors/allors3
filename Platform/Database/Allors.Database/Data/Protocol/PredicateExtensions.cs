@@ -39,8 +39,11 @@ namespace Allors.Protocol.Data
                     };
 
                 default:
-                    var propertyType = @this.PropertyType?.Load(session);
-                    var roleType = @this.RoleType != null ? (IRoleType)session.Database.ObjectFactory.MetaPopulation.Find(@this.RoleType.Value) : null;
+                    var metaPopulation = session.Database.ObjectFactory.MetaPopulation;
+
+                    var associationType = metaPopulation.FindAssociationType(@this.AssociationType);
+                    var roleType = metaPopulation.FindRoleType(@this.RoleType);
+                    var propertyType = (IPropertyType)associationType ?? roleType;
 
                     switch (@this.Kind)
                     {

@@ -76,7 +76,7 @@ namespace Allors.Domain
 
                 if (salesOrderItem.SalesOrderItemState.IsInProcess
                     && salesOrderItem.ExistPreviousReservedFromNonSerialisedInventoryItem
-                    && salesOrderItem.ReservedFromNonSerialisedInventoryItem != salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem)
+                    && !Equals(salesOrderItem.ReservedFromNonSerialisedInventoryItem, salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem))
                 {
                     validation.AddError($"{salesOrderItem} {salesOrderItem.Meta.ReservedFromNonSerialisedInventoryItem} {ErrorMessages.ReservedFromNonSerialisedInventoryItem}");
                 }
@@ -395,7 +395,7 @@ namespace Allors.Domain
 
                     foreach (Permission permission in salesOrderItem.Session().Extent<Permission>())
                     {
-                        if (permission.ConcreteClassPointer == salesOrderItem.Strategy.Class.Id
+                        if (permission.ClassPointer == salesOrderItem.Strategy.Class.Id
                             && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
                         {
                             deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);

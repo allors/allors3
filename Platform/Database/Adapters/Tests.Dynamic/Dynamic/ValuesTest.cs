@@ -26,52 +26,42 @@ namespace Allors.Database.Adapters
     {
         protected TestValues testValues = new TestValues();
 
-        protected virtual int[] BinarySizes
-        {
-            get
+        protected virtual int[] BinarySizes =>
+            new[]
             {
-                return new[]
-                           {
-                               0,
-                               1,
-                               2,
-                               8000 - 1,
-                               8000, // SqlClient
-                               8000 + 1,
-                               2 ^ 16 - 1,
-                               2 ^ 16, // MySqlClient
-                               2 ^ 16 + 1,
-                               2 ^ 32 - 1,
-                               2 ^ 32, // MySqlClient
-                               2 ^ 32 + 1
-                           };
-            }
-        }
+                0,
+                1,
+                2,
+                8000 - 1,
+                8000, // SqlClient
+                8000 + 1,
+                2 ^ 16 - 1,
+                2 ^ 16, // MySqlClient
+                2 ^ 16 + 1,
+                2 ^ 32 - 1,
+                2 ^ 32, // MySqlClient
+                2 ^ 32 + 1
+            };
 
-        protected virtual int[] StringSizes
-        {
-            get
+        protected virtual int[] StringSizes =>
+            new[]
             {
-                return new[]
-                           {
-                               0,
-                               1,
-                               2,
-                               4000 - 1,
-                               4000, // SqlClient
-                               4000 + 1,
-                               8000 - 1,
-                               8000, // SqlClient
-                               8000 + 1,
-                               2 ^ 16 - 1,
-                               2 ^ 16, // MySqlClient
-                               2 ^ 16 + 1,
-                               2 ^ 32 - 1,
-                               2 ^ 32, // MySqlClient
-                               2 ^ 32 + 1
-                           };
-            }
-        }
+                0,
+                1,
+                2,
+                4000 - 1,
+                4000, // SqlClient
+                4000 + 1,
+                8000 - 1,
+                8000, // SqlClient
+                8000 + 1,
+                2 ^ 16 - 1,
+                2 ^ 16, // MySqlClient
+                2 ^ 16 + 1,
+                2 ^ 32 - 1,
+                2 ^ 32, // MySqlClient
+                2 ^ 32 + 1
+            };
 
         [Fact]
         [Trait("Category", "Dynamic")]

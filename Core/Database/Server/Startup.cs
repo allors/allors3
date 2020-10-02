@@ -5,6 +5,7 @@
 
 namespace Allors.Server
 {
+    using System.Collections.Generic;
     using System.Text;
     using Allors.Database.Adapters.SqlClient;
     using Allors.Domain;
@@ -35,11 +36,19 @@ namespace Allors.Server
         {
             services.AddSingleton(this.Configuration);
 
+            var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
+            {
+                {new HostString("localhost", 5000), "Default"}
+            });
+
             // Allors
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddSingleton(workspaceConfig);
+            // Allors Scoped
             services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<IWorkspaceService, WorkspaceService>();
 
             services.AddCors(options =>
                 options.AddDefaultPolicy(
@@ -67,13 +76,15 @@ namespace Allors.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             // Allors
-            var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
-            var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseScope(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
-            databaseService.Database = databaseBuilder.Build();
-            databaseService.Database.RegisterDerivations();
+            var databaseScope = new DefaultDatabaseScope(httpContextAccessor);
+            var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
+            var database = databaseBuilder.Build();
+            database.RegisterDerivations();
+
+            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = database;
 
             if (env.IsDevelopment())
             {

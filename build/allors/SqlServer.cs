@@ -1,5 +1,6 @@
 using System;
 using MartinCostello.SqlLocalDb;
+using Microsoft.Data.SqlClient;
 using static Nuke.Common.Logger;
 
 partial class SqlServer : IDisposable
@@ -28,5 +29,17 @@ partial class SqlServer : IDisposable
         this.sqlLocalDbApi = null;
         this.dbInstance = null;
         this.manager = null;
+    }
+
+    public void Drop(string database) => this.ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
+
+    public void Create(string database) => this.ExecuteCommand($"CREATE DATABASE [{database}]");
+    
+    private int ExecuteCommand(string commandText)
+    {
+        using var connection = this.manager.CreateConnection();
+        connection.Open();
+        using var command = new SqlCommand(commandText, connection);
+        return command.ExecuteNonQuery();
     }
 }

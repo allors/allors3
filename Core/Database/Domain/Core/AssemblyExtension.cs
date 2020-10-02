@@ -14,12 +14,10 @@ namespace Tests
     {
         public static string Fingerprint(this Assembly assembly)
         {
-            using (var md5 = MD5.Create())
-            {
-                var assemblyBytes = File.ReadAllBytes(assembly.Location);
-                var assemblyHash = md5.ComputeHash(assemblyBytes);
-                return string.Concat(assemblyHash.Select(v => v.ToString("X2")));
-            }
+            using var md5 = MD5.Create();
+            var assemblyBytes = File.ReadAllBytes(assembly.Location);
+            var assemblyHash = md5.ComputeHash(assemblyBytes);
+            return string.Concat(assemblyHash.Select(v => v.ToString("X2")));
         }
     }
 }

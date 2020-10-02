@@ -6,23 +6,26 @@
 namespace Allors.Protocol.Data
 {
     using System.Collections.Generic;
+    using Meta;
 
     public static class TreeExtensions
     {
-        public static Allors.Data.Node[] Load(this Node[] treeNodes, ISession session)
+        public static Allors.Data.Node[] Load(this Node[] protocolNodes, ISession session)
         {
-            // TODO: Optimize
-            var tree = new List<Allors.Data.Node>();
+            var metaPopulation = session.Database.ObjectFactory.MetaPopulation;
 
-            foreach (var protocolTreeNode in treeNodes)
+            // TODO: Optimize
+            var dataNodes = new List<Allors.Data.Node>();
+
+            foreach (var protocolNode in protocolNodes)
             {
-                var propertyType = protocolTreeNode.PropertyType.Load(session);
-                var treeNode = new Allors.Data.Node(propertyType);
-                tree.Add(treeNode);
-                protocolTreeNode.Load(session, treeNode);
+                var propertyType = (IPropertyType)metaPopulation.FindAssociationType(protocolNode.AssociationType) ?? metaPopulation.FindRoleType(protocolNode.RoleType);
+                var dataNode = new Allors.Data.Node(propertyType);
+                dataNodes.Add(dataNode);
+                protocolNode.Load(session, dataNode);
             }
 
-            return tree.ToArray();
+            return dataNodes.ToArray();
         }
     }
 }

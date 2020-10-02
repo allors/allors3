@@ -83,7 +83,7 @@ namespace Allors.Domain
 
                 // CurrentVersion is Previous Version until PostDerive
                 var previousSerialisedItem = quoteItem.CurrentVersion?.SerialisedItem;
-                if (previousSerialisedItem != null && previousSerialisedItem != quoteItem.SerialisedItem)
+                if (previousSerialisedItem != null && !Equals(previousSerialisedItem, quoteItem.SerialisedItem))
                 {
                     previousSerialisedItem.DerivationTrigger = Guid.NewGuid();
                 }

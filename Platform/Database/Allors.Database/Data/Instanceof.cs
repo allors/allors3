@@ -27,7 +27,8 @@ namespace Allors.Data
             {
                 Kind = PredicateKind.Instanceof,
                 ObjectType = this.ObjectType?.Id,
-                PropertyType = this.PropertyType?.Save(),
+                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
+                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
             };
 
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);

@@ -286,7 +286,7 @@ namespace Allors.Domain
 
                     foreach (Permission permission in purchaseOrderItem.Session().Extent<Permission>())
                     {
-                        if (permission.ConcreteClassPointer == purchaseOrderItem.Strategy.Class.Id
+                        if (permission.ClassPointer == purchaseOrderItem.Strategy.Class.Id
                             && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
                         {
                             deniablePermissionByOperandType.Add(permission.OperandType, permission);

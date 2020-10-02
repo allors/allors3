@@ -87,20 +87,11 @@ namespace Allors.Database.Adapters
             return unit;
         }
 
-        public double GenerateFloat()
-        {
-            return (double)this.random.Next(int.MinValue, int.MaxValue) / this.random.Next(int.MinValue, int.MaxValue);
-        }
+        public double GenerateFloat() => (double)this.random.Next(int.MinValue, int.MaxValue) / this.random.Next(int.MinValue, int.MaxValue);
 
-        public int GenerateInteger()
-        {
-            return this.random.Next(int.MinValue, int.MaxValue);
-        }
+        public int GenerateInteger() => this.random.Next(int.MinValue, int.MaxValue);
 
-        public double GeneratePercentage()
-        {
-            return (double)this.random.Next(0, int.MaxValue) / int.MaxValue;
-        }
+        public double GeneratePercentage() => (double)this.random.Next(0, int.MaxValue) / int.MaxValue;
 
         public string GenerateString(int size)
         {
@@ -114,9 +105,6 @@ namespace Allors.Database.Adapters
             return stringBuilder.ToString();
         }
 
-        public Guid GenerateUnique()
-        {
-            return Guid.NewGuid();
-        }
+        public Guid GenerateUnique() => Guid.NewGuid();
     }
 }

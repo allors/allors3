@@ -64,8 +64,8 @@ namespace Allors.Domain
                             if (!permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(relationTypeId,
                                 out var permissionId))
                             {
-                                permissionId = new RoleReadPermissionBuilder(this.Session)
-                                    .WithConcreteClassPointer(@class.Id)
+                                permissionId = new ReadPermissionBuilder(this.Session)
+                                    .WithClassPointer(@class.Id)
                                     .WithRelationTypePointer(relationTypeId)
                                     .Build()
                                     .Id;
@@ -77,8 +77,8 @@ namespace Allors.Domain
                         {
                             if (!permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(relationTypeId, out var permissionId))
                             {
-                                permissionId = new RoleWritePermissionBuilder(this.Session)
-                                    .WithConcreteClassPointer(@class.Id)
+                                permissionId = new WritePermissionBuilder(this.Session)
+                                    .WithClassPointer(@class.Id)
                                     .WithRelationTypePointer(relationTypeId)
                                     .Build()
                                     .Id;
@@ -88,27 +88,12 @@ namespace Allors.Domain
                         }
                     }
 
-                    foreach (var associationType in @class.DatabaseAssociationTypes)
-                    {
-                        var relationTypeId = associationType.RelationType.Id;
-                        if (!permissionCacheEntry.AssociationReadPermissionIdByRelationTypeId.TryGetValue(relationTypeId, out var permissionId))
-                        {
-                            permissionId = new AssociationReadPermissionBuilder(this.Session)
-                                .WithConcreteClassPointer(@class.Id)
-                                .WithRelationTypePointer(relationTypeId)
-                                .Build()
-                                .Id;
-                        }
-
-                        permissionIds.Add(permissionId);
-                    }
-
                     foreach (var methodType in @class.MethodTypes)
                     {
                         if (!permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
                         {
-                            permissionId = new MethodExecutePermissionBuilder(this.Session)
-                                .WithConcreteClassPointer(@class.Id)
+                            permissionId = new ExecutePermissionBuilder(this.Session)
+                                .WithClassPointer(@class.Id)
                                 .WithMethodTypePointer(methodType.Id)
                                 .Build()
                                 .Id;
@@ -124,19 +109,13 @@ namespace Allors.Domain
                     {
                         var relationTypeId = roleType.RelationType.Id;
 
-                        permissionIds.Add(new RoleReadPermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
-                        permissionIds.Add(new RoleWritePermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
-                    }
-
-                    foreach (var associationType in @class.DatabaseAssociationTypes)
-                    {
-                        var relationTypeId = associationType.RelationType.Id;
-                        permissionIds.Add(new AssociationReadPermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new ReadPermissionBuilder(this.Session).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
+                        permissionIds.Add(new WritePermissionBuilder(this.Session).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
                     }
 
                     foreach (var methodType in @class.MethodTypes)
                     {
-                        permissionIds.Add(new MethodExecutePermissionBuilder(this.Session).WithConcreteClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
+                        permissionIds.Add(new ExecutePermissionBuilder(this.Session).WithClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
                     }
                 }
             }

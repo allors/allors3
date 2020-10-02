@@ -285,10 +285,7 @@ namespace Allors.Database.Adapters
             return roles;
         }
 
-        private IObject[] CreateRolesWithDifferentClass(RelationType relationType)
-        {
-            return this.CreateRolesWithDifferentClass(this.GetSession(), relationType);
-        }
+        private IObject[] CreateRolesWithDifferentClass(RelationType relationType) => this.CreateRolesWithDifferentClass(this.GetSession(), relationType);
 
         private IObject[] CreateRolesWithDifferentClass(ISession session, RelationType relationType)
         {
@@ -304,10 +301,7 @@ namespace Allors.Database.Adapters
             return allRoles;
         }
 
-        private IObject[] CreateRolesWithSameClass(RelationType relationType, Class roleClass)
-        {
-            return this.CreateRolesWithSameClass(this.GetSession(), relationType, roleClass);
-        }
+        private IObject[] CreateRolesWithSameClass(RelationType relationType, Class roleClass) => this.CreateRolesWithSameClass(this.GetSession(), relationType, roleClass);
 
         private IObject[] CreateRolesWithSameClass(ISession session, RelationType relationType, Class roleClass)
         {
@@ -320,10 +314,7 @@ namespace Allors.Database.Adapters
             return allRoles;
         }
 
-        private RelationType[] GetRelations()
-        {
-            return this.GetOne2ManyRelations(this.GetMetaPopulation());
-        }
+        private RelationType[] GetRelations() => this.GetOne2ManyRelations(this.GetMetaPopulation());
 
         private class DifferentAssociationDifferentRolesByOne : ReferenceProxyTest
         {

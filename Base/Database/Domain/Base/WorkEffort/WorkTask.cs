@@ -27,10 +27,7 @@ namespace Allors.Domain
             }
         }
 
-        public void BaseOnDerive(ObjectOnDerive method)
-        {
-            this.ResetPrintDocument();
-        }
+        public void BaseOnDerive(ObjectOnDerive method) => this.ResetPrintDocument();
 
         public void BasePrint(PrintablePrint method)
         {

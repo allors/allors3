@@ -3256,9 +3256,6 @@ namespace Allors.Database.Adapters
             }
         }
 
-        private RelationType[] GetRelations()
-        {
-            return this.GetOne2OneRelations(this.GetMetaPopulation());
-        }
+        private RelationType[] GetRelations() => this.GetOne2OneRelations(this.GetMetaPopulation());
     }
 }

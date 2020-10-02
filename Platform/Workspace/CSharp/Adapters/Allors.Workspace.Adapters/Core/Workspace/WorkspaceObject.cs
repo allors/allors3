@@ -79,10 +79,10 @@ namespace Allors.Workspace
 
             if (this.accessControls == null && this.SortedAccessControlIds != null)
             {
-                this.accessControls = this.SortedAccessControlIds.Split(Encoding.Separator).Select(v => this.Workspace.AccessControlById[long.Parse(v)]).ToArray();
+                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.Workspace.AccessControlById[long.Parse(v)]).ToArray();
                 if (this.deniedPermissions != null)
                 {
-                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.Separator).Select(v => this.Workspace.PermissionById[long.Parse(v)]).ToArray();
+                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.Workspace.PermissionById[long.Parse(v)]).ToArray();
                 }
             }
 

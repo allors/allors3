@@ -8,7 +8,7 @@ namespace Allors.Server.Controllers
     using Allors.Domain;
     using Server;
     using Allors.Services;
-
+    using Api.Json.Pull;
     using Microsoft.AspNetCore.Mvc;
 
     public class OrganisationContactRelationshipController : Controller
@@ -27,7 +27,7 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull([FromBody] Model model)
         {
-            var acls = new WorkspaceAccessControlLists(this.allors.Session.GetUser());
+            var acls = new WorkspaceAccessControlLists(this.allors.Session.Scope().User);
             var response = new PullResponseBuilder(acls, this.TreeService);
 
             var organisationContactRelationship = (OrganisationContactRelationship)this.allors.Session.Instantiate(model.Id);

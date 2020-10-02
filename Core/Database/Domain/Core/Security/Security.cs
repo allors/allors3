@@ -52,12 +52,12 @@ namespace Allors.Domain
 
             foreach (Permission permission in session.Extent<Permission>())
             {
-                if (!permission.ExistConcreteClassPointer || !permission.ExistOperation)
+                if (!permission.ExistClassPointer || !permission.ExistOperation)
                 {
                     throw new Exception("Permission " + permission + " has no concrete class, operand type and/or operation");
                 }
 
-                var objectId = permission.ConcreteClassPointer;
+                var objectId = permission.ClassPointer;
 
                 if (permission.Operation != Operations.Read)
                 {

@@ -21,7 +21,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = order.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == order.TakenBy);
+            var partyFinancial = order.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, order.TakenBy));
 
             Assert.True(partyFinancial.OpenOrderAmount == order.TotalIncVat);
         }
@@ -33,7 +33,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             Assert.True(partyFinancial.AmountDue == invoice.TotalIncVat - invoice.AmountPaid);
         }
@@ -46,7 +46,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             Assert.True(partyFinancial.AmountDue == invoice.TotalIncVat);
         }
@@ -65,7 +65,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             Assert.True(partyFinancial.AmountOverDue == invoice.TotalIncVat - invoice.AdvancePayment);
         }
@@ -84,7 +84,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => v.InternalOrganisation == invoice.BilledFrom);
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             Assert.True(partyFinancial.AmountOverDue == 0);
         }

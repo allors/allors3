@@ -12,6 +12,7 @@ public partial class Paths
     public AbsolutePath CoreDatabaseServer => CoreDatabase / "Server";
     public AbsolutePath CoreDatabaseCommands => CoreDatabase / "Commands";
     public AbsolutePath CoreDatabaseDomainTests => CoreDatabase / "Domain.Tests/Domain.Tests.csproj";
+    public AbsolutePath CoreDatabaseApiTests => CoreDatabase / "Api.Tests/Api.Tests.csproj";
     public AbsolutePath CoreDatabaseServerTests => CoreDatabase / "Server.Tests/Server.Tests.csproj";
     public AbsolutePath CoreDatabaseResources => CoreDatabase / "Resources";
     public AbsolutePath CoreDatabaseResourcesCore => CoreDatabaseResources / "Core";
