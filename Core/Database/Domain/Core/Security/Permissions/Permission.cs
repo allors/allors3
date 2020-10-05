@@ -22,6 +22,5 @@ namespace Allors.Domain
         Operations Operation { get; }
 
         bool InWorkspace(string workspaceName);
-
     }
 }

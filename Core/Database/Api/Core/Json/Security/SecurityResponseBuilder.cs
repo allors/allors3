@@ -6,55 +6,70 @@
 namespace Allors.Api.Json.Security
 {
     using System;
+    using System.ComponentModel.Design;
     using System.Data;
     using System.Diagnostics;
     using System.Linq;
     using Allors.Domain;
     using Allors.Protocol.Remote.Security;
+    using Services;
 
     public class SecurityResponseBuilder
     {
         private readonly ISession session;
         private readonly SecurityRequest securityRequest;
-        private readonly IAccessControlLists acls;
 
-        public SecurityResponseBuilder(IAccessControlLists acls, ISession session, SecurityRequest securityRequest)
+        public SecurityResponseBuilder(ISession session, string workspaceName, SecurityRequest securityRequest)
         {
             this.session = session;
             this.securityRequest = securityRequest;
-            this.acls = acls;
+
+            var sessionState = session.State();
+            var databaseState = session.Database.State();
+
+            this.WorkspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
+            this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, sessionState.User);
         }
+
+        public IAccessControlLists AccessControlLists { get; }
+
+        public IWorkspaceMetaCacheEntry WorkspaceMeta { get; }
 
         public SecurityResponse Build()
         {
+            var classes = this.WorkspaceMeta?.Classes;
+
             var securityResponse = new SecurityResponse();
 
-            if (this.securityRequest.AccessControls != null)
+            if (this.securityRequest.AccessControls?.Length > 0)
             {
                 var accessControlIds = this.securityRequest.AccessControls;
                 var accessControls = this.session.Instantiate(accessControlIds).Cast<AccessControl>().ToArray();
 
                 securityResponse.AccessControls = accessControls
-                    .Select(v => new SecurityResponseAccessControl
+                    .Select(v =>
                     {
-                        I = v.Strategy.ObjectId.ToString(),
-                        V = v.Strategy.ObjectVersion.ToString(),
-                        P = string.Join(",", this.acls.EffectivePermissionIdsByAccessControl[v]),
+                        var response = new SecurityResponseAccessControl
+                        {
+                            I = v.Strategy.ObjectId.ToString(),
+                            V = v.Strategy.ObjectVersion.ToString(),
+                        };
+
+                        if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
+                        {
+                            response.P = string.Join(",", x);
+                        }
+
+                        return response;
                     }).ToArray();
             }
 
-            if (this.securityRequest.Permissions.Length > 0)
+            if (this.securityRequest.Permissions?.Length > 0)
             {
                 var permissionIds = this.securityRequest.Permissions;
                 var permissions = this.session.Instantiate(permissionIds)
                     .Cast<Permission>()
-                    .Where(v => v switch
-                    {
-                        ReadPermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                        WritePermission permission => permission.RelationType.WorkspaceNames.Length > 0,
-                        ExecutePermission permission => permission.MethodType.WorkspaceNames.Length > 0,
-                        _ => throw new Exception(),
-                    });
+                    .Where(v => classes?.Contains(v.ConcreteClass) == true);
 
                 securityResponse.Permissions = permissions.Select(v =>
                     v switch

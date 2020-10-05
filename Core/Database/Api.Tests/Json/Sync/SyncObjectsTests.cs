@@ -12,9 +12,9 @@ namespace Tests
     using Allors.Protocol.Remote.Sync;
     using Xunit;
 
-    public class SyncTests : ApiTest, IClassFixture<Fixture>
+    public class SyncObjectTests : ApiTest, IClassFixture<Fixture>
     {
-        public SyncTests(Fixture fixture) : base(fixture) { }
+        public SyncObjectTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeletedObject()

@@ -56,7 +56,7 @@ namespace Allors.Domain
 
         public Operations Operation => Operations.Execute;
 
-        public bool InWorkspace(string workspaceName) => this.MethodType.WorkspaceNames.Contains(workspaceName);
+        public bool InWorkspace(string workspaceName) => this.ConcreteClass.WorkspaceNames.Contains(workspaceName) && this.MethodType.WorkspaceNames.Contains(workspaceName);
 
         public void CoreOnPreDerive(ObjectOnPreDerive method)
         {

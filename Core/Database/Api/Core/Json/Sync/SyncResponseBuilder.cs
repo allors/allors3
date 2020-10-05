@@ -9,34 +9,48 @@ namespace Allors.Api.Json.Sync
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Protocol.Remote.Sync;
-    using Protocol;
     using Protocol.Data;
     using Protocol.Remote;
     using Server;
+    using Services;
 
     public class SyncResponseBuilder
     {
         private readonly AccessControlsWriter accessControlsWriter;
-        private readonly IAccessControlLists acls;
         private readonly PermissionsWriter permissionsWriter;
 
         private readonly ISession session;
         private readonly SyncRequest syncRequest;
 
-        public SyncResponseBuilder(ISession session, SyncRequest syncRequest, IAccessControlLists acls)
+        public SyncResponseBuilder(ISession session, string workspaceName, SyncRequest syncRequest)
         {
             this.session = session;
             this.syncRequest = syncRequest;
-            this.acls = acls;
 
-            this.accessControlsWriter = new AccessControlsWriter(this.acls);
-            this.permissionsWriter = new PermissionsWriter(this.acls);
+            var sessionState = session.State();
+            var databaseState = session.Database.State();
+
+            this.M = databaseState.M;
+            this.WorkspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
+            this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, sessionState.User);
+
+            this.accessControlsWriter = new AccessControlsWriter(this.AccessControlLists);
+            this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
         }
+
+        public M M { get; }
+
+        public IAccessControlLists AccessControlLists { get; }
+
+        public IWorkspaceMetaCacheEntry WorkspaceMeta { get; }
 
         public SyncResponse Build()
         {
-            var m = ((IDatabaseState) this.session.Database.State()).M;
-            var objects = this.session.Instantiate(this.syncRequest.Objects);
+            var classes = this.WorkspaceMeta?.Classes;
+
+            var objects = this.session.Instantiate(this.syncRequest.Objects)
+                .Where(v => classes?.Contains(v.Strategy.Class) == true)
+                .ToArray();
 
             // Prefetch
             var objectByClass = objects.GroupBy(v => v.Strategy.Class, v => v);
@@ -47,7 +61,7 @@ namespace Allors.Api.Json.Sync
 
                 var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
                 prefetchPolicyBuilder.WithWorkspaceRules(prefetchClass);
-                prefetchPolicyBuilder.WithSecurityRules(prefetchClass, m);
+                prefetchPolicyBuilder.WithSecurityRules(prefetchClass, this.M);
 
                 var prefetcher = prefetchPolicyBuilder.Build();
 
@@ -87,7 +101,7 @@ namespace Allors.Api.Json.Sync
                 Objects = objects.Select(v =>
                 {
                     var @class = (Class)v.Strategy.Class;
-                    var acl = this.acls[v];
+                    var acl = this.AccessControlLists[v];
 
                     return new SyncResponseObject
                     {
@@ -95,7 +109,7 @@ namespace Allors.Api.Json.Sync
                         V = v.Strategy.ObjectVersion.ToString(),
                         T = v.Strategy.Class.IdAsString,
                         // TODO: Cache
-                        R = @class.RoleTypes.Where(v=>v.RelationType.WorkspaceNames.Length > 0)
+                        R = @class.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w.RelationType))
                             .Select(w => CreateSyncResponseRole(v, w))
                             .ToArray(),
@@ -105,7 +119,7 @@ namespace Allors.Api.Json.Sync
                 }).ToArray(),
             };
 
-            syncResponse.AccessControls = this.acls.EffectivePermissionIdsByAccessControl.Keys
+            syncResponse.AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
                 .Select(v => new[]
                 {
                     v.Strategy.ObjectId.ToString(),

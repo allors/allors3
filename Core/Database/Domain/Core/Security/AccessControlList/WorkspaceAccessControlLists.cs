@@ -77,7 +77,7 @@ namespace Allors.Domain
                         .Build();
 
                     var prefetch = new PrefetchPolicyBuilder()
-                        .WithRule(m.AccessControl.EffectivePermissions)
+                        .WithRule(m.AccessControl.EffectivePermissions, permissionPrefetch)
                         .Build();
 
                     session.Prefetch(prefetch, misses);
@@ -85,7 +85,7 @@ namespace Allors.Domain
 
                 foreach (var accessControl in misses)
                 {
-                    var workspaceEffectivePermissions = accessControl.EffectivePermissions.Where(v=>v.InWorkspace(this.WorkspaceName));
+                    var workspaceEffectivePermissions = accessControl.EffectivePermissions.Where(v => v.InWorkspace(this.WorkspaceName));
                     var effectivePermissionIds = new HashSet<long>(workspaceEffectivePermissions.Select(v => v.Id));
                     effectivePermissionCache.Set(this.WorkspaceName, accessControl.Id, effectivePermissionIds);
                     effectivePermissionsByAccessControl.Add(accessControl, effectivePermissionIds);

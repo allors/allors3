@@ -11,33 +11,12 @@ namespace Tests
     using Allors.Protocol.Remote.Push;
     using Xunit;
 
-    public class PushTests : ApiTest, IClassFixture<Fixture>
+    public class PushDeletedObjectsTests : ApiTest, IClassFixture<Fixture>
     {
-        public PushTests(Fixture fixture) : base(fixture) { }
+        public PushDeletedObjectsTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void WorkspaceNewObject()
-        {
-            this.SetUser("jane@example.com");
-
-            var pushRequest = new PushRequest
-            {
-                NewObjects = new[] { new PushRequestNewObject { T = M.Build.Class.IdAsString, NI = "-1" }, },
-            };
-
-            var api = new Api(this.Session, "Default");
-            var pushResponse = api.Push(pushRequest);
-            
-            this.Session.Rollback();
-
-            var build = (Build)this.Session.Instantiate(pushResponse.NewObjects[0].I);
-
-            Assert.Equal(new Guid("DCE649A4-7CF6-48FA-93E4-CDE222DA2A94"), build.Guid);
-            Assert.Equal("Exist", build.String);
-        }
-
-        [Fact]
-        public void DeletedObject()
+        public void SameWorkspace()
         {
             this.SetUser("jane@example.com");
 

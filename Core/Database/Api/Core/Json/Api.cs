@@ -62,16 +62,13 @@ namespace Allors.Api.Json
 
         public PushResponse Push(PushRequest pushRequest)
         {
-            var user = this.Session.State().User;
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, user);
-            var responseBuilder = new PushResponseBuilder(this.Session, pushRequest, acls);
+            var responseBuilder = new PushResponseBuilder(this.Session, this.WorkspaceName, pushRequest);
             return responseBuilder.Build();
         }
 
         public SyncResponse Sync(SyncRequest syncRequest)
         {
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
-            var responseBuilder = new SyncResponseBuilder(this.Session, syncRequest, acls);
+            var responseBuilder = new SyncResponseBuilder(this.Session, this.WorkspaceName, syncRequest);
             return responseBuilder.Build();
         }
 
@@ -84,10 +81,8 @@ namespace Allors.Api.Json
 
         public SecurityResponse Security(SecurityRequest securityRequest)
         {
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
-            var responseBuilder = new SecurityResponseBuilder(acls, this.Session, securityRequest);
-            var response = responseBuilder.Build();
-            return response;
+            var responseBuilder = new SecurityResponseBuilder(this.Session, this.WorkspaceName, securityRequest);
+            return responseBuilder.Build();
         }
     }
 }

@@ -13,24 +13,36 @@ namespace Allors.Api.Json.Push
     using Allors.Protocol.Remote.Push;
     using Protocol.Data;
     using Server;
+    using Services;
 
     public class PushResponseBuilder
     {
         private readonly ISession session;
         private readonly PushRequest pushRequest;
-        private readonly IAccessControlLists acls;
-        private readonly IMetaPopulation metaPopulation;
 
-        public PushResponseBuilder(ISession session, PushRequest pushRequest, IAccessControlLists acls)
+        public PushResponseBuilder(ISession session, string workspaceName, PushRequest pushRequest)
         {
             this.session = session;
             this.pushRequest = pushRequest;
-            this.acls = acls;
-            this.metaPopulation = this.session.Database.MetaPopulation;
+
+            var sessionState = session.State();
+            var databaseState = session.Database.State();
+
+            this.MetaPopulation = databaseState.MetaPopulation;
+            this.WorkspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
+            this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, sessionState.User);
         }
+
+        public MetaPopulation MetaPopulation { get; }
+
+        public IAccessControlLists AccessControlLists { get; }
+
+        public IWorkspaceMetaCacheEntry WorkspaceMeta { get; }
 
         public PushResponse Build()
         {
+            var classes = this.WorkspaceMeta?.Classes;
+
             var pushResponse = new PushResponse();
             Dictionary<string, IObject> objectByNewId = null;
             if (this.pushRequest.NewObjects != null && this.pushRequest.NewObjects.Length > 0)
@@ -39,8 +51,13 @@ namespace Allors.Api.Json.Push
                     x => x.NI,
                     x =>
                         {
-                            var cls = (IClass)this.metaPopulation.Find(Guid.Parse(x.T));
-                            return (IObject)Allors.ObjectBuilder.Build(this.session, cls);
+                            var cls = (IClass)this.MetaPopulation.Find(Guid.Parse(x.T));
+                            if (classes?.Contains(cls) == true)
+                            {
+                                return (IObject)Allors.ObjectBuilder.Build(this.session, cls);
+                            }
+
+                            return null;
                         });
             }
 
@@ -70,10 +87,14 @@ namespace Allors.Api.Json.Push
                         {
                             pushResponse.AddVersionError(obj);
                         }
-                        else
+                        else if (classes?.Contains(obj.Strategy.Class) == true)
                         {
                             var pushRequestRoles = pushRequestObject.Roles;
                             this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
+                        }
+                        else
+                        {
+                            pushResponse.AddAccessError(obj);
                         }
                     }
                 }
@@ -115,12 +136,12 @@ namespace Allors.Api.Json.Push
 
                 foreach (var newObject in objectByNewId.Values)
                 {
-                    ((Allors.Domain.Object)newObject).OnBuild();
+                    ((Allors.Domain.Object)newObject)?.OnBuild();
                 }
 
                 foreach (var newObject in objectByNewId.Values)
                 {
-                    ((Allors.Domain.Object)newObject).OnPostBuild();
+                    ((Allors.Domain.Object)newObject)?.OnPostBuild();
                 }
             }
 
@@ -135,10 +156,10 @@ namespace Allors.Api.Json.Push
             {
                 if (objectByNewId != null)
                 {
-                    pushResponse.NewObjects = objectByNewId.Select(dictionaryEntry => new PushResponseNewObject
+                    pushResponse.NewObjects = objectByNewId.Select(kvp => new PushResponseNewObject
                     {
-                        I = dictionaryEntry.Value.Id.ToString(),
-                        NI = dictionaryEntry.Key,
+                        I = kvp.Value != null ? kvp.Value.Id.ToString() : kvp.Key,
+                        NI = kvp.Key,
                     }).ToArray();
                 }
 
@@ -166,9 +187,9 @@ namespace Allors.Api.Json.Push
                 var composite = (Composite)obj.Strategy.Class;
                 // TODO: Cach
                 var roleTypes = composite.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
-                var acl = this.acls[obj];
+                var acl = this.AccessControlLists[obj];
 
-                var roleType = (IRoleType)this.metaPopulation.Find(Guid.Parse(pushRequestRole.T));
+                var roleType = ((IRelationType)this.MetaPopulation.Find(Guid.Parse(pushRequestRole.T))).RoleType;
                 if (roleType != null)
                 {
                     if (acl.CanWrite(roleType))

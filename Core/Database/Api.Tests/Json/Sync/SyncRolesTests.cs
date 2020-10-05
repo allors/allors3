@@ -6,20 +6,17 @@
 
 namespace Tests
 {
-    using System.Linq;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Data;
-    using Allors.Protocol.Remote.Pull;
     using Allors.Protocol.Remote.Sync;
     using Xunit;
 
-    public class SyncWorkspaceTests : ApiTest, IClassFixture<Fixture>
+    public class SyncRolesTests : ApiTest, IClassFixture<Fixture>
     {
-        public SyncWorkspaceTests(Fixture fixture) : base(fixture) { }
+        public SyncRolesTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void SameWorkspace()
+        public void Workspace()
         {
             var m = this.M;
             var user = this.SetUser("jane@example.com");
@@ -53,6 +50,7 @@ namespace Tests
             Assert.Equal("x1:xy", wx1WorkspaceXYString.V);
         }
 
+
         [Fact]
         public void WorkspaceNone()
         {
@@ -75,11 +73,7 @@ namespace Tests
             var api = new Api(this.Session, "None");
             var syncResponse = api.Sync(syncRequest);
 
-            Assert.Single(syncResponse.Objects);
-
-            var wx1 = syncResponse.Objects[0];
-
-            Assert.Empty(wx1.R);
+            Assert.Empty(syncResponse.Objects);
         }
     }
 }

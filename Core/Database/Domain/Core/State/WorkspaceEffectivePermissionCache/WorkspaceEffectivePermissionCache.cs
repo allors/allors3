@@ -30,7 +30,6 @@ namespace Allors.Services
             return effectivePermissionIds;
         }
 
-
         public void Set(string workspaceName, long accessControlId, ISet<long> effectivePermissionIds)
         {
             var effectivePermissionIdsByAccessControlId = this.EffectivePermissionIdsByAccessControlId(workspaceName);
