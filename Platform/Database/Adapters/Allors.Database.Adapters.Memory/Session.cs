@@ -160,16 +160,7 @@ namespace Allors.Database.Adapters.Memory
             return allorsObjects;
         }
 
-        public IObject Instantiate(string objectIdString)
-        {
-            if (objectIdString == null)
-            {
-                return null;
-            }
-
-            var id = long.Parse(objectIdString);
-            return this.Instantiate(id);
-        }
+        public IObject Instantiate(string objectIdString) => long.TryParse(objectIdString, out var id) ? this.Instantiate(id) : null;
 
         public IObject Instantiate(IObject obj)
         {

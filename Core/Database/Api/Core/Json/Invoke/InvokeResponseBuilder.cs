@@ -12,24 +12,32 @@ namespace Allors.Api.Json.Invoke
     using Allors.Meta;
     using Allors.Protocol.Remote.Invoke;
     using Server;
+    using Services;
 
     public class InvokeResponseBuilder
     {
         private readonly ISession session;
-        private readonly IAccessControlLists acls;
         private readonly Invocation[] invocations;
         private readonly bool isolated;
         private readonly bool continueOnError;
 
-        public InvokeResponseBuilder(ISession session, InvokeRequest invokeRequest, IAccessControlLists acls)
+        public InvokeResponseBuilder(ISession session, string workspaceName, InvokeRequest invokeRequest)
         {
             this.session = session;
             this.invocations = invokeRequest.I;
             this.isolated = invokeRequest.O?.I ?? false;
             this.continueOnError = invokeRequest.O?.C ?? false;
 
-            this.acls = acls;
+            var sessionState = session.State();
+            var databaseState = session.Database.State();
+
+            this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, sessionState.User);
+            this.WorkspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
         }
+
+        public IAccessControlLists AccessControlLists { get; }
+
+        public IWorkspaceMetaCacheEntry WorkspaceMeta { get; }
 
         public InvokeResponse Build()
         {
@@ -90,6 +98,8 @@ namespace Allors.Api.Json.Invoke
 
         private bool Invoke(Invocation invocation, InvokeResponse invokeResponse)
         {
+            var classes = this.WorkspaceMeta?.Classes;
+
             // TODO: M should be a methodTypeId instead of the methodName
             if (invocation.M == null || invocation.I == null || invocation.V == null)
             {
@@ -100,6 +110,12 @@ namespace Allors.Api.Json.Invoke
             if (obj == null)
             {
                 invokeResponse.AddMissingError(invocation.I);
+                return true;
+            }
+
+            if (classes?.Contains(obj.Strategy.Class) != true)
+            {
+                invokeResponse.AddAccessError(obj);
                 return true;
             }
 
@@ -119,7 +135,7 @@ namespace Allors.Api.Json.Invoke
                 return true;
             }
 
-            var acl = this.acls[obj];
+            var acl = this.AccessControlLists[obj];
             if (!acl.CanExecute(methodType))
             {
                 invokeResponse.AddAccessError(obj);

@@ -3498,6 +3498,18 @@ namespace Allors.Database.Adapters
 
                 var unexistingObject = (C1)this.Session.Instantiate("1000000");
                 Assert.Null(unexistingObject);
+
+                unexistingObject = (C1)this.Session.Instantiate("");
+                Assert.Null(unexistingObject);
+
+                unexistingObject = (C1)this.Session.Instantiate(" ");
+                Assert.Null(unexistingObject);
+
+                unexistingObject = (C1)this.Session.Instantiate("\t");
+                Assert.Null(unexistingObject);
+
+                unexistingObject = (C1)this.Session.Instantiate("blah blah blah");
+                Assert.Null(unexistingObject);
             }
         }
 

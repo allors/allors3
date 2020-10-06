@@ -74,8 +74,7 @@ namespace Allors.Api.Json
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
-            var acls = new WorkspaceAccessControlLists(this.WorkspaceName, this.Session.State().User);
-            var responseBuilder = new InvokeResponseBuilder(this.Session, invokeRequest, acls);
+            var responseBuilder = new InvokeResponseBuilder(this.Session, this.WorkspaceName, invokeRequest);
             return responseBuilder.Build();
         }
 

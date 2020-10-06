@@ -116,28 +116,60 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        public WorkspaceXObject2[] WorkspaceNonToWorkspaceXObject2 { get; set; }
+        public WorkspaceXObject2[] WorkspaceNoneToWorkspaceXObject2 { get; set; }
 
         #region Allors
         [Id("19E3ED0F-A9C8-4CE6-A858-B71175F3BECC")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        public WorkspaceYObject2[] WorkspaceNonToWorkspaceYObject2 { get; set; }
+        public WorkspaceYObject2[] WorkspaceNoneToWorkspaceYObject2 { get; set; }
 
         #region Allors
         [Id("9C88791E-EFD0-49B1-86C2-2613909052BB")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        public WorkspaceXYObject2[] WorkspaceNonToWorkspaceXYObject2 { get; set; }
+        public WorkspaceXYObject2[] WorkspaceNoneToWorkspaceXYObject2 { get; set; }
 
         #region Allors
         [Id("A0A91D88-A3C0-47C5-B6A7-61204146703A")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        public WorkspaceNonObject2[] WorkspaceNonToWorkspaceNonObject2 { get; set; }
+        public WorkspaceNonObject2[] WorkspaceNoneToWorkspaceNonObject2 { get; set; }
+
+        #region Allors
+
+        [Id("1C66795A-4BA0-4BEA-9A99-D5F04C826AE6")]
+
+        #endregion
+        [Workspace(X)]
+        public void DoX() { }
+
+        #region Allors
+
+        [Id("AC3ECBA1-E611-4DF7-BAAF-60A886827B2F")]
+
+        #endregion
+        [Workspace(Y)]
+        public void DoY() { }
+
+        #region Allors
+
+        [Id("388AC021-A9A5-4520-AFA5-8EAE58ACF3C0")]
+
+        #endregion
+        [Workspace(Y)]
+        public void DoXY() { }
+
+        #region Allors
+
+        [Id("C09E37EC-D5E4-4F14-BEDC-C7274A344BFF")]
+
+        #endregion
+        [Workspace(Y)]
+        public void DoNone() { }
 
         #region inherited methods
 

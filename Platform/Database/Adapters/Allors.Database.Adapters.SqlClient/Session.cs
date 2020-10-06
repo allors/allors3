@@ -122,16 +122,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public IObject Instantiate(IObject obj) => this.Instantiate(obj.Strategy.ObjectId);
 
-        public IObject Instantiate(string objectId)
-        {
-            if (long.TryParse(objectId, out var id))
-            {
-                return this.Instantiate(id);
-            }
-;
-
-            return null;
-        }
+        public IObject Instantiate(string objectId) => long.TryParse(objectId, out var id) ? this.Instantiate(id) : null;
 
         public IObject Instantiate(long objectId)
         {

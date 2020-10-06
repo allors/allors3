@@ -100,7 +100,7 @@ namespace Allors.Api.Json.Pull
             if (this.WorkspaceMeta != null && @object != null)
             {
                 var classes = this.WorkspaceMeta.Classes;
-                if ( classes.Contains(@object.Strategy.Class))
+                if (classes.Contains(@object.Strategy.Class))
                 {
 
                     if (tree != null)
