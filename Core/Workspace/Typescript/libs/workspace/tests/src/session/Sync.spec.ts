@@ -615,7 +615,7 @@ describe('Session', () => {
       expect(exceptionThrown).toBeTruthy();
     });
 
-    it('methodCanExecute', () => {
+    it('check access', () => {
       const acme = session.get('101') as Organisation;
       const ocme = session.get('102') as Organisation;
       const icme = session.get('103') as Organisation;

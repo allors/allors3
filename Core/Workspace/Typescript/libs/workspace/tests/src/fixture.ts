@@ -11,10 +11,10 @@ export function syncResponse(m: Meta): SyncResponse {
         t: m.Person.id,
         v: "1001",
         r: [
-          { t: m.Person.FirstName.id, v: "Koen" },
-          { t: m.Person.LastName.id, v: "Van Exem" },
-          { t: m.Person.BirthDate.id, v: "1973-03-27T18:00:00Z" },
-          { t: m.Person.IsStudent.id, v: "true" },
+          { t: m.Person.FirstName.relationType.id, v: "Koen" },
+          { t: m.Person.LastName.relationType.id, v: "Van Exem" },
+          { t: m.Person.BirthDate.relationType.id, v: "1973-03-27T18:00:00Z" },
+          { t: m.Person.IsStudent.relationType.id, v: "true" },
         ],
       },
       {
@@ -22,9 +22,9 @@ export function syncResponse(m: Meta): SyncResponse {
         t: m.Person.id,
         v: "1002",
         r: [
-          { t: m.Person.FirstName.id, v: "Patrick" },
-          { t: m.Person.LastName.id, v: "De Boeck" },
-          { t: m.Person.IsStudent.id, v: "false" },
+          { t: m.Person.FirstName.relationType.id, v: "Patrick" },
+          { t: m.Person.LastName.relationType.id, v: "De Boeck" },
+          { t: m.Person.IsStudent.relationType.id, v: "false" },
         ],
       },
       {
@@ -32,9 +32,9 @@ export function syncResponse(m: Meta): SyncResponse {
         t: m.Person.id,
         v: "1003",
         r: [
-          { t: m.Person.FirstName.id, v: "Martien" },
-          { t: m.Person.MiddleName.id, v: "van" },
-          { t: m.Person.LastName.id, v: "Knippenberg" },
+          { t: m.Person.FirstName.relationType.id, v: "Martien" },
+          { t: m.Person.MiddleName.relationType.id, v: "van" },
+          { t: m.Person.LastName.relationType.id, v: "Knippenberg" },
         ],
       },
       {
@@ -42,9 +42,9 @@ export function syncResponse(m: Meta): SyncResponse {
         t: m.Organisation.id,
         v: "1101",
         r: [
-          { t: m.Organisation.Name.id, v: "Acme" },
-          { t: m.Organisation.Owner.id, v: "1" },
-          { t: m.Organisation.Employees.id, v: "1|2|3" },
+          { t: m.Organisation.Name.relationType.id, v: "Acme" },
+          { t: m.Organisation.Owner.relationType.id, v: "1" },
+          { t: m.Organisation.Employees.relationType.id, v: "1|2|3" },
         ],
         a: "801",
       },
@@ -53,9 +53,9 @@ export function syncResponse(m: Meta): SyncResponse {
         t: m.Organisation.id,
         v: "1102",
         r: [
-          { t: m.Organisation.Name.id, v: "Ocme" },
-          { t: m.Organisation.Owner.id, v: "2" },
-          { t: m.Organisation.Employees.id, v: "1" },
+          { t: m.Organisation.Name.relationType.id, v: "Ocme" },
+          { t: m.Organisation.Owner.relationType.id, v: "2" },
+          { t: m.Organisation.Employees.relationType.id, v: "1" },
         ],
       },
       {
@@ -63,8 +63,8 @@ export function syncResponse(m: Meta): SyncResponse {
         t: m.Organisation.id,
         v: "1103",
         r: [
-          { t: m.Organisation.Name.id, v: "icme" },
-          { t: m.Organisation.Owner.id, v: "3" },
+          { t: m.Organisation.Name.relationType.id, v: "icme" },
+          { t: m.Organisation.Owner.relationType.id, v: "3" },
         ],
       },
     ],
@@ -93,13 +93,13 @@ export function securityResponse(m: Meta): SecurityResponse {
       [
         "902",
         m.Organisation.id,
-        m.Organisation.Name.id,
+        m.Organisation.Name.relationType.id,
         Operations.Read.toString(),
       ],
       [
         "903",
         m.Organisation.id,
-        m.Organisation.Owner.id,
+        m.Organisation.Owner.relationType.id,
         Operations.Write.toString(),
       ],
     ],
@@ -121,13 +121,13 @@ export function securityResponse2(m: Meta): SecurityResponse {
       [
         "902",
         m.Organisation.id,
-        m.Organisation.Name.id,
+        m.Organisation.Name.relationType.id,
         Operations.Read.toString(),
       ],
       [
         "903",
         m.Organisation.id,
-        m.Organisation.Owner.id,
+        m.Organisation.Owner.relationType.id,
         Operations.Write.toString(),
       ],
     ],

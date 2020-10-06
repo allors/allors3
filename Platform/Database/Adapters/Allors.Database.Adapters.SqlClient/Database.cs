@@ -213,6 +213,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 this.ResetSchema();
                 this.Cache.Invalidate();
+                this.StateLifecycle.OnInit(this);
             }
         }
 

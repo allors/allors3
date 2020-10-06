@@ -1,4 +1,4 @@
-import { ObjectType, PropertyType } from '@allors/meta/system';
+import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/meta/system';
 
 import { ParameterizablePredicate, ParameterizablePredicateArgs } from './ParameterizablePredicate';
 
@@ -29,7 +29,8 @@ export class Instanceof extends ParameterizablePredicate {
     return {
       kind: 'Instanceof',
       dependencies: this.dependencies,
-      propertytype: this.propertyType.id,
+      associationType: (this.propertyType instanceof AssociationType) ? this.propertyType.relationType.id : undefined,
+      roleType: (this.propertyType instanceof RoleType) ? this.propertyType.relationType.id : undefined,
       parameter: this.parameter,
       objecttype: this.instanceObjectType?.id,
     };

@@ -1,5 +1,4 @@
 export interface MetaData {
-  domains: string[];
   interfaces?: ObjectTypeData[];
   classes?: ObjectTypeData[];
   relationTypes?: RelationTypeData[];
@@ -24,14 +23,12 @@ export interface RelationTypeData {
 }
 
 export interface AssociationTypeData {
-  id: string;
   objectTypeId: string;
   name: string;
   isOne: boolean;
 }
 
 export interface RoleTypeData {
-  id: string;
   objectTypeId: string;
   singular: string;
   plural: string;

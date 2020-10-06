@@ -1,15 +1,13 @@
-import { PropertyType } from './PropertyType';
 import { RelationType } from './RelationType';
 import { MetaPopulation } from './MetaPopulation';
 import { ObjectType } from './ObjectType';
 import { AssociationTypeData } from './Data';
 import { RoleType } from './RoleType';
+import { PropertyType } from './PropertyType';
 
 export class AssociationType implements PropertyType {
   metaPopulation: MetaPopulation;
   roleType: RoleType;
-
-  id: string;
   objectType: ObjectType;
   name: string;
   isOne: boolean;
@@ -18,7 +16,6 @@ export class AssociationType implements PropertyType {
     relationType.associationType = this;
     this.metaPopulation = relationType.metaPopulation;
 
-    this.id = dataAssociationType.id;
     this.objectType = this.metaPopulation.metaObjectById.get(
       dataAssociationType.objectTypeId
     ) as ObjectType;

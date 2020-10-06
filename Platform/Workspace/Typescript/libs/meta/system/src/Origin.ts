@@ -1,5 +1,5 @@
 export enum Origin {
-  Database = "Database",
-  Workspace = "Workspace",
-  Session = "Session",
+  Remote = "Remote",
+  Local = "Local",
+  Working = "Working",
 }

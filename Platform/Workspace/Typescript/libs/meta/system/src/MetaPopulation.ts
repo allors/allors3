@@ -31,7 +31,7 @@ export class MetaPopulation {
       const objectType = new ObjectType(
         this,
         unitIdByTypeName[unitName],
-        Origin.Database,
+        Origin.Remote,
         unitName,
         unitName === 'Binary' ? 'Binaries' : unitName + 's',
         Kind.unit
@@ -129,9 +129,7 @@ export class MetaPopulation {
       const relationType = new RelationType(this, relationTypeData);
 
       this.metaObjectById.set(relationType.id, relationType);
-      this.metaObjectById.set(relationType.roleType.id, relationType.roleType);
-      this.metaObjectById.set(relationType.associationType.id, relationType.associationType);
-
+ 
       return relationType;
     });
 
@@ -143,7 +141,7 @@ export class MetaPopulation {
 
       objectType.subtypes.forEach((subtype) => {
         subtype.roleTypes
-          .filter((subtypeRoleType) => !objectType.roleTypes.find((v) => v.id === subtypeRoleType.id))
+          .filter((subtypeRoleType) => !objectType.roleTypes.find((v) => v.relationType.id === subtypeRoleType.relationType.id))
           .forEach((v) => objectType.roleTypeByName.set(`${subtype.name}_${v.name}`, v));
 
         subtype.associationTypes

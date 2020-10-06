@@ -11,7 +11,8 @@
     },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    ".eslintrc.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -33,12 +34,6 @@
       "tags": []
     },
     "domain-custom": {
-      "tags": []
-    },
-    "domain-generated": {
-      "tags": []
-    },
-    "meta-generated": {
       "tags": []
     },
     "meta-system": {
@@ -63,6 +58,12 @@
       "tags": []
     },
     "meta-tests": {
+      "tags": []
+    },
+    "domain-generated": {
+      "tags": []
+    },
+    "meta-generated": {
       "tags": []
     }
   }

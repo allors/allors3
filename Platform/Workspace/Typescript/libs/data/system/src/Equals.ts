@@ -1,4 +1,4 @@
-import { ObjectType, PropertyType } from '@allors/meta/system';
+import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/meta/system';
 import { DatabaseObject, CompositeTypes, UnitTypes, serialize} from '@allors/workspace/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
@@ -31,7 +31,8 @@ export class Equals extends ParameterizablePredicate {
     return {
       kind: 'Equals',
       dependencies: this.dependencies,
-      propertytype: this.propertyType.id,
+      associationType: (this.propertyType instanceof AssociationType) ? this.propertyType.relationType.id : undefined,
+      roleType: (this.propertyType instanceof RoleType) ? this.propertyType.relationType.id : undefined,
       parameter: this.parameter,
       value: serialize(this.value),
       object: this.object && (this.object as DatabaseObject).id ? (this.object as DatabaseObject).id : this.object,

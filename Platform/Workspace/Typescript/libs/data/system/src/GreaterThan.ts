@@ -35,7 +35,7 @@ export class GreaterThan extends ParameterizablePredicate {
     return {
       kind: 'GreaterThan',
       dependencies: this.dependencies,
-      roleType: this.roleType.id,
+      roleType: this.roleType.relationType.id,
       parameter: this.parameter,
       value: serialize(this.value),
     };

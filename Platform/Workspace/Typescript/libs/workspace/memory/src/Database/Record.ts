@@ -1,4 +1,4 @@
-import { ObjectType, MetaPopulation, RoleType } from '@allors/meta/system';
+import { ObjectType, MetaPopulation, RoleType, RelationType } from '@allors/meta/system';
 import { Compressor, SyncResponseObject } from '@allors/protocol/system';
 import { Record, Permission, AccessControl } from '@allors/workspace/system';
 
@@ -54,10 +54,9 @@ export class MemoryRecord implements Record {
       this.roleByRoleTypeId = new Map();
       if (syncResponseObject.r) {
         syncResponseObject.r.forEach((role) => {
-          const roleTypeId = role.t;
-          const roleType = metaPopulation.metaObjectById.get(
-            roleTypeId
-          ) as RoleType;
+          const relationTypeId = role.t;
+          const relationType = metaPopulation.metaObjectById.get(relationTypeId) as RelationType;
+          const roleType = relationType.roleType;
 
           let value: any = role.v;
           if (roleType.objectType.isUnit) {
@@ -68,7 +67,7 @@ export class MemoryRecord implements Record {
             }
           }
 
-          this.roleByRoleTypeId.set(roleType.id, value);
+          this.roleByRoleTypeId.set(roleType.relationType.id, value);
         });
       }
 

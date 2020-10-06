@@ -1,4 +1,4 @@
-import { MetaPopulation, assert, MetaObject } from '@allors/meta/system';
+import { MetaPopulation, assert, MetaObject, RoleType, RelationType, AssociationType } from '@allors/meta/system';
 import { PushRequest } from '@allors/protocol/system';
 
 export class PushRequestInfo {
@@ -27,6 +27,15 @@ export class PushRequestInfo {
   }
 
   is(key: string, metaObject: MetaObject): boolean {
+
+    if(metaObject instanceof RoleType){
+      return (this.metaTypeByKey.get(key) as RelationType).roleType === metaObject;
+    }
+
+    if(metaObject instanceof AssociationType){
+      return (this.metaTypeByKey.get(key) as RelationType).associationType === metaObject;
+    }
+
     return this.metaTypeByKey.get(key) === metaObject;
   }
 }

@@ -1,10 +1,17 @@
-import { ObjectType, PropertyType } from '@allors/meta/system';
+import { AssociationType, ObjectType, PropertyType } from '@allors/meta/system';
 import { DatabaseObject, CompositeTypes } from '@allors/workspace/system';
 
-import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
+import {
+  ParameterizablePredicateArgs,
+  ParameterizablePredicate,
+} from './ParameterizablePredicate';
 import { IExtent } from './IExtent';
+import { RelationType } from '../../../meta/system/src/RelationType';
+import { RoleType } from '../../../meta/system/src/RoleType';
 
-export interface ContainedInArgs extends ParameterizablePredicateArgs, Pick<ContainedIn, 'propertyType' | 'extent' | 'objects'> {}
+export interface ContainedInArgs
+  extends ParameterizablePredicateArgs,
+    Pick<ContainedIn, 'propertyType' | 'extent' | 'objects'> {}
 
 export class ContainedIn extends ParameterizablePredicate {
   propertyType: PropertyType;
@@ -29,13 +36,32 @@ export class ContainedIn extends ParameterizablePredicate {
   }
 
   public toJSON(): any {
-    return {
-      kind: 'ContainedIn',
-      dependencies: this.dependencies,
-      propertytype: this.propertyType.id,
-      parameter: this.parameter,
-      extent: this.extent,
-      objects: this.objects ? this.objects.map((v) => ((v as DatabaseObject).id ? (v as DatabaseObject).id : v)) : undefined,
-    };
+    if (this.propertyType instanceof AssociationType) {
+      return {
+        kind: 'ContainedIn',
+        associationType: this.propertyType.relationType.id,
+        dependencies: this.dependencies,
+        parameter: this.parameter,
+        extent: this.extent,
+        objects: this.objects
+          ? this.objects.map((v) =>
+              (v as DatabaseObject).id ? (v as DatabaseObject).id : v
+            )
+          : undefined,
+      };
+    } else {
+      return {
+        kind: 'ContainedIn',
+        roleType: this.propertyType.relationType.id,
+        dependencies: this.dependencies,
+        parameter: this.parameter,
+        extent: this.extent,
+        objects: this.objects
+          ? this.objects.map((v) =>
+              (v as DatabaseObject).id ? (v as DatabaseObject).id : v
+            )
+          : undefined,
+      };
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { ObjectType } from '@allors/meta/system';
-import { Permission } from '../Permission';
+import { Permission } from '../Permissions/Permission';
 import { Database } from './Database';
 
 export type Unit = string | Date | boolean | number;

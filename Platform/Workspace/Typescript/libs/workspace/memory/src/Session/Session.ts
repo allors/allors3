@@ -48,7 +48,7 @@ export class MemorySession implements Session {
     }
 
     switch (resolvedObjectType.origin) {
-      case Origin.Database: {
+      case Origin.Remote: {
         const newObject: MemoryDatabaseObject = new constructor();
         newObject.session = this;
         newObject.objectType = resolvedObjectType;
@@ -59,7 +59,7 @@ export class MemorySession implements Session {
         return newObject;
       }
 
-      case Origin.Workspace: {
+      case Origin.Local: {
         const newObject: MemoryWorkspaceObject = new constructor();
         newObject.session = this;
         newObject.workspace = this.workspace;
@@ -68,7 +68,7 @@ export class MemorySession implements Session {
         return newObject;
       }
 
-      case Origin.Session:
+      case Origin.Working:
         break;
     }
   }
@@ -241,13 +241,13 @@ export class MemorySession implements Session {
             const permission = this.database.permission(databaseObject.objectType, roleType, Operations.Read);
             if (permission && databaseObject.isPermitted(permission)) {
               if (roleType.isOne) {
-                const role: string = databaseObject.roleByRoleTypeId.get(roleType.id);
+                const role: string = databaseObject.roleByRoleTypeId.get(roleType.relationType.id);
                 if (object.id === role) {
                   associations.push(this.get(databaseObject.id) as DatabaseObject);
                   break;
                 }
               } else {
-                const roles: string[] = databaseObject.roleByRoleTypeId.get(roleType.id);
+                const roles: string[] = databaseObject.roleByRoleTypeId.get(roleType.relationType.id);
                 if (roles && roles.indexOf(databaseObject.id) > -1) {
                   associationIds.add(databaseObject.id);
                   associations.push(this.get(databaseObject.id) as DatabaseObject);

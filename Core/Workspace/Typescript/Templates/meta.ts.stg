@@ -235,6 +235,7 @@ $meta.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$methodTyp
 interface(interface) ::= <<
       {
         "id": "$interface.IdAsString$",
+        "origin": "$interface.Origin$",
         "name": "$interface.Name$",
         "plural": "$interface.PluralName$"$if(interface.Supertypes)$,
         "interfaceIds":

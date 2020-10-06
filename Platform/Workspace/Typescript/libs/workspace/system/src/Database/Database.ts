@@ -2,7 +2,7 @@ import { ObjectType, MetaPopulation, OperandType } from '@allors/meta/system';
 import { Operations, PullResponse, SyncRequest, SyncResponse, SecurityRequest, SecurityResponse } from '@allors/protocol/system';
 
 import { Session } from '../Session/Session';
-import { Permission } from '../Permission';
+import { Permission } from '../Permissions/Permission';
 import { AccessControl } from '../AccessControl';
 
 import { Record } from './Record';

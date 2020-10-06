@@ -23,7 +23,7 @@ export class Sort {
 
   public toJSON(): any {
     return {
-      roleType: this.roleType.id,
+      roleType: this.roleType.relationType.id,
       descending: this.descending,
     };
   }

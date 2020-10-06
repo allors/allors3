@@ -90,17 +90,17 @@ export abstract class MemoryDatabaseObject implements DatabaseObject {
     if (value === undefined) {
       if (this.newId === undefined) {
         if (roleType.objectType.isUnit) {
-          value = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
+          value = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id);
           if (value === undefined) {
             value = null;
           }
         } else {
           try {
             if (roleType.isOne) {
-              const role = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string;
+              const role = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id) as string;
               value = role ? this.session.get(role) : null;
             } else {
-              const roles = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string[];
+              const roles = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id) as string[];
               value = roles
                 ? roles.map((role) => {
                     return this.session.get(role);
@@ -143,16 +143,16 @@ export abstract class MemoryDatabaseObject implements DatabaseObject {
     if (value === undefined) {
       if (this.newId === undefined) {
         if (roleType.objectType.isUnit) {
-          value = this.databaseObject?.roleByRoleTypeId.get(roleType.id);
+          value = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id);
           if (value === undefined) {
             value = null;
           }
         } else {
           if (roleType.isOne) {
-            const role = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string;
+            const role = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id) as string;
             value = role ? this.session.getForAssociation(role) : null;
           } else {
-            const roles = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string[];
+            const roles = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id) as string[];
             value = roles
               ? roles.map((role) => {
                   return this.session.getForAssociation(role);
@@ -339,7 +339,7 @@ export abstract class MemoryDatabaseObject implements DatabaseObject {
       for (const [roleType, value] of this.changedRoleByRoleType) {
         const role = value;
         const saveRole: PushRequestRole = {
-          t: roleType.id,
+          t: roleType.relationType.id,
         };
 
         if (roleType.objectType.isUnit) {
@@ -352,7 +352,7 @@ export abstract class MemoryDatabaseObject implements DatabaseObject {
             if (this.newId) {
               saveRole.a = roleIds;
             } else {
-              const originalRoleIds = this.databaseObject?.roleByRoleTypeId.get(roleType.id) as string[];
+              const originalRoleIds = this.databaseObject?.roleByRoleTypeId.get(roleType.relationType.id) as string[];
               if (!originalRoleIds) {
                 saveRole.a = roleIds;
               } else {

@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'client-tests',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -20,6 +19,8 @@ module.exports = {
       },
     ],
   ],
+  displayName: 'client-tests',
   // --runInBand
-  "maxWorkers": 1 
+  maxWorkers: 1,
+  testTimeout: 5 * 60 * 1000,
 };

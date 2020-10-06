@@ -1,4 +1,4 @@
-import { ObjectType, MetaPopulation, OperandType, Origin } from '@allors/meta/system';
+import { ObjectType, MetaPopulation, OperandType, Origin, RelationType, MethodType } from '@allors/meta/system';
 import {
   Operations,
   Compressor,
@@ -8,7 +8,16 @@ import {
   SecurityRequest,
   SecurityResponse,
 } from '@allors/protocol/system';
-import { Permission, Database, Record, Session, AccessControl } from '@allors/workspace/system';
+import {
+  Permission,
+  ReadPermission,
+  WritePermission,
+  ExecutePermission,
+  Database,
+  Record,
+  Session,
+  AccessControl,
+} from '@allors/workspace/system';
 
 import { MemorySession } from '../Session/Session';
 import { MemoryWorkspace } from '../Workspace/Workspace';
@@ -29,9 +38,9 @@ export class MemoryDatabase implements Database {
   readonly accessControlById: Map<string, AccessControl>;
   readonly permissionById: Map<string, Permission>;
 
-  private readPermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
-  private writePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
-  private executePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, Permission>>;
+  private readPermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, ReadPermission>>;
+  private writePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, WritePermission>>;
+  private executePermissionByOperandTypeByClass: Map<ObjectType, Map<OperandType, ExecutePermission>>;
 
   constructor(public metaPopulation: MetaPopulation) {
     this.constructorByObjectType = new Map();
@@ -57,11 +66,11 @@ export class MemoryDatabase implements Database {
 
     const classes = metaPopulation.classes;
     databaseClasses(
-      classes.filter((v) => v.origin === Origin.Database),
+      classes.filter((v) => v.origin === Origin.Remote),
       this.constructorByObjectType
     );
     workspaceClasses(
-      classes.filter((v) => v.origin === Origin.Workspace),
+      classes.filter((v) => v.origin === Origin.Local),
       this.constructorByObjectType
     );
 
@@ -177,27 +186,35 @@ export class MemoryDatabase implements Database {
       securityResponse.permissions.forEach((v) => {
         const id = v[0];
         const objectType = this.metaPopulation.metaObjectById.get(v[1]) as ObjectType;
-        const operandType = this.metaPopulation.metaObjectById.get(v[2]) as OperandType;
+        const operandType = this.metaPopulation.metaObjectById.get(v[2]) as RelationType | MethodType;
         const operation = parseInt(v[3], 10);
 
-        let permission = this.permissionById.get(id);
-        if (!permission) {
-          permission = new Permission(id, objectType, operandType, operation);
-          this.permissionById.set(id, permission);
-        }
+        if (!this.permissionById.has(id)) {
+          switch (operation) {
+            case Operations.Read:
+              {
+                const permission = new ReadPermission(id, objectType, (operandType as RelationType).roleType);
+                this.permissionById.set(id, permission);
+                this.getOrCreate(this.readPermissionByOperandTypeByClass, objectType).set(permission.roleType, permission);
+              }
+              break;
 
-        switch (operation) {
-          case Operations.Read:
-            this.getOrCreate(this.readPermissionByOperandTypeByClass, objectType).set(operandType, permission);
-            break;
+            case Operations.Write:
+              {
+                const permission = new WritePermission(id, objectType, (operandType as RelationType).roleType);
+                this.permissionById.set(id, permission);
+                this.getOrCreate(this.writePermissionByOperandTypeByClass, objectType).set(permission.roleType, permission);
+              }
+              break;
 
-          case Operations.Write:
-            this.getOrCreate(this.writePermissionByOperandTypeByClass, objectType).set(operandType, permission);
-            break;
-
-          case Operations.Execute:
-            this.getOrCreate(this.executePermissionByOperandTypeByClass, objectType).set(operandType, permission);
-            break;
+            case Operations.Execute:
+              {
+                const permission = new ExecutePermission(id, objectType, operandType as MethodType);
+                this.permissionById.set(id, permission);
+                this.getOrCreate(this.executePermissionByOperandTypeByClass, objectType).set(permission.methodType, permission);
+              }
+              break;
+          }
         }
       });
     }

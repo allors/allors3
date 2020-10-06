@@ -208,6 +208,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 this.ResetSchema();
                 this.Cache.Invalidate();
+                this.StateLifecycle.OnInit(this);
             }
         }
 

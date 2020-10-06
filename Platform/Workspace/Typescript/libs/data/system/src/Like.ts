@@ -30,7 +30,7 @@ export class Like extends ParameterizablePredicate {
     return {
       kind: 'Like',
       dependencies: this.dependencies,
-      roleType: this.roleType.id,
+      roleType: this.roleType.relationType.id,
       parameter: this.parameter,
       value: this.value,
     };

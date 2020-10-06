@@ -18,8 +18,6 @@
     "paths": {
       "@allors/data/system": ["libs/data/system/src/index.ts"],
       "@allors/domain/custom": ["libs/domain/custom/src/index.ts"],
-      "@allors/domain/generated": ["libs/domain/generated/src/index.ts"],
-      "@allors/meta/generated": ["libs/meta/generated/src/index.ts"],
       "@allors/meta/system": ["libs/meta/system/src/index.ts"],
       "@allors/protocol/system": ["libs/protocol/system/src/index.ts"],
       "@allors/workspace/memory": ["libs/workspace/memory/src/index.ts"],
@@ -27,7 +25,9 @@
       "@allors/workspace/tests": ["libs/workspace/tests/src/index.ts"],
       "@allors/client/tests": ["libs/client/tests/src/index.ts"],
       "@allors/client/fetch": ["libs/client/fetch/src/index.ts"],
-      "@allors/meta/tests": ["libs/meta/tests/src/index.ts"]
+      "@allors/meta/tests": ["libs/meta/tests/src/index.ts"],
+      "@allors/domain/generated": ["libs/domain/generated/src/index.ts"],
+      "@allors/meta/generated": ["libs/meta/generated/src/index.ts"]
     },
     "preserveSymlinks": true,
     "resolveJsonModule": true

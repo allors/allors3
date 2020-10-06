@@ -12,7 +12,7 @@ describe('Extent',
 
     beforeEach(async () => {
       fixture = new Fixture();
-      await fixture.init();
+      await fixture.init('full');
     });
 
     describe('People',
@@ -39,7 +39,7 @@ describe('Extent',
 
           expect(people).toBeArray();
           expect(people).not.toBeEmpty();
-          expect(6).toBe( people.length);
+          expect(8).toBe( people.length);
         });
       });
 

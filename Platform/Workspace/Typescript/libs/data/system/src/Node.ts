@@ -1,4 +1,4 @@
-import { ObjectType, PropertyType } from '@allors/meta/system';
+import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/meta/system';
 
 export type NodeArgs = Pick<Node, 'propertyType' | 'nodes'>;
 
@@ -43,7 +43,8 @@ export class Node {
   public toJSON(): any {
     return {
       nodes: this.nodes && this.nodes.length > 0 ? this.nodes : undefined,
-      propertytype: this.propertyType.id,
+      associationType: (this.propertyType instanceof AssociationType) ? this.propertyType.relationType.id : undefined,
+      roleType: (this.propertyType instanceof RoleType) ? this.propertyType.relationType.id : undefined,
     };
   }
 }

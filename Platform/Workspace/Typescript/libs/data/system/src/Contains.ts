@@ -1,4 +1,4 @@
-import { ObjectType, PropertyType } from '@allors/meta/system';
+import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/meta/system';
 import { DatabaseObject, CompositeTypes } from '@allors/workspace/system';
 
 import { ParameterizablePredicateArgs, ParameterizablePredicate } from './ParameterizablePredicate';
@@ -30,7 +30,8 @@ export class Contains extends ParameterizablePredicate {
     return {
       kind: 'Contains',
       dependencies: this.dependencies,
-      propertyType: this.propertyType.id,
+      associationType: (this.propertyType instanceof AssociationType) ? this.propertyType.relationType.id : undefined,
+      roleType: (this.propertyType instanceof RoleType) ? this.propertyType.relationType.id : undefined,
       parameter: this.parameter,
       object: this.object ? ((this.object as DatabaseObject).id ? (this.object as DatabaseObject).id : this.object) : undefined,
     };

@@ -30,11 +30,11 @@ describe('Database',
       expect(martien?.id).toBe( '3');
       expect(martien?.version).toBe( '1003');
       expect(martien?.objectType.name).toBe( 'Person');
-      expect(martien?.roleByRoleTypeId.get(m.Person.FirstName.id)).toBe( 'Martien');
-      expect(martien?.roleByRoleTypeId.get(m.Person.MiddleName.id)).toBe( 'van');
-      expect(martien?.roleByRoleTypeId.get(m.Person.LastName.id)).toBe( 'Knippenberg');
-      expect(martien?.roleByRoleTypeId.get(m.Person.IsStudent.id)).toBeUndefined();
-      expect(martien?.roleByRoleTypeId.get(m.Person.BirthDate.id)).toBeUndefined();
+      expect(martien?.roleByRoleTypeId.get(m.Person.FirstName.relationType.id)).toBe( 'Martien');
+      expect(martien?.roleByRoleTypeId.get(m.Person.MiddleName.relationType.id)).toBe( 'van');
+      expect(martien?.roleByRoleTypeId.get(m.Person.LastName.relationType.id)).toBe( 'Knippenberg');
+      expect(martien?.roleByRoleTypeId.get(m.Person.IsStudent.relationType.id)).toBeUndefined();
+      expect(martien?.roleByRoleTypeId.get(m.Person.BirthDate.relationType.id)).toBeUndefined();
     });
 
     describe('synced with same access control',

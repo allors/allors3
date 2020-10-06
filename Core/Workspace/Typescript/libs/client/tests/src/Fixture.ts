@@ -40,7 +40,6 @@ export class Fixture {
     this.tree = new TreeFactory(this.m);
     this.fetch = new FetchFactory(this.m);
     this.pull = new PullFactory(this.m);
-
   }
 
   async login(user: string) {

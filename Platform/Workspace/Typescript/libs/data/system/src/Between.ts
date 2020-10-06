@@ -31,7 +31,7 @@ export class Between extends ParameterizablePredicate {
     return {
       kind: 'Between',
       dependencies: this.dependencies,
-      roleType: this.roleType.id,
+      roleType: this.roleType.relationType.id,
       parameter: this.parameter,
       values: this.values ? serialize(this.values) : undefined,
     };

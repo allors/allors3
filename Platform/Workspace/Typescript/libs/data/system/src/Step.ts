@@ -1,4 +1,4 @@
-import { ObjectType, PropertyType } from '@allors/meta/system';
+import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/meta/system';
 
 import { Tree } from './Tree';
 
@@ -75,7 +75,8 @@ export class Step {
   public toJSON(): any {
     return {
       include: this.include,
-      propertytype: this.propertyType.id,
+      associationType: (this.propertyType instanceof AssociationType) ? this.propertyType.relationType.id : undefined,
+      roleType: (this.propertyType instanceof RoleType) ? this.propertyType.relationType.id : undefined,
       next: this.next,
     };
   }

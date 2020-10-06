@@ -1,10 +1,14 @@
 module.exports = {
-  testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
-  transform: {
-    '^.+\\.(ts|js|html)$': 'ts-jest',
-  },
-  resolver: '@nrwl/jest/plugins/resolver',
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageReporters: ['html'],
-  testTimeout: 60000,
+  projects: [
+    '<rootDir>/libs/data/system',
+    '<rootDir>/libs/meta/system',
+    '<rootDir>/libs/meta/generated',
+    '<rootDir>/libs/meta/core',
+    '<rootDir>/libs/protocol/system',
+    '<rootDir>/libs/workspace/system',
+    '<rootDir>/libs/workspace/memory',
+    '<rootDir>/libs/domain/generated',
+    '<rootDir>/libs/domain/base',
+    '<rootDir>/libs/domain/custom',
+  ],
 };

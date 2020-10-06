@@ -155,6 +155,8 @@ namespace Allors.Database.Adapters.Memory
             this.Session.Init();
 
             this.session = null;
+
+            this.StateLifecycle.OnInit(this);
         }
 
         internal void OnObjectNotLoaded(Guid metaTypeId, long allorsObjectId)

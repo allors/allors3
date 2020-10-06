@@ -1,9 +1,9 @@
-import { PropertyType } from './PropertyType';
 import { ObjectType } from './ObjectType';
 import { RelationType } from './RelationType';
 import { MetaPopulation } from './MetaPopulation';
 import { RoleTypeData } from './Data';
 import { AssociationType } from './AssociationType';
+import { PropertyType } from './PropertyType';
 
 export class RoleTypeVirtual {
   isRequired?: boolean;
@@ -15,7 +15,6 @@ export class RoleType implements PropertyType {
 
   overridesByClass: Map<ObjectType, RoleTypeVirtual>;
 
-  id: string;
   objectType: ObjectType;
   name: string;
   singular: string;
@@ -33,7 +32,6 @@ export class RoleType implements PropertyType {
     this.virtual = new RoleTypeVirtual();
     this.virtual.isRequired = dataRoleType.isRequired;
 
-    this.id = dataRoleType.id;
     this.objectType = this.metaPopulation.metaObjectById.get(dataRoleType.objectTypeId) as ObjectType;
     this.singular = dataRoleType.singular;
     this.plural = dataRoleType.plural;
