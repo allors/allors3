@@ -110,7 +110,7 @@ namespace Allors.Domain
 
                 organisation.ContactsUserGroup.Members = organisation.CurrentContacts.ToArray();
 
-                var deletePermission = new Permissions(organisation.Strategy.Session).Get(organisation.Meta.ObjectType, organisation.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(organisation.Strategy.Session).Get(organisation.Meta.ObjectType, organisation.Meta.Delete);
                 if (organisation.IsDeletable)
                 {
                     organisation.RemoveDeniedPermission(deletePermission);

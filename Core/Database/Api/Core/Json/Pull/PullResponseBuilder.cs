@@ -12,7 +12,7 @@ namespace Allors.Api.Json.Pull
     using Allors.Domain;
     using Allors.Protocol.Remote.Pull;
     using Protocol;
-    using Allors.Services;
+    using Allors.State;
     using Server;
 
     public class PullResponseBuilder

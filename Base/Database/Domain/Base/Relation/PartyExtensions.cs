@@ -202,7 +202,7 @@ namespace Allors.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Session.Database.Scope().M;
+            var m = @this.Strategy.Session.Database.State().M;
 
             var customerRelationships = @this.CustomerRelationshipsWhereCustomer;
             customerRelationships.Filter.AddEquals(m.CustomerRelationship.InternalOrganisation, internalOrganisation);
@@ -213,7 +213,7 @@ namespace Allors.Domain
 
         public static CustomerShipment BaseGetPendingCustomerShipmentForStore(this Party @this, PostalAddress address, Store store, ShipmentMethod shipmentMethod)
         {
-            var m = @this.Strategy.Session.Database.Scope().M;
+            var m = @this.Strategy.Session.Database.State().M;
 
             var shipments = @this.ShipmentsWhereShipToParty;
             if (address != null)

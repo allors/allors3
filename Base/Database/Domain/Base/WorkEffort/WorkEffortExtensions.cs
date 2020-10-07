@@ -28,7 +28,7 @@ namespace Allors.Domain
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
             }
 
-            if (!@this.ExistOwner && @this.Strategy.Session.Scope().User is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Session.State().User is Person owner)
             {
                 @this.Owner = owner;
             }
@@ -94,28 +94,28 @@ namespace Allors.Domain
 
         public static void BaseOnPostDerive(this WorkEffort @this, ObjectOnPostDerive method)
         {
-            var m = @this.Strategy.Session.Database.Scope().M;
+            var m = @this.Strategy.Session.Database.State().M;
 
             if (!@this.CanInvoice)
             {
-                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Invoice, Operations.Execute));
+                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Invoice));
             }
             else
             {
-                @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Invoice, Operations.Execute));
+                @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Invoice));
             }
 
-            var completePermission = new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute);
+            var completePermission = new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete);
 
             if (@this.ServiceEntriesWhereWorkEffort.Any(v => !v.ExistThroughDate))
             {
-                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute));
+                @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete));
             }
             else
             {
                 if (@this.WorkEffortState.IsInProgress)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete, Operations.Execute));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, m.WorkEffort.Complete));
                 }
             }
         }
@@ -173,7 +173,7 @@ namespace Allors.Domain
 
         private static void VerifyWorkEffortPartyAssignments(this WorkEffort @this, IDerivation derivation)
         {
-            var m = @this.Strategy.Session.Database.Scope().M;
+            var m = @this.Strategy.Session.Database.State().M;
 
             var existingAssignmentRequired = @this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true;
             var existingAssignments = @this.WorkEffortPartyAssignmentsWhereAssignment.ToArray();
@@ -301,11 +301,13 @@ namespace Allors.Domain
             {
                 var part = workEffortInventoryAssignment.InventoryItem.Part;
 
+                var quantity = workEffortInventoryAssignment.DerivedBillableQuantity != 0 ? workEffortInventoryAssignment.DerivedBillableQuantity : workEffortInventoryAssignment.Quantity;
+
                 var invoiceItem = new SalesInvoiceItemBuilder(session)
                     .WithInvoiceItemType(new InvoiceItemTypes(session).PartItem)
                     .WithPart(part)
                     .WithAssignedUnitPrice(workEffortInventoryAssignment.UnitSellingPrice)
-                    .WithQuantity(workEffortInventoryAssignment.DerivedBillableQuantity ?? workEffortInventoryAssignment.Quantity)
+                    .WithQuantity(quantity)
                     .WithCostOfGoodsSold(workEffortInventoryAssignment.CostOfGoodsSold)
                     .Build();
 
@@ -370,7 +372,7 @@ namespace Allors.Domain
             if (!method.Result.HasValue)
             {
                 @this.TotalLabourRevenue = Math.Round(@this.BillableTimeEntries().Sum(v => v.BillingAmount), 2);
-                @this.TotalMaterialRevenue = Math.Round(@this.WorkEffortInventoryAssignmentsWhereAssignment.Where(v => v.DerivedBillableQuantity > 0).Sum(v => v.DerivedBillableQuantity.Value * v.UnitSellingPrice), 2);
+                @this.TotalMaterialRevenue = Math.Round(@this.WorkEffortInventoryAssignmentsWhereAssignment.Where(v => v.DerivedBillableQuantity > 0).Sum(v => v.DerivedBillableQuantity * v.UnitSellingPrice), 2);
                 @this.TotalSubContractedRevenue = Math.Round(@this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment.Sum(v => v.Quantity * v.UnitSellingPrice), 2);
                 var totalRevenue = Math.Round(@this.TotalLabourRevenue + @this.TotalMaterialRevenue + @this.TotalSubContractedRevenue, 2);
 

@@ -8,12 +8,10 @@ namespace Allors.Security
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
     using Allors;
     using Allors.Domain;
-    using Allors.Meta;
     using Allors.Services;
     using Microsoft.AspNetCore.Identity;
     using Claim = System.Security.Claims.Claim;

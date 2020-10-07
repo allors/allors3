@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Services;
+    using Allors.State;
 
     public partial class PurchaseInvoice
     {
@@ -241,7 +241,7 @@ namespace Allors.Domain
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
             //if (this.IsDeletable)
             //{
             //    this.RemoveDeniedPermission(deletePermission);
@@ -251,7 +251,7 @@ namespace Allors.Domain
             //    this.AddDeniedPermission(deletePermission);
             //}
 
-            //var revisePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Revise, Operations.Execute);
+            //var revisePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Revise);
             //if (this.BilledTo.DoAccounting)
             //{
             //    this.AddDeniedPermission(revisePermission);
@@ -261,11 +261,11 @@ namespace Allors.Domain
             //    && (this.BilledFrom as Organisation)?.IsInternalOrganisation == true
             //    && (this.PurchaseInvoiceState.IsPaid || this.PurchaseInvoiceState.IsPartiallyPaid || this.PurchaseInvoiceState.IsNotPaid))
             //{
-            //    this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice, Operations.Execute));
+            //    this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
             //}
             //else
             //{
-            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice, Operations.Execute));
+            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
             //}
         }
 
@@ -286,7 +286,7 @@ namespace Allors.Domain
                 if (this.ExistInvoiceNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.Database.Scope().BarcodeService;
+                    var barcodeService = session.Database.State().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
@@ -659,7 +659,7 @@ namespace Allors.Domain
                     .Build();
             }
 
-            this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice, Operations.Execute));
+            this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
         }
 
         public void BaseOnDeriveInvoiceItems(IDerivation derivation)

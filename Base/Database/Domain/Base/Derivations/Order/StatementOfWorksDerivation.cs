@@ -24,7 +24,7 @@ namespace Allors.Domain
             {
                 Sync(statementOfWork);
 
-                var deletePermission = new Permissions(statementOfWork.Strategy.Session).Get(statementOfWork.Meta.ObjectType, statementOfWork.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(statementOfWork.Strategy.Session).Get(statementOfWork.Meta.ObjectType, statementOfWork.Meta.Delete);
 
                 if (statementOfWork.IsDeletable)
                 {

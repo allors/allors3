@@ -12,7 +12,7 @@ namespace Allors.Domain.TestPopulation
     {
         public static SalesOrderItemBuilder WithDefaults(this SalesOrderItemBuilder @this)
         {
-            var m = @this.Session.Database.Scope().M;
+            var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();
             var invoiceItemTypes = @this.Session.Extent<InvoiceItemType>().ToList();
 
@@ -39,7 +39,7 @@ namespace Allors.Domain.TestPopulation
 
         public static SalesOrderItemBuilder WithProductItemDefaults(this SalesOrderItemBuilder @this)
         {
-            var m = @this.Session.Database.Scope().M;
+            var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
@@ -62,7 +62,7 @@ namespace Allors.Domain.TestPopulation
 
         public static SalesOrderItemBuilder WithPartItemDefaults(this SalesOrderItemBuilder @this)
         {
-            var m = @this.Session.Database.Scope().M;
+            var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
 

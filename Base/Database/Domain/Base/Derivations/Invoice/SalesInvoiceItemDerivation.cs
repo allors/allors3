@@ -204,7 +204,7 @@ namespace Allors.Domain
                         SalesInvoiceItem.Description = details;
                     }
                 }
-                var deletePermission = new Permissions(SalesInvoiceItem.Strategy.Session).Get(SalesInvoiceItem.Meta.ObjectType, SalesInvoiceItem.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(SalesInvoiceItem.Strategy.Session).Get(SalesInvoiceItem.Meta.ObjectType, SalesInvoiceItem.Meta.Delete);
                 if (SalesInvoiceItem.IsDeletable)
                 {
                     SalesInvoiceItem.RemoveDeniedPermission(deletePermission);

@@ -6,7 +6,7 @@
 namespace Allors
 {
     using Meta;
-    using Services;
+    using State;
 
     public partial interface IDatabaseState : IDatabaseStateLifecycle
     {

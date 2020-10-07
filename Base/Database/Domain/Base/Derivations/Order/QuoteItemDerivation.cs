@@ -93,7 +93,7 @@ namespace Allors.Domain
                     validation.AddError($"{quoteItem} {quoteItem.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
                 }
 
-                var deletePermission = new Permissions(quoteItem.Strategy.Session).Get(quoteItem.Meta.ObjectType, quoteItem.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(quoteItem.Strategy.Session).Get(quoteItem.Meta.ObjectType, quoteItem.Meta.Delete);
                 if (quoteItem.IsDeletable)
                 {
                     quoteItem.RemoveDeniedPermission(deletePermission);

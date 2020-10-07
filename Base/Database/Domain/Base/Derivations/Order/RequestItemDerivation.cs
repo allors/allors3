@@ -69,7 +69,7 @@ namespace Allors.Domain
                     validation.AddError($"{requestItem} {requestItem.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
                 }
 
-                var deletePermission = new Permissions(requestItem.Strategy.Session).Get(requestItem.Meta.ObjectType, requestItem.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(requestItem.Strategy.Session).Get(requestItem.Meta.ObjectType, requestItem.Meta.Delete);
                 if (requestItem.IsDeletable)
                 {
                     requestItem.RemoveDeniedPermission(deletePermission);

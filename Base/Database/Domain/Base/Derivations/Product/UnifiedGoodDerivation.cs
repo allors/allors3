@@ -128,7 +128,7 @@ namespace Allors.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(unifiedGood.Strategy.Session).Get(unifiedGood.Meta.ObjectType, unifiedGood.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(unifiedGood.Strategy.Session).Get(unifiedGood.Meta.ObjectType, unifiedGood.Meta.Delete);
 
                 if (!unifiedGood.ExistDeploymentsWhereProductOffering &&
                                 !unifiedGood.ExistEngagementItemsWhereProduct &&

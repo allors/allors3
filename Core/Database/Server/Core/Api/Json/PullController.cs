@@ -8,6 +8,7 @@ namespace Allors.Server.Controllers
     using System;
     using Allors.Protocol.Remote.Pull;
     using Allors.Services;
+    using Allors.State;
     using Api.Json;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

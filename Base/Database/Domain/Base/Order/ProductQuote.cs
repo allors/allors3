@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Services;
+    using Allors.State;
 
     public partial class ProductQuote
     {
@@ -71,7 +71,7 @@ namespace Allors.Domain
                 if (this.ExistQuoteNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.Database.Scope().BarcodeService;
+                    var barcodeService = session.Database.State().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }
@@ -336,7 +336,7 @@ namespace Allors.Domain
 
         public void BaseOnPostDerive(ObjectOnPostDerive method)
         {
-            //var SetReadyPermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.SetReadyForProcessing, Operations.Execute);
+            //var SetReadyPermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.SetReadyForProcessing);
 
             //if (this.QuoteState.IsCreated)
             //{
@@ -350,7 +350,7 @@ namespace Allors.Domain
             //    }
             //}
 
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
             //if (this.IsDeletable)
             //{
             //    this.RemoveDeniedPermission(deletePermission);

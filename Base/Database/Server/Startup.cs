@@ -5,7 +5,6 @@
 
 namespace Allors.Server
 {
-    using System;
     using System.Text;
     using Allors.Database.Adapters;
     using Allors.Domain;
@@ -40,7 +39,6 @@ namespace Allors.Server
             services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddSingleton<IExtentService, ExtentService>();
 
             services.AddCors(options =>
             {
@@ -78,8 +76,8 @@ namespace Allors.Server
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             // Allors
-            var databaseScope = new DefaultDatabaseScope(httpContextAccessor);
-            var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
+            var databaseState = new DefaultDatabaseState(httpContextAccessor);
+            var databaseBuilder = new DatabaseBuilder(databaseState, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             var database = databaseBuilder.Build();
             database.RegisterDerivations();
 

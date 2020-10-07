@@ -53,7 +53,7 @@ namespace Allors.Domain
                     new TimeSheetBuilder(person.Strategy.Session).WithWorker(person).Build();
                 }
 
-                var deletePermission = new Permissions(person.Strategy.Session).Get(person.Meta.ObjectType, person.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(person.Strategy.Session).Get(person.Meta.ObjectType, person.Meta.Delete);
                 if (person.IsDeletable)
                 {
                     person.RemoveDeniedPermission(deletePermission);

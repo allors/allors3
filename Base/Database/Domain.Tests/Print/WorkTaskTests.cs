@@ -12,6 +12,8 @@ namespace Allors.Domain.Print
 
     public class WorkTaskTests : DomainTest
     {
+        public WorkTaskTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenWorkEffort_WhenCreatingModel_ThenValuesAreSet()
         {
@@ -47,7 +49,7 @@ namespace Allors.Domain.Print
             this.Session.Derive(true);
 
             var salesOrderItem = salesOrder.SalesOrderItems.First;
-            ((SalesOrderDerivedRoles)salesOrder).AddValidOrderItem(salesOrderItem);
+            salesOrder.AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
             var part1 = this.CreatePart("P1");

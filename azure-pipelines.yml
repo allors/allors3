@@ -24,6 +24,8 @@ stages:
           target: 'CiCoreDatabaseTest'
         core_workspace:
           target: 'CiCoreWorkspaceTest'
+        base_database:
+          target: 'CiBaseDatabaseTest'
 
     steps:
     - powershell: Set-Culture -CultureInfo nl-BE

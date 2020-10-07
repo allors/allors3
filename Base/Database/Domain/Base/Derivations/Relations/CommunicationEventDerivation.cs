@@ -24,7 +24,7 @@ namespace Allors.Domain
 
             foreach (var communicationEventExtension in matches.Cast<CommunicationEvent>())
             {
-                if (!communicationEventExtension.ExistOwner && communicationEventExtension.Strategy.Session.Scope().User is Person owner)
+                if (!communicationEventExtension.ExistOwner && communicationEventExtension.Strategy.Session.State().User is Person owner)
                 {
                     communicationEventExtension.Owner = owner;
                 }

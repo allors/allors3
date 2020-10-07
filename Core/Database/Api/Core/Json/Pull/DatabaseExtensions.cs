@@ -9,7 +9,7 @@ namespace Allors.Api.Json.Pull
 
     using Allors.Data;
     using Allors.Meta;
-    using Allors.Services;
+    using Allors.State;
 
 
     public static class DatabaseExtensions

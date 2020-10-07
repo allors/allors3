@@ -24,7 +24,7 @@ namespace Allors.Domain
             {
                 if (salesOrderTransfer.ExistFrom && salesOrderTransfer.ExistInternalOrganisation && !salesOrderTransfer.ExistTo)
                 {
-                    var acl = new AccessControlLists(cycle.Session.Scope().User)[salesOrderTransfer.From];
+                    var acl = new DatabaseAccessControlLists(cycle.Session.State().User)[salesOrderTransfer.From];
                     if (!acl.CanExecute(M.SalesOrder.DoTransfer))
                     {
                         cycle.Validation.AddError($"{salesOrderTransfer} {salesOrderTransfer.Meta.To} No rights to transfer salesorder");

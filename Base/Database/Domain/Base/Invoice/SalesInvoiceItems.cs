@@ -19,9 +19,9 @@ namespace Allors.Domain
             var writtenOff = new SalesInvoiceItemStates(this.Session).WrittenOff;
             var cancelledByInvoice = new SalesInvoiceItemStates(this.Session).CancelledByInvoice;
 
-            config.Deny(this.ObjectType, notPaid, Operations.Write, Operations.Execute);
-            config.Deny(this.ObjectType, paid, Operations.Write, Operations.Execute);
-            config.Deny(this.ObjectType, writtenOff, Operations.Write, Operations.Execute);
+            config.Deny(this.ObjectType, notPaid, Operations.Write);
+            config.Deny(this.ObjectType, paid, Operations.Write);
+            config.Deny(this.ObjectType, writtenOff, Operations.Write);
             config.Deny(this.ObjectType, cancelledByInvoice, Operations.Write);
         }
     }

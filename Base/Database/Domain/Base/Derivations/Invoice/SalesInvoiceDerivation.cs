@@ -484,7 +484,7 @@ namespace Allors.Domain
 
                 salesInvoice.ResetPrintDocument();
 
-                var deletePermission = new Permissions(salesInvoice.Strategy.Session).Get(salesInvoice.Meta.ObjectType, salesInvoice.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(salesInvoice.Strategy.Session).Get(salesInvoice.Meta.ObjectType, salesInvoice.Meta.Delete);
                 if (salesInvoice.SalesInvoiceState.Equals(new SalesInvoiceStates(salesInvoice.Strategy.Session).ReadyForPosting) &&
                     salesInvoice.SalesInvoiceItems.All(v => v.IsDeletable) &&
                     !salesInvoice.ExistSalesOrders &&

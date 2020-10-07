@@ -16,7 +16,7 @@ namespace Allors.Domain.Print.ProductQuoteModel
         public QuoteItemModel(QuoteItem item, Dictionary<string, byte[]> imageByImageName)
         {
             var session = item.Strategy.Session;
-            var m = session.Database.Scope().M;
+            var m = session.Database.State().M;
 
             var product = item.Product;
             var serialisedItem = item.SerialisedItem;

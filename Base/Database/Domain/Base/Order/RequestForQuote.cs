@@ -20,10 +20,10 @@ namespace Allors.Domain
         {
             //if (!this.ExistOriginator)
             //{
-            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Submit, Operations.Execute));
+            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Submit));
             //}
 
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
             //if (this.IsDeletable())
             //{
             //    this.RemoveDeniedPermission(deletePermission);

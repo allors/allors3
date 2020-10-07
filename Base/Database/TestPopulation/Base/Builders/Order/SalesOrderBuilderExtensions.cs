@@ -19,7 +19,7 @@ namespace Allors.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithOrganisationInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
-            var m = @this.Session.Database.Scope().M;
+            var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();
 
             var internalOrganisations = @this.Session.Extent<Organisation>();
@@ -128,7 +128,7 @@ namespace Allors.Domain.TestPopulation
         public static SalesOrderBuilder WithPersonInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
             var faker = @this.Session.Faker();
-            var m = @this.Session.Database.Scope().M;
+            var m = @this.Session.Database.State().M;
 
             var internalOrganisations = @this.Session.Extent<Organisation>();
             // Organisation of type Internal Organisation

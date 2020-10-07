@@ -12,7 +12,7 @@ namespace Allors.Api.Json.Sync
     using Protocol.Data;
     using Protocol.Remote;
     using Server;
-    using Services;
+    using State;
 
     public class SyncResponseBuilder
     {

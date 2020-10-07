@@ -15,7 +15,7 @@ namespace Tests
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Protocol.Remote;
-    using Allors.Services;
+    using Allors.State;
 
     public class ApiTest : IDisposable
     {
@@ -49,7 +49,7 @@ namespace Tests
 
             set => this.TimeService.Shift = value;
         }
-        
+
         public void Dispose()
         {
             this.Session.Rollback();

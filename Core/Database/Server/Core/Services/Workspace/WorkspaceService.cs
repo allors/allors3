@@ -6,8 +6,6 @@
 namespace Allors.Services
 {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.Extensions.Configuration;
 
     public class WorkspaceService : IWorkspaceService
     {

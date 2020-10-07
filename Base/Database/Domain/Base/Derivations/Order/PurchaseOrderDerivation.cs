@@ -285,32 +285,32 @@ namespace Allors.Domain
 
                 if (CanInvoice(purchaseOrder))
                 {
-                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Invoice, Operations.Execute));
+                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Invoice));
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Invoice, Operations.Execute));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Invoice));
                 }
 
                 if (CanRevise(purchaseOrder))
                 {
-                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise, Operations.Execute));
+                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise));
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise, Operations.Execute));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise));
                 }
 
                 if (purchaseOrder.IsReceivable)
                 {
-                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive, Operations.Execute));
+                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive));
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive, Operations.Execute));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive));
                 }
 
-                var deletePermission = new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.ObjectType, purchaseOrder.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.ObjectType, purchaseOrder.Meta.Delete);
                 if (IsDeletable(purchaseOrder))
                 {
                     purchaseOrder.RemoveDeniedPermission(deletePermission);
@@ -322,11 +322,11 @@ namespace Allors.Domain
 
                 if (!purchaseOrder.PurchaseOrderShipmentState.IsNotReceived && !purchaseOrder.PurchaseOrderShipmentState.IsNa)
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Reject, Operations.Execute));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Cancel, Operations.Execute));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive, Operations.Execute));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise, Operations.Execute));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.SetReadyForProcessing, Operations.Execute));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Reject));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Cancel));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise));
+                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.SetReadyForProcessing));
 
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 

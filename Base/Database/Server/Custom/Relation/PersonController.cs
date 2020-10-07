@@ -5,32 +5,29 @@
 
 namespace Allors.Server.Controllers
 {
-    using Allors.Domain;
-    using Server;
     using Allors.Services;
     using Api.Json.Pull;
     using Microsoft.AspNetCore.Mvc;
 
     public class PersonController : Controller
     {
-        private readonly ISessionService allors;
-
-        public PersonController(ISessionService allorsContext, ITreeService treeService)
+        public PersonController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
-            this.allors = allorsContext;
-            this.TreeService = treeService;
+            this.SessionService = sessionService;
+            this.WorkspaceService = workspaceService;
         }
 
-        public ITreeService TreeService { get; set; }
+        public ISessionService SessionService { get; }
+
+        public IWorkspaceService WorkspaceService { get; }
 
 
         [HttpPost]
         public IActionResult Pull([FromBody] Model model)
         {
-            var acls = new WorkspaceAccessControlLists(this.allors.Session.Scope().User);
-            var response = new PullResponseBuilder(acls, this.TreeService);
+            var response = new PullResponseBuilder(this.SessionService.Session, this.WorkspaceService.Name);
 
-            var person = this.allors.Session.Instantiate(model.Id);
+            var person = this.SessionService.Session.Instantiate(model.Id);
             response.AddObject("person", person);
 
             return this.Ok(response.Build());

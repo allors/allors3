@@ -12,7 +12,7 @@ namespace Allors.Api.Json.Security
     using System.Linq;
     using Allors.Domain;
     using Allors.Protocol.Remote.Security;
-    using Services;
+    using State;
 
     public class SecurityResponseBuilder
     {

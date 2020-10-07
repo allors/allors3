@@ -81,7 +81,7 @@ namespace Allors.Domain
 
                 nonUnifiedGood.SearchString = builder.ToString();
 
-                var deletePermission = new Permissions(nonUnifiedGood.Strategy.Session).Get(nonUnifiedGood.Meta.ObjectType, nonUnifiedGood.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(nonUnifiedGood.Strategy.Session).Get(nonUnifiedGood.Meta.ObjectType, nonUnifiedGood.Meta.Delete);
                 if (IsDeletable(nonUnifiedGood))
                 {
                     nonUnifiedGood.RemoveDeniedPermission(deletePermission);

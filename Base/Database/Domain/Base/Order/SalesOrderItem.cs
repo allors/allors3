@@ -659,7 +659,7 @@ namespace Allors.Domain
         //        }
         //    }
 
-        //    var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete, Operations.Execute);
+        //    var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
         //    if (this.IsDeletable)
         //    {
         //        this.RemoveDeniedPermission(deletePermission);

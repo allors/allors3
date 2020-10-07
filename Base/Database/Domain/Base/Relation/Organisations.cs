@@ -73,7 +73,7 @@ namespace Allors.Domain
             SerialisedItemSoldOn[] serialisedItemSoldOns,
             bool collectiveWorkEffortInvoice)
         {
-            var m = session.Database.Scope().M;
+            var m = session.Database.State().M;
 
             var postalAddress1 = new PostalAddressBuilder(session)
                     .WithAddress1(address)

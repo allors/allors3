@@ -14,6 +14,7 @@ namespace Tests
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Services;
+    using Allors.State;
     using Moq;
 
     public class DomainTest : IDisposable

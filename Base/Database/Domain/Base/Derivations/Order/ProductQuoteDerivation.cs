@@ -267,7 +267,7 @@ namespace Allors.Domain
 
                 productQuote.ResetPrintDocument();
 
-                var SetReadyPermission = new Permissions(productQuote.Strategy.Session).Get(productQuote.Meta.ObjectType, productQuote.Meta.SetReadyForProcessing, Operations.Execute);
+                var SetReadyPermission = new Permissions(productQuote.Strategy.Session).Get(productQuote.Meta.ObjectType, productQuote.Meta.SetReadyForProcessing);
 
                 if (productQuote.QuoteState.IsCreated)
                 {
@@ -281,7 +281,7 @@ namespace Allors.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(productQuote.Strategy.Session).Get(productQuote.Meta.ObjectType, productQuote.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(productQuote.Strategy.Session).Get(productQuote.Meta.ObjectType, productQuote.Meta.Delete);
                 if (productQuote.IsDeletable)
                 {
                     productQuote.RemoveDeniedPermission(deletePermission);

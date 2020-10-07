@@ -270,7 +270,7 @@ namespace Allors.Domain
                     purchaseOrderItem.CanInvoice = false;
                 }
 
-                var deletePermission = new Permissions(purchaseOrderItem.Strategy.Session).Get(purchaseOrderItem.Meta.ObjectType, purchaseOrderItem.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(purchaseOrderItem.Strategy.Session).Get(purchaseOrderItem.Meta.ObjectType, purchaseOrderItem.Meta.Delete);
                 if (purchaseOrderItem.IsDeletable)
                 {
                     purchaseOrderItem.RemoveDeniedPermission(deletePermission);

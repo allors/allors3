@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Services;
+    using Allors.State;
 
     public partial class WorkTask
     {
@@ -46,7 +46,7 @@ namespace Allors.Domain
                 if (this.ExistWorkEffortNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.Database.Scope().BarcodeService;
+                    var barcodeService = session.Database.State().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images["Barcode"] = barcode;
                 }

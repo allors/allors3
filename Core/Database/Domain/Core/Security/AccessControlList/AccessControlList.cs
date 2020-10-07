@@ -10,6 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors;
     using Allors.Meta;
+    using Allors.State;
 
     /// <summary>
     /// List of permissions for an object/user combination.

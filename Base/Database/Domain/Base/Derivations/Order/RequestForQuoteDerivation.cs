@@ -30,10 +30,10 @@ namespace Allors.Domain
 
                 if (!requestForQuote.ExistOriginator)
                 {
-                    requestForQuote.AddDeniedPermission(new Permissions(requestForQuote.Strategy.Session).Get(requestForQuote.Meta.Class, requestForQuote.Meta.Submit, Operations.Execute));
+                    requestForQuote.AddDeniedPermission(new Permissions(requestForQuote.Strategy.Session).Get(requestForQuote.Meta.Class, requestForQuote.Meta.Submit));
                 }
 
-                var deletePermission = new Permissions(requestForQuote.Strategy.Session).Get(requestForQuote.Meta.ObjectType, requestForQuote.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(requestForQuote.Strategy.Session).Get(requestForQuote.Meta.ObjectType, requestForQuote.Meta.Delete);
                 if (requestForQuote.IsDeletable())
                 {
                     requestForQuote.RemoveDeniedPermission(deletePermission);

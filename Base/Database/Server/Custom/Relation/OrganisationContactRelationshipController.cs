@@ -6,45 +6,43 @@
 namespace Allors.Server.Controllers
 {
     using Allors.Domain;
-    using Server;
     using Allors.Services;
     using Api.Json.Pull;
     using Microsoft.AspNetCore.Mvc;
 
     public class OrganisationContactRelationshipController : Controller
     {
-        private readonly ISessionService allors;
 
-        public OrganisationContactRelationshipController(ISessionService allorsContext, ITreeService treeService)
+        public OrganisationContactRelationshipController(ISessionService sessionService, IWorkspaceService workspaceService)
         {
-            this.allors = allorsContext;
-            this.TreeService = treeService;
+            this.SessionService = sessionService;
+            this.WorkspaceService = workspaceService;
         }
 
-        public ITreeService TreeService { get; }
+        public ISessionService SessionService { get; }
 
+        public IWorkspaceService WorkspaceService { get; }
 
         [HttpPost]
         public IActionResult Pull([FromBody] Model model)
         {
-            var acls = new WorkspaceAccessControlLists(this.allors.Session.Scope().User);
-            var response = new PullResponseBuilder(acls, this.TreeService);
+            var response = new PullResponseBuilder(this.SessionService.Session, this.WorkspaceService.Name);
 
-            var organisationContactRelationship = (OrganisationContactRelationship)this.allors.Session.Instantiate(model.Id);
+            var organisationContactRelationship = (OrganisationContactRelationship)this.SessionService.Session.Instantiate(model.Id);
             response.AddObject("organisationContactRelationship", organisationContactRelationship);
 
             response.AddObject("contact", organisationContactRelationship.Contact);
 
-            var locales = new Locales(this.allors.Session).Extent();
+            var locales = new Locales(this.SessionService.Session).Extent();
             response.AddCollection("locales", locales);
 
-            var genders = new GenderTypes(this.allors.Session).Extent();
+            var genders = new GenderTypes(this.SessionService.Session).Extent();
             response.AddCollection("genders", genders);
 
-            var salutations = new Salutations(this.allors.Session).Extent();
+            var salutations = new Salutations(this.SessionService.Session).Extent();
             response.AddCollection("salutations", salutations);
 
-            var contactKinds = new OrganisationContactKinds(this.allors.Session).Extent();
+            var contactKinds = new OrganisationContactKinds(this.SessionService.Session).Extent();
             response.AddCollection("organisationContactKinds", contactKinds);
 
             return this.Ok(response.Build());

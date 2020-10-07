@@ -11,7 +11,7 @@ namespace Allors.Api.Json.Pull
     using System.Linq;
     using Allors.Data;
     using Allors.Domain;
-    using Allors.Services;
+    using Allors.State;
     using Server;
     using Extent = Allors.Extent;
 

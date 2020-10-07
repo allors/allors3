@@ -6,11 +6,9 @@
 namespace Allors.Server
 {
     using System;
-    using Allors.Domain;
     using Allors.Protocol.Remote.Push;
     using Allors.Services;
     using Api.Json;
-    using Api.Json.Push;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

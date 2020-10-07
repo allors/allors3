@@ -113,7 +113,7 @@ namespace Allors.Domain
                 serialisedItem.RemoveSerialisedItemCharacteristic(characteristic);
             }
 
-            var deletePermission = new Permissions(serialisedItem.Strategy.Session).Get(serialisedItem.Meta.ObjectType, serialisedItem.Meta.Delete, Operations.Execute);
+            var deletePermission = new Permissions(serialisedItem.Strategy.Session).Get(serialisedItem.Meta.ObjectType, serialisedItem.Meta.Delete);
             if (IsDeletable(serialisedItem))
             {
                 serialisedItem.RemoveDeniedPermission(deletePermission);

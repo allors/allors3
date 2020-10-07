@@ -13,6 +13,7 @@ namespace Allors
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Services;
+    using Allors.State;
     using Domain.TestPopulation;
     using Person = Domain.Person;
 
@@ -21,13 +22,13 @@ namespace Allors
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database.Adapters.Memory.Database(
-                new FakerDatabaseScope(),
+                new FakerDatabaseState(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.Scope().M;
+            this.M = database.State().M;
 
             this.Setup(database, populate);
         }
@@ -38,7 +39,7 @@ namespace Allors
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.Database.Scope().TimeService;
+        public ITimeService TimeService => this.Session.Database.State().TimeService;
 
         public TimeSpan? TimeShift
         {
@@ -88,7 +89,7 @@ namespace Allors
 
             new UserGroups(this.Session).Administrators.AddMember(administrator);
 
-            this.Session.Scope().User = administrator;
+            this.Session.State().User = administrator;
 
             this.Session.Derive();
             this.Session.Commit();

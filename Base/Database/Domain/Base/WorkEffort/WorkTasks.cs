@@ -14,7 +14,7 @@ namespace Allors.Domain
     {
         public static void BaseMonthly(ISession session)
         {
-            var m = session.Database.Scope().M;
+            var m = session.Database.State().M;
 
             var customers = new Parties(session).Extent();
             customers.Filter.AddEquals(m.Party.CollectiveWorkEffortInvoice, true);

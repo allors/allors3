@@ -57,7 +57,7 @@ namespace Allors.Domain
 
             config.DenyExcept(this.ObjectType, inProcess, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
-            config.DenyExcept(this.ObjectType, rejected, except, Operations.Write, Operations.Execute);
+            config.DenyExcept(this.ObjectType, rejected, except, Operations.Write);
             config.DenyExcept(this.ObjectType, completed, except, Operations.Write);
             config.DenyExcept(this.ObjectType, finished, except, Operations.Execute, Operations.Write);
         }

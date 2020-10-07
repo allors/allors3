@@ -53,7 +53,8 @@ namespace Allors.Domain
 
             this.CalculatePurchasePrice();
             this.CalculateSellingPrice();
-            this.CalculateBillableQuantity();
+            // TODO: Martien
+            //this.CalculateBillableQuantity();
 
             if (this.ExistAssignment)
             {

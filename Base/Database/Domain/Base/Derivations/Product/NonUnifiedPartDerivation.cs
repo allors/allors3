@@ -92,7 +92,7 @@ namespace Allors.Domain
                         totalCost = quantityOnHand * nonUnifiedPart.PartWeightedAverage.AverageCost;
                     }
 
-                    var deletePermission = new Permissions(nonUnifiedPart.Strategy.Session).Get(nonUnifiedPart.Meta.ObjectType, nonUnifiedPart.Meta.Delete, Operations.Execute);
+                    var deletePermission = new Permissions(nonUnifiedPart.Strategy.Session).Get(nonUnifiedPart.Meta.ObjectType, nonUnifiedPart.Meta.Delete);
                     if (!nonUnifiedPart.ExistWorkEffortInventoryProducedsWherePart &&
                            !nonUnifiedPart.ExistWorkEffortPartStandardsWherePart &&
                            !nonUnifiedPart.ExistPartBillOfMaterialsWherePart &&

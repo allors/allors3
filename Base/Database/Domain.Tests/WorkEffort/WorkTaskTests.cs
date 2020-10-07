@@ -12,6 +12,8 @@ namespace Allors.Domain
 
     public class WorkTaskTests : DomainTest
     {
+        public WorkTaskTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenWorkTask_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
@@ -209,7 +211,7 @@ namespace Allors.Domain
             var employment = new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(organisation).Build();
 
             var salesOrderItem = salesOrder.SalesOrderItems.First;
-            ((SalesOrderDerivedRoles)salesOrder).AddValidOrderItem(salesOrderItem);
+            salesOrder.AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
             var part1 = this.CreatePart("P1");
@@ -282,7 +284,7 @@ namespace Allors.Domain
             this.Session.Derive(true);
 
             var salesOrderItem = salesOrder.SalesOrderItems.First;
-            ((SalesOrderDerivedRoles)salesOrder).AddValidOrderItem(salesOrderItem);
+            salesOrder.AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
             var part1 = this.CreatePart("P1");

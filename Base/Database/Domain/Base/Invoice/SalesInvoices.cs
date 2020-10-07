@@ -46,7 +46,7 @@ namespace Allors.Domain
 
             config.DenyExcept(this.ObjectType, notPaid, except, Operations.Write);
             config.DenyExcept(this.ObjectType, partiallyPaid, except, Operations.Write);
-            config.DenyExcept(this.ObjectType, paid, except, Operations.Write, Operations.Execute);
+            config.DenyExcept(this.ObjectType, paid, except, Operations.Write);
             config.DenyExcept(this.ObjectType, writtenOff, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
         }

@@ -9,8 +9,8 @@ namespace Allors
 
     public static class SessionExtensions
     {
-        public static User GetUser(this ISession @this) => @this.Scope().User;
+        public static User GetUser(this ISession @this) => @this.State().User;
 
-        public static void SetUser(this ISession @this, User user) => @this.Scope().User = user;
+        public static void SetUser(this ISession @this, User user) => @this.State().User = user;
     }
 }

@@ -380,7 +380,7 @@ namespace Allors.Domain
 
                 purchaseInvoice.ResetPrintDocument();
 
-                var deletePermission = new Permissions(purchaseInvoice.Strategy.Session).Get(purchaseInvoice.Meta.ObjectType, purchaseInvoice.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(purchaseInvoice.Strategy.Session).Get(purchaseInvoice.Meta.ObjectType, purchaseInvoice.Meta.Delete);
                 if (purchaseInvoice.IsDeletable)
                 {
                     purchaseInvoice.RemoveDeniedPermission(deletePermission);
@@ -394,11 +394,11 @@ namespace Allors.Domain
                     && (purchaseInvoice.BilledFrom as Organisation)?.IsInternalOrganisation == true
                     && (purchaseInvoice.PurchaseInvoiceState.IsPaid || purchaseInvoice.PurchaseInvoiceState.IsPartiallyPaid || purchaseInvoice.PurchaseInvoiceState.IsNotPaid))
                 {
-                    purchaseInvoice.RemoveDeniedPermission(new Permissions(purchaseInvoice.Strategy.Session).Get(purchaseInvoice.Meta.ObjectType, purchaseInvoice.Meta.CreateSalesInvoice, Operations.Execute));
+                    purchaseInvoice.RemoveDeniedPermission(new Permissions(purchaseInvoice.Strategy.Session).Get(purchaseInvoice.Meta.ObjectType, purchaseInvoice.Meta.CreateSalesInvoice));
                 }
                 else
                 {
-                    purchaseInvoice.AddDeniedPermission(new Permissions(purchaseInvoice.Strategy.Session).Get(purchaseInvoice.Meta.ObjectType, purchaseInvoice.Meta.CreateSalesInvoice, Operations.Execute));
+                    purchaseInvoice.AddDeniedPermission(new Permissions(purchaseInvoice.Strategy.Session).Get(purchaseInvoice.Meta.ObjectType, purchaseInvoice.Meta.CreateSalesInvoice));
                 }
             }
         }

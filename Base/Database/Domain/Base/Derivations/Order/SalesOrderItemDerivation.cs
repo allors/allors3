@@ -408,7 +408,7 @@ namespace Allors.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(salesOrderItem.Strategy.Session).Get(salesOrderItem.Meta.ObjectType, salesOrderItem.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(salesOrderItem.Strategy.Session).Get(salesOrderItem.Meta.ObjectType, salesOrderItem.Meta.Delete);
                 if (salesOrderItem.IsDeletable)
                 {
                     salesOrderItem.RemoveDeniedPermission(deletePermission);

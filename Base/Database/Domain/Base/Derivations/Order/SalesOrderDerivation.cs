@@ -309,7 +309,7 @@ namespace Allors.Domain
                 if (salesOrder.SalesOrderState.Equals(new SalesOrderStates(salesOrder.Strategy.Session).InProcess) &&
                     Equals(salesOrder.Store.BillingProcess, new BillingProcesses(salesOrder.Strategy.Session).BillingForShipmentItems))
                 {
-                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice, Operations.Execute));
+                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice));
                 }
 
                 if (salesOrder.CanShip && salesOrder.Store.AutoGenerateCustomerShipment)
@@ -342,35 +342,35 @@ namespace Allors.Domain
 
                 if (salesOrder.CanShip)
                 {
-                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Ship, Operations.Execute));
+                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Ship));
                 }
                 else
                 {
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Ship, Operations.Execute));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Ship));
                 }
 
                 if (salesOrder.CanInvoice)
                 {
-                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice, Operations.Execute));
+                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice));
                 }
                 else
                 {
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice, Operations.Execute));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice));
                 }
 
                 if (!salesOrder.SalesOrderInvoiceState.NotInvoiced || !salesOrder.SalesOrderShipmentState.NotShipped)
                 {
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.SetReadyForPosting, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Post, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reopen, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Approve, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Hold, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Continue, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Accept, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Revise, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Complete, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reject, Operations.Execute));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Cancel, Operations.Execute));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.SetReadyForPosting));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Post));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reopen));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Approve));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Hold));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Continue));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Accept));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Revise));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Complete));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reject));
+                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Cancel));
 
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
@@ -388,7 +388,7 @@ namespace Allors.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.ObjectType, salesOrder.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.ObjectType, salesOrder.Meta.Delete);
                 if (salesOrder.IsDeletable)
                 {
                     salesOrder.RemoveDeniedPermission(deletePermission);

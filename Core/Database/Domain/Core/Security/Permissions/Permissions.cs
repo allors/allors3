@@ -10,6 +10,7 @@ namespace Allors.Domain
     using System.Linq;
     using Allors;
     using Allors.Meta;
+    using Allors.State;
 
     public partial class Permissions
     {
@@ -58,7 +59,7 @@ namespace Allors.Domain
                 .ToDictionary(
                     v => v.Key,
                     w => new PermissionsCacheEntry(w));
-            
+
             var permissionIds = new HashSet<long>();
 
             // Create new permissions

@@ -27,7 +27,7 @@ namespace Allors.Domain
                     requestItem.Sync(requestForInformation);
                 }
 
-                var deletePermission = new Permissions(requestForInformation.Strategy.Session).Get(requestForInformation.Meta.ObjectType, requestForInformation.Meta.Delete, Operations.Execute);
+                var deletePermission = new Permissions(requestForInformation.Strategy.Session).Get(requestForInformation.Meta.ObjectType, requestForInformation.Meta.Delete);
                 if (requestForInformation.IsDeletable())
                 {
                     requestForInformation.RemoveDeniedPermission(deletePermission);

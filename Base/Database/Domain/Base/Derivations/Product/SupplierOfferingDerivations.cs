@@ -20,7 +20,7 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var m = cycle.Session.Database.Scope().M;
+            var m = cycle.Session.Database.State().M;
             foreach (var supplierOffering in matches.Cast<SupplierOffering>())
             {
                 if (!supplierOffering.ExistCurrency)
