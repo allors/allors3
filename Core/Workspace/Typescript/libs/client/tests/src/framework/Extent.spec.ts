@@ -580,7 +580,7 @@ describe('Extent', () => {
     });
   });
 
-  describe('with unique id predicate on class', () => {
+  describe('with unique predicate on class', () => {
     it('should return matching objects', async () => {
       const { m, ctx } = fixture;
       const pulls = [
@@ -607,7 +607,7 @@ describe('Extent', () => {
     });
   });
 
-  describe('with unique id ({} notation) predicate on class', () => {
+  describe('with unique ({} notation) predicate on class', () => {
     it('should return matching objects', async () => {
       const { m, ctx } = fixture;
       const pulls = [
@@ -634,7 +634,7 @@ describe('Extent', () => {
     });
   });
 
-  describe('with unique id (no -) predicate on class', () => {
+  describe('with unique (no -) predicate on class', () => {
     it('should return matching objects', async () => {
       const { m, ctx } = fixture;
       const pulls = [
@@ -661,7 +661,7 @@ describe('Extent', () => {
     });
   });
 
-  describe('with unique id predicate on interface', () => {
+  describe('with unique predicate on interface', () => {
     it('should return matching objects', async () => {
       const { m, ctx } = fixture;
       const pulls = [
@@ -744,6 +744,474 @@ describe('Extent', () => {
           }),
           parameters: {
             p1: true,
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with date predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsDateTime,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "2000-01-01T00:00:04Z",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with date predicate parameter on interface', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.I1AllorsDateTime,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "2000-01-01T00:00:04Z",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with decimal predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsDecimal,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "1.1",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with decimal (extra precision) predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsDecimal,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "1.10",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with decimal predicate parameter on interface', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.I1AllorsDecimal,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "1.1",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with double predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsDouble,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: 1.1,
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with double predicate parameter on interface', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.I1AllorsDouble,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: 1.1,
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with integer predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsInteger,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: 1,
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with integer predicate parameter on interface', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.I1AllorsInteger,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: 1,
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with unique predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsUnique,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "8B3C4978-72D3-40BA-B302-114EB331FE04",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with unique ({} notation) predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsUnique,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "{8B3C4978-72D3-40BA-B302-114EB331FE04}",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with unique (no -) predicate parameter on class', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.C1AllorsUnique,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "8B3C497872D340BAB302114EB331FE04",
+          },
+        }),
+      ];
+
+      ctx.session.reset();
+
+      const pullRequest = new PullRequest({ pulls });
+      const loaded = await ctx.load(pullRequest);
+
+      const c1s = loaded.collections['C1s'] as C1[];
+
+      expect(c1s).toBeArray();
+      // expect(c1s).not.toBeEmpty();
+      // expect(7).toBe( c1s.length);
+    });
+  });
+
+  describe('with unique predicate parameter on interface', () => {
+    it('should return matching objects', async () => {
+      const { m, ctx } = fixture;
+
+      const pulls = [
+        new Pull({
+          extent: new Extent({
+            objectType: m.C1,
+            predicate: new And({
+              operands: [
+                new Equals({
+                  propertyType: m.C1.I1AllorsUnique,
+                  parameter: 'p1',
+                }),
+              ],
+            }),
+          }),
+          parameters: {
+            p1: "7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D",
           },
         }),
       ];

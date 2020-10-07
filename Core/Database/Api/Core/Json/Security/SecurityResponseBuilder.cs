@@ -79,21 +79,21 @@ namespace Allors.Api.Json.Security
                             permission.Strategy.ObjectId.ToString(),
                             permission.ClassPointer.ToString("D"),
                             permission.RelationTypePointer.ToString("D"),
-                            Operations.Read.ToString(),
+                            ((int)Operations.Read).ToString(),
                         },
                         WritePermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
                             permission.ClassPointer.ToString("D"),
                             permission.RelationTypePointer.ToString("D"),
-                            Operations.Write.ToString(),
+                            ((int)Operations.Write).ToString(),
                         },
                         ExecutePermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
                             permission.ClassPointer.ToString("D"),
                             permission.MethodTypePointer.ToString("D"),
-                            Operations.Execute.ToString(),
+                            ((int)Operations.Execute).ToString(),
                         },
                         _ => throw new Exception(),
                     }).ToArray();
