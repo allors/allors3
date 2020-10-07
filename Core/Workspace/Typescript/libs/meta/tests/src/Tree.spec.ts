@@ -41,7 +41,7 @@ describe('Tree', () => {
 
       expect(include).toEqual([
         {
-          propertytype: 'b95c7b34-a295-4600-82c8-826cc2186a00',
+          roleType: m.Organisation.Employees.relationType.id,
         },
       ]);
     });
@@ -59,10 +59,10 @@ describe('Tree', () => {
 
       expect(include).toEqual([
         {
-          propertytype: 'b95c7b34-a295-4600-82c8-826cc2186a00',
+          roleType: m.Organisation.Employees.relationType.id,
         },
         {
-          propertytype: '19de0627-fb1c-4f55-9b65-31d8008d0a48',
+          roleType: m.Organisation.Manager.relationType.id,
         },
       ]);
     });
@@ -83,10 +83,10 @@ describe('Tree', () => {
         {
           nodes: [
             {
-              propertytype: 'f6624fac-db8e-4fb2-9e86-18021b59d31d',
+              roleType: m.Person.Photo.relationType.id,
             },
           ],
-          propertytype: 'b95c7b34-a295-4600-82c8-826cc2186a00',
+          roleType: m.Organisation.Employees.relationType.id,
         },
       ]);
     });
@@ -103,7 +103,7 @@ describe('Tree', () => {
 
       expect(include).toEqual([
         {
-          propertytype: 'f6624fac-db8e-4fb2-9e86-18021b59d31d',
+          roleType: m.Person.Photo.relationType.id,
         },
       ]);
     });

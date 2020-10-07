@@ -29,7 +29,7 @@ describe('Meta',
 
     it('metaObject.objectType should be defined',
       () => {
-        data.interfaces.concat(data.classes).forEach((v) => {
+        data.classes.concat(data.interfaces).forEach((v) => {
           const metaObjectType: ObjectType = metaDomain[v.name];
           expect(metaObjectType).toBeDefined();
         });
@@ -37,7 +37,7 @@ describe('Meta',
 
     it('metaObject roleTypes should be defined',
       () => {
-        data.interfaces.concat(data.classes).forEach((v) => {
+        data.classes.concat(data.interfaces).forEach((v) => {
           const metaObjectType: ObjectType & { [key: string]: any } = metaDomain[v.name];
           const objectType = metaObjectType;
 
@@ -52,7 +52,7 @@ describe('Meta',
 
     it('metaObject associationTypes should be defined',
       () => {
-        data.interfaces.concat(data.classes).forEach((v) => {
+        data.classes.concat(data.interfaces).forEach((v) => {
           const metaObjectType: ObjectType & { [key: string]: any } = metaDomain[v.name];
           const objectType = metaObjectType;
 

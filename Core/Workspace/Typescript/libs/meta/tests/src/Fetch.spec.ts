@@ -80,7 +80,7 @@ describe('Fetch', () => {
       const fetch = JSON.parse(json);
 
       expect(fetch).toEqual({
-        step: { propertytype: '79ffeed6-e06a-42f4-b12f-d7f7c98b6499' },
+        step: { roleType: m.Person.CycleOne.relationType.id },
       });
     });
   });
@@ -122,7 +122,7 @@ describe('Fetch', () => {
       const fetch = JSON.parse(json);
 
       expect(fetch).toEqual({
-        step: { propertytype: 'dec66a7b-56f5-4010-a2e7-37e25124bc77' },
+        step: { associationType: m.Organisation.PeopleWhereCycleOne.relationType.id },
       });
     });
   });
