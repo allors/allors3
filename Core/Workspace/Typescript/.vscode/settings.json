@@ -3,5 +3,7 @@
     "search.exclude": {
         "**/*.g.ts": true
     },
-    "god.tsconfig": "./tsconfig.base.json"
+    "jestRunIt.jestCLIOptions": [
+        "--testTimeout=60000"
+    ]
 }

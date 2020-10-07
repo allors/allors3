@@ -22,5 +22,4 @@ module.exports = {
   displayName: 'client-tests',
   // --runInBand
   maxWorkers: 1,
-  testTimeout: 5 * 60 * 1000,
 };
