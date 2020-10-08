@@ -23,17 +23,27 @@ namespace Allors.State
             var permissionCacheEntryByClassId = this.PermissionCacheEntryByClassId;
             if (permissionCacheEntryByClassId == null)
             {
-                using var session = this.DatabaseState.Database.CreateSession();
-                var permissions = new Permissions(session).Extent();
-                session.Prefetch(this.DatabaseState.PrefetchPolicyCache.PermissionsWithClass, permissions);
+                var session = this.DatabaseState.Database.CreateSession();
+                try
+                {
+                    var permissions = new Permissions(session).Extent();
+                    session.Prefetch(this.DatabaseState.PrefetchPolicyCache.PermissionsWithClass, permissions);
 
-                permissionCacheEntryByClassId = permissions
-                    .GroupBy(v => v.ClassPointer)
-                    .ToDictionary(
-                        v => v.Key,
-                        w => (IPermissionsCacheEntry)new PermissionsCacheEntry(w));
+                    permissionCacheEntryByClassId = permissions
+                        .GroupBy(v => v.ClassPointer)
+                        .ToDictionary(
+                            v => v.Key,
+                            w => (IPermissionsCacheEntry)new PermissionsCacheEntry(w));
 
-                this.PermissionCacheEntryByClassId = permissionCacheEntryByClassId;
+                    this.PermissionCacheEntryByClassId = permissionCacheEntryByClassId;
+                }
+                finally
+                {
+                    if (this.DatabaseState.Database.IsShared)
+                    {
+                        session.Dispose();
+                    }
+                }
             }
 
             permissionCacheEntryByClassId.TryGetValue(classId, out var permissionsCacheEntry);

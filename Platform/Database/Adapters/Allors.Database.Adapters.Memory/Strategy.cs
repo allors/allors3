@@ -28,6 +28,7 @@ namespace Allors.Database.Adapters.Memory
         private Dictionary<IAssociationType, HashSet<Strategy>> rollbackCompositesAssociationByAssociationType;
         private bool isDeletedOnRollback;
         private WeakReference allorizedObjectWeakReference;
+        private bool isDeleted;
 
         internal Strategy(Session session, IClass objectType, long objectId, long version)
         {
@@ -54,7 +55,16 @@ namespace Allors.Database.Adapters.Memory
             this.rollbackCompositesAssociationByAssociationType = null;
         }
 
-        public bool IsDeleted { get; private set; }
+        public bool IsDeleted
+        {
+            get { return isDeleted; }
+            private set {
+                if (value == true)
+                {
+                    Console.WriteLine(0);
+                }
+                this.isDeleted = value; }
+        }
 
         public bool IsNewInSession { get; private set; }
 

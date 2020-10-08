@@ -26,19 +26,29 @@ namespace Allors.State
         {
             if (!this.fetchById.TryGetValue(id, out var fetch))
             {
-                using var session = this.DatabaseState.Database.CreateSession();
-                var m = session.Database.State().M;
-
-                var filter = new Extent(m.PreparedFetch.Class)
+                var session = this.DatabaseState.Database.CreateSession();
+                try
                 {
-                    Predicate = new Equals(m.PreparedFetch.UniqueId) { Value = id },
-                };
+                    var m = session.Database.State().M;
 
-                var preparedFetch = (PreparedFetch)filter.Build(session).First;
-                if (preparedFetch != null)
+                    var filter = new Extent(m.PreparedFetch.Class)
+                    {
+                        Predicate = new Equals(m.PreparedFetch.UniqueId) { Value = id },
+                    };
+
+                    var preparedFetch = (PreparedFetch)filter.Build(session).First;
+                    if (preparedFetch != null)
+                    {
+                        fetch = preparedFetch.Fetch;
+                        this.fetchById[id] = fetch;
+                    }
+                }
+                finally
                 {
-                    fetch = preparedFetch.Fetch;
-                    this.fetchById[id] = fetch;
+                    if (this.DatabaseState.Database.IsShared)
+                    {
+                        session.Dispose();
+                    }
                 }
             }
 

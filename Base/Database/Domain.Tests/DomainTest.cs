@@ -85,7 +85,13 @@ namespace Allors
 
             new Setup(this.Session, this.Config).Apply();
 
+            this.Session.Derive();
+            this.Session.Commit();
+
             var administrator = new PersonBuilder(this.Session).WithUserName("administrator").Build();
+
+            this.Session.Derive();
+            this.Session.Commit();
 
             new UserGroups(this.Session).Administrators.AddMember(administrator);
 

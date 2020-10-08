@@ -26,19 +26,29 @@ namespace Allors.State
         {
             if (!this.extentById.TryGetValue(id, out var extent))
             {
-                using var session = this.DatabaseState.Database.CreateSession();
-                var m = session.Database.State().M;
-
-                var filter = new Extent(m.PreparedExtent.Class)
+                var session = this.DatabaseState.Database.CreateSession();
+                try
                 {
-                    Predicate = new Equals(m.PreparedExtent.UniqueId) { Value = id },
-                };
+                    var m = session.Database.State().M;
 
-                var preparedExtent = (PreparedExtent)filter.Build(session).First;
-                if (preparedExtent != null)
+                    var filter = new Extent(m.PreparedExtent.Class)
+                    {
+                        Predicate = new Equals(m.PreparedExtent.UniqueId) { Value = id },
+                    };
+
+                    var preparedExtent = (PreparedExtent)filter.Build(session).First;
+                    if (preparedExtent != null)
+                    {
+                        extent = preparedExtent.Extent;
+                        this.extentById[id] = extent;
+                    }
+                }
+                finally
                 {
-                    extent = preparedExtent.Extent;
-                    this.extentById[id] = extent;
+                    if (this.DatabaseState.Database.IsShared)
+                    {
+                        session.Dispose();
+                    }
                 }
             }
 
