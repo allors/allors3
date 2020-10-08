@@ -2,8 +2,8 @@ import { ObjectType, AssociationType, Origin } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequest, PushResponse } from '@allors/protocol/system';
 import { Record, Session, DatabaseObject, WorkspaceObject } from '@allors/workspace/system';
 
-import { MemoryDatabase } from '../Database/Database';
-import { MemoryWorkspace } from '../Workspace/Workspace';
+import { MemoryDatabase } from '../Remote/Database';
+import { MemoryWorkspace } from '../Local/Workspace';
 
 import { MemoryDatabaseObject } from './DatabaseObject';
 import { MemoryWorkspaceObject } from './WorkspaceObject';

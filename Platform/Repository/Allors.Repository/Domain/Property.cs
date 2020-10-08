@@ -36,6 +36,8 @@ namespace Allors.Repository.Domain
 
         public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Remote);
 
+        public bool IsRemote => this.Origin == Origin.Remote;
+
         public XmlDoc XmlDoc { get; set; }
 
         public Composite DefiningType { get; }

@@ -184,7 +184,7 @@ build_interface(interface) ::= <<
 build_class(class) ::= <<
 	        objectTypes.$class.SingularName$ = new Class(meta, new System.Guid("$class.AttributeByName.Id.Value$"))
             {
-                AssignedOrigin = Allors.Origin.$class.Origin$,
+$if(!class.IsRemote)$                AssignedOrigin = Allors.Origin.$class.Origin$,$endif$
                 SingularName = "$class.SingularName$",
                 PluralName = "$class.PluralName$",
                 $if(class.WorkspaceNames)$AssignedWorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
@@ -208,7 +208,7 @@ relation(property) ::= <<
         {
             relationTypes.$property.DefiningType.SingularName$$property.RoleSingularName$ = new RelationType(objectTypes.$property.DefiningType.SingularName$, new System.Guid("$property.AttributeByName.Id.Value$"))
             {
-                AssignedOrigin = Origin.$property.Origin$,
+$if(!property.IsRemote)$                AssignedOrigin = Origin.$property.Origin$,$endif$
 $if(property.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
 $if(property.AttributeByName.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$property.AttributeByName.Multiplicity.Value$,$endif$
 $if(property.AttributeByName.Derived)$		        IsDerived = $property.AttributeByName.Derived.Value$,$endif$

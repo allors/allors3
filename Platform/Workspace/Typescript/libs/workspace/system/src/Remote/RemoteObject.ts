@@ -1,6 +1,6 @@
 import { ObjectType } from '@allors/meta/system';
 import { Permission } from '../Permissions/Permission';
-import { Database } from './Database';
+import { Database } from './Remote';
 
 export type Unit = string | Date | boolean | number;
 export type Composite = string;

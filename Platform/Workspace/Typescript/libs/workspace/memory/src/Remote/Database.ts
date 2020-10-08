@@ -19,11 +19,11 @@ import {
   AccessControl,
 } from '@allors/workspace/system';
 
-import { MemorySession } from '../Session/Session';
-import { MemoryWorkspace } from '../Workspace/Workspace';
+import { MemorySession } from '../Working/Session';
+import { MemoryWorkspace } from '../Local/Workspace';
 
-import { databaseClasses } from '../Session/databaseClasses';
-import { workspaceClasses } from '../Session/workspaceClasses';
+import { databaseClasses } from '../Working/databaseClasses';
+import { workspaceClasses } from '../Working/workspaceClasses';
 
 import { MemoryRecord } from './Record';
 

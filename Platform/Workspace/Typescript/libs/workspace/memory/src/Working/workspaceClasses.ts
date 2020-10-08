@@ -1,6 +1,6 @@
 import { ObjectType } from '@allors/meta/system';
 import { DatabaseObject } from '@allors/workspace/system';
-import { MemoryWorkspaceObject } from '../Session/WorkspaceObject';
+import { MemoryWorkspaceObject } from './WorkspaceObject';
 
 export function workspaceClasses(classes: ObjectType[], constructorByObjectType: Map<ObjectType, any>) {
   classes.forEach((objectType) => {

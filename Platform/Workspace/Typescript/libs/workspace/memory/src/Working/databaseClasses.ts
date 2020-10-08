@@ -1,6 +1,6 @@
 import { ObjectType } from '@allors/meta/system';
 import { DatabaseObject } from '@allors/workspace/system';
-import { MemoryDatabaseObject } from '../Session/DatabaseObject';
+import { MemoryDatabaseObject } from './DatabaseObject';
 
 export function databaseClasses(classes: ObjectType[], constructorByObjectType: Map<ObjectType, any>) {
   classes.forEach((objectType) => {

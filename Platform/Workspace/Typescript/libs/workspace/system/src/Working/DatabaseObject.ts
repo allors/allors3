@@ -1,9 +1,9 @@
 import { ObjectType, AssociationType, RoleType, MethodType, OperandType } from '@allors/meta/system';
 import { Operations, PushRequestObject, PushRequestNewObject } from '@allors/protocol/system';
 
-import { Record } from '../Database/Record';
+import { Record } from '../Remote/RemoteObject';
 
-import { Session } from './Session';
+import { Session } from './Working';
 
 export interface DatabaseObject {
   readonly id: string;

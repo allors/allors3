@@ -1,6 +1,6 @@
 import { ObjectType, AssociationType, RoleType } from '@allors/meta/system';
 
-import { Session } from './Session';
+import { Session } from './Working';
 
 export interface WorkspaceObject {
   readonly id: string;

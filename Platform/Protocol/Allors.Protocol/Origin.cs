@@ -5,21 +5,29 @@
 
 namespace Allors
 {
+    using System;
+
+    [Flags]
     public enum Origin
     {
         /// <summary>
+        /// None.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
         /// Remote origin.
         /// </summary>
-        Remote = 0,
+        Remote = 1,
 
         /// <summary>
         /// Local origin.
         /// </summary>
-        Local = 1,
+        Local = 2,
 
         /// <summary>
         /// Working origin.
         /// </summary>
-        Working = 2,
+        Working = 4,
     }
 }

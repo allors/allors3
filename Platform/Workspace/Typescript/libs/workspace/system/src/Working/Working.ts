@@ -2,7 +2,7 @@ import { ObjectType } from '@allors/meta/system';
 import { PushRequest, PushResponse } from '@allors/protocol/system';
 
 import { DatabaseObject } from './DatabaseObject';
-import { Database } from '../Database/Database';
+import { Database } from '../Remote/Remote';
 import { WorkspaceObject } from './WorkspaceObject';
 
 export interface Session {

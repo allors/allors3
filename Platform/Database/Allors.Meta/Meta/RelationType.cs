@@ -36,6 +36,7 @@ namespace Allors.Meta
         {
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
+            this.AssignedOrigin = Origin.Remote;
 
             this.AssociationType = new AssociationType(this)
             {

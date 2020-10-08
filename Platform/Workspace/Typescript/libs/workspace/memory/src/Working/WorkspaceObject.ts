@@ -1,6 +1,6 @@
 import { ObjectType, AssociationType, RoleType } from '@allors/meta/system';
 import { DatabaseObject, WorkspaceObject } from '@allors/workspace/system';
-import { MemoryWorkspace } from '../Workspace/Workspace';
+import { MemoryWorkspace } from '../Local/Workspace';
 import { MemorySession } from './Session';
 
 export abstract class MemoryWorkspaceObject implements WorkspaceObject {

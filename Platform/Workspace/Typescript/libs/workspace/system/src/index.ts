@@ -1,9 +1,9 @@
-export { Database } from './Database/Database';
-export { Record } from './Database/Record';
+export { Database } from './Remote/Remote';
+export { Record } from './Remote/RemoteObject';
 
-export { Session } from './Session/Session';
-export { DatabaseObject } from './Session/DatabaseObject';
-export { WorkspaceObject } from './Session/WorkspaceObject';
+export { Session } from './Working/Working';
+export { DatabaseObject } from './Working/DatabaseObject';
+export { WorkspaceObject } from './Working/WorkspaceObject';
 
 export { Permission } from './Permissions/Permission';
 export { ReadPermission } from './Permissions/ReadPermission';
