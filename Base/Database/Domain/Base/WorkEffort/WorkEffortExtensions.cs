@@ -65,7 +65,6 @@ namespace Allors.Domain
             @this.DeriveActualHoursAndDates();
 
             if (!@this.ExistWorkEffortBillingsWhereWorkEffort
-                && !@this.ExistServiceEntriesWhereWorkEffort
                 && @this.WorkEffortState.IsFinished)
             {
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Completed;
