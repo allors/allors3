@@ -18,11 +18,11 @@ namespace Allors.Workspace.Adapters.Remote
     using Polly;
     using Protocol.Database.Security;
 
-    public class ClientDatabase : IDatabase
+    public class Remote
     {
         private const string DefaultPullService = "Pull";
 
-        public ClientDatabase(HttpClient httpClient)
+        public Remote(HttpClient httpClient)
         {
             this.HttpClient = httpClient;
 
@@ -30,7 +30,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        ~ClientDatabase() => this.HttpClient.Dispose();
+        ~Remote() => this.HttpClient.Dispose();
 
         public HttpClient HttpClient { get; }
 

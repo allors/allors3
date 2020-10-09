@@ -1,4 +1,4 @@
-// <copyright file="WorkspaceObject.cs" company="Allors bvba">
+// <copyright file="DatabaseObject.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Protocol.Database;
 
-    public class WorkspaceObject : IWorkspaceObject
+    public class DatabaseObject 
     {
         private AccessControl[] accessControls;
 
@@ -19,21 +19,21 @@ namespace Allors.Workspace.Adapters.Remote
         private string sortedAccessControlIds;
         private string sortedDeniedPermissionIds;
 
-        internal WorkspaceObject(InternalWorkspace internalWorkspace, long objectId, IClass @class)
+        internal DatabaseObject(DatabaseOrigin databaseOrigin, long objectId, IClass @class)
         {
-            this.InternalWorkspace = internalWorkspace;
+            this.DatabaseOrigin = databaseOrigin;
             this.Id = objectId;
             this.Class = @class;
             this.Version = 0;
         }
 
-        internal WorkspaceObject(ResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal DatabaseObject(ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
-            this.InternalWorkspace = ctx.InternalWorkspace;
+            this.DatabaseOrigin = ctx.DatabaseOrigin;
             this.Id = long.Parse(syncResponseObject.I);
-            this.Class = (IClass)this.InternalWorkspace.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
+            this.Class = (IClass)this.DatabaseOrigin.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
-            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.InternalWorkspace.ObjectFactory.MetaPopulation, v)).Cast<IWorkspaceRole>().ToArray();
+            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.DatabaseOrigin.ObjectFactory.MetaPopulation, v)).Cast<WorkspaceRole>().ToArray();
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.A);
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.D);
         }
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public long Id { get; }
 
-        public IWorkspaceRole[] Roles { get; }
+        public WorkspaceRole[] Roles { get; }
 
         public string SortedAccessControlIds
         {
@@ -66,7 +66,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public long Version { get; private set; }
 
-        public InternalWorkspace InternalWorkspace { get; }
+        public DatabaseOrigin DatabaseOrigin { get; }
 
         public bool IsPermitted(Permission permission)
         {
@@ -77,10 +77,10 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (this.accessControls == null && this.SortedAccessControlIds != null)
             {
-                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.InternalWorkspace.AccessControlById[long.Parse(v)]).ToArray();
+                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.DatabaseOrigin.AccessControlById[long.Parse(v)]).ToArray();
                 if (this.deniedPermissions != null)
                 {
-                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.InternalWorkspace.PermissionById[long.Parse(v)]).ToArray();
+                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.DatabaseOrigin.PermissionById[long.Parse(v)]).ToArray();
                 }
             }
 

@@ -4,18 +4,18 @@ namespace Allors.Workspace
 {
     public static partial class ObjectExtensions
     {
-        public static ISessionState SessionScope(this IStrategy @this) => @this.Context.Scope();
+        public static ISessionStateState SessionState(this IStrategy @this) => @this.Session.State();
 
-        public static WorkspaceState WorkspaceScope(this IStrategy @this) => @this.Context.ContextFactory.Scope();
+        public static WorkspaceStateState WorkspaceState(this IStrategy @this) => @this.Session.Workspace.State();
     }
 
-    public static partial class ContextExtensions
+    public static partial class SessionExtensions
     {
-        public static ISessionState Scope(this IContext @this) => ((ISessionState)@this.Lifecycle);
+        public static ISessionStateState State(this ISession @this) => ((ISessionStateState)@this.StateLifecycle);
     }
 
     public static partial class WorkspaceExtensions
     {
-        public static WorkspaceState Scope(this IContextFactory @this) => ((WorkspaceState)@this.Lifecycle);
+        public static WorkspaceStateState State(this IWorkspace @this) => ((WorkspaceStateState)@this.StateLifecycle);
     }
 }

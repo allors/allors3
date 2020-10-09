@@ -145,7 +145,7 @@ namespace Allors.Workspace.Domain
 		public $class.name$(Allors.Workspace.IStrategy strategy)
 		{
             this.Strategy = strategy;
-            this.m = strategy.Context.ContextFactory.Scope().M;
+            this.m = strategy.Session.Workspace.State().M;
         }
 
         public IStrategy Strategy { get; }
@@ -167,7 +167,7 @@ namespace Allors.Workspace.Domain
 			}
 		}
 
-		public static $class.name$ Instantiate(IContext allorsSession, long allorsObjectId)
+		public static $class.name$ Instantiate(ISession allorsSession, long allorsObjectId)
 		{
 			return ($class.name$) allorsSession.Get(allorsObjectId);
 		}

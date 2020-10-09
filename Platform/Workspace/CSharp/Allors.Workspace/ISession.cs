@@ -12,15 +12,19 @@ namespace Allors.Workspace
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
 
-    public interface IContext
+    public interface ISession
     {
-        IContextFactory ContextFactory { get; }
+        IWorkspace Workspace { get; }
 
-        ISessionLifecycle Lifecycle { get; }
+        ISessionStateLifecycle StateLifecycle { get; }
 
         ISessionObject Get(long id);
 
         IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType);
+
+        ISessionObject Create(IClass @class);
+
+        void Reset();
 
         Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null);
 
@@ -33,9 +37,5 @@ namespace Allors.Workspace
         Task<Result> Load(object args, string pullService = null);
 
         Task<PushResponse> Save();
-
-        void Reset();
-
-        ISessionObject Create(IClass @class);
     }
 }

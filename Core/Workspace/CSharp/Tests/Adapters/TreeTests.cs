@@ -17,7 +17,7 @@ namespace Tests.Adapters
         [Fact]
         public async void Users()
         {
-            var context = this.ContextFactory.CreateContext();
+            var context = this.Workspace.CreateSession();
 
             var pull = new Pull
             {

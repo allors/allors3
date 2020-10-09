@@ -43,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
         /// Initializes a new instance of the <see cref="ObjectFactory"/> class.
         /// </summary>
         /// <param name="metaPopulation">
-        /// The meta population.
+        /// The meta databaseOrigin.
         /// </param>
         /// <param name="assembly">
         /// The assembly.
@@ -121,11 +121,8 @@ namespace Allors.Workspace.Adapters.Remote
         /// <summary>
         /// Creates a new <see cref="SessionObject"/> given the <see cref="SessionObject"/>.
         /// </summary>
-        /// <param name="session">
-        /// The internalSession.
-        /// </param>
-        /// <param name="objectType">
-        /// The object Type.
+        /// <param name="strategy">
+        /// The strategy.
         /// </param>
         /// <returns>
         /// The new <see cref="SessionObject"/>.

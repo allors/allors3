@@ -19,7 +19,7 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.ContextFactory.CreateContext();
+                    var context = this.Workspace.CreateSession();
 
                     var result = await context.Load(new { step = 0 }, "TestUnitSamples");
 
@@ -40,7 +40,7 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.ContextFactory.CreateContext();
+                    var context = this.Workspace.CreateSession();
 
                     var result = await context.Load(new { step = 1 }, "TestUnitSamples");
 

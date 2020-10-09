@@ -13,7 +13,7 @@ namespace Tests.Adapters
         [Fact]
         public async void ShouldSyncNewlyCreatedObject()
         {
-            var context = this.ContextFactory.CreateContext();
+            var context = this.Workspace.CreateSession();
 
             var newObject = context.Create(M.C1.Class);
 

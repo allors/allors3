@@ -24,7 +24,5 @@ namespace Allors.Workspace
         IObjectType GetObjectType(string name);
 
         Type GetType(IObjectType objectType);
-
-        object EmptyArray(IObjectType objectType);
     }
 }

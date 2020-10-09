@@ -7,8 +7,8 @@ namespace Allors.Workspace
 {
     public interface ISessionObject
     {
-        IStrategy Strategy { get; }
-
         long Id { get; }
+
+        IStrategy Strategy { get; }
     }
 }

@@ -19,7 +19,7 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.ContextFactory.CreateContext();
+                    var context = this.Workspace.CreateSession();
 
                     var pull = new[]
                     {
@@ -63,7 +63,7 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.ContextFactory.CreateContext();
+                    var context = this.Workspace.CreateSession();
 
                     var pull = new[]
                     {

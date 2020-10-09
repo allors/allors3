@@ -1,4 +1,4 @@
-// <copyright file="Context.cs" company="Allors bvba">
+// <copyright file="Session.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,36 +16,36 @@ namespace Allors.Workspace.Adapters.Remote
     using Meta;
     using Result = Allors.Workspace.Result;
 
-    public class Context : IContext
+    public class Session : ISession
     {
-        private readonly InternalWorkspace internalWorkspace;
-        private readonly ClientDatabase database;
+        private readonly DatabaseOrigin databaseOrigin;
+        private readonly Remote database;
 
-        public Context(ContextFactory contextFactory, ISessionLifecycle lifecycle)
+        public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
-            this.ContextFactory = contextFactory;
-            this.Lifecycle = lifecycle;
-            this.internalWorkspace = this.ContextFactory.InternalWorkspace;
-            this.database = this.ContextFactory.Database;
-            this.InternalSession = new InternalSession(this, this.internalWorkspace);
-            this.ContextFactory.RegisterContext(this);
+            this.Workspace = workspace;
+            this.StateLifecycle = stateLifecycle;
+            this.databaseOrigin = this.Workspace.DatabaseOrigin;
+            this.database = this.Workspace.Database;
+            this.SessionOrigin = new SessionOrigin(this, this.databaseOrigin);
+            this.Workspace.RegisterContext(this);
 
-            this.Lifecycle.OnInit(this);
+            this.StateLifecycle.OnInit(this);
         }
 
-        ~Context() => this.ContextFactory.UnregisterContext(this);
+        ~Session() => this.Workspace.UnregisterContext(this);
 
-        IContextFactory IContext.ContextFactory => this.ContextFactory;
+        IWorkspace ISession.Workspace => this.Workspace;
 
-        public ContextFactory ContextFactory { get; }
+        public Workspace Workspace { get; }
 
-        public InternalSession InternalSession { get; }
+        public SessionOrigin SessionOrigin { get; }
 
-        public ISessionLifecycle Lifecycle { get; }
+        public ISessionStateLifecycle StateLifecycle { get; }
 
-        public ISessionObject Get(long id) => this.InternalSession.Get(id);
+        public ISessionObject Get(long id) => this.SessionOrigin.Get(id);
 
-        public IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType) => this.InternalSession.GetAssociation(@object, associationType);
+        public IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType) => this.SessionOrigin.GetAssociation(@object, associationType);
 
         public Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null) => this.Invoke(new[] { method }, options);
 
@@ -71,7 +71,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
             var pullResponse = await this.database.Pull(pullRequest);
-            var syncRequest = this.internalWorkspace.Diff(pullResponse);
+            var syncRequest = this.databaseOrigin.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
             {
                 await this.Load(syncRequest);
@@ -94,7 +94,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var pullResponse = await this.database.Pull(pullService, args);
-            var syncRequest = this.internalWorkspace.Diff(pullResponse);
+            var syncRequest = this.databaseOrigin.Diff(pullResponse);
 
             if (syncRequest.Objects.Length > 0)
             {
@@ -107,11 +107,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         public async Task<PushResponse> Save()
         {
-            var saveRequest = this.InternalSession.PushRequest();
+            var saveRequest = this.SessionOrigin.PushRequest();
             var pushResponse = await this.database.Push(saveRequest);
             if (!pushResponse.HasErrors)
             {
-                this.InternalSession.PushResponse(pushResponse);
+                this.SessionOrigin.PushResponse(pushResponse);
 
                 var objects = saveRequest.Objects.Select(v => v.I).ToArray();
                 if (pushResponse.NewObjects != null)
@@ -126,30 +126,30 @@ namespace Allors.Workspace.Adapters.Remote
 
                 await this.Load(syncRequests);
 
-                this.InternalSession.Reset();
+                this.SessionOrigin.Reset();
             }
 
             return pushResponse;
         }
 
-        public void Reset() => this.InternalSession.Reset();
+        public void Reset() => this.SessionOrigin.Reset();
 
-        public ISessionObject Create(IClass @class) => this.InternalSession.Create(@class);
+        public ISessionObject Create(IClass @class) => this.SessionOrigin.Create(@class);
 
         private async Task Load(SyncRequest syncRequest)
         {
             var syncResponse = await this.database.Sync(syncRequest);
-            var securityRequest = this.internalWorkspace.Sync(syncResponse);
+            var securityRequest = this.databaseOrigin.Sync(syncResponse);
 
             if (securityRequest != null)
             {
                 var securityResponse = await this.database.Security(securityRequest);
-                securityRequest = this.internalWorkspace.Security(securityResponse);
+                securityRequest = this.databaseOrigin.Security(securityResponse);
 
                 if (securityRequest != null)
                 {
                     securityResponse = await this.database.Security(securityRequest);
-                    this.internalWorkspace.Security(securityResponse);
+                    this.databaseOrigin.Security(securityResponse);
                 }
             }
         }

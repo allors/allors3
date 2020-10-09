@@ -1,4 +1,4 @@
-// <copyright file="Context.cs" company="Allors bvba">
+// <copyright file="Session.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,23 +11,23 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database.Push;
     using Allors.Workspace.Meta;
 
-    public class InternalSession
+    public class SessionOrigin
     {
         private static long idCounter = 0;
         private readonly Dictionary<long, ISessionObject> sessionObjectById = new Dictionary<long, ISessionObject>();
         private readonly Dictionary<long, ISessionObject> newSessionObjectById = new Dictionary<long, ISessionObject>();
 
-        public InternalSession(Context context, InternalWorkspace internalWorkspace)
+        public SessionOrigin(Session session, DatabaseOrigin databaseOrigin)
         {
-            this.Context = context;
-            this.InternalWorkspace = internalWorkspace;
+            this.Session = session;
+            this.DatabaseOrigin = databaseOrigin;
         }
 
         public bool HasChanges => this.newSessionObjectById.Count > 0 || this.sessionObjectById.Values.Any(v => v.Strategy.HasChanges);
 
-        public Context Context { get; }
+        public Session Session { get; }
 
-        public InternalWorkspace InternalWorkspace { get; }
+        public DatabaseOrigin DatabaseOrigin { get; }
 
         public ISessionObject Get(long id)
         {
@@ -35,10 +35,10 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.newSessionObjectById.TryGetValue(id, out sessionObject))
                 {
-                    var workspaceObject = this.InternalWorkspace.Get(id);
+                    var workspaceObject = this.DatabaseOrigin.Get(id);
 
-                    var strategy = new Strategy(this.Context, workspaceObject);
-                    sessionObject = this.InternalWorkspace.ObjectFactory.Create(strategy);
+                    var strategy = new Strategy(this.Session, workspaceObject);
+                    sessionObject = this.DatabaseOrigin.ObjectFactory.Create(strategy);
                     strategy.SessionObject = sessionObject;
 
                     this.sessionObjectById[workspaceObject.Id] = sessionObject;
@@ -50,8 +50,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         public ISessionObject Create(IClass @class)
         {
-            var strategy = new Strategy(this.Context, @class, --InternalSession.idCounter);
-            var newSessionObject = this.InternalWorkspace.ObjectFactory.Create(strategy);
+            var strategy = new Strategy(this.Session, @class, --SessionOrigin.idCounter);
+            var newSessionObject = this.DatabaseOrigin.ObjectFactory.Create(strategy);
             strategy.SessionObject = newSessionObject;
             this.newSessionObjectById[newSessionObject.Id] = newSessionObject;
             return newSessionObject;
@@ -113,7 +113,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var roleType = associationType.RoleType;
 
-            var associations = this.InternalWorkspace.Get((IComposite)associationType.ObjectType).Select(v => this.Get(v.Id));
+            var associations = this.DatabaseOrigin.Get((IComposite)associationType.ObjectType).Select(v => this.Get(v.Id));
             foreach (var association in associations)
             {
                 if (association.Strategy.CanRead(roleType))

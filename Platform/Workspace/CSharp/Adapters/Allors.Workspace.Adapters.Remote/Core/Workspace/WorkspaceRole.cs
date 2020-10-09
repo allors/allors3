@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database;
     using Protocol.Database.Sync;
 
-    public class WorkspaceRole : IWorkspaceRole
+    public class WorkspaceRole
     {
         internal WorkspaceRole(IMetaPopulation metaPopulation, SyncResponseRole syncResponseRole)
         {

@@ -22,16 +22,16 @@ namespace Allors.Workspace.Adapters.Remote
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
-        public Strategy(Context context, IWorkspaceObject workspaceObject)
+        public Strategy(Session session, DatabaseObject databaseObject)
         {
-            this.Context = context;
-            this.WorkspaceObject = workspaceObject;
-            this.ObjectType = workspaceObject.Class;
+            this.Session = session;
+            this.DatabaseObject = databaseObject;
+            this.ObjectType = databaseObject.Class;
         }
 
-        public Strategy(Context context, IClass @class, long newId)
+        public Strategy(Session session, IClass @class, long newId)
         {
-            this.Context = context;
+            this.Session = session;
             this.ObjectType = @class;
             this.NewId = newId;
         }
@@ -39,22 +39,22 @@ namespace Allors.Workspace.Adapters.Remote
         public void PushResponse(long id)
         {
             this.NewId = null;
-            this.WorkspaceObject = this.InternalSession.InternalWorkspace.New(id, this.ObjectType);
+            this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.New(id, this.ObjectType);
         }
 
         public ISessionObject SessionObject { get; set; }
 
-        public InternalSession InternalSession => this.Context.InternalSession;
+        public SessionOrigin SessionOrigin => this.Session.SessionOrigin;
 
-        public IWorkspaceObject WorkspaceObject { get; private set; }
+        public DatabaseObject DatabaseObject { get; private set; }
 
         public IClass ObjectType { get; set; }
 
         public long? NewId { get; set; }
 
-        public long Id => this.WorkspaceObject?.Id ?? this.NewId ?? 0;
+        public long Id => this.DatabaseObject?.Id ?? this.NewId ?? 0;
 
-        public long? Version => this.WorkspaceObject?.Version;
+        public long? Version => this.DatabaseObject?.Version;
 
         public bool HasChanges
         {
@@ -69,9 +69,9 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        IContext IStrategy.Context => this.Context;
+        ISession IStrategy.Session => this.Session;
 
-        public Context Context { get; }
+        public Session Session { get; }
 
         public bool HasChangedRoles(params IRoleType[] roleTypes)
         {
@@ -82,7 +82,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (this.NewId != null)
             {
-                // I am new in the internalSession, and i have at least one of the requested roleTypes
+                // I am new in the session, and i have at least one of the requested roleTypes
                 if (roleTypes.Any(v => this.roleByRoleType.ContainsKey(v)))
                 {
                     return true;
@@ -109,8 +109,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.InternalSession.InternalWorkspace.GetPermission(this.ObjectType, roleType, Operations.Read);
-            return this.WorkspaceObject.IsPermitted(permission);
+            var permission = this.SessionOrigin.DatabaseOrigin.GetPermission(this.ObjectType, roleType, Operations.Read);
+            return this.DatabaseObject.IsPermitted(permission);
         }
 
         public bool CanWrite(IRoleType roleType)
@@ -120,8 +120,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.InternalSession.InternalWorkspace.GetPermission(this.ObjectType, roleType, Operations.Write);
-            return this.WorkspaceObject.IsPermitted(permission);
+            var permission = this.SessionOrigin.DatabaseOrigin.GetPermission(this.ObjectType, roleType, Operations.Write);
+            return this.DatabaseObject.IsPermitted(permission);
         }
 
         public bool CanExecute(IMethodType methodType)
@@ -131,8 +131,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.InternalSession.InternalWorkspace.GetPermission(this.ObjectType, methodType, Operations.Execute);
-            return this.WorkspaceObject.IsPermitted(permission);
+            var permission = this.SessionOrigin.DatabaseOrigin.GetPermission(this.ObjectType, methodType, Operations.Execute);
+            return this.DatabaseObject.IsPermitted(permission);
         }
 
         public bool Exist(IRoleType roleType)
@@ -152,7 +152,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.NewId == null)
                 {
-                    var workspaceRole = this.WorkspaceObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                    var workspaceRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
                     if (workspaceRole?.Value != null)
                     {
                         if (roleType.ObjectType.IsUnit)
@@ -163,7 +163,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.InternalSession.Get((long)workspaceRole.Value);
+                                value = this.SessionOrigin.Get((long)workspaceRole.Value);
                             }
                             else
                             {
@@ -171,7 +171,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
                                 for (var i = 0; i < ids.Length; i++)
                                 {
-                                    array.SetValue(this.InternalSession.Get(ids[i]), i);
+                                    array.SetValue(this.SessionOrigin.Get(ids[i]), i);
                                 }
 
                                 value = array;
@@ -182,7 +182,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.InternalSession.InternalWorkspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.SessionOrigin.DatabaseOrigin.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
 
                 this.roleByRoleType[roleType] = value;
@@ -255,9 +255,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public T GetAssociation<T>(IAssociationType associationType) => this.InternalSession.GetAssociation(this.SessionObject, associationType).Cast<T>().FirstOrDefault();
+        public T GetAssociation<T>(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.SessionObject, associationType).Cast<T>().FirstOrDefault();
 
-        public T[] GetAssociations<T>(IAssociationType associationType) => this.InternalSession.GetAssociation(this.SessionObject, associationType).Cast<T>().ToArray();
+        public T[] GetAssociations<T>(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.SessionObject, associationType).Cast<T>().ToArray();
 
         public PushRequestObject Save()
         {
@@ -294,9 +294,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Reset()
         {
-            if (this.WorkspaceObject != null)
+            if (this.DatabaseObject != null)
             {
-                this.WorkspaceObject = this.InternalSession.InternalWorkspace.Get(this.Id);
+                this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.Get(this.Id);
             }
 
             this.changedRoleByRoleType = null;
@@ -314,9 +314,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (merge)
                 {
-                    if (this.WorkspaceObject != null)
+                    if (this.DatabaseObject != null)
                     {
-                        this.WorkspaceObject = this.InternalSession.InternalWorkspace.Get(this.Id);
+                        this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.Get(this.Id);
                     }
                 }
             }
@@ -328,7 +328,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.NewId == null)
                 {
-                    var workspaceRole = this.WorkspaceObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                    var workspaceRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
                     if (workspaceRole?.Value != null)
                     {
                         if (roleType.ObjectType.IsUnit)
@@ -339,12 +339,12 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.InternalSession.GetForAssociation((long)workspaceRole.Value);
+                                value = this.SessionOrigin.GetForAssociation((long)workspaceRole.Value);
                             }
                             else
                             {
                                 var ids = (long[])workspaceRole.Value;
-                                var array = ids.Select(v => this.InternalSession.GetForAssociation(v))
+                                var array = ids.Select(v => this.SessionOrigin.GetForAssociation(v))
                                     .Where(v => v != null)
                                     .ToArray();
                                 value = array;
@@ -355,7 +355,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.InternalSession.InternalWorkspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.SessionOrigin.DatabaseOrigin.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
             }
 
@@ -394,7 +394,7 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                         else
                         {
-                            var workspaceRole = this.WorkspaceObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                            var workspaceRole = this.DatabaseObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
                             if (workspaceRole?.Value == null)
                             {
                                 pushRequestRole.A = roleIds;

@@ -5,15 +5,10 @@
 
 namespace Allors.Workspace
 {
-    using System;
+    using Meta;
 
-    /// <summary>
-    /// The InternalWorkspace lifecycle.
-    /// </summary>
-    public interface IWorkspaceLifecycle : IDisposable
+    public partial interface IWorkspaceStateState : IWorkspaceStateLifecycle
     {
-        void OnInit(IContextFactory internalWorkspace);
-
-        ISessionLifecycle CreateSessionScope();
+        M M { get; }
     }
 }

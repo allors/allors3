@@ -15,7 +15,7 @@ namespace Tests.Adapters
         [Fact]
         public void WithAccessControl()
         {
-            var context = this.ContextFactory.CreateContext();
+            var context = this.Workspace.CreateSession();
 
             var pull = new Pull
             {
@@ -38,7 +38,7 @@ namespace Tests.Adapters
         {
             this.Login("noacl");
 
-            var context = this.ContextFactory.CreateContext();
+            var context = this.Workspace.CreateSession();
 
             var pull = new Pull
             {
@@ -70,7 +70,7 @@ namespace Tests.Adapters
         {
             this.Login("noperm");
 
-            var context = this.ContextFactory.CreateContext();
+            var context = this.Workspace.CreateSession();
 
             var pull = new Pull
             {

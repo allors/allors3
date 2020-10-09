@@ -14,22 +14,21 @@ namespace Tests.Adapters
     using Allors.Workspace.Meta;
 
     using Xunit;
-    using InternalWorkspace = Allors.Workspace.Adapters.Remote.InternalWorkspace;
 
-    [Collection("Database")]
+    [Collection("Remote")]
     public class Test : IDisposable
     {
         public const string Url = "http://localhost:5000";
 
         public const string InitUrl = "/Test/Init";
-        public const string SetupUrl = "/Test/Setup?population=full";
+        public const string SetupUrl = "/Test/Setup?databaseOrigin=full";
         public const string LoginUrl = "/Test/Login";
 
-        public ContextFactory ContextFactory { get; }
+        public Workspace Workspace { get; }
 
-        public ClientDatabase Database { get; }
+        public Allors.Workspace.Adapters.Remote.Remote Remote { get; }
 
-        public InternalWorkspace InternalWorkspace { get; }
+        public DatabaseOrigin DatabaseOrigin { get; }
 
         public M M { get; }
 
@@ -40,13 +39,13 @@ namespace Tests.Adapters
                 BaseAddress = new Uri(Url),
             };
 
-            this.Database = new ClientDatabase(client);
+            this.Remote = new Allors.Workspace.Adapters.Remote.Remote(client);
             var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
-            this.InternalWorkspace = new InternalWorkspace(objectFactory);
+            this.DatabaseOrigin = new DatabaseOrigin(objectFactory);
 
-            this.ContextFactory = new ContextFactory(this.Database, this.InternalWorkspace, new WorkspaceState());
+            this.Workspace = new Workspace(this.Remote, this.DatabaseOrigin, new WorkspaceStateState());
 
-            this.M = this.ContextFactory.Scope().M;
+            this.M = this.Workspace.State().M;
 
             this.Init();
         }
@@ -58,12 +57,12 @@ namespace Tests.Adapters
         public void Login(string user)
         {
             var uri = new Uri("/TestAuthentication/Token", UriKind.Relative);
-            var result = this.Database.Login(uri, user, null).Result;
+            var result = this.Remote.Login(uri, user, null).Result;
         }
 
         private void Init()
         {
-            var httpResponseMessage = this.Database.HttpClient.GetAsync(SetupUrl).Result;
+            var httpResponseMessage = this.Remote.HttpClient.GetAsync(SetupUrl).Result;
             this.Login("administrator");
         }
     }

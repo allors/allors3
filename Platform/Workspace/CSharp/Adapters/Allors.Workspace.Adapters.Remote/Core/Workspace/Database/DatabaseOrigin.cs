@@ -1,4 +1,4 @@
-// <copyright file="InternalWorkspace.cs" company="Allors bvba">
+// <copyright file="DatabaseOrigin.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,21 +14,22 @@ namespace Allors.Workspace.Adapters.Remote
     using Domain;
     using Protocol.Database.Security;
 
-    public class InternalWorkspace
+    public class DatabaseOrigin
     {
-        private readonly Dictionary<long, WorkspaceObject> workspaceObjectById;
+        private readonly Dictionary<long, DatabaseObject> databaseObjectById;
+
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
-        public InternalWorkspace(ObjectFactory objectFactory)
+        public DatabaseOrigin(ObjectFactory objectFactory)
         {
             this.ObjectFactory = objectFactory;
 
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
 
-            this.workspaceObjectById = new Dictionary<long, WorkspaceObject>();
+            this.databaseObjectById = new Dictionary<long, DatabaseObject>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
@@ -51,7 +52,7 @@ namespace Allors.Workspace.Adapters.Remote
                     .Where(v =>
                     {
                         var id = long.Parse(v[0]);
-                        this.workspaceObjectById.TryGetValue(id, out var workspaceObject);
+                        this.databaseObjectById.TryGetValue(id, out var workspaceObject);
                         var sortedAccessControlIds = v.Length > 2 ? ctx.ReadSortedAccessControlIds(v[2]) : null;
                         var sortedDeniedPermissionIds = v.Length > 3 ? ctx.ReadSortedDeniedPermissionIds(v[3]) : null;
 
@@ -90,9 +91,9 @@ namespace Allors.Workspace.Adapters.Remote
             return syncRequest;
         }
 
-        public IWorkspaceObject Get(long id)
+        public DatabaseObject Get(long id)
         {
-            var workspaceObject = this.workspaceObjectById[id];
+            var workspaceObject = this.databaseObjectById[id];
             if (workspaceObject == null)
             {
                 throw new Exception($"Object with id {id} is not present.");
@@ -106,8 +107,8 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new ResponseContext(this, this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var workspaceObject = new WorkspaceObject(ctx, syncResponseObject);
-                this.workspaceObjectById[workspaceObject.Id] = workspaceObject;
+                var workspaceObject = new DatabaseObject(ctx, syncResponseObject);
+                this.databaseObjectById[workspaceObject.Id] = workspaceObject;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -217,10 +218,10 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        internal IEnumerable<IWorkspaceObject> Get(IComposite objectType)
+        internal IEnumerable<DatabaseObject> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.DatabaseClasses);
-            return this.workspaceObjectById.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
+            return this.databaseObjectById.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
 
         public Permission GetPermission(IClass @class, IOperandType roleType, Operations operation)
@@ -262,10 +263,10 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal WorkspaceObject New(long objectId, IClass @class)
+        internal DatabaseObject New(long objectId, IClass @class)
         {
-            var workspaceObject = new WorkspaceObject(this, objectId, @class);
-            this.workspaceObjectById[objectId] = workspaceObject;
+            var workspaceObject = new DatabaseObject(this, objectId, @class);
+            this.databaseObjectById[objectId] = workspaceObject;
             return workspaceObject;
         }
     }

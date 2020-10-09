@@ -18,7 +18,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitGet()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Get(1) as Person;
@@ -49,7 +49,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitSet()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
             var martien1 = session1.Get(3) as Person;
@@ -72,7 +72,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void HasChanges()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
             var martien = session.Get(3) as Person;
@@ -116,7 +116,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitSave()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Get(1) as Person;
@@ -166,7 +166,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneGet()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Get(1) as Person;
@@ -189,7 +189,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneSet()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -235,7 +235,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneSave()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Get(1) as Person;
@@ -285,7 +285,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManyGet()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = (Person)session.Get(1);
@@ -314,7 +314,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySet()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -363,7 +363,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySaveWithExistingObjects()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -430,7 +430,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySaveWithNewObjects()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -505,7 +505,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void SyncWithNewObjects()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -540,7 +540,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Onsaved()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -586,10 +586,10 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void methodCanExecute()
         {
-            var internalWorkspace = new InternalWorkspace();
-            internalWorkspace.Sync(Fixture.loadData);
+            var databaseOrigin = new DatabaseOrigin();
+            databaseOrigin.Sync(Fixture.loadData);
 
-            var session = new Session(internalWorkspace);
+            var session = new Session(databaseOrigin);
 
             var acme = session.Get("101") as Organisation;
             var ocme = session.Get("102") as Organisation;
@@ -604,7 +604,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Get()
         {
-            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
+            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -619,10 +619,10 @@ namespace Tests.Adapters.Remote
             Assert.Equal(acme, acmeAgain);
         }
 
-        private InternalSession CreateSession()
+        private SessionOrigin CreateSession()
         {
-            var context = (Context)this.ContextFactory.CreateContext();
-            return context.InternalSession;
+            var context = (Session)this.Workspace.CreateSession();
+            return context.SessionOrigin;
         }
     }
 }
