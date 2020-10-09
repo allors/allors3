@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Remote
+namespace Tests.Database
 {
     using System.Linq;
     using Allors.Workspace;
@@ -14,7 +14,7 @@ namespace Tests.Remote
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
-    public class AssociationTests : RemoteTest
+    public class AssociationTests : DatabaseTest
     {
         [Fact]
         public void GetOne2Many() =>

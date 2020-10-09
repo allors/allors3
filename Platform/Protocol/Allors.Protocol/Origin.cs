@@ -16,18 +16,18 @@ namespace Allors
         None = 0,
 
         /// <summary>
-        /// Remote origin.
+        /// Database origin.
         /// </summary>
-        Remote = 1,
+        Database = 1,
 
         /// <summary>
         /// Local origin.
         /// </summary>
-        Local = 2,
+        Workspace = 2,
 
         /// <summary>
-        /// Working origin.
+        /// Session origin.
         /// </summary>
-        Working = 4,
+        Session = 4,
     }
 }

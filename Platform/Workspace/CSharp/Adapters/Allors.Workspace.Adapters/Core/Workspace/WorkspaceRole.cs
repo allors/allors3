@@ -9,8 +9,8 @@ namespace Allors.Workspace
     using System.Linq;
     using Meta;
     using Protocol.Data;
-    using Protocol.Remote;
-    using Protocol.Remote.Sync;
+    using Protocol.Database;
+    using Protocol.Database.Sync;
 
     public class WorkspaceRole : IWorkspaceRole
     {

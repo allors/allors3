@@ -6,10 +6,10 @@
 namespace Allors.Workspace
 {
     using System;
-    using Allors.Protocol.Remote.Sync;
+    using Protocol.Database.Sync;
     using Allors.Workspace.Meta;
     using System.Linq;
-    using Protocol.Remote;
+    using Protocol.Database;
 
     public class WorkspaceObject : IWorkspaceObject
     {

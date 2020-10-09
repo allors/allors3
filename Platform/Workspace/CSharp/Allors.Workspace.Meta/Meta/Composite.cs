@@ -26,7 +26,7 @@ namespace Allors.Workspace.Meta
         private HashSet<AssociationType> derivedDatabaseAssociationTypes;
         private HashSet<RoleType> derivedDatabaseRoleTypes;
 
-        protected Composite(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Remote;
+        protected Composite(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Database;
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
@@ -166,7 +166,7 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypes => this.AssociationTypes.Where(associationType => this.Equals(associationType.RoleType.ObjectType)).ToArray();
 
-        public IEnumerable<AssociationType> ExclusiveDatabaseAssociationTypes => this.ExclusiveAssociationTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+        public IEnumerable<AssociationType> ExclusiveDatabaseAssociationTypes => this.ExclusiveAssociationTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
         /// <summary>
         /// Gets the roles.
@@ -183,15 +183,15 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<RoleType> UnitRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsUnit).ToArray();
 
-        public IEnumerable<RoleType> UnitDatabaseRoleTypes => this.UnitRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+        public IEnumerable<RoleType> UnitDatabaseRoleTypes => this.UnitRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
         public IEnumerable<RoleType> CompositeRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsComposite).ToArray();
 
-        public IEnumerable<RoleType> CompositeDatabaseRoleTypes => this.CompositeRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+        public IEnumerable<RoleType> CompositeDatabaseRoleTypes => this.CompositeRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
         public IEnumerable<RoleType> ExclusiveRoleTypes => this.RoleTypes.Where(roleType => this.Equals(roleType.AssociationType.ObjectType)).ToArray();
 
-        public IEnumerable<RoleType> ExclusiveDatabaseRoleTypes => this.ExclusiveRoleTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+        public IEnumerable<RoleType> ExclusiveDatabaseRoleTypes => this.ExclusiveRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
         public IEnumerable<RoleType> SortedExclusiveRoleTypes => this.ExclusiveRoleTypes.OrderBy(v => v.Name);
 
@@ -217,9 +217,9 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<AssociationType> InheritedAssociationTypes => this.AssociationTypes.Except(this.ExclusiveAssociationTypes);
 
-        public IEnumerable<RoleType> InheritedDatabaseRoleTypes => this.InheritedRoleTypes.Where(v => v.Origin == Origin.Remote);
+        public IEnumerable<RoleType> InheritedDatabaseRoleTypes => this.InheritedRoleTypes.Where(v => v.Origin == Origin.Database);
 
-        public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Remote);
+        public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Database);
 
         #region Workspace
 
@@ -329,25 +329,25 @@ namespace Allors.Workspace.Meta
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithRemoteOriginByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithDatabaseOriginByWorkspaceName
         {
             get
             {
                 this.MetaPopulation.Derive();
                 return this.WorkspaceNames
                     .ToDictionary(v => v,
-                        v => this.ExclusiveRoleTypes.Where(w => w.Origin == Origin.Remote && w.RelationType.WorkspaceNames.Contains(v)));
+                        v => this.ExclusiveRoleTypes.Where(w => w.Origin == Origin.Database && w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 
-        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithLocalOrWorkingOriginByWorkspaceName
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesWithWorkspaceOrSessionOriginByWorkspaceName
         {
             get
             {
                 this.MetaPopulation.Derive();
                 return this.WorkspaceNames
                     .ToDictionary(v => v,
-                        v => this.ExclusiveRoleTypes.Where(w => (w.Origin == Origin.Local || w.Origin == Origin.Working) && w.RelationType.WorkspaceNames.Contains(v)));
+                        v => this.ExclusiveRoleTypes.Where(w => (w.Origin == Origin.Workspace || w.Origin == Origin.Session) && w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 
@@ -500,7 +500,7 @@ namespace Allors.Workspace.Meta
             }
 
             this.derivedRoleTypes = new HashSet<RoleType>(roleTypes);
-            this.derivedDatabaseRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Remote));
+            this.derivedDatabaseRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Database));
         }
 
         /// <summary>
@@ -526,7 +526,7 @@ namespace Allors.Workspace.Meta
             }
 
             this.derivedAssociationTypes = new HashSet<AssociationType>(associationTypes);
-            this.derivedDatabaseAssociationTypes = new HashSet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Remote));
+            this.derivedDatabaseAssociationTypes = new HashSet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Database));
         }
 
         /// <summary>

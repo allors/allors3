@@ -1,22 +1,22 @@
-// <copyright file="RemoteTest.cs" company="Allors bvba">
+// <copyright file="DatabaseTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Remote
+namespace Tests.Database
 {
     using System;
     using System.Net.Http;
 
     using Allors.Workspace;
-    using Allors.Workspace.Remote;
+    using Allors.Workspace.Database;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
 
     using Xunit;
 
-    [Collection("Remote")]
-    public class RemoteTest : IDisposable
+    [Collection("Database")]
+    public class DatabaseTest : IDisposable
     {
         public const string Url = "http://localhost:5000";
 
@@ -30,7 +30,7 @@ namespace Tests.Remote
 
         public M M { get; }
 
-        public RemoteTest()
+        public DatabaseTest()
         {
             var client = new HttpClient()
             {

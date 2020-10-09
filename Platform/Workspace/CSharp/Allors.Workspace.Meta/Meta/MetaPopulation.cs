@@ -413,10 +413,10 @@ namespace Allors.Workspace.Meta
                     this.derivedComposites = compositeTypes.ToArray();
 
                     // Database
-                    this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+                    this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Database).ToArray();
+                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Database).ToArray();
+                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Database).ToArray();
+                    this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
                     // DirectSupertypes
                     foreach (var type in this.derivedComposites)

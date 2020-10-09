@@ -13,7 +13,7 @@ namespace Tests
     using Allors.Api.Json;
     using Allors.Domain;
     using Allors.Protocol.Data;
-    using Allors.Protocol.Remote.Pull;
+    using Allors.Protocol.Database.Pull;
     using Xunit;
 
     public class PullTests : ApiTest, IClassFixture<Fixture>

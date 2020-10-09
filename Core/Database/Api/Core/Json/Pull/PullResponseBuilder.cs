@@ -10,7 +10,7 @@ namespace Allors.Api.Json.Pull
     using System.Linq;
     using Allors.Data;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Pull;
+    using Protocol.Database.Pull;
     using Protocol;
     using Allors.State;
     using Server;

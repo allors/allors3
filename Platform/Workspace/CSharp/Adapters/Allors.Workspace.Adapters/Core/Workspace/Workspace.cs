@@ -9,11 +9,11 @@ namespace Allors.Workspace
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using Allors.Protocol.Remote.Pull;
-    using Allors.Protocol.Remote.Sync;
+    using Protocol.Database.Pull;
+    using Protocol.Database.Sync;
     using Allors.Workspace.Meta;
     using Domain;
-    using Protocol.Remote.Security;
+    using Protocol.Database.Security;
 
     public class Workspace : IWorkspace
     {

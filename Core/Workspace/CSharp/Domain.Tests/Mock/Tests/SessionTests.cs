@@ -8,7 +8,7 @@ namespace Tests.Mock
     using System;
     using System.Linq;
     using Allors.Protocol.Data;
-    using Allors.Protocol.Remote.Push;
+    using Allors.Protocol.Database.Push;
     using Allors.Workspace;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;

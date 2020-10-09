@@ -10,7 +10,7 @@ namespace Allors.Api.Json.Push
     using System.Linq;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Protocol.Remote.Push;
+    using Protocol.Database.Push;
     using Protocol.Data;
     using Server;
     using State;

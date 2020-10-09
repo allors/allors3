@@ -7,7 +7,7 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Protocol.Remote;
+    using Protocol.Database;
     using Domain.Derivations;
 
     public static class ResponseExtensions

@@ -7,7 +7,7 @@ namespace Tests
 {
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Push;
+    using Allors.Protocol.Database.Push;
     using Xunit;
 
     public class PushNewObjectTests : ApiTest, IClassFixture<Fixture>

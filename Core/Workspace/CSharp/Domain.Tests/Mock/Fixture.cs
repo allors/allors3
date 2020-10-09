@@ -5,7 +5,7 @@
 
 namespace Tests.Mock
 {
-    using Allors.Protocol.Remote.Sync;
+    using Allors.Protocol.Database.Sync;
     using Allors.Workspace.Meta;
 
     public class Fixture

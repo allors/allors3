@@ -8,7 +8,7 @@ namespace Tests
     using System;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Push;
+    using Allors.Protocol.Database.Push;
     using Xunit;
 
     public class PushDeletedObjectsTests : ApiTest, IClassFixture<Fixture>

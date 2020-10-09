@@ -8,10 +8,10 @@ namespace Allors.Workspace
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Allors.Protocol.Remote.Invoke;
-    using Allors.Protocol.Remote.Pull;
-    using Allors.Protocol.Remote.Push;
-    using Allors.Protocol.Remote.Sync;
+    using Protocol.Database.Invoke;
+    using Protocol.Database.Pull;
+    using Protocol.Database.Push;
+    using Protocol.Database.Sync;
     using Allors.Workspace.Data;
 
     public class Context

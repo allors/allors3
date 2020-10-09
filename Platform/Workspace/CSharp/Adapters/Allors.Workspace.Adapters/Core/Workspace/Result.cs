@@ -9,7 +9,7 @@ namespace Allors.Workspace
     using System.Collections.Generic;
     using System.Linq;
 
-    using Allors.Protocol.Remote.Pull;
+    using Protocol.Database.Pull;
 
     public class Result
     {

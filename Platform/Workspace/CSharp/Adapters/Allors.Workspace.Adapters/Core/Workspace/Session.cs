@@ -8,7 +8,7 @@ namespace Allors.Workspace
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Protocol.Remote.Push;
+    using Protocol.Database.Push;
     using Allors.Workspace.Meta;
 
     public class Session : ISession

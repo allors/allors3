@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Remote
+namespace Tests.Database
 {
     using System;
 
@@ -14,7 +14,7 @@ namespace Tests.Remote
 
     using Xunit;
 
-    public class UnitSamplesTests : RemoteTest
+    public class UnitSamplesTests : DatabaseTest
     {
         [Fact]
         public void Null() =>

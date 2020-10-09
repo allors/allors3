@@ -9,7 +9,7 @@ namespace Allors.Workspace
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Protocol.Remote.Push;
+    using Protocol.Database.Push;
     using Allors.Workspace.Meta;
     using Domain;
     using Protocol.Data;

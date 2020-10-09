@@ -8,7 +8,7 @@ namespace Tests
 {
     using System.Linq;
     using Allors.Meta;
-    using Allors.Protocol.Remote.Sync;
+    using Allors.Protocol.Database.Sync;
 
     public static class SyncResponseObjectExtensions
     {

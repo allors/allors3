@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace
 {
-    using Allors.Protocol.Remote.Push;
+    using Protocol.Database.Push;
     using Allors.Workspace.Meta;
 
     public interface ISessionObject

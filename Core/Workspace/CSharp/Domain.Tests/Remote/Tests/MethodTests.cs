@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Remote
+namespace Tests.Database
 {
     using System.Linq;
     using Allors.Workspace;
@@ -13,7 +13,7 @@ namespace Tests.Remote
     using Nito.AsyncEx;
     using Xunit;
 
-    public class MethodTests : RemoteTest
+    public class MethodTests : DatabaseTest
     {
         [Fact]
         public void Call() =>

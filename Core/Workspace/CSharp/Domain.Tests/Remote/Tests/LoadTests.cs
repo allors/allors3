@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Remote
+namespace Tests.Database
 {
     using System;
     using Allors.Workspace;
@@ -12,7 +12,7 @@ namespace Tests.Remote
     using Allors.Workspace.Meta;
     using Xunit;
 
-    public class LoadTests : RemoteTest
+    public class LoadTests : DatabaseTest
     {
         [Fact]
         public void WithAccessControl()

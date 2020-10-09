@@ -184,7 +184,7 @@ build_interface(interface) ::= <<
 build_class(class) ::= <<
 	        objectTypes.$class.SingularName$ = new Class(meta, new System.Guid("$class.IdAsString$"))
             {
-$if(!class.IsRemote)$                AssignedOrigin = Allors.Origin.$class.Origin$,$endif$
+$if(!class.HasDatabaseOrigin)$                AssignedOrigin = Allors.Origin.$class.Origin$,$endif$
                 SingularName = "$class.SingularName$",
                 PluralName = "$class.PluralName$",
                 $if(class.AssignedIsSynced)$AssignedIsSynced = $class.AssignedIsSynced$$endif$
@@ -199,7 +199,7 @@ build_relationType(relationType) ::= <<
         {
             relationTypes.$relationType.Name$ = new RelationType(objectTypes.$relationType.AssociationType.ObjectType.SingularName$, new System.Guid("$relationType.IdAsString$"))
             {
-$if(!relationType.IsRemote)$                AssignedOrigin = Origin.$relationType.Origin$,$endif$
+$if(!relationType.HasDatabaseOrigin)$                AssignedOrigin = Origin.$relationType.Origin$,$endif$
 $if(relationType.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$relationType.Multiplicity$,$endif$
 $if(relationType.IsDerived)$		        IsDerived = $relationType.IsDerived$,$endif$
 $if(relationType.IsSynced)$		    IsSynced = $relationType.IsSynced$,$endif$

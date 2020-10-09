@@ -170,7 +170,7 @@ namespace Allors.Workspace.Meta
             }
 
             this.derivedClasses = new HashSet<Class>(subClasses);
-            this.derivedDatabaseClasses = new HashSet<Class>(subClasses.Where(v => v.Origin == Origin.Remote));
+            this.derivedDatabaseClasses = new HashSet<Class>(subClasses.Where(v => v.Origin == Origin.Database));
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Allors.Workspace.Meta
             this.DeriveSubtypesRecursively(this, subTypes);
 
             this.derivedSubtypes = new HashSet<Composite>(subTypes);
-            this.derivedDatabaseSubtypes = new HashSet<Composite>(subTypes.Where(v => v.Origin == Origin.Remote));
+            this.derivedDatabaseSubtypes = new HashSet<Composite>(subTypes.Where(v => v.Origin == Origin.Database));
         }
 
         /// <summary>

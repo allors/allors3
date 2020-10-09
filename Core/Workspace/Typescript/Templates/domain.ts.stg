@@ -50,9 +50,9 @@ $objectType.WorkspaceRelatedCompositesByWorkspaceName.(workspaceName):{directSup
 
 export interface $objectType.name$ extends $inherits()$$if(objectType.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName))$, $objectType.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|$directSupertype.SingularName$}; separator=", "$$endif$ {
 
-$objectType.WorkspaceExclusiveRoleTypesWithRemoteOriginByWorkspaceName.(workspaceName):{roleType|$roleTypeWithRemoteOrigin()$}; separator="\n"$
+$objectType.WorkspaceExclusiveRoleTypesWithDatabaseOriginByWorkspaceName.(workspaceName):{roleType|$roleTypeWithDatabaseOrigin()$}; separator="\n"$
 
-$objectType.WorkspaceExclusiveRoleTypesWithLocalOrWorkingOriginByWorkspaceName.(workspaceName):{roleType|$roleTypeWithLocalOrWorkingOrigin()$}; separator="\n"$
+$objectType.WorkspaceExclusiveRoleTypesWithWorkspaceOrSessionOriginByWorkspaceName.(workspaceName):{roleType|$roleTypeWithWorkspaceOrSessionOrigin()$}; separator="\n"$
 
 $objectType.WorkspaceExclusiveAssociationTypesByWorkspaceName.(workspaceName):{associationType|$associationType()$}; separator="\n"$
 
@@ -66,7 +66,7 @@ $if(objectType.HasWorkspaceOrigin)$WorkspaceObject$endif$
 $if(objectType.HasSessionOrigin)$SessionObject$endif$
 >>
 
-roleTypeWithRemoteOrigin() ::= <<
+roleTypeWithDatabaseOrigin() ::= <<
     CanRead$roleType.Name$: boolean;
 $if(!roleType.RelationType.IsDerived)$
     CanWrite$roleType.Name$: boolean;
@@ -84,7 +84,7 @@ $endif$
 $endif$
 >>
 
-roleTypeWithLocalOrWorkingOrigin() ::= <<
+roleTypeWithWorkspaceOrSessionOrigin() ::= <<
 $if(roleType.ObjectType.IsUnit)$
     $roleType.Name$: $objectType_Name(roleType.ObjectType)$ | null;
 $else$

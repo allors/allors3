@@ -5,11 +5,11 @@
 
 namespace Allors.Workspace
 {
-    using Allors.Protocol.Remote.Pull;
-    using Allors.Protocol.Remote.Sync;
+    using Protocol.Database.Pull;
+    using Protocol.Database.Sync;
     using Domain;
     using Meta;
-    using Protocol.Remote.Security;
+    using Protocol.Database.Security;
 
     public interface IWorkspace
     {

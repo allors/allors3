@@ -9,7 +9,7 @@ namespace Tests
     using Allors;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Invoke;
+    using Allors.Protocol.Database.Invoke;
     using Xunit;
 
     public class InvokeTests : ApiTest, IClassFixture<Fixture>

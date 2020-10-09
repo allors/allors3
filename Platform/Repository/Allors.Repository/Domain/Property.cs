@@ -34,9 +34,9 @@ namespace Allors.Repository.Domain
             }
         }
 
-        public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Remote);
+        public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Database);
 
-        public bool IsRemote => this.Origin == Origin.Remote;
+        public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
         public XmlDoc XmlDoc { get; set; }
 

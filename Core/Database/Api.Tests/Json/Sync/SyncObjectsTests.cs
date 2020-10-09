@@ -9,7 +9,7 @@ namespace Tests
     using Allors;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Sync;
+    using Allors.Protocol.Database.Sync;
     using Xunit;
 
     public class SyncObjectTests : ApiTest, IClassFixture<Fixture>

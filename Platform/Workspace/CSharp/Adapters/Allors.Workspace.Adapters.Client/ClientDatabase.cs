@@ -3,20 +3,20 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Remote
+namespace Allors.Workspace.Database
 {
     using System;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
     using System.Threading.Tasks;
-    using Allors.Protocol.Remote.Invoke;
-    using Allors.Protocol.Remote.Pull;
-    using Allors.Protocol.Remote.Push;
-    using Allors.Protocol.Remote.Sync;
+    using Protocol.Database.Invoke;
+    using Protocol.Database.Pull;
+    using Protocol.Database.Push;
+    using Protocol.Database.Sync;
     using Newtonsoft.Json;
     using Polly;
-    using Protocol.Remote.Security;
+    using Protocol.Database.Security;
 
     public class ClientDatabase : IDatabase
     {

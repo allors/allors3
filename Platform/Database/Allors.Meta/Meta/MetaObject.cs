@@ -18,15 +18,13 @@ namespace Allors.Meta
 
         public abstract Origin Origin { get; }
 
-        public bool IsRemote => this.Origin == Origin.Remote;
-
         public int OriginAsInt => (int)this.Origin;
 
-        public bool HasDatabaseOrigin => this.Origin == Origin.Remote;
+        public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origin.Local;
+        public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
 
-        public bool HasSessionOrigin => this.Origin == Origin.Working;
+        public bool HasSessionOrigin => this.Origin == Origin.Session;
 
         /// <summary>
         /// Gets the validation name.

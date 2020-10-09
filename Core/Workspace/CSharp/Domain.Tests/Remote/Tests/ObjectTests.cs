@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Remote
+namespace Tests.Database
 {
     using System.Net.Http;
 
@@ -12,7 +12,7 @@ namespace Tests.Remote
 
     using Xunit;
 
-    public class ObjectTests : RemoteTest
+    public class ObjectTests : DatabaseTest
     {
         [Fact]
         public void NonExistingPullController() =>

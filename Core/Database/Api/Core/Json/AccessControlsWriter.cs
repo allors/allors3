@@ -7,7 +7,7 @@ namespace Allors.Server
 {
     using System.Linq;
     using Domain;
-    using Protocol.Remote;
+    using Protocol.Database;
 
     internal class AccessControlsWriter
     {

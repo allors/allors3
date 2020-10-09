@@ -8,7 +8,7 @@ namespace Tests.Mock
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol;
-    using Allors.Protocol.Remote.Pull;
+    using Allors.Protocol.Database.Pull;
     using Allors.Workspace;
     using Allors.Workspace.Meta;
     using Xunit;

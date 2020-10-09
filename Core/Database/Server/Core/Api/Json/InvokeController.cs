@@ -6,7 +6,7 @@
 namespace Allors.Server
 {
     using System;
-    using Allors.Protocol.Remote.Invoke;
+    using Protocol.Database.Invoke;
     using Allors.Services;
     using Api.Json;
     using Microsoft.AspNetCore.Authorization;

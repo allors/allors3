@@ -11,7 +11,7 @@ namespace Allors.Api.Json.Security
     using System.Diagnostics;
     using System.Linq;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Security;
+    using Protocol.Database.Security;
     using State;
 
     public class SecurityResponseBuilder
