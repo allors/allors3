@@ -4,12 +4,12 @@ namespace Allors.Workspace
 {
     public static partial class ObjectExtensions
     {
-        public static ISessionState SessionScope(this ISessionObject @this)
+        public static ISessionState SessionScope(this IStrategy @this)
         {
             return @this.Session.Scope();
         }
 
-        public static WorkspaceState WorkspaceScope(this ISessionObject @this)
+        public static WorkspaceState WorkspaceScope(this IStrategy @this)
         {
             return @this.Session.Workspace.Scope();
         }

@@ -456,7 +456,7 @@ namespace Tests.Mock
             Assert.Equal(3, save.NewObjects.Length);
             Assert.Empty(save.Objects);
             {
-                var savedMathijs = save.NewObjects.First(v => v.NI == mathijs.NewId?.ToString());
+                var savedMathijs = save.NewObjects.First(v => v.NI == mathijs.Strategy.NewId?.ToString());
 
                 Assert.Equal(M.Person.Class.IdAsString, savedMathijs.T);
                 Assert.Equal(2, savedMathijs.Roles.Length);
@@ -469,24 +469,24 @@ namespace Tests.Mock
             }
 
             {
-                var savedAcme2 = save.NewObjects.First(v => v.NI == acme2.NewId?.ToString());
+                var savedAcme2 = save.NewObjects.First(v => v.NI == acme2.Strategy.NewId?.ToString());
 
                 Assert.Equal(M.Organisation.Class.IdAsString, savedAcme2.T);
                 Assert.Equal(3, savedAcme2.Roles.Length);
 
                 var savedAcme2Manager = savedAcme2.Roles.First(v => v.T == M.Organisation.Manager.RelationType.IdAsString);
 
-                Assert.Equal(mathijs.NewId.ToString(), savedAcme2Manager.S);
+                Assert.Equal(mathijs.Strategy.NewId.ToString(), savedAcme2Manager.S);
 
                 var savedAcme2Employees = savedAcme2.Roles.First(v => v.T == M.Organisation.Employees.RelationType.IdAsString);
 
                 Assert.Null(savedAcme2Employees.S);
-                Assert.Contains(mathijs.NewId?.ToString(), savedAcme2Employees.A);
+                Assert.Contains(mathijs.Strategy.NewId?.ToString(), savedAcme2Employees.A);
                 Assert.Null(savedAcme2Employees.R);
             }
 
             {
-                var savedAcme3 = save.NewObjects.First(v => v.NI == acme3.NewId?.ToString());
+                var savedAcme3 = save.NewObjects.First(v => v.NI == acme3.Strategy.NewId?.ToString());
 
                 Assert.Equal(M.Organisation.Class.IdAsString, savedAcme3.T);
                 Assert.Equal(3, savedAcme3.Roles.Length);
@@ -526,12 +526,12 @@ namespace Tests.Mock
             session.Reset();
 
             // Assert.Null(mathijs.Id);
-            Assert.True(mathijs.NewId < 0);
+            Assert.True(mathijs.Strategy.NewId < 0);
             Assert.Null(mathijs.FirstName);
             Assert.Null(mathijs.LastName);
 
             // Assert.Null(acme2.Id);
-            Assert.True(acme2.NewId < 0);
+            Assert.True(acme2.Strategy.NewId < 0);
             Assert.Null(acme2.Owner);
             Assert.Null(acme2.Manager);
 
@@ -553,7 +553,7 @@ namespace Tests.Mock
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
-            var newId = mathijs.NewId.Value;
+            var newId = mathijs.Strategy.NewId.Value;
 
             pushResponse = new PushResponse
             {
@@ -562,9 +562,9 @@ namespace Tests.Mock
 
             session.PushResponse(pushResponse);
 
-            Assert.Null(mathijs.NewId);
+            Assert.Null(mathijs.Strategy.NewId);
             Assert.Equal(10000, mathijs.Id);
-            Assert.Equal("Person", mathijs.ObjectType.Name);
+            Assert.Equal("Person", mathijs.Strategy.ObjectType.Name);
 
             mathijs = session.Get(10000) as Person;
 
@@ -615,7 +615,7 @@ namespace Tests.Mock
 
             Assert.Equal(acme, acmeAgain);
 
-            acmeAgain = session.Get(acme.NewId.Value);
+            acmeAgain = session.Get(acme.Strategy.NewId.Value);
 
             Assert.Equal(acme, acmeAgain);
         }

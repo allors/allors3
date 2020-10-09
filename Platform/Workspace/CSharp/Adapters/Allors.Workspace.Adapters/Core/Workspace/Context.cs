@@ -39,7 +39,7 @@ namespace Allors.Workspace
                 I = methods.Select(v => new Invocation
                 {
                     I = v.Object.Id.ToString(),
-                    V = v.Object.Version.ToString(),
+                    V = v.Object.Strategy.Version.ToString(),
                     M = v.MethodType.IdAsString,
                 }).ToArray(),
                 O = options,

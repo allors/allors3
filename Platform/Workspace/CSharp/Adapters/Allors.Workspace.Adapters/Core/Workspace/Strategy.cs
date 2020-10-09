@@ -14,21 +14,41 @@ namespace Allors.Workspace
     using Domain;
     using Protocol.Data;
 
-    public class SessionObject : ISessionObject
+    public class Strategy : IStrategy
     {
-        private static readonly ISessionObject[] EmptySessionObjects = new ISessionObject[0];
+        private static readonly IStrategy[] EmptySessionObjects = new IStrategy[0];
 
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
-        protected SessionObject(Session session) => this.Session = session;
+        public Strategy(Session session, IWorkspaceObject workspaceObject)
+        {
+            this.Session = session;
+            this.WorkspaceObject = workspaceObject;
+            this.ObjectType = workspaceObject.Class;
+        }
 
-        ISession ISessionObject.Session => this.Session;
+        public Strategy(Session session, IClass @class, long newId)
+        {
+            this.Session = session;
+            this.ObjectType = @class;
+            this.NewId = newId;
+        }
+
+        public void PushResponse(long id)
+        {
+            this.NewId = null;
+            this.WorkspaceObject = this.Session.Workspace.New(id, this.ObjectType);
+        }
+
+        public ISessionObject SessionObject { get; set; }
+
+        ISession IStrategy.Session => this.Session;
 
         public Session Session { get; }
 
-        public IWorkspaceObject WorkspaceObject { get; set; }
+        public IWorkspaceObject WorkspaceObject { get; private set; }
 
         public IClass ObjectType { get; set; }
 
@@ -118,7 +138,7 @@ namespace Allors.Workspace
             var value = this.Get(roleType);
             if (roleType.ObjectType.IsComposite && roleType.IsMany)
             {
-                return ((IEnumerable<SessionObject>)value).Any();
+                return ((IEnumerable<IStrategy>)value).Any();
             }
 
             return value != null;
@@ -222,20 +242,20 @@ namespace Allors.Workspace
 
         public void Remove(IRoleType roleType, ISessionObject value)
         {
-            var roles = (ISessionObject[])this.Get(roleType);
-            if (roles.Contains(value))
+            var roles = (IStrategy[])this.Get(roleType);
+            if (roles.Contains(value.Strategy))
             {
-                var newRoles = new List<ISessionObject>(roles);
-                newRoles.Remove(value);
+                var newRoles = new List<IStrategy>(roles);
+                newRoles.Remove(value.Strategy);
                 roles = newRoles.ToArray();
             }
 
             this.Set(roleType, roles);
         }
 
-        public T GetAssociation<T>(IAssociationType associationType) => this.Session.GetAssociation(this, associationType).Cast<T>().FirstOrDefault();
+        public T GetAssociation<T>(IAssociationType associationType) => this.Session.GetAssociation(this.SessionObject, associationType).Cast<T>().FirstOrDefault();
 
-        public T[] GetAssociations<T>(IAssociationType associationType) => this.Session.GetAssociation(this, associationType).Cast<T>().ToArray();
+        public T[] GetAssociations<T>(IAssociationType associationType) => this.Session.GetAssociation(this.SessionObject, associationType).Cast<T>().ToArray();
 
         public PushRequestObject Save()
         {
@@ -300,7 +320,7 @@ namespace Allors.Workspace
             }
         }
 
-        internal object GetForAssociation(IRoleType roleType)
+        public object GetForAssociation(IRoleType roleType)
         {
             if (!this.roleByRoleType.TryGetValue(roleType, out var value))
             {
@@ -359,12 +379,12 @@ namespace Allors.Workspace
                 {
                     if (roleType.IsOne)
                     {
-                        var sessionRole = (SessionObject)roleValue;
+                        var sessionRole = (ISessionObject)roleValue;
                         pushRequestRole.S = sessionRole?.Id.ToString();
                     }
                     else
                     {
-                        var sessionRoles = (SessionObject[])roleValue;
+                        var sessionRoles = (ISessionObject[])roleValue;
                         var roleIds = sessionRoles.Select(item => item.Id.ToString()).ToArray();
                         if (this.NewId != null)
                         {

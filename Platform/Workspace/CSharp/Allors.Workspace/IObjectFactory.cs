@@ -15,7 +15,7 @@ namespace Allors.Workspace
 
         string Namespace { get; }
 
-        ISessionObject Create(ISession session, IObjectType objectType);
+        ISessionObject Create(IStrategy strategy);
 
         IObjectType GetObjectType<T>();
 

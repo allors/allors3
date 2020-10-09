@@ -9,7 +9,6 @@ namespace Tests.Database
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-    using Allors.Workspace.Meta;
     using Nito.AsyncEx;
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
@@ -23,7 +22,7 @@ namespace Tests.Database
                 {
                     var context = new Context(this.Database, this.Workspace);
 
-                    var pull = new Pull[]
+                    var pull = new[]
                     {
                         new Pull
                         {
@@ -67,7 +66,7 @@ namespace Tests.Database
                 {
                     var context = new Context(this.Database, this.Workspace);
 
-                    var pull = new Pull[]
+                    var pull = new[]
                     {
                         new Pull
                         {

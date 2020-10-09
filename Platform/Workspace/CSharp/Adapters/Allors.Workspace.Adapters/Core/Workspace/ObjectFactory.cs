@@ -51,6 +51,7 @@ namespace Allors.Workspace
         /// <param name="namespace">
         /// The namespace.
         /// </param>
+        /// <exception cref="ArgumentException"></exception>
         public ObjectFactory(IMetaPopulation metaPopulation, Type instance)
         {
             var assembly = instance.GetTypeInfo().Assembly;
@@ -98,14 +99,9 @@ namespace Allors.Workspace
 
                 if (objectType is IClass)
                 {
-                    var parameterTypes = new[] { typeof(Session) };
-                    var constructor = type.GetTypeInfo().GetConstructor(parameterTypes);
-                    if (constructor == null)
-                    {
-                        throw new ArgumentException(objectType.Name + " has no Allors constructor.");
-                    }
-
-                    this.contructorInfoByObjectType[objectType] = constructor;
+                    var parameterTypes = new[] { typeof(IStrategy) };
+                    this.contructorInfoByObjectType[objectType] = type.GetTypeInfo().GetConstructor(parameterTypes)
+                                                                  ?? throw new ArgumentException($"{objectType.Name} has no Allors constructor.");
                 }
 
                 this.emptyArrayByObjectType.Add(objectType, Array.CreateInstance(type, 0));
@@ -134,15 +130,15 @@ namespace Allors.Workspace
         /// <returns>
         /// The new <see cref="SessionObject"/>.
         /// </returns>
-        public SessionObject Create(ISession session, IObjectType objectType)
+        public ISessionObject Create(IStrategy strategy)
         {
-            var constructor = this.contructorInfoByObjectType[objectType];
-            object[] parameters = { session };
+            var constructor = this.contructorInfoByObjectType[strategy.ObjectType];
+            object[] parameters = { strategy };
 
-            return (SessionObject)constructor.Invoke(parameters);
+            return (ISessionObject)constructor.Invoke(parameters);
         }
 
-        ISessionObject IObjectFactory.Create(ISession session, IObjectType objectType) => this.Create(session, objectType);
+        ISessionObject IObjectFactory.Create(IStrategy strategy) => this.Create(strategy);
 
         /// <summary>
         /// Gets the .Net <see cref="Type"/> given the Allors <see cref="IObjectType"/>.

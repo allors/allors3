@@ -55,7 +55,7 @@ namespace Tests.Database
             {
                 foreach (var roleType in M.C1.ObjectType.RoleTypes)
                 {
-                    var role = c1.Get(roleType);
+                    var role = c1.Strategy.Get(roleType);
                     Assert.True(role == null || (role is Array array && array.Length == 0));
                 }
 
@@ -87,7 +87,7 @@ namespace Tests.Database
             {
                 foreach (var roleType in M.C1.ObjectType.RoleTypes)
                 {
-                    var role = c1.Get(roleType);
+                    var role = c1.Strategy.Get(roleType);
                     Assert.True(role == null || (role is Array array && array.Length == 0));
                 }
 

@@ -14,24 +14,24 @@ namespace Allors.Workspace
     public class Session : ISession
     {
         private static long idCounter = 0;
-
-        private readonly Workspace workspace;
         private readonly Dictionary<long, ISessionObject> sessionObjectById = new Dictionary<long, ISessionObject>();
         private readonly Dictionary<long, ISessionObject> newSessionObjectById = new Dictionary<long, ISessionObject>();
 
         public Session(Workspace workspace, ISessionLifecycle scope)
         {
-            this.workspace = workspace;
+            this.Workspace = workspace;
             this.Lifecycle = scope;
 
             this.Lifecycle.OnInit(this);
         }
 
-        public bool HasChanges => this.newSessionObjectById.Count > 0 || this.sessionObjectById.Values.Any(v => v.HasChanges);
+        public bool HasChanges => this.newSessionObjectById.Count > 0 || this.sessionObjectById.Values.Any(v => v.Strategy.HasChanges);
 
         public ISessionLifecycle Lifecycle { get; }
 
-        public IWorkspace Workspace => this.workspace;
+        IWorkspace ISession.Workspace => this.Workspace;
+
+        public Workspace Workspace { get; }
 
         public ISessionObject Get(long id)
         {
@@ -39,16 +39,13 @@ namespace Allors.Workspace
             {
                 if (!this.newSessionObjectById.TryGetValue(id, out sessionObject))
                 {
-                    var workspaceObject = this.workspace.Get(id);
+                    var workspaceObject = this.Workspace.Get(id);
 
-                    var newSessionObject = this.workspace.ObjectFactory.Create(this, workspaceObject.Class);
+                    var strategy = new Strategy(this, workspaceObject);
+                    sessionObject = this.Workspace.ObjectFactory.Create(strategy);
+                    strategy.SessionObject = sessionObject;
 
-                    newSessionObject.WorkspaceObject = workspaceObject;
-                    newSessionObject.ObjectType = workspaceObject.Class;
-
-                    this.sessionObjectById[workspaceObject.Id] = newSessionObject;
-
-                    sessionObject = newSessionObject;
+                    this.sessionObjectById[workspaceObject.Id] = sessionObject;
                 }
             }
 
@@ -57,14 +54,10 @@ namespace Allors.Workspace
 
         public ISessionObject Create(IClass @class)
         {
-            var newSessionObject = this.workspace.ObjectFactory.Create(this, @class);
-
-            var newId = --Session.idCounter;
-            newSessionObject.NewId = newId;
-            newSessionObject.ObjectType = @class;
-
-            this.newSessionObjectById[newId] = newSessionObject;
-
+            var strategy = new Strategy(this, @class, --Session.idCounter);
+            var newSessionObject = this.Workspace.ObjectFactory.Create(strategy);
+            strategy.SessionObject = newSessionObject;
+            this.newSessionObjectById[newSessionObject.Id] = newSessionObject;
             return newSessionObject;
         }
 
@@ -72,12 +65,12 @@ namespace Allors.Workspace
         {
             foreach (var newSessionObject in this.newSessionObjectById.Values)
             {
-                newSessionObject.Reset();
+                newSessionObject.Strategy.Reset();
             }
 
             foreach (var sessionObject in this.sessionObjectById.Values)
             {
-                sessionObject.Reset();
+                sessionObject.Strategy.Reset();
             }
         }
 
@@ -85,7 +78,7 @@ namespace Allors.Workspace
         {
             foreach (var sessionObject in this.sessionObjectById.Values)
             {
-                sessionObject.Refresh();
+                sessionObject.Strategy.Refresh();
             }
         }
 
@@ -93,8 +86,8 @@ namespace Allors.Workspace
         public PushRequest PushRequest() =>
             new PushRequest
             {
-                NewObjects = this.newSessionObjectById.Select(v => v.Value.SaveNew()).ToArray(),
-                Objects = this.sessionObjectById.Select(v => v.Value.Save()).Where(v => v != null).ToArray(),
+                NewObjects = this.newSessionObjectById.Select(v => v.Value.Strategy.SaveNew()).ToArray(),
+                Objects = this.sessionObjectById.Select(v => v.Value.Strategy.Save()).Where(v => v != null).ToArray(),
             };
 
         public void PushResponse(PushResponse pushResponse)
@@ -107,8 +100,7 @@ namespace Allors.Workspace
                     var id = long.Parse(pushResponseNewObject.I);
 
                     var sessionObject = this.newSessionObjectById[newId];
-                    sessionObject.NewId = null;
-                    sessionObject.WorkspaceObject = this.workspace.New(id, sessionObject.ObjectType);
+                    sessionObject.Strategy.PushResponse(id);
 
                     this.newSessionObjectById.Remove(newId);
                     this.sessionObjectById[id] = sessionObject;
@@ -125,14 +117,14 @@ namespace Allors.Workspace
         {
             var roleType = associationType.RoleType;
 
-            var associations = this.workspace.Get((IComposite)associationType.ObjectType).Select(v => this.Get(v.Id));
+            var associations = this.Workspace.Get((IComposite)associationType.ObjectType).Select(v => this.Get(v.Id));
             foreach (var association in associations)
             {
-                if (association.CanRead(roleType))
+                if (association.Strategy.CanRead(roleType))
                 {
                     if (roleType.IsOne)
                     {
-                        var role = (SessionObject)((SessionObject)association).GetForAssociation(roleType);
+                        var role = (ISessionObject)((ISessionObject)association).Strategy.GetForAssociation(roleType);
                         if (role != null && role.Id == @object.Id)
                         {
                             yield return association;
@@ -140,7 +132,7 @@ namespace Allors.Workspace
                     }
                     else
                     {
-                        var roles = (ISessionObject[])((SessionObject)association).GetForAssociation(roleType);
+                        var roles = (ISessionObject[])((ISessionObject)association).Strategy.GetForAssociation(roleType);
                         if (roles != null && roles.Contains(@object))
                         {
                             yield return association;

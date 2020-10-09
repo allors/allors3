@@ -49,7 +49,7 @@ namespace Allors.Workspace
         public T[] GetCollection<T>(string key) => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()
-            where T : SessionObject
+            where T : class, ISessionObject
         {
             var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
             var key = objectType.SingularName;
@@ -57,7 +57,7 @@ namespace Allors.Workspace
         }
 
         public T GetObject<T>(string key)
-            where T : SessionObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
+            where T : class, ISessionObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
 
         public object GetValue(string key) => this.Values[key];
     }

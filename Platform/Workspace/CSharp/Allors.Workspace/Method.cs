@@ -9,13 +9,13 @@ namespace Allors.Workspace
 
     public class Method
     {
-        public Method(SessionObject @object, IMethodType methodType)
+        public Method(ISessionObject @object, IMethodType methodType)
         {
             this.Object = @object;
             this.MethodType = methodType;
         }
 
-        public SessionObject Object { get; }
+        public ISessionObject Object { get; }
 
         public IMethodType MethodType { get; }
     }

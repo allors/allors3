@@ -5,45 +5,10 @@
 
 namespace Allors.Workspace
 {
-    using Protocol.Database.Push;
-    using Allors.Workspace.Meta;
-
     public interface ISessionObject
     {
+        IStrategy Strategy { get; }
+
         long Id { get; }
-
-        long? NewId { get; set; }
-
-        long? Version { get; }
-
-        IClass ObjectType { get; }
-
-        ISession Session { get; }
-
-        IWorkspaceObject WorkspaceObject { get; set; }
-
-        bool HasChanges { get; }
-
-        bool CanRead(IRoleType roleType);
-
-        bool CanWrite(IRoleType roleType);
-
-        bool Exist(IRoleType roleType);
-
-        object Get(IRoleType roleType);
-
-        void Set(IRoleType roleType, object value);
-
-        void Add(IRoleType roleType, ISessionObject value);
-
-        void Remove(IRoleType roleType, ISessionObject value);
-
-        PushRequestObject Save();
-
-        PushRequestNewObject SaveNew();
-
-        void Reset();
-
-        void Refresh(bool merge = false);
     }
 }

@@ -23,7 +23,7 @@ namespace Tests.Database
 
             foreach (var roleType in M.C1.ObjectType.RoleTypes)
             {
-                var role = newObject.Get(roleType);
+                var role = newObject.Strategy.Get(roleType);
                 Assert.True(role == null || (role is Array array && array.Length == 0));
             }
 
