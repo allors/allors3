@@ -19,9 +19,7 @@ namespace Allors.Server.Tests
     using Allors.Meta;
     using Server;
     using Allors.Services;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
     using ISession = Allors.ISession;
     using ObjectFactory = Allors.ObjectFactory;

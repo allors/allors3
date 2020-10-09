@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using Allors.Protocol.Data;
     using Allors.Workspace.Meta;
 

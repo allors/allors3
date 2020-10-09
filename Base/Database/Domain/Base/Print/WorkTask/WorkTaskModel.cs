@@ -5,7 +5,6 @@
 
 namespace Allors.Domain.Print.WorkTaskModel
 {
-    using System;
     using System.Globalization;
     using System.Linq;
 

@@ -5,7 +5,6 @@
 
 namespace Allors.Server.Controllers
 {
-    using Allors.Domain;
     using Allors.Services;
     using Allors.State;
     using Microsoft.AspNetCore.Authorization;

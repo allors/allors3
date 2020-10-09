@@ -6,7 +6,6 @@
 
 namespace Allors.Api.Json
 {
-    using Domain;
     using Invoke;
     using Protocol.Data;
     using Protocol.Database.Invoke;

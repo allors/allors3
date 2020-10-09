@@ -11,7 +11,6 @@ namespace Allors.Api.Json.Pull
     using Allors.Data;
     using Allors.Domain;
     using Protocol.Database.Pull;
-    using Protocol;
     using Allors.State;
     using Server;
 

@@ -12,7 +12,6 @@ namespace Allors
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Services;
     using Allors.State;
     using Domain.TestPopulation;
     using Person = Domain.Person;

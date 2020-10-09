@@ -5,8 +5,6 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors;
     using Allors.Api.Json;
     using Allors.Domain;
     using Allors.Protocol.Database.Invoke;

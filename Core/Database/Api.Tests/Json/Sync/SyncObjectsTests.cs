@@ -5,7 +5,6 @@
 
 namespace Tests
 {
-    using System;
     using Allors;
     using Allors.Api.Json;
     using Allors.Domain;

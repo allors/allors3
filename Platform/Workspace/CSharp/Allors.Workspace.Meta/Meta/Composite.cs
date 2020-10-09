@@ -9,7 +9,6 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Data;
 
     public abstract partial class Composite : ObjectType, IComposite
     {
