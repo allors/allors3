@@ -7,7 +7,7 @@ namespace Allors.Workspace
 {
     using Meta;
 
-    public partial interface IWorkspaceScope : IWorkspaceLifecycle
+    public partial interface IWorkspaceState : IWorkspaceLifecycle
     {
         M M { get; }
     }

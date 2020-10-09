@@ -4,12 +4,12 @@ namespace Allors.Workspace
 {
     public static partial class ObjectExtensions
     {
-        public static ISessionScope SessionScope(this ISessionObject @this)
+        public static ISessionState SessionScope(this ISessionObject @this)
         {
             return @this.Session.Scope();
         }
 
-        public static WorkspaceScope WorkspaceScope(this ISessionObject @this)
+        public static WorkspaceState WorkspaceScope(this ISessionObject @this)
         {
             return @this.Session.Workspace.Scope();
         }
@@ -17,17 +17,17 @@ namespace Allors.Workspace
 
     public static partial class SessionExtensions
     {
-        public static ISessionScope Scope(this ISession @this)
+        public static ISessionState Scope(this ISession @this)
         {
-            return ((ISessionScope)@this.Lifecycle);
+            return ((ISessionState)@this.Lifecycle);
         }
     }
 
     public static partial class WorkspaceExtensions
     {
-        public static WorkspaceScope Scope(this IWorkspace @this)
+        public static WorkspaceState Scope(this IWorkspace @this)
         {
-            return ((WorkspaceScope)@this.Lifecycle);
+            return ((WorkspaceState)@this.Lifecycle);
         }
     }
 }

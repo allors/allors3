@@ -9,6 +9,7 @@ namespace Allors.Workspace.Meta
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Data;
 
     public abstract partial class Composite : ObjectType, IComposite
     {
@@ -25,10 +26,7 @@ namespace Allors.Workspace.Meta
         private HashSet<AssociationType> derivedDatabaseAssociationTypes;
         private HashSet<RoleType> derivedDatabaseRoleTypes;
 
-        protected Composite(MetaPopulation metaPopulation, Guid id)
-            : base(metaPopulation, id)
-        {
-        }
+        protected Composite(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Remote;
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
@@ -363,7 +361,7 @@ namespace Allors.Workspace.Meta
                         v => this.ExclusiveRoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
-       
+
         public IReadOnlyDictionary<string, IEnumerable<MethodType>> WorkspaceMethodTypesByWorkspaceName
         {
             get
@@ -413,7 +411,7 @@ namespace Allors.Workspace.Meta
                     .ToDictionary(v => v, v => this.RelatedComposites.Where(w => w.WorkspaceNames.Contains(v)));
             }
         }
-        
+
         public bool ExistSupertype(IInterface @interface)
         {
             this.MetaPopulation.Derive();
@@ -530,7 +528,7 @@ namespace Allors.Workspace.Meta
             this.derivedAssociationTypes = new HashSet<AssociationType>(associationTypes);
             this.derivedDatabaseAssociationTypes = new HashSet<AssociationType>(associationTypes.Where(v => v.Origin == Origin.Remote));
         }
-        
+
         /// <summary>
         /// Derive method types.
         /// </summary>
@@ -565,7 +563,7 @@ namespace Allors.Workspace.Meta
 
             this.derivedMethodTypes = new HashSet<MethodType>(methodTypes);
         }
-        
+
         internal void DeriveIsSynced() => this.isSynced = this.assignedIsSynced || this.derivedSupertypes.Any(v => v.assignedIsSynced);
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace Tests.Remote
 
             this.Database = new ClientDatabase(client);
             var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
-            this.Workspace = new Workspace(objectFactory, new WorkspaceScope());
+            this.Workspace = new Workspace(objectFactory, new WorkspaceState());
 
             this.M = this.Workspace.Scope().M;
 

@@ -18,6 +18,8 @@ namespace Allors.Meta
 
         public abstract Origin Origin { get; }
 
+        public bool IsRemote => this.Origin == Origin.Remote;
+
         public int OriginAsInt => (int)this.Origin;
 
         public bool HasDatabaseOrigin => this.Origin == Origin.Remote;
