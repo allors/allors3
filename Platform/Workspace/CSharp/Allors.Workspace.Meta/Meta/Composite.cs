@@ -27,7 +27,7 @@ namespace Allors.Workspace.Meta
 
         protected Composite(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Database;
 
-        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
+        //public Dictionary<string, bool> InternalWorkspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
         public override Origin Origin => this.AssignedOrigin;
 
@@ -220,7 +220,7 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Database);
 
-        #region Workspace
+        #region InternalWorkspace
 
         public IEnumerable<Composite> RelatedComposites
         {
@@ -260,7 +260,7 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
 
-        #endregion Workspace
+        #endregion InternalWorkspace
 
         public IEnumerable<IAssociationType> DatabaseAssociationTypes
         {

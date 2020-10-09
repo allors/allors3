@@ -22,16 +22,16 @@ namespace Allors.Workspace.Adapters.Remote
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
-        public Strategy(Session session, IWorkspaceObject workspaceObject)
+        public Strategy(Context context, IWorkspaceObject workspaceObject)
         {
-            this.Session = session;
+            this.Context = context;
             this.WorkspaceObject = workspaceObject;
             this.ObjectType = workspaceObject.Class;
         }
 
-        public Strategy(Session session, IClass @class, long newId)
+        public Strategy(Context context, IClass @class, long newId)
         {
-            this.Session = session;
+            this.Context = context;
             this.ObjectType = @class;
             this.NewId = newId;
         }
@@ -39,14 +39,12 @@ namespace Allors.Workspace.Adapters.Remote
         public void PushResponse(long id)
         {
             this.NewId = null;
-            this.WorkspaceObject = this.Session.Workspace.New(id, this.ObjectType);
+            this.WorkspaceObject = this.InternalSession.InternalWorkspace.New(id, this.ObjectType);
         }
 
         public ISessionObject SessionObject { get; set; }
 
-        ISession IStrategy.Session => this.Session;
-
-        public Session Session { get; }
+        public InternalSession InternalSession => this.Context.InternalSession;
 
         public IWorkspaceObject WorkspaceObject { get; private set; }
 
@@ -71,6 +69,10 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
+        IContext IStrategy.Context => this.Context;
+
+        public Context Context { get; }
+
         public bool HasChangedRoles(params IRoleType[] roleTypes)
         {
             if (roleTypes.Length == 0)
@@ -80,7 +82,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (this.NewId != null)
             {
-                // I am new in the session, and i have at least one of the requested roleTypes
+                // I am new in the internalSession, and i have at least one of the requested roleTypes
                 if (roleTypes.Any(v => this.roleByRoleType.ContainsKey(v)))
                 {
                     return true;
@@ -107,7 +109,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.Session.Workspace.GetPermission(this.ObjectType, roleType, Operations.Read);
+            var permission = this.InternalSession.InternalWorkspace.GetPermission(this.ObjectType, roleType, Operations.Read);
             return this.WorkspaceObject.IsPermitted(permission);
         }
 
@@ -118,7 +120,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.Session.Workspace.GetPermission(this.ObjectType, roleType, Operations.Write);
+            var permission = this.InternalSession.InternalWorkspace.GetPermission(this.ObjectType, roleType, Operations.Write);
             return this.WorkspaceObject.IsPermitted(permission);
         }
 
@@ -129,7 +131,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.Session.Workspace.GetPermission(this.ObjectType, methodType, Operations.Execute);
+            var permission = this.InternalSession.InternalWorkspace.GetPermission(this.ObjectType, methodType, Operations.Execute);
             return this.WorkspaceObject.IsPermitted(permission);
         }
 
@@ -161,7 +163,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.Session.Get((long)workspaceRole.Value);
+                                value = this.InternalSession.Get((long)workspaceRole.Value);
                             }
                             else
                             {
@@ -169,7 +171,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
                                 for (var i = 0; i < ids.Length; i++)
                                 {
-                                    array.SetValue(this.Session.Get(ids[i]), i);
+                                    array.SetValue(this.InternalSession.Get(ids[i]), i);
                                 }
 
                                 value = array;
@@ -180,7 +182,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.InternalSession.InternalWorkspace.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
 
                 this.roleByRoleType[roleType] = value;
@@ -253,9 +255,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public T GetAssociation<T>(IAssociationType associationType) => this.Session.GetAssociation(this.SessionObject, associationType).Cast<T>().FirstOrDefault();
+        public T GetAssociation<T>(IAssociationType associationType) => this.InternalSession.GetAssociation(this.SessionObject, associationType).Cast<T>().FirstOrDefault();
 
-        public T[] GetAssociations<T>(IAssociationType associationType) => this.Session.GetAssociation(this.SessionObject, associationType).Cast<T>().ToArray();
+        public T[] GetAssociations<T>(IAssociationType associationType) => this.InternalSession.GetAssociation(this.SessionObject, associationType).Cast<T>().ToArray();
 
         public PushRequestObject Save()
         {
@@ -294,7 +296,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.WorkspaceObject != null)
             {
-                this.WorkspaceObject = this.WorkspaceObject.Workspace.Get(this.Id);
+                this.WorkspaceObject = this.InternalSession.InternalWorkspace.Get(this.Id);
             }
 
             this.changedRoleByRoleType = null;
@@ -314,7 +316,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (this.WorkspaceObject != null)
                     {
-                        this.WorkspaceObject = this.WorkspaceObject.Workspace.Get(this.Id);
+                        this.WorkspaceObject = this.InternalSession.InternalWorkspace.Get(this.Id);
                     }
                 }
             }
@@ -337,12 +339,12 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.Session.GetForAssociation((long)workspaceRole.Value);
+                                value = this.InternalSession.GetForAssociation((long)workspaceRole.Value);
                             }
                             else
                             {
                                 var ids = (long[])workspaceRole.Value;
-                                var array = ids.Select(v => this.Session.GetForAssociation(v))
+                                var array = ids.Select(v => this.InternalSession.GetForAssociation(v))
                                     .Where(v => v != null)
                                     .ToArray();
                                 value = array;
@@ -353,7 +355,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.InternalSession.InternalWorkspace.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
             }
 

@@ -122,7 +122,7 @@ namespace Allors.Workspace.Adapters.Remote
         /// Creates a new <see cref="SessionObject"/> given the <see cref="SessionObject"/>.
         /// </summary>
         /// <param name="session">
-        /// The session.
+        /// The internalSession.
         /// </param>
         /// <param name="objectType">
         /// The object Type.

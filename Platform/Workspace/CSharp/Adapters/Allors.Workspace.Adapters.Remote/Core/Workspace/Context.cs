@@ -13,31 +13,39 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database.Push;
     using Protocol.Database.Sync;
     using Allors.Workspace.Data;
+    using Meta;
     using Result = Allors.Workspace.Result;
 
     public class Context : IContext
     {
-        private readonly ContextFactory contextFactory;
-        private readonly Workspace workspace;
+        private readonly InternalWorkspace internalWorkspace;
         private readonly ClientDatabase database;
 
-        public Context(ContextFactory contextFactory)
+        public Context(ContextFactory contextFactory, ISessionLifecycle lifecycle)
         {
-            this.contextFactory = contextFactory;
-            this.workspace = this.contextFactory.Workspace;
-            this.database = this.contextFactory.Database;
+            this.ContextFactory = contextFactory;
+            this.Lifecycle = lifecycle;
+            this.internalWorkspace = this.ContextFactory.InternalWorkspace;
+            this.database = this.ContextFactory.Database;
+            this.InternalSession = new InternalSession(this, this.internalWorkspace);
+            this.ContextFactory.RegisterContext(this);
 
-            // TODO: remove cast
-            this.Session = new Session((Workspace)this.workspace, this.workspace.Lifecycle.CreateSessionScope());
-
-            this.contextFactory.RegisterContext(this);
+            this.Lifecycle.OnInit(this);
         }
 
-        ~Context() => this.contextFactory.UnregisterContext(this);
+        ~Context() => this.ContextFactory.UnregisterContext(this);
 
-        ISession IContext.Session => this.Session;
+        IContextFactory IContext.ContextFactory => this.ContextFactory;
 
-        public Session Session { get; }
+        public ContextFactory ContextFactory { get; }
+
+        public InternalSession InternalSession { get; }
+
+        public ISessionLifecycle Lifecycle { get; }
+
+        public ISessionObject Get(long id) => this.InternalSession.Get(id);
+
+        public IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType) => this.InternalSession.GetAssociation(@object, associationType);
 
         public Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null) => this.Invoke(new[] { method }, options);
 
@@ -63,13 +71,13 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
             var pullResponse = await this.database.Pull(pullRequest);
-            var syncRequest = this.workspace.Diff(pullResponse);
+            var syncRequest = this.internalWorkspace.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
             {
                 await this.Load(syncRequest);
             }
 
-            var result = new Result(this.Session, pullResponse);
+            var result = new Result(this, pullResponse);
             return result;
         }
 
@@ -86,24 +94,24 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var pullResponse = await this.database.Pull(pullService, args);
-            var syncRequest = this.workspace.Diff(pullResponse);
+            var syncRequest = this.internalWorkspace.Diff(pullResponse);
 
             if (syncRequest.Objects.Length > 0)
             {
                 await this.Load(syncRequest);
             }
 
-            var result = new Result(this.Session, pullResponse);
+            var result = new Result(this, pullResponse);
             return result;
         }
 
         public async Task<PushResponse> Save()
         {
-            var saveRequest = this.Session.PushRequest();
+            var saveRequest = this.InternalSession.PushRequest();
             var pushResponse = await this.database.Push(saveRequest);
             if (!pushResponse.HasErrors)
             {
-                this.Session.PushResponse(pushResponse);
+                this.InternalSession.PushResponse(pushResponse);
 
                 var objects = saveRequest.Objects.Select(v => v.I).ToArray();
                 if (pushResponse.NewObjects != null)
@@ -118,26 +126,30 @@ namespace Allors.Workspace.Adapters.Remote
 
                 await this.Load(syncRequests);
 
-                this.Session.Reset();
+                this.InternalSession.Reset();
             }
 
             return pushResponse;
         }
 
+        public void Reset() => this.InternalSession.Reset();
+
+        public ISessionObject Create(IClass @class) => this.InternalSession.Create(@class);
+
         private async Task Load(SyncRequest syncRequest)
         {
             var syncResponse = await this.database.Sync(syncRequest);
-            var securityRequest = this.workspace.Sync(syncResponse);
+            var securityRequest = this.internalWorkspace.Sync(syncResponse);
 
             if (securityRequest != null)
             {
                 var securityResponse = await this.database.Security(securityRequest);
-                securityRequest = this.workspace.Security(securityResponse);
+                securityRequest = this.internalWorkspace.Security(securityResponse);
 
                 if (securityRequest != null)
                 {
                     securityResponse = await this.database.Security(securityRequest);
-                    this.workspace.Security(securityResponse);
+                    this.internalWorkspace.Security(securityResponse);
                 }
             }
         }

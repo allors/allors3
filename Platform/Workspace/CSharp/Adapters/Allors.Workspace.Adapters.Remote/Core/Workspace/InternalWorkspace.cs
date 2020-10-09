@@ -1,4 +1,4 @@
-// <copyright file="Workspace.cs" company="Allors bvba">
+// <copyright file="InternalWorkspace.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,17 +14,16 @@ namespace Allors.Workspace.Adapters.Remote
     using Domain;
     using Protocol.Database.Security;
 
-    public class Workspace : IWorkspace
+    public class InternalWorkspace
     {
         private readonly Dictionary<long, WorkspaceObject> workspaceObjectById;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
-        public Workspace(ObjectFactory objectFactory, IWorkspaceLifecycle scope)
+        public InternalWorkspace(ObjectFactory objectFactory)
         {
             this.ObjectFactory = objectFactory;
-            this.Lifecycle = scope;
 
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
@@ -34,23 +33,13 @@ namespace Allors.Workspace.Adapters.Remote
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
-
-            this.Lifecycle.OnInit(this);
         }
-
-        public IWorkspaceLifecycle Lifecycle { get; }
-
-        IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
 
         public ObjectFactory ObjectFactory { get; }
 
         internal Dictionary<long, AccessControl> AccessControlById { get; }
 
         internal Dictionary<long, Permission> PermissionById { get; }
-
-        ISession IWorkspace.CreateSession() => this.CreateSession();
-
-        public Session CreateSession() => new Session(this, this.Lifecycle.CreateSessionScope());
 
         public SyncRequest Diff(PullResponse response)
         {
@@ -144,7 +133,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var metaObject = this.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponsePermission[2]));
                     IOperandType operandType = (metaObject as IRelationType)?.RoleType;
                     operandType ??= metaObject as IMethodType;
-                    
+
                     Enum.TryParse(syncResponsePermission[3], out Operations operation);
 
                     var permission = new Permission(id, @class, operandType, operation);

@@ -8,14 +8,14 @@ namespace Tests.Adapters
     using System;
     using Xunit;
 
-    public class SaveTests : DatabaseTest
+    public class SaveTests : Test
     {
         [Fact]
         public async void ShouldSyncNewlyCreatedObject()
         {
             var context = this.ContextFactory.CreateContext();
 
-            var newObject = context.Session.Create(M.C1.Class);
+            var newObject = context.Create(M.C1.Class);
 
             var saved = await context.Save();
 
@@ -27,7 +27,7 @@ namespace Tests.Adapters
 
             foreach (var associationType in M.C1.ObjectType.AssociationTypes)
             {
-                var association = context.Session.GetAssociation(newObject, associationType);
+                var association = context.GetAssociation(newObject, associationType);
                 Assert.Empty(association);
             }
         }

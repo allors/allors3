@@ -9,21 +9,27 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class ContextFactory : IContextFactory
     {
-        public ContextFactory(ClientDatabase database, Workspace workspace)
+        public ContextFactory(ClientDatabase database, InternalWorkspace internalWorkspace, IWorkspaceLifecycle lifecycle)
         {
             this.Database = database;
-            this.Workspace = workspace;
+            this.InternalWorkspace = internalWorkspace;
+            this.Lifecycle = lifecycle;
             this.Contexts = new HashSet<Context>();
+
+            this.Lifecycle.OnInit(this);
         }
 
         internal ClientDatabase Database { get; }
 
-        internal Workspace Workspace { get; }
+        internal InternalWorkspace InternalWorkspace { get; }
 
         internal ISet<Context> Contexts { get; }
 
-        public IContext CreateContext() => new Context(this);
+        public IWorkspaceLifecycle Lifecycle { get; }
 
+        public IObjectFactory ObjectFactory => this.InternalWorkspace.ObjectFactory;
+
+        public IContext CreateContext() => new Context(this, this.Lifecycle.CreateSessionScope());
 
         internal void RegisterContext(Context context) => this.Contexts.Add(context);
 

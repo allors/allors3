@@ -20,7 +20,7 @@ namespace Allors.Workspace
 
         IClass ObjectType { get; }
 
-        ISession Session { get; }
+        IContext Context { get; }
 
         IWorkspaceObject WorkspaceObject { get; }
 

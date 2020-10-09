@@ -13,17 +13,17 @@ namespace Allors.Workspace
 
     public class Result
     {
-        public Result(ISession session, PullResponse response)
+        public Result(IContext internalSession, PullResponse response)
         {
-            this.Workspace = session.Workspace;
+            this.ContextFactory = internalSession.ContextFactory;
 
             this.Objects = response.NamedObjects.ToDictionary(
                 pair => pair.Key,
-                pair => session.Get(long.Parse(pair.Value)),
+                pair => internalSession.Get(long.Parse(pair.Value)),
                 StringComparer.OrdinalIgnoreCase);
             this.Collections = response.NamedCollections.ToDictionary(
                 pair => pair.Key,
-                pair => pair.Value.Select(v => session.Get(long.Parse(v))).ToArray(),
+                pair => pair.Value.Select(v => internalSession.Get(long.Parse(v))).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
             this.Values = response.NamedValues.ToDictionary(
                 pair => pair.Key,
@@ -37,11 +37,11 @@ namespace Allors.Workspace
 
         public IDictionary<string, object> Values { get; }
 
-        private IWorkspace Workspace { get; }
+        private IContextFactory ContextFactory { get; }
 
         public T[] GetCollection<T>()
         {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
+            var objectType = this.ContextFactory.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName;
             return this.GetCollection<T>(key);
         }
@@ -51,7 +51,7 @@ namespace Allors.Workspace
         public T GetObject<T>()
             where T : class, ISessionObject
         {
-            var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
+            var objectType = this.ContextFactory.ObjectFactory.GetObjectType<T>();
             var key = objectType.SingularName;
             return this.GetObject<T>(key);
         }

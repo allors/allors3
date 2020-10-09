@@ -11,7 +11,7 @@ namespace Allors.Workspace
         {
         }
 
-        public void OnInit(ISession session)
+        public void OnInit(IContext internalSession)
         {
         }
     }

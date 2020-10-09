@@ -12,7 +12,7 @@ namespace Tests.Adapters
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
-    public class AssociationTests : DatabaseTest
+    public class AssociationTests : Test
     {
         [Fact]
         public void GetOne2Many() =>

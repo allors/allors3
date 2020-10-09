@@ -5,14 +5,22 @@
 
 namespace Allors.Workspace
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Protocol.Database.Invoke;
     using Protocol.Database.Push;
     using Allors.Workspace.Data;
+    using Allors.Workspace.Meta;
 
     public interface IContext
     {
-        ISession Session { get; }
+        IContextFactory ContextFactory { get; }
+
+        ISessionLifecycle Lifecycle { get; }
+
+        ISessionObject Get(long id);
+
+        IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType);
 
         Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null);
 
@@ -25,5 +33,9 @@ namespace Allors.Workspace
         Task<Result> Load(object args, string pullService = null);
 
         Task<PushResponse> Save();
+
+        void Reset();
+
+        ISessionObject Create(IClass @class);
     }
 }

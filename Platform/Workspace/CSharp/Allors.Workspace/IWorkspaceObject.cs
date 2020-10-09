@@ -9,7 +9,6 @@ namespace Allors.Workspace
 
     public interface IWorkspaceObject
     {
-        IWorkspace Workspace { get; }
 
         IClass Class { get; }
 

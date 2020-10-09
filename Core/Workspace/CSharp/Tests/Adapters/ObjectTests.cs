@@ -10,7 +10,7 @@ namespace Tests.Adapters
 
     using Xunit;
 
-    public class ObjectTests : DatabaseTest
+    public class ObjectTests : Test
     {
         [Fact]
         public void NonExistingPullController() =>

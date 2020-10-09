@@ -1,4 +1,4 @@
-// <copyright file="DatabaseTest.cs" company="Allors bvba">
+// <copyright file="Test.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,9 +14,10 @@ namespace Tests.Adapters
     using Allors.Workspace.Meta;
 
     using Xunit;
+    using InternalWorkspace = Allors.Workspace.Adapters.Remote.InternalWorkspace;
 
     [Collection("Database")]
-    public class DatabaseTest : IDisposable
+    public class Test : IDisposable
     {
         public const string Url = "http://localhost:5000";
 
@@ -28,11 +29,11 @@ namespace Tests.Adapters
 
         public ClientDatabase Database { get; }
 
-        public Workspace Workspace { get; }
+        public InternalWorkspace InternalWorkspace { get; }
 
         public M M { get; }
 
-        public DatabaseTest()
+        public Test()
         {
             var client = new HttpClient()
             {
@@ -41,11 +42,11 @@ namespace Tests.Adapters
 
             this.Database = new ClientDatabase(client);
             var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
-            this.Workspace = new Workspace(objectFactory, new WorkspaceState());
+            this.InternalWorkspace = new InternalWorkspace(objectFactory);
 
-            this.ContextFactory = new ContextFactory(this.Database, this.Workspace);
+            this.ContextFactory = new ContextFactory(this.Database, this.InternalWorkspace, new WorkspaceState());
 
-            this.M = this.Workspace.Scope().M;
+            this.M = this.ContextFactory.Scope().M;
 
             this.Init();
         }

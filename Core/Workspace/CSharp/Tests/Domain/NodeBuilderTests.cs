@@ -10,7 +10,7 @@ namespace Tests.Domain
     using Adapters;
     using Xunit;
 
-    public class NodeBuilderTests : DatabaseTest
+    public class NodeBuilderTests : Test
     {
         [Fact]
         public void Class()

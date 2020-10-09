@@ -12,16 +12,16 @@ namespace Tests.Adapters.Remote
     using Adapters;
     using Xunit;
 
-    public class WorkspaceTests : DatabaseTest
+    public class WorkspaceTests : Test
     {
         [Fact]
         public void Load()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
 
             object Value(IWorkspaceObject @object, IRoleType roleType) => @object.Roles.First(v => Equals(v.RoleType, roleType)).Value;
 
-            var martien = this.Workspace.Get(3);
+            var martien = this.InternalWorkspace.Get(3);
 
             Assert.Equal(3, martien.Id);
             Assert.Equal(1003, martien.Version);
@@ -36,7 +36,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Diff()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -48,7 +48,7 @@ namespace Tests.Adapters.Remote
                            },
             };
 
-            var requireLoad = this.Workspace.Diff(pullResponse);
+            var requireLoad = this.InternalWorkspace.Diff(pullResponse);
 
             Assert.Empty(requireLoad.Objects);
         }
@@ -56,7 +56,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffVersion()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -68,7 +68,7 @@ namespace Tests.Adapters.Remote
                     },
             };
 
-            var requireLoad = this.Workspace.Diff(pullResponse);
+            var requireLoad = this.InternalWorkspace.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -78,7 +78,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffAccessControl()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -90,7 +90,7 @@ namespace Tests.Adapters.Remote
                     },
             };
 
-            var requireLoad = this.Workspace.Diff(pullResponse);
+            var requireLoad = this.InternalWorkspace.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -100,7 +100,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffChangeDeniedPermission()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -112,7 +112,7 @@ namespace Tests.Adapters.Remote
                     },
             };
 
-            var requireLoad = this.Workspace.Diff(pullResponse);
+            var requireLoad = this.InternalWorkspace.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -122,7 +122,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffAddDeniedPermission()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -134,7 +134,7 @@ namespace Tests.Adapters.Remote
                     },
             };
 
-            var requireLoad = this.Workspace.Diff(pullResponse);
+            var requireLoad = this.InternalWorkspace.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -144,7 +144,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffRemoveDeniedPermission()
         {
-            this.Workspace.Sync(Fixture.LoadData(this.M));
+            this.InternalWorkspace.Sync(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -156,7 +156,7 @@ namespace Tests.Adapters.Remote
                     },
             };
 
-            var requireLoad = this.Workspace.Diff(pullResponse);
+            var requireLoad = this.InternalWorkspace.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 

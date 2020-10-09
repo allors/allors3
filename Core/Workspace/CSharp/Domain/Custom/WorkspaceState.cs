@@ -15,7 +15,7 @@ namespace Allors.Workspace
         {
         }
 
-        public void OnInit(IWorkspace workspace) => this.M = new M((MetaPopulation)workspace.ObjectFactory.MetaPopulation);
+        public void OnInit(IContextFactory internalWorkspace) => this.M = new M((MetaPopulation)internalWorkspace.ObjectFactory.MetaPopulation);
 
         public ISessionLifecycle CreateSessionScope() => new SessionState();
     }

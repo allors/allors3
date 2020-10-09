@@ -8,10 +8,10 @@ using System;
 namespace Allors.Workspace
 {
     /// <summary>
-    /// The Session lifecycle.
+    /// The Context lifecycle.
     /// </summary>
     public interface ISessionLifecycle : IDisposable
     {
-        void OnInit(ISession session);
+        void OnInit(IContext context);
     }
 }

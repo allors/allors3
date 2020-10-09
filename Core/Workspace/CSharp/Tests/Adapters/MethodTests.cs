@@ -11,7 +11,7 @@ namespace Tests.Adapters
     using Nito.AsyncEx;
     using Xunit;
 
-    public class MethodTests : DatabaseTest
+    public class MethodTests : Test
     {
         [Fact]
         public void Call() =>
@@ -46,7 +46,7 @@ namespace Tests.Adapters
 
                     organisation = (await context.Load(pull)).GetObject<Organisation>();
 
-                    context.Session.Reset();
+                    context.Reset();
 
                     Assert.True(organisation.JustDidIt);
                 });

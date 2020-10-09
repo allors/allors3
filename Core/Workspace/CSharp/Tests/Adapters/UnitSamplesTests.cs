@@ -12,7 +12,7 @@ namespace Tests.Adapters
 
     using Xunit;
 
-    public class UnitSamplesTests : DatabaseTest
+    public class UnitSamplesTests : Test
     {
         [Fact]
         public void Null() =>

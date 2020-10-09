@@ -12,7 +12,7 @@ namespace Tests.Adapters
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
-    public class TreeTests : DatabaseTest
+    public class TreeTests : Test
     {
         [Fact]
         public async void Users()

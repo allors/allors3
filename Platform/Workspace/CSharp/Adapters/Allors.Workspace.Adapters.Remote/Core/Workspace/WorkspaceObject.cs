@@ -19,9 +19,9 @@ namespace Allors.Workspace.Adapters.Remote
         private string sortedAccessControlIds;
         private string sortedDeniedPermissionIds;
 
-        internal WorkspaceObject(Workspace workspace, long objectId, IClass @class)
+        internal WorkspaceObject(InternalWorkspace internalWorkspace, long objectId, IClass @class)
         {
-            this.Workspace = workspace;
+            this.InternalWorkspace = internalWorkspace;
             this.Id = objectId;
             this.Class = @class;
             this.Version = 0;
@@ -29,11 +29,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal WorkspaceObject(ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
-            this.Workspace = ctx.Workspace;
+            this.InternalWorkspace = ctx.InternalWorkspace;
             this.Id = long.Parse(syncResponseObject.I);
-            this.Class = (IClass)this.Workspace.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
+            this.Class = (IClass)this.InternalWorkspace.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
-            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.Workspace.ObjectFactory.MetaPopulation, v)).Cast<IWorkspaceRole>().ToArray();
+            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.InternalWorkspace.ObjectFactory.MetaPopulation, v)).Cast<IWorkspaceRole>().ToArray();
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.A);
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.D);
         }
@@ -66,9 +66,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public long Version { get; private set; }
 
-        IWorkspace IWorkspaceObject.Workspace => this.Workspace;
-
-        public Workspace Workspace { get; }
+        public InternalWorkspace InternalWorkspace { get; }
 
         public bool IsPermitted(Permission permission)
         {
@@ -79,10 +77,10 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (this.accessControls == null && this.SortedAccessControlIds != null)
             {
-                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.Workspace.AccessControlById[long.Parse(v)]).ToArray();
+                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.InternalWorkspace.AccessControlById[long.Parse(v)]).ToArray();
                 if (this.deniedPermissions != null)
                 {
-                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.Workspace.PermissionById[long.Parse(v)]).ToArray();
+                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.InternalWorkspace.PermissionById[long.Parse(v)]).ToArray();
                 }
             }
 

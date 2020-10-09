@@ -8,11 +8,11 @@ namespace Allors.Workspace
     using System;
 
     /// <summary>
-    /// The Workspace lifecycle.
+    /// The InternalWorkspace lifecycle.
     /// </summary>
     public interface IWorkspaceLifecycle : IDisposable
     {
-        void OnInit(IWorkspace workspace);
+        void OnInit(IContextFactory internalWorkspace);
 
         ISessionLifecycle CreateSessionScope();
     }

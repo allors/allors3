@@ -7,6 +7,10 @@ namespace Allors.Workspace
 {
     public interface IContextFactory
     {
+        IObjectFactory ObjectFactory { get; }
+
+        IWorkspaceLifecycle Lifecycle { get; }
+
         IContext CreateContext();
     }
 }

@@ -10,7 +10,7 @@ namespace Tests.Adapters
     using Allors.Workspace.Domain;
     using Xunit;
 
-    public class LoadTests : DatabaseTest
+    public class LoadTests : Test
     {
         [Fact]
         public void WithAccessControl()
@@ -59,7 +59,7 @@ namespace Tests.Adapters
 
                 foreach (var associationType in M.C1.ObjectType.AssociationTypes)
                 {
-                    var association = context.Session.GetAssociation(c1, associationType);
+                    var association = context.GetAssociation(c1, associationType);
                     Assert.Empty(association);
                 }
             }
@@ -91,7 +91,7 @@ namespace Tests.Adapters
 
                 foreach (var associationType in M.C1.ObjectType.AssociationTypes)
                 {
-                    var association = context.Session.GetAssociation(c1, associationType);
+                    var association = context.GetAssociation(c1, associationType);
                     Assert.Empty(association);
                 }
             }
