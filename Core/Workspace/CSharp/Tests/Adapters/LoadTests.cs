@@ -6,6 +6,7 @@
 namespace Tests.Adapters
 {
     using System;
+    using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -59,8 +60,16 @@ namespace Tests.Adapters
 
                 foreach (var associationType in M.C1.ObjectType.AssociationTypes)
                 {
-                    var association = context.GetAssociation(c1, associationType);
-                    Assert.Empty(association);
+                    if (associationType.IsOne)
+                    {
+                        var association = ((Strategy)c1.Strategy).GetAssociation(associationType);
+                        Assert.Null(association);
+                    }
+                    else
+                    {
+                        var association = ((Strategy)c1.Strategy).GetAssociations(associationType);
+                        Assert.Empty(association);
+                    }
                 }
             }
         }
@@ -91,8 +100,16 @@ namespace Tests.Adapters
 
                 foreach (var associationType in M.C1.ObjectType.AssociationTypes)
                 {
-                    var association = context.GetAssociation(c1, associationType);
-                    Assert.Empty(association);
+                    if (associationType.IsOne)
+                    {
+                        var association = ((Strategy)c1.Strategy).GetAssociation(associationType);
+                        Assert.Null(association);
+                    }
+                    else
+                    {
+                        var association = ((Strategy)c1.Strategy).GetAssociations(associationType);
+                        Assert.Empty(association);
+                    }
                 }
             }
         }

@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Protocol.Database.Invoke;
     using Protocol.Database.Push;
@@ -18,11 +17,9 @@ namespace Allors.Workspace
 
         ISessionStateLifecycle StateLifecycle { get; }
 
-        ISessionObject Get(long id);
+        IObject Instantiate(long id);
 
-        IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType);
-
-        ISessionObject Create(IClass @class);
+        IObject Create(IClass @class);
 
         void Reset();
 

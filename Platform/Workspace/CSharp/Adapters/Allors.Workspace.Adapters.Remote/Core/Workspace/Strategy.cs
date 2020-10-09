@@ -1,4 +1,4 @@
-// <copyright file="SessionObject.cs" company="Allors bvba">
+// <copyright file="Object.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -22,6 +22,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
+        private IObject @object;
+
         public Strategy(Session session, DatabaseObject databaseObject)
         {
             this.Session = session;
@@ -42,7 +44,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.New(id, this.ObjectType);
         }
 
-        public ISessionObject SessionObject { get; set; }
+        public IObject Object
+        {
+            get
+            {
+                this.@object ??= this.Session.Workspace.DatabaseOrigin.ObjectFactory.Create(this);
+                return this.@object;
+            }
+        }
 
         public SessionOrigin SessionOrigin => this.Session.SessionOrigin;
 
@@ -231,18 +240,18 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRoleType[roleType] = value;
         }
 
-        public void Add(IRoleType roleType, ISessionObject value)
+        public void Add(IRoleType roleType, IObject value)
         {
-            var roles = (ISessionObject[])this.Get(roleType);
+            var roles = (IObject[])this.Get(roleType);
             if (!roles.Contains(value))
             {
-                roles = new List<ISessionObject>(roles) { value }.ToArray();
+                roles = new List<IObject>(roles) { value }.ToArray();
             }
 
             this.Set(roleType, roles);
         }
 
-        public void Remove(IRoleType roleType, ISessionObject value)
+        public void Remove(IRoleType roleType, IObject value)
         {
             var roles = (IStrategy[])this.Get(roleType);
             if (roles.Contains(value.Strategy))
@@ -255,9 +264,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public T GetAssociation<T>(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.SessionObject, associationType).Cast<T>().FirstOrDefault();
+        public object GetAssociation(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.Object, associationType).FirstOrDefault();
 
-        public T[] GetAssociations<T>(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.SessionObject, associationType).Cast<T>().ToArray();
+        public IEnumerable<IObject> GetAssociations(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.Object, associationType);
 
         public PushRequestObject Save()
         {
@@ -381,12 +390,12 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (roleType.IsOne)
                     {
-                        var sessionRole = (ISessionObject)roleValue;
+                        var sessionRole = (IObject)roleValue;
                         pushRequestRole.S = sessionRole?.Id.ToString();
                     }
                     else
                     {
-                        var sessionRoles = (ISessionObject[])roleValue;
+                        var sessionRoles = (IObject[])roleValue;
                         var roleIds = sessionRoles.Select(item => item.Id.ToString()).ToArray();
                         if (this.NewId != null)
                         {

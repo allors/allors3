@@ -19,11 +19,11 @@ namespace Allors.Workspace
 
             this.Objects = response.NamedObjects.ToDictionary(
                 pair => pair.Key,
-                pair => session.Get(long.Parse(pair.Value)),
+                pair => session.Instantiate(long.Parse(pair.Value)),
                 StringComparer.OrdinalIgnoreCase);
             this.Collections = response.NamedCollections.ToDictionary(
                 pair => pair.Key,
-                pair => pair.Value.Select(v => session.Get(long.Parse(v))).ToArray(),
+                pair => pair.Value.Select(v => session.Instantiate(long.Parse(v))).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
             this.Values = response.NamedValues.ToDictionary(
                 pair => pair.Key,
@@ -31,9 +31,9 @@ namespace Allors.Workspace
                 StringComparer.OrdinalIgnoreCase);
         }
 
-        public IDictionary<string, ISessionObject> Objects { get; }
+        public IDictionary<string, IObject> Objects { get; }
 
-        public IDictionary<string, ISessionObject[]> Collections { get; }
+        public IDictionary<string, IObject[]> Collections { get; }
 
         public IDictionary<string, object> Values { get; }
 
@@ -49,7 +49,7 @@ namespace Allors.Workspace
         public T[] GetCollection<T>(string key) => this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()
-            where T : class, ISessionObject
+            where T : class, IObject
         {
             var objectType = this.Workspace.ObjectFactory.GetObjectType<T>();
             var key = objectType.SingularName;
@@ -57,7 +57,7 @@ namespace Allors.Workspace
         }
 
         public T GetObject<T>(string key)
-            where T : class, ISessionObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
+            where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
 
         public object GetValue(string key) => this.Values[key];
     }

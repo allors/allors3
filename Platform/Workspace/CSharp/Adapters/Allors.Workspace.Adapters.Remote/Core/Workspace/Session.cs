@@ -43,9 +43,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public ISessionStateLifecycle StateLifecycle { get; }
 
-        public ISessionObject Get(long id) => this.SessionOrigin.Get(id);
+        public IObject Instantiate(long id) => this.SessionOrigin.Get(id);
 
-        public IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType) => this.SessionOrigin.GetAssociation(@object, associationType);
+        public IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType) => this.SessionOrigin.GetAssociation(@object, associationType);
 
         public Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null) => this.Invoke(new[] { method }, options);
 
@@ -134,7 +134,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Reset() => this.SessionOrigin.Reset();
 
-        public ISessionObject Create(IClass @class) => this.SessionOrigin.Create(@class);
+        public IObject Create(IClass @class) => this.SessionOrigin.Create(@class);
 
         private async Task Load(SyncRequest syncRequest)
         {

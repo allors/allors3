@@ -21,7 +21,7 @@ namespace Tests.Adapters
         public const string Url = "http://localhost:5000";
 
         public const string InitUrl = "/Test/Init";
-        public const string SetupUrl = "/Test/Setup?databaseOrigin=full";
+        public const string SetupUrl = "/Test/Setup?population=full";
         public const string LoginUrl = "/Test/Login";
 
         public Workspace Workspace { get; }

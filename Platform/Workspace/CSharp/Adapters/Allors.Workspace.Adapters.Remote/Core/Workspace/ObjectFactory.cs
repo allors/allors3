@@ -59,7 +59,7 @@ namespace Allors.Workspace.Adapters.Remote
             var types = assembly.GetTypes()
                 .Where(type => type.Namespace != null &&
                                type.Namespace.Equals(instance.Namespace) &&
-                               type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ISessionObject)))
+                               type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IObject)))
                 .ToArray();
 
             var extensionMethods = (from type in assembly.ExportedTypes
@@ -127,15 +127,15 @@ namespace Allors.Workspace.Adapters.Remote
         /// <returns>
         /// The new <see cref="SessionObject"/>.
         /// </returns>
-        public ISessionObject Create(IStrategy strategy)
+        public IObject Create(IStrategy strategy)
         {
             var constructor = this.contructorInfoByObjectType[strategy.ObjectType];
             object[] parameters = { strategy };
 
-            return (ISessionObject)constructor.Invoke(parameters);
+            return (IObject)constructor.Invoke(parameters);
         }
 
-        ISessionObject IObjectFactory.Create(IStrategy strategy) => this.Create(strategy);
+        IObject IObjectFactory.Create(IStrategy strategy) => this.Create(strategy);
 
         /// <summary>
         /// Gets the .Net <see cref="Type"/> given the Allors <see cref="IObjectType"/>.

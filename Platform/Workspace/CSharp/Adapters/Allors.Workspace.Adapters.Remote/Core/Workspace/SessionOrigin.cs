@@ -14,8 +14,8 @@ namespace Allors.Workspace.Adapters.Remote
     public class SessionOrigin
     {
         private static long idCounter = 0;
-        private readonly Dictionary<long, ISessionObject> sessionObjectById = new Dictionary<long, ISessionObject>();
-        private readonly Dictionary<long, ISessionObject> newSessionObjectById = new Dictionary<long, ISessionObject>();
+        private readonly Dictionary<long, Strategy> strategyById = new Dictionary<long, Strategy>();
+        private readonly Dictionary<long, Strategy> newStrategyById = new Dictionary<long, Strategy>();
 
         public SessionOrigin(Session session, DatabaseOrigin databaseOrigin)
         {
@@ -23,58 +23,52 @@ namespace Allors.Workspace.Adapters.Remote
             this.DatabaseOrigin = databaseOrigin;
         }
 
-        public bool HasChanges => this.newSessionObjectById.Count > 0 || this.sessionObjectById.Values.Any(v => v.Strategy.HasChanges);
+        public bool HasChanges => this.newStrategyById.Count > 0 || this.strategyById.Values.Any(v => v.HasChanges);
 
         public Session Session { get; }
 
         public DatabaseOrigin DatabaseOrigin { get; }
 
-        public ISessionObject Get(long id)
+        public IObject Get(long id)
         {
-            if (!this.sessionObjectById.TryGetValue(id, out var sessionObject))
+            if (!this.strategyById.TryGetValue(id, out var strategy))
             {
-                if (!this.newSessionObjectById.TryGetValue(id, out sessionObject))
+                if (!this.newStrategyById.TryGetValue(id, out strategy))
                 {
                     var workspaceObject = this.DatabaseOrigin.Get(id);
-
-                    var strategy = new Strategy(this.Session, workspaceObject);
-                    sessionObject = this.DatabaseOrigin.ObjectFactory.Create(strategy);
-                    strategy.SessionObject = sessionObject;
-
-                    this.sessionObjectById[workspaceObject.Id] = sessionObject;
+                    strategy = new Strategy(this.Session, workspaceObject);
+                    this.strategyById[workspaceObject.Id] = strategy;
                 }
             }
 
-            return sessionObject;
+            return strategy.Object;
         }
 
-        public ISessionObject Create(IClass @class)
+        public IObject Create(IClass @class)
         {
             var strategy = new Strategy(this.Session, @class, --SessionOrigin.idCounter);
-            var newSessionObject = this.DatabaseOrigin.ObjectFactory.Create(strategy);
-            strategy.SessionObject = newSessionObject;
-            this.newSessionObjectById[newSessionObject.Id] = newSessionObject;
-            return newSessionObject;
+            this.newStrategyById[strategy.Id] = strategy;
+            return strategy.Object;
         }
 
         public void Reset()
         {
-            foreach (var newSessionObject in this.newSessionObjectById.Values)
+            foreach (var newSessionObject in this.newStrategyById.Values)
             {
-                newSessionObject.Strategy.Reset();
+                newSessionObject.Reset();
             }
 
-            foreach (var sessionObject in this.sessionObjectById.Values)
+            foreach (var sessionObject in this.strategyById.Values)
             {
-                sessionObject.Strategy.Reset();
+                sessionObject.Reset();
             }
         }
 
         public void Refresh()
         {
-            foreach (var sessionObject in this.sessionObjectById.Values)
+            foreach (var sessionObject in this.strategyById.Values)
             {
-                sessionObject.Strategy.Refresh();
+                sessionObject.Refresh();
             }
         }
 
@@ -82,8 +76,8 @@ namespace Allors.Workspace.Adapters.Remote
         public PushRequest PushRequest() =>
             new PushRequest
             {
-                NewObjects = this.newSessionObjectById.Select(v => v.Value.Strategy.SaveNew()).ToArray(),
-                Objects = this.sessionObjectById.Select(v => v.Value.Strategy.Save()).Where(v => v != null).ToArray(),
+                NewObjects = this.newStrategyById.Select(v => v.Value.SaveNew()).ToArray(),
+                Objects = this.strategyById.Select(v => v.Value.Save()).Where(v => v != null).ToArray(),
             };
 
         public void PushResponse(PushResponse pushResponse)
@@ -95,21 +89,21 @@ namespace Allors.Workspace.Adapters.Remote
                     var newId = long.Parse(pushResponseNewObject.NI);
                     var id = long.Parse(pushResponseNewObject.I);
 
-                    var sessionObject = this.newSessionObjectById[newId];
-                    sessionObject.Strategy.PushResponse(id);
+                    var sessionObject = this.newStrategyById[newId];
+                    sessionObject.PushResponse(id);
 
-                    this.newSessionObjectById.Remove(newId);
-                    this.sessionObjectById[id] = sessionObject;
+                    this.newStrategyById.Remove(newId);
+                    this.strategyById[id] = sessionObject;
                 }
             }
 
-            if (this.newSessionObjectById != null && this.newSessionObjectById.Count != 0)
+            if (this.newStrategyById != null && this.newStrategyById.Count != 0)
             {
                 throw new Exception("Not all new objects received ids");
             }
         }
 
-        public IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType)
+        public IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
@@ -120,7 +114,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (roleType.IsOne)
                     {
-                        var role = (ISessionObject)((ISessionObject)association).Strategy.GetForAssociation(roleType);
+                        var role = (IObject)((Strategy)association.Strategy).GetForAssociation(roleType);
                         if (role != null && role.Id == @object.Id)
                         {
                             yield return association;
@@ -128,7 +122,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roles = (ISessionObject[])((ISessionObject)association).Strategy.GetForAssociation(roleType);
+                        var roles = (IObject[])((Strategy)association.Strategy).GetForAssociation(roleType);
                         if (roles != null && roles.Contains(@object))
                         {
                             yield return association;
@@ -138,14 +132,14 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal ISessionObject GetForAssociation(long id)
+        internal IObject GetForAssociation(long id)
         {
-            if (!this.sessionObjectById.TryGetValue(id, out var sessionObject))
+            if (!this.strategyById.TryGetValue(id, out var sessionObject))
             {
-                this.newSessionObjectById.TryGetValue(id, out sessionObject);
+                this.newStrategyById.TryGetValue(id, out sessionObject);
             }
 
-            return sessionObject;
+            return sessionObject?.Object;
         }
     }
 }

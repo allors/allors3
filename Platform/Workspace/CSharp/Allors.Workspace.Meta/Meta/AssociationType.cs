@@ -142,7 +142,7 @@ namespace Allors.Workspace.Meta
         public int CompareTo(object other) => this.RelationType.Id.CompareTo((other as AssociationType)?.RelationType.Id);
 
         ///// <summary>
-        ///// Get the value of the association on this object.
+        ///// Instantiate the value of the association on this object.
         ///// </summary>
         ///// <param name="strategy">
         ///// The strategy.
@@ -150,7 +150,7 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The association value.
         ///// </returns>
-        //public object Get(IStrategy strategy) => strategy.GetAssociation(this.RelationType);
+        //public object Instantiate(IStrategy strategy) => strategy.GetAssociation(this.RelationType);
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

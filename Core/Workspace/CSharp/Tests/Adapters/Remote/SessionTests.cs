@@ -591,9 +591,9 @@ namespace Tests.Adapters.Remote
 
             var session = new Session(databaseOrigin);
 
-            var acme = session.Get("101") as Organisation;
-            var ocme = session.Get("102") as Organisation;
-            var icme = session.Get("102") as Organisation;
+            var acme = session.Instantiate("101") as Organisation;
+            var ocme = session.Instantiate("102") as Organisation;
+            var icme = session.Instantiate("102") as Organisation;
 
             Assert.True(acme.CanExecuteJustDoIt);
             this.isFalse(ocme.CanExecuteJustDoIt);

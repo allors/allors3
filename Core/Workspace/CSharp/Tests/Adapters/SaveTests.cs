@@ -6,6 +6,7 @@
 namespace Tests.Adapters
 {
     using System;
+    using Allors.Workspace.Adapters.Remote;
     using Xunit;
 
     public class SaveTests : Test
@@ -27,8 +28,16 @@ namespace Tests.Adapters
 
             foreach (var associationType in M.C1.ObjectType.AssociationTypes)
             {
-                var association = context.GetAssociation(newObject, associationType);
-                Assert.Empty(association);
+                if (associationType.IsOne)
+                {
+                    var association = ((Strategy)newObject.Strategy).GetAssociation(associationType);
+                    Assert.Null(association);
+                }
+                else
+                {
+                    var association = ((Strategy)newObject.Strategy).GetAssociations(associationType);
+                    Assert.Empty(association);
+                }
             }
         }
     }
