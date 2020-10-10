@@ -1,4 +1,4 @@
-// <copyright file="DatabaseOrigin.cs" company="Allors bvba">
+// <copyright file="Database.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -62,7 +62,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public SyncRequest Diff(PullResponse response)
         {
-            var ctx = new ResponseContext(this, this.AccessControlById, this.PermissionById);
+            var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
 
             var syncRequest = new SyncRequest
             {
@@ -122,10 +122,10 @@ namespace Allors.Workspace.Adapters.Remote
 
         public SecurityRequest Sync(SyncResponse syncResponse)
         {
-            var ctx = new ResponseContext(this, this.AccessControlById, this.PermissionById);
+            var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var workspaceObject = new DatabaseObject(ctx, syncResponseObject);
+                var workspaceObject = new DatabaseObject(this, ctx, syncResponseObject);
                 this.databaseObjectById[workspaceObject.Id] = workspaceObject;
             }
 
@@ -400,9 +400,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal DatabaseObject New(long objectId, IClass @class)
         {
-            var workspaceObject = new DatabaseObject(this, objectId, @class);
-            this.databaseObjectById[objectId] = workspaceObject;
-            return workspaceObject;
+            var databaseObject = new DatabaseObject(this, objectId, @class);
+            this.databaseObjectById[objectId] = databaseObject;
+            return databaseObject;
         }
     }
 }

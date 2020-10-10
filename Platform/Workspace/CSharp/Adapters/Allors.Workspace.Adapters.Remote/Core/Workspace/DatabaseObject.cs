@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Protocol.Database;
 
-    public class DatabaseObject 
+    public class DatabaseObject
     {
         private AccessControl[] accessControls;
 
@@ -19,21 +19,21 @@ namespace Allors.Workspace.Adapters.Remote
         private string sortedAccessControlIds;
         private string sortedDeniedPermissionIds;
 
-        internal DatabaseObject(Database databaseOrigin, long objectId, IClass @class)
+        internal DatabaseObject(Database database, long objectId, IClass @class)
         {
-            this.DatabaseOrigin = databaseOrigin;
+            this.Database = database;
             this.Id = objectId;
             this.Class = @class;
             this.Version = 0;
         }
 
-        internal DatabaseObject(ResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal DatabaseObject(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
-            this.DatabaseOrigin = ctx.DatabaseOrigin;
+            this.Database = database;
             this.Id = long.Parse(syncResponseObject.I);
-            this.Class = (IClass)this.DatabaseOrigin.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
+            this.Class = (IClass)this.Database.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
-            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.DatabaseOrigin.ObjectFactory.MetaPopulation, v)).Cast<WorkspaceRole>().ToArray();
+            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.Database.ObjectFactory.MetaPopulation, v)).Cast<WorkspaceRole>().ToArray();
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.A);
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.D);
         }
@@ -66,7 +66,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public long Version { get; private set; }
 
-        public Database DatabaseOrigin { get; }
+        public Database Database { get; }
 
         public bool IsPermitted(Permission permission)
         {
@@ -77,10 +77,10 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (this.accessControls == null && this.SortedAccessControlIds != null)
             {
-                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.DatabaseOrigin.AccessControlById[long.Parse(v)]).ToArray();
+                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.Database.AccessControlById[long.Parse(v)]).ToArray();
                 if (this.deniedPermissions != null)
                 {
-                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.DatabaseOrigin.PermissionById[long.Parse(v)]).ToArray();
+                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.Database.PermissionById[long.Parse(v)]).ToArray();
                 }
             }
 

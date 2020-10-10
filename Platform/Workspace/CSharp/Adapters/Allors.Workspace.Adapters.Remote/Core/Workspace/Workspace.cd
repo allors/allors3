@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Allors.Workspace.Adapters.Remote.Workspace">
-    <Position X="0.5" Y="2" Width="1.75" />
+    <Position X="0.5" Y="0.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>EAQAABAAAEAAABAAAAAAAAAEAAAAAAAAAACAAABAAAA=</HashCode>
+      <HashCode>AAQAABAAAEAAABAAAAAAAAAEAAAAAAAAAACAAABAAAA=</HashCode>
       <FileName>Core\Workspace\Workspace.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -11,30 +11,15 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Workspace.Adapters.Remote.Remote">
-    <Position X="3.25" Y="5" Width="1.75" />
-    <NestedTypes>
-      <Class Name="Allors.Workspace.Adapters.Remote.Remote.AuthenticationResult" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Core\Workspace\Remote.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAIEACAAAIAAAgACgAAAAAAAAAUAACAiAA=</HashCode>
-      <FileName>Core\Workspace\Remote.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Session">
-    <Position X="0.5" Y="7" Width="1.5" />
+    <Position X="0.5" Y="7.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>EAAAwIAAAABABkRAAAQAAAgUBAAgAEAAAIAQAAAAAAA=</HashCode>
+      <HashCode>AAAAwIAAAEBABkQAAAQAAAgUBAAgAEAAAIAQAAAAAAA=</HashCode>
       <FileName>Core\Workspace\Session.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="database" />
       <Property Name="Workspace" />
-      <Property Name="DatabaseOrigin" />
+      <Property Name="Database" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Field Name="strategyById" />
@@ -44,40 +29,60 @@
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Database">
     <Position X="3.75" Y="0.5" Width="3" />
+    <NestedTypes>
+      <Class Name="Allors.Workspace.Adapters.Remote.Database.AuthenticationResult" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Core\Workspace\Database.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>IAQAICAAAAAAACDAgQACAAAAAAAAAAAAAAAEAAgAQAA=</HashCode>
+      <HashCode>IAQAICAAAAAIACDAgQICAAgACgAAAAAAAAAUAAiAyAA=</HashCode>
       <FileName>Core\Workspace\Database.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ObjectFactory" />
+    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Field Name="databaseObjectById" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseObject">
-    <Position X="8.25" Y="0.5" Width="2.25" />
+    <Position X="8.25" Y="1.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>MACCgAAAAAAAAAAIAAIAAAAIAgAAAAAAAAAAAIAIAAg=</HashCode>
+      <HashCode>IACCgAAAAEAAAAAIAAIAAAAIAgAAAAAAAAAAAIAIAAg=</HashCode>
       <FileName>Core\Workspace\DatabaseObject.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="accessControls" />
-      <Field Name="deniedPermissions" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Strategy">
-    <Position X="3.75" Y="11" Width="1.5" />
+    <Position X="4.25" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>JAICAIAQQqBABUBgEEAABEgAAAAgAAAAAIAUIAEIAAA=</HashCode>
       <FileName>Core\Workspace\Strategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Workspace.AccessControl">
-    <Position X="12.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier />
+  <Class Name="Allors.Workspace.Adapters.Remote.ObjectFactory" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAAACAAAAAAAgAAAAAAAAAYEEAAggAAABICAA=</HashCode>
+      <FileName>Core\Workspace\ObjectFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MetaPopulation" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Allors.Workspace.Permission">
-    <Position X="12.5" Y="2.75" Width="1.5" />
-    <TypeIdentifier />
+  <Class Name="Allors.Workspace.Adapters.Remote.ResponseContext">
+    <Position X="8.25" Y="6.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAABAAAEAAAAAAAgAAAAAABAACAAAAAAAAAAA=</HashCode>
+      <FileName>Core\Workspace\ResponseContext.cs</FileName>
+    </TypeIdentifier>
   </Class>
+  <Interface Name="Allors.Workspace.Meta.IMetaPopulation" Collapsed="true">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

@@ -586,10 +586,10 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void methodCanExecute()
         {
-            var databaseOrigin = new DatabaseOrigin();
-            databaseOrigin.Sync(Fixture.loadData);
+            var database = new Database();
+            database.Sync(Fixture.loadData);
 
-            var session = new Session(databaseOrigin);
+            var session = new Session(database);
 
             var acme = session.Instantiate("101") as Organisation;
             var ocme = session.Instantiate("102") as Organisation;

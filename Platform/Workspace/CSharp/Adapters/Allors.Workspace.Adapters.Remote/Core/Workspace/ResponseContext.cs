@@ -14,9 +14,8 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<long, AccessControl> accessControlById;
         private readonly Dictionary<long, Permission> permissionById;
 
-        public ResponseContext(Database databaseOrigin, Dictionary<long, AccessControl> accessControlById, Dictionary<long, Permission> permissionById)
+        public ResponseContext(Dictionary<long, AccessControl> accessControlById, Dictionary<long, Permission> permissionById)
         {
-            this.DatabaseOrigin = databaseOrigin;
             this.accessControlById = accessControlById;
             this.permissionById = permissionById;
 
@@ -27,8 +26,6 @@ namespace Allors.Workspace.Adapters.Remote
         internal HashSet<long> MissingAccessControlIds { get; }
 
         internal HashSet<long> MissingPermissionIds { get; }
-
-        internal Database DatabaseOrigin { get; }
 
         internal string ReadSortedAccessControlIds(string value)
         {
