@@ -18,7 +18,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitGet()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -49,7 +49,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitSet()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
             var martien1 = session1.Instantiate(3) as Person;
@@ -72,7 +72,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void HasChanges()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
             var martien = session.Instantiate(3) as Person;
@@ -116,7 +116,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitSave()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -166,7 +166,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneGet()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -189,7 +189,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneSet()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -235,7 +235,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneSave()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -285,7 +285,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManyGet()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = (Person)session.Instantiate(1);
@@ -314,7 +314,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySet()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -363,7 +363,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySaveWithExistingObjects()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -430,7 +430,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySaveWithNewObjects()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -505,7 +505,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void SyncWithNewObjects()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -540,7 +540,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Onsaved()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -604,7 +604,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Get()
         {
-            this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
+            this.Database.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 

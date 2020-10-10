@@ -40,14 +40,14 @@ namespace Allors.Workspace.Adapters.Remote
         public void PushResponse(long id)
         {
             this.NewId = null;
-            this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.New(id, this.ObjectType);
+            this.DatabaseObject = this.SessionOrigin.Database.New(id, this.ObjectType);
         }
 
         public IObject Object
         {
             get
             {
-                this.@object ??= this.Session.Workspace.DatabaseOrigin.ObjectFactory.Create(this);
+                this.@object ??= this.Session.Workspace.Database.ObjectFactory.Create(this);
                 return this.@object;
             }
         }
@@ -117,7 +117,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.SessionOrigin.DatabaseOrigin.GetPermission(this.ObjectType, roleType, Operations.Read);
+            var permission = this.SessionOrigin.Database.GetPermission(this.ObjectType, roleType, Operations.Read);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -128,7 +128,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.SessionOrigin.DatabaseOrigin.GetPermission(this.ObjectType, roleType, Operations.Write);
+            var permission = this.SessionOrigin.Database.GetPermission(this.ObjectType, roleType, Operations.Write);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -139,7 +139,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.SessionOrigin.DatabaseOrigin.GetPermission(this.ObjectType, methodType, Operations.Execute);
+            var permission = this.SessionOrigin.Database.GetPermission(this.ObjectType, methodType, Operations.Execute);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -190,7 +190,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.SessionOrigin.DatabaseOrigin.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.SessionOrigin.Database.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
 
                 this.roleByRoleType[roleType] = value;
@@ -304,7 +304,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.DatabaseObject != null)
             {
-                this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.Get(this.Id);
+                this.DatabaseObject = this.SessionOrigin.Database.Get(this.Id);
             }
 
             this.changedRoleByRoleType = null;
@@ -324,7 +324,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (this.DatabaseObject != null)
                     {
-                        this.DatabaseObject = this.SessionOrigin.DatabaseOrigin.Get(this.Id);
+                        this.DatabaseObject = this.SessionOrigin.Database.Get(this.Id);
                     }
                 }
             }
@@ -363,7 +363,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.SessionOrigin.DatabaseOrigin.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.SessionOrigin.Database.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
             }
 

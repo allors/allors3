@@ -20,8 +20,6 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private static long idCounter = 0;
 
-        private readonly Remote database;
-
         private readonly Dictionary<long, Strategy> strategyById = new Dictionary<long, Strategy>();
         private readonly Dictionary<long, Strategy> newStrategyById = new Dictionary<long, Strategy>();
 
@@ -29,8 +27,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = workspace;
             this.StateLifecycle = stateLifecycle;
-            this.DatabaseOrigin = this.Workspace.DatabaseOrigin;
-            this.database = this.Workspace.Database;
+            this.Database = this.Workspace.Database;
             this.Workspace.RegisterContext(this);
 
             this.StateLifecycle.OnInit(this);
@@ -44,7 +41,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasChanges => this.newStrategyById.Count > 0 || this.strategyById.Values.Any(v => v.HasChanges);
 
-        public DatabaseOrigin DatabaseOrigin { get; }
+        public Database Database { get; }
 
         public ISessionStateLifecycle StateLifecycle { get; }
 
@@ -54,7 +51,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.newStrategyById.TryGetValue(id, out strategy))
                 {
-                    var workspaceObject = this.DatabaseOrigin.Get(id);
+                    var workspaceObject = this.Database.Get(id);
                     strategy = new Strategy(this, workspaceObject);
                     this.strategyById[workspaceObject.Id] = strategy;
                 }
@@ -67,7 +64,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var roleType = associationType.RoleType;
 
-            var associations = this.DatabaseOrigin.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id));
+            var associations = this.Database.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id));
             foreach (var association in associations)
             {
                 if (association.Strategy.CanRead(roleType))
@@ -111,21 +108,21 @@ namespace Allors.Workspace.Adapters.Remote
                 } : null,
             };
 
-            var invokeResponse = await this.database.Invoke(invokeRequest);
+            var invokeResponse = await this.Database.Invoke(invokeRequest);
             return new CallResult(invokeResponse);
         }
 
         public async Task<ICallResult> Call(string service, object args)
         {
-            var invokeResponse = await this.database.Invoke(service, args);
+            var invokeResponse = await this.Database.Invoke(service, args);
             return new CallResult(invokeResponse);
         }
 
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
-            var pullResponse = await this.database.Pull(pullRequest);
-            var syncRequest = this.DatabaseOrigin.Diff(pullResponse);
+            var pullResponse = await this.Database.Pull(pullRequest);
+            var syncRequest = this.Database.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
             {
                 await this.Load(syncRequest);
@@ -146,8 +143,8 @@ namespace Allors.Workspace.Adapters.Remote
                 args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
             }
 
-            var pullResponse = await this.database.Pull(pullService, args);
-            var syncRequest = this.DatabaseOrigin.Diff(pullResponse);
+            var pullResponse = await this.Database.Pull(pullService, args);
+            var syncRequest = this.Database.Diff(pullResponse);
 
             if (syncRequest.Objects.Length > 0)
             {
@@ -160,7 +157,7 @@ namespace Allors.Workspace.Adapters.Remote
         public async Task<ISaveResult> Save()
         {
             var saveRequest = this.PushRequest();
-            var pushResponse = await this.database.Push(saveRequest);
+            var pushResponse = await this.Database.Push(saveRequest);
             if (!pushResponse.HasErrors)
             {
                 this.PushResponse(pushResponse);
@@ -254,18 +251,18 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task Load(SyncRequest syncRequest)
         {
-            var syncResponse = await this.database.Sync(syncRequest);
-            var securityRequest = this.DatabaseOrigin.Sync(syncResponse);
+            var syncResponse = await this.Database.Sync(syncRequest);
+            var securityRequest = this.Database.Sync(syncResponse);
 
             if (securityRequest != null)
             {
-                var securityResponse = await this.database.Security(securityRequest);
-                securityRequest = this.DatabaseOrigin.Security(securityResponse);
+                var securityResponse = await this.Database.Security(securityRequest);
+                securityRequest = this.Database.Security(securityResponse);
 
                 if (securityRequest != null)
                 {
-                    securityResponse = await this.database.Security(securityRequest);
-                    this.DatabaseOrigin.Security(securityResponse);
+                    securityResponse = await this.Database.Security(securityRequest);
+                    this.Database.Security(securityResponse);
                 }
             }
         }

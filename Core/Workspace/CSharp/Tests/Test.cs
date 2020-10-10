@@ -15,7 +15,7 @@ namespace Tests.Adapters
 
     using Xunit;
 
-    [Collection("Remote")]
+    [Collection("Database")]
     public class Test : IDisposable
     {
         public const string Url = "http://localhost:5000";
@@ -26,24 +26,21 @@ namespace Tests.Adapters
 
         public Workspace Workspace { get; }
 
-        public Allors.Workspace.Adapters.Remote.Remote Remote { get; }
-
-        public DatabaseOrigin DatabaseOrigin { get; }
+        public Database Database { get; }
 
         public M M { get; }
 
         public Test()
         {
-            var client = new HttpClient()
-            {
-                BaseAddress = new Uri(Url),
-            };
 
-            this.Remote = new Allors.Workspace.Adapters.Remote.Remote(client);
-            var objectFactory = new ObjectFactory(new MetaBuilder().Build(), typeof(User));
-            this.DatabaseOrigin = new DatabaseOrigin(objectFactory);
+            this.Database = new Database(
+                new ObjectFactory(new MetaBuilder().Build(), typeof(User)),
+                new HttpClient()
+                {
+                    BaseAddress = new Uri(Url),
+                });
 
-            this.Workspace = new Workspace(this.Remote, this.DatabaseOrigin, new WorkspaceStateState());
+            this.Workspace = new Workspace(this.Database, new WorkspaceStateState());
 
             this.M = this.Workspace.State().M;
 
@@ -57,12 +54,14 @@ namespace Tests.Adapters
         public void Login(string user)
         {
             var uri = new Uri("/TestAuthentication/Token", UriKind.Relative);
-            var result = this.Remote.Login(uri, user, null).Result;
+            var response = this.Database.Login(uri, user, null).Result;
+            Assert.True(response);
         }
 
         private void Init()
         {
-            var httpResponseMessage = this.Remote.HttpClient.GetAsync(SetupUrl).Result;
+            var response = this.Database.HttpClient.GetAsync(SetupUrl).Result;
+            Assert.True(response.IsSuccessStatusCode);
             this.Login("administrator");
         }
     }

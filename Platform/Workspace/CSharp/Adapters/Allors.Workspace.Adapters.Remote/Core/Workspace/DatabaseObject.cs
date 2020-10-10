@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote
         private string sortedAccessControlIds;
         private string sortedDeniedPermissionIds;
 
-        internal DatabaseObject(DatabaseOrigin databaseOrigin, long objectId, IClass @class)
+        internal DatabaseObject(Database databaseOrigin, long objectId, IClass @class)
         {
             this.DatabaseOrigin = databaseOrigin;
             this.Id = objectId;
@@ -66,7 +66,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public long Version { get; private set; }
 
-        public DatabaseOrigin DatabaseOrigin { get; }
+        public Database DatabaseOrigin { get; }
 
         public bool IsPermitted(Permission permission)
         {

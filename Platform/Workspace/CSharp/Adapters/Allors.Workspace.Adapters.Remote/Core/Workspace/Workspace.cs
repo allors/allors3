@@ -10,19 +10,17 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        public Workspace(Remote database, DatabaseOrigin databaseOrigin, IWorkspaceStateLifecycle stateLifecycle)
+        public Workspace(Database database, IWorkspaceStateLifecycle stateLifecycle)
         {
             this.Database = database;
-            this.DatabaseOrigin = databaseOrigin;
             this.StateLifecycle = stateLifecycle;
+
             this.Contexts = new HashSet<Session>();
 
             this.StateLifecycle.OnInit(this);
         }
 
-        internal Remote Database { get; }
-
-        internal DatabaseOrigin DatabaseOrigin { get; }
+        internal Database Database { get; }
 
         internal ISet<Session> Contexts { get; }
 
@@ -30,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
 
-        public IObjectFactory ObjectFactory => this.DatabaseOrigin.ObjectFactory;
+        public IObjectFactory ObjectFactory => this.Database.ObjectFactory;
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
 
