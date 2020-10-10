@@ -32,7 +32,7 @@ namespace Tests.Adapters
 
                     Assert.False(organisation.JustDidIt);
 
-                    var result = await context.Invoke(organisation.JustDoIt);
+                    var result = await context.Call(organisation.JustDoIt);
 
                     Assert.False(result.HasErrors);
 

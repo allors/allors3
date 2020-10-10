@@ -7,7 +7,6 @@ namespace Allors.Workspace
 {
     using System.Threading.Tasks;
     using Protocol.Database.Invoke;
-    using Protocol.Database.Push;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
 
@@ -23,16 +22,16 @@ namespace Allors.Workspace
 
         void Reset();
 
-        Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null);
+        Task<ICallResult> Call(Method method, CallOptions options = null);
 
-        Task<InvokeResponse> Invoke(Method[] methods, InvokeOptions options = null);
+        Task<ICallResult> Call(Method[] methods, CallOptions options = null);
 
-        Task<InvokeResponse> Invoke(string service, object args);
+        Task<ICallResult> Call(string service, object args);
 
-        Task<Result> Load(params Pull[] pulls);
+        Task<ILoadResult> Load(params Pull[] pulls);
 
-        Task<Result> Load(object args, string pullService = null);
+        Task<ILoadResult> Load(object args, string pullService = null);
 
-        Task<PushResponse> Save();
+        Task<ISaveResult> Save();
     }
 }

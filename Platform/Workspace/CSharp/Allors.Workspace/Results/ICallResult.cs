@@ -5,16 +5,7 @@
 
 namespace Allors.Workspace
 {
-    using Meta;
-
-    public interface IWorkspace
+    public interface ICallResult : IResult
     {
-        IMetaPopulation MetaPopulation { get; }
-
-        IObjectFactory ObjectFactory { get; }
-
-        IWorkspaceStateLifecycle StateLifecycle { get; }
-
-        ISession CreateSession();
     }
 }

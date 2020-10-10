@@ -15,7 +15,6 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database.Sync;
     using Allors.Workspace.Data;
     using Meta;
-    using Result = Allors.Workspace.Result;
 
     public class Session : ISession
     {
@@ -93,9 +92,9 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public Task<InvokeResponse> Invoke(Method method, InvokeOptions options = null) => this.Invoke(new[] { method }, options);
+        public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
 
-        public Task<InvokeResponse> Invoke(Method[] methods, InvokeOptions options = null)
+        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
         {
             var invokeRequest = new InvokeRequest
             {
@@ -105,15 +104,24 @@ namespace Allors.Workspace.Adapters.Remote
                     V = v.Object.Strategy.Version.ToString(),
                     M = v.MethodType.IdAsString,
                 }).ToArray(),
-                O = options,
+                O = options != null ? new InvokeOptions
+                {
+                    C = options.ContinueOnError,
+                    I = options.Isolated
+                } : null,
             };
 
-            return this.database.Invoke(invokeRequest);
+            var invokeResponse = await this.database.Invoke(invokeRequest);
+            return new CallResult(invokeResponse);
         }
 
-        public Task<InvokeResponse> Invoke(string service, object args) => this.database.Invoke(service, args);
+        public async Task<ICallResult> Call(string service, object args)
+        {
+            var invokeResponse = await this.database.Invoke(service, args);
+            return new CallResult(invokeResponse);
+        }
 
-        public async Task<Result> Load(params Pull[] pulls)
+        public async Task<ILoadResult> Load(params Pull[] pulls)
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
             var pullResponse = await this.database.Pull(pullRequest);
@@ -123,11 +131,10 @@ namespace Allors.Workspace.Adapters.Remote
                 await this.Load(syncRequest);
             }
 
-            var result = new Result(this, pullResponse);
-            return result;
+            return new LoadResult(this, pullResponse);
         }
 
-        public async Task<Result> Load(object args, string pullService = null)
+        public async Task<ILoadResult> Load(object args, string pullService = null)
         {
             if (args is Pull pull)
             {
@@ -147,11 +154,10 @@ namespace Allors.Workspace.Adapters.Remote
                 await this.Load(syncRequest);
             }
 
-            var result = new Result(this, pullResponse);
-            return result;
+            return new LoadResult(this, pullResponse);
         }
 
-        public async Task<PushResponse> Save()
+        public async Task<ISaveResult> Save()
         {
             var saveRequest = this.PushRequest();
             var pushResponse = await this.database.Push(saveRequest);
@@ -175,7 +181,7 @@ namespace Allors.Workspace.Adapters.Remote
                 this.Reset();
             }
 
-            return pushResponse;
+            return new SaveResult(pushResponse);
         }
 
         public void Reset()

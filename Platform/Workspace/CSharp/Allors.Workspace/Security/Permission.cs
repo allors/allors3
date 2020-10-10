@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using Domain;
     using Meta;
 
     public class Permission

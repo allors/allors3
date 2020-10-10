@@ -1,4 +1,4 @@
-// <copyright file="Result.cs" company="Allors bvba">
+// <copyright file="ILoadResult.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,12 +8,12 @@ namespace Allors.Workspace
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
+    using Adapters.Remote;
     using Protocol.Database.Pull;
 
-    public class Result
+    public class LoadResult : Result, ILoadResult
     {
-        public Result(ISession session, PullResponse response)
+        public LoadResult(ISession session, PullResponse response) : base(response)
         {
             this.Workspace = session.Workspace;
 
@@ -31,11 +31,11 @@ namespace Allors.Workspace
                 StringComparer.OrdinalIgnoreCase);
         }
 
-        public IDictionary<string, IObject> Objects { get; }
+        public IReadOnlyDictionary<string, IObject> Objects { get; }
 
-        public IDictionary<string, IObject[]> Collections { get; }
+        public IReadOnlyDictionary<string, IObject[]> Collections { get; }
 
-        public IDictionary<string, object> Values { get; }
+        public IReadOnlyDictionary<string, object> Values { get; }
 
         private IWorkspace Workspace { get; }
 

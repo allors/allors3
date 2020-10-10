@@ -7,7 +7,7 @@ namespace Allors.Protocol.Database.Pull
 {
     using System.Collections.Generic;
 
-    public class PullResponse
+    public class PullResponse : Response
     {
         public string[][] AccessControls { get; set; }
 

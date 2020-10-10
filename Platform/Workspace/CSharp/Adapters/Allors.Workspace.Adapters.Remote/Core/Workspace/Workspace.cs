@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
+    using Meta;
 
     public class Workspace : IWorkspace
     {
@@ -26,6 +27,8 @@ namespace Allors.Workspace.Adapters.Remote
         internal ISet<Session> Contexts { get; }
 
         public IWorkspaceStateLifecycle StateLifecycle { get; }
+
+        public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
 
         public IObjectFactory ObjectFactory => this.DatabaseOrigin.ObjectFactory;
 

@@ -11,7 +11,6 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Protocol.Database.Push;
     using Allors.Workspace.Meta;
-    using Domain;
     using Protocol.Data;
 
     public class Strategy : IStrategy

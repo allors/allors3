@@ -5,16 +5,11 @@
 
 namespace Allors.Workspace
 {
-    using Meta;
-
-    public interface IWorkspace
+    public interface IDerivationError
     {
-        IMetaPopulation MetaPopulation { get; }
+        string ErrorMessage { get; }
 
-        IObjectFactory ObjectFactory { get; }
-
-        IWorkspaceStateLifecycle StateLifecycle { get; }
-
-        ISession CreateSession();
+        // TODO: return objects instead of ids 
+        string[][] Roles { get; }
     }
 }

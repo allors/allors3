@@ -11,7 +11,6 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database.Pull;
     using Protocol.Database.Sync;
     using Allors.Workspace.Meta;
-    using Domain;
     using Protocol.Database.Security;
 
     public class DatabaseOrigin
