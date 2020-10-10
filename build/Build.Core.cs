@@ -154,8 +154,8 @@ partial class Build
             using var server = new Server(this.Paths.ArtifactsCoreServer);
             await server.Ready();
             DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreWorkspaceCSharpDomainTests)
-                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpDomainTests.trx")
+                .SetProjectFile(this.Paths.CoreWorkspaceCSharpTests)
+                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
