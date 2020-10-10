@@ -84,9 +84,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.newStrategyById.TryGetValue(id, out strategy))
                 {
-                    var workspaceObject = this.Workspace.Database.Get(id);
-                    strategy = new Strategy(this, workspaceObject);
-                    this.strategyById[workspaceObject.Id] = strategy;
+                    var databaseObject = this.Workspace.Database.Get(id);
+                    strategy = new Strategy(this, databaseObject);
+                    this.strategyById[databaseObject.Id] = strategy;
                 }
             }
 
@@ -249,7 +249,7 @@ namespace Allors.Workspace.Adapters.Remote
         private async Task Load(SyncRequest syncRequest)
         {
             var syncResponse = await this.Workspace.Database.Sync(syncRequest);
-            var securityRequest = this.Workspace.Database.Sync(syncResponse);
+            var securityRequest = this.Workspace.Database.Synced(syncResponse);
 
             if (securityRequest != null)
             {

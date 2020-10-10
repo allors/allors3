@@ -12,6 +12,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
+        private readonly WorkspacePopulation workspacePopulation;
+
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
@@ -20,6 +22,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new Database(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
+
+            this.workspacePopulation = new WorkspacePopulation(this.MetaPopulation);
 
             this.StateLifecycle.OnInit(this);
         }

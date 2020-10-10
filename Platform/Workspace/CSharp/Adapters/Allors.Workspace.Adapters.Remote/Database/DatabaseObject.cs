@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Id = long.Parse(syncResponseObject.I);
             this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
-            this.Roles = syncResponseObject.R?.Select(v => new WorkspaceRole(this.Database.MetaPopulation, v)).Cast<WorkspaceRole>().ToArray();
+            this.Roles = syncResponseObject.R?.Select(v => new DatabaseRole(this.Database.MetaPopulation, v)).ToArray();
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.A);
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.D);
         }
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public long Id { get; }
 
-        public WorkspaceRole[] Roles { get; }
+        public DatabaseRole[] Roles { get; }
 
         public string SortedAccessControlIds
         {

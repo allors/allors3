@@ -15,8 +15,6 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Strategy : IStrategy
     {
-        private static readonly IStrategy[] EmptySessionObjects = new IStrategy[0];
-
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
@@ -40,7 +38,7 @@ namespace Allors.Workspace.Adapters.Remote
         public void PushResponse(long id)
         {
             this.NewId = null;
-            this.DatabaseObject = this.Session.Workspace.Database.New(id, this.ObjectType);
+            this.DatabaseObject = this.Session.Workspace.Database.Pushed(id, this.ObjectType);
         }
 
         public IObject Object
@@ -158,22 +156,22 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.NewId == null)
                 {
-                    var workspaceRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                    if (workspaceRole?.Value != null)
+                    var databaseRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                    if (databaseRole?.Value != null)
                     {
                         if (roleType.ObjectType.IsUnit)
                         {
-                            value = workspaceRole.Value;
+                            value = databaseRole.Value;
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.Session.Instantiate((long)workspaceRole.Value);
+                                value = this.Session.Instantiate((long)databaseRole.Value);
                             }
                             else
                             {
-                                var ids = (long[])workspaceRole.Value;
+                                var ids = (long[])databaseRole.Value;
                                 var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
                                 for (var i = 0; i < ids.Length; i++)
                                 {
@@ -211,7 +209,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (value == null)
                 {
-                    value = EmptySessionObjects;
+                    value = Array.Empty<IStrategy>();
                 }
 
                 var currentCollection = (IList<object>)current;
@@ -334,22 +332,22 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.NewId == null)
                 {
-                    var workspaceRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                    if (workspaceRole?.Value != null)
+                    var databaseRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                    if (databaseRole?.Value != null)
                     {
                         if (roleType.ObjectType.IsUnit)
                         {
-                            value = workspaceRole.Value;
+                            value = databaseRole.Value;
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.Session.GetForAssociation((long)workspaceRole.Value);
+                                value = this.Session.GetForAssociation((long)databaseRole.Value);
                             }
                             else
                             {
-                                var ids = (long[])workspaceRole.Value;
+                                var ids = (long[])databaseRole.Value;
                                 var array = ids.Select(v => this.Session.GetForAssociation(v))
                                     .Where(v => v != null)
                                     .ToArray();
@@ -400,16 +398,16 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                         else
                         {
-                            var workspaceRole = this.DatabaseObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                            if (workspaceRole?.Value == null)
+                            var databaseRole = this.DatabaseObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                            if (databaseRole?.Value == null)
                             {
                                 pushRequestRole.A = roleIds;
                             }
                             else
                             {
-                                if (workspaceRole.Value != null)
+                                if (databaseRole.Value != null)
                                 {
-                                    var originalRoleIds = ((IEnumerable<long>)workspaceRole.Value)
+                                    var originalRoleIds = ((IEnumerable<long>)databaseRole.Value)
                                         .Select(v => v.ToString())
                                         .ToArray();
                                     pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();

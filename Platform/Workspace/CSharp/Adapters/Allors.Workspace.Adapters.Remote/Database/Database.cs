@@ -83,73 +83,20 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal SyncRequest Diff(PullResponse response)
+        internal DatabaseObject Pushed(long objectId, IClass @class)
         {
-            var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
-
-            var syncRequest = new SyncRequest
-            {
-                Objects = response.Objects
-                    .Where(v =>
-                    {
-                        var id = long.Parse(v[0]);
-                        this.databaseObjectById.TryGetValue(id, out var workspaceObject);
-                        var sortedAccessControlIds = v.Length > 2 ? ctx.ReadSortedAccessControlIds(v[2]) : null;
-                        var sortedDeniedPermissionIds = v.Length > 3 ? ctx.ReadSortedDeniedPermissionIds(v[3]) : null;
-
-                        if (workspaceObject == null)
-                        {
-                            return true;
-                        }
-
-                        var version = long.Parse(v[1]);
-                        if (!workspaceObject.Version.Equals(version))
-                        {
-                            return true;
-                        }
-
-                        if (v.Length == 2)
-                        {
-                            return false;
-                        }
-
-                        if (v.Length == 3)
-                        {
-                            if (workspaceObject.SortedDeniedPermissionIds != null)
-                            {
-                                return true;
-                            }
-
-                            return !Equals(workspaceObject.SortedAccessControlIds, sortedAccessControlIds);
-                        }
-
-                        return !Equals(workspaceObject.SortedAccessControlIds, sortedAccessControlIds) ||
-                               !Equals(workspaceObject.SortedDeniedPermissionIds, sortedDeniedPermissionIds);
-                    })
-                    .Select(v => v[0]).ToArray(),
-            };
-
-            return syncRequest;
+            var databaseObject = new DatabaseObject(this, objectId, @class);
+            this.databaseObjectById[objectId] = databaseObject;
+            return databaseObject;
         }
 
-        internal DatabaseObject Get(long id)
-        {
-            var workspaceObject = this.databaseObjectById[id];
-            if (workspaceObject == null)
-            {
-                throw new Exception($"Object with id {id} is not present.");
-            }
-
-            return workspaceObject;
-        }
-
-        internal SecurityRequest Sync(SyncResponse syncResponse)
+        internal SecurityRequest Synced(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var workspaceObject = new DatabaseObject(this, ctx, syncResponseObject);
-                this.databaseObjectById[workspaceObject.Id] = workspaceObject;
+                var databaseObject = new DatabaseObject(this, ctx, syncResponseObject);
+                this.databaseObjectById[databaseObject.Id] = databaseObject;
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -162,6 +109,67 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return null;
+        }
+
+
+        internal SyncRequest Diff(PullResponse response)
+        {
+            var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
+
+            var syncRequest = new SyncRequest
+            {
+                Objects = response.Objects
+                    .Where(v =>
+                    {
+                        var id = long.Parse(v[0]);
+                        this.databaseObjectById.TryGetValue(id, out var databaseObject);
+                        var sortedAccessControlIds = v.Length > 2 ? ctx.ReadSortedAccessControlIds(v[2]) : null;
+                        var sortedDeniedPermissionIds = v.Length > 3 ? ctx.ReadSortedDeniedPermissionIds(v[3]) : null;
+
+                        if (databaseObject == null)
+                        {
+                            return true;
+                        }
+
+                        var version = long.Parse(v[1]);
+                        if (!databaseObject.Version.Equals(version))
+                        {
+                            return true;
+                        }
+
+                        if (v.Length == 2)
+                        {
+                            return false;
+                        }
+
+                        if (v.Length == 3)
+                        {
+                            if (databaseObject.SortedDeniedPermissionIds != null)
+                            {
+                                return true;
+                            }
+
+                            return !Equals(databaseObject.SortedAccessControlIds, sortedAccessControlIds);
+                        }
+
+                        return !Equals(databaseObject.SortedAccessControlIds, sortedAccessControlIds) ||
+                               !Equals(databaseObject.SortedDeniedPermissionIds, sortedDeniedPermissionIds);
+                    })
+                    .Select(v => v[0]).ToArray(),
+            };
+
+            return syncRequest;
+        }
+
+        internal DatabaseObject Get(long id)
+        {
+            var databaseObject = this.databaseObjectById[id];
+            if (databaseObject == null)
+            {
+                throw new Exception($"Object with id {id} is not present.");
+            }
+
+            return databaseObject;
         }
 
         internal SecurityRequest Security(SecurityResponse securityResponse)
@@ -387,13 +395,6 @@ namespace Allors.Workspace.Adapters.Remote
             var json = await response.Content.ReadAsStringAsync();
             var deserializedObject = JsonConvert.DeserializeObject<T>(json);
             return deserializedObject;
-        }
-
-        internal DatabaseObject New(long objectId, IClass @class)
-        {
-            var databaseObject = new DatabaseObject(this, objectId, @class);
-            this.databaseObjectById[objectId] = databaseObject;
-            return databaseObject;
         }
 
         public class AuthenticationTokenResponse

@@ -17,7 +17,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Load()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
 
             object Value(DatabaseObject @object, IRoleType roleType) => @object.Roles.First(v => Equals(v.RoleType, roleType)).Value;
 
@@ -36,7 +36,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Diff()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -56,7 +56,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffVersion()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -78,7 +78,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffAccessControl()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -100,7 +100,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffChangeDeniedPermission()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -122,7 +122,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffAddDeniedPermission()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -144,7 +144,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void DiffRemoveDeniedPermission()
         {
-            this.Database.Sync(Fixture.LoadData(this.M));
+            this.Database.Synced(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =

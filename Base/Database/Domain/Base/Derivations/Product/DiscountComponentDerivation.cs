@@ -45,9 +45,9 @@ namespace Allors.Domain
                     validation.AssertExists(discountComponent, M.BasePrice.Currency);
                 }
 
-                if (((DiscountComponent)discountComponent).ExistProduct)
+                if (discountComponent.ExistProduct)
                 {
-                    ((DiscountComponent)discountComponent).Product.BaseOnDeriveVirtualProductPriceComponent();
+                    discountComponent.Product.BaseOnDeriveVirtualProductPriceComponent();
                 }
             }
 

@@ -115,7 +115,7 @@ WHERE routine_schema = @routineSchema";
                                 var routineName = (string)routineNameValue;
                                 var routineDefinition = routineDefinitionValue != DBNull.Value ? (string)routineDefinitionValue : string.Empty;
 
-                                var lowercaseRoutineName = ((string)routineName).Trim().ToLowerInvariant();
+                                var lowercaseRoutineName = routineName.Trim().ToLowerInvariant();
                                 var fullyQualifiedName = database.SchemaName + "." + lowercaseRoutineName;
                                 this.ProcedureByName[fullyQualifiedName] = new SchemaProcedure(routineName, routineDefinition);
                             }

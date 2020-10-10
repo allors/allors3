@@ -22,7 +22,7 @@ namespace Allors.Domain
         {
             foreach (var organisation in matches.Cast<Organisation>())
             {
-                var partyContactMechanisms = ((Organisation)organisation).PartyContactMechanisms.ToArray();
+                var partyContactMechanisms = organisation.PartyContactMechanisms.ToArray();
                 foreach (OrganisationContactRelationship organisationContactRelationship in organisation.OrganisationContactRelationshipsWhereOrganisation)
                 {
                     foreach (var partyContactMechanism in partyContactMechanisms)

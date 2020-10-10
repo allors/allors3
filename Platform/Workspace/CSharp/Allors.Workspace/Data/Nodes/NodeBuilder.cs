@@ -27,7 +27,7 @@ namespace Allors.Workspace.Data
 
         public IPropertyType PropertyType { get; set; }
 
-        private Node Build() => new Node(this.PropertyType, this.NodeBuilders?.Select(v => v.Build()).Cast<Node>().ToArray());
+        private Node Build() => new Node(this.PropertyType, this.NodeBuilders?.Select(v => v.Build()).ToArray());
 
         public NodeBuilder Add(NodeBuilder nodeBuilder)
         {
