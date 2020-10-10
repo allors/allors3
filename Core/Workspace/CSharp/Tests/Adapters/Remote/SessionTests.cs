@@ -21,7 +21,7 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Get(1) as Person;
+            var koen = session.Instantiate(1) as Person;
 
             Assert.Equal("Koen", koen.FirstName);
             Assert.Null(koen.MiddleName);
@@ -29,7 +29,7 @@ namespace Tests.Adapters.Remote
             Assert.Equal(UnitConvert.Parse(this.M.Person.BirthDate.ObjectType.Id, "1973-03-27T18:00:00Z"), koen.BirthDate);
             Assert.True(koen.IsStudent);
 
-            var patrick = session.Get(2) as Person;
+            var patrick = session.Instantiate(2) as Person;
 
             Assert.Equal("Patrick", patrick.FirstName);
             Assert.Equal("De Boeck", patrick.LastName);
@@ -37,7 +37,7 @@ namespace Tests.Adapters.Remote
             Assert.Null(patrick.BirthDate);
             Assert.False(patrick.IsStudent);
 
-            var martien = session.Get(3) as Person;
+            var martien = session.Instantiate(3) as Person;
 
             Assert.Equal("Martien", martien.FirstName);
             Assert.Equal("Knippenberg", martien.LastName);
@@ -52,10 +52,10 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
-            var martien1 = session1.Get(3) as Person;
+            var martien1 = session1.Instantiate(3) as Person;
 
             var session2 = this.CreateSession();
-            var martien2 = session2.Get(3) as Person;
+            var martien2 = session2.Instantiate(3) as Person;
 
             martien2.FirstName = "Martinus";
             martien2.MiddleName = "X";
@@ -75,8 +75,8 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
-            var martien = session.Get(3) as Person;
-            var acme = session.Get(101) as Organisation;
+            var martien = session.Instantiate(3) as Person;
+            var acme = session.Instantiate(101) as Organisation;
 
             Assert.False(session.HasChanges);
 
@@ -119,9 +119,9 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Get(1) as Person;
-            var patrick = session.Get(2) as Person;
-            var martien = session.Get(3) as Person;
+            var koen = session.Instantiate(1) as Person;
+            var patrick = session.Instantiate(2) as Person;
+            var martien = session.Instantiate(3) as Person;
 
             koen.FirstName = "K";
             koen.LastName = "VE";
@@ -169,13 +169,13 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Get(1) as Person;
-            var patrick = session.Get(2) as Person;
-            var martien = session.Get(3) as Person;
+            var koen = session.Instantiate(1) as Person;
+            var patrick = session.Instantiate(2) as Person;
+            var martien = session.Instantiate(3) as Person;
 
-            var acme = session.Get(101) as Organisation;
-            var ocme = session.Get(102) as Organisation;
-            var icme = session.Get(103) as Organisation;
+            var acme = session.Instantiate(101) as Organisation;
+            var ocme = session.Instantiate(102) as Organisation;
+            var icme = session.Instantiate(103) as Organisation;
 
             Assert.Equal(koen, acme.Owner);
             Assert.Equal(patrick, ocme.Owner);
@@ -195,21 +195,21 @@ namespace Tests.Adapters.Remote
 
             var session2 = this.CreateSession();
 
-            var koen1 = session1.Get(1) as Person;
-            var patrick1 = session1.Get(2) as Person;
-            var martien1 = session1.Get(3) as Person;
+            var koen1 = session1.Instantiate(1) as Person;
+            var patrick1 = session1.Instantiate(2) as Person;
+            var martien1 = session1.Instantiate(3) as Person;
 
-            var acme1 = session1.Get(101) as Organisation;
-            var ocme1 = session1.Get(102) as Organisation;
-            var icme1 = session1.Get(103) as Organisation;
+            var acme1 = session1.Instantiate(101) as Organisation;
+            var ocme1 = session1.Instantiate(102) as Organisation;
+            var icme1 = session1.Instantiate(103) as Organisation;
 
-            var koen2 = session2.Get(1) as Person;
-            var patrick2 = session2.Get(2) as Person;
-            var martien2 = session2.Get(3) as Person;
+            var koen2 = session2.Instantiate(1) as Person;
+            var patrick2 = session2.Instantiate(2) as Person;
+            var martien2 = session2.Instantiate(3) as Person;
 
-            var acme2 = session2.Get(101) as Organisation;
-            var ocme2 = session2.Get(102) as Organisation;
-            var icme2 = session2.Get(103) as Organisation;
+            var acme2 = session2.Instantiate(101) as Organisation;
+            var ocme2 = session2.Instantiate(102) as Organisation;
+            var icme2 = session2.Instantiate(103) as Organisation;
 
             acme2.Owner = martien2;
             ocme2.Owner = null;
@@ -238,13 +238,13 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = session.Get(1) as Person;
-            var patrick = session.Get(2) as Person;
-            var martien = session.Get(3) as Person;
+            var koen = session.Instantiate(1) as Person;
+            var patrick = session.Instantiate(2) as Person;
+            var martien = session.Instantiate(3) as Person;
 
-            var acme = session.Get(101) as Organisation;
-            var ocme = session.Get(102) as Organisation;
-            var icme = session.Get(103) as Organisation;
+            var acme = session.Instantiate(101) as Organisation;
+            var ocme = session.Instantiate(102) as Organisation;
+            var icme = session.Instantiate(103) as Organisation;
 
             acme.Owner = martien;
             ocme.Owner = null;
@@ -288,13 +288,13 @@ namespace Tests.Adapters.Remote
             this.DatabaseOrigin.Sync(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
-            var koen = (Person)session.Get(1);
-            var patrick = (Person)session.Get(2);
-            var martien = (Person)session.Get(3);
+            var koen = (Person)session.Instantiate(1);
+            var patrick = (Person)session.Instantiate(2);
+            var martien = (Person)session.Instantiate(3);
 
-            var acme = (Organisation)session.Get(101);
-            var ocme = (Organisation)session.Get(102);
-            var icme = (Organisation)session.Get(103);
+            var acme = (Organisation)session.Instantiate(101);
+            var ocme = (Organisation)session.Instantiate(102);
+            var icme = (Organisation)session.Instantiate(103);
 
             Assert.Equal(3, acme.Employees.Length);
             Assert.Contains(koen, acme.Employees);
@@ -320,21 +320,21 @@ namespace Tests.Adapters.Remote
 
             var session2 = this.CreateSession();
 
-            var koen1 = session1.Get(1) as Person;
-            var patrick1 = session1.Get(2) as Person;
-            var martien1 = session1.Get(3) as Person;
+            var koen1 = session1.Instantiate(1) as Person;
+            var patrick1 = session1.Instantiate(2) as Person;
+            var martien1 = session1.Instantiate(3) as Person;
 
-            var acme1 = session1.Get(101) as Organisation;
-            var ocme1 = session1.Get(102) as Organisation;
-            var icme1 = session1.Get(103) as Organisation;
+            var acme1 = session1.Instantiate(101) as Organisation;
+            var ocme1 = session1.Instantiate(102) as Organisation;
+            var icme1 = session1.Instantiate(103) as Organisation;
 
-            var koen2 = session2.Get(1) as Person;
-            var patrick2 = session2.Get(2) as Person;
-            var martien2 = session2.Get(3) as Person;
+            var koen2 = session2.Instantiate(1) as Person;
+            var patrick2 = session2.Instantiate(2) as Person;
+            var martien2 = session2.Instantiate(3) as Person;
 
-            var acme2 = session2.Get(101) as Organisation;
-            var ocme2 = session2.Get(102) as Organisation;
-            var icme2 = session2.Get(103) as Organisation;
+            var acme2 = session2.Instantiate(101) as Organisation;
+            var ocme2 = session2.Instantiate(102) as Organisation;
+            var icme2 = session2.Instantiate(103) as Organisation;
 
             acme2.Employees = null;
             icme2.Employees = new[] { koen2, patrick2, martien2 };
@@ -367,13 +367,13 @@ namespace Tests.Adapters.Remote
 
             var session = this.CreateSession();
 
-            var koen = session.Get(1) as Person;
-            var patrick = session.Get(2) as Person;
-            var martien = session.Get(3) as Person;
+            var koen = session.Instantiate(1) as Person;
+            var patrick = session.Instantiate(2) as Person;
+            var martien = session.Instantiate(3) as Person;
 
-            var acme = session.Get(101) as Organisation;
-            var ocme = session.Get(102) as Organisation;
-            var icme = session.Get(103) as Organisation;
+            var acme = session.Instantiate(101) as Organisation;
+            var ocme = session.Instantiate(102) as Organisation;
+            var icme = session.Instantiate(103) as Organisation;
 
             acme.Employees = null;
             ocme.Employees = new[] { martien, patrick };
@@ -434,7 +434,7 @@ namespace Tests.Adapters.Remote
 
             var session = this.CreateSession();
 
-            var martien = session.Get(3) as Person;
+            var martien = session.Instantiate(3) as Person;
 
             var mathijs = session.Create(this.M.Person.Class) as Person;
             mathijs.FirstName = "Mathijs";
@@ -509,7 +509,7 @@ namespace Tests.Adapters.Remote
 
             var session = this.CreateSession();
 
-            var martien = session.Get(3) as Person;
+            var martien = session.Instantiate(3) as Person;
 
             var mathijs = session.Create(this.M.Person.Class) as Person;
             mathijs.FirstName = "Mathijs";
@@ -565,14 +565,14 @@ namespace Tests.Adapters.Remote
             Assert.Equal(10000, mathijs.Id);
             Assert.Equal("Person", mathijs.Strategy.ObjectType.Name);
 
-            mathijs = session.Get(10000) as Person;
+            mathijs = session.Instantiate(10000) as Person;
 
             Assert.NotNull(mathijs);
 
             var exceptionThrown = false;
             try
             {
-                session.Get(newId);
+                session.Instantiate(newId);
             }
             catch
             {
@@ -610,19 +610,15 @@ namespace Tests.Adapters.Remote
 
             var acme = (Organisation)session.Create(this.M.Organisation.Class);
 
-            var acmeAgain = session.Get(acme.Id);
+            var acmeAgain = session.Instantiate(acme.Id);
 
             Assert.Equal(acme, acmeAgain);
 
-            acmeAgain = session.Get(acme.Strategy.NewId.Value);
+            acmeAgain = session.Instantiate(acme.Strategy.NewId.Value);
 
             Assert.Equal(acme, acmeAgain);
         }
 
-        private SessionOrigin CreateSession()
-        {
-            var context = (Session)this.Workspace.CreateSession();
-            return context.SessionOrigin;
-        }
+        private Session CreateSession() => (Session)this.Workspace.CreateSession();
     }
 }

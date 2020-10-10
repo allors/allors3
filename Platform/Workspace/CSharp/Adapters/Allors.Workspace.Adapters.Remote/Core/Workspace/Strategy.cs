@@ -53,7 +53,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public SessionOrigin SessionOrigin => this.Session.SessionOrigin;
+        public Session SessionOrigin => this.Session;
 
         public DatabaseObject DatabaseObject { get; private set; }
 
@@ -172,7 +172,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.SessionOrigin.Get((long)workspaceRole.Value);
+                                value = this.SessionOrigin.Instantiate((long)workspaceRole.Value);
                             }
                             else
                             {
@@ -180,7 +180,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
                                 for (var i = 0; i < ids.Length; i++)
                                 {
-                                    array.SetValue(this.SessionOrigin.Get(ids[i]), i);
+                                    array.SetValue(this.SessionOrigin.Instantiate(ids[i]), i);
                                 }
 
                                 value = array;

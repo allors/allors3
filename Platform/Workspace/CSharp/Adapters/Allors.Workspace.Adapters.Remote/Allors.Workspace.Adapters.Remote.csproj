@@ -19,10 +19,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Core\Workspace\Database\" />
-    <Folder Include="Core\Workspace\Session\" />
-    <Folder Include="Core\Workspace\Workspace\" />
-  </ItemGroup>
-
 </Project>
