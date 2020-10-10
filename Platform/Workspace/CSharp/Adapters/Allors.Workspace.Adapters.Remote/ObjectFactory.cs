@@ -54,6 +54,13 @@ namespace Allors.Workspace.Adapters.Remote
         /// <exception cref="ArgumentException"></exception>
         public ObjectFactory(IMetaPopulation metaPopulation, Type instance)
         {
+            var validationLog = metaPopulation.Validate();
+            if (validationLog.ContainsErrors)
+            {
+                throw new Exception(validationLog.ToString());
+            }
+
+
             var assembly = instance.GetTypeInfo().Assembly;
 
             var types = assembly.GetTypes()
@@ -68,14 +75,7 @@ namespace Allors.Workspace.Adapters.Remote
                                     where method.IsStatic && method.IsDefined(typeof(ExtensionAttribute), false)
                                     select method).ToArray();
 
-            this.MetaPopulation = metaPopulation;
             this.Namespace = instance.Namespace;
-
-            var validationLog = metaPopulation.Validate();
-            if (validationLog.ContainsErrors)
-            {
-                throw new Exception(validationLog.ToString());
-            }
 
             metaPopulation.Bind(types, extensionMethods);
 
@@ -112,11 +112,6 @@ namespace Allors.Workspace.Adapters.Remote
         /// Gets the namespace.
         /// </summary>
         public string Namespace { get; }
-
-        /// <summary>
-        /// Gets the domain.
-        /// </summary>
-        public IMetaPopulation MetaPopulation { get; }
 
         /// <summary>
         /// Creates a new <see cref="SessionObject"/> given the <see cref="SessionObject"/>.

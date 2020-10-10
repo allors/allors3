@@ -29,9 +29,9 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
-        public Database(ObjectFactory objectFactory, HttpClient httpClient)
+        public Database(IMetaPopulation metaPopulation, HttpClient httpClient)
         {
-            this.ObjectFactory = objectFactory;
+            this.MetaPopulation = metaPopulation;
 
             this.HttpClient = httpClient;
 
@@ -50,9 +50,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         ~Database() => this.HttpClient.Dispose();
 
-        public ObjectFactory ObjectFactory { get; }
+        public IMetaPopulation MetaPopulation { get; }
 
         public HttpClient HttpClient { get; }
+
+        public IAsyncPolicy Policy { get; set; } = Polly.Policy
+           .Handle<HttpRequestException>()
+           .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         public string UserId { get; private set; }
 
@@ -60,7 +64,26 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<long, Permission> PermissionById { get; }
 
-        public SyncRequest Diff(PullResponse response)
+        public async Task<bool> Login(Uri url, string username, string password)
+        {
+            var request = new { UserName = username, Password = password };
+            using (var response = await this.PostAsJsonAsync(url, request))
+            {
+                response.EnsureSuccessStatusCode();
+                var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
+                if (!authResult.Authenticated)
+                {
+                    return false;
+                }
+
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
+                this.UserId = authResult.UserId;
+
+                return true;
+            }
+        }
+
+        internal SyncRequest Diff(PullResponse response)
         {
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
 
@@ -109,7 +132,7 @@ namespace Allors.Workspace.Adapters.Remote
             return syncRequest;
         }
 
-        public DatabaseObject Get(long id)
+        internal DatabaseObject Get(long id)
         {
             var workspaceObject = this.databaseObjectById[id];
             if (workspaceObject == null)
@@ -120,7 +143,7 @@ namespace Allors.Workspace.Adapters.Remote
             return workspaceObject;
         }
 
-        public SecurityRequest Sync(SyncResponse syncResponse)
+        internal SecurityRequest Sync(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
@@ -141,15 +164,15 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        public SecurityRequest Security(SecurityResponse securityResponse)
+        internal SecurityRequest Security(SecurityResponse securityResponse)
         {
             if (securityResponse.Permissions != null)
             {
                 foreach (var syncResponsePermission in securityResponse.Permissions)
                 {
                     var id = long.Parse(syncResponsePermission[0]);
-                    var @class = (IClass)this.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponsePermission[1]));
-                    var metaObject = this.ObjectFactory.MetaPopulation.Find(Guid.Parse(syncResponsePermission[2]));
+                    var @class = (IClass)this.MetaPopulation.Find(Guid.Parse(syncResponsePermission[1]));
+                    var metaObject = this.MetaPopulation.Find(Guid.Parse(syncResponsePermission[2]));
                     IOperandType operandType = (metaObject as IRelationType)?.RoleType;
                     operandType ??= metaObject as IMethodType;
 
@@ -242,14 +265,14 @@ namespace Allors.Workspace.Adapters.Remote
             return this.databaseObjectById.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
 
-        public Permission GetPermission(IClass @class, IOperandType roleType, Operations operation)
+        internal Permission GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)
             {
                 case Operations.Read:
                     if (this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
                     {
-                        if (readPermissionByOperandType.TryGetValue(roleType, out var readPermission))
+                        if (readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
                         {
                             return readPermission;
                         }
@@ -260,7 +283,7 @@ namespace Allors.Workspace.Adapters.Remote
                 case Operations.Write:
                     if (this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
                     {
-                        if (writePermissionByOperandType.TryGetValue(roleType, out var writePermission))
+                        if (writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
                         {
                             return writePermission;
                         }
@@ -271,7 +294,7 @@ namespace Allors.Workspace.Adapters.Remote
                 default:
                     if (this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
                     {
-                        if (executePermissionByOperandType.TryGetValue(roleType, out var executePermission))
+                        if (executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
                         {
                             return executePermission;
                         }
@@ -281,11 +304,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public IAsyncPolicy Policy { get; set; } = Polly.Policy
-           .Handle<HttpRequestException>()
-           .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-
-        public async Task<PullResponse> Pull(PullRequest pullRequest)
+        internal async Task<PullResponse> Pull(PullRequest pullRequest)
         {
             var uri = new Uri("allors/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
@@ -294,7 +313,7 @@ namespace Allors.Workspace.Adapters.Remote
             return pullResponse;
         }
 
-        public async Task<PullResponse> Pull(string name, object pullRequest)
+        internal async Task<PullResponse> Pull(string name, object pullRequest)
         {
             var uri = new Uri(name + "/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
@@ -303,7 +322,7 @@ namespace Allors.Workspace.Adapters.Remote
             return pullResponse;
         }
 
-        public async Task<SyncResponse> Sync(SyncRequest syncRequest)
+        internal async Task<SyncResponse> Sync(SyncRequest syncRequest)
         {
             var uri = new Uri("allors/sync", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, syncRequest);
@@ -313,7 +332,7 @@ namespace Allors.Workspace.Adapters.Remote
             return syncResponse;
         }
 
-        public async Task<PushResponse> Push(PushRequest pushRequest)
+        internal async Task<PushResponse> Push(PushRequest pushRequest)
         {
             var uri = new Uri("allors/push", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pushRequest);
@@ -323,7 +342,7 @@ namespace Allors.Workspace.Adapters.Remote
             return pushResponse;
         }
 
-        public async Task<InvokeResponse> Invoke(InvokeRequest invokeRequest, InvokeOptions options = null)
+        internal async Task<InvokeResponse> Invoke(InvokeRequest invokeRequest, InvokeOptions options = null)
         {
             var uri = new Uri("allors/invoke", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, invokeRequest);
@@ -333,7 +352,7 @@ namespace Allors.Workspace.Adapters.Remote
             return invokeResponse;
         }
 
-        public async Task<InvokeResponse> Invoke(string service, object args)
+        internal async Task<InvokeResponse> Invoke(string service, object args)
         {
             var uri = new Uri(service + "/Pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
@@ -343,7 +362,7 @@ namespace Allors.Workspace.Adapters.Remote
             return invokeResponse;
         }
 
-        public async Task<SecurityResponse> Security(SecurityRequest securityRequest)
+        internal async Task<SecurityResponse> Security(SecurityRequest securityRequest)
         {
             var uri = new Uri("allors/security", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, securityRequest);
@@ -353,7 +372,7 @@ namespace Allors.Workspace.Adapters.Remote
             return syncResponse;
         }
 
-        public async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>
+        internal async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>
             await this.Policy.ExecuteAsync(
                 async () =>
                 {
@@ -363,39 +382,11 @@ namespace Allors.Workspace.Adapters.Remote
                         new StringContent(json, Encoding.UTF8, "application/json"));
                 });
 
-        public async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
+        internal async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
             var deserializedObject = JsonConvert.DeserializeObject<T>(json);
             return deserializedObject;
-        }
-
-        public async Task<bool> Login(Uri url, string username, string password)
-        {
-            var request = new { UserName = username, Password = password };
-            using (var response = await this.PostAsJsonAsync(url, request))
-            {
-                response.EnsureSuccessStatusCode();
-                var authResult = await this.ReadAsAsync<AuthenticationResult>(response);
-                if (!authResult.Authenticated)
-                {
-                    return false;
-                }
-
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.Token);
-                this.UserId = authResult.UserId;
-
-                return true;
-            }
-        }
-
-        public class AuthenticationResult
-        {
-            public bool Authenticated { get; set; }
-
-            public string Token { get; set; }
-
-            public string UserId { get; set; }
         }
 
         internal DatabaseObject New(long objectId, IClass @class)
@@ -403,6 +394,15 @@ namespace Allors.Workspace.Adapters.Remote
             var databaseObject = new DatabaseObject(this, objectId, @class);
             this.databaseObjectById[objectId] = databaseObject;
             return databaseObject;
+        }
+
+        public class AuthenticationTokenResponse
+        {
+            public bool Authenticated { get; set; }
+
+            public string Token { get; set; }
+
+            public string UserId { get; set; }
         }
     }
 }

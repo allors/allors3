@@ -7,7 +7,7 @@ namespace Allors.Workspace
 {
     using Meta;
 
-    public partial class WorkspaceStateState : IWorkspaceStateState
+    public partial class WorkspaceState : IWorkspaceState
     {
         public M M { get; private set; }
 
@@ -15,7 +15,7 @@ namespace Allors.Workspace
         {
         }
 
-        public void OnInit(IWorkspace internalWorkspace) => this.M = new M((MetaPopulation)internalWorkspace.ObjectFactory.MetaPopulation);
+        public void OnInit(IWorkspace workspace) => this.M = new M((MetaPopulation)workspace.MetaPopulation);
 
         public ISessionStateLifecycle CreateSessionState() => new SessionStateState();
     }

@@ -11,8 +11,6 @@ namespace Allors.Workspace
 
     public interface IObjectFactory
     {
-        IMetaPopulation MetaPopulation { get; }
-
         string Namespace { get; }
 
         IObject Create(IStrategy strategy);

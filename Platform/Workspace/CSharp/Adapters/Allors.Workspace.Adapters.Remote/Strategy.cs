@@ -40,19 +40,17 @@ namespace Allors.Workspace.Adapters.Remote
         public void PushResponse(long id)
         {
             this.NewId = null;
-            this.DatabaseObject = this.SessionOrigin.Database.New(id, this.ObjectType);
+            this.DatabaseObject = this.Session.Workspace.Database.New(id, this.ObjectType);
         }
 
         public IObject Object
         {
             get
             {
-                this.@object ??= this.Session.Workspace.Database.ObjectFactory.Create(this);
+                this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
                 return this.@object;
             }
         }
-
-        public Session SessionOrigin => this.Session;
 
         public DatabaseObject DatabaseObject { get; private set; }
 
@@ -117,7 +115,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.SessionOrigin.Database.GetPermission(this.ObjectType, roleType, Operations.Read);
+            var permission = this.Session.Workspace.Database.GetPermission(this.ObjectType, roleType, Operations.Read);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -128,7 +126,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.SessionOrigin.Database.GetPermission(this.ObjectType, roleType, Operations.Write);
+            var permission = this.Session.Workspace.Database.GetPermission(this.ObjectType, roleType, Operations.Write);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -139,7 +137,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.SessionOrigin.Database.GetPermission(this.ObjectType, methodType, Operations.Execute);
+            var permission = this.Session.Workspace.Database.GetPermission(this.ObjectType, methodType, Operations.Execute);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -171,7 +169,7 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.SessionOrigin.Instantiate((long)workspaceRole.Value);
+                                value = this.Session.Instantiate((long)workspaceRole.Value);
                             }
                             else
                             {
@@ -179,7 +177,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
                                 for (var i = 0; i < ids.Length; i++)
                                 {
-                                    array.SetValue(this.SessionOrigin.Instantiate(ids[i]), i);
+                                    array.SetValue(this.Session.Instantiate(ids[i]), i);
                                 }
 
                                 value = array;
@@ -190,7 +188,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.SessionOrigin.Database.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
 
                 this.roleByRoleType[roleType] = value;
@@ -263,9 +261,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.Set(roleType, roles);
         }
 
-        public object GetAssociation(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.Object, associationType).FirstOrDefault();
+        public object GetAssociation(IAssociationType associationType) => this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
 
-        public IEnumerable<IObject> GetAssociations(IAssociationType associationType) => this.SessionOrigin.GetAssociation(this.Object, associationType);
+        public IEnumerable<IObject> GetAssociations(IAssociationType associationType) => this.Session.GetAssociation(this.Object, associationType);
 
         public PushRequestObject Save()
         {
@@ -304,7 +302,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (this.DatabaseObject != null)
             {
-                this.DatabaseObject = this.SessionOrigin.Database.Get(this.Id);
+                this.DatabaseObject = this.Session.Workspace.Database.Get(this.Id);
             }
 
             this.changedRoleByRoleType = null;
@@ -324,7 +322,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (this.DatabaseObject != null)
                     {
-                        this.DatabaseObject = this.SessionOrigin.Database.Get(this.Id);
+                        this.DatabaseObject = this.Session.Workspace.Database.Get(this.Id);
                     }
                 }
             }
@@ -347,12 +345,12 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.SessionOrigin.GetForAssociation((long)workspaceRole.Value);
+                                value = this.Session.GetForAssociation((long)workspaceRole.Value);
                             }
                             else
                             {
                                 var ids = (long[])workspaceRole.Value;
-                                var array = ids.Select(v => this.SessionOrigin.GetForAssociation(v))
+                                var array = ids.Select(v => this.Session.GetForAssociation(v))
                                     .Where(v => v != null)
                                     .ToArray();
                                 value = array;
@@ -363,7 +361,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                 if (value == null && roleType.IsMany)
                 {
-                    value = this.SessionOrigin.Database.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    value = this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
                 }
             }
 

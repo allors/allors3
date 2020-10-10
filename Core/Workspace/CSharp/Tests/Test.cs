@@ -26,23 +26,20 @@ namespace Tests.Adapters
 
         public Workspace Workspace { get; }
 
-        public Database Database { get; }
+        public Database Database => this.Workspace.Database;
 
-        public M M { get; }
+        public M M => this.Workspace.State().M;
 
         public Test()
         {
-
-            this.Database = new Database(
-                new ObjectFactory(new MetaBuilder().Build(), typeof(User)),
+            this.Workspace = new Workspace(
+                new MetaBuilder().Build(),
+                typeof(User),
+                new WorkspaceState(),
                 new HttpClient()
                 {
                     BaseAddress = new Uri(Url),
                 });
-
-            this.Workspace = new Workspace(this.Database, new WorkspaceStateState());
-
-            this.M = this.Workspace.State().M;
 
             this.Init();
         }

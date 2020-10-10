@@ -6,7 +6,7 @@ namespace Allors.Workspace
     {
         public static ISessionStateState SessionState(this IStrategy @this) => @this.Session.State();
 
-        public static WorkspaceStateState WorkspaceState(this IStrategy @this) => @this.Session.Workspace.State();
+        public static WorkspaceState WorkspaceState(this IStrategy @this) => @this.Session.Workspace.State();
     }
 
     public static partial class SessionExtensions
@@ -16,6 +16,6 @@ namespace Allors.Workspace
 
     public static partial class WorkspaceExtensions
     {
-        public static WorkspaceStateState State(this IWorkspace @this) => ((WorkspaceStateState)@this.StateLifecycle);
+        public static WorkspaceState State(this IWorkspace @this) => ((WorkspaceState)@this.StateLifecycle);
     }
 }

@@ -9,41 +9,74 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Allors.Workspace.Data;
+    using Meta;
     using Protocol.Database.Invoke;
     using Protocol.Database.Pull;
     using Protocol.Database.Push;
     using Protocol.Database.Sync;
-    using Allors.Workspace.Data;
-    using Meta;
 
     public class Session : ISession
     {
         private static long idCounter = 0;
 
-        private readonly Dictionary<long, Strategy> strategyById = new Dictionary<long, Strategy>();
         private readonly Dictionary<long, Strategy> newStrategyById = new Dictionary<long, Strategy>();
+        private readonly Dictionary<long, Strategy> strategyById = new Dictionary<long, Strategy>();
 
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
             this.Workspace = workspace;
             this.StateLifecycle = stateLifecycle;
-            this.Database = this.Workspace.Database;
-            this.Workspace.RegisterContext(this);
+            this.Workspace.RegisterSession(this);
 
             this.StateLifecycle.OnInit(this);
         }
 
-        ~Session() => this.Workspace.UnregisterContext(this);
-
-        IWorkspace ISession.Workspace => this.Workspace;
-
-        public Workspace Workspace { get; }
+        ~Session() => this.Workspace.UnregisterSession(this);
 
         internal bool HasChanges => this.newStrategyById.Count > 0 || this.strategyById.Values.Any(v => v.HasChanges);
 
-        public Database Database { get; }
-
         public ISessionStateLifecycle StateLifecycle { get; }
+
+        IWorkspace ISession.Workspace => this.Workspace;
+
+        internal Workspace Workspace { get; }
+
+        public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
+
+        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        {
+            var invokeRequest = new InvokeRequest
+            {
+                I = methods.Select(v => new Invocation
+                {
+                    I = v.Object.Id.ToString(),
+                    V = v.Object.Strategy.Version.ToString(),
+                    M = v.MethodType.IdAsString,
+                }).ToArray(),
+                O = options != null ? new InvokeOptions
+                {
+                    C = options.ContinueOnError,
+                    I = options.Isolated
+                } : null,
+            };
+
+            var invokeResponse = await this.Workspace.Database.Invoke(invokeRequest);
+            return new CallResult(invokeResponse);
+        }
+
+        public async Task<ICallResult> Call(string service, object args)
+        {
+            var invokeResponse = await this.Workspace.Database.Invoke(service, args);
+            return new CallResult(invokeResponse);
+        }
+
+        public IObject Create(IClass @class)
+        {
+            var strategy = new Strategy(this, @class, --idCounter);
+            this.newStrategyById[strategy.Id] = strategy;
+            return strategy.Object;
+        }
 
         public IObject Instantiate(long id)
         {
@@ -51,7 +84,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (!this.newStrategyById.TryGetValue(id, out strategy))
                 {
-                    var workspaceObject = this.Database.Get(id);
+                    var workspaceObject = this.Workspace.Database.Get(id);
                     strategy = new Strategy(this, workspaceObject);
                     this.strategyById[workspaceObject.Id] = strategy;
                 }
@@ -60,11 +93,87 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy.Object;
         }
 
-        public IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
+        public async Task<ILoadResult> Load(params Pull[] pulls)
+        {
+            var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
+            var pullResponse = await this.Workspace.Database.Pull(pullRequest);
+            var syncRequest = this.Workspace.Database.Diff(pullResponse);
+            if (syncRequest.Objects.Length > 0)
+            {
+                await this.Load(syncRequest);
+            }
+
+            return new LoadResult(this, pullResponse);
+        }
+
+        public async Task<ILoadResult> Load(object args, string pullService = null)
+        {
+            if (args is Pull pull)
+            {
+                args = new PullRequest { P = new[] { pull.ToJson() } };
+            }
+
+            if (args is IEnumerable<Pull> pulls)
+            {
+                args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
+            }
+
+            var pullResponse = await this.Workspace.Database.Pull(pullService, args);
+            var syncRequest = this.Workspace.Database.Diff(pullResponse);
+
+            if (syncRequest.Objects.Length > 0)
+            {
+                await this.Load(syncRequest);
+            }
+
+            return new LoadResult(this, pullResponse);
+        }
+
+        public void Reset()
+        {
+            foreach (var newSessionObject in this.newStrategyById.Values)
+            {
+                newSessionObject.Reset();
+            }
+
+            foreach (var sessionObject in this.strategyById.Values)
+            {
+                sessionObject.Reset();
+            }
+        }
+
+        public async Task<ISaveResult> Save()
+        {
+            var saveRequest = this.PushRequest();
+            var pushResponse = await this.Workspace.Database.Push(saveRequest);
+            if (!pushResponse.HasErrors)
+            {
+                this.PushResponse(pushResponse);
+
+                var objects = saveRequest.Objects.Select(v => v.I).ToArray();
+                if (pushResponse.NewObjects != null)
+                {
+                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.I)).ToArray();
+                }
+
+                var syncRequests = new SyncRequest
+                {
+                    Objects = objects,
+                };
+
+                await this.Load(syncRequests);
+
+                this.Reset();
+            }
+
+            return new SaveResult(pushResponse);
+        }
+
+        internal IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
-            var associations = this.Database.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id));
+            var associations = this.Workspace.Database.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id));
             foreach (var association in associations)
             {
                 if (association.Strategy.CanRead(roleType))
@@ -89,124 +198,14 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
-
-        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
+        internal IObject GetForAssociation(long id)
         {
-            var invokeRequest = new InvokeRequest
+            if (!this.strategyById.TryGetValue(id, out var sessionObject))
             {
-                I = methods.Select(v => new Invocation
-                {
-                    I = v.Object.Id.ToString(),
-                    V = v.Object.Strategy.Version.ToString(),
-                    M = v.MethodType.IdAsString,
-                }).ToArray(),
-                O = options != null ? new InvokeOptions
-                {
-                    C = options.ContinueOnError,
-                    I = options.Isolated
-                } : null,
-            };
-
-            var invokeResponse = await this.Database.Invoke(invokeRequest);
-            return new CallResult(invokeResponse);
-        }
-
-        public async Task<ICallResult> Call(string service, object args)
-        {
-            var invokeResponse = await this.Database.Invoke(service, args);
-            return new CallResult(invokeResponse);
-        }
-
-        public async Task<ILoadResult> Load(params Pull[] pulls)
-        {
-            var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
-            var pullResponse = await this.Database.Pull(pullRequest);
-            var syncRequest = this.Database.Diff(pullResponse);
-            if (syncRequest.Objects.Length > 0)
-            {
-                await this.Load(syncRequest);
+                this.newStrategyById.TryGetValue(id, out sessionObject);
             }
 
-            return new LoadResult(this, pullResponse);
-        }
-
-        public async Task<ILoadResult> Load(object args, string pullService = null)
-        {
-            if (args is Pull pull)
-            {
-                args = new PullRequest { P = new[] { pull.ToJson() } };
-            }
-
-            if (args is IEnumerable<Pull> pulls)
-            {
-                args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
-            }
-
-            var pullResponse = await this.Database.Pull(pullService, args);
-            var syncRequest = this.Database.Diff(pullResponse);
-
-            if (syncRequest.Objects.Length > 0)
-            {
-                await this.Load(syncRequest);
-            }
-
-            return new LoadResult(this, pullResponse);
-        }
-
-        public async Task<ISaveResult> Save()
-        {
-            var saveRequest = this.PushRequest();
-            var pushResponse = await this.Database.Push(saveRequest);
-            if (!pushResponse.HasErrors)
-            {
-                this.PushResponse(pushResponse);
-
-                var objects = saveRequest.Objects.Select(v => v.I).ToArray();
-                if (pushResponse.NewObjects != null)
-                {
-                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.I)).ToArray();
-                }
-
-                var syncRequests = new SyncRequest
-                {
-                    Objects = objects,
-                };
-
-                await this.Load(syncRequests);
-
-                this.Reset();
-            }
-
-            return new SaveResult(pushResponse);
-        }
-
-        public void Reset()
-        {
-            foreach (var newSessionObject in this.newStrategyById.Values)
-            {
-                newSessionObject.Reset();
-            }
-
-            foreach (var sessionObject in this.strategyById.Values)
-            {
-                sessionObject.Reset();
-            }
-        }
-
-        public IObject Create(IClass @class)
-        {
-            var strategy = new Strategy(this, @class, --idCounter);
-            this.newStrategyById[strategy.Id] = strategy;
-            return strategy.Object;
-        }
-
-        internal void Refresh()
-        {
-            foreach (var sessionObject in this.strategyById.Values)
-            {
-                sessionObject.Refresh();
-            }
+            return sessionObject?.Object;
         }
 
         internal PushRequest PushRequest() =>
@@ -239,30 +238,28 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal IObject GetForAssociation(long id)
+        internal void Refresh()
         {
-            if (!this.strategyById.TryGetValue(id, out var sessionObject))
+            foreach (var sessionObject in this.strategyById.Values)
             {
-                this.newStrategyById.TryGetValue(id, out sessionObject);
+                sessionObject.Refresh();
             }
-
-            return sessionObject?.Object;
         }
 
         private async Task Load(SyncRequest syncRequest)
         {
-            var syncResponse = await this.Database.Sync(syncRequest);
-            var securityRequest = this.Database.Sync(syncResponse);
+            var syncResponse = await this.Workspace.Database.Sync(syncRequest);
+            var securityRequest = this.Workspace.Database.Sync(syncResponse);
 
             if (securityRequest != null)
             {
-                var securityResponse = await this.Database.Security(securityRequest);
-                securityRequest = this.Database.Security(securityResponse);
+                var securityResponse = await this.Workspace.Database.Security(securityRequest);
+                securityRequest = this.Workspace.Database.Security(securityResponse);
 
                 if (securityRequest != null)
                 {
-                    securityResponse = await this.Database.Security(securityRequest);
-                    this.Database.Security(securityResponse);
+                    securityResponse = await this.Workspace.Database.Security(securityRequest);
+                    this.Workspace.Database.Security(securityResponse);
                 }
             }
         }
