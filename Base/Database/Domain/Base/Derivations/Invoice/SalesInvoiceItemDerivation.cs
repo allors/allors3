@@ -18,7 +18,7 @@ namespace Allors.Domain
         public SalesInvoiceItemDerivation(M m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.SalesInvoiceItem.Class),
+                new CreatedPattern(this.M.SalesInvoiceItem.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,8 +32,8 @@ namespace Allors.Domain
                 var salesInvoice = SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem;
                 var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
 
-                validation.AssertExistsAtMostOne(SalesInvoiceItem, M.SalesInvoiceItem.Product, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
-                validation.AssertExistsAtMostOne(SalesInvoiceItem, M.SalesInvoiceItem.SerialisedItem, M.SalesInvoiceItem.ProductFeatures, M.SalesInvoiceItem.Part);
+                validation.AssertExistsAtMostOne(SalesInvoiceItem, this.M.SalesInvoiceItem.Product, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
+                validation.AssertExistsAtMostOne(SalesInvoiceItem, this.M.SalesInvoiceItem.SerialisedItem, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
 
                 if (!SalesInvoiceItem.ExistDerivationTrigger)
                 {
@@ -47,17 +47,17 @@ namespace Allors.Domain
 
                 if (SalesInvoiceItem.Part != null && SalesInvoiceItem.Part.InventoryItemKind.IsSerialised && SalesInvoiceItem.Quantity != 1)
                 {
-                    validation.AddError($"{SalesInvoiceItem}, {M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{SalesInvoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
                 }
 
                 if (SalesInvoiceItem.Part != null && SalesInvoiceItem.Part.InventoryItemKind.IsNonSerialised && SalesInvoiceItem.Quantity == 0)
                 {
-                    validation.AddError($"{SalesInvoiceItem}, {M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{SalesInvoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
                 }
 
                 if (SalesInvoiceItem.ExistInvoiceItemType && SalesInvoiceItem.InvoiceItemType.MaxQuantity.HasValue && SalesInvoiceItem.Quantity > SalesInvoiceItem.InvoiceItemType.MaxQuantity.Value)
                 {
-                    validation.AddError($"{SalesInvoiceItem}, {M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{SalesInvoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
                 }
 
                 SalesInvoiceItem.VatRegime = SalesInvoiceItem.ExistAssignedVatRegime ? SalesInvoiceItem.AssignedVatRegime : SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem?.VatRegime;

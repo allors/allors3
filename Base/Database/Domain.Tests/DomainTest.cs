@@ -252,6 +252,6 @@ namespace Allors
             this.Session.Commit();
         }
 
-        private Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(M.User.UserName, userName);
+        private Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(this.M.User.UserName, userName);
     }
 }

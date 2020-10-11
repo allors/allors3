@@ -15,8 +15,8 @@ namespace Allors.Domain
         public PickListDerivation(M m) : base(m, new Guid("8D9F3C91-DBA7-44AA-AA60-C1A58CAFDF0D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PickList.Class),
-                new ChangedRolePattern(M.PickList.Picker),
+                new CreatedPattern(this.M.PickList.Class),
+                new ChangedRolePattern(this.M.PickList.Picker),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

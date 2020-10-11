@@ -9,8 +9,8 @@ namespace Allors.Domain
     {
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.ContactMechanismPurpose);
-            setup.AddDependency(this.ObjectType, M.Settings);
+            setup.AddDependency(this.ObjectType, this.M.ContactMechanismPurpose);
+            setup.AddDependency(this.ObjectType, this.M.Settings);
         }
     }
 }

@@ -11,9 +11,9 @@ namespace Allors.Domain
     {
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.Singleton);
-            setup.AddDependency(this.ObjectType, M.InventoryStrategy);
-            setup.AddDependency(this.ObjectType, M.Currency);
+            setup.AddDependency(this.ObjectType, this.M.Singleton);
+            setup.AddDependency(this.ObjectType, this.M.InventoryStrategy);
+            setup.AddDependency(this.ObjectType, this.M.Currency);
         }
 
         protected override void BaseSetup(Setup setup)
@@ -27,7 +27,7 @@ namespace Allors.Domain
             var settings = singleton.Settings;
 
             var inventoryStrategy = new InventoryStrategies(this.Session).Standard;
-            var preferredCurrency = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var preferredCurrency = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             settings.InventoryStrategy ??= inventoryStrategy;
             settings.SkuPrefix ??= "Sku";

@@ -16,9 +16,13 @@ namespace Allors.Workspace
 
         ISessionStateLifecycle StateLifecycle { get; }
 
-        IObject Instantiate(long id);
+        T Create<T>() where T : class, IObject;
 
         IObject Create(IClass @class);
+
+        T Instantiate<T>(T @object) where T : IObject;
+
+        IObject Instantiate(long id);
 
         void Reset();
 
@@ -31,7 +35,6 @@ namespace Allors.Workspace
         Task<ILoadResult> Load(params Pull[] pulls);
 
         Task<ILoadResult> Load(object args, string pullService = null);
-
         Task<ISaveResult> Save();
     }
 }

@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     public partial class PurchaseOrderItems
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.PurchaseOrderItemState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.PurchaseOrderItemState);
 
         protected override void BaseSecure(Security config)
         {

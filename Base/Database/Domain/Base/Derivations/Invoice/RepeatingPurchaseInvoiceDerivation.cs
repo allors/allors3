@@ -17,7 +17,7 @@ namespace Allors.Domain
         public RepeatingPurchaseInvoiceDerivation(M m) : base(m, new Guid("BCFAE9E0-8100-4BD0-9262-14A56E557B57")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.RepeatingPurchaseInvoice.Class)
+                new CreatedPattern(this.M.RepeatingPurchaseInvoice.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -28,24 +28,24 @@ namespace Allors.Domain
             {
                 if (!repeatingPurchaseInvoice.Frequency.Equals(new TimeFrequencies(repeatingPurchaseInvoice.Strategy.Session).Month) && !repeatingPurchaseInvoice.Frequency.Equals(new TimeFrequencies(repeatingPurchaseInvoice.Strategy.Session).Week))
                 {
-                    validation.AddError($"{repeatingPurchaseInvoice} {M.RepeatingPurchaseInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
+                    validation.AddError($"{repeatingPurchaseInvoice} {this.M.RepeatingPurchaseInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
                 }
 
                 if (repeatingPurchaseInvoice.Frequency.Equals(new TimeFrequencies(repeatingPurchaseInvoice.Strategy.Session).Week) && !repeatingPurchaseInvoice.ExistDayOfWeek)
                 {
-                    validation.AssertExists(repeatingPurchaseInvoice, M.RepeatingPurchaseInvoice.DayOfWeek);
+                    validation.AssertExists(repeatingPurchaseInvoice, this.M.RepeatingPurchaseInvoice.DayOfWeek);
                 }
 
                 if (repeatingPurchaseInvoice.Frequency.Equals(new TimeFrequencies(repeatingPurchaseInvoice.Strategy.Session).Month) && repeatingPurchaseInvoice.ExistDayOfWeek)
                 {
-                    validation.AssertNotExists(repeatingPurchaseInvoice, M.RepeatingPurchaseInvoice.DayOfWeek);
+                    validation.AssertNotExists(repeatingPurchaseInvoice, this.M.RepeatingPurchaseInvoice.DayOfWeek);
                 }
 
                 if (repeatingPurchaseInvoice.Frequency.Equals(new TimeFrequencies(repeatingPurchaseInvoice.Strategy.Session).Week) && repeatingPurchaseInvoice.ExistDayOfWeek && repeatingPurchaseInvoice.ExistNextExecutionDate)
                 {
                     if (!repeatingPurchaseInvoice.NextExecutionDate.DayOfWeek.ToString().Equals(repeatingPurchaseInvoice.DayOfWeek.Name))
                     {
-                        validation.AddError($"{repeatingPurchaseInvoice} {M.RepeatingPurchaseInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
+                        validation.AddError($"{repeatingPurchaseInvoice} {this.M.RepeatingPurchaseInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
                     }
                 }
             }

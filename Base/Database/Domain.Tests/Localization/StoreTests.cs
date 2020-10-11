@@ -73,7 +73,7 @@ namespace Allors.Domain
             Assert.Equal(0, store.ShipmentThreshold);
             Assert.Equal(internalOrganisation.DefaultCollectionMethod, store.DefaultCollectionMethod);
             Assert.Single(store.CollectionMethods);
-            Assert.Equal(new Facilities(this.Session).FindBy(M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), store.DefaultFacility);
+            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), store.DefaultFacility);
         }
 
         [Fact]

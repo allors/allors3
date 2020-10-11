@@ -11,7 +11,7 @@ namespace Allors.Domain
     {
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
-            new TransitionalConfiguration(M.SalesInvoiceItem, M.SalesInvoiceItem.SalesInvoiceItemState),
+            new TransitionalConfiguration(this.M.SalesInvoiceItem, this.M.SalesInvoiceItem.SalesInvoiceItemState),
         };
 
         public bool IsValid => !(this.SalesInvoiceItemState.IsCancelledByInvoice || this.SalesInvoiceItemState.IsWrittenOff);

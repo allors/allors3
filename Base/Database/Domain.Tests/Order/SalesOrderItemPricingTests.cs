@@ -39,7 +39,7 @@ namespace Allors.Domain
 
         public SalesOrderItemPricingTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             this.internalOrganisation = this.Session.GetSingleton();
 
@@ -1961,7 +1961,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenBillToCustomerWithDifferentCurrency_WhenDerivingPrices_ThenCalculatePricesInPreferredCurrency()
         {
-            var poundSterling = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "GBP");
+            var poundSterling = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "GBP");
 
             const decimal conversionfactor = 0.8553M;
             var euroToPoundStirling = new UnitOfMeasureConversionBuilder(this.Session)
@@ -1970,7 +1970,7 @@ namespace Allors.Domain
                 .WithStartDate(this.Session.Now())
                 .Build();
 
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
             euro.AddUnitOfMeasureConversion(euroToPoundStirling);
 
             this.Session.Derive();

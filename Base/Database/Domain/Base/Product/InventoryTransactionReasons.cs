@@ -46,8 +46,8 @@ namespace Allors.Domain
 
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.Meta.ObjectType, M.SerialisedInventoryItemState);
-            setup.AddDependency(this.Meta.ObjectType, M.NonSerialisedInventoryItemState);
+            setup.AddDependency(this.Meta.ObjectType, this.M.SerialisedInventoryItemState);
+            setup.AddDependency(this.Meta.ObjectType, this.M.NonSerialisedInventoryItemState);
         }
 
         protected override void BaseSetup(Setup setup)

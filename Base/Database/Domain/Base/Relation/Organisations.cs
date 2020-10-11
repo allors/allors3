@@ -282,19 +282,19 @@ namespace Allors.Domain
         public Organisation[] InternalOrganisations()
         {
             var internalOrganisations = this.Extent();
-            internalOrganisations.Filter.AddEquals(M.InternalOrganisation.IsInternalOrganisation, true);
+            internalOrganisations.Filter.AddEquals(this.M.InternalOrganisation.IsInternalOrganisation, true);
 
             return internalOrganisations.ToArray();
         }
 
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.Meta.ObjectType, M.InventoryStrategy);
-            setup.AddDependency(this.Meta.ObjectType, M.Role);
-            setup.AddDependency(this.Meta.ObjectType, M.OrganisationRole);
-            setup.AddDependency(this.Meta.ObjectType, M.InvoiceSequence);
-            setup.AddDependency(this.Meta.ObjectType, M.Singleton);
-            setup.AddDependency(this.Meta.ObjectType, M.FacilityType);
+            setup.AddDependency(this.Meta.ObjectType, this.M.InventoryStrategy);
+            setup.AddDependency(this.Meta.ObjectType, this.M.Role);
+            setup.AddDependency(this.Meta.ObjectType, this.M.OrganisationRole);
+            setup.AddDependency(this.Meta.ObjectType, this.M.InvoiceSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.Singleton);
+            setup.AddDependency(this.Meta.ObjectType, this.M.FacilityType);
         }
     }
 }

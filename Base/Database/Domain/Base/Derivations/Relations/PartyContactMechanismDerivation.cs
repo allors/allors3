@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PartyContactMechanismDerivation(M m) : base(m, new Guid("7C4E6217-8D71-4544-B8E4-8B2C51F6A5C1")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PartyContactMechanism.Class),
+                new CreatedPattern(this.M.PartyContactMechanism.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -25,7 +25,7 @@ namespace Allors.Domain
             {
                 if (partyContactMechanism.ExistUseAsDefault && partyContactMechanism.UseAsDefault)
                 {
-                    cycle.Validation.AssertExists(partyContactMechanism, M.PartyContactMechanism.ContactPurposes);
+                    cycle.Validation.AssertExists(partyContactMechanism, this.M.PartyContactMechanism.ContactPurposes);
                 }
 
                 if (partyContactMechanism.UseAsDefault && partyContactMechanism.ExistPartyWherePartyContactMechanism && partyContactMechanism.ExistContactPurposes)
@@ -33,7 +33,7 @@ namespace Allors.Domain
                     foreach (var contactMechanismPurpose in partyContactMechanism.ContactPurposes)
                     {
                         var partyContactMechanisms = partyContactMechanism.PartyWherePartyContactMechanism.PartyContactMechanisms;
-                        partyContactMechanisms.Filter.AddContains(M.PartyContactMechanism.ContactPurposes, (IObject)contactMechanismPurpose);
+                        partyContactMechanisms.Filter.AddContains(this.M.PartyContactMechanism.ContactPurposes, (IObject)contactMechanismPurpose);
 
                         foreach (PartyContactMechanism partyContactMechanismFromOrganisationWherePartyContactMechanism in partyContactMechanisms)
                         {

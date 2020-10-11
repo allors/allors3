@@ -25,8 +25,8 @@ namespace Allors.Domain
                 }
 
                 var picklists = this.ShipToParty.PickListsWhereShipToParty;
-                picklists.Filter.AddEquals(M.PickList.Store, this.Store);
-                picklists.Filter.AddNot().AddEquals(M.PickList.PickListState, new PickListStates(this.Strategy.Session).Picked);
+                picklists.Filter.AddEquals(this.M.PickList.Store, this.Store);
+                picklists.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Strategy.Session).Picked);
                 if (picklists.First != null)
                 {
                     return false;
@@ -55,8 +55,8 @@ namespace Allors.Domain
             get
             {
                 var pickLists = this.ShipToParty.PickListsWhereShipToParty;
-                pickLists.Filter.AddEquals(M.PickList.Store, this.Store);
-                pickLists.Filter.AddNot().AddEquals(M.PickList.PickListState, new PickListStates(this.Session()).Picked);
+                pickLists.Filter.AddEquals(this.M.PickList.Store, this.Store);
+                pickLists.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Session()).Picked);
 
                 return pickLists.FirstOrDefault();
             }

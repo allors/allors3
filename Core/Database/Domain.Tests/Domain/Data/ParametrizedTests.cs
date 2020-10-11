@@ -20,16 +20,16 @@ namespace Tests
         [Fact]
         public void EqualsWithParameters()
         {
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
-                Predicate = new Equals { PropertyType = M.Person.FirstName, Parameter = "firstName" },
+                Predicate = new Equals { PropertyType = this.M.Person.FirstName, Parameter = "firstName" },
             };
 
             var arguments = new Dictionary<string, string> { { "firstName", "John" } };
             var queryExtent = filter.Build(this.Session, arguments);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
-            extent.Filter.AddEquals(M.Person.FirstName, "John");
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -37,23 +37,23 @@ namespace Tests
         [Fact]
         public void EqualsWithDependencies()
         {
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
-                Predicate = new Equals { Dependencies = new[] { "useFirstname" }, PropertyType = M.Person.FirstName, Value = "John" },
+                Predicate = new Equals { Dependencies = new[] { "useFirstname" }, PropertyType = this.M.Person.FirstName, Value = "John" },
             };
 
             var arguments = new Dictionary<string, string>();
             var queryExtent = filter.Build(this.Session, arguments);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
 
             arguments.Add("useFirstname", "x");
             queryExtent = filter.Build(this.Session, arguments);
 
-            extent = this.Session.Extent(M.Person.ObjectType);
-            extent.Filter.AddEquals(M.Person.FirstName, "John");
+            extent = this.Session.Extent(this.M.Person.ObjectType);
+            extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -61,14 +61,14 @@ namespace Tests
         [Fact]
         public void EqualsWithoutParameters()
         {
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
-                Predicate = new Equals { PropertyType = M.Person.FirstName, Parameter = "firstName" },
+                Predicate = new Equals { PropertyType = this.M.Person.FirstName, Parameter = "firstName" },
             };
 
             var queryExtent = filter.Build(this.Session);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -77,7 +77,7 @@ namespace Tests
         public void AndWithParameters()
         {
             // select from Person where FirstName='John' and LastName='Doe'
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
                 Predicate = new And
                 {
@@ -85,12 +85,12 @@ namespace Tests
                                 {
                                     new Equals
                                         {
-                                            PropertyType = M.Person.FirstName,
+                                            PropertyType = this.M.Person.FirstName,
                                             Parameter = "firstName",
                                         },
                                     new Equals
                                         {
-                                            PropertyType = M.Person.LastName,
+                                            PropertyType = this.M.Person.LastName,
                                             Parameter = "lastName"
                                         },
                                 },
@@ -104,10 +104,10 @@ namespace Tests
                                 };
             var queryExtent = filter.Build(this.Session, arguments);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
             var and = extent.Filter.AddAnd();
-            and.AddEquals(M.Person.FirstName, "John");
-            and.AddEquals(M.Person.LastName, "Doe");
+            and.AddEquals(this.M.Person.FirstName, "John");
+            and.AddEquals(this.M.Person.LastName, "Doe");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -116,7 +116,7 @@ namespace Tests
         public void AndWithoutParameters()
         {
             // select from Person where FirstName='John' and LastName='Doe'
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
                 Predicate = new And
                 {
@@ -124,12 +124,12 @@ namespace Tests
                         {
                             new Equals
                                 {
-                                    PropertyType = M.Person.FirstName,
+                                    PropertyType = this.M.Person.FirstName,
                                     Parameter = "firstName",
                                 },
                             new Equals
                                 {
-                                    PropertyType = M.Person.LastName,
+                                    PropertyType = this.M.Person.LastName,
                                     Parameter = "lastName"
                                 },
                         },
@@ -142,8 +142,8 @@ namespace Tests
                                     };
                 var queryExtent = filter.Build(this.Session, arguments);
 
-                var extent = this.Session.Extent(M.Person.ObjectType);
-                extent.Filter.AddEquals(M.Person.FirstName, "John");
+                var extent = this.Session.Extent(this.M.Person.ObjectType);
+                extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
                 Assert.Equal(extent.ToArray(), queryExtent.ToArray());
             }
@@ -151,7 +151,7 @@ namespace Tests
             {
                 var queryExtent = filter.Build(this.Session);
 
-                var extent = this.Session.Extent(M.Person.ObjectType);
+                var extent = this.Session.Extent(this.M.Person.ObjectType);
 
                 Assert.Equal(extent.ToArray(), queryExtent.ToArray());
             }
@@ -160,16 +160,16 @@ namespace Tests
         [Fact]
         public void NestedWithParameters()
         {
-            var filter = new Extent(M.Organisation.ObjectType)
+            var filter = new Extent(this.M.Organisation.ObjectType)
             {
                 Predicate = new ContainedIn
                 {
-                    PropertyType = M.Organisation.Employees,
-                    Extent = new Extent(M.Person.ObjectType)
+                    PropertyType = this.M.Organisation.Employees,
+                    Extent = new Extent(this.M.Person.ObjectType)
                     {
                         Predicate = new Equals
                         {
-                            PropertyType = M.Person.Gender,
+                            PropertyType = this.M.Person.Gender,
                             Parameter = "gender",
                         },
                     },
@@ -181,10 +181,10 @@ namespace Tests
             var arguments = new Dictionary<string, string> { { "gender", male.Id.ToString() } };
             var queryExtent = filter.Build(this.Session, arguments);
 
-            var employees = this.Session.Extent(M.Person.ObjectType);
-            employees.Filter.AddEquals(M.Person.Gender, male);
-            var extent = this.Session.Extent(M.Organisation.ObjectType);
-            extent.Filter.AddContainedIn(M.Organisation.Employees, employees);
+            var employees = this.Session.Extent(this.M.Person.ObjectType);
+            employees.Filter.AddEquals(this.M.Person.Gender, male);
+            var extent = this.Session.Extent(this.M.Organisation.ObjectType);
+            extent.Filter.AddContainedIn(this.M.Organisation.Employees, employees);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -192,16 +192,16 @@ namespace Tests
         [Fact]
         public void NestedWithoutParameters()
         {
-            var filter = new Extent(M.Organisation.ObjectType)
+            var filter = new Extent(this.M.Organisation.ObjectType)
             {
                 Predicate = new ContainedIn
                 {
-                    PropertyType = M.Organisation.Employees,
-                    Extent = new Extent(M.Person.ObjectType)
+                    PropertyType = this.M.Organisation.Employees,
+                    Extent = new Extent(this.M.Person.ObjectType)
                     {
                         Predicate = new Equals
                         {
-                            PropertyType = M.Person.Gender,
+                            PropertyType = this.M.Person.Gender,
                             Parameter = "gender",
                         },
                     },
@@ -211,7 +211,7 @@ namespace Tests
             var arguments = new Dictionary<string, string>();
             var queryExtent = filter.Build(this.Session, arguments);
 
-            var extent = this.Session.Extent(M.Organisation.ObjectType);
+            var extent = this.Session.Extent(this.M.Organisation.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -219,7 +219,7 @@ namespace Tests
         [Fact]
         public void AndNestedContainedInWithoutParameters()
         {
-            var filter = new Extent(M.Organisation.ObjectType)
+            var filter = new Extent(this.M.Organisation.ObjectType)
             {
                 Predicate = new And
                 {
@@ -227,12 +227,12 @@ namespace Tests
                     {
                         new ContainedIn
                         {
-                            PropertyType = M.Organisation.Employees,
-                            Extent = new Extent(M.Person.ObjectType)
+                            PropertyType = this.M.Organisation.Employees,
+                            Extent = new Extent(this.M.Person.ObjectType)
                             {
                                 Predicate = new ContainedIn
                                 {
-                                    PropertyType = M.Person.Gender,
+                                    PropertyType = this.M.Person.Gender,
                                     Parameter = "gender",
                                 },
                             },
@@ -244,7 +244,7 @@ namespace Tests
             var parameters = new Dictionary<string, string>();
             var queryExtent = filter.Build(this.Session, parameters);
 
-            var extent = this.Session.Extent(M.Organisation.ObjectType);
+            var extent = this.Session.Extent(this.M.Organisation.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -252,7 +252,7 @@ namespace Tests
         [Fact]
         public void AndNestedContainsWithoutParameters()
         {
-            var filter = new Extent(M.Organisation.ObjectType)
+            var filter = new Extent(this.M.Organisation.ObjectType)
             {
                 Predicate = new And
                 {
@@ -260,12 +260,12 @@ namespace Tests
                     {
                         new ContainedIn
                             {
-                                PropertyType = M.Organisation.Employees,
-                                Extent = new Extent(M.Person.ObjectType)
+                                PropertyType = this.M.Organisation.Employees,
+                                Extent = new Extent(this.M.Person.ObjectType)
                                              {
                                                  Predicate = new Contains
                                                                  {
-                                                                     PropertyType = M.Person.Gender,
+                                                                     PropertyType = this.M.Person.Gender,
                                                                      Parameter = "gender",
                                                                  },
                                              },
@@ -277,7 +277,7 @@ namespace Tests
             var arguments = new Dictionary<string, string>();
             var queryExtent = filter.Build(this.Session, arguments);
 
-            var extent = this.Session.Extent(M.Organisation.ObjectType);
+            var extent = this.Session.Extent(this.M.Organisation.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }

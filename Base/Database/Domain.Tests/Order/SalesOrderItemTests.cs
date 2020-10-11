@@ -37,7 +37,7 @@ namespace Allors.Domain
 
         public SalesOrderItemTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             this.supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
 
@@ -567,7 +567,7 @@ namespace Allors.Domain
         {
             this.InstantiateObjects(this.Session);
 
-            var good2 = new Goods(this.Session).FindBy(M.Good.Name, "good2");
+            var good2 = new Goods(this.Session).FindBy(this.M.Good.Name, "good2");
 
             new SupplierRelationshipBuilder(this.Session)
                 .WithSupplier(this.supplier)
@@ -577,7 +577,7 @@ namespace Allors.Domain
             var good2PurchasePrice = new SupplierOfferingBuilder(this.Session)
                 .WithPart(this.part)
                 .WithSupplier(this.supplier)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithFromDate(this.Session.Now())
                 .WithPrice(7)
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
@@ -605,14 +605,14 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            order.Post();
+            this.order.Post();
             this.Session.Derive(true);
 
-            order.Accept();
+            this.order.Accept();
             this.Session.Derive(true);
 
-            Assert.Equal(new Facilities(this.Session).FindBy(M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item1.ReservedFromNonSerialisedInventoryItem.Facility);
-            Assert.Equal(new Facilities(this.Session).FindBy(M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item2.ReservedFromNonSerialisedInventoryItem.Facility);
+            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item1.ReservedFromNonSerialisedInventoryItem.Facility);
+            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item2.ReservedFromNonSerialisedInventoryItem.Facility);
         }
 
         //[Fact]
@@ -750,10 +750,10 @@ namespace Allors.Domain
             this.order.SetReadyForPosting();
             this.Session.Derive();
 
-            order.Post();
+            this.order.Post();
             this.Session.Derive(true);
 
-            order.Accept();
+            this.order.Accept();
             this.Session.Derive(true);
 
             Assert.Equal(salesOrderItem.QuantityOrdered, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
@@ -988,7 +988,7 @@ namespace Allors.Domain
 
             var manual = new OrderKindBuilder(this.Session).WithDescription("manual").WithScheduleManually(true).Build();
 
-            var good = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             new InventoryItemTransactionBuilder(this.Session).WithQuantity(110).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(good.Part).Build();
 
@@ -1188,7 +1188,7 @@ namespace Allors.Domain
             var derivationLog = this.Session.Derive(false);
 
             Assert.True(derivationLog.HasErrors);
-            Assert.Contains(M.OrderShipment.Quantity, derivationLog.Errors[0].RoleTypes);
+            Assert.Contains(this.M.OrderShipment.Quantity, derivationLog.Errors[0].RoleTypes);
 
             this.Session.Rollback();
 
@@ -1271,7 +1271,7 @@ namespace Allors.Domain
 
         public SalesOrderItemSecurityTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             this.supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
 
@@ -1559,9 +1559,9 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Provisional, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Delete));
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Reject));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
 
         [Fact]
@@ -1600,9 +1600,9 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).InProcess, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Reject));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Delete));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Reject));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
         [Fact]
@@ -1669,9 +1669,9 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemShipmentStates(this.Session).PartiallyShipped, item.SalesOrderItemShipmentState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Reject));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Delete));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
         [Fact]
@@ -1705,8 +1705,8 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Cancelled, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Reject));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
 
         [Fact]
@@ -1740,7 +1740,7 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Cancelled, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Delete));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
         [Fact]
@@ -1774,8 +1774,8 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Rejected, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Reject));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
 
         [Fact]
@@ -1809,7 +1809,7 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Rejected, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.True(acl.CanExecute(M.SalesOrderItem.Delete));
+            Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
         [Fact]
@@ -1889,8 +1889,8 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Completed, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Reject));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
 
         [Fact]
@@ -1924,8 +1924,8 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemStates(this.Session).Finished, item.SalesOrderItemState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Cancel));
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Reject));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
 
         [Fact]
@@ -1992,7 +1992,7 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemShipmentStates(this.Session).PartiallyShipped, item.SalesOrderItemShipmentState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanWrite(M.SalesOrderItem.Product));
+            Assert.False(acl.CanWrite(this.M.SalesOrderItem.Product));
         }
 
         [Fact]
@@ -2035,7 +2035,7 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderItemShipmentStates(this.Session).InProgress, item.SalesOrderItemShipmentState);
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[item];
-            Assert.False(acl.CanExecute(M.SalesOrderItem.Cancel));
+            Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
         }
 
         private void InstantiateObjects(ISession session)

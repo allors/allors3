@@ -23,7 +23,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -48,7 +48,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -114,7 +114,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenSalesInvoice_WhenDerivingWithMultipleInternalOrganisations_ThenBilledFromMustExist()
         {
-            var internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.IsInternalOrganisation, true);
+            var internalOrganisation = new Organisations(this.Session).FindBy(this.M.Organisation.IsInternalOrganisation, true);
 
             var anotherInternalOrganisation = new OrganisationBuilder(this.Session)
                 .WithIsInternalOrganisation(true)
@@ -158,7 +158,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             new SalesInvoiceBuilder(this.Session)
@@ -184,7 +184,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             new SalesInvoiceBuilder(this.Session)
@@ -216,7 +216,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice1 = new SalesInvoiceBuilder(this.Session)
@@ -303,7 +303,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice1 = new SalesInvoiceBuilder(this.Session)
@@ -351,7 +351,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -384,7 +384,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -406,13 +406,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -467,7 +467,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenSalesInvoiceBuilderWithBillToCustomerWithPreferredCurrency_WhenBuilding_ThenDerivedCurrencyIsCustomersPreferredCurrency()
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             var customer = new OrganisationBuilder(this.Session)
                 .WithName("customer")
@@ -521,7 +521,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenSalesInvoiceBuilderWithoutBillToCustomer_WhenBuilding_ThenDerivedCurrencyIsSingletonsPreferredCurrency()
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             var customer = new OrganisationBuilder(this.Session)
                 .WithName("customer")
@@ -533,7 +533,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -555,7 +555,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice1 = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).WithBillToContactMechanism(contactMechanism).Build();
@@ -580,10 +580,10 @@ namespace Allors.Domain
         [Fact]
         public void GivenSalesInvoice_WhenDeriving_ThenTotalAmountMustBeDerived()
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
 
-            var good = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good.Part)
@@ -600,7 +600,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
@@ -663,10 +663,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
@@ -701,10 +701,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
@@ -739,10 +739,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
@@ -777,10 +777,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
@@ -815,7 +815,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -840,7 +840,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
@@ -866,10 +866,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
             this.Session.Commit();
@@ -902,10 +902,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
             good.VatRate = new VatRateBuilder(this.Session).WithRate(0).Build();
 
             this.Session.Derive();
@@ -939,10 +939,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
             this.Session.Commit();
@@ -974,10 +974,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
             this.Session.Commit();
@@ -1026,7 +1026,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good1.Part)
@@ -1034,7 +1034,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .WithPrice(7)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .Build();
 
             this.Session.Derive();
@@ -1086,7 +1086,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             this.Session.Derive();
@@ -1108,11 +1108,11 @@ namespace Allors.Domain
             this.Session.Commit();
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
-            Assert.True(acl.CanExecute(M.SalesInvoice.Send));
-            Assert.False(acl.CanExecute(M.SalesInvoice.WriteOff));
-            Assert.True(acl.CanExecute(M.SalesInvoice.CancelInvoice));
-            Assert.True(acl.CanExecute(M.SalesInvoice.Delete));
-            Assert.False(acl.CanExecute(M.SalesInvoice.SetPaid));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.Send));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.Delete));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.SetPaid));
         }
 
         [Fact]
@@ -1122,10 +1122,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
             this.Session.Commit();
@@ -1153,11 +1153,11 @@ namespace Allors.Domain
             Assert.Equal(new SalesInvoiceStates(this.Session).NotPaid, invoice.SalesInvoiceState);
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
-            Assert.False(acl.CanExecute(M.SalesInvoice.Send));
-            Assert.True(acl.CanExecute(M.SalesInvoice.WriteOff));
-            Assert.False(acl.CanExecute(M.SalesInvoice.CancelInvoice));
-            Assert.False(acl.CanExecute(M.SalesInvoice.Delete));
-            Assert.True(acl.CanExecute(M.SalesInvoice.SetPaid));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.WriteOff));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Delete));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.SetPaid));
         }
 
         ////[Fact]
@@ -1192,10 +1192,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
             this.Session.Commit();
@@ -1232,11 +1232,11 @@ namespace Allors.Domain
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
 
             Assert.Equal(new SalesInvoiceStates(this.Session).Paid, invoice.SalesInvoiceState);
-            Assert.False(acl.CanExecute(M.SalesInvoice.Send));
-            Assert.False(acl.CanExecute(M.SalesInvoice.WriteOff));
-            Assert.False(acl.CanExecute(M.SalesInvoice.CancelInvoice));
-            Assert.False(acl.CanExecute(M.SalesInvoice.Delete));
-            Assert.False(acl.CanExecute(M.SalesInvoice.SetPaid));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Delete));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.SetPaid));
         }
 
         [Fact]
@@ -1246,10 +1246,10 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
             this.Session.Commit();
@@ -1278,11 +1278,11 @@ namespace Allors.Domain
             this.Session.Commit();
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
-            Assert.False(acl.CanExecute(M.SalesInvoice.Send));
-            Assert.True(acl.CanExecute(M.SalesInvoice.WriteOff));
-            Assert.False(acl.CanExecute(M.SalesInvoice.CancelInvoice));
-            Assert.False(acl.CanExecute(M.SalesInvoice.Delete));
-            Assert.True(acl.CanExecute(M.SalesInvoice.SetPaid));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.WriteOff));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Delete));
+            Assert.True(acl.CanExecute(this.M.SalesInvoice.SetPaid));
         }
 
         [Fact]
@@ -1292,7 +1292,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             this.Session.Derive();
@@ -1318,11 +1318,11 @@ namespace Allors.Domain
             this.Session.Derive();
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
-            Assert.False(acl.CanExecute(M.SalesInvoice.Send));
-            Assert.False(acl.CanExecute(M.SalesInvoice.WriteOff));
-            Assert.False(acl.CanExecute(M.SalesInvoice.CancelInvoice));
-            Assert.False(acl.CanExecute(M.SalesInvoice.Delete));
-            Assert.False(acl.CanExecute(M.SalesInvoice.SetPaid));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Delete));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.SetPaid));
         }
 
         [Fact]
@@ -1332,7 +1332,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             this.Session.Derive();
@@ -1356,11 +1356,11 @@ namespace Allors.Domain
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
             Assert.Equal(new SalesInvoiceStates(this.Session).Cancelled, invoice.SalesInvoiceState);
-            Assert.False(acl.CanExecute(M.SalesInvoice.Send));
-            Assert.False(acl.CanExecute(M.SalesInvoice.WriteOff));
-            Assert.False(acl.CanExecute(M.SalesInvoice.CancelInvoice));
-            Assert.False(acl.CanExecute(M.SalesInvoice.Delete));
-            Assert.False(acl.CanExecute(M.SalesInvoice.SetPaid));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.Delete));
+            Assert.False(acl.CanExecute(this.M.SalesInvoice.SetPaid));
         }
     }
 }

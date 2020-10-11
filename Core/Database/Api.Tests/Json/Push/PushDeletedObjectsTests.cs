@@ -43,7 +43,7 @@ namespace Tests
                         {
                             new PushRequestRole
                             {
-                              T = M.Organisation.Name.RelationType.IdAsString,
+                              T = this.M.Organisation.Name.RelationType.IdAsString,
                               S = "Acme"
                             },
                         },

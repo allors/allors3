@@ -21,7 +21,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceXObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceXObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "X");
@@ -41,7 +41,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceXObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceXObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "Y");
@@ -61,7 +61,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceXObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceXObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "None");
@@ -80,7 +80,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceYObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceYObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "None");
@@ -100,7 +100,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceNoneObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceNoneObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "X");
@@ -120,7 +120,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceNoneObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceNoneObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "Y");
@@ -140,7 +140,7 @@ namespace Tests
 
             var pushRequest = new PushRequest
             {
-                NewObjects = new[] { new PushRequestNewObject { T = M.WorkspaceNoneObject1.Class.IdAsString, NI = "-1" }, },
+                NewObjects = new[] { new PushRequestNewObject { T = this.M.WorkspaceNoneObject1.Class.IdAsString, NI = "-1" }, },
             };
 
             var api = new Api(this.Session, "None");

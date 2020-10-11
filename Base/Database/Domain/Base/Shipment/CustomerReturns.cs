@@ -7,6 +7,6 @@ namespace Allors.Domain
 {
     public partial class CustomerReturns
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.ShipmentState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.ShipmentState);
     }
 }

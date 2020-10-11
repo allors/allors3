@@ -17,7 +17,7 @@ namespace Allors.Domain
         public QuoteItemDerivation(M m) : base(m, new Guid("17010D27-1BE9-4A8C-8AF5-8A9F9589AAF6")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.QuoteItem.Class),
+                new CreatedPattern(this.M.QuoteItem.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,9 +30,9 @@ namespace Allors.Domain
             || quoteItem.InvoiceItemType.IsProductFeatureItem
             || quoteItem.InvoiceItemType.IsProductItem)
                 {
-                    validation.AssertAtLeastOne(quoteItem, M.QuoteItem.Product, M.QuoteItem.ProductFeature, M.QuoteItem.SerialisedItem, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
-                    validation.AssertExistsAtMostOne(quoteItem, M.QuoteItem.Product, M.QuoteItem.ProductFeature, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
-                    validation.AssertExistsAtMostOne(quoteItem, M.QuoteItem.SerialisedItem, M.QuoteItem.ProductFeature, M.QuoteItem.Deliverable, M.QuoteItem.WorkEffort);
+                    validation.AssertAtLeastOne(quoteItem, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
+                    validation.AssertExistsAtMostOne(quoteItem, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
+                    validation.AssertExistsAtMostOne(quoteItem, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
                 }
                 else
                 {

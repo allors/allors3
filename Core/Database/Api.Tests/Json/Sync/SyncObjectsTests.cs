@@ -59,7 +59,7 @@ namespace Tests
             var syncObject = syncResponse.Objects[0];
 
             Assert.Equal(person.Id.ToString(), syncObject.I);
-            Assert.Equal($"{M.Person.Class.IdAsString}", syncObject.T);
+            Assert.Equal($"{this.M.Person.Class.IdAsString}", syncObject.T);
             Assert.Equal(person.Strategy.ObjectVersion.ToString(), syncObject.V);
         }
 

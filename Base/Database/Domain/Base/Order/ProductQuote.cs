@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[]{
-            new TransitionalConfiguration(M.ProductQuote, M.ProductQuote.QuoteState),
+            new TransitionalConfiguration(this.M.ProductQuote, this.M.ProductQuote.QuoteState),
         };
 
         private bool BaseNeedsApproval => false;

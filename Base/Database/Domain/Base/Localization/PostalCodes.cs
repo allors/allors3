@@ -9,6 +9,6 @@ namespace Allors.Domain
     {
         private Sticky<string, PostalCode> postalCodeByCode;
 
-        public Sticky<string, PostalCode> PostalCodeByCode => this.postalCodeByCode ??= new Sticky<string, PostalCode>(this.Session, M.PostalCode.Code);
+        public Sticky<string, PostalCode> PostalCodeByCode => this.postalCodeByCode ??= new Sticky<string, PostalCode>(this.Session, this.M.PostalCode.Code);
     }
 }

@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Domain
+namespace Tests.Workspace.Meta
 {
+    using Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
-    using Adapters;
     using Xunit;
 
     public class NodeBuilderTests : Test
@@ -15,14 +15,11 @@ namespace Tests.Domain
         [Fact]
         public void Class()
         {
-            var builder = new OrganisationNodeBuilder(this.M, organisation =>
+            var builder = new OrganisationNodeBuilder(this.M, organisation => organisation.Manager(manage =>
             {
-                organisation.Manager(manage =>
-                {
-                    manage.Photo();
-                    manage.Address(address => address.HomeAddress_AddressablesWhereAddress());
-                });
-            });
+                manage.Photo();
+                manage.Address(address => address.HomeAddress_AddressablesWhereAddress());
+            }));
 
             Node[] nodes = builder;
 

@@ -16,14 +16,14 @@ namespace Allors.Domain
         public AgreementTermDerivation(M m) : base(m, new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.AgreementTerm.Interface),
+                new CreatedPattern(this.M.AgreementTerm.Interface),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var agreementTerm in matches.Cast<AgreementTerm>())
             {
-                cycle.Validation.AssertAtLeastOne(agreementTerm, M.AgreementTerm.TermType, M.AgreementTerm.Description);
+                cycle.Validation.AssertAtLeastOne(agreementTerm, this.M.AgreementTerm.TermType, this.M.AgreementTerm.Description);
             }
         }
     }

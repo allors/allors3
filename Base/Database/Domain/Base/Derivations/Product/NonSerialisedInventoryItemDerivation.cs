@@ -15,22 +15,22 @@ namespace Allors.Domain
         public NonSerialisedInventoryItemDerivation(M m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.NonSerialisedInventoryItem.Class),
-                new CreatedPattern(M.InventoryItemTransaction.Class)
+                new CreatedPattern(this.M.NonSerialisedInventoryItem.Class),
+                new CreatedPattern(this.M.InventoryItemTransaction.Class)
                 {
                     Steps = new IPropertyType[]
                     {
-                        M.InventoryItemTransaction.Part,
-                        M.Part.InventoryItemsWherePart
+                        this.M.InventoryItemTransaction.Part,
+                        this.M.Part.InventoryItemsWherePart
                     },
-                    OfType = M.NonSerialisedInventoryItem.Class
+                    OfType = this.M.NonSerialisedInventoryItem.Class
                 },
-                new ChangedAssociationPattern(M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem),
-                new ChangedRolePattern(M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
+                new ChangedAssociationPattern(this.M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem),
+                new ChangedRolePattern(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
                 {
                     Steps = new IPropertyType[]
                     {
-                        M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem
+                        this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem
                     }
                 },
             };
@@ -188,8 +188,8 @@ namespace Allors.Domain
         {
 
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Extent<SalesOrderItem>();
-            salesOrderItems.Filter.AddEquals(M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
-            salesOrderItems.AddSort(M.OrderItem.DeliveryDate, SortDirection.Ascending);
+            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
+            salesOrderItems.AddSort(this.M.OrderItem.DeliveryDate, SortDirection.Ascending);
             var nonUnifiedGoods = nonSerialisedInventoryItem.Part.NonUnifiedGoodsWherePart;
             var unifiedGood = nonSerialisedInventoryItem.Part as UnifiedGood;
 
@@ -197,12 +197,12 @@ namespace Allors.Domain
             {
                 if (unifiedGood != null)
                 {
-                    salesOrderItems.Filter.AddEquals(M.SalesOrderItem.Product, unifiedGood);
+                    salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.Product, unifiedGood);
                 }
 
                 if (nonUnifiedGoods.Count > 0)
                 {
-                    salesOrderItems.Filter.AddContainedIn(M.SalesOrderItem.Product, (Extent)nonUnifiedGoods);
+                    salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, (Extent)nonUnifiedGoods);
                 }
 
                 salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Instantiate(salesOrderItems);
@@ -243,9 +243,9 @@ namespace Allors.Domain
         private void DepleteSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
         {
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Extent<SalesOrderItem>();
-            salesOrderItems.Filter.AddEquals(M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
-            salesOrderItems.Filter.AddExists(M.OrderItem.DeliveryDate);
-            salesOrderItems.AddSort(M.OrderItem.DeliveryDate, SortDirection.Descending);
+            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
+            salesOrderItems.Filter.AddExists(this.M.OrderItem.DeliveryDate);
+            salesOrderItems.AddSort(this.M.OrderItem.DeliveryDate, SortDirection.Descending);
 
             salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Instantiate(salesOrderItems);
 

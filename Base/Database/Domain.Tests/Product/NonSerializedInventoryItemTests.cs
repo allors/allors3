@@ -78,7 +78,7 @@ namespace Allors.Domain
             Assert.Equal(0M, item.QuantityExpectedIn);
             Assert.Equal(0M, item.QuantityOnHand);
             Assert.Equal(new NonSerialisedInventoryItemStates(this.Session).Good, item.NonSerialisedInventoryItemState);
-            Assert.Equal(new Facilities(this.Session).FindBy(M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item.Facility);
+            Assert.Equal(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse), item.Facility);
         }
 
         [Fact]

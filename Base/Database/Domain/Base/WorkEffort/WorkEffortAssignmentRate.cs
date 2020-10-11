@@ -43,7 +43,7 @@ namespace Allors.Domain
             if (this.ExistRateType)
             {
                 var extent = this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort;
-                extent.Filter.AddEquals(M.WorkEffortAssignmentRate.RateType, this.RateType);
+                extent.Filter.AddEquals(this.M.WorkEffortAssignmentRate.RateType, this.RateType);
                 if (extent.Count > 1)
                 {
                     derivation.Validation.AddError(this, this.Meta.RateType, ErrorMessages.WorkEffortRateError);

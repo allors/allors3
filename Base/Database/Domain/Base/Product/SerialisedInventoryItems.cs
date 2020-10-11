@@ -7,6 +7,6 @@ namespace Allors.Domain
 {
     public partial class SerialisedInventoryItems
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.SerialisedInventoryItemState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.SerialisedInventoryItemState);
     }
 }

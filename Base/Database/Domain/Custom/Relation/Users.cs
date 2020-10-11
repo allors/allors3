@@ -9,9 +9,9 @@ namespace Allors.Domain
     {
         protected override void CustomPrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.Locale.ObjectType);
-            setup.AddDependency(this.ObjectType, M.Singleton.ObjectType);
-            setup.AddDependency(this.ObjectType, M.ContactMechanismPurpose.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.Singleton.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.ContactMechanismPurpose.ObjectType);
         }
     }
 }

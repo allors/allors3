@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SingletonDerivation(M m) : base(m, new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.Singleton.Class)
+                new CreatedPattern(this.M.Singleton.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

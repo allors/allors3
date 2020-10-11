@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     public partial class Requirements
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.RequirementState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.RequirementState);
 
         protected override void BaseSecure(Security config)
         {
@@ -15,7 +15,7 @@ namespace Allors.Domain
             var cancelledState = new WorkEffortStates(this.Session).Cancelled;
             var finishedState = new WorkEffortStates(this.Session).Completed;
 
-            config.Deny(this.ObjectType, createdState, M.WorkEffort.Reopen);
+            config.Deny(this.ObjectType, createdState, this.M.WorkEffort.Reopen);
 
             config.Deny(this.ObjectType, cancelledState, Operations.Execute, Operations.Write);
             config.Deny(this.ObjectType, finishedState, Operations.Execute, Operations.Read);

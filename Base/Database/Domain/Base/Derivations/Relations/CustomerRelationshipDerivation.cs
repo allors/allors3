@@ -15,7 +15,7 @@ namespace Allors.Domain
         public CustomerRelationshipDerivation(M m) : base(m, new Guid("3E1DE413-1939-4369-AFA0-D3A6CA340DD5")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.CustomerRelationship.Class),
+                new CreatedPattern(this.M.CustomerRelationship.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

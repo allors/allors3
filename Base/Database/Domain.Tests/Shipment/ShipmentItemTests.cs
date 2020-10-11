@@ -16,7 +16,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenPurchaseShipmentItemForNonSerialisedNotFromPurchaseOrder_WhenDerived_ThenUnitPurchasePriceIsRequired()
         {
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             User user = this.Administrator;
             this.Session.SetUser(user);
@@ -34,7 +34,7 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(M.ShipmentItem.UnitPurchasePrice, validation.Errors.First().RoleTypes);
+            Assert.Contains(this.M.ShipmentItem.UnitPurchasePrice, validation.Errors.First().RoleTypes);
         }
     }
 
@@ -51,7 +51,7 @@ namespace Allors.Domain
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
             var shipToAddress = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
             new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount).WithPart(good1.Part).Build();
 
             User user = this.Administrator;
@@ -75,7 +75,7 @@ namespace Allors.Domain
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Session).Picking, shipmentItem.ShipmentItemState);
-            Assert.False(acl.CanExecute(M.ShipmentItem.Delete));
+            Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
             var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
@@ -85,7 +85,7 @@ namespace Allors.Domain
 
             acl = new DatabaseAccessControlLists(this.Session.GetUser())[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Session).Picked, shipmentItem.ShipmentItemState);
-            Assert.False(acl.CanExecute(M.ShipmentItem.Delete));
+            Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
             var package = new ShipmentPackageBuilder(this.Session).Build();
             shipment.AddShipmentPackage(package);
@@ -102,14 +102,14 @@ namespace Allors.Domain
 
             acl = new DatabaseAccessControlLists(this.Session.GetUser())[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Session).Packed, shipmentItem.ShipmentItemState);
-            Assert.False(acl.CanExecute(M.ShipmentItem.Delete));
+            Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
             shipment.Ship();
             this.Session.Derive();
 
             acl = new DatabaseAccessControlLists(this.Session.GetUser())[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Session).Shipped, shipmentItem.ShipmentItemState);
-            Assert.False(acl.CanExecute(M.ShipmentItem.Delete));
+            Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
         }
     }
 }

@@ -116,7 +116,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             // TODO: Implement normalization
-            var normalizedRole = role;
+            var normalizedRole = role is IObject @object ? @object.WorkspaceId : role;
 
             if (roleType.ObjectType.IsUnit)
             {

@@ -15,7 +15,7 @@ namespace Allors.Domain
         public RequestForQuoteDerivation(M m) : base(m, new Guid("BD181210-419E-4F87-8B3C-3AEF43711514")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.RequestForQuote.Class)
+                new CreatedPattern(this.M.RequestForQuote.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

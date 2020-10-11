@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters
+namespace Tests.Workspace.Origin.Database
 {
     using System.Linq;
     using Allors.Workspace.Data;
@@ -19,15 +19,15 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.Workspace.CreateSession();
+                    var session = this.Workspace.CreateSession();
 
                     var pull = new[]
                     {
                         new Pull
                         {
-                            Extent = new Extent(M.C2.ObjectType)
+                            Extent = new Extent(this.M.C2.ObjectType)
                             {
-                                Predicate = new Equals(M.C2.Name) {Value = "c2C"},
+                                Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
                             },
                             Results = new[]
                             {
@@ -37,7 +37,7 @@ namespace Tests.Adapters
                                     {
                                         Include = new[]
                                             {
-                                                new Node(M.C2.C1WhereC1C2One2Many),
+                                                new Node(this.M.C2.C1WhereC1C2One2Many),
                                             },
                                     },
                                 },
@@ -45,7 +45,7 @@ namespace Tests.Adapters
                         },
                     };
 
-                    var result = await context.Load(pull);
+                    var result = await session.Load(pull);
 
                     var c2s = result.GetCollection<C2>();
 
@@ -63,15 +63,15 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.Workspace.CreateSession();
+                    var session = this.Workspace.CreateSession();
 
                     var pull = new[]
                     {
                         new Pull
                         {
-                            Extent = new Extent(M.C2.ObjectType)
+                            Extent = new Extent(this.M.C2.ObjectType)
                             {
-                                Predicate = new Equals(M.C2.Name) {Value = "c2C"},
+                                Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
                             },
                             Results = new[]
                             {
@@ -81,7 +81,7 @@ namespace Tests.Adapters
                                     {
                                         Include = new[]
                                         {
-                                            new Node(M.C2.C1WhereC1C2One2One),
+                                            new Node(this.M.C2.C1WhereC1C2One2One),
                                         },
                                     },
                                 },
@@ -89,7 +89,7 @@ namespace Tests.Adapters
                         },
                     };
 
-                    var result = await context.Load(pull);
+                    var result = await session.Load(pull);
 
                     var c2s = result.GetCollection<C2>();
 

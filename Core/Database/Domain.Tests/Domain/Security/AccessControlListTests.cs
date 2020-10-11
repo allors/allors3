@@ -29,7 +29,7 @@ namespace Tests
 
                 var guest = new AutomatedAgents(this.Session).Guest;
                 var acls = new DatabaseAccessControlLists(guest);
-                foreach (Object aco in (IObject[])session.Extent(M.Organisation.ObjectType))
+                foreach (Object aco in (IObject[])session.Extent(this.M.Organisation.ObjectType))
                 {
                     // When
                     var accessList = acls[aco];
@@ -45,7 +45,7 @@ namespace Tests
         [Fact]
         public void GivenAUserAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
-            var permission = this.FindPermission(M.Organisation.Name, Operations.Read);
+            var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Session).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
             new AccessControlBuilder(this.Session).WithSubject(person).WithRole(role).Build();
@@ -72,7 +72,7 @@ namespace Tests
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.True(acl.CanRead(M.Organisation.Name));
+                Assert.True(acl.CanRead(this.M.Organisation.Name));
 
                 session.Rollback();
             }
@@ -81,7 +81,7 @@ namespace Tests
         [Fact]
         public void GivenAUserGroupAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
-            var permission = this.FindPermission(M.Organisation.Name, Operations.Read);
+            var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Session).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
             new UserGroupBuilder(this.Session).WithName("Group").WithMember(person).Build();
@@ -108,7 +108,7 @@ namespace Tests
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.True(acl.CanRead(M.Organisation.Name));
+                Assert.True(acl.CanRead(this.M.Organisation.Name));
 
                 session.Rollback();
             }
@@ -117,7 +117,7 @@ namespace Tests
         [Fact]
         public void GivenAnotherUserAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
-            var readOrganisationName = this.FindPermission(M.Organisation.Name, Operations.Read);
+            var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var databaseRole = new RoleBuilder(this.Session).WithName("Role").WithPermission(readOrganisationName).Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -141,7 +141,7 @@ namespace Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(M.Role.Name, "Role"));
+                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(this.M.Role.Name, "Role"));
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
@@ -149,7 +149,7 @@ namespace Tests
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.False(acl.CanRead(M.Organisation.Name));
+                Assert.False(acl.CanRead(this.M.Organisation.Name));
 
                 session.Rollback();
             }
@@ -158,7 +158,7 @@ namespace Tests
         [Fact]
         public void GivenAnotherUserGroupAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
-            var readOrganisationName = this.FindPermission(M.Organisation.Name, Operations.Read);
+            var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var databaseRole = new RoleBuilder(this.Session).WithName("Role").WithPermission(readOrganisationName).Build();
 
             var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
@@ -182,7 +182,7 @@ namespace Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(M.Role.Name, "Role"));
+                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(this.M.Role.Name, "Role"));
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
@@ -190,7 +190,7 @@ namespace Tests
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.False(acl.CanRead(M.Organisation.Name));
+                Assert.False(acl.CanRead(this.M.Organisation.Name));
 
                 session.Rollback();
             }
@@ -199,7 +199,7 @@ namespace Tests
         [Fact]
         public void GivenAnAccessListWhenRemovingUserFromACLThenUserHasNoAccessToThePermissionsInTheRole()
         {
-            var permission = this.FindPermission(M.Organisation.Name, Operations.Read);
+            var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Session).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
             var person2 = new PersonBuilder(this.Session).WithFirstName("Jane").WithLastName("Doe").Build();
@@ -232,7 +232,7 @@ namespace Tests
 
                 acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.False(acl.CanRead(M.Organisation.Name));
+                Assert.False(acl.CanRead(this.M.Organisation.Name));
 
                 session.Rollback();
             }
@@ -241,7 +241,7 @@ namespace Tests
         [Fact]
         public void DeniedPermissions()
         {
-            var readOrganisationName = this.FindPermission(M.Organisation.Name, Operations.Read);
+            var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var databaseRole = new RoleBuilder(this.Session).WithName("Role").WithPermission(readOrganisationName).Build();
             var person = new PersonBuilder(this.Session).WithFirstName("John").WithLastName("Doe").Build();
             new AccessControlBuilder(this.Session).WithRole(databaseRole).WithSubject(person).Build();
@@ -259,7 +259,7 @@ namespace Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(M.Role.Name, "Role"));
+                var role = (Role)session.Instantiate(new Roles(this.Session).FindBy(this.M.Role.Name, "Role"));
                 var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
                 token.AddAccessControl(accessControl);
 
@@ -267,13 +267,13 @@ namespace Tests
 
                 var acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.True(acl.CanRead(M.Organisation.Name));
+                Assert.True(acl.CanRead(this.M.Organisation.Name));
 
                 organisation.AddDeniedPermission(readOrganisationName);
 
                 acl = new DatabaseAccessControlLists(person)[organisation];
 
-                Assert.False(acl.CanRead(M.Organisation.Name));
+                Assert.False(acl.CanRead(this.M.Organisation.Name));
 
                 session.Rollback();
             }

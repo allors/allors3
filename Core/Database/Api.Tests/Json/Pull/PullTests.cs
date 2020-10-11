@@ -135,7 +135,7 @@ namespace Tests
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
-            var extent = new Allors.Data.Extent(M.Data.ObjectType);
+            var extent = new Allors.Data.Extent(this.M.Data.ObjectType);
 
             var pullRequest = new PullRequest
             {
@@ -185,7 +185,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(M.Data.ObjectType);
+            var extent = new Allors.Data.Extent(this.M.Data.ObjectType);
 
             var pullRequest = new PullRequest
             {

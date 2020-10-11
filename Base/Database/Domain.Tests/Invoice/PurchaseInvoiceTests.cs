@@ -173,13 +173,13 @@ namespace Allors.Domain
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[invoice];
 
             Assert.Equal(new PurchaseInvoiceStates(this.Session).Created, invoice.PurchaseInvoiceState);
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.Approve));
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.Reject));
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.Reopen));
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.SetPaid));
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.Revise));
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.FinishRevising));
-            Assert.False(acl.CanExecute(M.PurchaseInvoice.CreateSalesInvoice));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.Approve));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.Reject));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.Reopen));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.SetPaid));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.Revise));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.FinishRevising));
+            Assert.False(acl.CanExecute(this.M.PurchaseInvoice.CreateSalesInvoice));
         }
     }
 }

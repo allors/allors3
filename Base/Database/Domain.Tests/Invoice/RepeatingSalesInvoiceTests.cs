@@ -21,13 +21,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -59,7 +59,7 @@ namespace Allors.Domain
 
             var weekDay = repeatingInvoice.NextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Session).Extent();
-            daysOfWeek.Filter.AddEquals(M.Enumeration.Name, weekDay);
+            daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
             var dayOfWeek = daysOfWeek.First;
 
             repeatingInvoice.Frequency = new TimeFrequencies(this.Session).Week;
@@ -83,13 +83,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -121,13 +121,13 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
+            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
             var weekDay = repeatingInvoice.NextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Session).Extent();
-            daysOfWeek.Filter.AddEquals(M.Enumeration.Name, weekDay);
+            daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
             var dayOfWeek = daysOfWeek.First;
 
             repeatingInvoice.DayOfWeek = dayOfWeek;
@@ -142,13 +142,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -173,7 +173,7 @@ namespace Allors.Domain
             var nextExecutionDate = this.Session.Now().AddDays(1);
             var weekDay = nextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Session).Extent();
-            daysOfWeek.Filter.AddEquals(M.Enumeration.Name, weekDay);
+            daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
             var dayOfWeek = daysOfWeek.First;
 
             var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
@@ -187,7 +187,7 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
+            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
 
             repeatingInvoice.RemoveDayOfWeek();
 
@@ -201,13 +201,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -232,7 +232,7 @@ namespace Allors.Domain
             var nextExecutionDate = this.Session.Now().AddDays(1);
             var weekDay = nextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Session).Extent();
-            daysOfWeek.Filter.AddEquals(M.Enumeration.Name, weekDay);
+            daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
             var dayOfWeek = daysOfWeek.First;
 
             var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
@@ -249,7 +249,7 @@ namespace Allors.Domain
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
-            Assert.Contains(M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
+            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
         }
 
         [Fact]
@@ -259,13 +259,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -316,13 +316,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -373,13 +373,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)
@@ -429,13 +429,13 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var homeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Sint-Lambertuslaan 78")
                 .WithLocality("Muizen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Session)

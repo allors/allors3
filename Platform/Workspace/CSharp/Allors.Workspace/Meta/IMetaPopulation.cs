@@ -12,6 +12,8 @@ namespace Allors.Workspace.Meta
 
     public interface IMetaPopulation
     {
+        IEnumerable<IComposite> Composites { get; }
+
         IEnumerable<IComposite> DatabaseComposites { get; }
 
         IEnumerable<IClass> DatabaseClasses { get; }

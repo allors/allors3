@@ -40,6 +40,31 @@ namespace Allors.Repository
         public Person[] Employees { get; set; }
 
         #region Allors
+        [Id("dbef262d-7184-4b98-8f1f-cf04e884bb92")]
+        [Indexed]
+        [Workspace(Default)]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        public Person Manager { get; set; }
+
+        #region Allors
+        [Id("845ff004-516f-4ad5-9870-3d0e966a9f7d")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person Owner { get; set; }
+
+        #region Allors
+        [Id("15f33fa4-c878-45a0-b40c-c5214bce350b")]
+        [Indexed]
+        [Workspace(Default)]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        public Person[] Shareholders { get; set; }
+
+
+        #region Allors
         [Id("17e55fcd-2c82-462b-8e31-b4a515acdaa9")]
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
@@ -83,36 +108,12 @@ namespace Allors.Repository
         public Address MainAddress { get; set; }
 
         #region Allors
-        [Id("dbef262d-7184-4b98-8f1f-cf04e884bb92")]
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public Person Manager { get; set; }
-
-        #region Allors
         [Id("2cc74901-cda5-4185-bcd8-d51c745a8437")]
         [Indexed]
         #endregion
         [Size(256)]
         [Workspace(Default)]
         public string Name { get; set; }
-
-        #region Allors
-        [Id("845ff004-516f-4ad5-9870-3d0e966a9f7d")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        public Person Owner { get; set; }
-
-        #region Allors
-        [Id("15f33fa4-c878-45a0-b40c-c5214bce350b")]
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public Person[] Shareholders { get; set; }
 
         #region Allors
         [Id("bac702b8-7874-45c3-a410-102e1caea4a7")]

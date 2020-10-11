@@ -15,7 +15,7 @@ namespace Allors.Domain
         public PurchaseReturnDerivation(M m) : base(m, new Guid("B5AB3B14-310A-42EE-9EF5-963290D812CC")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PurchaseReturn.Class),
+                new CreatedPattern(this.M.PurchaseReturn.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

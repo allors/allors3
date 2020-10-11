@@ -20,7 +20,7 @@ namespace Allors.Domain
             else
             {
                 var fiscalYearInvoiceNumbers = new FiscalYearInvoiceNumbers(this.Strategy.Session).Extent();
-                fiscalYearInvoiceNumbers.Filter.AddEquals(M.FiscalYearInvoiceNumber.FiscalYear, year);
+                fiscalYearInvoiceNumbers.Filter.AddEquals(this.M.FiscalYearInvoiceNumber.FiscalYear, year);
                 var fiscalYearInvoiceNumber = fiscalYearInvoiceNumbers.First;
 
                 if (fiscalYearInvoiceNumber == null)
@@ -45,7 +45,7 @@ namespace Allors.Domain
             else
             {
                 var fiscalYearInvoiceNumbers = new FiscalYearInvoiceNumbers(this.Strategy.Session).Extent();
-                fiscalYearInvoiceNumbers.Filter.AddEquals(M.FiscalYearInvoiceNumber.FiscalYear, year);
+                fiscalYearInvoiceNumbers.Filter.AddEquals(this.M.FiscalYearInvoiceNumber.FiscalYear, year);
                 var fiscalYearInvoiceNumber = fiscalYearInvoiceNumbers.First;
 
                 if (fiscalYearInvoiceNumber == null)
@@ -140,7 +140,7 @@ namespace Allors.Domain
                 this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
             }
 
-            derivation.Validation.AssertExistsAtMostOne(this, M.Store.FiscalYearInvoiceNumbers, M.Store.SalesInvoiceCounter);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.Store.FiscalYearInvoiceNumbers, this.M.Store.SalesInvoiceCounter);
         }
     }
 }

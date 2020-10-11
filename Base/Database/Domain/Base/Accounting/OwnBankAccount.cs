@@ -34,10 +34,10 @@ namespace Allors.Domain
 
             if (this.ExistInternalOrganisationWhereActiveCollectionMethod && this.InternalOrganisationWhereActiveCollectionMethod.DoAccounting)
             {
-                derivation.Validation.AssertAtLeastOne(this, M.Cash.GeneralLedgerAccount, M.Cash.Journal);
+                derivation.Validation.AssertAtLeastOne(this, this.M.Cash.GeneralLedgerAccount, this.M.Cash.Journal);
             }
 
-            derivation.Validation.AssertExistsAtMostOne(this, M.Cash.GeneralLedgerAccount, M.Cash.Journal);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.Cash.GeneralLedgerAccount, this.M.Cash.Journal);
         }
     }
 }

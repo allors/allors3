@@ -21,7 +21,7 @@ namespace Allors.Domain
                     derivation.Validation.AddError(this, this.Meta.Bic, ErrorMessages.NotAValidBic);
                 }
 
-                var country = new Countries(this.Strategy.Session).FindBy(M.Country.IsoCode, this.Bic.Substring(4, 2));
+                var country = new Countries(this.Strategy.Session).FindBy(this.M.Country.IsoCode, this.Bic.Substring(4, 2));
                 if (country == null)
                 {
                     derivation.Validation.AddError(this, this.Meta.Bic, ErrorMessages.NotAValidBic);

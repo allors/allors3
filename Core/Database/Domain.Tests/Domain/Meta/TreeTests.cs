@@ -35,7 +35,7 @@ namespace Tests
 
             this.Session.Derive();
 
-            var tree = new[] { new Node(M.C1.C1C2One2Manies) };
+            var tree = new[] { new Node(this.M.C1.C1C2One2Manies) };
 
             var resolved = new HashSet<IObject>();
             tree.Resolve(c1A, this.AclsMock.Object, resolved);
@@ -80,10 +80,10 @@ namespace Tests
 
             var tree = new[]
             {
-                new Node(M.C1.C1I12One2Manies)
-                    .Add(M.C1.C1C1One2Manies),
-                new Node(M.C1.C1I12One2Manies)
-                    .Add(M.C2.C2C2One2Manies),
+                new Node(this.M.C1.C1I12One2Manies)
+                    .Add(this.M.C1.C1C1One2Manies),
+                new Node(this.M.C1.C1I12One2Manies)
+                    .Add(this.M.C2.C2C2One2Manies),
             };
 
             var prefetchPolicy = tree.BuildPrefetchPolicy();
@@ -114,11 +114,11 @@ namespace Tests
         [Fact]
         public void Legal()
         {
-            new Node(M.C1.C1C1Many2Manies).Add(M.C1.C1C2Many2Manies);
+            new Node(this.M.C1.C1C1Many2Manies).Add(this.M.C1.C1C2Many2Manies);
 
-            new Node(M.C1.C1C1Many2Manies).Add(M.I12.I12C2Many2Manies);
+            new Node(this.M.C1.C1C1Many2Manies).Add(this.M.I12.I12C2Many2Manies);
 
-            new Node(M.C1.C1I12Many2Manies).Add(M.C1.I12C2Many2Manies);
+            new Node(this.M.C1.C1I12Many2Manies).Add(this.M.C1.I12C2Many2Manies);
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace Tests
 
                 try
                 {
-                    new Node(M.C1.C1C1Many2Manies).Add(M.C2.C2C1Many2Manies);
+                    new Node(this.M.C1.C1C1Many2Manies).Add(this.M.C2.C2C1Many2Manies);
                 }
                 catch (ArgumentException)
                 {
@@ -143,7 +143,7 @@ namespace Tests
         [Fact]
         public void UnitTreeNodesDontHaveTreeNodes()
         {
-            var treeNode = new Node(M.C1.C1AllorsString);
+            var treeNode = new Node(this.M.C1.C1AllorsString);
 
             Assert.Null(treeNode.Nodes);
         }
@@ -154,10 +154,10 @@ namespace Tests
             var tree = new Node[0];
             tree.BuildPrefetchPolicy();
 
-            tree = new[] { new Node(M.C1.C1AllorsBinary) };
+            tree = new[] { new Node(this.M.C1.C1AllorsBinary) };
             tree.BuildPrefetchPolicy();
 
-            tree = new[] { new Node(M.C1.C1C1Many2Manies) };
+            tree = new[] { new Node(this.M.C1.C1C1Many2Manies) };
             tree.BuildPrefetchPolicy();
         }
     }

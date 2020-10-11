@@ -15,7 +15,7 @@ namespace Allors.Domain
         public ProductQuoteDerivation(M m) : base(m, new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.ProductQuote.Class)
+                new CreatedPattern(this.M.ProductQuote.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -83,14 +83,14 @@ namespace Allors.Domain
                     {
                         if (quoteItem.Quantity == 0)
                         {
-                            cycle.Validation.AddError($"{quoteItem} {M.QuoteItem.Quantity} Quantity is Required");
+                            cycle.Validation.AddError($"{quoteItem} {this.M.QuoteItem.Quantity} Quantity is Required");
                         }
                     }
                     else
                     {
                         if (quoteItem.UnitPrice == 0)
                         {
-                            cycle.Validation.AddError($"{quoteItem} {M.QuoteItem.UnitPrice} Price is Required");
+                            cycle.Validation.AddError($"{quoteItem} {this.M.QuoteItem.UnitPrice} Price is Required");
                         }
                     }
                 }

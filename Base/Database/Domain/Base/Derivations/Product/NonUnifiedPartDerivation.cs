@@ -15,10 +15,10 @@ namespace Allors.Domain
         public NonUnifiedPartDerivation(M m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.NonUnifiedPart.Class),
-                new CreatedPattern(M.InventoryItemTransaction.Class) {Steps = new IPropertyType[]{M.InventoryItemTransaction.Part}, OfType = M.NonUnifiedPart.Class},
-                new ChangedRolePattern(M.InventoryItemTransaction.Part) { OfType = M.NonUnifiedPart.Class},
-                new ChangedRolePattern(M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{M.NonSerialisedInventoryItem.Part },OfType = M.NonUnifiedPart.Class},
+                new CreatedPattern(this.M.NonUnifiedPart.Class),
+                new CreatedPattern(this.M.InventoryItemTransaction.Class) {Steps = new IPropertyType[]{ this.M.InventoryItemTransaction.Part}, OfType = this.M.NonUnifiedPart.Class},
+                new ChangedRolePattern(this.M.InventoryItemTransaction.Part) { OfType = this.M.NonUnifiedPart.Class},
+                new ChangedRolePattern(this.M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -38,7 +38,7 @@ namespace Allors.Domain
                 }
 
                 var identifications = nonUnifiedPart.ProductIdentifications;
-                identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(nonUnifiedPart.Strategy.Session).Part);
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(nonUnifiedPart.Strategy.Session).Part);
                 var partIdentification = identifications.FirstOrDefault();
 
                 if (partIdentification == null && setings.UsePartNumberCounter)

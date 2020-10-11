@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
     <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Origin\Session\" />
+  </ItemGroup>
 </Project>

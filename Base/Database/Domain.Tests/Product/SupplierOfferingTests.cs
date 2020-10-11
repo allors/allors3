@@ -99,7 +99,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .WithPrice(1)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .Build();
 
             this.Session.Derive();
@@ -144,7 +144,7 @@ namespace Allors.Domain
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good.Part)
                 .WithSupplier(supplier)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .WithFromDate(this.Session.Now())
                 .WithPrice(1)
@@ -200,7 +200,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
             var piece = new UnitsOfMeasure(this.Session).Piece;
 
             new BasePriceBuilder(this.Session)

@@ -56,7 +56,7 @@ namespace Allors.Domain
         {
             // Arrange
             var goodOrder = new SerialisedInventoryItemStates(this.Session).Good;
-            var warehouse = new Facilities(this.Session).FindBy(M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse);
+            var warehouse = new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse);
             var kinds = new InventoryItemKinds(this.Session);
 
             var serialItem = new SerialisedItemBuilder(this.Session).WithSerialNumber("1").Build();
@@ -80,7 +80,7 @@ namespace Allors.Domain
         {
             // Arrange
             var goodOrder = new SerialisedInventoryItemStates(this.Session).Good;
-            var warehouse = new Facilities(this.Session).FindBy(M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse);
+            var warehouse = new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse);
 
             var kinds = new InventoryItemKinds(this.Session);
             var unitsOfMeasure = new UnitsOfMeasure(this.Session);

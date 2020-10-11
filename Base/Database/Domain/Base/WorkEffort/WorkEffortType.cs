@@ -13,7 +13,7 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertExists(this, M.WorkEffortType.Description);
+            derivation.Validation.AssertExists(this, this.M.WorkEffortType.Description);
 
             this.CurrentWorkEffortPartStandards = this.WorkEffortPartStandards
                 .Where(v => v.FromDate <= this.Session().Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Session().Now()))

@@ -11,9 +11,9 @@ namespace Allors.Domain
     {
         private Sticky<string, Country> countryByIsoCode;
 
-        public Sticky<string, Country> CountryByIsoCode => this.countryByIsoCode ??= new Sticky<string, Country>(this.Session, M.Country.IsoCode);
+        public Sticky<string, Country> CountryByIsoCode => this.countryByIsoCode ??= new Sticky<string, Country>(this.Session, this.M.Country.IsoCode);
 
-        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.Currency.ObjectType);
+        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Currency.ObjectType);
 
         protected override void CoreSetup(Setup setup)
         {

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters
+namespace Tests.Workspace.Origin.Database
 {
     using System;
     using Allors.Workspace.Domain;
@@ -19,9 +19,9 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.Workspace.CreateSession();
+                    var session = this.Workspace.CreateSession();
 
-                    var result = await context.Load(new { step = 0 }, "TestUnitSamples");
+                    var result = await session.Load(new { step = 0 }, "TestUnitSamples");
 
                     var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -40,9 +40,9 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.Workspace.CreateSession();
+                    var session = this.Workspace.CreateSession();
 
-                    var result = await context.Load(new { step = 1 }, "TestUnitSamples");
+                    var result = await session.Load(new { step = 1 }, "TestUnitSamples");
 
                     var unitSample = result.GetObject<UnitSample>("unitSample");
 

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters
+namespace Tests.Workspace.Origin.Database
 {
     using System.Net.Http;
     using Nito.AsyncEx;
@@ -17,12 +17,12 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.Workspace.CreateSession();
+                    var session = this.Workspace.CreateSession();
 
                     var exceptionThrown = false;
                     try
                     {
-                        await context.Load(new { step = 0 }, "ThisIsWrong");
+                        await session.Load(new { step = 0 }, "ThisIsWrong");
                     }
                     catch (HttpRequestException)
                     {

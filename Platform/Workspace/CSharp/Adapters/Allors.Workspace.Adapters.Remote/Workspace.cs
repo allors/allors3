@@ -12,8 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        private readonly Population workspacePopulation;
-        private readonly Dictionary<long, IClass> workspaceClassByWorkspaceId;
+        private readonly Population population;
 
         private readonly Dictionary<long, long> workspaceIdByDatabaseId;
 
@@ -31,8 +30,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = new Database(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
 
-            this.workspacePopulation = new Population();
-            this.workspaceClassByWorkspaceId = new Dictionary<long, IClass>();
+            this.population = new Population();
+            this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -49,15 +48,24 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal ISet<Session> Sessions { get; }
 
+        public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
+
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
 
         internal void RegisterSession(Session session) => this.Sessions.Add(session);
 
         internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
 
+        internal long CreateWorkspaceObject(IClass @class)
+        {
+            var workspaceId = this.NextWorkspaceId();
+            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+            return workspaceId;
+        }
+
         internal long NextWorkspaceId() => --this.worskpaceIdCounter;
 
-        internal long WorkspaceId(long id)
+        internal long ToWorkspaceId(long id)
         {
             if (id > 0)
             {
@@ -72,6 +80,14 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return id;
+        }
+
+        internal void Set(Strategy strategy, IRoleType roleType, object value) => this.population.SetRole(strategy.WorkspaceId, roleType, value);
+
+        internal object Get(Strategy strategy, IRoleType roleType)
+        {
+            this.population.GetRole(strategy.WorkspaceId, roleType, out var role);
+            return role;
         }
     }
 }

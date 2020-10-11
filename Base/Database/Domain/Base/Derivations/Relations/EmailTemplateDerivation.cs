@@ -15,7 +15,7 @@ namespace Allors.Domain
         public EmailTemplateDerivation(M m) : base(m, new Guid("334F4D84-D343-4FD7-9F74-2FF0617DE747")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.EmailTemplate.Class),
+                new CreatedPattern(this.M.EmailTemplate.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

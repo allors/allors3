@@ -32,6 +32,7 @@ namespace Allors.Repository
         #region Allors
         [Id("95429c41-f951-4f38-a15f-ca0e8777fae9")]
         #endregion
+        [Derived]
         [Workspace(Default)]
         [Origin(Origin.Session)]
         public string FullName { get; set; }

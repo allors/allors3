@@ -15,7 +15,7 @@ namespace Allors.Domain
         public PurchaseOrderApprovalLevel1Derivation(M m) : base(m, new Guid("C2585A88-209B-4C1D-9781-04138F4CFBF7")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.PurchaseOrderApprovalLevel1.Class)
+                new CreatedPattern(this.M.PurchaseOrderApprovalLevel1.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

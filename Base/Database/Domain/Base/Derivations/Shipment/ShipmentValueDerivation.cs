@@ -16,14 +16,14 @@ namespace Allors.Domain
         public ShipmentValueDerivation(M m) : base(m, new Guid("FF7A2ED6-9D20-4A68-874D-98BF42B5CB5B")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.ShipmentValue.Class),
+                new CreatedPattern(this.M.ShipmentValue.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var shipmentValue in matches.Cast<ShipmentValue>())
             {
-                cycle.Validation.AssertAtLeastOne(shipmentValue, M.ShipmentValue.FromAmount, M.ShipmentValue.ThroughAmount);
+                cycle.Validation.AssertAtLeastOne(shipmentValue, this.M.ShipmentValue.FromAmount, this.M.ShipmentValue.ThroughAmount);
             }
         }
     }

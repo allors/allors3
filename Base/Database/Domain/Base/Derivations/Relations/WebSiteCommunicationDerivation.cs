@@ -15,7 +15,7 @@ namespace Allors.Domain
         public WebSiteCommunicationsDerivation(M m) : base(m, new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.WebSiteCommunication.Class),
+                new CreatedPattern(this.M.WebSiteCommunication.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

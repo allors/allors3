@@ -17,7 +17,7 @@ namespace Allors.Domain
         public BasePriceDerivation(M m) : base(m, new Guid("499B0F1E-F653-4DB6-82D0-190C9738DA5A")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.BasePrice.Class),
+                new CreatedPattern(this.M.BasePrice.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -36,16 +36,16 @@ namespace Allors.Domain
                     basePrice.PricedBy = internalOrganisations.First();
                 }
 
-                validation.AssertAtLeastOne(basePrice, M.BasePrice.Part, M.BasePrice.Product, M.BasePrice.ProductFeature);
+                validation.AssertAtLeastOne(basePrice, this.M.BasePrice.Part, this.M.BasePrice.Product, this.M.BasePrice.ProductFeature);
 
                 if (basePrice.ExistOrderQuantityBreak)
                 {
-                    validation.AddError($"{basePrice} { M.BasePrice.OrderQuantityBreak} {ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}");
+                    validation.AddError($"{basePrice} { this.M.BasePrice.OrderQuantityBreak} {ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}");
                 }
 
                 if (basePrice.ExistOrderValue)
                 {
-                    validation.AddError($"{basePrice} {M.BasePrice.OrderValue} {ErrorMessages.BasePriceOrderValueNotAllowed}");
+                    validation.AddError($"{basePrice} {this.M.BasePrice.OrderValue} {ErrorMessages.BasePriceOrderValueNotAllowed}");
                 }
 
                 if (basePrice.ExistPrice)
@@ -55,7 +55,7 @@ namespace Allors.Domain
                         basePrice.Currency = basePrice.PricedBy.PreferredCurrency;
                     }
 
-                    validation.AssertExists(basePrice, M.BasePrice.Currency);
+                    validation.AssertExists(basePrice, this.M.BasePrice.Currency);
                 }
 
                 if (basePrice.ExistProduct && !basePrice.ExistProductFeature)

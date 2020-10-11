@@ -182,10 +182,10 @@ namespace Allors.Domain
             this.Session.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(existingAdministrator)[internalOrganisation];
-            Assert.True(acl.CanRead(M.Organisation.Name));
+            Assert.True(acl.CanRead(this.M.Organisation.Name));
 
             acl = new DatabaseAccessControlLists(existingAdministrator)[internalOrganisation];
-            Assert.True(acl.CanWrite(M.Organisation.Name));
+            Assert.True(acl.CanWrite(this.M.Organisation.Name));
 
             var administrators = new UserGroups(this.Session).Administrators;
             administrators.AddMember(secondAdministrator);
@@ -195,10 +195,10 @@ namespace Allors.Domain
             Assert.True(secondAdministrator.IsAdministrator());
 
             acl = new DatabaseAccessControlLists(existingAdministrator)[internalOrganisation];
-            Assert.True(acl.CanRead(M.Organisation.Name));
+            Assert.True(acl.CanRead(this.M.Organisation.Name));
 
             acl = new DatabaseAccessControlLists(existingAdministrator)[internalOrganisation];
-            Assert.True(acl.CanWrite(M.Organisation.Name));
+            Assert.True(acl.CanWrite(this.M.Organisation.Name));
         }
     }
 }

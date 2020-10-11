@@ -15,7 +15,7 @@ namespace Allors.Domain
         [Fact]
         public void WhenEmailTemplateDescriptionIsNull()
         {
-            var emailTemplate = new EmailTemplateBuilder(Session).Build();
+            var emailTemplate = new EmailTemplateBuilder(this.Session).Build();
 
             this.Session.Derive();
 

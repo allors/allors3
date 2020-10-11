@@ -15,10 +15,10 @@ namespace Allors.Domain
         public PartyDerivation(M m) : base(m, new Guid("C57CD79C-F75E-4282-BFAD-B2F5F54FD4A4")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.Party.Interface),
-                new CreatedPattern(M.PartyContactMechanism.Class) {Steps = new IPropertyType[] { M.PartyContactMechanism.PartyWherePartyContactMechanism } },
-                new CreatedPattern(M.CustomerRelationship.Class) {Steps = new IPropertyType[] { M.CustomerRelationship.Customer } },
-                new ChangedRolePattern(M.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[] { M.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new CreatedPattern(this.M.Party.Interface),
+                new CreatedPattern(this.M.PartyContactMechanism.Class) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new CreatedPattern(this.M.CustomerRelationship.Class) {Steps = new IPropertyType[] { this.M.CustomerRelationship.Customer } },
+                new ChangedRolePattern(this.M.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

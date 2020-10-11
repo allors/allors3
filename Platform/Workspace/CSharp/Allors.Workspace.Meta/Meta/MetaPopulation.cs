@@ -96,6 +96,8 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<MethodType> MethodTypes => this.methodTypes;
 
+        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
+
         public IEnumerable<Composite> Composites
         {
             get
@@ -352,12 +354,12 @@ namespace Allors.Workspace.Meta
                     unit.Bind();
                 }
 
-                foreach (Interface @interface in this.DatabaseInterfaces)
+                foreach (var @interface in this.Interfaces)
                 {
                     @interface.Bind(typeByName);
                 }
 
-                foreach (Class @class in this.DatabaseClasses)
+                foreach (var @class in this.Classes)
                 {
                     @class.Bind(typeByName);
                 }
@@ -367,7 +369,7 @@ namespace Allors.Workspace.Meta
 
                 var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
 
-                foreach (Class @class in this.DatabaseClasses)
+                foreach (var @class in this.Classes)
                 {
                     foreach (MethodClass concreteMethodType in @class.MethodTypes)
                     {

@@ -12,14 +12,14 @@ namespace Allors.Domain
             get
             {
                 var pickLists = new PickLists(this.Session).Extent();
-                pickLists.Filter.AddNot().AddExists(M.PickList.Picker);
-                pickLists.Filter.AddEquals(M.PickList.PickListState, new PickListStates(this.Session).Created);
+                pickLists.Filter.AddNot().AddExists(this.M.PickList.Picker);
+                pickLists.Filter.AddEquals(this.M.PickList.PickListState, new PickListStates(this.Session).Created);
 
                 return pickLists;
             }
         }
 
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.PickListState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.PickListState);
 
         protected override void BaseSecure(Security config)
         {

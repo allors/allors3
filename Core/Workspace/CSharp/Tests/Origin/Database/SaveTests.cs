@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters
+namespace Tests.Workspace.Origin.Database
 {
     using System;
     using Allors.Workspace.Adapters.Remote;
@@ -14,19 +14,19 @@ namespace Tests.Adapters
         [Fact]
         public async void ShouldSyncNewlyCreatedObject()
         {
-            var context = this.Workspace.CreateSession();
+            var session = this.Workspace.CreateSession();
 
-            var newObject = context.Create(M.C1.Class);
+            var newObject = session.Create(this.M.C1.Class);
 
-            var saved = await context.Save();
+            var saved = await session.Save();
 
-            foreach (var roleType in M.C1.ObjectType.RoleTypes)
+            foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
             {
                 var role = newObject.Strategy.Get(roleType);
-                Assert.True(role == null || (role is Array array && array.Length == 0));
+                Assert.True(role == null || role is Array array && array.Length == 0);
             }
 
-            foreach (var associationType in M.C1.ObjectType.AssociationTypes)
+            foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)
             {
                 if (associationType.IsOne)
                 {

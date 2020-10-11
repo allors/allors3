@@ -3,10 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters.Remote
+namespace Tests.Workspace.Origin.Database
 {
     using System.Linq;
-    using Adapters;
+    using Workspace;
     using Allors.Protocol.Data;
     using Allors.Protocol.Database.Push;
     using Allors.Workspace.Adapters.Remote;

@@ -23,7 +23,7 @@ namespace Allors.Domain
 
         private UniquelyIdentifiableSticky<IrpfRegime> Cache => this.cache ??= new UniquelyIdentifiableSticky<IrpfRegime>(this.Session);
 
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.IrpfRate);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.IrpfRate);
 
         protected override void BaseSetup(Setup setup)
         {

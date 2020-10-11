@@ -9,7 +9,7 @@ namespace Allors.Domain
 
     public partial class ShipmentItems
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.ShipmentItemState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.ShipmentItemState);
 
         protected override void BaseSecure(Security config)
         {

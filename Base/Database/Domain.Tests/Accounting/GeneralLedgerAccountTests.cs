@@ -193,7 +193,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenGeneralLedgerAccount_WhenSettingDefaultCostUnit_ThenDefaultCostUnitMustBeInListOfAllowedCostUnits()
         {
-            var costUnit = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var costUnit = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")

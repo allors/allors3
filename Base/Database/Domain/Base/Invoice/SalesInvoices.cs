@@ -11,7 +11,7 @@ namespace Allors.Domain
 
     public partial class SalesInvoices
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.SalesInvoiceState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.SalesInvoiceState);
 
         protected override void BaseSecure(Security config)
         {

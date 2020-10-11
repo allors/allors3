@@ -16,7 +16,7 @@ namespace Allors.Domain
         public OrderShipmentDerivation(M m) : base(m, new Guid("A4B63A0B-C6AF-44CB-B778-3CD75EDBE2B7")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.OrderShipment.Class),
+                new CreatedPattern(this.M.OrderShipment.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -54,17 +54,17 @@ namespace Allors.Domain
 
                         if (salesOrderItem.ExistReservedFromNonSerialisedInventoryItem && orderShipment.Quantity > salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand + quantityPicked)
                         {
-                            validation.AddError($"{orderShipment} {M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
+                            validation.AddError($"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
                         }
                         else if (orderShipment.Quantity > salesOrderItem.QuantityOrdered)
                         {
-                            validation.AddError($"{orderShipment} {M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
+                            validation.AddError($"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
                         }
                         else
                         {
                             if (orderShipment.Quantity > salesOrderItem.QuantityOrdered - salesOrderItem.QuantityShipped - pendingFromOthers + salesOrderItem.QuantityReturned + quantityPicked)
                             {
-                                validation.AddError($"{orderShipment} {M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
+                                validation.AddError($"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
                             }
                         }
                     }

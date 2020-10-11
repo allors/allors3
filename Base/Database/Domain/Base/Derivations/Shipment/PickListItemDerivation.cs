@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PickListItemDerivation(M m) : base(m, new Guid("7E5843FB-7D25-4D41-833B-077C1B83AAD1")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PickListItem.Class),
+                new CreatedPattern(this.M.PickListItem.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -25,7 +25,7 @@ namespace Allors.Domain
             {
                 if (pickListItems.Quantity > 0 && pickListItems.QuantityPicked > pickListItems.Quantity)
                 {
-                    cycle.Validation.AddError($"{pickListItems} {M.PickListItem.QuantityPicked} {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
+                    cycle.Validation.AddError($"{pickListItems} {this.M.PickListItem.QuantityPicked} {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
                 }
 
                 if (pickListItems.QuantityPicked > 0 && pickListItems.ExistPickListWherePickListItem && pickListItems.PickListWherePickListItem.PickListState.Equals(new PickListStates(pickListItems.Session()).Picked))

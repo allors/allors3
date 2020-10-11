@@ -16,7 +16,7 @@ namespace Allors.Domain
         public DiscountComponentDerivation(M m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.DiscountComponent.Class),
+                new CreatedPattern(this.M.DiscountComponent.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,8 +32,8 @@ namespace Allors.Domain
                     discountComponent.PricedBy = internalOrganisations.First();
                 }
 
-                validation.AssertAtLeastOne(discountComponent, M.DiscountComponent.Price, M.DiscountComponent.Percentage);
-                validation.AssertExistsAtMostOne(discountComponent, M.DiscountComponent.Price, M.DiscountComponent.Percentage);
+                validation.AssertAtLeastOne(discountComponent, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
+                validation.AssertExistsAtMostOne(discountComponent, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
 
                 if (discountComponent.ExistPrice)
                 {
@@ -42,7 +42,7 @@ namespace Allors.Domain
                         discountComponent.Currency = discountComponent.PricedBy.PreferredCurrency;
                     }
 
-                    validation.AssertExists(discountComponent, M.BasePrice.Currency);
+                    validation.AssertExists(discountComponent, this.M.BasePrice.Currency);
                 }
 
                 if (discountComponent.ExistProduct)

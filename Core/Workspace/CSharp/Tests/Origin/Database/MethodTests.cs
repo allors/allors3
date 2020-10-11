@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters
+namespace Tests.Workspace.Origin.Database
 {
     using System.Linq;
     using Allors.Workspace.Data;
@@ -18,21 +18,21 @@ namespace Tests.Adapters
             AsyncContext.Run(
                 async () =>
                 {
-                    var context = this.Workspace.CreateSession();
+                    var session = this.Workspace.CreateSession();
 
                     var pull = new[]
                     {
                         new Pull
                         {
-                            Extent = new Extent(M.Organisation.ObjectType),
+                            Extent = new Extent(this.M.Organisation.ObjectType),
                         },
                     };
 
-                    var organisation = (await context.Load(pull)).GetCollection<Organisation>().First();
+                    var organisation = (await session.Load(pull)).GetCollection<Organisation>().First();
 
                     Assert.False(organisation.JustDidIt);
 
-                    var result = await context.Call(organisation.JustDoIt);
+                    var result = await session.Call(organisation.JustDoIt);
 
                     Assert.False(result.HasErrors);
 
@@ -44,9 +44,9 @@ namespace Tests.Adapters
                         },
                     };
 
-                    organisation = (await context.Load(pull)).GetObject<Organisation>();
+                    organisation = (await session.Load(pull)).GetObject<Organisation>();
 
-                    context.Reset();
+                    session.Reset();
 
                     Assert.True(organisation.JustDidIt);
                 });

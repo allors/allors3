@@ -19,7 +19,7 @@ namespace Allors.Domain
 
             if (!this.ExistData || this.Data.Length == 0)
             {
-                derivation.Validation.AddError(this, Meta.Data, "Empty data");
+                derivation.Validation.AddError(this, this.Meta.Data, "Empty data");
             }
         }
     }

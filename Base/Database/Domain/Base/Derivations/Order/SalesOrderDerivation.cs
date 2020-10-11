@@ -17,9 +17,9 @@ namespace Allors.Domain
         public SalesOrderDerivation(M m) : base(m, new Guid("CC43279A-22B4-499E-9ADA-33364E30FBD4")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SalesOrder.Class),
-                new ChangedRolePattern(M.SalesOrder.SalesOrderState),
-                new ChangedRolePattern(M.SalesOrder.SalesOrderItems)
+                new CreatedPattern(this.M.SalesOrder.Class),
+                new ChangedRolePattern(this.M.SalesOrder.SalesOrderState),
+                new ChangedRolePattern(this.M.SalesOrder.SalesOrderItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -54,12 +54,12 @@ namespace Allors.Domain
 
                 if (salesOrder.BillToCustomer?.BaseIsActiveCustomer(salesOrder.TakenBy, salesOrder.OrderDate) == false)
                 {
-                    validation.AddError($"{salesOrder} {M.SalesOrder.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{salesOrder} {this.M.SalesOrder.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 if (salesOrder.ShipToCustomer?.BaseIsActiveCustomer(salesOrder.TakenBy, salesOrder.OrderDate) == false)
                 {
-                    validation.AddError($"{salesOrder} {M.SalesOrder.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{salesOrder} {this.M.SalesOrder.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 if (salesOrder.SalesOrderState.IsInProcess)
@@ -85,7 +85,7 @@ namespace Allors.Domain
                     // TODO: Use versioning
                     if (salesOrderItem.ExistPreviousProduct && !salesOrderItem.PreviousProduct.Equals(salesOrderItem.Product))
                     {
-                        validation.AddError($"{salesOrderItem} {M.SalesOrderItem.Product} {ErrorMessages.SalesOrderItemProductChangeNotAllowed}");
+                        validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.Product} {ErrorMessages.SalesOrderItemProductChangeNotAllowed}");
                     }
                     else
                     {
@@ -94,17 +94,17 @@ namespace Allors.Domain
 
                     if (salesOrderItem.ExistSalesOrderItemWhereOrderedWithFeature)
                     {
-                        validation.AssertExists(salesOrderItem, M.SalesOrderItem.ProductFeature);
-                        validation.AssertNotExists(salesOrderItem, M.SalesOrderItem.Product);
+                        validation.AssertExists(salesOrderItem, this.M.SalesOrderItem.ProductFeature);
+                        validation.AssertNotExists(salesOrderItem, this.M.SalesOrderItem.Product);
                     }
                     else
                     {
-                        validation.AssertNotExists(salesOrderItem, M.SalesOrderItem.ProductFeature);
+                        validation.AssertNotExists(salesOrderItem, this.M.SalesOrderItem.ProductFeature);
                     }
 
                     if (salesOrderItem.ExistProduct && salesOrderItem.ExistQuantityOrdered && salesOrderItem.QuantityOrdered < salesOrderItem.QuantityShipped)
                     {
-                        validation.AddError($"{salesOrderItem} {M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemLessThanAlreadeyShipped}");
+                        validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemLessThanAlreadeyShipped}");
                     }
 
                     var isSubTotalItem = salesOrderItem.ExistInvoiceItemType && (salesOrderItem.InvoiceItemType.IsProductItem || salesOrderItem.InvoiceItemType.IsPartItem);
@@ -112,21 +112,21 @@ namespace Allors.Domain
                     {
                         if (salesOrderItem.QuantityOrdered == 0)
                         {
-                            validation.AddError($"{salesOrderItem} {M.SalesOrderItem.QuantityOrdered} QuantityOrdered is Required");
+                            validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} QuantityOrdered is Required");
                         }
                     }
                     else
                     {
                         if (salesOrderItem.AssignedUnitPrice == 0)
                         {
-                            validation.AddError($"{salesOrderItem} {M.SalesOrderItem.AssignedUnitPrice} Price is Required");
+                            validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.AssignedUnitPrice} Price is Required");
                         }
                     }
 
-                    validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.Product, M.SalesOrderItem.ProductFeature);
-                    validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.SerialisedItem, M.SalesOrderItem.ProductFeature);
-                    validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.ReservedFromSerialisedInventoryItem, M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
-                    validation.AssertExistsAtMostOne(salesOrderItem, M.SalesOrderItem.AssignedUnitPrice, M.SalesOrderItem.DiscountAdjustments, M.SalesOrderItem.SurchargeAdjustments);
+                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.Product, this.M.SalesOrderItem.ProductFeature);
+                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.SerialisedItem, this.M.SalesOrderItem.ProductFeature);
+                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem, this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
+                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.AssignedUnitPrice, this.M.SalesOrderItem.DiscountAdjustments, this.M.SalesOrderItem.SurchargeAdjustments);
                 }
 
                 var validOrderItems = salesOrder.SalesOrderItems.Where(v => v.IsValid).ToArray();
@@ -631,7 +631,7 @@ namespace Allors.Domain
                 {
                     if (!unitBasePrice.HasValue)
                     {
-                        validation.AddError($"{salesOrderItem} {M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
+                        validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
                         return;
                     }
 

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Adapters
+namespace Tests.Workspace.Origin.Database
 {
     using System.Linq;
     using Allors.Workspace.Data;
@@ -17,24 +17,24 @@ namespace Tests.Adapters
         [Fact]
         public async void Users()
         {
-            var context = this.Workspace.CreateSession();
+            var session = this.Workspace.CreateSession();
 
             var pull = new Pull
             {
-                Extent = new Extent(M.User.ObjectType),
+                Extent = new Extent(this.M.User.ObjectType),
                 Results = new[]
                 {
                     new Result
                     {
                         Fetch = new Fetch
                         {
-                            Include = new UserNodeBuilder(M,v => v.Person_Address()),
+                            Include = new UserNodeBuilder(this.M,v => v.Person_Address()),
                         },
                     },
                 },
             };
 
-            var result = await context.Load(pull);
+            var result = await session.Load(pull);
 
             var users = result.GetCollection<User>();
 

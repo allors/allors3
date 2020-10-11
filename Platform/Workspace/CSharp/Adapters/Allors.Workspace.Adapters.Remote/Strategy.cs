@@ -26,6 +26,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.Session = session;
             this.DatabaseObject = databaseObject;
             this.Class = databaseObject.Class;
+            this.WorkspaceId = workspaceId;
         }
 
         public Strategy(Session session, IClass @class, long workspaceId)
@@ -119,7 +120,15 @@ namespace Allors.Workspace.Adapters.Remote
             return value != null;
         }
 
-        public object Get(IRoleType roleType)
+        public object Get(IRoleType roleType) => roleType.Origin switch
+        {
+            Origin.Database => this.DatabaseGet(roleType),
+            Origin.Workspace => this.WorkspaceGet(roleType),
+            Origin.Session => this.SessionGet(roleType),
+            _ => throw new Exception($"Unsupported origin: {roleType.Origin}"),
+        };
+
+        public object DatabaseGet(IRoleType roleType)
         {
             if (!this.roleByRoleType.TryGetValue(roleType, out var value))
             {
@@ -164,7 +173,63 @@ namespace Allors.Workspace.Adapters.Remote
             return value;
         }
 
+        public object WorkspaceGet(IRoleType roleType)
+        {
+            var role = this.Session.Workspace.Get(this, roleType);
+            if (roleType.ObjectType.IsUnit)
+            {
+                return role;
+            }
+            else
+            {
+                if (roleType.IsOne)
+                {
+                    var id = (long?)role;
+                    if (id.HasValue)
+                    {
+                        return this.Session.Instantiate(id.Value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    var ids = (IEnumerable<long>)role;
+                    if (ids != null)
+                    {
+                        return ids.Select(v => this.Session.Instantiate(v)).ToArray();
+                    }
+                    else
+                    {
+                        return this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
+                    }
+                }
+            }
+        }
+
+        public object SessionGet(IRoleType roleType) => this.Session.Get(this, roleType);
+
         public void Set(IRoleType roleType, object value)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Database:
+                    this.DatabaseSet(roleType, value);
+                    break;
+                case Origin.Workspace:
+                    this.WorkspaceSet(roleType, value);
+                    break;
+                case Origin.Session:
+                    this.SessionSet(roleType, value);
+                    break;
+                default:
+                    throw new Exception($"Unsupported origin: {roleType.Origin}");
+            }
+        }
+
+        public void DatabaseSet(IRoleType roleType, object value)
         {
             var current = this.Get(roleType);
             if (roleType.ObjectType.IsUnit || roleType.IsOne)
@@ -203,6 +268,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.roleByRoleType[roleType] = value;
             this.changedRoleByRoleType[roleType] = value;
         }
+
+        public void WorkspaceSet(IRoleType roleType, object value) => this.Session.Workspace.Set(this, roleType, value);
+
+        public void SessionSet(IRoleType roleType, object value) => this.Session.Set(this, roleType, value);
 
         public void Add(IRoleType roleType, IObject value)
         {
