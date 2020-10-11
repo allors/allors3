@@ -14,10 +14,16 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly WorkspacePopulation workspacePopulation;
 
+        private long worskpaceIdCounter;
+        private Dictionary<long, long> workspaceIdByDatabaseId { get; }
+
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
+
+            this.worskpaceIdCounter = 0;
+            this.workspaceIdByDatabaseId = new Dictionary<long, long>();
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new Database(this.MetaPopulation, httpClient);
@@ -45,5 +51,24 @@ namespace Allors.Workspace.Adapters.Remote
         internal void RegisterSession(Session session) => this.Sessions.Add(session);
 
         internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
+
+        internal long NextWorkspaceId() => --this.worskpaceIdCounter;
+
+        internal long WorkspaceId(long id)
+        {
+            if (id > 0)
+            {
+                if (!this.workspaceIdByDatabaseId.TryGetValue(id, out var workspaceId))
+                {
+                    workspaceId = this.NextWorkspaceId();
+                    this.workspaceIdByDatabaseId.Add(workspaceId, id);
+
+                }
+
+                return workspaceId;
+            }
+
+            return id;
+        }
     }
 }

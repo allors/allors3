@@ -18,10 +18,9 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : ISession
     {
-        private static long idCounter = 0;
 
-        private readonly Dictionary<long, Strategy> newStrategyById = new Dictionary<long, Strategy>();
-        private readonly Dictionary<long, Strategy> strategyById = new Dictionary<long, Strategy>();
+        private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
+        private List<Strategy> newDatabaseStrategies;
 
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
@@ -29,12 +28,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = stateLifecycle;
             this.Workspace.RegisterSession(this);
 
+            this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
+
             this.StateLifecycle.OnInit(this);
         }
 
         ~Session() => this.Workspace.UnregisterSession(this);
 
-        internal bool HasChanges => this.newStrategyById.Count > 0 || this.strategyById.Values.Any(v => v.HasChanges);
+        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.strategyByWorkspaceId.Values.Any(v => v.HasDatabaseChanges);
 
         public ISessionStateLifecycle StateLifecycle { get; }
 
@@ -50,7 +51,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 I = methods.Select(v => new Invocation
                 {
-                    I = v.Object.Id.ToString(),
+                    I = v.Object.DatabaseId?.ToString(),
                     V = v.Object.Strategy.Version.ToString(),
                     M = v.MethodType.IdAsString,
                 }).ToArray(),
@@ -73,21 +74,27 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IObject Create(IClass @class)
         {
-            var strategy = new Strategy(this, @class, --idCounter);
-            this.newStrategyById[strategy.Id] = strategy;
+            var strategy = new Strategy(this, @class, this.Workspace.NextWorkspaceId());
+
+            if (@class.HasDatabaseOrigin)
+            {
+                this.newDatabaseStrategies ??= new List<Strategy>();
+                this.newDatabaseStrategies.Add(strategy);
+            }
+
+            this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
         }
 
         public IObject Instantiate(long id)
         {
-            if (!this.strategyById.TryGetValue(id, out var strategy))
+            var workspaceId = this.Workspace.WorkspaceId(id);
+
+            if (!this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy))
             {
-                if (!this.newStrategyById.TryGetValue(id, out strategy))
-                {
-                    var databaseObject = this.Workspace.Database.Get(id);
-                    strategy = new Strategy(this, databaseObject);
-                    this.strategyById[databaseObject.Id] = strategy;
-                }
+                var databaseObject = this.Workspace.Database.Get(id);
+                strategy = new Strategy(this, databaseObject, workspaceId);
+                this.strategyByWorkspaceId[workspaceId] = strategy;
             }
 
             return strategy.Object;
@@ -131,12 +138,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Reset()
         {
-            foreach (var newSessionObject in this.newStrategyById.Values)
-            {
-                newSessionObject.Reset();
-            }
-
-            foreach (var sessionObject in this.strategyById.Values)
+            foreach (var sessionObject in this.strategyByWorkspaceId.Values)
             {
                 sessionObject.Reset();
             }
@@ -173,15 +175,14 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var roleType = associationType.RoleType;
 
-            var associations = this.Workspace.Database.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id));
-            foreach (var association in associations)
+            foreach (var association in this.Workspace.Database.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id)))
             {
                 if (association.Strategy.CanRead(roleType))
                 {
                     if (roleType.IsOne)
                     {
                         var role = (IObject)((Strategy)association.Strategy).GetForAssociation(roleType);
-                        if (role != null && role.Id == @object.Id)
+                        if (role != null && role.WorkspaceId == @object.WorkspaceId)
                         {
                             yield return association;
                         }
@@ -198,22 +199,17 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal IObject GetForAssociation(long id)
+        internal IObject GetForAssociation(long workspaceId)
         {
-            if (!this.strategyById.TryGetValue(id, out var sessionObject))
-            {
-                this.newStrategyById.TryGetValue(id, out sessionObject);
-            }
-
-            return sessionObject?.Object;
+            this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy);
+            return strategy?.Object;
         }
 
-        internal PushRequest PushRequest() =>
-            new PushRequest
-            {
-                NewObjects = this.newStrategyById.Select(v => v.Value.SaveNew()).ToArray(),
-                Objects = this.strategyById.Select(v => v.Value.Save()).Where(v => v != null).ToArray(),
-            };
+        internal PushRequest PushRequest() => new PushRequest
+        {
+            NewObjects = this.newDatabaseStrategies?.Select(v => v.SaveNew()).ToArray(),
+            Objects = this.strategyByWorkspaceId.Where(v => v.Value.HasDatabaseChanges).Select(v => v.Value.SaveExisting()).ToArray(),
+        };
 
         internal void PushResponse(PushResponse pushResponse)
         {
@@ -221,26 +217,27 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var pushResponseNewObject in pushResponse.NewObjects)
                 {
-                    var newId = long.Parse(pushResponseNewObject.NI);
-                    var id = long.Parse(pushResponseNewObject.I);
+                    var workspaceId = long.Parse(pushResponseNewObject.WI);
+                    var databaseId = long.Parse(pushResponseNewObject.I);
 
-                    var sessionObject = this.newStrategyById[newId];
-                    sessionObject.PushResponse(id);
+                    var strategy = this.strategyByWorkspaceId[workspaceId];
+                    strategy.PushResponse(databaseId);
 
-                    this.newStrategyById.Remove(newId);
-                    this.strategyById[id] = sessionObject;
+                    this.newDatabaseStrategies.Remove(strategy);
                 }
             }
 
-            if (this.newStrategyById != null && this.newStrategyById.Count != 0)
+            if (this.newDatabaseStrategies.Count != 0)
             {
                 throw new Exception("Not all new objects received ids");
             }
+
+            this.newDatabaseStrategies = null;
         }
 
         internal void Refresh()
         {
-            foreach (var sessionObject in this.strategyById.Values)
+            foreach (var sessionObject in this.strategyByWorkspaceId.Values)
             {
                 sessionObject.Refresh();
             }
@@ -249,17 +246,17 @@ namespace Allors.Workspace.Adapters.Remote
         private async Task Load(SyncRequest syncRequest)
         {
             var syncResponse = await this.Workspace.Database.Sync(syncRequest);
-            var securityRequest = this.Workspace.Database.Synced(syncResponse);
+            var securityRequest = this.Workspace.Database.SyncResponse(syncResponse);
 
             if (securityRequest != null)
             {
                 var securityResponse = await this.Workspace.Database.Security(securityRequest);
-                securityRequest = this.Workspace.Database.Security(securityResponse);
+                securityRequest = this.Workspace.Database.SecurityResponse(securityResponse);
 
                 if (securityRequest != null)
                 {
                     securityResponse = await this.Workspace.Database.Security(securityRequest);
-                    this.Workspace.Database.Security(securityResponse);
+                    this.Workspace.Database.SecurityResponse(securityResponse);
                 }
             }
         }

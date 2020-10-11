@@ -12,17 +12,17 @@ namespace Allors.Workspace
     {
         IObject Object { get; }
 
-        long Id { get; }
+        long WorkspaceId { get; set; }
 
-        long? NewId { get; set; }
+        long? DatabaseId { get; }
 
         long? Version { get; }
 
-        IClass ObjectType { get; }
+        IClass Class { get; }
 
         ISession Session { get; }
 
-        bool HasChanges { get; }
+        bool HasDatabaseChanges { get; }
 
         bool CanRead(IRoleType roleType);
 

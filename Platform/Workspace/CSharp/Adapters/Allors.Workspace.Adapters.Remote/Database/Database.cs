@@ -83,14 +83,14 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal DatabaseObject Pushed(long objectId, IClass @class)
+        internal DatabaseObject PushResponse(long objectId, IClass @class)
         {
             var databaseObject = new DatabaseObject(this, objectId, @class);
             this.databaseObjectById[objectId] = databaseObject;
             return databaseObject;
         }
 
-        internal SecurityRequest Synced(SyncResponse syncResponse)
+        internal SecurityRequest SyncResponse(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
@@ -116,7 +116,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
 
-            var syncRequest = new SyncRequest
+            return new SyncRequest
             {
                 Objects = response.Objects
                     .Where(v =>
@@ -157,22 +157,20 @@ namespace Allors.Workspace.Adapters.Remote
                     })
                     .Select(v => v[0]).ToArray(),
             };
-
-            return syncRequest;
         }
 
-        internal DatabaseObject Get(long id)
+        internal DatabaseObject Get(long databaseId)
         {
-            var databaseObject = this.databaseObjectById[id];
+            var databaseObject = this.databaseObjectById[databaseId];
             if (databaseObject == null)
             {
-                throw new Exception($"Object with id {id} is not present.");
+                throw new Exception($"Object with id {databaseId} is not present.");
             }
 
             return databaseObject;
         }
 
-        internal SecurityRequest Security(SecurityResponse securityResponse)
+        internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
         {
             if (securityResponse.Permissions != null)
             {
@@ -251,8 +249,7 @@ namespace Allors.Workspace.Adapters.Remote
                             return permissionId;
                         }) ?? Array.Empty<long>();
 
-                    var accessControl = new AccessControl(id, version, new HashSet<long>(permissionsIds));
-                    this.AccessControlById[id] = accessControl;
+                    this.AccessControlById[id] = new AccessControl(id, version, new HashSet<long>(permissionsIds));
                 }
             }
 
@@ -317,8 +314,7 @@ namespace Allors.Workspace.Adapters.Remote
             var uri = new Uri("allors/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
             response.EnsureSuccessStatusCode();
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
-            return pullResponse;
+            return await this.ReadAsAsync<PullResponse>(response);
         }
 
         internal async Task<PullResponse> Pull(string name, object pullRequest)
@@ -326,8 +322,8 @@ namespace Allors.Workspace.Adapters.Remote
             var uri = new Uri(name + "/pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
             response.EnsureSuccessStatusCode();
-            var pullResponse = await this.ReadAsAsync<PullResponse>(response);
-            return pullResponse;
+
+            return await this.ReadAsAsync<PullResponse>(response);
         }
 
         internal async Task<SyncResponse> Sync(SyncRequest syncRequest)
@@ -336,8 +332,7 @@ namespace Allors.Workspace.Adapters.Remote
             var response = await this.PostAsJsonAsync(uri, syncRequest);
             response.EnsureSuccessStatusCode();
 
-            var syncResponse = await this.ReadAsAsync<SyncResponse>(response);
-            return syncResponse;
+            return await this.ReadAsAsync<SyncResponse>(response);
         }
 
         internal async Task<PushResponse> Push(PushRequest pushRequest)
@@ -346,18 +341,16 @@ namespace Allors.Workspace.Adapters.Remote
             var response = await this.PostAsJsonAsync(uri, pushRequest);
             response.EnsureSuccessStatusCode();
 
-            var pushResponse = await this.ReadAsAsync<PushResponse>(response);
-            return pushResponse;
+            return await this.ReadAsAsync<PushResponse>(response);
         }
 
-        internal async Task<InvokeResponse> Invoke(InvokeRequest invokeRequest, InvokeOptions options = null)
+        internal async Task<InvokeResponse> Invoke(InvokeRequest invokeRequest)
         {
             var uri = new Uri("allors/invoke", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, invokeRequest);
             response.EnsureSuccessStatusCode();
 
-            var invokeResponse = await this.ReadAsAsync<InvokeResponse>(response);
-            return invokeResponse;
+            return await this.ReadAsAsync<InvokeResponse>(response);
         }
 
         internal async Task<InvokeResponse> Invoke(string service, object args)
@@ -366,8 +359,7 @@ namespace Allors.Workspace.Adapters.Remote
             var response = await this.PostAsJsonAsync(uri, args);
             response.EnsureSuccessStatusCode();
 
-            var invokeResponse = await this.ReadAsAsync<InvokeResponse>(response);
-            return invokeResponse;
+            return await this.ReadAsAsync<InvokeResponse>(response);
         }
 
         internal async Task<SecurityResponse> Security(SecurityRequest securityRequest)
@@ -376,8 +368,7 @@ namespace Allors.Workspace.Adapters.Remote
             var response = await this.PostAsJsonAsync(uri, securityRequest);
             response.EnsureSuccessStatusCode();
 
-            var syncResponse = await this.ReadAsAsync<SecurityResponse>(response);
-            return syncResponse;
+            return await this.ReadAsAsync<SecurityResponse>(response);
         }
 
         internal async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>
@@ -393,8 +384,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
-            var deserializedObject = JsonConvert.DeserializeObject<T>(json);
-            return deserializedObject;
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         public class AuthenticationTokenResponse

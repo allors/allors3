@@ -153,11 +153,19 @@ namespace Allors.Workspace.Domain
         public IStrategy Strategy { get; }
 
 
-		public long Id
+		public long WorkspaceId
 		{
 			get
 			{
-				return this.Strategy.Id;
+				return this.Strategy.WorkspaceId;
+			}
+		}
+
+		public long? DatabaseId
+		{
+			get
+			{
+				return this.Strategy.DatabaseId;
 			}
 		}
 
@@ -182,12 +190,12 @@ namespace Allors.Workspace.Domain
 		        return false;
 		    }
 
-		    return this.Id.Equals(that.Id);
+		    return this.WorkspaceId.Equals(that.WorkspaceId);
         }
 
 		public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return this.WorkspaceId.GetHashCode();
         }
 
 $class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{concreteRoleType|$classConcreteRoleType_Class()$}$

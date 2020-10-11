@@ -8,7 +8,7 @@ namespace Allors.Protocol.Database.Push
     public class PushRequestNewObject
     {
         /// <summary>
-        /// Gets or sets the new id.
+        /// Gets or sets the new (workspace) id.
         /// </summary>
         public string NI { get; set; }
 

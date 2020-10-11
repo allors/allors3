@@ -1,30 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Allors.Workspace.Adapters.Remote.WorkspacePopulation">
-    <Position X="3.5" Y="1.75" Width="2" />
+    <Position X="4" Y="1.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>EBAAAAUACAAgAAEAgAAAAAABhAAAAgEAIAAQAAAIAAA=</HashCode>
+      <HashCode>EBAAAAUACAAgAAEAgAAAAAABBAAAAgEAIAAQAABIAAA=</HashCode>
       <FileName>Workspace\WorkspacePopulation.cs</FileName>
       <NewMemberFileName>Workspace.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Session">
-    <Position X="0.5" Y="7" Width="1.75" />
+    <Position X="0.5" Y="7" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAwIAAAABABkQAAAQAAAgUBAAgAEAAAIAQAAAAAAA=</HashCode>
-      <FileName>Session\Session.cs</FileName>
+      <HashCode>AAQAwIAAAABABAQAAAQAAAgEAAAgAEAAAIAQCQBAAAA=</HashCode>
+      <FileName>Session.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Workspace" />
     </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Field Name="newStrategyById" />
-      <Field Name="strategyById" />
-    </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Database">
-    <Position X="7.25" Y="0.5" Width="3" />
+    <Position X="7.75" Y="0.5" Width="3" />
     <NestedTypes>
       <Class Name="Allors.Workspace.Adapters.Remote.Database.AuthenticationTokenResponse" Collapsed="true">
         <TypeIdentifier>
@@ -33,7 +29,7 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>IAAAICAAAAAIAATAgQICAAgACgQAAAAAAAAUAAjAyAA=</HashCode>
+      <HashCode>YAAAICAAgAAIAADAgQICAAgACgAgAAAAAAAUAAjAyAA=</HashCode>
       <FileName>Database\Database.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -43,7 +39,7 @@
   <Class Name="Allors.Workspace.Adapters.Remote.Strategy">
     <Position X="4.25" Y="7" Width="2" />
     <TypeIdentifier>
-      <HashCode>JAICAIAQQIBABUBgEEAABEgAAAAgAAAAAIAUIAEIAAA=</HashCode>
+      <HashCode>JAIAAAAAQIBABQBgEEIABEgAAAIiAAAAQAAUIAFIAAI=</HashCode>
       <FileName>Strategy.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -69,10 +65,10 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Workspace">
-    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Position X="0.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAEAAABAAACAAAAAEAAEAAgAAAAAAAABAAIA=</HashCode>
-      <FileName>Workspace\Workspace.cs</FileName>
+      <HashCode>AAQAAAEAAEAAABAAACABAAAEAAEAAgAAAAAAABBAAIA=</HashCode>
+      <FileName>Workspace.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="workspacePopulation" />

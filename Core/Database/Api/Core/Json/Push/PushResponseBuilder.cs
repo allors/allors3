@@ -159,7 +159,7 @@ namespace Allors.Api.Json.Push
                     pushResponse.NewObjects = objectByNewId.Select(kvp => new PushResponseNewObject
                     {
                         I = kvp.Value != null ? kvp.Value.Id.ToString() : kvp.Key,
-                        NI = kvp.Key,
+                        WI = kvp.Key,
                     }).ToArray();
                 }
 

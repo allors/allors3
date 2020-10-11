@@ -33,7 +33,7 @@ namespace Allors.Workspace.Data
                 AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
                 Extent = this.Extent?.ToJson(),
-                Values = this.Objects?.Select(v => v.Id.ToString()).ToArray(),
+                Values = this.Objects?.Select(v => v.DatabaseId?.ToString()).ToArray(),
                 Parameter = this.Parameter,
             };
     }

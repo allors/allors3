@@ -7,7 +7,9 @@ namespace Allors.Workspace
 {
     public interface IObject
     {
-        long Id { get; }
+        long WorkspaceId { get; }
+
+        long? DatabaseId { get; }
 
         IStrategy Strategy { get; }
     }

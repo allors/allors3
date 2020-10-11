@@ -124,7 +124,7 @@ namespace Allors.Workspace.Adapters.Remote
         /// </returns>
         public IObject Create(IStrategy strategy)
         {
-            var constructor = this.contructorInfoByObjectType[strategy.ObjectType];
+            var constructor = this.contructorInfoByObjectType[strategy.Class];
             object[] parameters = { strategy };
 
             return (IObject)constructor.Invoke(parameters);

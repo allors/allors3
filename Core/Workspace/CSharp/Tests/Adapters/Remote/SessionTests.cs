@@ -6,11 +6,11 @@
 namespace Tests.Adapters.Remote
 {
     using System.Linq;
+    using Adapters;
     using Allors.Protocol.Data;
     using Allors.Protocol.Database.Push;
-    using Allors.Workspace.Domain;
-    using Adapters;
     using Allors.Workspace.Adapters.Remote;
+    using Allors.Workspace.Domain;
     using Xunit;
 
     public class SessionTests : Test
@@ -18,7 +18,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitGet()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -49,7 +49,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void UnitSet()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
             var martien1 = session1.Instantiate(3) as Person;
@@ -72,51 +72,51 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void HasChanges()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
             var martien = session.Instantiate(3) as Person;
             var acme = session.Instantiate(101) as Organisation;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             var firstName = martien.FirstName;
             martien.FirstName = firstName;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             martien.UserName = null;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             var owner = acme.Owner;
             acme.Owner = owner;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             acme.CycleOne = null;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             var employees = acme.Employees;
             acme.Employees = employees;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             employees = employees.Reverse().ToArray();
             acme.Employees = employees;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
 
             acme.CycleMany = null;
 
-            Assert.False(session.HasChanges);
+            Assert.False(session.HasDatabaseChanges);
         }
 
         [Fact]
         public void UnitSave()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -166,7 +166,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneGet()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -189,7 +189,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneSet()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -235,7 +235,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void OneSave()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = session.Instantiate(1) as Person;
@@ -285,7 +285,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManyGet()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
             var session = this.CreateSession();
 
             var koen = (Person)session.Instantiate(1);
@@ -314,7 +314,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySet()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session1 = this.CreateSession();
 
@@ -363,7 +363,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySaveWithExistingObjects()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -430,7 +430,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void ManySaveWithNewObjects()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -455,7 +455,7 @@ namespace Tests.Adapters.Remote
             Assert.Equal(3, save.NewObjects.Length);
             Assert.Empty(save.Objects);
             {
-                var savedMathijs = save.NewObjects.First(v => v.NI == mathijs.Strategy.NewId?.ToString());
+                var savedMathijs = save.NewObjects.First(v => v.NI == mathijs.Strategy.WorkspaceId.ToString());
 
                 Assert.Equal(this.M.Person.Class.IdAsString, savedMathijs.T);
                 Assert.Equal(2, savedMathijs.Roles.Length);
@@ -468,24 +468,24 @@ namespace Tests.Adapters.Remote
             }
 
             {
-                var savedAcme2 = save.NewObjects.First(v => v.NI == acme2.Strategy.NewId?.ToString());
+                var savedAcme2 = save.NewObjects.First(v => v.NI == acme2.Strategy.WorkspaceId.ToString());
 
                 Assert.Equal(this.M.Organisation.Class.IdAsString, savedAcme2.T);
                 Assert.Equal(3, savedAcme2.Roles.Length);
 
                 var savedAcme2Manager = savedAcme2.Roles.First(v => v.T == this.M.Organisation.Manager.RelationType.IdAsString);
 
-                Assert.Equal(mathijs.Strategy.NewId.ToString(), savedAcme2Manager.S);
+                Assert.Equal(mathijs.Strategy.WorkspaceId.ToString(), savedAcme2Manager.S);
 
                 var savedAcme2Employees = savedAcme2.Roles.First(v => v.T == this.M.Organisation.Employees.RelationType.IdAsString);
 
                 Assert.Null(savedAcme2Employees.S);
-                Assert.Contains(mathijs.Strategy.NewId?.ToString(), savedAcme2Employees.A);
+                Assert.Contains(mathijs.Strategy.WorkspaceId.ToString(), savedAcme2Employees.A);
                 Assert.Null(savedAcme2Employees.R);
             }
 
             {
-                var savedAcme3 = save.NewObjects.First(v => v.NI == acme3.Strategy.NewId?.ToString());
+                var savedAcme3 = save.NewObjects.First(v => v.NI == acme3.Strategy.WorkspaceId.ToString());
 
                 Assert.Equal(this.M.Organisation.Class.IdAsString, savedAcme3.T);
                 Assert.Equal(3, savedAcme3.Roles.Length);
@@ -505,7 +505,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void SyncWithNewObjects()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -525,12 +525,12 @@ namespace Tests.Adapters.Remote
             session.Reset();
 
             // Assert.Null(mathijs.Id);
-            Assert.True(mathijs.Strategy.NewId < 0);
+            Assert.True(mathijs.Strategy.WorkspaceId < 0);
             Assert.Null(mathijs.FirstName);
             Assert.Null(mathijs.LastName);
 
             // Assert.Null(acme2.Id);
-            Assert.True(acme2.Strategy.NewId < 0);
+            Assert.True(acme2.Strategy.WorkspaceId < 0);
             Assert.Null(acme2.Owner);
             Assert.Null(acme2.Manager);
 
@@ -540,7 +540,7 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Onsaved()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
@@ -552,18 +552,18 @@ namespace Tests.Adapters.Remote
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
-            var newId = mathijs.Strategy.NewId.Value;
+            var newId = mathijs.Strategy.WorkspaceId;
 
             pushResponse = new PushResponse
             {
-                NewObjects = new[] { new PushResponseNewObject { I = "10000", NI = newId.ToString() } },
+                NewObjects = new[] { new PushResponseNewObject { I = "10000", WI = newId.ToString() } },
             };
 
             session.PushResponse(pushResponse);
 
-            Assert.Null(mathijs.Strategy.NewId);
-            Assert.Equal(10000, mathijs.Id);
-            Assert.Equal("Person", mathijs.Strategy.ObjectType.Name);
+            Assert.Null(mathijs.Strategy.WorkspaceId);
+            Assert.Equal(10000, mathijs.DatabaseId);
+            Assert.Equal("Person", mathijs.Strategy.Class.Name);
 
             mathijs = session.Instantiate(10000) as Person;
 
@@ -604,17 +604,13 @@ namespace Tests.Adapters.Remote
         [Fact]
         public void Get()
         {
-            this.Database.Synced(Fixture.LoadData(this.M));
+            this.Database.SyncResponse(Fixture.LoadData(this.M));
 
             var session = this.CreateSession();
 
             var acme = (Organisation)session.Create(this.M.Organisation.Class);
 
-            var acmeAgain = session.Instantiate(acme.Id);
-
-            Assert.Equal(acme, acmeAgain);
-
-            acmeAgain = session.Instantiate(acme.Strategy.NewId.Value);
+            var acmeAgain = session.Instantiate(acme.WorkspaceId);
 
             Assert.Equal(acme, acmeAgain);
         }

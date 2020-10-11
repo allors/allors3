@@ -30,7 +30,7 @@ namespace Allors.Workspace.Data
                 Dependencies = this.Dependencies,
                 AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Object = this.Object?.Id.ToString(),
+                Object = this.Object?.DatabaseId?.ToString(),
                 Value = UnitConvert.ToString(this.Value),
                 Parameter = this.Parameter,
             };
