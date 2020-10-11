@@ -11,32 +11,24 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    internal class WorkspacePopulation
+    internal class Population
     {
-        private readonly Dictionary<IRoleType, Dictionary<WorkspaceObject, object>> roleByAssociationByRoleType;
-        private readonly Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>> associationByRoleByAssociationType;
+        private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
+        private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType;
 
-        private Dictionary<IRoleType, Dictionary<WorkspaceObject, object>> changedRoleByAssociationByRoleType;
-        private Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>> changedAssociationByRoleByAssociationType;
+        private Dictionary<IRoleType, Dictionary<long, object>> changedRoleByAssociationByRoleType;
+        private Dictionary<IAssociationType, Dictionary<long, object>> changedAssociationByRoleByAssociationType;
 
-        internal WorkspacePopulation(IMetaPopulation metaPopulation)
+        internal Population()
         {
-            this.MetaPopulation = metaPopulation;
+            this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
+            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
 
-            this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<WorkspaceObject, object>>();
-            this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>>();
-
-            this.changedRoleByAssociationByRoleType =
-                new Dictionary<IRoleType, Dictionary<WorkspaceObject, object>>();
-            this.changedAssociationByRoleByAssociationType =
-                new Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>>();
+            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
+            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
         }
 
-        internal WorkspaceObject[] Objects { get; private set; }
-
-        public IMetaPopulation MetaPopulation { get; }
-
-        internal WorkspaceChangeSet Snapshot()
+        internal ChangeSet Snapshot()
         {
             foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
             {
@@ -96,17 +88,15 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            var snapshot = new WorkspaceChangeSet(this.MetaPopulation, this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
+            var snapshot = new ChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
-            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<WorkspaceObject, object>>();
-            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>>();
+            this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
+            this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
 
             return snapshot;
         }
 
-        internal void AddObject(WorkspaceObject newObject) => this.Objects = NullableArraySet.Add(this.Objects, newObject);
-
-        internal void GetRole(WorkspaceObject association, IRoleType roleType, out object role)
+        internal void GetRole(long association, IRoleType roleType, out object role)
         {
             if (this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation) &&
                 changedRoleByAssociation.TryGetValue(association, out role))
@@ -117,8 +107,14 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleByAssociation(roleType).TryGetValue(association, out role);
         }
 
-        internal void SetRole(WorkspaceObject association, IRoleType roleType, object role)
+        internal void SetRole(long association, IRoleType roleType, object role)
         {
+            if (role == null)
+            {
+                this.RemoveRole(association, roleType);
+                return;
+            }
+
             // TODO: Implement normalization
             var normalizedRole = role;
 
@@ -130,10 +126,10 @@ namespace Allors.Workspace.Adapters.Remote
             else
             {
                 var associationType = roleType.AssociationType;
-                this.GetRole(association, roleType, out object previousRole);
+                this.GetRole(association, roleType, out var previousRole);
                 if (roleType.IsOne)
                 {
-                    var roleObject = (WorkspaceObject)normalizedRole;
+                    var roleObject = (long)normalizedRole;
                     this.GetAssociation(roleObject, associationType, out var previousAssociation);
 
                     // Role
@@ -145,15 +141,15 @@ namespace Allors.Workspace.Adapters.Remote
                     if (associationType.IsOne)
                     {
                         // One to One
-                        var previousAssociationObject = (WorkspaceObject)previousAssociation;
+                        var previousAssociationObject = (long?)previousAssociation;
                         if (previousAssociationObject != null)
                         {
-                            changedRoleByAssociation[previousAssociationObject] = null;
+                            changedRoleByAssociation[previousAssociationObject.Value] = null;
                         }
 
                         if (previousRole != null)
                         {
-                            var previousRoleObject = (WorkspaceObject)previousRole;
+                            var previousRoleObject = (long)previousRole;
                             changedAssociationByRole[previousRoleObject] = null;
                         }
 
@@ -161,13 +157,13 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        changedAssociationByRole[roleObject] = NullableArraySet.Remove(previousAssociation, roleObject);
+                        changedAssociationByRole[roleObject] = NullableArrayList.Remove(previousAssociation, roleObject);
                     }
                 }
                 else
                 {
-                    WorkspaceObject[] roles = ((IEnumerable<WorkspaceObject>)normalizedRole)?.ToArray() ?? Array.Empty<WorkspaceObject>();
-                    WorkspaceObject[] previousRoles = (WorkspaceObject[])previousRole ?? Array.Empty<WorkspaceObject>();
+                    var roles = ((IEnumerable<long>)normalizedRole)?.ToArray() ?? Array.Empty<long>();
+                    var previousRoles = (long[])previousRole ?? Array.Empty<long>();
 
                     // Use Diff (Add/Remove)
                     var addedRoles = roles.Except(previousRoles);
@@ -186,7 +182,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void AddRole(WorkspaceObject association, IRoleType roleType, WorkspaceObject role)
+        internal void AddRole(long association, IRoleType roleType, long role)
         {
             var associationType = roleType.AssociationType;
             this.GetAssociation(role, associationType, out var previousAssociation);
@@ -194,8 +190,8 @@ namespace Allors.Workspace.Adapters.Remote
             // Role
             var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
             this.GetRole(association, roleType, out var previousRole);
-            var roleArray = (WorkspaceObject[])previousRole;
-            roleArray = NullableArraySet.Add(roleArray, role);
+            var roleArray = (long?[])previousRole;
+            roleArray = NullableArrayList.Add(roleArray, role);
             changedRoleByAssociation[association] = roleArray;
 
             // Association
@@ -203,11 +199,11 @@ namespace Allors.Workspace.Adapters.Remote
             if (associationType.IsOne)
             {
                 // One to Many
-                var previousAssociationObject = (WorkspaceObject)previousAssociation;
+                var previousAssociationObject = (long?)previousAssociation;
                 if (previousAssociationObject != null)
                 {
-                    this.GetRole(previousAssociationObject, roleType, out var previousAssociationRole);
-                    changedRoleByAssociation[previousAssociationObject] = NullableArraySet.Remove(previousAssociationRole, role);
+                    this.GetRole(previousAssociationObject.Value, roleType, out var previousAssociationRole);
+                    changedRoleByAssociation[previousAssociationObject.Value] = NullableArrayList.Remove(previousAssociationRole, role);
                 }
 
                 changedAssociationByRole[role] = association;
@@ -215,11 +211,11 @@ namespace Allors.Workspace.Adapters.Remote
             else
             {
                 // Many to Many
-                changedAssociationByRole[role] = NullableArraySet.Add(previousAssociation, association);
+                changedAssociationByRole[role] = NullableArrayList.Add(previousAssociation, association);
             }
         }
 
-        internal void RemoveRole(WorkspaceObject association, IRoleType roleType, WorkspaceObject role)
+        internal void RemoveRole(long association, IRoleType roleType, long role)
         {
             var associationType = roleType.AssociationType;
             this.GetAssociation(role, associationType, out var previousAssociation);
@@ -229,7 +225,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 // Role
                 var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                changedRoleByAssociation[association] = NullableArraySet.Remove(previousRole, role);
+                changedRoleByAssociation[association] = NullableArrayList.Remove(previousRole, role);
 
                 // Association
                 var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
@@ -241,12 +237,17 @@ namespace Allors.Workspace.Adapters.Remote
                 else
                 {
                     // Many to Many
-                    changedAssociationByRole[role] = NullableArraySet.Add(previousAssociation, association);
+                    changedAssociationByRole[role] = NullableArrayList.Add(previousAssociation, association);
                 }
             }
         }
 
-        internal void GetAssociation(WorkspaceObject role, IAssociationType associationType, out object association)
+        internal void RemoveRole(long association, IRoleType roleType)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void GetAssociation(long role, IAssociationType associationType, out object association)
         {
             if (this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole) &&
                 changedAssociationByRole.TryGetValue(role, out association))
@@ -257,44 +258,44 @@ namespace Allors.Workspace.Adapters.Remote
             this.AssociationByRole(associationType).TryGetValue(role, out association);
         }
 
-        private Dictionary<WorkspaceObject, object> AssociationByRole(IAssociationType asscociationType)
+        private Dictionary<long, object> AssociationByRole(IAssociationType asscociationType)
         {
             if (!this.associationByRoleByAssociationType.TryGetValue(asscociationType, out var associationByRole))
             {
-                associationByRole = new Dictionary<WorkspaceObject, object>();
+                associationByRole = new Dictionary<long, object>();
                 this.associationByRoleByAssociationType[asscociationType] = associationByRole;
             }
 
             return associationByRole;
         }
 
-        private Dictionary<WorkspaceObject, object> RoleByAssociation(IRoleType roleType)
+        private Dictionary<long, object> RoleByAssociation(IRoleType roleType)
         {
             if (!this.roleByAssociationByRoleType.TryGetValue(roleType, out var roleByAssociation))
             {
-                roleByAssociation = new Dictionary<WorkspaceObject, object>();
+                roleByAssociation = new Dictionary<long, object>();
                 this.roleByAssociationByRoleType[roleType] = roleByAssociation;
             }
 
             return roleByAssociation;
         }
 
-        private Dictionary<WorkspaceObject, object> ChangedAssociationByRole(IAssociationType associationType)
+        private Dictionary<long, object> ChangedAssociationByRole(IAssociationType associationType)
         {
             if (!this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole))
             {
-                changedAssociationByRole = new Dictionary<WorkspaceObject, object>();
+                changedAssociationByRole = new Dictionary<long, object>();
                 this.changedAssociationByRoleByAssociationType[associationType] = changedAssociationByRole;
             }
 
             return changedAssociationByRole;
         }
 
-        private Dictionary<WorkspaceObject, object> ChangedRoleByAssociation(IRoleType roleType)
+        private Dictionary<long, object> ChangedRoleByAssociation(IRoleType roleType)
         {
             if (!this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation))
             {
-                changedRoleByAssociation = new Dictionary<WorkspaceObject, object>();
+                changedRoleByAssociation = new Dictionary<long, object>();
                 this.changedRoleByAssociationByRoleType[roleType] = changedRoleByAssociation;
             }
 

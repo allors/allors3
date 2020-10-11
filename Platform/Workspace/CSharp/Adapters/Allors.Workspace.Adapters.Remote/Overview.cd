@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Allors.Workspace.Adapters.Remote.WorkspacePopulation">
-    <Position X="4" Y="1.5" Width="3.25" />
-    <TypeIdentifier>
-      <HashCode>EBAAAAUACAAgAAEAgAAAAAABBAAAAgEAIAAQAABIAAA=</HashCode>
-      <FileName>Workspace\WorkspacePopulation.cs</FileName>
-      <NewMemberFileName>Workspace.cs</NewMemberFileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Session">
     <Position X="0.5" Y="7" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAwIAAAABABAQAAAQAAAgEAAAgAEAAAIAQCQBAAAA=</HashCode>
+      <HashCode>AAQAwIAAAABIBAQAAARAAAgEAAAgAEAAAIAQAQBAAAA=</HashCode>
       <FileName>Session.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -20,7 +12,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Database">
-    <Position X="7.75" Y="0.5" Width="3" />
+    <Position X="8.25" Y="0.5" Width="3" />
     <NestedTypes>
       <Class Name="Allors.Workspace.Adapters.Remote.Database.AuthenticationTokenResponse" Collapsed="true">
         <TypeIdentifier>
@@ -37,7 +29,7 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Strategy">
-    <Position X="4.25" Y="7" Width="2" />
+    <Position X="4.25" Y="8" Width="2" />
     <TypeIdentifier>
       <HashCode>JAIAAAAAQIBABQBgEEIABEgAAAIiAAAAQAAUIAFIAAI=</HashCode>
       <FileName>Strategy.cs</FileName>
@@ -48,14 +40,14 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseRole">
-    <Position X="15.5" Y="0.5" Width="1.5" />
+    <Position X="16.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Database\DatabaseRole.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseObject">
-    <Position X="12" Y="0.5" Width="2.25" />
+    <Position X="12.75" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>IACCgAAAAEAAAAAIAAIAAAAIAgAAAAAAAAAAAIAIAAg=</HashCode>
       <FileName>Database\DatabaseObject.cs</FileName>
@@ -65,9 +57,9 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Workspace">
-    <Position X="0.5" Y="0.5" Width="2.25" />
+    <Position X="0.5" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAAAEAAEAAABAAACABAAAEAAEAAgAAAAAAABBAAIA=</HashCode>
+      <HashCode>AAQAAAEAAEAAABAAACABAAAEAAMACgAAAAAAABBAAIA=</HashCode>
       <FileName>Workspace.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -78,6 +70,13 @@
       <Property Name="Sessions" />
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Remote.Population">
+    <Position X="4" Y="2.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>EBAAAAUACAAgAAEAgAAAAAABAAAAAgAAIAAQAAAIAAA=</HashCode>
+      <FileName>Population\Population.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

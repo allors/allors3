@@ -9,32 +9,29 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    public class WorkspaceChangeSet
+    public class ChangeSet
     {
-        private readonly Dictionary<IRoleType, Dictionary<WorkspaceObject, object>> roleByAssociationByRoleType;
-        private readonly Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>> associationByRoleByRoleType;
+        private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
+        private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByRoleType;
 
-        public WorkspaceChangeSet(IMetaPopulation metaPopulation, Dictionary<IRoleType, Dictionary<WorkspaceObject, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<WorkspaceObject, object>> associationByRoleByAssociationType)
+        public ChangeSet(Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType)
         {
-            this.MetaPopulation = metaPopulation;
             this.roleByAssociationByRoleType = roleByAssociationByRoleType;
             this.associationByRoleByRoleType = associationByRoleByAssociationType;
         }
-
-        public IMetaPopulation MetaPopulation { get; }
 
         public bool HasChanges =>
             this.roleByAssociationByRoleType.Any(v => v.Value.Count > 0) ||
             this.associationByRoleByRoleType.Any(v => v.Value.Count > 0);
 
-        //public Dictionary<WorkspaceObject, object> ChangedRoles<TRole>(string name)
+        //public Dictionary<long?, object> ChangedRoles<TRole>(string name)
         //{
         //    IObjectType objectType = this.Meta.ObjectTypeByType[typeof(TRole)];
         //    IRoleType roleType = objectType.RoleTypeByName[name];
         //    return this.ChangedRoles(roleType);
         //}
 
-        public Dictionary<WorkspaceObject, object> ChangedRoles(IRoleType roleType)
+        public Dictionary<long, object> ChangedRoles(IRoleType roleType)
         {
             this.roleByAssociationByRoleType.TryGetValue(roleType, out var changedRelations);
             return changedRelations;

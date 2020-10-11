@@ -12,10 +12,12 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        private readonly WorkspacePopulation workspacePopulation;
+        private readonly Population workspacePopulation;
+        private readonly Dictionary<long, IClass> workspaceClassByWorkspaceId;
+
+        private readonly Dictionary<long, long> workspaceIdByDatabaseId;
 
         private long worskpaceIdCounter;
-        private Dictionary<long, long> workspaceIdByDatabaseId { get; }
 
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
@@ -29,7 +31,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = new Database(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
 
-            this.workspacePopulation = new WorkspacePopulation(this.MetaPopulation);
+            this.workspacePopulation = new Population();
+            this.workspaceClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.StateLifecycle.OnInit(this);
         }

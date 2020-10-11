@@ -18,6 +18,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : ISession
     {
+        private readonly Population sessionPopulation;
+        private readonly Dictionary<long, IClass> sessionClassByWorkspaceId;
 
         private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
         private List<Strategy> newDatabaseStrategies;
@@ -29,6 +31,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.Workspace.RegisterSession(this);
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
+
+            this.sessionPopulation = new Population();
+            this.sessionClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.StateLifecycle.OnInit(this);
         }

@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceId = workspaceId;
         }
 
-        public void PushResponse(long id) => this.DatabaseObject = this.Session.Workspace.Database.PushResponse(id, this.Class);
+        public void PushResponse(long databaseId) => this.DatabaseObject = this.Session.Workspace.Database.PushResponse(databaseId, this.Class);
 
         public IObject Object
         {

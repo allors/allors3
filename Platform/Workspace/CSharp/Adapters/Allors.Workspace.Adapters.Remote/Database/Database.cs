@@ -83,10 +83,10 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal DatabaseObject PushResponse(long objectId, IClass @class)
+        internal DatabaseObject PushResponse(long databaseId, IClass @class)
         {
-            var databaseObject = new DatabaseObject(this, objectId, @class);
-            this.databaseObjectById[objectId] = databaseObject;
+            var databaseObject = new DatabaseObject(this, databaseId, @class);
+            this.databaseObjectById[databaseId] = databaseObject;
             return databaseObject;
         }
 
