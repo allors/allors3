@@ -8,9 +8,9 @@ namespace Allors.Api.Json.Sync
     using System.Linq;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Protocol.Remote.Sync;
+    using Protocol.Database.Sync;
     using Protocol.Data;
-    using Protocol.Remote;
+    using Protocol.Database;
     using Server;
     using State;
 

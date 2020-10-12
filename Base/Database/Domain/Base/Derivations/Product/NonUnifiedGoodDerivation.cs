@@ -17,7 +17,7 @@ namespace Allors.Domain
         public NonUnifiedGoodDerivation(M m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.OrderValue.Class),
+                new CreatedPattern(this.M.OrderValue.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +30,7 @@ namespace Allors.Domain
                 var settings = nonUnifiedGood.Strategy.Session.GetSingleton().Settings;
 
                 var identifications = nonUnifiedGood.ProductIdentifications;
-                identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(nonUnifiedGood.Strategy.Session).Good);
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(nonUnifiedGood.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
                 if (goodIdentification == null && settings.UseProductNumberCounter)
@@ -46,12 +46,12 @@ namespace Allors.Domain
 
                 if (!nonUnifiedGood.ExistProductIdentifications)
                 {
-                    validation.AssertExists(nonUnifiedGood, M.Good.ProductIdentifications);
+                    validation.AssertExists(nonUnifiedGood, this.M.Good.ProductIdentifications);
                 }
 
                 if (!nonUnifiedGood.ExistVariants)
                 {
-                    validation.AssertExists(nonUnifiedGood, M.NonUnifiedGood.Part);
+                    validation.AssertExists(nonUnifiedGood, this.M.NonUnifiedGood.Part);
                 }
 
                 if (nonUnifiedGood.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))

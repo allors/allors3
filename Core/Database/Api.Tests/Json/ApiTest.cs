@@ -14,7 +14,7 @@ namespace Tests
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Protocol.Remote;
+    using Allors.Protocol.Database;
     using Allors.State;
 
     public class ApiTest : IDisposable

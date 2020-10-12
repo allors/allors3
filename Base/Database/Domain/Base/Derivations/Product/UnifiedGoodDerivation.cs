@@ -17,8 +17,8 @@ namespace Allors.Domain
         public UnifiedGoodDerivation(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.UnifiedGood.Class),
-                new CreatedPattern(M.InventoryItemTransaction.Class){Steps = new IPropertyType[]{M.InventoryItemTransaction.Part}, OfType = M.UnifiedGood.Class},
+                new CreatedPattern(this.M.UnifiedGood.Class),
+                new CreatedPattern(this.M.InventoryItemTransaction.Class){Steps = new IPropertyType[]{ this.M.InventoryItemTransaction.Part}, OfType = this.M.UnifiedGood.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -52,7 +52,7 @@ namespace Allors.Domain
                 }
 
                 var identifications = unifiedGood.ProductIdentifications;
-                identifications.Filter.AddEquals(M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(unifiedGood.Strategy.Session).Good);
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(unifiedGood.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
                 if (goodIdentification == null && settings.UseProductNumberCounter)
@@ -68,7 +68,7 @@ namespace Allors.Domain
 
                 if (!unifiedGood.ExistProductIdentifications)
                 {
-                    cycle.Validation.AssertExists(unifiedGood, M.Good.ProductIdentifications);
+                    cycle.Validation.AssertExists(unifiedGood, this.M.Good.ProductIdentifications);
                 }
 
                 if (unifiedGood.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))

@@ -22,8 +22,8 @@ namespace Allors.Domain
 
         protected override void CorePrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.UserGroup);
-            setup.AddDependency(this.ObjectType, M.SecurityToken);
+            setup.AddDependency(this.ObjectType, this.M.UserGroup);
+            setup.AddDependency(this.ObjectType, this.M.SecurityToken);
         }
 
         protected override void CoreSetup(Setup setup)

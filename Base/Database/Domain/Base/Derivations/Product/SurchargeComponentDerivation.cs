@@ -16,7 +16,7 @@ namespace Allors.Domain
         public SurchargeComponentDerivation(M m) : base(m, new Guid("1C8B75D1-3288-4DB7-987E-7A64A3225891")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SurchargeComponent.Class),
+                new CreatedPattern(this.M.SurchargeComponent.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -25,8 +25,8 @@ namespace Allors.Domain
 
             foreach (var surchargeComponent in matches.Cast<SurchargeComponent>())
             {
-                validation.AssertAtLeastOne(surchargeComponent, M.SurchargeComponent.Price, M.SurchargeComponent.Percentage);
-                validation.AssertExistsAtMostOne(surchargeComponent, M.SurchargeComponent.Price, M.SurchargeComponent.Percentage);
+                validation.AssertAtLeastOne(surchargeComponent, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
+                validation.AssertExistsAtMostOne(surchargeComponent, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
 
                 if (surchargeComponent.ExistPrice)
                 {
@@ -35,7 +35,7 @@ namespace Allors.Domain
                         surchargeComponent.Currency = surchargeComponent.PricedBy.PreferredCurrency;
                     }
 
-                    validation.AssertExists(surchargeComponent, M.BasePrice.Currency);
+                    validation.AssertExists(surchargeComponent, this.M.BasePrice.Currency);
                 }
 
                 if (surchargeComponent.ExistProduct)

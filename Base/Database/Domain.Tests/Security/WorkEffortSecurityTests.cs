@@ -32,10 +32,10 @@ namespace Allors.Domain
             this.Session.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
-            Assert.True(acl.CanExecute(M.WorkEffort.Cancel));
-            Assert.False(acl.CanExecute(M.WorkEffort.Reopen));
-            Assert.False(acl.CanExecute(M.WorkEffort.Complete));
-            Assert.False(acl.CanExecute(M.WorkEffort.Invoice));
+            Assert.True(acl.CanExecute(this.M.WorkEffort.Cancel));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Complete));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Invoice));
         }
 
         [Fact]
@@ -59,10 +59,10 @@ namespace Allors.Domain
             this.Session.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
-            Assert.True(acl.CanExecute(M.WorkEffort.Invoice));
-            Assert.False(acl.CanExecute(M.WorkEffort.Cancel));
-            Assert.False(acl.CanExecute(M.WorkEffort.Reopen));
-            Assert.False(acl.CanExecute(M.WorkEffort.Complete));
+            Assert.True(acl.CanExecute(this.M.WorkEffort.Invoice));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Cancel));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Complete));
         }
 
         [Fact]
@@ -114,10 +114,10 @@ namespace Allors.Domain
             this.Session.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
-            Assert.False(acl.CanExecute(M.WorkEffort.Invoice));
-            Assert.False(acl.CanExecute(M.WorkEffort.Cancel));
-            Assert.False(acl.CanExecute(M.WorkEffort.Reopen));
-            Assert.False(acl.CanExecute(M.WorkEffort.Complete));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Invoice));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Cancel));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
+            Assert.False(acl.CanExecute(this.M.WorkEffort.Complete));
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace Allors.Domain
             this.Session.SetUser(user);
 
             var acl = new DatabaseAccessControlLists(this.Administrator)[timeEntry];
-            Assert.False(acl.CanWrite(M.TimeEntry.AmountOfTime));
+            Assert.False(acl.CanWrite(this.M.TimeEntry.AmountOfTime));
         }
     }
 }

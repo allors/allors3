@@ -114,7 +114,7 @@ namespace Allors.Domain
             this.Session.Derive(true);
 
             // Assert
-            Assert.Equal(Math.Round(4.0M / 24.0M, M.TimeEntry.AmountOfTime.Scale ?? 2), timeEntry.AmountOfTime);
+            Assert.Equal(Math.Round(4.0M / 24.0M, this.M.TimeEntry.AmountOfTime.Scale ?? 2), timeEntry.AmountOfTime);
             Assert.Equal(4.00M, timeEntry.ActualHours);
 
             //// Re-arrange
@@ -176,7 +176,7 @@ namespace Allors.Domain
             // Assert
             timeSpan = timeEntry.ThroughDate - timeEntry.FromDate;
             Assert.Equal(4.00, timeSpan.Value.TotalMinutes);
-            Assert.Equal(Math.Round(4.0M / 60.0M, M.TimeEntry.AmountOfTime.Scale ?? 2), timeEntry.ActualHours);
+            Assert.Equal(Math.Round(4.0M / 60.0M, this.M.TimeEntry.AmountOfTime.Scale ?? 2), timeEntry.ActualHours);
 
             //// Re-arrange
             timeEntry.RemoveThroughDate();

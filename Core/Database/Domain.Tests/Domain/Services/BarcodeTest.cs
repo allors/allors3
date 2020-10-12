@@ -7,7 +7,6 @@ namespace Tests
 {
     using System.IO;
     using Allors;
-    using Allors.Services;
     using Allors.State;
     using Xunit;
 

@@ -165,24 +165,24 @@ namespace Allors.Domain
             config.DenyExcept(this.ObjectType, completed, except, Operations.Write);
             config.DenyExcept(this.ObjectType, finished, except, Operations.Write);
 
-            config.Deny(M.TimeEntry, cancelled, Operations.Write);
-            config.Deny(M.TimeEntry, finished, Operations.Write);
-            config.Deny(M.TimeEntry, completed, Operations.Write);
-            config.Deny(M.WorkEffortAssignmentRate, cancelled, Operations.Write);
-            config.Deny(M.WorkEffortAssignmentRate, finished, Operations.Write);
-            config.Deny(M.WorkEffortAssignmentRate, completed, Operations.Write);
-            config.Deny(M.WorkEffortInventoryAssignment, cancelled, Operations.Write);
-            config.Deny(M.WorkEffortInventoryAssignment, finished, Operations.Write);
-            config.Deny(M.WorkEffortInventoryAssignment, completed, Operations.Write);
-            config.Deny(M.WorkEffortPartyAssignment, cancelled, Operations.Write);
-            config.Deny(M.WorkEffortPartyAssignment, finished, Operations.Write);
-            config.Deny(M.WorkEffortPartyAssignment, completed, Operations.Write);
-            config.Deny(M.WorkEffortPurchaseOrderItemAssignment, cancelled, Operations.Write);
-            config.Deny(M.WorkEffortPurchaseOrderItemAssignment, finished, Operations.Write);
-            config.Deny(M.WorkEffortPurchaseOrderItemAssignment, completed, Operations.Write);
-            config.Deny(M.WorkEffortFixedAssetAssignment, cancelled, Operations.Write);
-            config.Deny(M.WorkEffortFixedAssetAssignment, finished, Operations.Write);
-            config.Deny(M.WorkEffortFixedAssetAssignment, completed, Operations.Write);
+            config.Deny(this.M.TimeEntry, cancelled, Operations.Write);
+            config.Deny(this.M.TimeEntry, finished, Operations.Write);
+            config.Deny(this.M.TimeEntry, completed, Operations.Write);
+            config.Deny(this.M.WorkEffortAssignmentRate, cancelled, Operations.Write);
+            config.Deny(this.M.WorkEffortAssignmentRate, finished, Operations.Write);
+            config.Deny(this.M.WorkEffortAssignmentRate, completed, Operations.Write);
+            config.Deny(this.M.WorkEffortInventoryAssignment, cancelled, Operations.Write);
+            config.Deny(this.M.WorkEffortInventoryAssignment, finished, Operations.Write);
+            config.Deny(this.M.WorkEffortInventoryAssignment, completed, Operations.Write);
+            config.Deny(this.M.WorkEffortPartyAssignment, cancelled, Operations.Write);
+            config.Deny(this.M.WorkEffortPartyAssignment, finished, Operations.Write);
+            config.Deny(this.M.WorkEffortPartyAssignment, completed, Operations.Write);
+            config.Deny(this.M.WorkEffortPurchaseOrderItemAssignment, cancelled, Operations.Write);
+            config.Deny(this.M.WorkEffortPurchaseOrderItemAssignment, finished, Operations.Write);
+            config.Deny(this.M.WorkEffortPurchaseOrderItemAssignment, completed, Operations.Write);
+            config.Deny(this.M.WorkEffortFixedAssetAssignment, cancelled, Operations.Write);
+            config.Deny(this.M.WorkEffortFixedAssetAssignment, finished, Operations.Write);
+            config.Deny(this.M.WorkEffortFixedAssetAssignment, completed, Operations.Write);
         }
     }
 }

@@ -9,8 +9,8 @@ namespace Allors.Domain
     {
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.BillingProcess.ObjectType);
-            setup.AddDependency(this.ObjectType, M.InternalOrganisation.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.BillingProcess.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.InternalOrganisation.ObjectType);
         }
     }
 }

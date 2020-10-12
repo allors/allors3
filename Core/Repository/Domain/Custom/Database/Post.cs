@@ -5,7 +5,6 @@
 
 namespace Allors.Repository
 {
-    using System;
 
     using Allors.Repository.Attributes;
 
@@ -27,17 +26,17 @@ namespace Allors.Repository
         public int Counter { get; set; }
 
         #region inherited methods
-        public void OnBuild() => throw new NotImplementedException();
+        public void OnBuild() { }
 
-        public void OnPostBuild() => throw new NotImplementedException();
+        public void OnPostBuild() { }
 
-        public void OnInit() => throw new NotImplementedException();
+        public void OnInit() { }
 
-        public void OnPreDerive() => throw new NotImplementedException();
+        public void OnPreDerive() { }
 
-        public void OnDerive() => throw new NotImplementedException();
+        public void OnDerive() { }
 
-        public void OnPostDerive() => throw new NotImplementedException();
+        public void OnPostDerive() { }
         #endregion
     }
 }

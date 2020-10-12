@@ -6,7 +6,6 @@
 namespace Allors.State
 {
     using System;
-    using Domain;
 
     public interface IPermissionsCache
     {

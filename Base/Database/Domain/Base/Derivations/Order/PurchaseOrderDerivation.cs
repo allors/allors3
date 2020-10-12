@@ -17,11 +17,11 @@ namespace Allors.Domain
         public PurchaseOrderDerivation(M m) : base(m, new Guid("C98B629B-12F8-4297-B6DA-FB0C36C56C39")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PurchaseOrder.Class),
-                new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderState),
-                new ChangedRolePattern(M.PurchaseOrder.PurchaseOrderItems),
-                new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] {M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
-                new ChangedRolePattern(M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] {M.InternalOrganisation.ActiveSuppliers, M.Organisation.PurchaseOrdersWhereOrderedBy}},
+                new CreatedPattern(this.M.PurchaseOrder.Class),
+                new ChangedRolePattern(this.M.PurchaseOrder.PurchaseOrderState),
+                new ChangedRolePattern(this.M.PurchaseOrder.PurchaseOrderItems),
+                new ChangedRolePattern(this.M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
+                new ChangedRolePattern(this.M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] { this.M.InternalOrganisation.ActiveSuppliers, this.M.Organisation.PurchaseOrdersWhereOrderedBy}},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

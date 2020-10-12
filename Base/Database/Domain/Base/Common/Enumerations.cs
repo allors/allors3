@@ -7,6 +7,6 @@ namespace Allors.Domain
 {
     public partial class Enumerations
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.Singleton.ObjectType);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Singleton.ObjectType);
     }
 }

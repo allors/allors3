@@ -44,7 +44,7 @@ namespace Allors.Domain
 
         private UniquelyIdentifiableSticky<SalesOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesOrderItemState>(this.Session);
 
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.InventoryTransactionReason.ObjectType);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason.ObjectType);
 
         protected override void BaseSetup(Setup setup)
         {

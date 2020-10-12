@@ -36,6 +36,7 @@ namespace Allors.Workspace.Meta
         {
             this.Id = id;
             this.IdAsString = this.Id.ToString("D");
+            this.AssignedOrigin = Origin.Database;
 
             this.AssociationType = new AssociationType(this)
             {
@@ -51,7 +52,7 @@ namespace Allors.Workspace.Meta
             this.MetaPopulation.OnRelationTypeCreated(this);
         }
 
-        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
+        //public Dictionary<string, bool> InternalWorkspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
         public IReadOnlyDictionary<string, IEnumerable<RoleClass>> WorkspaceRoleClassesByWorkspaceName
         {

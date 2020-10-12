@@ -35,7 +35,7 @@ namespace Tests
 
             this.Session.Derive();
 
-            var path = new Fetch(M.C1.C1C2One2Manies, M.C2.C2AllorsString);
+            var path = new Fetch(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
             var result = (ISet<object>)path.Get(c1a, this.AclsMock.Object);
             Assert.Equal(1, result.Count);
@@ -67,7 +67,7 @@ namespace Tests
 
             this.Session.Derive();
 
-            var path = new Fetch(M.C1.C1C2One2Manies, M.C2.C2AllorsString);
+            var path = new Fetch(this.M.C1.C1C2One2Manies, this.M.C2.C2AllorsString);
 
             var result = (ISet<object>)path.Get(c1a, this.AclsMock.Object);
             Assert.Equal(1, result.Count);
@@ -99,7 +99,7 @@ namespace Tests
 
             this.Session.Derive();
 
-            Fetch.TryParse(M.C2.ObjectType, "C1WhereC1C2One2Many", out var fetch);
+            Fetch.TryParse(this.M.C2.ObjectType, "C1WhereC1C2One2Many", out var fetch);
 
             var result = (C1)fetch.Get(c2A, this.AclsMock.Object);
             Assert.Equal(result, c1A);

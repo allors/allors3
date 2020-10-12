@@ -28,7 +28,7 @@ namespace Allors.Domain
                     invoiceItem?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
                 if (totalInvoiceItemAmountPaid > invoiceItem.TotalIncVat)
                 {
-                    cycle.Validation.AddError($"{invoiceItem} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
+                    cycle.Validation.AddError($"{invoiceItem} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
                 }
             }
         }

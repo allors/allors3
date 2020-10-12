@@ -23,14 +23,14 @@ namespace Tests
 
             this.Session.Rollback();
 
-            builder.WithLanguage(new Languages(this.Session).FindBy(M.Language.IsoCode, "en"));
+            builder.WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "en"));
             builder.Build();
 
             Assert.True(this.Session.Derive(false).HasErrors);
 
             this.Session.Rollback();
 
-            builder.WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"));
+            builder.WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"));
             builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -40,8 +40,8 @@ namespace Tests
         public void GivenLocale_WhenDeriving_ThenNameIsSet()
         {
             var locale = new LocaleBuilder(this.Session)
-                .WithLanguage(new Languages(this.Session).FindBy(M.Language.IsoCode, "en"))
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "en"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             this.Session.Derive();
@@ -72,7 +72,7 @@ namespace Tests
         [Fact]
         public void GivenLocaleWhenValidatingThenNameIsSet()
         {
-            var locale = new Locales(this.Session).FindBy(M.Locale.Name, Locales.DutchNetherlandsName);
+            var locale = new Locales(this.Session).FindBy(this.M.Locale.Name, Locales.DutchNetherlandsName);
 
             Assert.Equal("nl-NL", locale.Name);
         }

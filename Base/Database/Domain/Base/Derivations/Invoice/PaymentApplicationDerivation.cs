@@ -17,7 +17,7 @@ namespace Allors.Domain
         public PaymentApplicationDerivation(M m) : base(m, new Guid("D3D3B1B9-4619-4720-8E73-04419896B3AE")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.PaymentApplication.Class)
+                new CreatedPattern(this.M.PaymentApplication.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,11 +26,11 @@ namespace Allors.Domain
 
             foreach (var paymentApplication in matches.Cast<PaymentApplication>())
             {
-                validation.AssertExistsAtMostOne(paymentApplication, M.PaymentApplication.Invoice, M.PaymentApplication.InvoiceItem);
+                validation.AssertExistsAtMostOne(paymentApplication, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem);
 
                 if (paymentApplication.ExistPaymentWherePaymentApplication && paymentApplication.AmountApplied > paymentApplication.PaymentWherePaymentApplication.Amount)
                 {
-                    validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");
+                    validation.AddError($"{paymentApplication} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");
                 }
 
                 var totalInvoiceAmountPaid = paymentApplication.Invoice?.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
@@ -41,7 +41,7 @@ namespace Allors.Domain
 
                 if (paymentApplication.ExistInvoice && totalInvoiceAmountPaid > paymentApplication.Invoice.TotalIncVat)
                 {
-                    validation.AddError($"{paymentApplication} {M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
+                    validation.AddError($"{paymentApplication} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
                 }
             }
         }

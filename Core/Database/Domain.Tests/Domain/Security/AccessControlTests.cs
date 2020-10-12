@@ -37,7 +37,7 @@ namespace Tests
 
             Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
-            Assert.Equal(M.AccessControl.Role, derivationError.Relations[0].RoleType);
+            Assert.Equal(this.M.AccessControl.Role, derivationError.Relations[0].RoleType);
         }
 
         [Fact]

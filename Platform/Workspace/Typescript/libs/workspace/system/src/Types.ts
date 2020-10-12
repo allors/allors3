@@ -1,4 +1,4 @@
-﻿import { DatabaseObject } from './Session/DatabaseObject';
+﻿import { DatabaseObject } from './Working/DatabaseObject';
 
 export type UnitTypes = string | Date | boolean | number;
 export type CompositeTypes = DatabaseObject | string;

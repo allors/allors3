@@ -15,7 +15,7 @@ namespace Allors.Domain
         public PhoneCommunicationDerivation(M m) : base(m, new Guid("6C8EB5C8-1E8C-41CF-B127-53C88E200F65")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PhoneCommunication.Class),
+                new CreatedPattern(this.M.PhoneCommunication.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

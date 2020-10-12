@@ -1,34 +1,40 @@
-// <copyright file="Session.cs" company="Allors bvba">
+// <copyright file="IDatabase.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Workspace
 {
-    using System.Collections.Generic;
-    using Allors.Protocol.Remote.Push;
+    using System.Threading.Tasks;
+    using Protocol.Database.Invoke;
+    using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
 
     public interface ISession
     {
-        bool HasChanges { get; }
-
-        ISessionLifecycle Lifecycle { get; }
-
         IWorkspace Workspace { get; }
 
-        ISessionObject Create(IClass @class);
+        ISessionStateLifecycle StateLifecycle { get; }
 
-        ISessionObject Get(long id);
+        T Create<T>() where T : class, IObject;
 
-        PushRequest PushRequest();
+        IObject Create(IClass @class);
 
-        void PushResponse(PushResponse pushResponse);
+        T Instantiate<T>(T @object) where T : IObject;
+
+        IObject Instantiate(long id);
 
         void Reset();
 
-        void Refresh();
+        Task<ICallResult> Call(Method method, CallOptions options = null);
 
-        IEnumerable<ISessionObject> GetAssociation(ISessionObject @object, IAssociationType associationType);
+        Task<ICallResult> Call(Method[] methods, CallOptions options = null);
+
+        Task<ICallResult> Call(string service, object args);
+
+        Task<ILoadResult> Load(params Pull[] pulls);
+
+        Task<ILoadResult> Load(object args, string pullService = null);
+        Task<ISaveResult> Save();
     }
 }

@@ -16,8 +16,8 @@ namespace Allors.Domain
         public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
             this.Patterns = new Pattern[]
         {
-            new CreatedPattern(M.SalesInvoice.Class),
-            new ChangedRolePattern(M.SalesInvoice.SalesInvoiceItems),
+            new CreatedPattern(this.M.SalesInvoice.Class),
+            new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -37,7 +37,7 @@ namespace Allors.Domain
                 if (!salesInvoice.ExistStore && salesInvoice.ExistBilledFrom)
                 {
                     var stores = new Stores(session).Extent();
-                    stores.Filter.AddEquals(M.Store.InternalOrganisation, salesInvoice.BilledFrom);
+                    stores.Filter.AddEquals(this.M.Store.InternalOrganisation, salesInvoice.BilledFrom);
                     salesInvoice.Store = stores.FirstOrDefault();
                 }
 
@@ -461,12 +461,12 @@ namespace Allors.Domain
 
                 if (salesInvoice.ExistBillToCustomer && !salesInvoice.BillToCustomer.BaseIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
                 {
-                    validation.AddError($"{this}  {M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{this}  {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 if (salesInvoice.ExistShipToCustomer && !salesInvoice.ShipToCustomer.BaseIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
                 {
-                    validation.AddError($"{this} {M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{this} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 salesInvoice.PreviousBillToCustomer = salesInvoice.BillToCustomer;
@@ -546,7 +546,7 @@ namespace Allors.Domain
                 {
                     if (!unitBasePrice.HasValue)
                     {
-                        validation.AddError($"{salesInvoiceItem}, {M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
+                        validation.AddError($"{salesInvoiceItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
                         return;
                     }
 

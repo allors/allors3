@@ -168,7 +168,7 @@ namespace Allors.Domain
 
             var billToContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Mechelen").Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
             good.VatRate = new VatRateBuilder(this.Session).WithRate(0).Build();
 
             this.Session.Derive();
@@ -234,7 +234,7 @@ namespace Allors.Domain
 
             var billToContactMechanism = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Mechelen").Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
             good.VatRate = new VatRateBuilder(this.Session).WithRate(0).Build();
 
             this.Session.Derive();

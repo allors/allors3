@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     public partial class CommunicationEvents
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.CommunicationEventState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.CommunicationEventState);
 
         protected override void BaseSecure(Security config)
         {
@@ -15,9 +15,9 @@ namespace Allors.Domain
             ObjectState cancelled = new CommunicationEventStates(this.Session).Cancelled;
             ObjectState closed = new CommunicationEventStates(this.Session).Completed;
 
-            var reopenId = M.CommunicationEvent.Reopen;
-            var closeId = M.CommunicationEvent.Close;
-            var cancelId = M.CommunicationEvent.Cancel;
+            var reopenId = this.M.CommunicationEvent.Reopen;
+            var closeId = this.M.CommunicationEvent.Close;
+            var cancelId = this.M.CommunicationEvent.Cancel;
 
             config.Deny(this.ObjectType, scheduled, reopenId);
             config.Deny(this.ObjectType, closed, closeId, cancelId);

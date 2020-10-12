@@ -18,10 +18,10 @@ namespace Tests
         [Fact]
         public void Type()
         {
-            var query = new Extent(M.Person.ObjectType);
+            var query = new Extent(this.M.Person.ObjectType);
             var queryExtent = query.Build(this.Session);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -29,19 +29,19 @@ namespace Tests
         [Fact]
         public void RoleEquals()
         {
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
                 Predicate = new Equals
                 {
-                    PropertyType = M.Person.FirstName,
+                    PropertyType = this.M.Person.FirstName,
                     Value = "John",
                 },
             };
 
             var queryExtent = filter.Build(this.Session);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
-            extent.Filter.AddEquals(M.Person.FirstName, "John");
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
+            extent.Filter.AddEquals(this.M.Person.FirstName, "John");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }
@@ -50,7 +50,7 @@ namespace Tests
         public void And()
         {
             // select from Person where FirstName='John' and LastName='Doe'
-            var filter = new Extent(M.Person.ObjectType)
+            var filter = new Extent(this.M.Person.ObjectType)
             {
                 Predicate = new And
                 {
@@ -58,12 +58,12 @@ namespace Tests
                                                                     {
                                                                         new Equals
                                                                             {
-                                                                                PropertyType = M.Person.FirstName,
+                                                                                PropertyType = this.M.Person.FirstName,
                                                                                 Value = "John",
                                                                             },
                                                                         new Equals
                                                                             {
-                                                                                PropertyType = M.Person.LastName,
+                                                                                PropertyType = this.M.Person.LastName,
                                                                                 Value = "Doe"
                                                                             },
                                                                     },
@@ -72,10 +72,10 @@ namespace Tests
 
             var queryExtent = filter.Build(this.Session);
 
-            var extent = this.Session.Extent(M.Person.ObjectType);
+            var extent = this.Session.Extent(this.M.Person.ObjectType);
             var and = extent.Filter.AddAnd();
-            and.AddEquals(M.Person.FirstName, "John");
-            and.AddEquals(M.Person.LastName, "Doe");
+            and.AddEquals(this.M.Person.FirstName, "John");
+            and.AddEquals(this.M.Person.LastName, "Doe");
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
         }

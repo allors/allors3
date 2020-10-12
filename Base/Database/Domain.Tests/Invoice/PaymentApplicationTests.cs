@@ -22,7 +22,7 @@ namespace Allors.Domain
                 .WithCustomer(customer)
                 .Build();
 
-            var good1 = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good1 = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(customer)
@@ -46,7 +46,7 @@ namespace Allors.Domain
         public void GivenPaymentApplication_WhenDeriving_ThenAmountAppliedCannotBeLargerThenAmountReceived()
         {
             var contactMechanism = new ContactMechanisms(this.Session).Extent().First;
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var customer = new PersonBuilder(this.Session).WithLastName("customer").Build();
             new CustomerRelationshipBuilder(this.Session)
@@ -79,7 +79,7 @@ namespace Allors.Domain
 
             var derivationLog = this.Session.Derive(false);
             Assert.True(derivationLog.HasErrors);
-            Assert.Contains(M.PaymentApplication.AmountApplied, derivationLog.Errors[0].RoleTypes);
+            Assert.Contains(this.M.PaymentApplication.AmountApplied, derivationLog.Errors[0].RoleTypes);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Allors.Domain
         public RepeatingSalesInvoiceDerivation(M m) : base(m, new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.RepeatingSalesInvoice.Class)
+                new CreatedPattern(this.M.RepeatingSalesInvoice.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -28,24 +28,24 @@ namespace Allors.Domain
             {
                 if (!repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Month) && !repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Week))
                 {
-                    validation.AddError($"{repeatingSalesInvoice} {M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
+                    validation.AddError($"{repeatingSalesInvoice} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
                 }
 
                 if (repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Week) && !repeatingSalesInvoice.ExistDayOfWeek)
                 {
-                    validation.AssertExists(repeatingSalesInvoice, M.RepeatingSalesInvoice.DayOfWeek);
+                    validation.AssertExists(repeatingSalesInvoice, this.M.RepeatingSalesInvoice.DayOfWeek);
                 }
 
                 if (repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Month) && repeatingSalesInvoice.ExistDayOfWeek)
                 {
-                    validation.AssertNotExists(repeatingSalesInvoice, M.RepeatingSalesInvoice.DayOfWeek);
+                    validation.AssertNotExists(repeatingSalesInvoice, this.M.RepeatingSalesInvoice.DayOfWeek);
                 }
 
                 if (repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Week) && repeatingSalesInvoice.ExistDayOfWeek && repeatingSalesInvoice.ExistNextExecutionDate)
                 {
                     if (!repeatingSalesInvoice.NextExecutionDate.DayOfWeek.ToString().Equals(repeatingSalesInvoice.DayOfWeek.Name))
                     {
-                        validation.AddError($"{repeatingSalesInvoice} {M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
+                        validation.AddError($"{repeatingSalesInvoice} {this.M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
                     }
                 }
             }

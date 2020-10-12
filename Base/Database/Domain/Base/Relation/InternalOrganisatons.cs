@@ -9,11 +9,11 @@ namespace Allors.Domain
     {
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.Locale.ObjectType);
-            setup.AddDependency(this.ObjectType, M.TemplateType.ObjectType);
-            setup.AddDependency(this.ObjectType, M.ShipmentMethod.ObjectType);
-            setup.AddDependency(this.ObjectType, M.Carrier.ObjectType);
-            setup.AddDependency(this.ObjectType, M.BillingProcess.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.TemplateType.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.ShipmentMethod.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.Carrier.ObjectType);
+            setup.AddDependency(this.ObjectType, this.M.BillingProcess.ObjectType);
         }
     }
 }

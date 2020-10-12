@@ -49,8 +49,8 @@ namespace Allors.Domain
 
         protected override void BasePrepare(Setup setup)
         {
-            setup.AddDependency(this.ObjectType, M.Locale);
-            setup.AddDependency(this.ObjectType, M.UnitOfMeasure);
+            setup.AddDependency(this.ObjectType, this.M.Locale);
+            setup.AddDependency(this.ObjectType, this.M.UnitOfMeasure);
         }
 
         protected override void BaseSetup(Setup setup)

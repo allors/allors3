@@ -7,7 +7,7 @@ export interface MetaData {
 
 export interface ObjectTypeData {
   id: string;
-  origin: string;
+  origin: number;
   name: string;
   plural: string;
   interfaceIds?: string[];
@@ -15,7 +15,7 @@ export interface ObjectTypeData {
 
 export interface RelationTypeData {
   id: string;
-  origin: string;
+  origin: number;
   associationType: AssociationTypeData;
   roleType: RoleTypeData;
   concreteRoleTypes?: ConcreteRoleTypeData[];

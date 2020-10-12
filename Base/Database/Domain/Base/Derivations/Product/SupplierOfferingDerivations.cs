@@ -32,12 +32,12 @@ namespace Allors.Domain
                     supplierOffering.Part.InventoryItemKind.Equals(new InventoryItemKinds(supplierOffering.Strategy.Session).NonSerialised))
                 {
                     var warehouses = supplierOffering.Strategy.Session.Extent<Facility>();
-                    warehouses.Filter.AddEquals(M.Facility.FacilityType, new FacilityTypes(supplierOffering.Session()).Warehouse);
+                    warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(supplierOffering.Session()).Warehouse);
 
                     foreach (Facility facility in warehouses)
                     {
                         var inventoryItems = supplierOffering.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, facility);
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, facility);
                         var inventoryItem = inventoryItems.First;
 
                         if (inventoryItem == null)

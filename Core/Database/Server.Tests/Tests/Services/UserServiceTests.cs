@@ -6,9 +6,6 @@
 namespace Allors.Server.Tests
 {
     using System;
-
-    using Allors.Domain;
-
     using Xunit;
 
     [Collection("Api")]

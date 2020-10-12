@@ -47,17 +47,17 @@ namespace Allors.Domain
 
                 if (salesOrderItem.Part != null && salesOrderItem.Part.InventoryItemKind.IsSerialised && salesOrderItem.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{salesOrderItem} {M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
                 if (salesOrderItem.Part != null && salesOrderItem.Part.InventoryItemKind.IsNonSerialised && salesOrderItem.QuantityOrdered == 0)
                 {
-                    validation.AddError($"{salesOrderItem} {M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
                 if (salesOrderItem.ExistInvoiceItemType && salesOrderItem.InvoiceItemType.MaxQuantity.HasValue && salesOrderItem.QuantityOrdered > salesOrderItem.InvoiceItemType.MaxQuantity.Value)
                 {
-                    validation.AddError($"{salesOrderItem} {M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
                 var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(session);
@@ -88,7 +88,7 @@ namespace Allors.Domain
 
                 if (salesOrderItem.QuantityOrdered < salesOrderItem.QuantityPendingShipment || salesOrderItem.QuantityOrdered < salesOrderItem.QuantityShipped)
                 {
-                    validation.AddError($"{salesOrderItem} {M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
+                    validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
                 }
 
                 if (salesOrderItem.SalesOrderItemInventoryAssignments.FirstOrDefault() != null)
@@ -441,7 +441,7 @@ namespace Allors.Domain
                                 else
                                 {
                                     var inventoryItems = salesOrderItem.Part.InventoryItemsWherePart;
-                                    inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, salesOrder.OriginFacility);
+                                    inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
                                     salesOrderItem.ReservedFromSerialisedInventoryItem = inventoryItems.FirstOrDefault() as SerialisedInventoryItem;
                                 }
                             }
@@ -451,7 +451,7 @@ namespace Allors.Domain
                             if (!salesOrderItem.ExistReservedFromNonSerialisedInventoryItem)
                             {
                                 var inventoryItems = salesOrderItem.Part.InventoryItemsWherePart;
-                                inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, salesOrder.OriginFacility);
+                                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
                                 salesOrderItem.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
                             }
                         }
@@ -614,7 +614,7 @@ namespace Allors.Domain
                 {
                     if (!unitBasePrice.HasValue)
                     {
-                        validation.AddError($"{salesOrderItem} {M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
+                        validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
                         return;
                     }
 

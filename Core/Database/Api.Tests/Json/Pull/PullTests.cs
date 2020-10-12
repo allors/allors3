@@ -13,7 +13,7 @@ namespace Tests
     using Allors.Api.Json;
     using Allors.Domain;
     using Allors.Protocol.Data;
-    using Allors.Protocol.Remote.Pull;
+    using Allors.Protocol.Database.Pull;
     using Xunit;
 
     public class PullTests : ApiTest, IClassFixture<Fixture>
@@ -135,7 +135,7 @@ namespace Tests
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
-            var extent = new Allors.Data.Extent(M.Data.ObjectType);
+            var extent = new Allors.Data.Extent(this.M.Data.ObjectType);
 
             var pullRequest = new PullRequest
             {
@@ -185,7 +185,7 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(M.Data.ObjectType);
+            var extent = new Allors.Data.Extent(this.M.Data.ObjectType);
 
             var pullRequest = new PullRequest
             {

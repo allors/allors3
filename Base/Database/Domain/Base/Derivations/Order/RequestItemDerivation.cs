@@ -17,7 +17,7 @@ namespace Allors.Domain
         public RequestItemDerivation(M m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.RequestItem.Class)
+                new CreatedPattern(this.M.RequestItem.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,9 +26,9 @@ namespace Allors.Domain
 
             foreach (var requestItem in matches.Cast<RequestItem>())
             {
-                validation.AssertAtLeastOne(requestItem, M.RequestItem.Product, M.RequestItem.ProductFeature, M.RequestItem.SerialisedItem, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
-                validation.AssertExistsAtMostOne(requestItem, M.RequestItem.Product, M.RequestItem.ProductFeature, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
-                validation.AssertExistsAtMostOne(requestItem, M.RequestItem.SerialisedItem, M.RequestItem.ProductFeature, M.RequestItem.Description, M.RequestItem.NeededSkill, M.RequestItem.Deliverable);
+                validation.AssertAtLeastOne(requestItem, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.SerialisedItem, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
+                validation.AssertExistsAtMostOne(requestItem, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
+                validation.AssertExistsAtMostOne(requestItem, this.M.RequestItem.SerialisedItem, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
 
                 var requestItemStates = new RequestItemStates(cycle.Session);
                 if (requestItem.IsValid)

@@ -11,8 +11,8 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertAtLeastOne(this, M.PayrollPreference.Amount, M.PayrollPreference.Percentage);
-            derivation.Validation.AssertExistsAtMostOne(this, M.PayrollPreference.Amount, M.PayrollPreference.Percentage);
+            derivation.Validation.AssertAtLeastOne(this, this.M.PayrollPreference.Amount, this.M.PayrollPreference.Percentage);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.PayrollPreference.Amount, this.M.PayrollPreference.Percentage);
         }
     }
 }

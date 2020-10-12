@@ -96,6 +96,8 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<MethodType> MethodTypes => this.methodTypes;
 
+        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
+
         public IEnumerable<Composite> Composites
         {
             get
@@ -352,12 +354,12 @@ namespace Allors.Workspace.Meta
                     unit.Bind();
                 }
 
-                foreach (Interface @interface in this.DatabaseInterfaces)
+                foreach (var @interface in this.Interfaces)
                 {
                     @interface.Bind(typeByName);
                 }
 
-                foreach (Class @class in this.DatabaseClasses)
+                foreach (var @class in this.Classes)
                 {
                     @class.Bind(typeByName);
                 }
@@ -367,7 +369,7 @@ namespace Allors.Workspace.Meta
 
                 var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
 
-                foreach (Class @class in this.DatabaseClasses)
+                foreach (var @class in this.Classes)
                 {
                     foreach (MethodClass concreteMethodType in @class.MethodTypes)
                     {
@@ -413,10 +415,10 @@ namespace Allors.Workspace.Meta
                     this.derivedComposites = compositeTypes.ToArray();
 
                     // Database
-                    this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Remote).ToArray();
-                    this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Remote).ToArray();
+                    this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Database).ToArray();
+                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Database).ToArray();
+                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Database).ToArray();
+                    this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Database).ToArray();
 
                     // DirectSupertypes
                     foreach (var type in this.derivedComposites)

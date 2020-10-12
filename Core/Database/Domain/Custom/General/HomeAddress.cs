@@ -15,8 +15,8 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertExists(this, M.HomeAddress.Street);
-            derivation.Validation.AssertNonEmptyString(this, M.HomeAddress.Street);
+            derivation.Validation.AssertExists(this, this.M.HomeAddress.Street);
+            derivation.Validation.AssertNonEmptyString(this, this.M.HomeAddress.Street);
         }
     }
 }

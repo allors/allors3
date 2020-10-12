@@ -57,7 +57,7 @@ namespace Allors.Database.Adapters.Memory
 
         public bool IsDeleted
         {
-            get { return isDeleted; }
+            get { return this.isDeleted; }
             private set {
                 if (value == true)
                 {

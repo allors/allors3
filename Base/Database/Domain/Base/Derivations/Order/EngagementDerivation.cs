@@ -15,7 +15,7 @@ namespace Allors.Domain
         public EngagementDerivation(M m) : base(m, new Guid("D2E8DC2A-BB26-4E85-A3DF-6D379A3CD0F0")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.Engagement.Class)
+                new CreatedPattern(this.M.Engagement.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

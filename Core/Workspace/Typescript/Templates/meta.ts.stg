@@ -235,7 +235,7 @@ $meta.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$methodTyp
 interface(interface) ::= <<
       {
         "id": "$interface.IdAsString$",
-        "origin": "$interface.Origin$",
+        "origin": $interface.OriginAsInt$,
         "name": "$interface.Name$",
         "plural": "$interface.PluralName$"$if(interface.Supertypes)$,
         "interfaceIds":
@@ -249,7 +249,7 @@ $endif$
 class(class) ::= <<
       {
         "id": "$class.IdAsString$",
-        "origin": "$class.Origin$",
+        "origin": $class.OriginAsInt$,
         "name": "$class.Name$",
         "plural": "$class.PluralName$"$if(class.Supertypes)$,
         "interfaceIds":
@@ -263,7 +263,7 @@ $endif$
 relationType(relationType) ::= <<
       {
         "id": "$relationType.IdAsString$",
-        "origin": "$relationType.Origin$",
+        "origin": $relationType.OriginAsInt$,
         "associationType": {
           "objectTypeId": "$relationType.AssociationType.ObjectType.IdAsString$",
           "name": "$relationType.AssociationType.Name$",

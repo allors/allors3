@@ -15,7 +15,7 @@ namespace Allors.Domain
         public DropShipmentDerivation(M m) : base(m, new Guid("1B7E3857-425A-4946-AB63-15AEE196350D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.DropShipment.Class),
+                new CreatedPattern(this.M.DropShipment.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

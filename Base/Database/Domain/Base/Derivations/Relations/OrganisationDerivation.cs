@@ -15,10 +15,10 @@ namespace Allors.Domain
         public OrganisationDerivation(M m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.Organisation.Class),
-                new CreatedPattern(M.SupplierRelationship.Class){Steps = new IPropertyType[]{M.SupplierRelationship.InternalOrganisation}, OfType = M.Organisation.Class},
-                new ChangedRolePattern(M.Employment.Employer){Steps = new IPropertyType[]{M.Employment.Employer}},
-                new ChangedRolePattern(M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{M.SupplierRelationship.InternalOrganisation}, OfType = M.Organisation.Class},
+                new CreatedPattern(this.M.Organisation.Class),
+                new CreatedPattern(this.M.SupplierRelationship.Class){Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
+                new ChangedRolePattern(this.M.Employment.Employer){Steps = new IPropertyType[]{ this.M.Employment.Employer}},
+                new ChangedRolePattern(this.M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

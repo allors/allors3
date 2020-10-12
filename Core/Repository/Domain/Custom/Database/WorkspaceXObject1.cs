@@ -19,7 +19,7 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
         #endregion
-        
+
         #region Allors
         [Id("5A61A363-085C-4FFF-B955-4BE9EECF75C1")]
         [Indexed]
@@ -46,7 +46,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         public string WorkspaceNonString { get; set; }
-        
+
         #region Allors
         [Id("BE86B92F-733F-481A-B135-45A1FB991F34")]
         [Indexed]

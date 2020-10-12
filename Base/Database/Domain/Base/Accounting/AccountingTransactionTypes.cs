@@ -37,7 +37,7 @@ namespace Allors.Domain
 
         private UniquelyIdentifiableSticky<AccountingTransactionType> Cache => this.cache ??= new UniquelyIdentifiableSticky<AccountingTransactionType>(this.Session);
 
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.Locale);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale);
 
         protected override void BaseSetup(Setup setup)
         {

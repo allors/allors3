@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PackagingContentDerivation(M m) : base(m, new Guid("E6D43FBC-8501-4BEA-83D3-4034657E0D3A")) =>
             this.Patterns = new Pattern[]
         {
-            new CreatedPattern(M.PackagingContent.Class),
+            new CreatedPattern(this.M.PackagingContent.Class),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,7 +30,7 @@ namespace Allors.Domain
                     var maxQuantity = packagingContent.ShipmentItem.Quantity - packagingContent.ShipmentItem.QuantityShipped;
                     if (packagingContent.Quantity == 0 || packagingContent.Quantity > maxQuantity)
                     {
-                        validation.AddError($"{packagingContent} {M.PackagingContent.Quantity} {ErrorMessages.PackagingContentMaximum}");
+                        validation.AddError($"{packagingContent} {this.M.PackagingContent.Quantity} {ErrorMessages.PackagingContentMaximum}");
                     }
                 }
             }

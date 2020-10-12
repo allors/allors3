@@ -17,8 +17,8 @@ namespace Allors.Domain
         public PurchaseOrderItemDerivation(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.PurchaseOrderItem.Class),
-                new ChangedRolePattern(M.PurchaseOrderItem.PurchaseOrderItemState),
+                new CreatedPattern(this.M.PurchaseOrderItem.Class),
+                new ChangedRolePattern(this.M.PurchaseOrderItem.PurchaseOrderItemState),
                 // new ChangedRolePattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
             };
 
@@ -144,23 +144,23 @@ namespace Allors.Domain
 
                 if (purchaseOrderItem.ExistPart && purchaseOrderItem.Part.InventoryItemKind.IsSerialised)
                 {
-                    validation.AssertAtLeastOne(purchaseOrderItem, M.PurchaseOrderItem.SerialisedItem, M.PurchaseOrderItem.SerialNumber);
-                    validation.AssertExistsAtMostOne(purchaseOrderItem, M.PurchaseOrderItem.SerialisedItem, M.PurchaseOrderItem.SerialNumber);
+                    validation.AssertAtLeastOne(purchaseOrderItem, this.M.PurchaseOrderItem.SerialisedItem, this.M.PurchaseOrderItem.SerialNumber);
+                    validation.AssertExistsAtMostOne(purchaseOrderItem, this.M.PurchaseOrderItem.SerialisedItem, this.M.PurchaseOrderItem.SerialNumber);
 
                     if (purchaseOrderItem.QuantityOrdered != 1)
                     {
-                        validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                        validation.AddError($"{purchaseOrderItem} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                     }
                 }
 
                 if (!purchaseOrderItem.ExistPart && purchaseOrderItem.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{purchaseOrderItem} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
                 if (purchaseOrderItem.ExistPart && purchaseOrderItem.Part.InventoryItemKind.IsNonSerialised && purchaseOrderItem.QuantityOrdered == 0)
                 {
-                    validation.AddError($"{purchaseOrderItem} {M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{purchaseOrderItem} {this.M.PurchaseOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
                 var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(session);
@@ -240,7 +240,7 @@ namespace Allors.Domain
                     if (purchaseOrderItem.ExistPart)
                     {
                         var inventoryItems = purchaseOrderItem.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility);
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility);
                         inventoryItem = inventoryItems.First as NonSerialisedInventoryItem;
                     }
 

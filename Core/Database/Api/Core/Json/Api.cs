@@ -6,14 +6,13 @@
 
 namespace Allors.Api.Json
 {
-    using Domain;
     using Invoke;
     using Protocol.Data;
-    using Protocol.Remote.Invoke;
-    using Protocol.Remote.Pull;
-    using Protocol.Remote.Push;
-    using Protocol.Remote.Security;
-    using Protocol.Remote.Sync;
+    using Protocol.Database.Invoke;
+    using Protocol.Database.Pull;
+    using Protocol.Database.Push;
+    using Protocol.Database.Security;
+    using Protocol.Database.Sync;
     using Pull;
     using Push;
     using Security;

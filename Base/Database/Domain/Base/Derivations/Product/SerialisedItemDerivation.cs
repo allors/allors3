@@ -18,7 +18,7 @@ namespace Allors.Domain
         public SerialisedItemDerivation(M m) : base(m, new Guid("A871B4BB-3285-418F-9E10-5A786A6284DA")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SerialisedItem.Class),
+                new CreatedPattern(this.M.SerialisedItem.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -93,7 +93,7 @@ namespace Allors.Domain
                         serialisedItem.AddSerialisedItemCharacteristic(newCharacteristic);
 
                         var partCharacteristics = part.SerialisedItemCharacteristics;
-                        partCharacteristics.Filter.AddEquals(M.SerialisedItemCharacteristic.SerialisedItemCharacteristicType, characteristicType);
+                        partCharacteristics.Filter.AddEquals(this.M.SerialisedItemCharacteristic.SerialisedItemCharacteristicType, characteristicType);
                         var fromPart = partCharacteristics.FirstOrDefault();
 
                         if (fromPart != null)
@@ -114,7 +114,7 @@ namespace Allors.Domain
             }
 
             var deletePermission = new Permissions(serialisedItem.Strategy.Session).Get(serialisedItem.Meta.ObjectType, serialisedItem.Meta.Delete);
-            if (IsDeletable(serialisedItem))
+            if (this.IsDeletable(serialisedItem))
             {
                 serialisedItem.RemoveDeniedPermission(deletePermission);
             }

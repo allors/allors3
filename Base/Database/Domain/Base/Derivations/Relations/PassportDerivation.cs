@@ -16,14 +16,14 @@ namespace Allors.Domain
         public PassportDerivation(M m) : base(m, new Guid("BB960F7C-2B67-4B4D-967A-84B50F55BE6E")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.Passport.Class),
+                new CreatedPattern(this.M.Passport.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var passport in matches.Cast<Passport>())
             {
-                cycle.Validation.AssertIsUnique(passport, M.Passport.Number, cycle.ChangeSet);
+                cycle.Validation.AssertIsUnique(passport, this.M.Passport.Number, cycle.ChangeSet);
             }
         }
     }

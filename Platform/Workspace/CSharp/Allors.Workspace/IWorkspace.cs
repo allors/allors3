@@ -5,28 +5,16 @@
 
 namespace Allors.Workspace
 {
-    using Allors.Protocol.Remote.Pull;
-    using Allors.Protocol.Remote.Sync;
-    using Domain;
     using Meta;
-    using Protocol.Remote.Security;
 
     public interface IWorkspace
     {
-        IWorkspaceLifecycle Lifecycle { get; }
+        IMetaPopulation MetaPopulation { get; }
 
         IObjectFactory ObjectFactory { get; }
 
+        IWorkspaceStateLifecycle StateLifecycle { get; }
+
         ISession CreateSession();
-
-        SyncRequest Diff(PullResponse response);
-
-        SecurityRequest Sync(SyncResponse syncResponse);
-
-        SecurityRequest Security(SecurityResponse securityResponse);
-
-        IWorkspaceObject Get(long id);
-
-        Permission GetPermission(IClass @class, IOperandType roleType, Operations operation);
     }
 }

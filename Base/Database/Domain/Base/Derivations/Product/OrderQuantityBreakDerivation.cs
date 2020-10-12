@@ -16,14 +16,14 @@ namespace Allors.Domain
         public OrderQuantityBreakDerivation(M m) : base(m, new Guid("CFEBA3D7-4B3F-4E56-80CA-E84228DAE2E9")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.OrderValue.Class),
+                new CreatedPattern(this.M.OrderValue.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var orderQuantityBreak in matches.Cast<OrderQuantityBreak>())
             {
-                cycle.Validation.AssertAtLeastOne(orderQuantityBreak, M.OrderQuantityBreak.FromAmount, M.OrderQuantityBreak.ThroughAmount);
+                cycle.Validation.AssertAtLeastOne(orderQuantityBreak, this.M.OrderQuantityBreak.FromAmount, this.M.OrderQuantityBreak.ThroughAmount);
             }
         }
     }

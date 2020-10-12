@@ -16,26 +16,26 @@ namespace Allors.Domain
             get
             {
                 var organisationContactRelationshipPrefetch = new PrefetchPolicyBuilder()
-                    .WithRule(M.OrganisationContactRelationship.Contact)
+                    .WithRule(this.M.OrganisationContactRelationship.Contact)
                     .Build();
 
                 var partyContactMechanismePrefetch = new PrefetchPolicyBuilder()
-                    .WithRule(M.PartyContactMechanism.ContactMechanism)
+                    .WithRule(this.M.PartyContactMechanism.ContactMechanism)
                     .Build();
 
                 return new PrefetchPolicyBuilder()
-                    .WithRule(M.Organisation.RequestCounter)
-                    .WithRule(M.Organisation.QuoteCounter)
-                    .WithRule(M.Organisation.PurchaseInvoiceCounter)
-                    .WithRule(M.Organisation.PurchaseOrderCounter)
-                    .WithRule(M.Organisation.SubAccountCounter)
-                    .WithRule(M.Organisation.IncomingShipmentCounter)
-                    .WithRule(M.Organisation.WorkEffortCounter)
-                    .WithRule(M.Organisation.InvoiceSequence)
-                    .WithRule(M.Organisation.ContactsUserGroup)
-                    .WithRule(M.Organisation.OrganisationContactRelationshipsWhereOrganisation, organisationContactRelationshipPrefetch)
-                    .WithRule(M.Organisation.PartyContactMechanisms, partyContactMechanismePrefetch)
-                    .WithRule(M.Organisation.CurrentContacts)
+                    .WithRule(this.M.Organisation.RequestCounter)
+                    .WithRule(this.M.Organisation.QuoteCounter)
+                    .WithRule(this.M.Organisation.PurchaseInvoiceCounter)
+                    .WithRule(this.M.Organisation.PurchaseOrderCounter)
+                    .WithRule(this.M.Organisation.SubAccountCounter)
+                    .WithRule(this.M.Organisation.IncomingShipmentCounter)
+                    .WithRule(this.M.Organisation.WorkEffortCounter)
+                    .WithRule(this.M.Organisation.InvoiceSequence)
+                    .WithRule(this.M.Organisation.ContactsUserGroup)
+                    .WithRule(this.M.Organisation.OrganisationContactRelationshipsWhereOrganisation, organisationContactRelationshipPrefetch)
+                    .WithRule(this.M.Organisation.PartyContactMechanisms, partyContactMechanismePrefetch)
+                    .WithRule(this.M.Organisation.CurrentContacts)
                     .Build();
             }
         }

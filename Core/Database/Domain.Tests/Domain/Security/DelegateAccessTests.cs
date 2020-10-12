@@ -35,11 +35,11 @@ namespace Tests
             var acs2 = new AccessControls(this.Session).Extent().Where(v => v.SubjectGroups.Contains(administrators));
 
             var acl = new DatabaseAccessControlLists(administrator)[accessClass];
-            Assert.True(acl.CanRead(M.AccessClass.Property));
-            Assert.True(acl.CanWrite(M.AccessClass.Property));
+            Assert.True(acl.CanRead(this.M.AccessClass.Property));
+            Assert.True(acl.CanWrite(this.M.AccessClass.Property));
 
-            Assert.True(acl.CanRead(M.AccessClass.Property));
-            Assert.True(acl.CanWrite(M.AccessClass.Property));
+            Assert.True(acl.CanRead(this.M.AccessClass.Property));
+            Assert.True(acl.CanWrite(this.M.AccessClass.Property));
         }
 
         [Fact]
@@ -56,11 +56,11 @@ namespace Tests
 
             // Use default security from Singleton
             var acl = new DatabaseAccessControlLists(administrator)[accessClass];
-            Assert.True(acl.CanRead(M.AccessClass.Property));
-            Assert.True(acl.CanWrite(M.AccessClass.Property));
+            Assert.True(acl.CanRead(this.M.AccessClass.Property));
+            Assert.True(acl.CanWrite(this.M.AccessClass.Property));
 
-            Assert.True(acl.CanRead(M.AccessClass.Property));
-            Assert.True(acl.CanWrite(M.AccessClass.Property));
+            Assert.True(acl.CanRead(this.M.AccessClass.Property));
+            Assert.True(acl.CanWrite(this.M.AccessClass.Property));
         }
     }
 }

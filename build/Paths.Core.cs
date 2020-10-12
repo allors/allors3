@@ -18,7 +18,7 @@ public partial class Paths
     public AbsolutePath CoreDatabaseResourcesCore => CoreDatabaseResources / "Core";
     public AbsolutePath CoreDatabaseResourcesCustom => CoreDatabaseResources / "Custom";
 
-    public AbsolutePath CoreWorkspaceCSharpDomainTests => Core / "Workspace/CSharp/Domain.Tests";
+    public AbsolutePath CoreWorkspaceCSharpTests => Core / "Workspace/CSharp/Tests";
 
     public AbsolutePath CoreWorkspaceTypescript=> Core / "Workspace/Typescript";
 }

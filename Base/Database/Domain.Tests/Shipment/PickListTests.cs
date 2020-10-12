@@ -53,15 +53,15 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good2");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good1.Part)
                 .WithSupplier(supplier)
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithPrice(7)
                 .Build();
 
@@ -185,8 +185,8 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good2");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good1.Part)
@@ -194,7 +194,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .WithPrice(7)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .Build();
 
             new SupplierOfferingBuilder(this.Session)
@@ -203,7 +203,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .WithPrice(7)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .Build();
 
             this.Session.Derive();
@@ -305,15 +305,15 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good2");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good1.Part)
                 .WithSupplier(supplier)
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithPrice(7)
                 .Build();
 
@@ -322,7 +322,7 @@ namespace Allors.Domain
                 .WithSupplier(supplier)
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithPrice(7)
                 .Build();
 
@@ -375,11 +375,11 @@ namespace Allors.Domain
             Assert.Equal(2, pickList.PickListItems.Count);
 
             var extent1 = pickList.PickListItems;
-            extent1.Filter.AddEquals(M.PickListItem.InventoryItem, good1Inventory);
+            extent1.Filter.AddEquals(this.M.PickListItem.InventoryItem, good1Inventory);
             Assert.Equal(3, extent1.First.Quantity);
 
             var extent2 = pickList.PickListItems;
-            extent2.Filter.AddEquals(M.PickListItem.InventoryItem, good2Inventory);
+            extent2.Filter.AddEquals(this.M.PickListItem.InventoryItem, good2Inventory);
             Assert.Equal(5, extent2.First.Quantity);
         }
 
@@ -409,14 +409,14 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good2");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good1.Part)
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithPrice(7)
                 .WithSupplier(supplier)
                 .Build();
@@ -425,7 +425,7 @@ namespace Allors.Domain
                 .WithPart(good2.Part)
                 .WithFromDate(this.Session.Now())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
-                .WithCurrency(new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR"))
+                .WithCurrency(new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR"))
                 .WithPrice(7)
                 .WithSupplier(supplier)
                 .Build();
@@ -510,7 +510,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenCustomerBuyingFromDifferentStores_WhenShipping_ThenPickListIsCreatedForEachStore()
         {
-            var store1 = new Stores(this.Session).FindBy(M.Store.Name, "store");
+            var store1 = new Stores(this.Session).FindBy(this.M.Store.Name, "store");
 
             var store2 = new StoreBuilder(this.Session).WithName("second store")
                 .WithDefaultFacility(new Facilities(this.Session).Extent().First)
@@ -521,7 +521,7 @@ namespace Allors.Domain
                 .WithIsImmediatelyPacked(true)
                 .Build();
 
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount).WithPart(good1.Part).Build();
 
@@ -645,7 +645,7 @@ namespace Allors.Domain
             this.Session.Derive();
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[pickList];
-            Assert.True(acl.CanExecute(M.PickList.Cancel));
+            Assert.True(acl.CanExecute(this.M.PickList.Cancel));
         }
 
         [Fact]
@@ -666,8 +666,8 @@ namespace Allors.Domain
             this.Session.Derive();
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[pickList];
-            Assert.False(acl.CanExecute(M.PickList.Cancel));
-            Assert.False(acl.CanExecute(M.PickList.SetPicked));
+            Assert.False(acl.CanExecute(this.M.PickList.Cancel));
+            Assert.False(acl.CanExecute(this.M.PickList.SetPicked));
         }
 
         [Fact]
@@ -688,8 +688,8 @@ namespace Allors.Domain
             this.Session.Derive();
 
             var acl = new DatabaseAccessControlLists(this.Session.GetUser())[pickList];
-            Assert.False(acl.CanExecute(M.PickList.Cancel));
-            Assert.False(acl.CanExecute(M.PickList.SetPicked));
+            Assert.False(acl.CanExecute(this.M.PickList.Cancel));
+            Assert.False(acl.CanExecute(this.M.PickList.SetPicked));
         }
     }
 }

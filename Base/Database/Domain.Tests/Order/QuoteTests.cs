@@ -99,7 +99,7 @@ namespace Allors.Domain
         {
             var party = new PersonBuilder(this.Session).WithLastName("party").Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var quote = new ProductQuoteBuilder(this.Session)
                 .WithReceiver(party)

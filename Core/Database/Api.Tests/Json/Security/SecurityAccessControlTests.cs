@@ -5,13 +5,11 @@
 
 namespace Tests
 {
-    using System;
     using System.Linq;
     using Allors;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Remote.Security;
-    using Allors.Protocol.Remote.Sync;
+    using Allors.Protocol.Database.Security;
     using Xunit;
 
     public class SecurityAccessControlTests : ApiTest, IClassFixture<Fixture>

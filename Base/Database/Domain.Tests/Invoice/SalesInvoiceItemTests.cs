@@ -33,7 +33,7 @@ namespace Allors.Domain
 
         public SalesInvoiceItemTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             this.supplier = new OrganisationBuilder(this.Session).WithName("supplier").WithLocale(new Locales(this.Session).EnglishGreatBritain).Build();
 
@@ -55,7 +55,7 @@ namespace Allors.Domain
 
             this.Session.Derive();
 
-            this.good = new NonUnifiedGoods(this.Session).FindBy(M.Good.Name, "good1");
+            this.good = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
             this.finishedGood = this.good.Part;
 
             this.feature1 = new ColourBuilder(this.Session)
@@ -258,7 +258,7 @@ namespace Allors.Domain
         {
             this.InstantiateObjects(this.Session);
 
-            var vatRate0 = new VatRates(this.Session).FindBy(M.VatRate.Rate, 0);
+            var vatRate0 = new VatRates(this.Session).FindBy(this.M.VatRate.Rate, 0);
 
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
@@ -301,7 +301,7 @@ namespace Allors.Domain
         {
             this.InstantiateObjects(this.Session);
 
-            var irpfRate19 = new IrpfRates(this.Session).FindBy(M.IrpfRate.Rate, 19);
+            var irpfRate19 = new IrpfRates(this.Session).FindBy(this.M.IrpfRate.Rate, 19);
 
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
@@ -1841,7 +1841,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenBillToCustomerWithDifferentCurrency_WhenDerivingPrices_ThenCalculatePricesInPreferredCurrency()
         {
-            var poundSterling = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "GBP");
+            var poundSterling = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "GBP");
 
             const decimal conversionfactor = 0.8553M;
             var euroToPoundStirling = new UnitOfMeasureConversionBuilder(this.Session)
@@ -1850,7 +1850,7 @@ namespace Allors.Domain
                 .WithStartDate(this.Session.Now())
                 .Build();
 
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
             euro.AddUnitOfMeasureConversion(euroToPoundStirling);
 
             this.Session.Derive();

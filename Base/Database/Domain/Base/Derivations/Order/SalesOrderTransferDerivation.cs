@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SalesOrderTransferDerivation(M m) : base(m, new Guid("7E5895C6-712C-42F9-8B1C-964D8B8CBC1D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SalesOrderTransfer.Class),
+                new CreatedPattern(this.M.SalesOrderTransfer.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -25,7 +25,7 @@ namespace Allors.Domain
                 if (salesOrderTransfer.ExistFrom && salesOrderTransfer.ExistInternalOrganisation && !salesOrderTransfer.ExistTo)
                 {
                     var acl = new DatabaseAccessControlLists(cycle.Session.State().User)[salesOrderTransfer.From];
-                    if (!acl.CanExecute(M.SalesOrder.DoTransfer))
+                    if (!acl.CanExecute(this.M.SalesOrder.DoTransfer))
                     {
                         cycle.Validation.AddError($"{salesOrderTransfer} {salesOrderTransfer.Meta.To} No rights to transfer salesorder");
                     }

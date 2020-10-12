@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Operation type.</summary>
 
-namespace Allors.Domain
+namespace Allors
 {
     using System;
 

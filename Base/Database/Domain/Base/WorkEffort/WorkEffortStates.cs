@@ -29,7 +29,7 @@ namespace Allors.Domain
 
         private UniquelyIdentifiableSticky<WorkEffortState> Cache => this.cache ??= new UniquelyIdentifiableSticky<WorkEffortState>(this.Session);
 
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.InventoryTransactionReason);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason);
 
         protected override void BaseSetup(Setup setup)
         {

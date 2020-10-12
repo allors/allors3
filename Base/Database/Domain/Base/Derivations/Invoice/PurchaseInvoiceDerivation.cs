@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PurchaseInvoiceDerivation(M m) : base(m, new Guid("7F6A083E-1409-4158-B302-603F0973A98C")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.PurchaseInvoice.Class)
+                new CreatedPattern(this.M.PurchaseInvoice.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

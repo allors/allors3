@@ -15,7 +15,7 @@ namespace Allors.Domain
         public ShipmentReceiptDerivation(M m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.ShipmentReceipt.Class),
+                new CreatedPattern(this.M.ShipmentReceipt.Class),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Domain
                 if (shipmentReceipt.ExistOrderItem && shipmentReceipt.ExistShipmentItem)
                 {
                     var orderShipmentsWhereShipmentItem = shipmentReceipt.ShipmentItem.OrderShipmentsWhereShipmentItem;
-                    orderShipmentsWhereShipmentItem.Filter.AddEquals(M.OrderShipment.OrderItem, shipmentReceipt.OrderItem);
+                    orderShipmentsWhereShipmentItem.Filter.AddEquals(this.M.OrderShipment.OrderItem, shipmentReceipt.OrderItem);
 
                     if (orderShipmentsWhereShipmentItem.First == null)
                     {
@@ -49,8 +49,8 @@ namespace Allors.Domain
                     if (shipmentReceipt.ShipmentItem.ExistSerialisedItem)
                     {
                         var inventoryItems = shipmentReceipt.ShipmentItem.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem;
-                        inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, shipmentReceipt.Facility);
-                        inventoryItems.Filter.AddEquals(M.SerialisedInventoryItem.SerialisedInventoryItemState, new SerialisedInventoryItemStates(shipmentReceipt.Session()).Good);
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, shipmentReceipt.Facility);
+                        inventoryItems.Filter.AddEquals(this.M.SerialisedInventoryItem.SerialisedInventoryItemState, new SerialisedInventoryItemStates(shipmentReceipt.Session()).Good);
                         shipmentReceipt.InventoryItem = inventoryItems.First;
 
                         if (!shipmentReceipt.ExistInventoryItem)
@@ -66,7 +66,7 @@ namespace Allors.Domain
                     else
                     {
                         var inventoryItems = shipmentReceipt.ShipmentItem.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, shipmentReceipt.Facility);
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, shipmentReceipt.Facility);
                         //inventoryItems.Filter.AddEquals(M.NonSerialisedInventoryItem.NonSerialisedInventoryItemState, new NonSerialisedInventoryItemStates(this.Session()).Good);
                         shipmentReceipt.InventoryItem = inventoryItems.First;
 

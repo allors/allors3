@@ -7,7 +7,6 @@ namespace Allors.State
 {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Runtime.InteropServices.ComTypes;
 
     public class EffectivePermissionCache : IEffectivePermissionCache
     {

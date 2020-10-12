@@ -40,7 +40,7 @@ namespace Allors.Domain
 
                 if (offerings != null)
                 {
-                    offerings.Filter.AddEquals(M.SupplierOffering.Supplier, this.PurchaseOrderWherePurchaseOrderItem.TakenViaSupplier);
+                    offerings.Filter.AddEquals(this.M.SupplierOffering.Supplier, this.PurchaseOrderWherePurchaseOrderItem.TakenViaSupplier);
                     foreach (SupplierOffering offering in offerings)
                     {
                         if (offering.FromDate <= this.PurchaseOrderWherePurchaseOrderItem.OrderDate &&

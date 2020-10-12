@@ -5,15 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Api\Core*\**\*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Base\" />
   </ItemGroup>
 
 </Project>

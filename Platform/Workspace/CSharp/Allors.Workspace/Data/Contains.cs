@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using Allors.Protocol.Data;
     using Allors.Workspace.Meta;
 
@@ -17,7 +16,7 @@ namespace Allors.Workspace.Data
 
         public IPropertyType PropertyType { get; set; }
 
-        public ISessionObject Object { get; set; }
+        public IStrategy Object { get; set; }
 
         public string Parameter { get; set; }
 
@@ -28,7 +27,7 @@ namespace Allors.Workspace.Data
                 Dependencies = this.Dependencies,
                 AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Object = this.Object?.Id.ToString(),
+                Object = this.Object?.DatabaseId?.ToString(),
                 Parameter = this.Parameter,
             };
     }

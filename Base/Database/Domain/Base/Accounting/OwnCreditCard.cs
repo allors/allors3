@@ -21,7 +21,7 @@ namespace Allors.Domain
 
             if (this.ExistInternalOrganisationWherePaymentMethod && this.InternalOrganisationWherePaymentMethod.DoAccounting)
             {
-                derivation.Validation.AssertAtLeastOne(this, M.Cash.GeneralLedgerAccount, M.Cash.Journal);
+                derivation.Validation.AssertAtLeastOne(this, this.M.Cash.GeneralLedgerAccount, this.M.Cash.Journal);
             }
 
             if (this.ExistCreditCard)
@@ -32,7 +32,7 @@ namespace Allors.Domain
                 }
             }
 
-            derivation.Validation.AssertExistsAtMostOne(this, M.Cash.GeneralLedgerAccount, M.Cash.Journal);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.Cash.GeneralLedgerAccount, this.M.Cash.Journal);
         }
     }
 }

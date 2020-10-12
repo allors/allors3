@@ -18,7 +18,7 @@ namespace Allors.Workspace.Data
 
         public IObjectType ObjectType { get; set; }
 
-        public ISessionObject Object { get; set; }
+        public IObject Object { get; set; }
 
         public string ObjectId { get; set; }
 
@@ -32,7 +32,7 @@ namespace Allors.Workspace.Data
                 ExtentRef = this.ExtentRef,
                 Extent = this.Extent?.ToJson(),
                 ObjectType = this.ObjectType?.Id,
-                Object = this.ObjectId ?? this.Object?.Id.ToString(),
+                Object = this.ObjectId ?? this.Object?.DatabaseId?.ToString(),
                 Results = this.Results?.Select(v => v.ToJson()).ToArray(),
             };
     }

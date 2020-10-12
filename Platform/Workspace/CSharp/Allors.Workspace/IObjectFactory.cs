@@ -11,11 +11,9 @@ namespace Allors.Workspace
 
     public interface IObjectFactory
     {
-        IMetaPopulation MetaPopulation { get; }
-
         string Namespace { get; }
 
-        ISessionObject Create(ISession session, IObjectType objectType);
+        IObject Create(IStrategy strategy);
 
         IObjectType GetObjectType<T>();
 
@@ -24,7 +22,5 @@ namespace Allors.Workspace
         IObjectType GetObjectType(string name);
 
         Type GetType(IObjectType objectType);
-
-        object EmptyArray(IObjectType objectType);
     }
 }

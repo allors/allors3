@@ -49,7 +49,7 @@ namespace Allors.Workspace.Meta
 
         public override IEnumerable<Class> Classes => this.classes;
 
-        public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Remote ? this.classes : Array.Empty<Class>();
+        public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Database ? this.classes : Array.Empty<Class>();
 
         public override bool ExistClass => true;
 
@@ -59,7 +59,7 @@ namespace Allors.Workspace.Meta
 
         public override IEnumerable<Composite> Subtypes => new[] { this };
 
-        public override IEnumerable<Composite> DatabaseSubtypes => this.Origin == Origin.Remote ? this.Subtypes : Array.Empty<Composite>();
+        public override IEnumerable<Composite> DatabaseSubtypes => this.Origin == Origin.Database ? this.Subtypes : Array.Empty<Composite>();
 
         internal void DeriveWorkspaceNames(HashSet<string> workspaceNames)
         {

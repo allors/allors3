@@ -23,8 +23,8 @@ namespace Allors.Domain
             this.Session.SetUser(employee);
 
             var acl = new DatabaseAccessControlLists(employee)[employee];
-            Assert.True(acl.CanRead(M.Person.FirstName));
-            Assert.False(acl.CanWrite(M.Person.FirstName));
+            Assert.True(acl.CanRead(this.M.Person.FirstName));
+            Assert.False(acl.CanWrite(this.M.Person.FirstName));
         }
 
         [Fact]
@@ -36,8 +36,8 @@ namespace Allors.Domain
             this.Session.SetUser(employee);
 
             var acl = new DatabaseAccessControlLists(employee)[good];
-            Assert.True(acl.CanRead(M.Good.Name));
-            Assert.False(acl.CanWrite(M.Good.Name));
+            Assert.True(acl.CanRead(this.M.Good.Name));
+            Assert.False(acl.CanWrite(this.M.Good.Name));
         }
 
         [Fact]
@@ -57,8 +57,8 @@ namespace Allors.Domain
             Assert.True(workTask.Strategy.IsNewInSession);
 
             var acl = new DatabaseAccessControlLists(employee)[workTask];
-            Assert.True(acl.CanRead(M.WorkTask.Name));
-            Assert.True(acl.CanWrite(M.WorkTask.Name));
+            Assert.True(acl.CanRead(this.M.WorkTask.Name));
+            Assert.True(acl.CanWrite(this.M.WorkTask.Name));
         }
 
         [Fact]
@@ -79,8 +79,8 @@ namespace Allors.Domain
             Assert.False(workTask.Strategy.IsNewInSession);
 
             var acl = new DatabaseAccessControlLists(employee)[workTask];
-            Assert.True(acl.CanRead(M.WorkTask.Name));
-            Assert.False(acl.CanWrite(M.WorkTask.Name));
+            Assert.True(acl.CanRead(this.M.WorkTask.Name));
+            Assert.False(acl.CanWrite(this.M.WorkTask.Name));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Allors.Domain
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
             var internalOrganisation = new Organisations(this.Session).Extent().First(o => o.IsInternalOrganisation);
@@ -106,16 +106,16 @@ namespace Allors.Domain
             Assert.True(salesInvoice.Strategy.IsNewInSession);
 
             var acl = new DatabaseAccessControlLists(employee)[salesInvoice];
-            Assert.True(acl.CanRead(M.SalesInvoice.Description));
-            Assert.False(acl.CanWrite(M.SalesInvoice.Description));
+            Assert.True(acl.CanRead(this.M.SalesInvoice.Description));
+            Assert.False(acl.CanWrite(this.M.SalesInvoice.Description));
 
             this.Session.Commit();
 
             Assert.False(salesInvoice.Strategy.IsNewInSession);
 
             acl = new DatabaseAccessControlLists(employee)[salesInvoice];
-            Assert.True(acl.CanRead(M.SalesInvoice.Description));
-            Assert.False(acl.CanWrite(M.SalesInvoice.Description));
+            Assert.True(acl.CanRead(this.M.SalesInvoice.Description));
+            Assert.False(acl.CanWrite(this.M.SalesInvoice.Description));
         }
 
         [Fact]
@@ -144,9 +144,9 @@ namespace Allors.Domain
             Assert.Equal(new SalesOrderStates(this.Session).Provisional, order.SalesOrderState);
 
             var acl = new DatabaseAccessControlLists(employee)[order];
-            Assert.False(acl.CanExecute(M.SalesOrder.DoTransfer));
-            Assert.False(acl.CanWrite(M.SalesOrder.Description));
-            Assert.True(acl.CanRead(M.SalesOrder.Description));
+            Assert.False(acl.CanExecute(this.M.SalesOrder.DoTransfer));
+            Assert.False(acl.CanWrite(this.M.SalesOrder.Description));
+            Assert.True(acl.CanRead(this.M.SalesOrder.Description));
         }
 
         [Fact]
@@ -158,8 +158,8 @@ namespace Allors.Domain
             this.Session.SetUser(employee);
 
             var acl = new DatabaseAccessControlLists(employee)[userGroup];
-            Assert.True(acl.CanRead(M.UserGroup.Members));
-            Assert.False(acl.CanWrite(M.UserGroup.Members));
+            Assert.True(acl.CanRead(this.M.UserGroup.Members));
+            Assert.False(acl.CanWrite(this.M.UserGroup.Members));
         }
     }
 }

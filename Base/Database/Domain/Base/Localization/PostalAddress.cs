@@ -13,15 +13,15 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertExistsAtMostOne(this, M.PostalAddress.PostalAddressBoundaries, M.PostalAddress.Locality);
-            derivation.Validation.AssertExistsAtMostOne(this, M.PostalAddress.PostalAddressBoundaries, M.PostalAddress.Region);
-            derivation.Validation.AssertExistsAtMostOne(this, M.PostalAddress.PostalAddressBoundaries, M.PostalAddress.PostalCode);
-            derivation.Validation.AssertExistsAtMostOne(this, M.PostalAddress.PostalAddressBoundaries, M.PostalAddress.Country);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.Locality);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.Region);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.PostalCode);
+            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.Country);
 
             if (!this.ExistPostalAddressBoundaries)
             {
-                derivation.Validation.AssertExists(this, M.PostalAddress.Locality);
-                derivation.Validation.AssertExists(this, M.PostalAddress.Country);
+                derivation.Validation.AssertExists(this, this.M.PostalAddress.Locality);
+                derivation.Validation.AssertExists(this, this.M.PostalAddress.Country);
             }
         }
     }

@@ -146,7 +146,7 @@ namespace Allors.Domain
 
                 if (inventoryItem is NonSerialisedInventoryItem nonserialisedInventoryItem && nonserialisedInventoryItem.QuantityOnHand < adjustmentQuantity)
                 {
-                    derivation.Validation.AddError(this, M.NonSerialisedInventoryItem.QuantityOnHand, ErrorMessages.InsufficientStock);
+                    derivation.Validation.AddError(this, this.M.NonSerialisedInventoryItem.QuantityOnHand, ErrorMessages.InsufficientStock);
                 }
             }
 

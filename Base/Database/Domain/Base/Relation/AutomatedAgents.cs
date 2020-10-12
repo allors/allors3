@@ -7,6 +7,6 @@ namespace Allors.Domain
 {
     public partial class AutomatedAgents
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.AccessControl);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.AccessControl);
     }
 }

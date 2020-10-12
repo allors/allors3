@@ -15,10 +15,10 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertExists(this, M.MailboxAddress.PoBox);
-            derivation.Validation.AssertNonEmptyString(this, M.MailboxAddress.PoBox);
+            derivation.Validation.AssertExists(this, this.M.MailboxAddress.PoBox);
+            derivation.Validation.AssertNonEmptyString(this, this.M.MailboxAddress.PoBox);
 
-            derivation.Validation.AssertExists(this, M.MailboxAddress.Place);
+            derivation.Validation.AssertExists(this, this.M.MailboxAddress.Place);
         }
     }
 }

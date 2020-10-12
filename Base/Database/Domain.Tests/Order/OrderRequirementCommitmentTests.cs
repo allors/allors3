@@ -28,7 +28,7 @@ namespace Allors.Domain
 
                 .Build();
 
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
 

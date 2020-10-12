@@ -7,7 +7,6 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Text;
-    using Allors.Database.Adapters.SqlClient;
     using Allors.Domain;
     using Allors.Meta;
     using Allors.Services;

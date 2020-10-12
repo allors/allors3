@@ -17,11 +17,11 @@ namespace Allors.Domain
 
         public ReceiptTests(Fixture fixture) : base(fixture)
         {
-            var euro = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "EUR");
+            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             this.singleton = this.Session.GetSingleton();
             this.billToCustomer = new OrganisationBuilder(this.Session).WithName("billToCustomer").WithPreferredCurrency(euro).Build();
-            this.good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            this.good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").WithLocale(new Locales(this.Session).EnglishGreatBritain).Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(this.billToCustomer).Build();
@@ -153,7 +153,7 @@ namespace Allors.Domain
 
             var derivationLog = this.Session.Derive(false);
             Assert.True(derivationLog.HasErrors);
-            Assert.Contains(M.Receipt.Amount, derivationLog.Errors[0].RoleTypes);
+            Assert.Contains(this.M.Receipt.Amount, derivationLog.Errors[0].RoleTypes);
         }
 
         private void InstantiateObjects(ISession session)

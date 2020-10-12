@@ -11,10 +11,10 @@ namespace Allors.Domain
     public partial class Person
     {
         public PrefetchPolicy PrefetchPolicy => new PrefetchPolicyBuilder()
-            .WithRule(M.Person.OrganisationContactRelationshipsWhereContact)
-            .WithRule(M.Person.PartyContactMechanisms)
-            .WithRule(M.Person.TimeSheetWhereWorker)
-            .WithRule(M.Person.EmploymentsWhereEmployee)
+            .WithRule(this.M.Person.OrganisationContactRelationshipsWhereContact)
+            .WithRule(this.M.Person.PartyContactMechanisms)
+            .WithRule(this.M.Person.TimeSheetWhereWorker)
+            .WithRule(this.M.Person.EmploymentsWhereEmployee)
             .Build();
 
         public bool IsDeletable =>

@@ -16,7 +16,7 @@ namespace Allors.Domain
         public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
         {
             var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var colorFeature = new ColourBuilder(this.Session)
                 .WithVatRate(vatRate21)
@@ -73,7 +73,7 @@ namespace Allors.Domain
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .Build();
 
-            var physicalGood = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var physicalGood = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             virtualGood.AddVariant(physicalGood);
 
@@ -96,7 +96,7 @@ namespace Allors.Domain
         [Fact]
         public void GivenBasePriceForNonVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsNull()
         {
-            var physicalGood = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var physicalGood = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             new BasePriceBuilder(this.Session)
                 .WithDescription("baseprice")
@@ -112,7 +112,7 @@ namespace Allors.Domain
         public void GivenDiscount_WhenDeriving_ThenRequiredRelationsMustExist()
         {
             var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var colorFeature = new ColourBuilder(this.Session)
              .WithVatRate(vatRate21)
@@ -220,7 +220,7 @@ namespace Allors.Domain
         public void GivenSurcharge_WhenDeriving_ThenRequiredRelationsMustExist()
         {
             var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
-            var good = new Goods(this.Session).FindBy(M.Good.Name, "good1");
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             var colorFeature = new ColourBuilder(this.Session)
                 .WithVatRate(vatRate21)

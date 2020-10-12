@@ -116,7 +116,7 @@ namespace Allors.Domain
             if (!this.ExistStore && this.ExistTakenBy)
             {
                 var stores = new Stores(this.Strategy.Session).Extent();
-                stores.Filter.AddEquals(M.Store.InternalOrganisation, this.TakenBy);
+                stores.Filter.AddEquals(this.M.Store.InternalOrganisation, this.TakenBy);
 
                 if (stores.Any())
                 {

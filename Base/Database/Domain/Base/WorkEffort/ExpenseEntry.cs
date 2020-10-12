@@ -11,7 +11,7 @@ namespace Allors.Domain
         {
             var derivation = method.Derivation;
 
-            derivation.Validation.AssertAtLeastOne(this, M.ExpenseEntry.WorkEffort, M.ExpenseEntry.EngagementItem);
+            derivation.Validation.AssertAtLeastOne(this, this.M.ExpenseEntry.WorkEffort, this.M.ExpenseEntry.EngagementItem);
         }
     }
 }

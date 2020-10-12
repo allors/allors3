@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SettingsDerivation(M m) : base(m, new Guid("48BC48B2-1614-4E79-984C-E1BFC14C0C22")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(M.Settings.Class)
+                new CreatedPattern(this.M.Settings.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

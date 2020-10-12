@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Data;
@@ -22,7 +21,7 @@ namespace Allors.Workspace.Data
 
         public IExtent Extent { get; set; }
 
-        public IEnumerable<ISessionObject> Objects { get; set; }
+        public IEnumerable<IStrategy> Objects { get; set; }
 
         public string Parameter { get; set; }
 
@@ -34,7 +33,7 @@ namespace Allors.Workspace.Data
                 AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
                 RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
                 Extent = this.Extent?.ToJson(),
-                Values = this.Objects?.Select(v => v.Id.ToString()).ToArray(),
+                Values = this.Objects?.Select(v => v.DatabaseId?.ToString()).ToArray(),
                 Parameter = this.Parameter,
             };
     }

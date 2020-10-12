@@ -7,6 +7,6 @@ namespace Allors.Domain
 {
     public partial class Cases
     {
-        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.CaseState);
+        protected override void BasePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.CaseState);
     }
 }

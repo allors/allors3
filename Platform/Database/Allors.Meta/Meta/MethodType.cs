@@ -26,7 +26,7 @@ namespace Allors.Meta
         public abstract Guid Id { get; }
         public abstract string IdAsString { get; }
 
-        public override Origin Origin => Origin.Remote;
+        public override Origin Origin => Origin.Database;
 
         IComposite IMethodType.ObjectType => this.Composite;
 

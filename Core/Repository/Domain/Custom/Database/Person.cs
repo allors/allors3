@@ -42,7 +42,7 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace(Default)]
-        [Origin(Origin.Local)]
+        [Origin(Origin.Workspace)]
         [Derived]
         public string LocalFullName { get; set; }
 
@@ -51,7 +51,7 @@ namespace Allors.Repository
         [Size(256)]
         #endregion
         [Workspace(Default)]
-        [Origin(Origin.Working)]
+        [Origin(Origin.Session)]
         [Derived]
         public string WorkingFullName { get; set; }
         

@@ -105,7 +105,7 @@ namespace Allors.Workspace.Meta
         public abstract string MediaType { get; set; }
 
         ///// <summary>
-        ///// Get the value of the role on this object.
+        ///// Instantiate the value of the role on this object.
         ///// </summary>
         ///// <param name="strategy">
         ///// The strategy.
@@ -113,7 +113,7 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The role value.
         ///// </returns>
-        //public object Get(IStrategy strategy) => strategy.GetRole(this.RelationType);
+        //public object Instantiate(IStrategy strategy) => strategy.GetRole(this.RelationType);
 
         ///// <summary>
         ///// Set the value of the role on this object.
