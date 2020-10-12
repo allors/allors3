@@ -10,6 +10,7 @@ namespace Allors.Domain.Derivations.Default
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Data;
+    using Allors.Meta;
     using Object = Domain.Object;
 
     public class Iteration : IIteration
@@ -119,9 +120,13 @@ namespace Allors.Domain.Derivations.Default
                                     CreatedPattern createdPattern => changeSet.Created
                                         .Where(v => v.Class.IsAssignableFrom(createdPattern.Composite))
                                         .Select(v => v.GetObject()),
-                                    ChangedRolePattern changedRolePattern => changeSet.AssociationsByRoleType
-                                        .Where(v => v.Key.Equals(changedRolePattern.RoleType))
+                                    ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet.AssociationsByRoleType
+                                        .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                         .SelectMany(v => session.Instantiate(v.Value)),
+                                    ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet.AssociationsByRoleType
+                                        .Where(v => v.Key.Equals(roleClass))
+                                        .SelectMany(v => session.Instantiate(v.Value))
+                                        .Where(v => v.Strategy.Class.Equals(roleClass)),
                                     ChangedAssociationPattern changedAssociationsPattern => changeSet
                                         .AssociationsByRoleType
                                         .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
