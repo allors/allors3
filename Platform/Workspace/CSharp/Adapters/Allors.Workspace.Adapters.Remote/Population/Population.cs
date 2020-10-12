@@ -114,14 +114,12 @@ namespace Allors.Workspace.Adapters.Remote
                 this.RemoveRole(association, roleType);
                 return;
             }
-
-            // TODO: Implement normalization
-            var normalizedRole = role is IObject @object ? @object.WorkspaceId : role;
-
+            
             if (roleType.ObjectType.IsUnit)
             {
                 // Role
-                this.ChangedRoleByAssociation(roleType)[association] = normalizedRole;
+                var unitRole = roleType.NormalizeUnit(role);
+                this.ChangedRoleByAssociation(roleType)[association] = unitRole;
             }
             else
             {
@@ -129,12 +127,12 @@ namespace Allors.Workspace.Adapters.Remote
                 this.GetRole(association, roleType, out var previousRole);
                 if (roleType.IsOne)
                 {
-                    var roleObject = (long)normalizedRole;
-                    this.GetAssociation(roleObject, associationType, out var previousAssociation);
+                    var compositeRole = roleType.NormalizeComposite(role);
+                    this.GetAssociation(compositeRole, associationType, out var previousAssociation);
 
                     // Role
                     var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                    changedRoleByAssociation[association] = roleObject;
+                    changedRoleByAssociation[association] = compositeRole;
 
                     // Association
                     var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
@@ -153,21 +151,21 @@ namespace Allors.Workspace.Adapters.Remote
                             changedAssociationByRole[previousRoleObject] = null;
                         }
 
-                        changedAssociationByRole[roleObject] = association;
+                        changedAssociationByRole[compositeRole] = association;
                     }
                     else
                     {
-                        changedAssociationByRole[roleObject] = NullableArrayList.Remove(previousAssociation, roleObject);
+                        changedAssociationByRole[compositeRole] = NullableArrayList.Remove(previousAssociation, compositeRole);
                     }
                 }
                 else
                 {
-                    var roles = ((IEnumerable<long>)normalizedRole)?.ToArray() ?? Array.Empty<long>();
+                    var compositesRole = roleType.NormalizeComposites(role);
                     var previousRoles = (long[])previousRole ?? Array.Empty<long>();
 
                     // Use Diff (Add/Remove)
-                    var addedRoles = roles.Except(previousRoles);
-                    var removedRoles = previousRoles.Except(roles);
+                    var addedRoles = compositesRole.Except(previousRoles);
+                    var removedRoles = previousRoles.Except(compositesRole);
 
                     foreach (var addedRole in addedRoles)
                     {
