@@ -15,7 +15,7 @@ namespace Allors.Domain
         public OrganisationPartyContactMechanismsDerivation(M m) : base(m, new Guid("BB960F7C-2B67-4B4D-967A-84B50F55BE6E")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedConcreteRolePattern(M.Organisation.PartyContactMechanisms),
+                new ChangedRolePattern(M.Organisation.PartyContactMechanisms),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

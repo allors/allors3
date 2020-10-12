@@ -20,7 +20,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(M.SalesOrderItem.Class),
                 new ChangedRolePattern(M.SalesOrderItem.SalesOrderItemState),
-                new ChangedConcreteRolePattern(M.SalesOrderItem.QuantityOrdered),
+                new ChangedRolePattern(M.SalesOrderItem.QuantityOrdered),
                 new ChangedRolePattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
                 new ChangedRolePattern(M.OrderShipment.Quantity){Steps = new IPropertyType[]{M.OrderShipment.OrderItem}},
             };

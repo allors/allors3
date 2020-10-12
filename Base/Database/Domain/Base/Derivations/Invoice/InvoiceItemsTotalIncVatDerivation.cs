@@ -16,8 +16,8 @@ namespace Allors.Domain
         public InvoiceItemsTotalIncVatDerivation(M m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedConcreteRolePattern(M.SalesInvoiceItem.TotalIncVat),
-                new ChangedConcreteRolePattern(M.PurchaseInvoiceItem.TotalIncVat),
+                new ChangedRolePattern(M.SalesInvoiceItem.TotalIncVat),
+                new ChangedRolePattern(M.PurchaseInvoiceItem.TotalIncVat),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
