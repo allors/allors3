@@ -105,29 +105,29 @@ namespace Allors.Domain.Derivations.Default
 
                         var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = session, Validation = domainValidation };
 
-                        var matchesByDerivationId = new Dictionary<Guid, IEnumerable<IObject>>();
+                        var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
                         foreach (var kvp in domainDerivationById)
                         {
-                            var id = kvp.Key;
                             var domainDerivation = kvp.Value;
-
                             var matches = new HashSet<IObject>();
 
                             foreach (var pattern in domainDerivation.Patterns)
                             {
-                                var source = pattern switch
+                                IEnumerable<IObject> source = pattern switch
                                 {
                                     CreatedPattern createdPattern => changeSet.Created
                                         .Where(v => v.Class.IsAssignableFrom(createdPattern.Composite))
                                         .Select(v => v.GetObject()),
-                                    ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet.AssociationsByRoleType
-                                        .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                        .SelectMany(v => session.Instantiate(v.Value)),
-                                    ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet.AssociationsByRoleType
-                                        .Where(v => v.Key.Equals(roleClass))
-                                        .SelectMany(v => session.Instantiate(v.Value)),
+                                    ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
+                                            .AssociationsByRoleType
+                                            .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                            .SelectMany(v => session.Instantiate(v.Value)),
+                                    ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
+                                            .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
+                                            .SelectMany(v => session.Instantiate(v.Value))
+                                            .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeClass)),
                                     ChangedAssociationPattern changedAssociationsPattern => changeSet
-                                        .AssociationsByRoleType
+                                        .RolesByAssociationType
                                         .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
                                         .SelectMany(v => session.Instantiate(v.Value)),
                                     _ => Array.Empty<IObject>()
@@ -148,16 +148,18 @@ namespace Allors.Domain.Derivations.Default
                                 }
                             }
 
-                            matchesByDerivationId[id] = matches;
+                            if (matches.Count > 0)
+                            {
+                                matchesByDerivation[domainDerivation] = matches;
+                            }
                         }
 
                         // TODO: Prefetching
 
-                        foreach (var kvp in domainDerivationById)
+                        foreach (var kvp in matchesByDerivation)
                         {
-                            var id = kvp.Key;
-                            var domainDerivation = kvp.Value;
-                            var matches = matchesByDerivationId[id];
+                            var domainDerivation = kvp.Key;
+                            var matches = kvp.Value;
                             domainDerivation.Derive(domainCycle, matches);
                         }
 
