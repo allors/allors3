@@ -36,6 +36,11 @@ namespace Allors.Domain
                 {
                     settings.ProductNumberCounter = new CounterBuilder(settings.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                 }
+
+                if (!settings.ExistPartNumberCounter)
+                {
+                    settings.PartNumberCounter = new CounterBuilder(settings.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                }
             }
         }
     }

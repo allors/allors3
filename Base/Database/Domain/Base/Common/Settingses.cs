@@ -30,10 +30,10 @@ namespace Allors.Domain
             var preferredCurrency = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             settings.InventoryStrategy ??= inventoryStrategy;
-            settings.SkuPrefix ??= "Sku";
-            settings.SerialisedItemPrefix ??= "S";
-            settings.ProductNumberPrefix ??= "art-";
-            settings.PartNumberPrefix ??= "part-";
+            settings.SkuPrefix ??= "Sku-";
+            settings.SerialisedItemPrefix ??= "S-";
+            settings.ProductNumberPrefix ??= "Art-";
+            settings.PartNumberPrefix ??= "Part-";
             settings.PreferredCurrency ??= preferredCurrency;
 
             settings.SkuCounter ??= new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
