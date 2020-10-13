@@ -56,15 +56,12 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
 
-        internal long CreateWorkspaceObject(IClass @class)
-        {
-            var workspaceId = this.NextWorkspaceId();
-            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
-            return workspaceId;
-        }
+        internal void RegisterWorkspaceIdForDatabaseObject(long databaseId, long workspaceId) => this.workspaceIdByDatabaseId.Add(databaseId, workspaceId);
+
+        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
 
         internal long NextWorkspaceId() => --this.worskpaceIdCounter;
-
+        
         internal long ToWorkspaceId(long id)
         {
             if (id > 0)
@@ -72,7 +69,7 @@ namespace Allors.Workspace.Adapters.Remote
                 if (!this.workspaceIdByDatabaseId.TryGetValue(id, out var workspaceId))
                 {
                     workspaceId = this.NextWorkspaceId();
-                    this.workspaceIdByDatabaseId.Add(workspaceId, id);
+                    this.workspaceIdByDatabaseId.Add(id, workspaceId);
 
                 }
 

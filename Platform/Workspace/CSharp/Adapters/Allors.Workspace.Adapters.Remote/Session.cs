@@ -222,8 +222,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Set(Strategy strategy, IRoleType roleType, object value) => this.population.SetRole(strategy.WorkspaceId, roleType, value);
 
-        internal IObject GetForAssociation(long workspaceId)
+        internal IObject GetForAssociation(long id)
         {
+            var workspaceId = this.Workspace.ToWorkspaceId(id);
             this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy);
             return strategy?.Object;
         }
@@ -231,7 +232,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal PushRequest PushRequest() => new PushRequest
         {
             NewObjects = this.newDatabaseStrategies?.Select(v => v.SaveNew()).ToArray(),
-            Objects = this.strategyByWorkspaceId.Where(v => v.Value.HasDatabaseChanges).Select(v => v.Value.SaveExisting()).ToArray(),
+            Objects = this.strategyByWorkspaceId.Where(v => v.Value.HasDatabaseChanges && v.Value.DatabaseObject != null).Select(v => v.Value.SaveExisting()).ToArray(),
         };
 
         internal void PushResponse(PushResponse pushResponse)
@@ -243,6 +244,8 @@ namespace Allors.Workspace.Adapters.Remote
                     var workspaceId = long.Parse(pushResponseNewObject.WI);
                     var databaseId = long.Parse(pushResponseNewObject.I);
 
+                    this.Workspace.RegisterWorkspaceIdForDatabaseObject(databaseId, workspaceId);
+
                     var strategy = this.strategyByWorkspaceId[workspaceId];
                     strategy.PushResponse(databaseId);
 
@@ -250,7 +253,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            if (this.newDatabaseStrategies.Count != 0)
+            if (this.newDatabaseStrategies?.Count > 0)
             {
                 throw new Exception("Not all new objects received ids");
             }
@@ -268,7 +271,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IObject CreateDatabaseObject(IClass @class)
         {
-            var strategy = new Strategy(this, @class, this.Workspace.NextWorkspaceId());
+            var workspaceId = this.Workspace.NextWorkspaceId();
+            var strategy = new Strategy(this, @class, workspaceId);
             this.newDatabaseStrategies ??= new List<Strategy>();
             this.newDatabaseStrategies.Add(strategy);
             this.strategyByWorkspaceId.Add(strategy.WorkspaceId, strategy);
@@ -278,7 +282,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IObject CreateWorkspaceObject(IClass @class)
         {
-            var workspaceId = this.Workspace.CreateWorkspaceObject(@class);
+            var workspaceId = this.Workspace.NextWorkspaceId();
+            this.Workspace.RegisterWorkspaceIdForWorkspaceObject(@class, workspaceId);
             var strategy = new Strategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;

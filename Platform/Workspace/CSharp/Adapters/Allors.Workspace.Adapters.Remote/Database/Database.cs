@@ -247,7 +247,7 @@ namespace Allors.Workspace.Adapters.Remote
                             }
 
                             return permissionId;
-                        }) ?? Array.Empty<long>();
+                        });
 
                     this.AccessControlById[id] = new AccessControl(id, version, new HashSet<long>(permissionsIds));
                 }
