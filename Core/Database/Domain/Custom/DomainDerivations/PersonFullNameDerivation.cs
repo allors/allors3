@@ -15,8 +15,8 @@ namespace Allors.Domain
         public PersonFullNameDerivation(M m) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedRolePattern( m.Person.FirstName),
-                new ChangedRolePattern( m.Person.LastName),
+                new ChangedRolePattern(m.Person.FirstName),
+                new ChangedRolePattern(m.Person.LastName),
             };
 
         public Guid Id => new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D");
