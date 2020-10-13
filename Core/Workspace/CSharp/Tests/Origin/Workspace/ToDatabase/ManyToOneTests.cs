@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Workspace
+namespace Tests.Workspace.Origin.Workspace.ToDatabase
 {
     using System.Linq;
     using Allors.Workspace.Data;
@@ -11,10 +11,10 @@ namespace Tests.Workspace.Origin.Workspace
     using Nito.AsyncEx;
     using Xunit;
 
-    public class ToDatabaseObjectTests : Test
+    public class Many2OneTests : Test
     {
         [Fact]
-        public void Many2One() =>
+        public void GetRole() =>
            AsyncContext.Run(
                async () =>
                {

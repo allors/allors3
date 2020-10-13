@@ -114,7 +114,7 @@ namespace Allors.Workspace.Adapters.Remote
                 this.RemoveRole(association, roleType);
                 return;
             }
-            
+
             if (roleType.ObjectType.IsUnit)
             {
                 // Role
@@ -242,7 +242,45 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void RemoveRole(long association, IRoleType roleType)
         {
-            throw new NotImplementedException();
+            if (roleType.ObjectType.IsUnit)
+            {
+                // Role
+                this.ChangedRoleByAssociation(roleType)[association] = null;
+            }
+            else
+            {
+                var associationType = roleType.AssociationType;
+                this.GetRole(association, roleType, out var previousRole);
+
+                if (roleType.IsOne)
+                {
+                    // Role
+                    var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+                    changedRoleByAssociation[association] = null;
+
+                    // Association
+                    var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+                    if (associationType.IsOne)
+                    {
+                        // One to One
+                        if (previousRole != null)
+                        {
+                            var previousRoleObject = (long)previousRole;
+                            changedAssociationByRole[previousRoleObject] = null;
+                        }
+                    }
+                }
+                else
+                {
+                    var previousRoles = (long[])previousRole ?? Array.Empty<long>();
+
+                    // Use Diff (Remove)
+                    foreach (var removeRole in previousRoles)
+                    {
+                        this.RemoveRole(association, roleType, removeRole);
+                    }
+                }
+            }
         }
 
         internal void GetAssociation(long role, IAssociationType associationType, out object association)

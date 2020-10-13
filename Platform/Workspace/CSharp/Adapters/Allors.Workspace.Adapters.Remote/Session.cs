@@ -18,14 +18,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : ISession
     {
-        private readonly Population population;
-        private readonly Dictionary<long, IClass> sessionClassByWorkspaceId;
-
         private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
-
         private List<Strategy> newDatabaseStrategies;
-        private readonly HashSet<Strategy> workspaceStrategies;
-        private readonly HashSet<Strategy> sessionStrategies;
 
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
@@ -35,22 +29,21 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
 
-            this.population = new Population();
-            this.workspaceStrategies = new HashSet<Strategy>();
-            this.sessionStrategies = new HashSet<Strategy>();
-
+            this.Population = new Population();
             this.StateLifecycle.OnInit(this);
         }
 
         ~Session() => this.Workspace.UnregisterSession(this);
-
-        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.strategyByWorkspaceId.Values.Any(v => v.HasDatabaseChanges);
 
         public ISessionStateLifecycle StateLifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
 
         internal Workspace Workspace { get; }
+
+        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.strategyByWorkspaceId.Values.Any(v => v.HasDatabaseChanges);
+
+        internal Population Population { get; }
 
         public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
 
@@ -186,12 +179,6 @@ namespace Allors.Workspace.Adapters.Remote
             return new SaveResult(pushResponse);
         }
 
-        internal object Get(Strategy strategy, IRoleType roleType)
-        {
-            this.population.GetRole(strategy.WorkspaceId, roleType, out var role);
-            return role;
-        }
-
         internal IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
@@ -202,7 +189,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (roleType.IsOne)
                     {
-                        var role = (IObject)((Strategy)association.Strategy).GetForAssociation(roleType);
+                        var role = (IObject)((Strategy)association.Strategy).GetAssociationForDatabase(roleType);
                         if (role != null && role.WorkspaceId == @object.WorkspaceId)
                         {
                             yield return association;
@@ -210,7 +197,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roles = (IObject[])((Strategy)association.Strategy).GetForAssociation(roleType);
+                        var roles = (IObject[])((Strategy)association.Strategy).GetAssociationForDatabase(roleType);
                         if (roles != null && roles.Contains(@object))
                         {
                             yield return association;
@@ -219,8 +206,6 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
         }
-
-        internal void Set(Strategy strategy, IRoleType roleType, object value) => this.population.SetRole(strategy.WorkspaceId, roleType, value);
 
         internal IObject GetForAssociation(long id)
         {
@@ -279,7 +264,6 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy.Object;
         }
 
-
         private IObject CreateWorkspaceObject(IClass @class)
         {
             var workspaceId = this.Workspace.NextWorkspaceId();
@@ -292,7 +276,6 @@ namespace Allors.Workspace.Adapters.Remote
         private IObject CreateSessionObject(IClass @class)
         {
             var workspaceId = this.Workspace.NextWorkspaceId();
-            this.sessionClassByWorkspaceId.Add(workspaceId, @class);
             var strategy = new Strategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
