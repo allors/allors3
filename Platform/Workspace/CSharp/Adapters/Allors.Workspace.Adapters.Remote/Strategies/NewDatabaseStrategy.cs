@@ -13,40 +13,22 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Data;
     using Protocol.Database.Push;
 
-    public class Strategy : IStrategy
+    public class NewDatabaseStrategy : IDatabaseStrategy
     {
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
         private IObject @object;
-
-        public Strategy(Session session, DatabaseObject databaseObject, long workspaceId)
-        {
-            this.Session = session;
-            this.DatabaseObject = databaseObject;
-            this.Class = databaseObject.Class;
-            this.WorkspaceId = workspaceId;
-        }
-
-        public Strategy(Session session, IClass @class, long workspaceId)
+        
+        public NewDatabaseStrategy(Session session, IClass @class, long workspaceId)
         {
             this.Session = session;
             this.Class = @class;
             this.WorkspaceId = workspaceId;
         }
-
-        public void PushResponse(long databaseId) =>
-            this.DatabaseObject = this.Session.Workspace.Database.PushResponse(databaseId, this.Class);
-
-        public IObject Object
-        {
-            get
-            {
-                this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
-                return this.@object;
-            }
-        }
+        
+        public IObject Object => this.@object ??= this.Session.Object(this.WorkspaceId);
 
         public DatabaseObject DatabaseObject { get; private set; }
 
@@ -185,14 +167,14 @@ namespace Allors.Workspace.Adapters.Remote
             Roles = this.SaveRoles(),
         };
 
-        internal PushRequestObject SaveExisting() => new PushRequestObject
+        public PushRequestObject SaveExisting() => new PushRequestObject
         {
             I = this.DatabaseId?.ToString(),
             V = this.Version.ToString(),
             Roles = this.SaveRoles(),
         };
 
-        internal void Reset()
+        public void Reset()
         {
             if (this.DatabaseObject != null)
             {
@@ -204,7 +186,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.roleByRoleType = new Dictionary<IRoleType, object>();
         }
 
-        internal void Refresh(bool merge = false)
+        public void Refresh(bool merge = false)
         {
             if (!this.HasDatabaseChanges)
             {
@@ -326,7 +308,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRoleType[roleType] = value;
         }
 
-        internal object GetAssociationForDatabase(IRoleType roleType)
+        public object GetAssociationForDatabase(IRoleType roleType)
         {
             if (!this.roleByRoleType.TryGetValue(roleType, out var value))
             {

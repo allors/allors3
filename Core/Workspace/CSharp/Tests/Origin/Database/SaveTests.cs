@@ -30,12 +30,12 @@ namespace Tests.Workspace.Origin.Database
             {
                 if (associationType.IsOne)
                 {
-                    var association = ((Strategy)newObject.Strategy).GetAssociation(associationType);
+                    var association = ((IDatabaseStrategy)newObject.Strategy).GetAssociation(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = ((Strategy)newObject.Strategy).GetAssociations(associationType);
+                    var association = ((IDatabaseStrategy)newObject.Strategy).GetAssociations(associationType);
                     Assert.Empty(association);
                 }
             }

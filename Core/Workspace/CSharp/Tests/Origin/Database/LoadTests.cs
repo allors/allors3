@@ -62,12 +62,12 @@ namespace Tests.Workspace.Origin.Database
                 {
                     if (associationType.IsOne)
                     {
-                        var association = ((Strategy)c1.Strategy).GetAssociation(associationType);
+                        var association = ((IDatabaseStrategy)c1.Strategy).GetAssociation(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = ((Strategy)c1.Strategy).GetAssociations(associationType);
+                        var association = ((IDatabaseStrategy)c1.Strategy).GetAssociations(associationType);
                         Assert.Empty(association);
                     }
                 }
@@ -102,12 +102,12 @@ namespace Tests.Workspace.Origin.Database
                 {
                     if (associationType.IsOne)
                     {
-                        var association = ((Strategy)c1.Strategy).GetAssociation(associationType);
+                        var association = ((IDatabaseStrategy)c1.Strategy).GetAssociation(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = ((Strategy)c1.Strategy).GetAssociations(associationType);
+                        var association = ((IDatabaseStrategy)c1.Strategy).GetAssociations(associationType);
                         Assert.Empty(association);
                     }
                 }

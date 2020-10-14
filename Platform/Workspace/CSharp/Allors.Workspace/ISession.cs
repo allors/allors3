@@ -26,6 +26,8 @@ namespace Allors.Workspace
 
         void Reset();
 
+        void Refresh();
+
         Task<ICallResult> Call(Method method, CallOptions options = null);
 
         Task<ICallResult> Call(Method[] methods, CallOptions options = null);
