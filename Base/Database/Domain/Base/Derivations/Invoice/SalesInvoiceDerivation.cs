@@ -18,6 +18,7 @@ namespace Allors.Domain
         {
             new CreatedPattern(this.M.SalesInvoice.Class),
             new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
+            new ChangedRolePattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
