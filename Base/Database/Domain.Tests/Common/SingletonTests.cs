@@ -12,15 +12,23 @@ namespace Allors.Domain
         public SingletonTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenGeneralLedgerAccount_WhenDeriving_ThenRequiredRelationsMustExist()
+        public void GivenSingleton_WhenCreated_ThenLogoImageMustExist()
         {
-            //TODO: NotificationConfirm that it works
+            var singleton = this.Session.GetSingleton();
+
+            Assert.True(singleton.ExistLogoImage);
+        }
+
+        [Fact]
+        public void GivenNewAdditionaleLocale_WhenDeriving_ThenLocalesIsDerived()
+        {
             var singleton = this.Session.GetSingleton();
             var localeCount = singleton.Locales.Count;
 
-            singleton.AddLocale(new Locales(this.Session).EnglishUnitedStates);
+            singleton.AddAdditionalLocale(new Locales(this.Session).EnglishUnitedStates);
 
-            Assert.True(singleton.ExistLogoImage);
+            this.Session.Derive();
+
             Assert.Contains(singleton.DefaultLocale, singleton.Locales);
             Assert.Contains(new Locales(this.Session).EnglishUnitedStates, singleton.Locales);
             Assert.Equal(localeCount + 1, singleton.Locales.Count);

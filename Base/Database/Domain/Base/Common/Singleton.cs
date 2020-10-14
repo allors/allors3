@@ -17,32 +17,6 @@ namespace Allors.Domain
     /// </summary>
     public partial class Singleton
     {
-        public void BaseOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (changeSet.IsCreated(this) || changeSet.HasChangedRole(this, this.Meta.AdditionalLocales))
-            //{
-            //    foreach (Good product in new Goods(this.Strategy.Session).Extent())
-            //    {
-            //        iteration.Mark(product);
-            //    }
-            //}
-        }
-
-        public void BaseOnDerive(ObjectOnDerive method)
-        {
-            //var session = this.Strategy.Session;
-
-            //if (!this.ExistLogoImage)
-            //{
-            //    this.LogoImage = new MediaBuilder(this.Strategy.Session).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
-            //}
-
-            //this.Locales = this.AdditionalLocales;
-            //this.AddLocale(this.DefaultLocale);
-        }
-
         private byte[] GetResourceBytes(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;

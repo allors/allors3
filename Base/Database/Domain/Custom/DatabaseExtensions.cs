@@ -60,7 +60,8 @@ namespace Allors.Domain
                 new InventoryItemTransactionDerivation(m),
                 new InventoryItemDerivation(m),
                 new CatalogueDerivation(m),
-                new SingletonDerivation(m),
+                new SingletonCreationDerivation(m),
+                new SingletonLocalesDerivation(m),
                 new SettingsDerivation(m),
                 new PhoneCommunicationDerivation(m),
                 new ProfessionalServicesRelationshipDerivation(m),
@@ -112,7 +113,7 @@ namespace Allors.Domain
                 new SalesOrderItemDerivation(m), //Has Dependency on OrderShipment
                 new SalesOrderDerivation(m), //Has Dependency on SalesOrderItem
 
-                new InvoiceItemsTotalIncVatDerivation(m),
+                new InvoiceItemTotalIncVatDerivation(m),
             };
 
             foreach (var derivation in derivations)
