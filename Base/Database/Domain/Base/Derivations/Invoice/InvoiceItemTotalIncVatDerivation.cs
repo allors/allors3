@@ -11,21 +11,21 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class InvoiceItemsTotalIncVatDerivation : DomainDerivation
+    public class InvoiceItemTotalIncVatDerivation : DomainDerivation
     {
-        public InvoiceItemsTotalIncVatDerivation(M m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
+        public InvoiceItemTotalIncVatDerivation(M m) : base(m, new Guid("DB8D8C77-4E1A-4775-A243-79C7A558CFE4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedRolePattern(M.SalesInvoiceItem.TotalIncVat),
-                new ChangedRolePattern(M.PurchaseInvoiceItem.TotalIncVat),
+                new ChangedRolePattern(this.M.SalesInvoiceItem.TotalIncVat),
+                new ChangedRolePattern(this.M.PurchaseInvoiceItem.TotalIncVat),
+                new ChangedRolePattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var invoiceItem in matches.Cast<InvoiceItem>())
             {
-                var totalInvoiceItemAmountPaid =
-                    invoiceItem?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
+                var totalInvoiceItemAmountPaid = invoiceItem?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
                 if (totalInvoiceItemAmountPaid > invoiceItem.TotalIncVat)
                 {
                     cycle.Validation.AddError($"{invoiceItem} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");

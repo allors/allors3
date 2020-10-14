@@ -10,9 +10,9 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class SingletonDerivation : DomainDerivation
+    public class SingletonCreationDerivation : DomainDerivation
     {
-        public SingletonDerivation(M m) : base(m, new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b")) =>
+        public SingletonCreationDerivation(M m) : base(m, new Guid("5195dc97-6005-4a2c-b6ae-041f46969d3b")) =>
             this.Patterns = new[]
             {
                 new CreatedPattern(this.M.Singleton.Class)
@@ -26,9 +26,6 @@ namespace Allors.Domain
                 {
                     singleton.LogoImage = new MediaBuilder(singleton.Strategy.Session).WithInFileName("allors.png").WithInData(singleton.GetResourceBytes("allors.png")).Build();
                 }
-
-                singleton.Locales = singleton.AdditionalLocales;
-                singleton.AddLocale(singleton.DefaultLocale);
             }
         }
     }
