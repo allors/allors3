@@ -26,7 +26,7 @@ namespace Allors.Workspace
 
         void Reset();
 
-        void Refresh();
+        void Refresh(bool merge = false);
 
         Task<ICallResult> Call(Method method, CallOptions options = null);
 

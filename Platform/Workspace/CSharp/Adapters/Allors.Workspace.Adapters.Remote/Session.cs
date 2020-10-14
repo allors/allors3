@@ -18,8 +18,10 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : ISession
     {
-        private readonly Dictionary<long, StrategyProxy> strategyProxyByWorkspaceId;
-        private List<NewDatabaseStrategy> newDatabaseStrategies;
+        private readonly Dictionary<long, IStrategy> strategyByWorkspaceId;
+
+        private readonly IList<ExistingDatabaseStrategy> existingDatabaseStrategies;
+        private ISet<NewDatabaseStrategy> newDatabaseStrategies;
 
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
@@ -27,7 +29,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = stateLifecycle;
             this.Workspace.RegisterSession(this);
 
-            this.strategyProxyByWorkspaceId = new Dictionary<long, StrategyProxy>();
+            this.strategyByWorkspaceId = new Dictionary<long, IStrategy>();
+            this.existingDatabaseStrategies = new List<ExistingDatabaseStrategy>();
 
             this.Population = new Population();
             this.StateLifecycle.OnInit(this);
@@ -41,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Workspace Workspace { get; }
 
-        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.strategyProxyByWorkspaceId.Values.Any(v => v.HasDatabaseChanges);
+        internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.strategyByWorkspaceId.Values.Any(v => v.HasDatabaseChanges);
 
         internal Population Population { get; }
 
@@ -90,26 +93,26 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var workspaceId = this.Workspace.ToWorkspaceId(id);
 
-            if (!this.strategyProxyByWorkspaceId.TryGetValue(workspaceId, out var strategyProxy))
+            if (!this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy))
             {
                 if (this.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(workspaceId, out var @class))
                 {
-                    var strategy = new NewDatabaseStrategy(this, @class, workspaceId);
-                    strategyProxy = new StrategyProxy(strategy);
-                    this.strategyProxyByWorkspaceId[workspaceId] = strategyProxy;
+                    strategy = new WorkspaceStrategy(this, @class, workspaceId);
+                    this.strategyByWorkspaceId[workspaceId] = strategy;
                 }
                 else
                 {
                     var databaseObject = this.Workspace.Database.Get(id);
-                    var strategy = new ExistingDatabaseStrategy(this, databaseObject, workspaceId);
-                    strategyProxy = new StrategyProxy(strategy);
-                    this.strategyProxyByWorkspaceId[workspaceId] = strategyProxy;
+                    var existingStrategy = new ExistingDatabaseStrategy(this, databaseObject, workspaceId);
+                    this.existingDatabaseStrategies.Add(existingStrategy);
+                    strategy = new ProxyDatabaseStrategy(existingStrategy);
+                    this.strategyByWorkspaceId[workspaceId] = strategy;
                 }
             }
 
-            return strategyProxy.Object;
+            return strategy.Object;
         }
-
+        
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
@@ -148,17 +151,33 @@ namespace Allors.Workspace.Adapters.Remote
 
         public void Reset()
         {
-            foreach (var strategyProxy in this.strategyProxyByWorkspaceId.Values)
+            if (this.newDatabaseStrategies != null)
             {
-                strategyProxy.Strategy.Reset();
+                foreach (var databaseStrategy in this.newDatabaseStrategies)
+                {
+                    databaseStrategy.Reset();
+                }
+            }
+
+            foreach (var databaseStrategy in this.existingDatabaseStrategies)
+            {
+                databaseStrategy.Reset();
             }
         }
 
-        public void Refresh()
+        public void Refresh(bool merge = false)
         {
-            foreach (var strategyProxy in this.strategyProxyByWorkspaceId.Values)
+            if (this.newDatabaseStrategies != null)
             {
-                strategyProxy.Strategy.Refresh();
+                foreach (var databaseStrategy in this.newDatabaseStrategies)
+                {
+                    databaseStrategy.Refresh(merge);
+                }
+            }
+
+            foreach (var databaseStrategy in this.existingDatabaseStrategies)
+            {
+                databaseStrategy.Refresh(merge);
             }
         }
 
@@ -199,7 +218,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (roleType.IsOne)
                     {
-                        var role = (IObject)((IDatabaseStrategy)association.Strategy).GetAssociationForDatabase(roleType);
+                        var role = (IObject)((ProxyDatabaseStrategy)association.Strategy).Strategy.GetAssociationForDatabase(roleType);
                         if (role != null && role.WorkspaceId == @object.WorkspaceId)
                         {
                             yield return association;
@@ -207,7 +226,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roles = (IObject[])((IDatabaseStrategy)association.Strategy).GetAssociationForDatabase(roleType);
+                        var roles = (IObject[])((ProxyDatabaseStrategy)association.Strategy).Strategy.GetAssociationForDatabase(roleType);
                         if (roles != null && roles.Contains(@object))
                         {
                             yield return association;
@@ -220,14 +239,14 @@ namespace Allors.Workspace.Adapters.Remote
         internal IObject GetForAssociation(long id)
         {
             var workspaceId = this.Workspace.ToWorkspaceId(id);
-            this.strategyProxyByWorkspaceId.TryGetValue(workspaceId, out var strategy);
+            this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy);
             return strategy?.Object;
         }
 
         internal PushRequest PushRequest() => new PushRequest
         {
             NewObjects = this.newDatabaseStrategies?.Select(v => v.SaveNew()).ToArray(),
-            Objects = this.strategyProxyByWorkspaceId.Where(v => v.Value.HasDatabaseChanges && v.Value.Strategy.DatabaseObject != null).Select(v => v.Value.Strategy.SaveExisting()).ToArray(),
+            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.SaveExisting()).ToArray(),
         };
 
         internal void PushResponse(PushResponse pushResponse)
@@ -241,11 +260,13 @@ namespace Allors.Workspace.Adapters.Remote
 
                     this.Workspace.RegisterWorkspaceIdForDatabaseObject(databaseId, workspaceId);
                     
-                    var strategyProxy = this.strategyProxyByWorkspaceId[workspaceId];
+                    var strategyProxy = (ProxyDatabaseStrategy)this.strategyByWorkspaceId[workspaceId];
                     this.newDatabaseStrategies.Remove((NewDatabaseStrategy) strategyProxy.Strategy);
 
                     var databaseObject = this.Workspace.Database.PushResponse(databaseId, strategyProxy.Class);
-                    strategyProxy.Strategy = new ExistingDatabaseStrategy(this, databaseObject, workspaceId);
+                    var strategy = new ExistingDatabaseStrategy(this, databaseObject, workspaceId);
+                    this.existingDatabaseStrategies.Add(strategy);
+                    strategyProxy.Strategy = strategy;
                 }
             }
 
@@ -261,10 +282,10 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var workspaceId = this.Workspace.NextWorkspaceId();
             var strategy = new NewDatabaseStrategy(this, @class, workspaceId);
-            this.newDatabaseStrategies ??= new List<NewDatabaseStrategy>();
+            this.newDatabaseStrategies ??= new HashSet<NewDatabaseStrategy>();
             this.newDatabaseStrategies.Add(strategy);
-            var strategyProxy = new StrategyProxy(strategy);
-            this.strategyProxyByWorkspaceId.Add(strategy.WorkspaceId, strategyProxy);
+            var strategyProxy = new ProxyDatabaseStrategy(strategy);
+            this.strategyByWorkspaceId.Add(strategy.WorkspaceId, strategyProxy);
             return strategy.Object;
         }
 
@@ -273,8 +294,7 @@ namespace Allors.Workspace.Adapters.Remote
             var workspaceId = this.Workspace.NextWorkspaceId();
             this.Workspace.RegisterWorkspaceIdForWorkspaceObject(@class, workspaceId);
             var strategy = new WorkspaceStrategy(this, @class, workspaceId);
-            var strategyProxy = new StrategyProxy(strategy);
-            this.strategyProxyByWorkspaceId[strategy.WorkspaceId] = strategyProxy;
+            this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
         }
 
@@ -282,8 +302,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var workspaceId = this.Workspace.NextWorkspaceId();
             var strategy = new SessionStrategy(this, @class, workspaceId);
-            var strategyProxy = new StrategyProxy(strategy);
-            this.strategyProxyByWorkspaceId[strategy.WorkspaceId] = strategyProxy;
+            this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
         }
 
@@ -307,7 +326,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IObject Object(long workspaceId)
         {
-            var strategyProxy = this.strategyProxyByWorkspaceId[workspaceId];
+            var strategyProxy = this.strategyByWorkspaceId[workspaceId];
             var @object = this.Workspace.ObjectFactory.Create(strategyProxy);
             return @object;
         }

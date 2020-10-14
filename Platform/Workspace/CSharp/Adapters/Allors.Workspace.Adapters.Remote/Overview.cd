@@ -3,17 +3,13 @@
   <Class Name="Allors.Workspace.Adapters.Remote.Session">
     <Position X="0.5" Y="7" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAQAwIAAAQBABgQIAAQAAAgEAAAgAEAAAIAQAQBAAAA=</HashCode>
+      <HashCode>AAQAwMAAAQBAAgQoAAQAAAgEAAAgAEAAAIAQAQBAAAA=</HashCode>
       <FileName>Session.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Workspace" />
       <Property Name="Population" />
     </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Field Name="strategyByWorkspaceId" />
-      <Field Name="newDatabaseStrategies" />
-    </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Database">
@@ -73,41 +69,52 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.SessionStrategy">
-    <Position X="11.5" Y="9.75" Width="2" />
+    <Position X="12.25" Y="9.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAAIAAEgAAAIgAAAAQAAEIAAAAAA=</HashCode>
+      <HashCode>JAKAAAAAQIBCJQBgEEIABkgAAAICAAAAQBAUIAFIAAI=</HashCode>
       <FileName>Strategies\SessionStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.WorkspaceStrategy">
-    <Position X="9.25" Y="9.75" Width="2" />
+    <Position X="9.75" Y="9.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAAIAAEgAAAIgAAAAQAAEIAAAAAA=</HashCode>
+      <HashCode>JAKAAAAAQIBCJQBgEEIABkgAAAICAAAAQBAUIAFIAAI=</HashCode>
       <FileName>Strategies\WorkspaceStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.NewDatabaseStrategy">
-    <Position X="4.5" Y="9.75" Width="2.25" />
+    <Position X="4.75" Y="9.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>JAKAAAAAQIBCJQBgEEIABkgAAAIiAAAAQBAUIAFIAAI=</HashCode>
+      <HashCode>JAKAAAAAQIBCJQBgEEIABkgAAAICAAAAQBAUIAFIAAI=</HashCode>
       <FileName>Strategies\NewDatabaseStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.ExistingDatabaseStrategy">
-    <Position X="7" Y="9.75" Width="2" />
+    <Position X="7.25" Y="9.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>JAKAAAAAQIBCJQBgEEIABkgAAAIiAAAAQBAUIAFIAAI=</HashCode>
+      <HashCode>JAKAAAAAQIBCJQBgEEIABkgAAAICAAAAQBAUIAFIAAI=</HashCode>
       <FileName>Strategies\ExistingDatabaseStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="Allors.Workspace.Adapters.Remote.IDatabaseStrategy" Collapsed="true">
-    <Position X="8.25" Y="8.25" Width="1.5" />
+  <Class Name="Allors.Workspace.Adapters.Remote.ProxyDatabaseStrategy" Collapsed="true">
+    <Position X="3.25" Y="8" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABABAAAAAAAAAgAAAAiAAAAABAAAAAAAAA=</HashCode>
+      <HashCode>IAIAAAAAAAAABQBgEEIABAAAAAIAAAAAQAAQABFIAAA=</HashCode>
+      <FileName>Strategies\ProxyDatabaseStrategy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Strategy" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Allors.Workspace.Adapters.Remote.IDatabaseStrategy" Collapsed="true">
+    <Position X="6" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABABAAAAAAAAAgAAAACAAAAABAAAAAAAAA=</HashCode>
       <FileName>Strategies\IDatabaseStrategy.cs</FileName>
     </TypeIdentifier>
   </Interface>

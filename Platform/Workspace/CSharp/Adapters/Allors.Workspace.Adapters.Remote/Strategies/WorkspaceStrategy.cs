@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Data;
     using Protocol.Database.Push;
 
-    public class WorkspaceStrategy : IDatabaseStrategy
+    public class WorkspaceStrategy : IStrategy
     {
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 

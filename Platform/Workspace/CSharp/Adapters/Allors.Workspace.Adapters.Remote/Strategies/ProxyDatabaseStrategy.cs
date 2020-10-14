@@ -8,9 +8,9 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using Meta;
 
-    public class StrategyProxy : IStrategy
+    public class ProxyDatabaseStrategy : IStrategy
     {
-        public StrategyProxy(IDatabaseStrategy strategy) => this.Strategy = strategy;
+        public ProxyDatabaseStrategy(IDatabaseStrategy strategy) => this.Strategy = strategy;
 
         public IDatabaseStrategy Strategy
         {
