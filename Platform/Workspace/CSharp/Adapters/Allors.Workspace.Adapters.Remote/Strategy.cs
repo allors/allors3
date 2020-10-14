@@ -36,7 +36,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceId = workspaceId;
         }
 
-        public void PushResponse(long databaseId) => this.DatabaseObject = this.Session.Workspace.Database.PushResponse(databaseId, this.Class);
+        public void PushResponse(long databaseId) =>
+            this.DatabaseObject = this.Session.Workspace.Database.PushResponse(databaseId, this.Class);
 
         public IObject Object
         {
@@ -112,9 +113,10 @@ namespace Allors.Workspace.Adapters.Remote
         public bool Exist(IRoleType roleType)
         {
             var value = this.Get(roleType);
+            
             if (roleType.ObjectType.IsComposite && roleType.IsMany)
             {
-                return ((IEnumerable<IStrategy>)value).Any();
+                return ((IEnumerable<IObject>)value).Any();
             }
 
             return value != null;
@@ -122,13 +124,105 @@ namespace Allors.Workspace.Adapters.Remote
 
         public object Get(IRoleType roleType) => roleType.Origin switch
         {
-            Origin.Database => this.DatabaseGet(roleType),
-            Origin.Workspace => this.WorkspaceGet(roleType),
-            Origin.Session => this.SessionGet(roleType),
+            Origin.Database => this.GetForDatabase(roleType),
+            Origin.Workspace => this.GetForWorkspace(roleType),
+            Origin.Session => this.GetForSession(roleType),
             _ => throw new Exception($"Unsupported origin: {roleType.Origin}"),
         };
+     
+        public void Set(IRoleType roleType, object value)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Database:
+                    this.SetForDatabase(roleType, value);
+                    break;
+                case Origin.Workspace:
+                    this.Session.Workspace.Population.SetRole(this.WorkspaceId, roleType, value);
+                    break;
+                case Origin.Session:
+                    this.Session.Population.SetRole(this.WorkspaceId, roleType, value);
+                    break;
+                default:
+                    throw new Exception($"Unsupported origin: {roleType.Origin}");
+            }
+        }
 
-        public object DatabaseGet(IRoleType roleType)
+        public void Add(IRoleType roleType, IObject value)
+        {
+            var roles = (IObject[])this.Get(roleType);
+            if (!roles.Contains(value))
+            {
+                roles = new List<IObject>(roles) { value }.ToArray();
+            }
+
+            this.Set(roleType, roles);
+        }
+
+        public void Remove(IRoleType roleType, IObject value)
+        {
+            var roles = (IStrategy[])this.Get(roleType);
+            if (roles.Contains(value.Strategy))
+            {
+                var newRoles = new List<IStrategy>(roles);
+                newRoles.Remove(value.Strategy);
+                roles = newRoles.ToArray();
+            }
+
+            this.Set(roleType, roles);
+        }
+
+        public object GetAssociation(IAssociationType associationType) =>
+            this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
+
+        public IEnumerable<IObject> GetAssociations(IAssociationType associationType) =>
+            this.Session.GetAssociation(this.Object, associationType);
+
+        internal PushRequestNewObject SaveNew() => new PushRequestNewObject
+        {
+            NI = this.WorkspaceId.ToString(),
+            T = this.Class.IdAsString,
+            Roles = this.SaveRoles(),
+        };
+
+        internal PushRequestObject SaveExisting() => new PushRequestObject
+        {
+            I = this.DatabaseId?.ToString(),
+            V = this.Version.ToString(),
+            Roles = this.SaveRoles(),
+        };
+
+        internal void Reset()
+        {
+            if (this.DatabaseObject != null)
+            {
+                this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
+            }
+
+            this.changedRoleByRoleType = null;
+
+            this.roleByRoleType = new Dictionary<IRoleType, object>();
+        }
+
+        internal void Refresh(bool merge = false)
+        {
+            if (!this.HasDatabaseChanges)
+            {
+                this.Reset();
+            }
+            else
+            {
+                if (merge)
+                {
+                    if (this.DatabaseObject != null)
+                    {
+                        this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
+                    }
+                }
+            }
+        }
+        
+        private object GetForDatabase(IRoleType roleType)
         {
             if (!this.roleByRoleType.TryGetValue(roleType, out var value))
             {
@@ -173,63 +267,31 @@ namespace Allors.Workspace.Adapters.Remote
             return value;
         }
 
-        public object WorkspaceGet(IRoleType roleType)
+        private object GetForWorkspace(IRoleType roleType)
         {
-            var role = this.Session.Workspace.Get(this, roleType);
+            this.Session.Workspace.Population.GetRole(this.WorkspaceId, roleType, out var role);
             if (roleType.ObjectType.IsUnit)
             {
                 return role;
             }
-            else
+
+            if (roleType.IsOne)
             {
-                if (roleType.IsOne)
-                {
-                    var id = (long?)role;
-                    if (id.HasValue)
-                    {
-                        return this.Session.Instantiate(id.Value);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    var ids = (IEnumerable<long>)role;
-                    if (ids != null)
-                    {
-                        return ids.Select(v => this.Session.Instantiate(v)).ToArray();
-                    }
-                    else
-                    {
-                        return this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
-                    }
-                }
+                var id = (long?)role;
+                return id.HasValue ? this.Session.Instantiate(id.Value) : null;
             }
+
+            var ids = (IEnumerable<long>)role;
+            return ids?.Select(v => this.Session.Instantiate(v)).ToArray() ?? this.Session.Workspace.ObjectFactory.EmptyArray(roleType.ObjectType);
         }
 
-        public object SessionGet(IRoleType roleType) => this.Session.Get(this, roleType);
-
-        public void Set(IRoleType roleType, object value)
+        private object GetForSession(IRoleType roleType)
         {
-            switch (roleType.Origin)
-            {
-                case Origin.Database:
-                    this.DatabaseSet(roleType, value);
-                    break;
-                case Origin.Workspace:
-                    this.WorkspaceSet(roleType, value);
-                    break;
-                case Origin.Session:
-                    this.SessionSet(roleType, value);
-                    break;
-                default:
-                    throw new Exception($"Unsupported origin: {roleType.Origin}");
-            }
+            this.Session.Population.GetRole(this.WorkspaceId, roleType, out var role);
+            return role;
         }
 
-        public void DatabaseSet(IRoleType roleType, object value)
+        private void SetForDatabase(IRoleType roleType, object value)
         {
             var current = this.Get(roleType);
             if (roleType.ObjectType.IsUnit || roleType.IsOne)
@@ -241,23 +303,18 @@ namespace Allors.Workspace.Adapters.Remote
             }
             else
             {
-                if (value == null)
-                {
-                    value = Array.Empty<IStrategy>();
-                }
+                value ??= Array.Empty<IStrategy>();
 
                 var currentCollection = (IList<object>)current;
                 var valueCollection = (IList<object>)value;
-                if (currentCollection.Count == valueCollection.Count && !currentCollection.Except(valueCollection).Any())
+                if (currentCollection.Count == valueCollection.Count &&
+                    !currentCollection.Except(valueCollection).Any())
                 {
                     return;
                 }
             }
 
-            if (this.changedRoleByRoleType == null)
-            {
-                this.changedRoleByRoleType = new Dictionary<IRoleType, object>();
-            }
+            this.changedRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
             if (roleType.ObjectType.IsComposite && roleType.IsMany)
             {
@@ -269,83 +326,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedRoleByRoleType[roleType] = value;
         }
 
-        public void WorkspaceSet(IRoleType roleType, object value) => this.Session.Workspace.Set(this, roleType, value);
-
-        public void SessionSet(IRoleType roleType, object value) => this.Session.Set(this, roleType, value);
-
-        public void Add(IRoleType roleType, IObject value)
-        {
-            var roles = (IObject[])this.Get(roleType);
-            if (!roles.Contains(value))
-            {
-                roles = new List<IObject>(roles) { value }.ToArray();
-            }
-
-            this.Set(roleType, roles);
-        }
-
-        public void Remove(IRoleType roleType, IObject value)
-        {
-            var roles = (IStrategy[])this.Get(roleType);
-            if (roles.Contains(value.Strategy))
-            {
-                var newRoles = new List<IStrategy>(roles);
-                newRoles.Remove(value.Strategy);
-                roles = newRoles.ToArray();
-            }
-
-            this.Set(roleType, roles);
-        }
-
-        public object GetAssociation(IAssociationType associationType) => this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
-
-        public IEnumerable<IObject> GetAssociations(IAssociationType associationType) => this.Session.GetAssociation(this.Object, associationType);
-
-        public PushRequestNewObject SaveNew() => new PushRequestNewObject
-        {
-            NI = this.DatabaseId?.ToString(),
-            T = this.Class.IdAsString,
-            Roles = this.SaveRoles(),
-        };
-
-        public PushRequestObject SaveExisting() => new PushRequestObject
-        {
-            I = this.DatabaseId?.ToString(),
-            V = this.Version.ToString(),
-            Roles = this.SaveRoles(),
-        };
-
-        public void Reset()
-        {
-            if (this.DatabaseObject != null)
-            {
-                this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
-            }
-
-            this.changedRoleByRoleType = null;
-
-            this.roleByRoleType = new Dictionary<IRoleType, object>();
-        }
-
-        public void Refresh(bool merge = false)
-        {
-            if (!this.HasDatabaseChanges)
-            {
-                this.Reset();
-            }
-            else
-            {
-                if (merge)
-                {
-                    if (this.DatabaseObject != null)
-                    {
-                        this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
-                    }
-                }
-            }
-        }
-
-        public object GetForAssociation(IRoleType roleType)
+        internal object GetAssociationForDatabase(IRoleType roleType)
         {
             if (!this.roleByRoleType.TryGetValue(roleType, out var value))
             {
@@ -386,64 +367,72 @@ namespace Allors.Workspace.Adapters.Remote
 
         private PushRequestRole[] SaveRoles()
         {
-            var saveRoles = new List<PushRequestRole>();
-
-            foreach (var keyValuePair in this.changedRoleByRoleType)
+            if (this.changedRoleByRoleType?.Count > 0)
             {
-                var roleType = keyValuePair.Key;
-                var roleValue = keyValuePair.Value;
+                var saveRoles = new List<PushRequestRole>();
 
-                var pushRequestRole = new PushRequestRole { T = roleType.RelationType.IdAsString };
+                foreach (var keyValuePair in this.changedRoleByRoleType)
+                {
+                    var roleType = keyValuePair.Key;
+                    var roleValue = keyValuePair.Value;
 
-                if (roleType.ObjectType.IsUnit)
-                {
-                    pushRequestRole.S = UnitConvert.ToString(roleValue);
-                }
-                else
-                {
-                    if (roleType.IsOne)
+                    var pushRequestRole = new PushRequestRole { T = roleType.RelationType.IdAsString };
+
+                    if (roleType.ObjectType.IsUnit)
                     {
-                        var sessionRole = (IObject)roleValue;
-                        pushRequestRole.S = sessionRole?.DatabaseId?.ToString() ?? sessionRole?.WorkspaceId.ToString();
+                        pushRequestRole.S = UnitConvert.ToString(roleValue);
                     }
                     else
                     {
-                        var sessionRoles = (IObject[])roleValue;
-                        var roleIds = sessionRoles.Select(item => item.DatabaseId?.ToString() ?? item.WorkspaceId.ToString()).ToArray();
-                        if (this.ExistDatabaseObject)
+                        if (roleType.IsOne)
                         {
-                            pushRequestRole.A = roleIds;
+                            var sessionRole = (IObject)roleValue;
+                            pushRequestRole.S = sessionRole?.DatabaseId?.ToString() ??
+                                                sessionRole?.WorkspaceId.ToString();
                         }
                         else
                         {
-                            var databaseRole = this.DatabaseObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                            if (databaseRole?.Value == null)
+                            var sessionRoles = (IObject[])roleValue;
+                            var roleIds = sessionRoles
+                                .Select(item => item.DatabaseId?.ToString() ?? item.WorkspaceId.ToString()).ToArray();
+                            if (!this.ExistDatabaseObject)
                             {
                                 pushRequestRole.A = roleIds;
                             }
                             else
                             {
-                                if (databaseRole.Value != null)
+                                var databaseRole =
+                                    this.DatabaseObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
+                                if (databaseRole?.Value == null)
                                 {
-                                    var originalRoleIds = ((IEnumerable<long>)databaseRole.Value)
-                                        .Select(v => v.ToString())
-                                        .ToArray();
-                                    pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();
-                                    pushRequestRole.R = originalRoleIds.Except(roleIds).ToArray();
+                                    pushRequestRole.A = roleIds;
                                 }
                                 else
                                 {
-                                    pushRequestRole.A = roleIds.ToArray();
+                                    if (databaseRole.Value != null)
+                                    {
+                                        var originalRoleIds = ((IEnumerable<long>)databaseRole.Value)
+                                            .Select(v => v.ToString())
+                                            .ToArray();
+                                        pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();
+                                        pushRequestRole.R = originalRoleIds.Except(roleIds).ToArray();
+                                    }
+                                    else
+                                    {
+                                        pushRequestRole.A = roleIds.ToArray();
+                                    }
                                 }
                             }
                         }
                     }
+
+                    saveRoles.Add(pushRequestRole);
                 }
 
-                saveRoles.Add(pushRequestRole);
+                return saveRoles.ToArray();
             }
 
-            return saveRoles.ToArray();
+            return null;
         }
     }
 }

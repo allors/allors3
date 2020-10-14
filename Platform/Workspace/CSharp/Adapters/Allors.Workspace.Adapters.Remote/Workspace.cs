@@ -12,10 +12,6 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        private readonly Population population;
-
-        private readonly Dictionary<long, long> workspaceIdByDatabaseId;
-
         private long worskpaceIdCounter;
 
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
@@ -24,13 +20,13 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = state;
 
             this.worskpaceIdCounter = 0;
-            this.workspaceIdByDatabaseId = new Dictionary<long, long>();
+            this.WorkspaceIdByDatabaseId = new Dictionary<long, long>();
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new Database(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
 
-            this.population = new Population();
+            this.Population = new Population();
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.StateLifecycle.OnInit(this);
@@ -48,7 +44,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal ISet<Session> Sessions { get; }
 
-        public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
+        internal Population Population { get; }
+
+        internal Dictionary<long, long> WorkspaceIdByDatabaseId { get; }
+
+        internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
 
@@ -56,23 +56,20 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
 
-        internal long CreateWorkspaceObject(IClass @class)
-        {
-            var workspaceId = this.NextWorkspaceId();
-            this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
-            return workspaceId;
-        }
+        internal void RegisterWorkspaceIdForDatabaseObject(long databaseId, long workspaceId) => this.WorkspaceIdByDatabaseId.Add(databaseId, workspaceId);
+
+        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
 
         internal long NextWorkspaceId() => --this.worskpaceIdCounter;
-
+        
         internal long ToWorkspaceId(long id)
         {
             if (id > 0)
             {
-                if (!this.workspaceIdByDatabaseId.TryGetValue(id, out var workspaceId))
+                if (!this.WorkspaceIdByDatabaseId.TryGetValue(id, out var workspaceId))
                 {
                     workspaceId = this.NextWorkspaceId();
-                    this.workspaceIdByDatabaseId.Add(workspaceId, id);
+                    this.WorkspaceIdByDatabaseId.Add(id, workspaceId);
 
                 }
 
@@ -80,14 +77,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return id;
-        }
-
-        internal void Set(Strategy strategy, IRoleType roleType, object value) => this.population.SetRole(strategy.WorkspaceId, roleType, value);
-
-        internal object Get(Strategy strategy, IRoleType roleType)
-        {
-            this.population.GetRole(strategy.WorkspaceId, roleType, out var role);
-            return role;
         }
     }
 }

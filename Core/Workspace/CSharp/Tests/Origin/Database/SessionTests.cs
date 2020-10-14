@@ -381,7 +381,7 @@ namespace Tests.Workspace.Origin.Database
 
             var save = session.PushRequest();
 
-            Assert.Empty(save.NewObjects);
+            Assert.Null(save.NewObjects);
             Assert.Equal(3, save.Objects.Length);
 
             var savedAcme = save.Objects.First(v => v.I == "101");
@@ -552,16 +552,16 @@ namespace Tests.Workspace.Origin.Database
             mathijs.FirstName = "Mathijs";
             mathijs.LastName = "Verwer";
 
-            var newId = mathijs.Strategy.WorkspaceId;
+            var workspaceId = mathijs.Strategy.WorkspaceId;
 
             pushResponse = new PushResponse
             {
-                NewObjects = new[] { new PushResponseNewObject { I = "10000", WI = newId.ToString() } },
+                NewObjects = new[] { new PushResponseNewObject { I = "10000", WI = workspaceId.ToString() } },
             };
 
             session.PushResponse(pushResponse);
 
-            Assert.Null(mathijs.Strategy.WorkspaceId);
+            Assert.NotNull(mathijs.Strategy.DatabaseId);
             Assert.Equal(10000, mathijs.DatabaseId);
             Assert.Equal("Person", mathijs.Strategy.Class.Name);
 
@@ -569,17 +569,9 @@ namespace Tests.Workspace.Origin.Database
 
             Assert.NotNull(mathijs);
 
-            var exceptionThrown = false;
-            try
-            {
-                session.Instantiate(newId);
-            }
-            catch
-            {
-                exceptionThrown = true;
-            }
+            var mathijs2 = session.Instantiate(workspaceId);
 
-            Assert.True(exceptionThrown);
+            Assert.Equal(mathijs, mathijs2);
         }
 
         /*
