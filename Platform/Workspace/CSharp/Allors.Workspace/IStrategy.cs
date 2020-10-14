@@ -12,7 +12,7 @@ namespace Allors.Workspace
     {
         IObject Object { get; }
 
-        long WorkspaceId { get; set; }
+        long WorkspaceId { get; }
 
         long? DatabaseId { get; }
 
@@ -21,9 +21,7 @@ namespace Allors.Workspace
         IClass Class { get; }
 
         ISession Session { get; }
-
-        bool HasDatabaseChanges { get; }
-
+        
         bool CanRead(IRoleType roleType);
 
         bool CanWrite(IRoleType roleType);
@@ -40,7 +38,7 @@ namespace Allors.Workspace
 
         void Remove(IRoleType roleType, IObject value);
 
-        object GetAssociation(IAssociationType associationType);
+        IObject GetAssociation(IAssociationType associationType);
 
         IEnumerable<IObject> GetAssociations(IAssociationType associationType);
     }

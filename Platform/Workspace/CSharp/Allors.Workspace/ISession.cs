@@ -37,6 +37,7 @@ namespace Allors.Workspace
         Task<ILoadResult> Load(params Pull[] pulls);
 
         Task<ILoadResult> Load(object args, string pullService = null);
+
         Task<ISaveResult> Save();
     }
 }
