@@ -14,19 +14,9 @@ namespace Allors.Workspace
 
         long WorkspaceId { get; }
 
-        long? DatabaseId { get; }
-
-        long? Version { get; }
-
         IClass Class { get; }
 
         ISession Session { get; }
-        
-        bool CanRead(IRoleType roleType);
-
-        bool CanWrite(IRoleType roleType);
-
-        bool CanExecute(IMethodType methodType);
 
         bool Exist(IRoleType roleType);
 

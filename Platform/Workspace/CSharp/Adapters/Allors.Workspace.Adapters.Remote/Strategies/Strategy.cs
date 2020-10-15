@@ -10,18 +10,34 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    public abstract class Strategy
+    public abstract class Strategy : IStrategy
     {
-        protected Strategy(Session session, long workspaceId)
+        private IObject @object;
+
+        protected Strategy(Session session, long workspaceId, IClass @class)
         {
             this.Session = session;
             this.WorkspaceId = workspaceId;
+            this.Class = @class;
         }
+
+        ISession IStrategy.Session => this.Session;
 
         public Session Session { get; }
 
-        public virtual long WorkspaceId { get; }
+        public IObject Object
+        {
+            get
+            {
+                this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
+                return this.@object;
+            }
+        }
 
+        public IClass Class { get; }
+
+        public long WorkspaceId { get; }
+        
         public virtual bool Exist(IRoleType roleType)
         {
             var value = this.Get(roleType);
@@ -98,7 +114,7 @@ namespace Allors.Workspace.Adapters.Remote
             var ids = (IEnumerable<long>)association;
             return ids?.Select(v => this.Session.Instantiate(v)).ToArray() ?? Array.Empty<IObject>();
         }
-
+        
         internal abstract Population GetPopulation(Origin origin);
     }
 }
