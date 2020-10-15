@@ -6,6 +6,10 @@
 
 namespace Allors.Domain
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Allors.Domain.TestPopulation;
+    using Resources;
     using Xunit;
 
     public class PaymentApplicationTests : DomainTest, IClassFixture<Fixture>
@@ -80,6 +84,26 @@ namespace Allors.Domain
             var derivationLog = this.Session.Derive(false);
             Assert.True(derivationLog.HasErrors);
             Assert.Contains(this.M.PaymentApplication.AmountApplied, derivationLog.Errors[0].RoleTypes);
+        }
+
+        [Fact]
+        public void DeriveOnCreateInvalidPaymentApplication()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var invoiceItem = salesInvoice.InvoiceItems.First();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+
+            var partialAmount = invoiceItem.TotalIncVat - 1;
+            new PaymentApplicationBuilder(this.Session)
+                                        .WithInvoiceItem(invoiceItem)
+                                        .WithInvoice(salesInvoice)
+                                        .WithAmountApplied(partialAmount)
+                                        .Build();
+
+            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
         }
     }
 }
