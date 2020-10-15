@@ -18,7 +18,7 @@ namespace Allors.Domain
         { }
 
         [Fact]
-        public void GivenInvoiceItem_WhenDeriving_ThenRequiredRelationsMustExist()
+        public void DeriveOnChangedRolePaymentApplicationAmountApplied()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
@@ -53,10 +53,33 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void DeriveAssignedUnitPrice()
+        public void DeriveOnChangedRoleSalesTotalIncVat()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+
+            var partialAmount = invoiceItem.TotalIncVat - 1;
+            new PaymentApplicationBuilder(this.Session)
+                                        .WithInvoiceItem(invoiceItem)
+                                        .WithAmountApplied(partialAmount)
+                                        .Build();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+
+            invoiceItem.AssignedUnitPrice = 0;
+
+            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+        }
+
+        [Fact]
+        public void DeriveOnChangedRolePurchaseTotalIncVat()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var invoiceItem = purchaseInvoice.InvoiceItems.First();
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
