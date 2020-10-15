@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Allors.Workspace.Data;
+    using Data;
     using Meta;
     using Protocol.Database.Invoke;
     using Protocol.Database.Pull;
@@ -18,7 +18,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Session : ISession
     {
-        private readonly Dictionary<long, IStrategy> strategyByWorkspaceId;
+        private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
 
         private readonly IList<DatabaseStrategy> existingDatabaseStrategies;
         private ISet<DatabaseStrategy> newDatabaseStrategies;
@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = stateLifecycle;
             this.Workspace.RegisterSession(this);
 
-            this.strategyByWorkspaceId = new Dictionary<long, IStrategy>();
+            this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.existingDatabaseStrategies = new List<DatabaseStrategy>();
 
             this.Population = new Population();
@@ -207,13 +207,13 @@ namespace Allors.Workspace.Adapters.Remote
             return new SaveResult(pushResponse);
         }
 
-        internal IEnumerable<IObject> GetAssociation(IObject @object, IAssociationType associationType)
+        internal IEnumerable<IObject> GetAssociation(IDatabaseObject @object, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
-            foreach (var association in this.Workspace.Database.Get((IComposite)associationType.ObjectType).Select(v => this.Instantiate(v.Id)))
+            foreach (var association in this.Workspace.Database.Get(associationType.ObjectType).Select(v => this.Instantiate(v.Id)))
             {
-                if (association.Strategy.CanRead(roleType))
+                if (((IDatabaseObject)association).Strategy.CanRead(roleType))
                 {
                     if (roleType.IsOne)
                     {

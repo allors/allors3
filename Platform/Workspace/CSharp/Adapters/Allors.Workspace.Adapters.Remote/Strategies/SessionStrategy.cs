@@ -10,9 +10,9 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    public class SessionStrategy : NonDatabaseStrategy
+    public class SessionStrategy : Strategy
     {
-        public SessionStrategy(Session session, IClass @class, long workspaceId) : base(session, @class, workspaceId)
+        public SessionStrategy(Session session, IClass @class, long workspaceId) : base(session, workspaceId, @class)
         {
         }
 

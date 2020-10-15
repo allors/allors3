@@ -140,18 +140,21 @@ namespace Allors.Workspace.Domain
 {
     using System.Linq;
 
-	public partial class $class.name$ : IObject $class.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|, $directSupertype.SingularName$}$
+	public partial class $class.name$ : $object(class)$ $class.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|, $directSupertype.SingularName$}$
 	{
         private readonly Allors.Workspace.Meta.M m;
 
-		public $class.name$(Allors.Workspace.IStrategy strategy)
+		public $class.name$(Allors.Workspace.$strategy(class)$ strategy)
 		{
             this.Strategy = strategy;
             this.m = strategy.Session.Workspace.State().M;
         }
 
-        public IStrategy Strategy { get; }
+$if(class.HasDatabaseOrigin)$
+        IStrategy IObject.Strategy => this.Strategy;
+$endif$
 
+        public $strategy(class)$ Strategy { get; }
 
 		public long WorkspaceId
 		{
@@ -161,6 +164,7 @@ namespace Allors.Workspace.Domain
 			}
 		}
 
+$if(class.HasDatabaseOrigin)$
 		public long? DatabaseId
 		{
 			get
@@ -168,6 +172,7 @@ namespace Allors.Workspace.Domain
 				return this.Strategy.DatabaseId;
 			}
 		}
+$endif$
 
 		public Allors.Workspace.Meta.Meta$class.name$ Meta
 		{
@@ -208,6 +213,7 @@ $class.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$classMet
 >>
 
 classMethodType() ::= <<
+$if(methodType.HasDatabaseOrigin)$
 			public bool CanExecute$methodType.Name$
 			{
 				get
@@ -215,7 +221,7 @@ classMethodType() ::= <<
 					return this.Strategy.CanExecute(this.Meta.$methodType.Name$);
 				}
 			}
-
+$endif$
 			public Method $methodType.Name$
 			{
 				get
@@ -226,6 +232,7 @@ classMethodType() ::= <<
 >>
 
 classConcreteRoleType_Class() ::= <<
+$if(concreteRoleType.HasDatabaseOrigin)$
 		public bool CanRead$concreteRoleType.Name$
 		{
 			get
@@ -241,7 +248,7 @@ classConcreteRoleType_Class() ::= <<
 				return this.Strategy.CanWrite(this.Meta.$concreteRoleType.Name$);
 			}
 		}
-
+$endif$
 $\n$
 $if(concreteRoleType.ObjectType.IsUnit)$
 		virtual public $concreteRoleType_ObjectType(concreteRoleType)$ $concreteRoleType.SingularName$
@@ -353,7 +360,9 @@ $else$
 $endif$
 >>
 
-boolean(value) ::= "$if(value)$true$else$false$endif$"
+object(object) ::= "$if(object.HasDatabaseOrigin)$IDatabaseObject$else$IObject$endif$"
+
+strategy(object) ::= "$if(object.HasDatabaseOrigin)$IDatabaseStrategy$else$IStrategy$endif$"
 
 roleType_ObjectType(roleType) ::= <%
 $if(roleType.IsRequired)$

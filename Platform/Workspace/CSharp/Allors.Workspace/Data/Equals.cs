@@ -17,7 +17,7 @@ namespace Allors.Workspace.Data
         /// <inheritdoc/>
         public IPropertyType PropertyType { get; set; }
 
-        public IStrategy Object { get; set; }
+        public IDatabaseStrategy Object { get; set; }
 
         public object Value { get; set; }
 

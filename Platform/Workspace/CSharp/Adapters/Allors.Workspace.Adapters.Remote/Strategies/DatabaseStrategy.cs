@@ -13,27 +13,17 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Data;
     using Protocol.Database.Push;
 
-    public class DatabaseStrategy : Strategy, IStrategy
+    public class DatabaseStrategy : Strategy, IDatabaseStrategy
     {
         private Dictionary<IRoleType, object> changedRoleByRoleType;
 
         private Dictionary<IRoleType, object> roleByRoleType = new Dictionary<IRoleType, object>();
 
-        private IObject @object;
+        public DatabaseStrategy(Session session, IClass @class, long workspaceId) : base(session, workspaceId, @class) { }
 
-        public DatabaseStrategy(Session session, IClass @class, long workspaceId) : base(session, workspaceId) => this.Class = @class;
-
-        public DatabaseStrategy(Session session, DatabaseObject databaseObject, long workspaceId) : base(session, workspaceId)
-        {
-            this.DatabaseObject = databaseObject;
-            this.Class = databaseObject.Class;
-        }
-
-        public IObject Object => this.@object ??= this.Session.Object(this.WorkspaceId);
+        public DatabaseStrategy(Session session, DatabaseObject databaseObject, long workspaceId) : base(session, workspaceId, databaseObject.Class) => this.DatabaseObject = databaseObject;
 
         public DatabaseObject DatabaseObject { get; private set; }
-
-        public IClass Class { get; set; }
 
         public long? DatabaseId => this.DatabaseObject?.Id;
 
@@ -205,7 +195,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var roles = (IObject[])this.Get(roleType);
                 if (!roles.Contains(value))
                 {
-                    roles = new List<IObject>(roles) {value}.ToArray();
+                    roles = new List<IObject>(roles) { value }.ToArray();
                 }
 
                 this.Set(roleType, roles);
@@ -234,11 +224,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override IObject GetAssociation(IAssociationType associationType) => associationType.Origin != Origin.Database ?
             base.GetAssociation(associationType) :
-            this.Session.GetAssociation(this.Object, associationType).FirstOrDefault();
+            this.Session.GetAssociation((IDatabaseObject)this.Object, associationType).FirstOrDefault();
 
         public override IEnumerable<IObject> GetAssociations(IAssociationType associationType) => associationType.Origin != Origin.Database ?
             base.GetAssociations(associationType) :
-            this.Session.GetAssociation(this.Object, associationType);
+            this.Session.GetAssociation((IDatabaseObject)this.Object, associationType);
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
         {
@@ -354,13 +344,13 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         if (roleType.IsOne)
                         {
-                            var sessionRole = (IObject)roleValue;
+                            var sessionRole = (IDatabaseObject)roleValue;
                             pushRequestRole.S = sessionRole?.DatabaseId?.ToString() ??
                                                 sessionRole?.WorkspaceId.ToString();
                         }
                         else
                         {
-                            var sessionRoles = (IObject[])roleValue;
+                            var sessionRoles = (IDatabaseObject[])roleValue;
                             var roleIds = sessionRoles
                                 .Select(item => item.DatabaseId?.ToString() ?? item.WorkspaceId.ToString()).ToArray();
                             if (!this.ExistDatabaseObject)

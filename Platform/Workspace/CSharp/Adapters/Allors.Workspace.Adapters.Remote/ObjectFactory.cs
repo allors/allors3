@@ -100,7 +100,9 @@ namespace Allors.Workspace.Adapters.Remote
                 if (objectType is IClass)
                 {
                     var parameterTypes = new[] { typeof(IStrategy) };
+                    var databaseParameterTypes = new[] { typeof(IDatabaseStrategy) };
                     this.contructorInfoByObjectType[objectType] = type.GetTypeInfo().GetConstructor(parameterTypes)
+                                                                  ?? type.GetTypeInfo().GetConstructor(databaseParameterTypes)
                                                                   ?? throw new ArgumentException($"{objectType.Name} has no Allors constructor.");
                 }
 

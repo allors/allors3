@@ -5,10 +5,10 @@
 
 namespace Allors.Workspace
 {
-    public interface IObject
+    public interface IDatabaseObject : IObject
     {
-        long WorkspaceId { get; }
+        long? DatabaseId { get; }
 
-        IStrategy Strategy { get; }
+        new IDatabaseStrategy Strategy { get; }
     }
 }
