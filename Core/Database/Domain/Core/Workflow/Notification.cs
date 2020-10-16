@@ -31,7 +31,7 @@ namespace Allors.Domain
             }
         }
 
-        public void BaseConfirm(NotificationConfirm method) => this.Confirmed = true;
+        public void AppsConfirm(NotificationConfirm method) => this.Confirmed = true;
 
         public void CoreOnDerive(ObjectOnDerive method)
         {

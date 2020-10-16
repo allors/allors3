@@ -8,28 +8,28 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 partial class Build
 {
     Target SecurityGenerate => _ => _
-        .After(Clean)
+        .After(this.Clean)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(Paths.PlatformRepositoryGenerate)
-                .SetApplicationArguments($"{Paths.SecurityRepositoryDomainRepository} {Paths.PlatformRepositoryTemplatesMetaCs} {Paths.SecurityDatabaseMetaGenerated}"));
+                .SetProjectFile(this.Paths.PlatformRepositoryGenerate)
+                .SetApplicationArguments($"{this.Paths.SecurityRepositoryDomainRepository} {this.Paths.PlatformRepositoryTemplatesMetaCs} {this.Paths.SecurityDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetWorkingDirectory(Paths.Security)
-                .SetProjectFile(Paths.SecurityDatabaseGenerate));
+                .SetWorkingDirectory(this.Paths.Security)
+                .SetProjectFile(this.Paths.SecurityDatabaseGenerate));
         });
 
     Target SecurityTest => _ => _
-        .DependsOn(SecurityGenerate)
+        .DependsOn(this.SecurityGenerate)
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.SecurityDatabaseDomainTests)
+                .SetProjectFile(this.Paths.SecurityDatabaseDomainTests)
                 .SetLogger("trx;LogFileName=security.trx")
-                .SetResultsDirectory(Paths.ArtifactsTests));
+                .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
     Target Security => _ => _
-        .After(Clean)
-        .DependsOn(SecurityTest);
+        .After(this.Clean)
+        .DependsOn(this.SecurityTest);
 }

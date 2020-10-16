@@ -17,19 +17,19 @@ partial class Angular : IDisposable
             .SetWorkingDirectory(path)
             .SetCommand(command);
 
-        Process = ProcessTasks.StartProcess((ToolSettings)npmRunSetting);
+        this.Process = ProcessTasks.StartProcess((ToolSettings)npmRunSetting);
     }
 
     public void Dispose()
     {
-        Process?.Kill();
-        Process?.Dispose();
-        Process = null;
+        this.Process?.Kill();
+        this.Process?.Dispose();
+        this.Process = null;
     }
 
     public async Task Init()
     {
-        if (!await Get("/", TimeSpan.FromMinutes(10)))
+        if (!await this.Get("/", TimeSpan.FromMinutes(10)))
         {
             throw new Exception("Could not initialize angular");
         }

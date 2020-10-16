@@ -8,28 +8,28 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 partial class Build
 {
     Target DerivationGenerate => _ => _
-        .After(Clean)
+        .After(this.Clean)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(Paths.PlatformRepositoryGenerate)
-                .SetApplicationArguments($"{Paths.DerivationRepositoryDomainRepository} {Paths.PlatformRepositoryTemplatesMetaCs} {Paths.DerivationDatabaseMetaGenerated}"));
+                .SetProjectFile(this.Paths.PlatformRepositoryGenerate)
+                .SetApplicationArguments($"{this.Paths.DerivationRepositoryDomainRepository} {this.Paths.PlatformRepositoryTemplatesMetaCs} {this.Paths.DerivationDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetWorkingDirectory(Paths.Derivation)
-                .SetProjectFile(Paths.DerivationDatabaseGenerate));
+                .SetWorkingDirectory(this.Paths.Derivation)
+                .SetProjectFile(this.Paths.DerivationDatabaseGenerate));
         });
 
     Target DerivationTest => _ => _
-        .DependsOn(DerivationGenerate)
+        .DependsOn(this.DerivationGenerate)
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.DerivationDatabaseDomainTests)
+                .SetProjectFile(this.Paths.DerivationDatabaseDomainTests)
                 .SetLogger("trx;LogFileName=next.trx")
-                .SetResultsDirectory(Paths.ArtifactsTests));
+                .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
     Target Derivation => _ => _
-        .After(Clean)
-        .DependsOn(DerivationTest);
+        .After(this.Clean)
+        .DependsOn(this.DerivationTest);
 }

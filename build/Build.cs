@@ -13,8 +13,8 @@ partial class Build : NukeBuild
     private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     Target Install => _ => _
-        .DependsOn(CoreInstall)
-        .DependsOn(BaseInstall);
+        .DependsOn(this.CoreInstall)
+        .DependsOn(this.AppsInstall);
 
     Target Clean => _ => _
         .Executes(() =>
@@ -40,7 +40,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new AbsolutePath[] { Paths.Platform, Paths.Core, Paths.Base })
+            foreach (var path in new AbsolutePath[] {this.Paths.Platform, this.Paths.Core, this.Paths.Apps })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -48,13 +48,13 @@ partial class Build : NukeBuild
                 }
             }
 
-            DeleteDirectory(Paths.Artifacts);
+            DeleteDirectory(this.Paths.Artifacts);
         });
 
     Target Generate => _ => _
         .DependsOn(this.AdaptersGenerate)
         .DependsOn(this.CoreGenerate)
-        .DependsOn(this.BaseGenerate);
+        .DependsOn(this.AppsGenerate);
 
     Target Default => _ => _
         .DependsOn(this.Generate);

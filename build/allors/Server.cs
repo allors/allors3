@@ -16,19 +16,19 @@ partial class Server : IDisposable
         var arguments = $@"{path}/Server.dll";
         var workingDirectory = path;
 
-        Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory);
+        this.Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory);
     }
 
     public void Dispose()
     {
-        Process?.Kill();
-        Process?.Dispose();
-        Process = null;
+        this.Process?.Kill();
+        this.Process?.Dispose();
+        this.Process = null;
     }
 
     public async Task Ready()
     {
-        if (!await Get("/Test/Ready", TimeSpan.FromMinutes(5)))
+        if (!await this.Get("/Test/Ready", TimeSpan.FromMinutes(5)))
         {
             throw new Exception("Server is not ready");
         }

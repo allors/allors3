@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Generate": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\KoenVanExem\\Documents\\GitHub\\allors3\\Domains\\Apps"
+    }
+  }
+}

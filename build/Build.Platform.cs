@@ -6,44 +6,44 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 partial class Build
 {
     Target AdaptersGenerate => _ => _
-        .After(Clean)
+        .After(this.Clean)
         .Executes(() =>
         {
             DotNetRun(s => s
-                .SetProjectFile(Paths.PlatformRepositoryGenerate)
-                .SetApplicationArguments($"{Paths.PlatformAdaptersRepositoryDomainRepository} {Paths.PlatformRepositoryTemplatesMetaCs} {Paths.PlatformAdaptersMetaGenerated}"));
+                .SetProjectFile(this.Paths.PlatformRepositoryGenerate)
+                .SetApplicationArguments($"{this.Paths.PlatformAdaptersRepositoryDomainRepository} {this.Paths.PlatformRepositoryTemplatesMetaCs} {this.Paths.PlatformAdaptersMetaGenerated}"));
             DotNetRun(s => s
-                .SetWorkingDirectory(Paths.PlatformAdapters)
-                .SetProjectFile(Paths.PlatformAdaptersGenerate));
+                .SetWorkingDirectory(this.Paths.PlatformAdapters)
+                .SetProjectFile(this.Paths.PlatformAdaptersGenerate));
         });
 
     Target AdaptersTestMemory => _ => _
-        .DependsOn(AdaptersGenerate)
+        .DependsOn(this.AdaptersGenerate)
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.PlatformAdaptersStaticTests)
+                .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
                 .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Memory")
                 .SetLogger("trx;LogFileName=AdaptersMemory.trx")
-                .SetResultsDirectory(Paths.ArtifactsTests));
+                .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
     Target AdaptersTestSqlClient => _ => _
-        .DependsOn(AdaptersGenerate)
+        .DependsOn(this.AdaptersGenerate)
         .Executes(() =>
         {
             using (new SqlServer())
             {
                 DotNetTest(s => s
-                    .SetProjectFile(Paths.PlatformAdaptersStaticTests)
+                    .SetProjectFile(this.Paths.PlatformAdaptersStaticTests)
                     .SetFilter("FullyQualifiedName~Allors.Database.Adapters.SqlClient")
                     .SetLogger("trx;LogFileName=AdaptersSqlClient.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
+                    .SetResultsDirectory(this.Paths.ArtifactsTests));
             }
         });
 
     Target AdaptersTestNpgsql => _ => _
-        .DependsOn(AdaptersGenerate)
+        .DependsOn(this.AdaptersGenerate)
         .Executes(() =>
         {
             using (new Postgres())
@@ -57,8 +57,8 @@ partial class Build
         });
 
     Target Adapters => _ => _
-        .DependsOn(Clean)
-        .DependsOn(AdaptersTestMemory)
-        .DependsOn(AdaptersTestSqlClient)
-        .DependsOn(AdaptersTestNpgsql);
+        .DependsOn(this.Clean)
+        .DependsOn(this.AdaptersTestMemory)
+        .DependsOn(this.AdaptersTestSqlClient)
+        .DependsOn(this.AdaptersTestNpgsql);
 }

@@ -19,11 +19,11 @@ public class Environment : Enumeration
         Value = "production"
     };
 
-    public bool IsDevelopment => this == Environment.Development;
+    public bool IsDevelopment => this == Development;
 
-    public bool IsStaging => this == Environment.Staging;
+    public bool IsStaging => this == Staging;
 
-    public bool IsProduction => this == Environment.Production;
+    public bool IsProduction => this == Production;
 
     public static implicit operator string(Environment configuration) => configuration.Value;
 }
