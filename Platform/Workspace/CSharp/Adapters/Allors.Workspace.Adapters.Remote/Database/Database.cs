@@ -109,8 +109,8 @@ namespace Allors.Workspace.Adapters.Remote
                 if (!this.DatabaseIdByWorkspaceId.TryGetValue(databaseObject.DatabaseId, out var workspaceId))
                 {
                     workspaceId = this.NextWorkspaceId();
-                    this.WorkspaceIdByDatabaseId.Add(databaseObject.DatabaseId, workspaceId);
-                    this.DatabaseIdByWorkspaceId.Add(workspaceId, databaseObject.DatabaseId);
+                    this.WorkspaceIdByDatabaseId[databaseObject.DatabaseId] = workspaceId;
+                    this.DatabaseIdByWorkspaceId[workspaceId] = databaseObject.DatabaseId;
                 }
             }
 
