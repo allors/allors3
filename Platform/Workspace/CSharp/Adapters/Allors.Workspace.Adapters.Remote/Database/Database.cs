@@ -23,16 +23,17 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Database
     {
-        private readonly Dictionary<long, DatabaseObject> databaseObjectById;
+        private readonly Dictionary<long, DatabaseObject> databaseObjectByDatabaseId;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
+        private long worskpaceIdCounter;
+
         public Database(IMetaPopulation metaPopulation, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
-
             this.HttpClient = httpClient;
 
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
@@ -41,11 +42,15 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
 
-            this.databaseObjectById = new Dictionary<long, DatabaseObject>();
+            this.databaseObjectByDatabaseId = new Dictionary<long, DatabaseObject>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
+
+            this.worskpaceIdCounter = 0;
+            this.WorkspaceIdByDatabaseId = new Dictionary<long, long>();
+            this.DatabaseIdByWorkspaceId = new Dictionary<long, long>();
         }
 
         ~Database() => this.HttpClient.Dispose();
@@ -59,6 +64,10 @@ namespace Allors.Workspace.Adapters.Remote
            .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         public string UserId { get; private set; }
+
+        internal Dictionary<long, long> WorkspaceIdByDatabaseId { get; }
+
+        internal Dictionary<long, long> DatabaseIdByWorkspaceId { get; }
 
         internal Dictionary<long, AccessControl> AccessControlById { get; }
 
@@ -86,7 +95,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseObject PushResponse(long databaseId, IClass @class)
         {
             var databaseObject = new DatabaseObject(this, databaseId, @class);
-            this.databaseObjectById[databaseId] = databaseObject;
+            this.databaseObjectByDatabaseId[databaseId] = databaseObject;
             return databaseObject;
         }
 
@@ -96,7 +105,13 @@ namespace Allors.Workspace.Adapters.Remote
             foreach (var syncResponseObject in syncResponse.Objects)
             {
                 var databaseObject = new DatabaseObject(this, ctx, syncResponseObject);
-                this.databaseObjectById[databaseObject.Id] = databaseObject;
+                this.databaseObjectByDatabaseId[databaseObject.DatabaseId] = databaseObject;
+                if (!this.DatabaseIdByWorkspaceId.TryGetValue(databaseObject.DatabaseId, out var workspaceId))
+                {
+                    workspaceId = this.NextWorkspaceId();
+                    this.WorkspaceIdByDatabaseId.Add(databaseObject.DatabaseId, workspaceId);
+                    this.DatabaseIdByWorkspaceId.Add(workspaceId, databaseObject.DatabaseId);
+                }
             }
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
@@ -111,7 +126,6 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-
         internal SyncRequest Diff(PullResponse response)
         {
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
@@ -122,14 +136,14 @@ namespace Allors.Workspace.Adapters.Remote
                     .Where(v =>
                     {
                         var id = long.Parse(v[0]);
-                        this.databaseObjectById.TryGetValue(id, out var databaseObject);
-                        var sortedAccessControlIds = v.Length > 2 ? ctx.ReadSortedAccessControlIds(v[2]) : null;
-                        var sortedDeniedPermissionIds = v.Length > 3 ? ctx.ReadSortedDeniedPermissionIds(v[3]) : null;
-
+                        this.databaseObjectByDatabaseId.TryGetValue(id, out var databaseObject);
                         if (databaseObject == null)
                         {
                             return true;
                         }
+
+                        var sortedAccessControlIds = v.Length > 2 ? ctx.ReadSortedAccessControlIds(v[2]) : null;
+                        var sortedDeniedPermissionIds = v.Length > 3 ? ctx.ReadSortedDeniedPermissionIds(v[3]) : null;
 
                         var version = long.Parse(v[1]);
                         if (!databaseObject.Version.Equals(version))
@@ -159,9 +173,22 @@ namespace Allors.Workspace.Adapters.Remote
             };
         }
 
+        internal long NextWorkspaceId() => --this.worskpaceIdCounter;
+
+        internal long ToWorkspaceId(long id)
+        {
+            if (id <= 0)
+            {
+                return id;
+            }
+
+            this.WorkspaceIdByDatabaseId.TryGetValue(id, out var workspaceId);
+            return workspaceId;
+        }
+
         internal DatabaseObject Get(long databaseId)
         {
-            var databaseObject = this.databaseObjectById[databaseId];
+            var databaseObject = this.databaseObjectByDatabaseId[databaseId];
             if (databaseObject == null)
             {
                 throw new Exception($"Object with id {databaseId} is not present.");
@@ -267,7 +294,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal IEnumerable<DatabaseObject> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.DatabaseClasses);
-            return this.databaseObjectById.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
+            return this.databaseObjectByDatabaseId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
         }
 
         internal Permission GetPermission(IClass @class, IOperandType operandType, Operations operation)

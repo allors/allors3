@@ -26,6 +26,7 @@ namespace Allors.Workspace.Adapters.Remote
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
             this.Workspace = workspace;
+            this.Database = this.Workspace.Database;
             this.StateLifecycle = stateLifecycle;
             this.Workspace.RegisterSession(this);
 
@@ -43,6 +44,8 @@ namespace Allors.Workspace.Adapters.Remote
         IWorkspace ISession.Workspace => this.Workspace;
 
         internal Workspace Workspace { get; }
+
+        internal Database Database { get; }
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
@@ -67,13 +70,13 @@ namespace Allors.Workspace.Adapters.Remote
                 } : null,
             };
 
-            var invokeResponse = await this.Workspace.Database.Invoke(invokeRequest);
+            var invokeResponse = await this.Database.Invoke(invokeRequest);
             return new CallResult(invokeResponse);
         }
 
         public async Task<ICallResult> Call(string service, object args)
         {
-            var invokeResponse = await this.Workspace.Database.Invoke(service, args);
+            var invokeResponse = await this.Database.Invoke(service, args);
             return new CallResult(invokeResponse);
         }
 
@@ -91,18 +94,28 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IObject Instantiate(long id)
         {
-            var workspaceId = this.Workspace.ToWorkspaceId(id);
+            var workspaceId = this.Database.ToWorkspaceId(id);
+
+            if (workspaceId == 0)
+            {
+                return null;
+            }
 
             if (!this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy))
             {
-                if (this.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(workspaceId, out var @class))
+                if (this.Workspace.WorkspaceOrSessionClassByWorkspaceId.TryGetValue(workspaceId, out var @class))
                 {
                     strategy = new WorkspaceStrategy(this, @class, workspaceId);
                     this.strategyByWorkspaceId[workspaceId] = strategy;
                 }
                 else
                 {
-                    var databaseObject = this.Workspace.Database.Get(id);
+                    if (!this.Database.DatabaseIdByWorkspaceId.TryGetValue(workspaceId, out var databaseId))
+                    {
+                        return null;
+                    }
+
+                    var databaseObject = this.Database.Get(databaseId);
                     strategy = new DatabaseStrategy(this, databaseObject, workspaceId);
                     this.existingDatabaseStrategies.Add((DatabaseStrategy)strategy);
                     this.strategyByWorkspaceId[workspaceId] = strategy;
@@ -111,12 +124,12 @@ namespace Allors.Workspace.Adapters.Remote
 
             return strategy.Object;
         }
-        
+
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
-            var pullResponse = await this.Workspace.Database.Pull(pullRequest);
-            var syncRequest = this.Workspace.Database.Diff(pullResponse);
+            var pullResponse = await this.Database.Pull(pullRequest);
+            var syncRequest = this.Database.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
             {
                 await this.Load(syncRequest);
@@ -137,8 +150,8 @@ namespace Allors.Workspace.Adapters.Remote
                 args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
             }
 
-            var pullResponse = await this.Workspace.Database.Pull(pullService, args);
-            var syncRequest = this.Workspace.Database.Diff(pullResponse);
+            var pullResponse = await this.Database.Pull(pullService, args);
+            var syncRequest = this.Database.Diff(pullResponse);
 
             if (syncRequest.Objects.Length > 0)
             {
@@ -183,7 +196,7 @@ namespace Allors.Workspace.Adapters.Remote
         public async Task<ISaveResult> Save()
         {
             var saveRequest = this.PushRequest();
-            var pushResponse = await this.Workspace.Database.Push(saveRequest);
+            var pushResponse = await this.Database.Push(saveRequest);
             if (!pushResponse.HasErrors)
             {
                 this.PushResponse(pushResponse);
@@ -211,7 +224,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var roleType = associationType.RoleType;
 
-            foreach (var association in this.Workspace.Database.Get(associationType.ObjectType).Select(v => this.Instantiate(v.Id)))
+            foreach (var association in this.Database.Get(associationType.ObjectType).Select(v => this.Instantiate(v.DatabaseId)))
             {
                 if (((IDatabaseObject)association).Strategy.CanRead(roleType))
                 {
@@ -237,7 +250,12 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IObject GetForAssociation(long id)
         {
-            var workspaceId = this.Workspace.ToWorkspaceId(id);
+            var workspaceId = this.Database.ToWorkspaceId(id);
+            if (workspaceId == 0)
+            {
+                return null;
+            }
+
             this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy);
             return strategy?.Object;
         }
@@ -257,13 +275,14 @@ namespace Allors.Workspace.Adapters.Remote
                     var workspaceId = long.Parse(pushResponseNewObject.WI);
                     var databaseId = long.Parse(pushResponseNewObject.I);
 
-                    this.Workspace.RegisterWorkspaceIdForDatabaseObject(databaseId, workspaceId);
-                    
+                    this.Database.WorkspaceIdByDatabaseId[databaseId] = workspaceId;
+                    this.Database.DatabaseIdByWorkspaceId[workspaceId] = databaseId;
+
                     var strategy = (DatabaseStrategy)this.strategyByWorkspaceId[workspaceId];
                     this.newDatabaseStrategies.Remove(strategy);
                     this.existingDatabaseStrategies.Add(strategy);
 
-                    var databaseObject = this.Workspace.Database.PushResponse(databaseId, strategy.Class);
+                    var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
                     strategy.PushResponse(databaseObject);
                 }
             }
@@ -278,7 +297,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IObject CreateDatabaseObject(IClass @class)
         {
-            var workspaceId = this.Workspace.NextWorkspaceId();
+            var workspaceId = this.Database.NextWorkspaceId();
             var strategy = new DatabaseStrategy(this, @class, workspaceId);
             this.newDatabaseStrategies ??= new HashSet<DatabaseStrategy>();
             this.newDatabaseStrategies.Add(strategy);
@@ -288,7 +307,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IObject CreateWorkspaceObject(IClass @class)
         {
-            var workspaceId = this.Workspace.NextWorkspaceId();
+            var workspaceId = this.Database.NextWorkspaceId();
             this.Workspace.RegisterWorkspaceIdForWorkspaceObject(@class, workspaceId);
             var strategy = new WorkspaceStrategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
@@ -297,7 +316,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private IObject CreateSessionObject(IClass @class)
         {
-            var workspaceId = this.Workspace.NextWorkspaceId();
+            var workspaceId = this.Database.NextWorkspaceId();
             var strategy = new SessionStrategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
@@ -305,18 +324,18 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task Load(SyncRequest syncRequest)
         {
-            var syncResponse = await this.Workspace.Database.Sync(syncRequest);
-            var securityRequest = this.Workspace.Database.SyncResponse(syncResponse);
+            var syncResponse = await this.Database.Sync(syncRequest);
+            var securityRequest = this.Database.SyncResponse(syncResponse);
 
             if (securityRequest != null)
             {
-                var securityResponse = await this.Workspace.Database.Security(securityRequest);
-                securityRequest = this.Workspace.Database.SecurityResponse(securityResponse);
+                var securityResponse = await this.Database.Security(securityRequest);
+                securityRequest = this.Database.SecurityResponse(securityResponse);
 
                 if (securityRequest != null)
                 {
-                    securityResponse = await this.Workspace.Database.Security(securityRequest);
-                    this.Workspace.Database.SecurityResponse(securityResponse);
+                    securityResponse = await this.Database.Security(securityRequest);
+                    this.Database.SecurityResponse(securityResponse);
                 }
             }
         }

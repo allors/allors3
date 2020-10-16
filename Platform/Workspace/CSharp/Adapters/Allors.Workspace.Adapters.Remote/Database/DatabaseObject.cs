@@ -21,10 +21,10 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<Guid, object> roleByRelationTypeId;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseObject(Database database, long objectId, IClass @class)
+        internal DatabaseObject(Database database, long databaseId, IClass @class)
         {
             this.Database = database;
-            this.Id = objectId;
+            this.DatabaseId = databaseId;
             this.Class = @class;
             this.Version = 0;
         }
@@ -32,7 +32,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseObject(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
-            this.Id = long.Parse(syncResponseObject.I);
+            this.DatabaseId = long.Parse(syncResponseObject.I);
             this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
             this.syncResponseRoles = syncResponseObject.R;
@@ -44,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IClass Class { get; }
 
-        public long Id { get; }
+        public long DatabaseId { get; }
 
         public long Version { get; private set; }
 

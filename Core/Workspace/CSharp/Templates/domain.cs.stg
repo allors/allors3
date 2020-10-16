@@ -182,11 +182,6 @@ $endif$
 			}
 		}
 
-		public static $class.name$ Instantiate(ISession allorsSession, long allorsObjectId)
-		{
-			return ($class.name$) allorsSession.Instantiate(allorsObjectId);
-		}
-
 		public override bool Equals(object obj)
         {
             var that = obj as IObject;

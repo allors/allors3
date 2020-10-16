@@ -3,13 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database
+namespace Tests.Workspace.Origin.Database.ToDatabase
 {
-    using System.Linq;
     using Allors.Protocol.Database.Pull;
-    using Allors.Workspace.Meta;
-    using Workspace;
-    using Allors.Workspace.Adapters.Remote;
     using Xunit;
 
     public class WorkspaceTests : Test
@@ -21,7 +17,7 @@ namespace Tests.Workspace.Origin.Database
 
             var martien = this.Database.Get(3);
 
-            Assert.Equal(3, martien.Id);
+            Assert.Equal(3, martien.DatabaseId);
             Assert.Equal(1003, martien.Version);
             Assert.Equal("Person", martien.Class.Name);
             Assert.Equal("Martien", martien.GetRole(this.M.Person.FirstName));

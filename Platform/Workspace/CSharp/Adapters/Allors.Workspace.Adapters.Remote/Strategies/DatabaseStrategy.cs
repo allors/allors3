@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public DatabaseObject DatabaseObject { get; private set; }
 
-        public long? DatabaseId => this.DatabaseObject?.Id;
+        public long? DatabaseId => this.DatabaseObject?.DatabaseId;
 
         public long? Version => this.DatabaseObject?.Version;
 

@@ -3,10 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database
+namespace Tests.Workspace.Origin.Database.ToDatabase
 {
     using System.Linq;
-    using Workspace;
     using Allors.Protocol.Data;
     using Allors.Protocol.Database.Push;
     using Allors.Workspace.Adapters.Remote;
@@ -524,12 +523,12 @@ namespace Tests.Workspace.Origin.Database
 
             session.Reset();
 
-            // Assert.Null(mathijs.Id);
+            // Assert.Null(mathijs.DatabaseId);
             Assert.True(mathijs.Strategy.WorkspaceId < 0);
             Assert.Null(mathijs.FirstName);
             Assert.Null(mathijs.LastName);
 
-            // Assert.Null(acme2.Id);
+            // Assert.Null(acme2.DatabaseId);
             Assert.True(acme2.Strategy.WorkspaceId < 0);
             Assert.Null(acme2.Owner);
             Assert.Null(acme2.Manager);

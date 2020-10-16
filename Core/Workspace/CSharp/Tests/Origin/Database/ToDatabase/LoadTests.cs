@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database
+namespace Tests.Workspace.Origin.Database.ToDatabase
 {
     using System;
     using Allors.Workspace.Adapters.Remote;

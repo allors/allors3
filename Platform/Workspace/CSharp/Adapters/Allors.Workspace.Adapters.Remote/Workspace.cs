@@ -12,22 +12,18 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        private long worskpaceIdCounter;
 
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
 
-            this.worskpaceIdCounter = 0;
-            this.WorkspaceIdByDatabaseId = new Dictionary<long, long>();
-
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
             this.Database = new Database(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
 
             this.Population = new Population();
-            this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
+            this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -45,10 +41,8 @@ namespace Allors.Workspace.Adapters.Remote
         internal ISet<Session> Sessions { get; }
 
         internal Population Population { get; }
-
-        internal Dictionary<long, long> WorkspaceIdByDatabaseId { get; }
-
-        internal Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
+        
+        internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
 
@@ -56,27 +50,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
 
-        internal void RegisterWorkspaceIdForDatabaseObject(long databaseId, long workspaceId) => this.WorkspaceIdByDatabaseId.Add(databaseId, workspaceId);
 
-        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceClassByWorkspaceId.Add(workspaceId, @class);
+        internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
 
-        internal long NextWorkspaceId() => --this.worskpaceIdCounter;
-        
-        internal long ToWorkspaceId(long id)
-        {
-            if (id > 0)
-            {
-                if (!this.WorkspaceIdByDatabaseId.TryGetValue(id, out var workspaceId))
-                {
-                    workspaceId = this.NextWorkspaceId();
-                    this.WorkspaceIdByDatabaseId.Add(id, workspaceId);
-
-                }
-
-                return workspaceId;
-            }
-
-            return id;
-        }
+        internal void RegisterWorkspaceIdForSessionObject(IClass @class, long workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
     }
 }
