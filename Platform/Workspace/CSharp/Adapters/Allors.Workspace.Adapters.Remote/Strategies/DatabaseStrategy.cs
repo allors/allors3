@@ -102,22 +102,22 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.ExistDatabaseObject)
                 {
-                    var databaseRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                    if (databaseRole?.Value != null)
+                    var databaseRole = this.DatabaseObject.GetRole(roleType);
+                    if (databaseRole != null)
                     {
                         if (roleType.ObjectType.IsUnit)
                         {
-                            value = databaseRole.Value;
+                            value = databaseRole;
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.Session.Instantiate((long)databaseRole.Value);
+                                value = this.Session.Instantiate((long)databaseRole);
                             }
                             else
                             {
-                                var ids = (long[])databaseRole.Value;
+                                var ids = (long[])databaseRole;
                                 var array = Array.CreateInstance(roleType.ObjectType.ClrType, ids.Length);
                                 for (var i = 0; i < ids.Length; i++)
                                 {
@@ -276,28 +276,28 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public object GetAssociationForDatabase(IRoleType roleType)
+        internal object GetDatabase(IRoleType roleType)
         {
             if (!this.roleByRoleType.TryGetValue(roleType, out var value))
             {
                 if (this.ExistDatabaseObject)
                 {
-                    var databaseRole = this.DatabaseObject.Roles?.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                    if (databaseRole?.Value != null)
+                    var databaseRole = this.DatabaseObject.GetRole(roleType);
+                    if (databaseRole != null)
                     {
                         if (roleType.ObjectType.IsUnit)
                         {
-                            value = databaseRole.Value;
+                            value = databaseRole;
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                value = this.Session.GetForAssociation((long)databaseRole.Value);
+                                value = this.Session.GetForAssociation((long)databaseRole);
                             }
                             else
                             {
-                                var ids = (long[])databaseRole.Value;
+                                var ids = (long[])databaseRole;
                                 value = ids.Select(v => this.Session.GetForAssociation(v))
                                     .Where(v => v != null)
                                     .ToArray();
@@ -359,26 +359,18 @@ namespace Allors.Workspace.Adapters.Remote
                             }
                             else
                             {
-                                var databaseRole =
-                                    this.DatabaseObject.Roles.FirstOrDefault(v => Equals(v.RoleType, roleType));
-                                if (databaseRole?.Value == null)
+                                var databaseRole = this.DatabaseObject.GetRole(roleType);
+                                if (databaseRole == null)
                                 {
                                     pushRequestRole.A = roleIds;
                                 }
                                 else
                                 {
-                                    if (databaseRole.Value != null)
-                                    {
-                                        var originalRoleIds = ((IEnumerable<long>)databaseRole.Value)
-                                            .Select(v => v.ToString())
-                                            .ToArray();
-                                        pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();
-                                        pushRequestRole.R = originalRoleIds.Except(roleIds).ToArray();
-                                    }
-                                    else
-                                    {
-                                        pushRequestRole.A = roleIds.ToArray();
-                                    }
+                                    var originalRoleIds = ((IEnumerable<long>)databaseRole)
+                                        .Select(v => v.ToString())
+                                        .ToArray();
+                                    pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();
+                                    pushRequestRole.R = originalRoleIds.Except(roleIds).ToArray();
                                 }
                             }
                         }

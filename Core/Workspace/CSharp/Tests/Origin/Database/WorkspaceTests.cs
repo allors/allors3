@@ -19,18 +19,16 @@ namespace Tests.Workspace.Origin.Database
         {
             this.Database.SyncResponse(Fixture.LoadData(this.M));
 
-            object Value(DatabaseObject @object, IRoleType roleType) => @object.Roles.First(v => Equals(v.RoleType, roleType)).Value;
-
             var martien = this.Database.Get(3);
 
             Assert.Equal(3, martien.Id);
             Assert.Equal(1003, martien.Version);
             Assert.Equal("Person", martien.Class.Name);
-            Assert.Equal("Martien", Value(martien, this.M.Person.FirstName));
-            Assert.Equal("van", Value(martien, this.M.Person.MiddleName));
-            Assert.Equal("Knippenberg", Value(martien, this.M.Person.LastName));
-            Assert.DoesNotContain(martien.Roles, v => Equals(v.RoleType, this.M.Person.IsStudent));
-            Assert.DoesNotContain(martien.Roles, v => Equals(v.RoleType, this.M.Person.BirthDate));
+            Assert.Equal("Martien", martien.GetRole(this.M.Person.FirstName));
+            Assert.Equal("van", martien.GetRole(this.M.Person.MiddleName));
+            Assert.Equal("Knippenberg", martien.GetRole(this.M.Person.LastName));
+            Assert.Null(martien.GetRole(this.M.Person.IsStudent));
+            Assert.Null(martien.GetRole(this.M.Person.BirthDate));
         }
 
         [Fact]

@@ -217,7 +217,7 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     if (roleType.IsOne)
                     {
-                        var role = (IObject)((DatabaseStrategy)association.Strategy).GetAssociationForDatabase(roleType);
+                        var role = (IObject)((DatabaseStrategy)association.Strategy).GetDatabase(roleType);
                         if (role != null && role.WorkspaceId == @object.WorkspaceId)
                         {
                             yield return association;
@@ -225,7 +225,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roles = (IObject[])((DatabaseStrategy)association.Strategy).GetAssociationForDatabase(roleType);
+                        var roles = (IObject[])((DatabaseStrategy)association.Strategy).GetDatabase(roleType);
                         if (roles != null && roles.Contains(@object))
                         {
                             yield return association;

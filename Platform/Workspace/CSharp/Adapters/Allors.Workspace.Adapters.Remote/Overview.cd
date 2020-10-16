@@ -75,9 +75,6 @@
       <HashCode>IACCgAAAAEAAAAAIAAIAAAAIAgAAAAAAAAAAAIAIAAg=</HashCode>
       <FileName>Database\DatabaseObject.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Roles" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseRole">
     <Position X="16.25" Y="1.5" Width="1.5" />

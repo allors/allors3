@@ -6,18 +6,20 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System;
+    using System.Collections.Generic;
     using Protocol.Database.Sync;
     using Allors.Workspace.Meta;
     using System.Linq;
     using Protocol.Database;
+    using Protocol.Data;
 
     public class DatabaseObject
     {
+        private Permission[] deniedPermissions;
         private AccessControl[] accessControls;
 
-        private Permission[] deniedPermissions;
-        private string sortedAccessControlIds;
-        private string sortedDeniedPermissionIds;
+        private Dictionary<Guid, object> roleByRelationTypeId;
+        private SyncResponseRole[] syncResponseRoles;
 
         internal DatabaseObject(Database database, long objectId, IClass @class)
         {
@@ -33,68 +35,94 @@ namespace Allors.Workspace.Adapters.Remote
             this.Id = long.Parse(syncResponseObject.I);
             this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
-            this.Roles = syncResponseObject.R?.Select(v => new DatabaseRole(this.Database.MetaPopulation, v)).ToArray();
+            this.syncResponseRoles = syncResponseObject.R;
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.A);
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.D);
         }
+
+        public Database Database { get; }
 
         public IClass Class { get; }
 
         public long Id { get; }
 
-        public DatabaseRole[] Roles { get; }
-
-        public string SortedAccessControlIds
-        {
-            get => this.sortedAccessControlIds;
-            set
-            {
-                this.sortedAccessControlIds = value;
-                this.accessControls = null;
-            }
-        }
-
-        public string SortedDeniedPermissionIds
-        {
-            get => this.sortedDeniedPermissionIds;
-            set
-            {
-                this.sortedDeniedPermissionIds = value;
-                this.accessControls = null;
-            }
-        }
-
         public long Version { get; private set; }
 
-        public Database Database { get; }
+        public string SortedAccessControlIds { get; }
 
-        public bool IsPermitted(Permission permission)
+        public string SortedDeniedPermissionIds { get; }
+
+        private Dictionary<Guid, object> RoleByRelationTypeId
         {
-            if (permission == null)
+            get
             {
-                return false;
-            }
-
-            if (this.accessControls == null && this.SortedAccessControlIds != null)
-            {
-                this.accessControls = this.SortedAccessControlIds.Split(Encoding.SeparatorChar).Select(v => this.Database.AccessControlById[long.Parse(v)]).ToArray();
-                if (this.deniedPermissions != null)
+                if (this.syncResponseRoles != null)
                 {
-                    this.deniedPermissions = this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar).Select(v => this.Database.PermissionById[long.Parse(v)]).ToArray();
+                    var metaPopulation = this.Database.MetaPopulation;
+                    this.roleByRelationTypeId = this.syncResponseRoles.ToDictionary(
+                        v => Guid.Parse(v.T),
+                        v =>
+                        {
+                            var value = v.V;
+                            var RoleType = ((IRelationType)metaPopulation.Find(Guid.Parse(v.T))).RoleType;
+
+                            var objectType = RoleType.ObjectType;
+                            if (objectType.IsUnit)
+                            {
+                                return UnitConvert.Parse(RoleType.ObjectType.Id, value);
+                            }
+                            else
+                            {
+                                if (RoleType.IsOne)
+                                {
+                                    return value != null ? long.Parse(value) : (long?)null;
+                                }
+                                else
+                                {
+                                    return value != null
+                                        ? value.Split(Encoding.SeparatorChar).Select(long.Parse).ToArray()
+                                        : Array.Empty<long>();
+                                }
+                            }
+                        });
+
+                    this.syncResponseRoles = null;
                 }
-            }
 
-            if (this.deniedPermissions != null && this.deniedPermissions.Contains(permission))
-            {
-                return false;
+                return this.roleByRelationTypeId;
             }
-
-            if (this.accessControls != null && this.accessControls.Length > 0)
-            {
-                return this.accessControls.Any(v => v.PermissionIds.Any(w => w == permission.Id));
-            }
-
-            return false;
         }
+
+        private AccessControl[] AccessControls =>
+            this.accessControls = this.accessControls switch
+            {
+                null when this.SortedAccessControlIds == null => Array.Empty<AccessControl>(),
+                null => this.SortedAccessControlIds.Split(Encoding.SeparatorChar)
+                    .Select(v => this.Database.AccessControlById[long.Parse(v)])
+                    .ToArray(),
+                _ => this.accessControls
+            };
+
+        private Permission[] DeniedPermissions =>
+            this.deniedPermissions = this.deniedPermissions switch
+            {
+                null when this.SortedDeniedPermissionIds == null => Array.Empty<Permission>(),
+                null => this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar)
+                    .Select(v => this.Database.PermissionById[long.Parse(v)])
+                    .ToArray(),
+                _ => this.deniedPermissions
+            };
+
+        public object GetRole(IRoleType roleType)
+        {
+            object @object = null;
+            this.RoleByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out @object);
+            return @object;
+        }
+
+        public bool IsPermitted(Permission permission) =>
+            permission != null &&
+            !this.DeniedPermissions.Contains(permission) &&
+            this.AccessControls.Any(v => v.PermissionIds.Any(w => w == permission.Id));
     }
 }
