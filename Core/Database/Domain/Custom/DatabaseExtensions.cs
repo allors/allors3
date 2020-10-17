@@ -14,10 +14,13 @@ namespace Allors
             var m = @this.State().M;
             var derivations = new IDomainDerivation[]
             {
-                new PersonFullNameDerivation(m),
-                new PersonGreetingDerivation(m),
+                // Core
                 new AuditableDerivation(m),
                 new MediaDerivation(m),
+
+                // Custom
+                new PersonFullNameDerivation(m),
+                new PersonGreetingDerivation(m),
             };
 
             foreach (var derivation in derivations)

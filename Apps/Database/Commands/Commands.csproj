@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Platform\Database\Adapters\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
     <ProjectReference Include="..\Domain.Default\Domain.Default.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />

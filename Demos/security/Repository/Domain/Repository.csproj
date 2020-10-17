@@ -5,8 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\..\Platform\Repository\Domain\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\..\System\Repository\Domain\Attributes*\**\*.cs" />
     <Compile Include="..\..\..\..\Core\Repository\Domain\Core*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\System\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
   </ItemGroup>
 
 </Project>

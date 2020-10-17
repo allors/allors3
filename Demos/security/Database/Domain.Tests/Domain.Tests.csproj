@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Platform\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
+    <ProjectReference Include="..\Domain.Default\Domain.Default.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />

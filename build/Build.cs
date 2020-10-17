@@ -40,7 +40,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new AbsolutePath[] {this.Paths.Platform, this.Paths.Core, this.Paths.Apps })
+            foreach (var path in new AbsolutePath[] {this.Paths.System, this.Paths.Core, this.Paths.Apps })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {

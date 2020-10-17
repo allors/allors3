@@ -4,7 +4,7 @@ trigger:
 - issue/*
 
 stages:
-- stage: Platform
+- stage: System
   jobs:
   - job: Test
     timeoutInMinutes: 120
@@ -26,6 +26,8 @@ stages:
           target: 'CiCoreWorkspaceTest'
         apps_database:
           target: 'CiAppsDatabaseTest'
+        demos:
+          target: 'CiDemosTest'
 
     steps:
     - powershell: Set-Culture -CultureInfo nl-BE

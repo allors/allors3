@@ -3,18 +3,21 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Tests.Relation
 {
-    using Allors.Meta;
+    using Allors;
+    using Allors.Domain;
     using Xunit;
 
-    public class PersonTests : DomainTest
+    public class PersonTests : DomainTest, IClassFixture<Fixture>
     {
+        public PersonTests(Fixture fixture) : base(fixture) { }
+
         [Theory]
         [MemberData(nameof(TestedDerivationTypes))]
         public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist(object data)
         {
-            this.RegisterDerivations((DerivationTypes)data);
+            this.RegisterAdditionalDerivations((DerivationTypes)data);
 
             var builder = new PersonBuilder(this.Session);
             builder.Build();
@@ -26,7 +29,7 @@ namespace Allors.Domain
         [MemberData(nameof(TestedDerivationTypes))]
         public void OneDeclarerAndThreeDefenderDerivationTest(object data)
         {
-            this.RegisterDerivations((DerivationTypes) data);
+            this.RegisterAdditionalDerivations((DerivationTypes) data);
 
             var people = new People(this.Session);
 
@@ -68,7 +71,7 @@ namespace Allors.Domain
         [MemberData(nameof(TestedDerivationTypes))]
         public void TwoDeclarerAndTwoDefenderDerivationTest(object data)
         {
-            this.RegisterDerivations((DerivationTypes)data);
+            this.RegisterAdditionalDerivations((DerivationTypes)data);
 
             var people = new People(this.Session);
 

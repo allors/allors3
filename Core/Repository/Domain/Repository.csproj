@@ -6,9 +6,9 @@
     <DefineConstants>TRACE;INTRANET</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Platform\Repository\Domain\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\System\Repository\Domain\Attributes*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Platform\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
   </ItemGroup>
 </Project>

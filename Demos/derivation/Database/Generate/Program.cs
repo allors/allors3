@@ -1,49 +1,45 @@
+// <copyright file="Program.cs" company="Allors bvba">
+// Copyright (c) Allors bvba. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
 namespace Allors
 {
     using System;
     using System.IO;
-
     using Allors.Development.Repository.Tasks;
+    using Meta;
 
-    class Program
+    internal class Program
     {
-        static int Main(string[] args)
-        {
-            switch (args.Length)
-            {
-                case 0:
-                    return Default();
-                case 2:
-                    return Generate.Execute(args[0], args[1]).ErrorOccured ? 1 : 0;
-                default:
-                    return 1;
-            }
-        }
+        private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
 
-        private static int Default()
+        private static int Main()
         {
-            string[,] config =
-                {
-                    { "../../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/Generated" },
-                    { "../../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/Generated" },
-                };
-
-            for (var i = 0; i < config.GetLength(0); i++)
+            string[,] database =
             {
-                var template = config[i, 0];
-                var output = config[i, 1];
+                { "../../Core/Database/Templates/meta.cs.stg", "DataBase/Domain/generated/meta" },
+                { "../../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated/domain" },
+                { "../../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
+            };
+
+            var metaPopulation = MetaBuilder.Build();
+
+            for (var i = 0; i < database.GetLength(0); i++)
+            {
+                var template = database[i, 0];
+                var output = database[i, 1];
 
                 Console.WriteLine("-> " + output);
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(template, output);
+                var log = Generate.Execute(metaPopulation, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;
                 }
             }
-
 
             return 0;
         }

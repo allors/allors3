@@ -21,12 +21,16 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Allors.Domain
+namespace Tests.Domain
 {
+    using Allors;
+    using Allors.Domain;
     using Xunit;
 
-    public class PersonTests : DomainTest
+    public class PersonTests : DomainTest, IClassFixture<Fixture>
     {
+        public PersonTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist()
         {

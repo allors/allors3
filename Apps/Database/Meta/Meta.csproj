@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Platform\Database\Allors.Database\Allors.Database.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database\Allors.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Platform\Database\Allors.Meta\Meta*\**\*.cs" />
+    <Compile Include="..\..\..\System\Database\Allors.Meta\Meta*\**\*.cs" />
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
   </ItemGroup>
 </Project>

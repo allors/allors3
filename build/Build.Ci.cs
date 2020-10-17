@@ -24,4 +24,8 @@ partial class Build
     private Target CiAppsWorkspaceTest => _ => _
         .DependsOn(this.AppsInstall)
         .DependsOn(this.AppsWorkspaceTest);
+
+    private Target CiDemosTest => _ => _
+        .DependsOn(this.DerivationTest)
+        .DependsOn(this.SecurityTest);
 }

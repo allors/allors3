@@ -7,16 +7,13 @@ namespace Allors.Domain
 {
     public static class DatabaseExtensions
     {
-        public static void RegisterCoarseDerivations(this @IDatabase @this)
+        public static void RegisterDerivations(this @IDatabase @this)
         {
+            var m = @this.State().M;
             var derivations = new IDomainDerivation[]
             {
-                // Core
-                new AuditableDerivation(),
-                new MediaDerivation(),
-
-                // Custom
-                new CoarseDerivation(),
+                new AuditableDerivation(m),
+                new MediaDerivation(m),
             };
 
             foreach (var derivation in derivations)
@@ -25,22 +22,31 @@ namespace Allors.Domain
             }
         }
 
+        public static void RegisterCoarseDerivations(this @IDatabase @this)
+        {
+            var m = @this.State().M;
+            var derivations = new IDomainDerivation[]
+            {
+                new CoarseDerivation(m),
+            };
+
+            foreach (var derivation in derivations)
+            {
+                @this.DomainDerivationById.Add(derivation.Id, derivation);
+            }
+        }
 
         public static void RegisterFineDerivations(this @IDatabase @this)
         {
+            var m = @this.State().M;
             var derivations = new IDomainDerivation[]
             {
-                // Core
-                new AuditableDerivation(),
-                new MediaDerivation(),
-
-                // Custom
-                new ScoreboardDerivation(),
-                new GameDerivation(),
-                new StartEndDateDerivation(),
-                new GameDefenderDerivation(),
-                new ScoreDerivation(),
-                new AccumulatedScoreDerivation(),
+                new ScoreboardDerivation(m),
+                new GameDerivation(m),
+                new StartEndDateDerivation(m),
+                new GameDefenderDerivation(m),
+                new ScoreDerivation(m),
+                new AccumulatedScoreDerivation(m),
             };
 
             foreach (var derivation in derivations)

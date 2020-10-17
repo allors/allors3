@@ -16,11 +16,7 @@ namespace Allors.Repository
 
 
         #region Allors
-
         [Id("bb433309-4ba0-441c-97eb-e35e6492fe96")]
-        [AssociationId("df33494e-7567-43dd-8189-0fd9a7623c1b")]
-        [RoleId("c8acd051-31a3-4920-8782-bb3550910329")]
-
         #endregion Allors
         [Workspace]
         public DateTime CreationDate { get; set; }
@@ -28,9 +24,7 @@ namespace Allors.Repository
         #region Allors
 
         [Id("9ef3ad24-28c4-476c-a21d-a5e5c12f496a")]
-        [AssociationId("66d89b23-d478-43ed-aead-32844ad6cd0d")]
-        [RoleId("e9500be1-851c-49a3-b201-69597e419722")]
-
+       
         #endregion Allors
         [Workspace]
         public string Name { get; set; }

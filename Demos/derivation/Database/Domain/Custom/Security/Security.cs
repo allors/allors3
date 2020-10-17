@@ -28,7 +28,7 @@ namespace Allors.Domain
         {
             // Default access policy
             var security = new Security(this.session);
-            foreach (ObjectType @class in session.Database.MetaPopulation.Classes)
+            foreach (ObjectType @class in session.Database.MetaPopulation.DatabaseClasses)
             {
                 security.GrantAdministrator(@class, Operations.Read, Operations.Write, Operations.Execute);
                 security.GrantCreator(@class, Operations.Read, Operations.Write, Operations.Execute);

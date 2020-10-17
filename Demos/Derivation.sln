@@ -23,11 +23,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "derivation\Re
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Allors", "Allors", "{F899580C-01C7-418D-8B5D-4E88580F0316}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Memory", "..\Platform\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj", "{9444771F-ECE8-447A-A27F-22A639FAF381}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Memory", "..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj", "{9444771F-ECE8-447A-A27F-22A639FAF381}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database", "..\Platform\Database\Allors.Database\Allors.Database.csproj", "{132BB2E4-E746-4CC5-8638-6D26A9DDBA02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database", "..\System\Database\Allors.Database\Allors.Database.csproj", "{132BB2E4-E746-4CC5-8638-6D26A9DDBA02}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol", "..\Platform\Protocol\Allors.Protocol\Allors.Protocol.csproj", "{BC36F146-48FC-4155-A468-E6F5FFEFFCF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol", "..\System\Protocol\Allors.Protocol\Allors.Protocol.csproj", "{BC36F146-48FC-4155-A468-E6F5FFEFFCF8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Default", "derivation\Database\Domain.Default\Domain.Default.csproj", "{A4D772A7-FE18-4142-8D58-17A61C8D3220}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{BC36F146-48FC-4155-A468-E6F5FFEFFCF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC36F146-48FC-4155-A468-E6F5FFEFFCF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC36F146-48FC-4155-A468-E6F5FFEFFCF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4D772A7-FE18-4142-8D58-17A61C8D3220}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4D772A7-FE18-4142-8D58-17A61C8D3220}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4D772A7-FE18-4142-8D58-17A61C8D3220}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4D772A7-FE18-4142-8D58-17A61C8D3220}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{9444771F-ECE8-447A-A27F-22A639FAF381} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 		{132BB2E4-E746-4CC5-8638-6D26A9DDBA02} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 		{BC36F146-48FC-4155-A468-E6F5FFEFFCF8} = {F899580C-01C7-418D-8B5D-4E88580F0316}
+		{A4D772A7-FE18-4142-8D58-17A61C8D3220} = {BF7DC468-B9B1-4696-8E4D-7D108B8DF4D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C4BD046D-C81E-41F3-B82E-DED455C38924}

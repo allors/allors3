@@ -3,12 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Tests.Sandbox
 {
     using Xunit;
 
-    public class SandboxTests : DomainTest
+    public class SandboxTests : DomainTest, IClassFixture<Fixture>
     {
+        public SandboxTests(Fixture fixture) : base(fixture) { }
+
         [Fact]
         public void Dummy()
         {

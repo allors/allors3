@@ -3,13 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Tests.Whist
 {
-    using Allors.Meta;
+    using Allors;
+    using Allors.Domain;
     using Xunit;
 
-    public class GameTests : DomainTest
+    public class GameTests : DomainTest, IClassFixture<Fixture>
     {
+        public GameTests(Fixture fixture) : base(fixture) { }
+
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -20,7 +23,7 @@ namespace Allors.Domain
 
         public void Setup(DerivationTypes data)
         {
-            this.RegisterDerivations(data);
+            this.RegisterAdditionalDerivations(data);
 
             var people = new People(this.Session);
 

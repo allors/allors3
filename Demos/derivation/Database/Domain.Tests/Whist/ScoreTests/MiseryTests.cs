@@ -19,14 +19,17 @@
 // <summary>Defines the MediaTests type.</summary>
 //-------------------------------------------------------------------------------------------------
 
-namespace Allors.Domain
+namespace Tests.Whist.Score
 {
-    using Allors.Meta;
     using System.Linq;
+    using Allors;
+    using Allors.Domain;
     using Xunit;
 
-    public class MiseryTests : DomainTest
+    public class MiseryTests : DomainTest, IClassFixture<Fixture>
     {
+        public MiseryTests(Fixture fixture) : base(fixture) { }
+
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -37,7 +40,7 @@ namespace Allors.Domain
 
         public void Setup(DerivationTypes data)
         {
-            this.RegisterDerivations(data);
+            this.RegisterAdditionalDerivations(data);
 
             var people = new People(this.Session);
 

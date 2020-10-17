@@ -1,35 +1,22 @@
-// <copyright file="Domain.cs" company="Allors bvba">
+// <copyright file="DomainTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Tests
 {
-    using System.Globalization;
-    using Domain;
+    using System;
+    using Allors.Meta;
 
-    public class Fixture
+    public class Fixture : IDisposable
     {
-        public static void Setup(IDatabase database)
-        {
-            CultureInfo.CurrentCulture = new CultureInfo("en-GB");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
+        private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
 
-            using (var session = database.CreateSession())
-            {
-                var config = new Config();
-                new Setup(session, config).Apply();
+        public Fixture() => this.MetaPopulation = MetaBuilder.Build();
 
-                var administrator = new Users(session).GetUser("administrator");
-                session.SetUser(administrator);
+        public MetaPopulation MetaPopulation { get; set; }
 
-                var singleton = session.GetSingleton();
-
-                new UserGroups(session).Administrators.AddMember(administrator);
-
-                session.Derive();
-                session.Commit();
-            }
-        }
+        public void Dispose() => this.MetaPopulation = null;
     }
 }

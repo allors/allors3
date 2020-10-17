@@ -1,25 +1,33 @@
-// <copyright file="Domain.cs" company="Allors bvba">
+// <copyright file="DomainTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Tests
 {
     using System;
     using System.Collections.Generic;
-
+    using Allors;
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Services;
+    using Allors.State;
 
-    using Microsoft.Extensions.DependencyInjection;
-
-    public class DomainTest : IDisposable
+    public abstract class DomainTest : IDisposable
     {
-        public DomainTest(bool populate = true)
+        protected DomainTest(Fixture fixture, bool populate = true)
         {
-            this.Setup(populate);
+            var database = new Database(
+                new DefaultDatabaseState(),
+                new Configuration
+                {
+                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
+                });
+
+            this.M = database.State().M;
+
+            this.Setup(database, populate);
         }
 
         public static IEnumerable<object[]> TestedDerivationTypes
@@ -27,12 +35,16 @@ namespace Allors
                 new object[] {DerivationTypes.Coarse },
                 new object[] {DerivationTypes.Fine },
             };
+        
+        public M M { get; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.ServiceProvider.GetRequiredService<ITimeService>();
+        public ITimeService TimeService => this.Session.Database.State().TimeService;
+
+        public IDerivationService DerivationService => this.Session.Database.State().DerivationService;
 
         public TimeSpan? TimeShift
         {
@@ -41,55 +53,29 @@ namespace Allors
             set => this.TimeService.Shift = value;
         }
 
-        protected Person Administrator => this.GetUser("administrator");
-
-        protected ObjectFactory ObjectFactory => new ObjectFactory(MetaPopulation.Instance, typeof(User));
-
+        
         public void Dispose()
         {
             this.Session.Rollback();
             this.Session = null;
         }
 
-        protected void Setup(bool populate)
-        {
-            var services = new ServiceCollection();
-            services.AddAllors();
-            var serviceProvider = services.BuildServiceProvider();
-
-            var configuration = new Configuration
-            {
-                ObjectFactory = this.ObjectFactory,
-            };
-
-            var database = new Database.Adapters.Memory.Database(serviceProvider, configuration);
-            this.Setup(database, populate);
-        }
-
         protected void Setup(IDatabase database, bool populate)
         {
             database.Init();
+
+            database.RegisterDerivations();
 
             this.Session = database.CreateSession();
 
             if (populate)
             {
-                Fixture.Setup(database);
-
+                new Setup(this.Session, this.Config).Apply();
                 this.Session.Commit();
             }
         }
 
-        protected void SetIdentity(string identity)
-        {
-            var users = new Users(this.Session);
-            var user = users.GetUser(identity) ?? new AutomatedAgents(this.Session).Guest;
-            this.Session.SetUser(user);
-        }
-
-        private Person GetUser(string userName) => (Person)new Users(this.Session).GetUser(userName);
-
-        protected void RegisterDerivations(DerivationTypes derivationType)
+        protected void RegisterAdditionalDerivations(DerivationTypes derivationType)
         {
             if (derivationType == DerivationTypes.Fine)
             {

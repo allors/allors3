@@ -1,5 +1,4 @@
-﻿using Allors.Repository.Attributes;
-using System;
+using Allors.Repository.Attributes;
 
 namespace Allors.Repository
 {
@@ -18,8 +17,6 @@ namespace Allors.Repository
         #region Allors
 
         [Id("19b4ccc7-c396-474d-a3b2-ad631932545e")]
-        [AssociationId("4c23c03b-92fc-4e2f-bd63-f97394b80a7e")]
-        [RoleId("e28c39c1-4288-4533-b997-b481a783295e")]
 
         #endregion Allors
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -30,8 +27,6 @@ namespace Allors.Repository
         #region Allors
 
         [Id("e68d4b5c-41c7-41d1-93cb-b00f71bcb6bf")]
-        [AssociationId("25863fd8-5850-4bb1-8170-a9efee52af14")]
-        [RoleId("33df16a6-915e-4a3f-84e2-78dec18ceba4")]
 
         #endregion Allors
         [Multiplicity(Multiplicity.ManyToOne)]
