@@ -30,22 +30,10 @@
       "tags": [],
       "implicitDependencies": ["react"]
     },
-    "data-system": {
-      "tags": []
-    },
     "domain-custom": {
       "tags": []
     },
-    "meta-system": {
-      "tags": []
-    },
-    "protocol-system": {
-      "tags": []
-    },
     "workspace-memory": {
-      "tags": []
-    },
-    "workspace-system": {
       "tags": []
     },
     "workspace-tests": {
@@ -64,6 +52,18 @@
       "tags": []
     },
     "meta-generated": {
+      "tags": []
+    },
+    "data-core": {
+      "tags": []
+    },
+    "meta-core": {
+      "tags": []
+    },
+    "protocol-core": {
+      "tags": []
+    },
+    "workspace-core": {
       "tags": []
     }
   }

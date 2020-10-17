@@ -1,5 +1,5 @@
-import { MetaPopulation } from '@allors/meta/system';
-import { Database, Session } from '@allors/workspace/system';
+import { MetaPopulation } from '@allors/meta/core';
+import { Database, Session } from '@allors/workspace/core';
 import { MemoryDatabase } from '@allors/workspace/memory';
 import { data, Meta } from '@allors/meta/generated';
 import { WorkspacePerson } from '@allors/domain/generated';

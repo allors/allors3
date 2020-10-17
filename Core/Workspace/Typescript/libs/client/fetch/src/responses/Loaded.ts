@@ -1,6 +1,6 @@
-import { DatabaseObject, Session, WorkspaceObject } from '@allors/workspace/system';
-import { PullResponse } from '@allors/protocol/system';
-import { assert } from '@allors/meta/system';
+import { DatabaseObject, Session, WorkspaceObject } from '@allors/workspace/core';
+import { PullResponse } from '@allors/protocol/core';
+import { assert } from '@allors/meta/core';
 
 export class Loaded {
   public objects: { [name: string]: DatabaseObject | WorkspaceObject } = {};

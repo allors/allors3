@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Base\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
+    <Compile Include="..\..\..\..\Core\Workspace\CSharp\Allors.Workspace.Meta\Meta*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Base\Workspace\CSharp\Allors.Workspace.Meta\Meta*\**\*.cs" />
+    <ProjectReference Include="..\Allors.Workspace\Allors.Workspace.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-import { MetaPopulation, ObjectType } from '@allors/meta/system';
+import { MetaPopulation, ObjectType } from '@allors/meta/core';
 
 import { data, Meta } from '@allors/meta/generated';
 

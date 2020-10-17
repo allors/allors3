@@ -11,13 +11,13 @@ import {
   SecurityResponse,
   InvokeResponse,
   InvokeRequest,
-} from '@allors/protocol/system';
-import { Pull } from '@allors/data/system';
-import { assert } from '@allors/meta/system';
+} from '@allors/protocol/core';
+import { Pull } from '@allors/data/core';
+import { assert } from '@allors/meta/core';
 
 import { Http } from './http/Http';
 import { HttpResponse } from './http/HttpResponse';
-import { Method } from '@allors/workspace/system';
+import { Method } from '@allors/workspace/core';
 
 export class Client {
   constructor(private http: Http) {}

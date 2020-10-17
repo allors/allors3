@@ -1,4 +1,4 @@
-import { ResponseType, SyncResponse, SecurityResponse, Operations } from "@allors/protocol/system";
+import { ResponseType, SyncResponse, SecurityResponse, Operations } from "@allors/protocol/core";
 import { Meta } from "@allors/meta/generated";
 
 export function syncResponse(m: Meta): SyncResponse {

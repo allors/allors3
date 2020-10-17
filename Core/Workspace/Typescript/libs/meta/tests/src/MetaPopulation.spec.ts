@@ -1,4 +1,4 @@
-import { MetaPopulation } from '@allors/meta/system';
+import { MetaPopulation } from '@allors/meta/core';
 
 import { data } from '@allors/meta/generated';
 

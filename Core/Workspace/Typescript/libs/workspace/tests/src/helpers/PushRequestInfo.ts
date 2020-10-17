@@ -1,5 +1,5 @@
-import { MetaPopulation, assert, MetaObject, RoleType, RelationType, AssociationType } from '@allors/meta/system';
-import { PushRequest } from '@allors/protocol/system';
+import { MetaPopulation, assert, MetaObject, RoleType, RelationType, AssociationType } from '@allors/meta/core';
+import { PushRequest } from '@allors/protocol/core';
 
 export class PushRequestInfo {
   metaTypeByKey: Map<string, MetaObject>;

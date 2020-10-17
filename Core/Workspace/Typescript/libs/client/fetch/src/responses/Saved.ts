@@ -1,5 +1,5 @@
-import { Session } from '@allors/workspace/system';
-import { PushResponse } from '@allors/protocol/system';
+import { Session } from '@allors/workspace/core';
+import { PushResponse } from '@allors/protocol/core';
 
 export class Saved {
   constructor(public session: Session, public response: PushResponse) {}

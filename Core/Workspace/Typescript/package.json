@@ -24,7 +24,6 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "postinstall": "node ./postinstall.js",
     "typecheck": "npx tsc --noEmit --project ./libs/workspace/memory/tsconfig.lib.json",
     "test:meta": "npx nx test meta-tests --skipNxCache",
     "test:workspace": "npx nx test workspace-tests --skipNxCache",

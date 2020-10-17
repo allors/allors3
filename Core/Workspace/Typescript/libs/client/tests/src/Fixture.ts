@@ -1,6 +1,6 @@
-import { MetaPopulation } from '@allors/meta/system';
+import { MetaPopulation } from '@allors/meta/core';
 import { Meta, PullFactory, TreeFactory, FetchFactory, data } from '@allors/meta/generated';
-import { Database } from '@allors/workspace/system';
+import { Database } from '@allors/workspace/core';
 import { MemoryDatabase } from '@allors/workspace/memory';
 
 import { extend as extendDomain } from '@allors/domain/custom';
