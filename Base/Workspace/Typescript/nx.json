@@ -49,6 +49,9 @@
     },
     "workspace-core": {
       "tags": []
+    },
+    "meta-base": {
+      "tags": []
     }
   }
 }

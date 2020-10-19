@@ -1,0 +1,65 @@
+@startuml overview
+
+' Database
+'---------
+interface Database {
+    +metaPopulation
+    +accessControlById
+    +permission()
+    +diff()
+    +sync()
+    +security()
+}
+Database ..> Session : createSession()
+Database ..> Record : get()
+
+interface Record{
+    +objectType
+    +id
+    +version
+    +roleByRoleTypeId
+    +isPermitted()
+}
+Record --> Database
+
+' Session
+'---------
+interface Session {
+    +hasChanges
+    +delete()
+    +pushRequest()
+    +pushResponse()
+    +reset()
+}
+Session --> Database
+Session ..> DatabaseObject : get()
+Session ..> DatabaseObject : create()
+
+interface DatabaseObject {
+    +id
+    +objectType
+    +newId
+    +version
+    +isNew
+    +hasChanges
+    --
+    +canRead()
+    +canWrite()
+    +canExecute()
+    +isPermited()
+    ..
+    +get()
+    +set()
+    +add()
+    +remove()
+    ..
+    getAssociation()
+    ..
+    save()
+    saveNew()
+    reset()
+}
+DatabaseObject --> Session
+DatabaseObject --> Record
+
+@enduml

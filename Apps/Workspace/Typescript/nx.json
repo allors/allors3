@@ -49,6 +49,15 @@
     },
     "workspace-core": {
       "tags": []
+    },
+    "meta-base": {
+      "tags": []
+    },
+    "meta-apps": {
+      "tags": []
+    },
+    "domain-apps": {
+      "tags": []
     }
   }
 }

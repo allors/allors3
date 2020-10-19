@@ -65,6 +65,9 @@
     },
     "workspace-core": {
       "tags": []
+    },
+    "domain-core": {
+      "tags": []
     }
   }
 }

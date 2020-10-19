@@ -11,5 +11,6 @@ module.exports = {
     '<rootDir>/libs/client/tests',
     '<rootDir>/libs/client/fetch',
     '<rootDir>/libs/meta/tests',
+    '<rootDir>/libs/domain/core',
   ],
 };
