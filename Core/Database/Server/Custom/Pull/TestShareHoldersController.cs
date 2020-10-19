@@ -40,7 +40,6 @@ namespace Allors.Server.Controllers
                 response.AddObject("root", organisation,
                     new[] {
                                 new Node(m.Organisation.Shareholders)
-                                    .Add(m.Person.Photo),
                                 });
                 return this.Ok(response.Build());
             }

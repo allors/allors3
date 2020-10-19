@@ -1,4 +1,4 @@
-// <copyright file="CoreMediaController.cs" company="Allors bvba">
+// <copyright file="BaseMediaController.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,11 +20,11 @@ namespace Allors.Server
     using SkiaSharp;
     using ISession = Allors.ISession;
 
-    public abstract partial class CoreImageController : Controller
+    public abstract partial class BaseImageController : Controller
     {
         protected const int OneYearInSeconds = 60 * 60 * 24 * 356;
 
-        protected CoreImageController(ISessionService sessionService)
+        protected BaseImageController(ISessionService sessionService)
         {
             this.Session = sessionService.Session;
             this.ETagByPath = new ConcurrentDictionary<string, string>();

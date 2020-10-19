@@ -15,10 +15,10 @@ namespace Tests.Workspace.Meta
         [Fact]
         public void Class()
         {
-            var builder = new OrganisationNodeBuilder(this.M, organisation => organisation.Manager(manage =>
+            var builder = new OrganisationNodeBuilder(this.M, organisation => organisation.Manager(manager =>
             {
-                manage.Photo();
-                manage.Address(address => address.HomeAddress_AddressablesWhereAddress());
+                manager.CycleOne();
+                manager.CycleMany(person => person.Employees());
             }));
 
             Node[] nodes = builder;
@@ -33,8 +33,10 @@ namespace Tests.Workspace.Meta
             var photoNode = managerNode.Nodes[0];
             var addressNode = managerNode.Nodes[1];
 
-            Assert.Equal(this.M.Person.Photo, photoNode.PropertyType);
-            Assert.Equal(this.M.Person.Address, addressNode.PropertyType);
+            Assert.Equal(this.M.Person.CycleOne, photoNode.PropertyType);
+            Assert.Equal(this.M.Person.CycleMany, addressNode.PropertyType);
+
+            // TODO: Check subnodes
         }
 
         [Fact]
@@ -42,7 +44,7 @@ namespace Tests.Workspace.Meta
         {
             var builder = new DeletableNodeBuilder(this.M, deletable =>
             {
-                deletable.Media_MediaContent();
+                deletable.Organisation_Employees();
             });
 
             Node[] nodes = builder;
@@ -51,7 +53,7 @@ namespace Tests.Workspace.Meta
 
             var mediaContentNode = nodes[0];
 
-            Assert.Equal(this.M.Media.MediaContent, mediaContentNode.PropertyType);
+            Assert.Equal(this.M.Organisation.Employees, mediaContentNode.PropertyType);
         }
     }
 }

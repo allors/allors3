@@ -7,7 +7,7 @@ namespace Allors.Server
 {
     using Allors.Services;
 
-    public class ImageController : CoreImageController
+    public class ImageController : BaseImageController
     {
         public ImageController(ISessionService sessionService)
             : base(sessionService)
