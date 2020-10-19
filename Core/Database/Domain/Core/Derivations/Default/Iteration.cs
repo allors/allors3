@@ -8,6 +8,7 @@ namespace Allors.Domain.Derivations.Default
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Allors.Data;
     using Allors.Meta;
@@ -79,6 +80,9 @@ namespace Allors.Domain.Derivations.Default
         {
             try
             {
+                const int maxDomainDerivationCycles = 100;
+                var domainCycles = 0;
+
                 // Domain Derivations
                 var session = this.Cycle.Derivation.Session;
                 AccumulatedChangeSet domainAccumulatedChangeSet = null;
@@ -93,6 +97,11 @@ namespace Allors.Domain.Derivations.Default
 
                     while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
                     {
+                        if (++domainCycles > maxDomainDerivationCycles)
+                        {
+                            throw new Exception("Maximum amount of domain derivation cycles detected");
+                        }
+
                         // Initialization
                         if (changeSet.Created.Any())
                         {

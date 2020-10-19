@@ -52,8 +52,6 @@ namespace Allors.Repository
 
         public Login[] Logins { get; set; }
 
-        public NotificationList NotificationList { get; set; }
-
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }

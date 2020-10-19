@@ -119,13 +119,5 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         Login[] Logins { get; set; }
-
-        #region Allors
-        [Id("bed34563-4ed8-4c6b-88d2-b4199e521d74")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        NotificationList NotificationList { get; set; }
     }
 }

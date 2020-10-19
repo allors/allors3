@@ -1,26 +1,23 @@
-// <copyright file="Address.cs" company="Allors bvba">
+// <copyright file="User.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
+// <summary>Defines the Extent type.</summary>
 
 namespace Allors.Repository
 {
+    using System;
     using Allors.Repository.Attributes;
     using static Workspaces;
-
-
-    #region Allors
-    [Id("FA760DB7-59FE-49C7-8198-6A08A2DFDEF9")]
-    #endregion
-    public partial interface Addressable : Object
+   
+    public partial interface User 
     {
         #region Allors
-        [Id("5E8CA38B-F4FB-4BBF-8A60-4DDA8EA6EF0E")]
+        [Id("bed34563-4ed8-4c6b-88d2-b4199e521d74")]
         [Indexed]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
-        Address Address { get; set; }
+        NotificationList NotificationList { get; set; }
     }
 }

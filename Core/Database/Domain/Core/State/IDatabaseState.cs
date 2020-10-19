@@ -26,8 +26,6 @@ namespace Allors
 
         IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; }
 
-        ITemplateObjectCache TemplateObjectCache { get; }
-
         IBarcodeGenerator BarcodeGenerator { get; }
 
         IDerivationService DerivationService { get; }
@@ -36,13 +34,9 @@ namespace Allors
 
         IFetchService FetchService { get; }
 
-        IMailService MailService { get; }
-
         IMetaCache MetaCache { get; }
 
         IPasswordService PasswordService { get; }
-
-        ISingletonService SingletonService { get; }
 
         IStickyService StickyService { get; }
 

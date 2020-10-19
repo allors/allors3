@@ -14,10 +14,6 @@ namespace Allors
             var m = @this.State().M;
             var derivations = new IDomainDerivation[]
             {
-                // Core
-                new AuditableDerivation(m),
-                new MediaDerivation(m),
-
                 // Custom
                 new PersonFullNameDerivation(m),
                 new PersonGreetingDerivation(m),

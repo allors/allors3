@@ -36,11 +36,6 @@ namespace Allors.Domain
 
         public static void CoreOnPostBuild(this User @this, ObjectOnPostBuild method)
         {
-            if (!@this.ExistNotificationList)
-            {
-                @this.NotificationList = new NotificationListBuilder(@this.Strategy.Session).Build();
-            }
-
             if (!@this.ExistOwnerAccessControl)
             {
                 var ownerRole = new Roles(@this.Strategy.Session).Owner;
@@ -84,8 +79,6 @@ namespace Allors.Domain
             {
                 login.Delete();
             }
-
-            @this.NotificationList?.Delete();
         }
     }
 }

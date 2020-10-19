@@ -86,22 +86,6 @@ namespace Allors.Repository
         public DateTime DateTime2 { get; set; }
 
         #region Allors
-        [Id("BA910E25-0D71-43E1-8311-7C9620AC0CDE")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        public Media File { get; set; }
-
-        #region Allors
-        [Id("68515CCE-3E87-4D21-B5E5-2136CC3D4F5C")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        public Media[] MultipleFiles { get; set; }
-
-        #region Allors
         [Id("3AA7FE12-F9DC-43A8-ACA7-3EADAEE0D05D")]
         #endregion
         [Size(256)]

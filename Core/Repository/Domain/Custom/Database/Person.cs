@@ -10,14 +10,96 @@ namespace Allors.Repository
     using Allors.Repository.Attributes;
     using static Workspaces;
 
+    #region Allors
+    [Id("6E026CC2-1979-413A-A4B2-54B41667E013")]
+    #endregion
     [Workspace(Default)]
-    public partial class Person : Addressable, Deletable
+    public partial class Person : User,  Deletable
     {
         #region inherited properties
-        public Address Address { get; set; }
+
+        public SecurityToken OwnerSecurityToken { get; set; }
+
+        public AccessControl OwnerAccessControl { get; set; }
+
+        public Permission[] DeniedPermissions { get; set; }
+
+        public SecurityToken[] SecurityTokens { get; set; }
+
+        public Guid UniqueId { get; set; }
+
+        public string UserName { get; set; }
+
+        public string NormalizedUserName { get; set; }
+
+        public string InUserPassword { get; set; }
+
+        public string UserPasswordHash { get; set; }
+
+        public string UserEmail { get; set; }
+
+        public string NormalizedUserEmail { get; set; }
+
+        public bool UserEmailConfirmed { get; set; }
+
+        public string UserSecurityStamp { get; set; }
+
+        public string UserPhoneNumber { get; set; }
+
+        public bool UserPhoneNumberConfirmed { get; set; }
+
+        public bool UserTwoFactorEnabled { get; set; }
+
+        public DateTime UserLockoutEnd { get; set; }
+
+        public bool UserLockoutEnabled { get; set; }
+
+        public int UserAccessFailedCount { get; set; }
+
+        public IdentityClaim[] IdentityClaims { get; set; }
+
+        public Login[] Logins { get; set; }
 
         #endregion
 
+        #region Allors
+        [Id("ed4b710a-fe24-4143-bb96-ed1bd9beae1a")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string FirstName { get; set; }
+
+        #region Allors
+        [Id("eb18bb28-da9c-47b4-a091-2f8f2303dcb6")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string MiddleName { get; set; }
+
+        #region Allors
+        [Id("8a3e4664-bb40-4208-8e90-a1b5be323f27")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string LastName { get; set; }
+
+        #region inherited methods
+
+        public void OnBuild() { }
+
+        public void OnPostBuild() { }
+
+        public void OnInit()
+        {
+        }
+
+        public void OnPreDerive() { }
+
+        public void OnDerive() { }
+
+        public void OnPostDerive() { }
+
+        #endregion
         #region Allors
         [Id("2a25125f-3545-4209-afc6-523eb0d8851e")]
         #endregion
@@ -71,12 +153,6 @@ namespace Allors.Repository
         //[DomainDerived]
         public string DomainGreeting { get; set; }
 
-        #region Allors
-        [Id("654f6c84-62f2-4c0a-9d68-532ed3f39447")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        #endregion
-        public Gender Gender { get; set; }
 
         #region Allors
         [Id("a8a3b4b8-c4f2-4054-ab2a-2eac6fd058e4")]
@@ -88,36 +164,6 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public bool IsStudent { get; set; }
-
-        #region Allors
-        [Id("6340de2a-c3b1-4893-a7f3-cb924b82fa0e")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        #endregion
-        public MailboxAddress MailboxAddress { get; set; }
-
-        #region Allors
-        [Id("0375a3d3-1a1b-4cbb-b735-1fe508bcc672")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        #endregion
-        public Address MainAddress { get; set; }
-
-        #region Allors
-        [Id("b3ddd2df-8a5a-4747-bd4f-1f1eb37386b3")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public Media Photo { get; set; }
-
-        #region Allors
-        [Id("2E878C18-9DF7-4DEF-8145-983F4A5CCB2D")]
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public Media[] Pictures { get; set; }
 
         #region Allors
         [Id("6b626ba5-0c45-48c7-8b6b-5ea85e002d90")]
@@ -160,11 +206,11 @@ namespace Allors.Repository
         [Indexed]
         public Organisation[] CycleMany { get; set; }
 
+        [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
+        public void Method() { }
+
         #region inherited methods
         public void Delete() { }
         #endregion
-
-        [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
-        public void Method() { }
     }
 }

@@ -9,6 +9,7 @@ namespace Allors.Meta
     {
         private void BuildBase(MetaPopulation meta, Domains domains, ObjectTypes objectTypes, RelationTypes relationTypes, MethodTypes methodTypes, RoleClasses roleClasses)
         {
+            roleClasses.LocalisedTextLocale.IsRequired = true;
         }
     }
 }

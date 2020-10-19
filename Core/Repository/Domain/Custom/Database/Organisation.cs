@@ -13,7 +13,7 @@ namespace Allors.Repository
     [Id("3a5dcec7-308f-48c7-afee-35d38415aa0b")]
     #endregion
     [Workspace(Default)]
-    public partial class Organisation : Addressable, Deletable, UniquelyIdentifiable
+    public partial class Organisation : Deletable, UniquelyIdentifiable
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
@@ -21,8 +21,6 @@ namespace Allors.Repository
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Address Address { get; set; }
 
         #endregion
 
@@ -63,14 +61,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         public Person[] Shareholders { get; set; }
 
-
-        #region Allors
-        [Id("17e55fcd-2c82-462b-8e31-b4a515acdaa9")]
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        #endregion
-        public Media[] Images { get; set; }
-
         #region Allors
         [Id("5fa25b53-e2a7-44c8-b6ff-f9575abb911d")]
         #endregion
@@ -92,20 +82,6 @@ namespace Allors.Repository
         [Id("68c61cea-4e6e-4ed5-819b-7ec794a10870")]
         #endregion
         public bool IsSupplier { get; set; }
-
-        #region Allors
-        [Id("b201d2a0-2335-47a1-aa8d-8416e89a9fec")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        #endregion
-        public Media Logo { get; set; }
-
-        #region Allors
-        [Id("ddcea177-0ed9-4247-93d3-2090496c130c")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        #endregion
-        public Address MainAddress { get; set; }
 
         #region Allors
         [Id("2cc74901-cda5-4185-bcd8-d51c745a8437")]
