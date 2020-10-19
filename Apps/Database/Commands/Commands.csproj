@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -18,9 +18,12 @@
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Commands\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Commands\Base*\**\*.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <None Update="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -35,7 +35,6 @@ namespace Allors.Server.Controllers
             var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.State().User);
             response.AddObject("root", organisation, new[] {
                 new Node(m.Organisation.Shareholders)
-                    .Add(m.Person.Photo),
             });
             return this.Ok(response.Build());
         }

@@ -54,6 +54,7 @@ partial class Build : NukeBuild
     Target Generate => _ => _
         .DependsOn(this.AdaptersGenerate)
         .DependsOn(this.CoreGenerate)
+        .DependsOn(this.BaseGenerate)
         .DependsOn(this.AppsGenerate);
 
     Target Default => _ => _

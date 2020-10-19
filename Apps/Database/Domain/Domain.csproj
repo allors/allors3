@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Domain\Base*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

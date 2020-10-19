@@ -1,0 +1,234 @@
+{
+  "version": 1,
+  "projects": {
+    "meta-generated": {
+      "root": "libs/meta/generated",
+      "sourceRoot": "libs/meta/generated/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/meta/generated/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/meta/generated/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "meta-core": {
+      "root": "libs/meta/core",
+      "sourceRoot": "libs/meta/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/meta/core/**/*.ts",
+              "libs/meta/core/**/*.spec.ts",
+              "libs/meta/core/**/*.spec.tsx",
+              "libs/meta/core/**/*.spec.js",
+              "libs/meta/core/**/*.spec.jsx",
+              "libs/meta/core/**/*.d.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/meta/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-memory": {
+      "root": "libs/workspace/memory",
+      "sourceRoot": "libs/workspace/memory/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/workspace/memory/**/*.ts",
+              "libs/workspace/memory/**/*.spec.ts",
+              "libs/workspace/memory/**/*.spec.tsx",
+              "libs/workspace/memory/**/*.spec.js",
+              "libs/workspace/memory/**/*.spec.jsx",
+              "libs/workspace/memory/**/*.d.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/memory/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "domain-generated": {
+      "root": "libs/domain/generated",
+      "sourceRoot": "libs/domain/generated/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/domain/generated/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/domain/generated/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "domain-base": {
+      "root": "libs/domain/base",
+      "sourceRoot": "libs/domain/base/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/domain/base/**/*.ts",
+              "libs/domain/base/**/*.spec.ts",
+              "libs/domain/base/**/*.spec.tsx",
+              "libs/domain/base/**/*.spec.js",
+              "libs/domain/base/**/*.spec.jsx",
+              "libs/domain/base/**/*.d.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/domain/base/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "domain-custom": {
+      "root": "libs/domain/custom",
+      "sourceRoot": "libs/domain/custom/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/domain/custom/**/*.ts",
+              "libs/domain/custom/**/*.spec.ts",
+              "libs/domain/custom/**/*.spec.tsx",
+              "libs/domain/custom/**/*.spec.js",
+              "libs/domain/custom/**/*.spec.jsx",
+              "libs/domain/custom/**/*.d.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/domain/custom/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "data-core": {
+      "root": "libs/data/core",
+      "sourceRoot": "libs/data/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/data/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/data/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "protocol-core": {
+      "root": "libs/protocol/core",
+      "sourceRoot": "libs/protocol/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/protocol/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/protocol/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-core": {
+      "root": "libs/workspace/core",
+      "sourceRoot": "libs/workspace/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "schematics": {
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
+    }
+  }
+}

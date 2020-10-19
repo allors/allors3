@@ -21,14 +21,14 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.User.ObjectType),
+                Extent = new Extent(this.M.Organisation.Class),
                 Results = new[]
                 {
                     new Result
                     {
                         Fetch = new Fetch
                         {
-                            Include = new UserNodeBuilder(this.M,v => v.Person_Address()),
+                            Include = new OrganisationNodeBuilder(this.M,v => v.Organisation_Owner()),
                         },
                     },
                 },
@@ -36,12 +36,12 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
 
             var result = await session.Load(pull);
 
-            var users = result.GetCollection<User>();
+            var organisations = result.GetCollection<Organisation>();
 
-            var personWithAddress = (Person)users.Single(v => (v as Person)?.ExistAddress == true);
+            var owner = organisations.Single(v => v.ExistOwner).Owner;
 
-            Assert.NotNull(personWithAddress);
-            Assert.Equal("Jane", personWithAddress.FirstName);
+            Assert.NotNull(owner);
+            Assert.Equal("Jane", owner.FirstName);
         }
     }
 }
