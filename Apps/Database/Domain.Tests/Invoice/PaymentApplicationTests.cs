@@ -87,7 +87,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void DeriveOnCreateInvalidPaymentApplication()
+        public void DeriveOnCreateAtMostOneInvalidPaymentApplication()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
@@ -104,6 +104,46 @@ namespace Allors.Domain
             var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+        }
+
+        [Fact]
+        public void DeriveOnCreateAtLeastOneInvalidPaymentApplication()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var invoiceItem = salesInvoice.InvoiceItems.First();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+
+            var partialAmount = invoiceItem.TotalIncVat - 1;
+            new PaymentApplicationBuilder(this.Session)
+                                        .WithAmountApplied(partialAmount)
+                                        .Build();
+
+            var expectedMessage = $"{invoiceItem} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertAtLeastOne")));
+        }
+
+        [Fact]
+        public void DeriveOnCreatePaymentApplicationNotLargerThanPaymentAmount()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+
+            var fullAmount = salesInvoice.TotalIncVat - 1;
+            var extraAmount = salesInvoice.TotalIncVat + 1;
+            var paymentApp = new PaymentApplicationBuilder(this.Session).WithInvoice(salesInvoice).WithAmountApplied(extraAmount).Build();
+
+            new ReceiptBuilder(this.Session)
+                .WithAmount(fullAmount)
+                .WithPaymentApplication(paymentApp)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+
+            var expectedMessage = $"{paymentApp} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
         }
     }
 }
