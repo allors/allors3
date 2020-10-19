@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\System\Repository\Domain\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\Core\Repository\Domain\Core*\**\*.cs" />
+  </ItemGroup>
+
+</Project>

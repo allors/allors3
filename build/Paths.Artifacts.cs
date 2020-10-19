@@ -10,9 +10,12 @@ public partial class Paths
     public AbsolutePath ArtifactsCoreCommands => this.Artifacts / "Core/Commands";
     public AbsolutePath ArtifactsCoreServer => this.Artifacts / "Core/Server";
 
+    // Base
+    public AbsolutePath ArtifactsBaseCommands => this.Artifacts / "Base/Commands";
+    public AbsolutePath ArtifactsBaseServer => this.Artifacts / "Base/Server";
+
+
     // Apps
-    public AbsolutePath ArtifactsTestsAppsWorkspaceTypescriptDomain => this.ArtifactsTests / "AppsWorkspaceTypescriptDomain.trx";
     public AbsolutePath ArtifactsAppsCommands => this.Artifacts / "Apps/Commands";
     public AbsolutePath ArtifactsAppsServer => this.Artifacts / "Apps/Server";
-    public AbsolutePath ArtifactsAppsExcellAddIn => this.Artifacts / "Apps/ExcelAddIn";
 }

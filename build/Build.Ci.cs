@@ -18,6 +18,9 @@ partial class Build
         .DependsOn(this.CoreInstall)
         .DependsOn(this.CoreWorkspaceTest);
 
+    private Target CiBaseDatabaseTest => _ => _
+        .DependsOn(this.BaseDatabaseTest);
+
     private Target CiAppsDatabaseTest => _ => _
        .DependsOn(this.AppsDatabaseTest);
 

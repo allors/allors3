@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -16,5 +16,6 @@
   <ItemGroup>
     <Compile Include="..\..\..\System\Database\Allors.Meta\Meta*\**\*.cs" />
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Meta\Base*\**\*.cs" />
   </ItemGroup>
 </Project>
