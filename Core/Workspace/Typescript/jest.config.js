@@ -1,14 +1,14 @@
 module.exports = {
   projects: [
     '<rootDir>/apps/react',
-    '<rootDir>/libs/data/system',
+    '<rootDir>/libs/data/core',
     '<rootDir>/libs/domain/custom',
     '<rootDir>/libs/domain/generated',
     '<rootDir>/libs/meta/generated',
-    '<rootDir>/libs/meta/system',
-    '<rootDir>/libs/protocol/system',
+    '<rootDir>/libs/meta/core',
+    '<rootDir>/libs/protocol/core',
     '<rootDir>/libs/workspace/memory',
-    '<rootDir>/libs/workspace/system',
+    '<rootDir>/libs/workspace/core',
     '<rootDir>/libs/workspace/tests',
     '<rootDir>/libs/client/tests',
     '<rootDir>/libs/client/fetch',

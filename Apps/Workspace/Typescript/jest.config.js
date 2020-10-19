@@ -10,5 +10,8 @@ module.exports = {
     '<rootDir>/libs/domain/generated',
     '<rootDir>/libs/domain/base',
     '<rootDir>/libs/domain/custom',
+    '<rootDir>/libs/data/core',
+    '<rootDir>/libs/protocol/core',
+    '<rootDir>/libs/workspace/core',
   ],
 };

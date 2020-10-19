@@ -23,22 +23,10 @@
     }
   },
   "projects": {
-    "data-system": {
-      "tags": []
-    },
-    "meta-system": {
-      "tags": []
-    },
     "meta-generated": {
       "tags": []
     },
     "meta-core": {
-      "tags": []
-    },
-    "protocol-system": {
-      "tags": []
-    },
-    "workspace-system": {
       "tags": []
     },
     "workspace-memory": {
@@ -51,6 +39,15 @@
       "tags": []
     },
     "domain-custom": {
+      "tags": []
+    },
+    "data-core": {
+      "tags": []
+    },
+    "protocol-core": {
+      "tags": []
+    },
+    "workspace-core": {
       "tags": []
     }
   }
