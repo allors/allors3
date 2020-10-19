@@ -15,20 +15,20 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
     public class TreeTests : Test
     {
         [Fact]
-        public async void Users()
+        public async void C1()
         {
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.Organisation.Class),
+                Extent = new Extent(this.M.C1.Class),
                 Results = new[]
                 {
                     new Result
                     {
                         Fetch = new Fetch
                         {
-                            Include = new OrganisationNodeBuilder(this.M,v => v.Organisation_Owner()),
+                            Include = new C1NodeBuilder(this.M,v => v.C1C2One2One()),
                         },
                     },
                 },
@@ -36,12 +36,16 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
 
             var result = await session.Load(pull);
 
-            var organisations = result.GetCollection<Organisation>();
+            var c1s = result.GetCollection<C1>();
+            var c1b = c1s.Single(v => v.Name == "c1B");
+            var c1c = c1s.Single(v => v.Name == "c1C");
+            var c1d = c1s.Single(v => v.Name == "c1D");
 
-            var owner = organisations.Single(v => v.ExistOwner).Owner;
+            var c2ByC1 = c1s.ToDictionary(v => v, v => v.C1C2One2One);
 
-            Assert.NotNull(owner);
-            Assert.Equal("Jane", owner.FirstName);
+            Assert.Equal("c2B", c2ByC1[c1b].Name);
+            Assert.Equal("c2C", c2ByC1[c1c].Name);
+            Assert.Equal("c2D", c2ByC1[c1d].Name);
         }
     }
 }

@@ -1,20 +1,14 @@
 import { MetaPopulation } from '@allors/meta/core';
-import { Database } from '@allors/workspace/core';
-
 import { data, TreeFactory, Meta } from '@allors/meta/generated';
-import { MemoryDatabase } from '@allors/workspace/memory';
 
 import 'jest-extended';
 
 describe('Tree', () => {
   let m: Meta;
   let factory: TreeFactory;
-  let database: Database;
 
   beforeEach(async () => {
     m = new MetaPopulation(data) as Meta;
-    database = new MemoryDatabase(m);
-
     factory = new TreeFactory(m);
   });
 
@@ -72,7 +66,7 @@ describe('Tree', () => {
     it('should serialize to correct json', () => {
       const original = factory.Organisation({
         Employees: {
-          Photo: {},
+          CycleOne: {},
         },
       });
 
@@ -83,7 +77,7 @@ describe('Tree', () => {
         {
           nodes: [
             {
-              roleType: m.Person.Photo.relationType.id,
+              roleType: m.Person.CycleOne.relationType.id,
             },
           ],
           roleType: m.Organisation.Employees.relationType.id,
@@ -95,7 +89,7 @@ describe('Tree', () => {
   describe('with a subclass role include', () => {
     it('should serialize to correct json', () => {
       const original = factory.Deletable({
-        Person_Photo: {},
+        Person_CycleOne: {},
       });
 
       const json = JSON.stringify(original);
@@ -103,7 +97,7 @@ describe('Tree', () => {
 
       expect(include).toEqual([
         {
-          roleType: m.Person.Photo.relationType.id,
+          roleType: m.Person.CycleOne.relationType.id,
         },
       ]);
     });

@@ -14,8 +14,6 @@ namespace Allors
             var m = @this.State().M;
             var derivations = new IDomainDerivation[]
             {
-                new AuditableDerivation(m),
-                new MediaDerivation(m),
             };
 
             foreach (var derivation in derivations)

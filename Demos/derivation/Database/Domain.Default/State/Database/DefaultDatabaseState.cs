@@ -31,14 +31,11 @@ namespace Allors
             this.EffectivePermissionCache = new EffectivePermissionCache();
             this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
 
-            this.TemplateObjectCache = new TemplateObjectCache();
             this.BarcodeGenerator = new BarcodeGenerator();
 
             this.DerivationService = new DerivationService();
             this.FetchService = new FetchService(this);
-            this.MailService = new MailService();
             this.PasswordService = new PasswordService();
-            this.SingletonService = new SingletonService();
             this.StickyService = new StickyService();
             this.TimeService = new TimeService();
         }
@@ -63,15 +60,11 @@ namespace Allors
 
         public IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; private set; }
 
-        public ITemplateObjectCache TemplateObjectCache { get; private set; }
-
         public IBarcodeGenerator BarcodeGenerator { get; private set; }
         public IDerivationService DerivationService { get; private set; }
         public IPreparedExtentCache PreparedExtentCache { get; private set; }
         public IFetchService FetchService { get; private set; }
-        public IMailService MailService { get; private set; }
         public IPasswordService PasswordService { get; private set; }
-        public ISingletonService SingletonService { get; private set; }
         public IStickyService StickyService { get; private set; }
         public ITimeService TimeService { get; private set; }
 

@@ -82,7 +82,7 @@ describe('Instantiate',
                       objectType: m.Person,
                       nodes: [
                         new Node({
-                          propertyType: m.Person.Photo,
+                          propertyType: m.Person.CycleOne,
                         }),
                       ]
                     })

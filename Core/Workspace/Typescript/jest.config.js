@@ -3,8 +3,6 @@ module.exports = {
     '<rootDir>/apps/react',
     '<rootDir>/libs/data/core',
     '<rootDir>/libs/domain/custom',
-    '<rootDir>/libs/domain/generated',
-    '<rootDir>/libs/meta/generated',
     '<rootDir>/libs/meta/core',
     '<rootDir>/libs/protocol/core',
     '<rootDir>/libs/workspace/memory',
@@ -13,9 +11,5 @@ module.exports = {
     '<rootDir>/libs/client/tests',
     '<rootDir>/libs/client/fetch',
     '<rootDir>/libs/meta/tests',
-    '<rootDir>/libs/data/core',
-    '<rootDir>/libs/meta/core',
-    '<rootDir>/libs/protocol/core',
-    '<rootDir>/libs/workspace/core',
   ],
 };

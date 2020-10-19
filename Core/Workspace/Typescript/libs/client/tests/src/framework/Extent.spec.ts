@@ -1,6 +1,6 @@
 import { Pull, Result, Fetch, Tree, And, Equals, Extent, Node } from '@allors/data/core';
 import { PullRequest } from '@allors/protocol/core';
-import { Organisation, User, Media, C1, Person } from '@allors/domain/generated';
+import { Organisation, C1, Person, I1 } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';
 
@@ -39,23 +39,23 @@ describe('Extent', () => {
     });
   });
 
-  describe('People with include tree', () => {
+  describe('C1 with include tree (C1C2One2One)', () => {
     it('should return all people', async () => {
       const { m, ctx } = fixture;
 
       const pulls = [
         new Pull({
           extent: new Extent({
-            objectType: m.Person,
+            objectType: m.C1,
           }),
           results: [
             new Result({
               fetch: new Fetch({
                 include: new Tree({
-                  objectType: m.Person,
+                  objectType: m.C1,
                   nodes: [
                     new Node({
-                      propertyType: m.Person.Photo,
+                      propertyType: m.C1.C1C2One2One,
                     }),
                   ],
                 }),
@@ -71,12 +71,20 @@ describe('Extent', () => {
 
       const loaded = await ctx.load(pullRequest);
 
-      const people = loaded.collections['People'] as Person[];
+      const c1s = loaded.collections['C1s'] as C1[];
 
-      expect(people).toBeArray();
-      expect(people).not.toBeEmpty();
+      expect(c1s).toBeArray();
+      expect(c1s).toHaveLength(4);
 
-      // people.forEach(() => {});
+      const c1a = c1s.find((v) => v.Name === 'c1A');
+      const c1b = c1s.find((v) => v.Name === 'c1B');
+      const c1c = c1s.find((v) => v.Name === 'c1C');
+      const c1d = c1s.find((v) => v.Name === 'c1D');
+
+      expect(c1a.C1C2One2One).toBeNull();
+      expect(c1b.C1C2One2One?.Name).toEqual('c2B');
+      expect(c1c.C1C2One2One?.Name).toEqual('c2C');
+      expect(c1d.C1C2One2One?.Name).toEqual('c2D');
     });
   });
 
@@ -119,20 +127,20 @@ describe('Extent', () => {
     });
   });
 
-  describe('User with tree (and Person)', () => {
+  describe('I1 with tree (I1I2One2One)', () => {
     it('should return all users', async () => {
       const { m, ctx, tree } = fixture;
 
       const pulls = [
         new Pull({
           extent: new Extent({
-            objectType: m.User,
+            objectType: m.I1,
           }),
           results: [
             new Result({
               fetch: new Fetch({
-                include: tree.User({
-                  Person_Address: {},
+                include: tree.I1({
+                  I1I2One2One: {},
                 }),
               }),
             }),
@@ -144,15 +152,20 @@ describe('Extent', () => {
 
       const loaded = await ctx.load(new PullRequest({ pulls }));
 
-      const users = loaded.collections['Users'] as User[];
+      const i1s = loaded.collections['I1s'] as I1[];
 
-      expect(users).toBeArray();
-      expect(users).not.toBeEmpty();
+      expect(i1s).toBeArray();
+      expect(i1s).not.toBeEmpty();
 
-      const personWithAddress = users.find((v) => (v as Person).Address) as Person;
+      const c1a = i1s.find((v) => v.Name === 'c1A');
+      const c1b = i1s.find((v) => v.Name === 'c1B');
+      const c1c = i1s.find((v) => v.Name === 'c1C');
+      const c1d = i1s.find((v) => v.Name === 'c1D');
 
-      expect(personWithAddress).toBeDefined();
-      expect('Jane').toBe(personWithAddress.FirstName);
+      expect(c1a.I1I2One2One).toBeNull();
+      expect(c1b.I1I2One2One.Name).toEqual('c2B');
+      expect(c1c.I1I2One2One.Name).toEqual('c2C');
+      expect(c1d.I1I2One2One.Name).toEqual('c2D');
     });
   });
 
@@ -208,7 +221,7 @@ describe('Extent', () => {
 
       const loaded = await ctx.load(new PullRequest({ pulls }));
 
-      const employees = loaded.collections['Employees'] as Media[];
+      const employees = loaded.collections['Employees'] as Person[];
 
       expect(employees).toBeArray();
       expect(employees).not.toBeEmpty();
@@ -257,7 +270,7 @@ describe('Extent', () => {
               fetch: fetch.Organisation({
                 Owner: {
                   include: {
-                    Photo: {},
+                    CycleOne: {},
                   },
                 },
               }),
@@ -272,7 +285,7 @@ describe('Extent', () => {
 
       const owners = loaded.collections['Owners'] as Person[];
 
-      owners.forEach((v) => v.Photo);
+      owners.forEach((v) => v.CycleOne);
 
       expect(owners).toBeArray();
       expect(owners).not.toBeEmpty();
@@ -344,7 +357,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.C1AllorsDateTime,
-              value: "2000-01-01T00:00:04Z",
+              value: '2000-01-01T00:00:04Z',
             }),
           }),
         }),
@@ -371,7 +384,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.I1AllorsDateTime,
-              value: "2000-01-01T00:00:04Z",
+              value: '2000-01-01T00:00:04Z',
             }),
           }),
         }),
@@ -398,7 +411,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.C1AllorsDecimal,
-              value: "1.1",
+              value: '1.1',
             }),
           }),
         }),
@@ -425,7 +438,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.C1AllorsDecimal,
-              value: "1.10",
+              value: '1.10',
             }),
           }),
         }),
@@ -452,7 +465,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.I1AllorsDecimal,
-              value: "1.1",
+              value: '1.1',
             }),
           }),
         }),
@@ -589,7 +602,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.C1AllorsUnique,
-              value: "8B3C4978-72D3-40BA-B302-114EB331FE04",
+              value: '8B3C4978-72D3-40BA-B302-114EB331FE04',
             }),
           }),
         }),
@@ -616,7 +629,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.C1AllorsUnique,
-              value: "{8B3C4978-72D3-40BA-B302-114EB331FE04}",
+              value: '{8B3C4978-72D3-40BA-B302-114EB331FE04}',
             }),
           }),
         }),
@@ -643,7 +656,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.C1AllorsUnique,
-              value: "8B3C497872D340BAB302114EB331FE04",
+              value: '8B3C497872D340BAB302114EB331FE04',
             }),
           }),
         }),
@@ -670,7 +683,7 @@ describe('Extent', () => {
             objectType: m.C1,
             predicate: new Equals({
               propertyType: m.C1.I1AllorsUnique,
-              value: "7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D",
+              value: '7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D',
             }),
           }),
         }),
@@ -779,7 +792,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "2000-01-01T00:00:04Z",
+            p1: '2000-01-01T00:00:04Z',
           },
         }),
       ];
@@ -815,7 +828,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "2000-01-01T00:00:04Z",
+            p1: '2000-01-01T00:00:04Z',
           },
         }),
       ];
@@ -851,7 +864,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "1.1",
+            p1: '1.1',
           },
         }),
       ];
@@ -887,7 +900,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "1.10",
+            p1: '1.10',
           },
         }),
       ];
@@ -923,7 +936,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "1.1",
+            p1: '1.1',
           },
         }),
       ];
@@ -1103,7 +1116,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "8B3C4978-72D3-40BA-B302-114EB331FE04",
+            p1: '8B3C4978-72D3-40BA-B302-114EB331FE04',
           },
         }),
       ];
@@ -1139,7 +1152,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "{8B3C4978-72D3-40BA-B302-114EB331FE04}",
+            p1: '{8B3C4978-72D3-40BA-B302-114EB331FE04}',
           },
         }),
       ];
@@ -1175,7 +1188,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "8B3C497872D340BAB302114EB331FE04",
+            p1: '8B3C497872D340BAB302114EB331FE04',
           },
         }),
       ];
@@ -1211,7 +1224,7 @@ describe('Extent', () => {
             }),
           }),
           parameters: {
-            p1: "7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D",
+            p1: '7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D',
           },
         }),
       ];
