@@ -26,7 +26,8 @@ namespace Allors.Domain
 
             foreach (var paymentApplication in matches.Cast<PaymentApplication>())
             {
-                validation.AssertExistsAtMostOne(paymentApplication, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem);
+                validation.AssertExistsAtMostOne(paymentApplication, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
+                validation.AssertAtLeastOne(paymentApplication, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
 
                 if (paymentApplication.ExistPaymentWherePaymentApplication && paymentApplication.AmountApplied > paymentApplication.PaymentWherePaymentApplication.Amount)
                 {
