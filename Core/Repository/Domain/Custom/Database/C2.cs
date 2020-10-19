@@ -134,6 +134,7 @@ namespace Allors.Repository
         public C1 I12C1Many2One { get; set; }
 
         public DateTime I12AllorsDateTime { get; set; }
+        public bool I12CreationDerivation { get; set; }
 
         #endregion
 

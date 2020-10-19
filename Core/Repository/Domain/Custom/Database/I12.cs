@@ -234,5 +234,11 @@ namespace Allors.Repository
         [Workspace(Default)]
         #endregion
         DateTime I12AllorsDateTime { get; set; }
+
+        #region Allors
+        [Id("2CE1230A-AB2B-49C0-803F-77C4536FCE2E")]
+        #endregion
+        [Derived]
+        bool I12CreationDerivation { get; set; }
     }
 }

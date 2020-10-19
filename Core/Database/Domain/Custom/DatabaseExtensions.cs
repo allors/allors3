@@ -15,6 +15,8 @@ namespace Allors
             var derivations = new IDomainDerivation[]
             {
                 // Custom
+                new ClassCreationDerivation(m),
+                new InterfaceCreationDerivation(m),
                 new PersonFullNameDerivation(m),
                 new PersonGreetingDerivation(m),
             };

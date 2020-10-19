@@ -125,7 +125,7 @@ namespace Allors.Domain.Derivations.Default
                                 IEnumerable<IObject> source = pattern switch
                                 {
                                     CreatedPattern createdPattern => changeSet.Created
-                                        .Where(v => v.Class.IsAssignableFrom(createdPattern.Composite))
+                                        .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
                                         .Select(v => v.GetObject()),
                                     ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
                                             .AssociationsByRoleType
