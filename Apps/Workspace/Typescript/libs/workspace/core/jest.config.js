@@ -1,4 +1,5 @@
 module.exports = {
+  displayName: 'workspace-core',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -9,15 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/meta/tests',
-  reporters: [
-    'default',
-    [
-      'jest-trx-results-processor',
-      {
-        outputFile: '../../../artifacts/tests/core.meta.trx',
-      },
-    ],
-  ],
-  displayName: 'meta-tests',
+  coverageDirectory: '../../../coverage/libs/workspace/core',
 };

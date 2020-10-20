@@ -47,9 +47,6 @@
     "protocol-core": {
       "tags": []
     },
-    "workspace-core": {
-      "tags": []
-    },
     "meta-base": {
       "tags": []
     },
@@ -57,6 +54,9 @@
       "tags": []
     },
     "domain-apps": {
+      "tags": []
+    },
+    "workspace-core": {
       "tags": []
     }
   }

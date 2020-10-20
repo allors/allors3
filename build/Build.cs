@@ -14,6 +14,7 @@ partial class Build : NukeBuild
 
     Target Install => _ => _
         .DependsOn(this.CoreInstall)
+        .DependsOn(this.BaseInstall)
         .DependsOn(this.AppsInstall);
 
     Target Clean => _ => _
