@@ -1,4 +1,4 @@
-// <copyright file="PreparedExtent.cs" company="Allors bvba">
+// <copyright file="PersistentPreparedFetch.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,20 +9,18 @@ namespace Allors.Domain
     using System.Text;
     using System.Xml.Serialization;
 
-    using Allors.Data;
     using Allors.Protocol.Data;
-    using Extent = Protocol.Data.Extent;
 
-    public partial class PreparedExtent
+    public partial class PersistentPreparedFetch
     {
-        public IExtent Extent
+        public Allors.Data.Fetch Fetch
         {
             get
             {
                 using (TextReader reader = new StringReader(this.Content))
                 {
-                    var protocolExtent = (Extent)XmlSerializer.Deserialize(reader);
-                    return protocolExtent.Load(this.Strategy.Session);
+                    var protocolFetch = (Fetch)XmlSerializer.Deserialize(reader);
+                    return protocolFetch.Load(this.Strategy.Session);
                 }
             }
 
@@ -37,6 +35,6 @@ namespace Allors.Domain
             }
         }
 
-        private static XmlSerializer XmlSerializer => new XmlSerializer(typeof(Extent));
+        private static XmlSerializer XmlSerializer => new XmlSerializer(typeof(Fetch));
     }
 }

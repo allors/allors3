@@ -456,7 +456,7 @@ namespace Allors.Domain
 
         // var valueByParameter = new Dictionary<Predicate, object>();
 
-        // var preparedExtent = new Reports(this.DatabaseSession).FindByName(Constants.REPORTNONSERIALIZEDINVENTORY).PreparedExtent;
+        // var preparedExtent = new Reports(this.DatabaseSession).FindByName(Constants.REPORTNONSERIALIZEDINVENTORY).PersistentPreparedExtent;
         // var parameters = preparedExtent.Parameters;
 
         // var extent = preparedExtent.Execute(valueByParameter);

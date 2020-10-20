@@ -1,4 +1,4 @@
-// <copyright file="PreparedExtent.cs" company="Allors bvba">
+// <copyright file="PersistentPreparedExtent.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("645A4F92-F1F1-41C7-BA76-53A1CC4D2A61")]
     #endregion
-    public partial class PreparedExtent : UniquelyIdentifiable, Deletable
+    public partial class PersistentPreparedExtent : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
 

@@ -1,4 +1,4 @@
-// <copyright file="FetchService.cs" company="Allors bvba">
+// <copyright file="PersistentPreparedFetches.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,37 +10,37 @@ namespace Allors.State
     using Data;
     using Domain;
 
-    public class FetchService : IFetchService
-   {
-       private readonly ConcurrentDictionary<Guid, Fetch> fetchById;
+    public class PreparedExtents : IPreparedExtents
+    {
+        private readonly ConcurrentDictionary<Guid, IExtent> extentById;
 
-        public FetchService(IDatabaseState databaseState)
+        public PreparedExtents(IDatabaseState databaseState)
         {
             this.DatabaseState = databaseState;
-            this.fetchById = new ConcurrentDictionary<Guid, Fetch>();
+            this.extentById = new ConcurrentDictionary<Guid, IExtent>();
         }
 
         public IDatabaseState DatabaseState { get; }
 
-        public Fetch Get(Guid id)
+        public IExtent Get(Guid id)
         {
-            if (!this.fetchById.TryGetValue(id, out var fetch))
+            if (!this.extentById.TryGetValue(id, out var extent))
             {
                 var session = this.DatabaseState.Database.CreateSession();
                 try
                 {
                     var m = session.Database.State().M;
 
-                    var filter = new Extent(m.PreparedFetch.Class)
+                    var filter = new Extent(m.PersistentPreparedExtent.Class)
                     {
-                        Predicate = new Equals(m.PreparedFetch.UniqueId) { Value = id },
+                        Predicate = new Equals(m.PersistentPreparedExtent.UniqueId) { Value = id },
                     };
 
-                    var preparedFetch = (PreparedFetch)filter.Build(session).First;
-                    if (preparedFetch != null)
+                    var preparedExtent = (PersistentPreparedExtent)filter.Build(session).First;
+                    if (preparedExtent != null)
                     {
-                        fetch = preparedFetch.Fetch;
-                        this.fetchById[id] = fetch;
+                        extent = preparedExtent.Extent;
+                        this.extentById[id] = extent;
                     }
                 }
                 finally
@@ -52,7 +52,7 @@ namespace Allors.State
                 }
             }
 
-            return fetch;
+            return extent;
         }
     }
 }

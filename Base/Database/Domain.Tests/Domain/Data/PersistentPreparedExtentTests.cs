@@ -10,17 +10,17 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class PreparedExtentTests : DomainTest, IClassFixture<Fixture>
+    public class PersistentPreparedExtentTests : DomainTest, IClassFixture<Fixture>
     {
-        public PreparedExtentTests(Fixture fixture) : base(fixture) { }
+        public PersistentPreparedExtentTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public async void WithParameter()
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.Database.State().PreparedExtentCache;
-            var organizationByName = extentService.Get(PreparedExtents.ByName);
+            var extentService = this.Session.Database.State().PreparedExtents;
+            var organizationByName = extentService.Get(PersistentPreparedExtents.ByName);
 
             var arguments = new Dictionary<string, string>
             {

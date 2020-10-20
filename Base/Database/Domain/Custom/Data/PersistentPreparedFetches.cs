@@ -9,7 +9,7 @@ namespace Allors.Domain
 
     using Allors.Data;
 
-    public partial class PreparedFetches
+    public partial class PersistentPreparedFetches
     {
         public static readonly Guid FetchPeople = new Guid("F24CC434-8CDE-4E64-8970-4F693A606B7D");
 

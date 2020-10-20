@@ -1,4 +1,4 @@
-// <copyright file="FetchService.cs" company="Allors bvba">
+// <copyright file="PersistentPreparedFetches.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,11 +10,11 @@ namespace Allors.State
     using Data;
     using Domain;
 
-    public class FetchService : IFetchService
+    public class PreparedFetches : IPreparedFetches
    {
        private readonly ConcurrentDictionary<Guid, Fetch> fetchById;
 
-        public FetchService(IDatabaseState databaseState)
+        public PreparedFetches(IDatabaseState databaseState)
         {
             this.DatabaseState = databaseState;
             this.fetchById = new ConcurrentDictionary<Guid, Fetch>();
@@ -31,12 +31,12 @@ namespace Allors.State
                 {
                     var m = session.Database.State().M;
 
-                    var filter = new Extent(m.PreparedFetch.Class)
+                    var filter = new Extent(m.PersistentPreparedFetch.Class)
                     {
-                        Predicate = new Equals(m.PreparedFetch.UniqueId) { Value = id },
+                        Predicate = new Equals(m.PersistentPreparedFetch.UniqueId) { Value = id },
                     };
 
-                    var preparedFetch = (PreparedFetch)filter.Build(session).First;
+                    var preparedFetch = (PersistentPreparedFetch)filter.Build(session).First;
                     if (preparedFetch != null)
                     {
                         fetch = preparedFetch.Fetch;

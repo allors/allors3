@@ -26,8 +26,8 @@ namespace Allors.Server.Controllers
 
             var scope = this.DatabaseService.Database.State();
 
-            this.ExtentService = scope.PreparedExtentCache;
-            this.FetchService = scope.FetchService;
+            this.ExtentService = scope.PreparedExtents;
+            this.PreparedFetches = scope.PreparedFetches;
             this.TreeCache = scope.TreeCache;
             this.Logger = logger;
         }
@@ -36,9 +36,9 @@ namespace Allors.Server.Controllers
 
         public IWorkspaceService WorkspaceService { get; }
 
-        private IPreparedExtentCache ExtentService { get; }
+        private IPreparedExtents ExtentService { get; }
 
-        private IFetchService FetchService { get; }
+        private IPreparedFetches PreparedFetches { get; }
 
         private ILogger<PullController> Logger { get; }
 

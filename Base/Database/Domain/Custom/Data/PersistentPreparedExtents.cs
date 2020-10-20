@@ -9,7 +9,7 @@ namespace Allors.Domain
 
     using Allors.Data;
 
-    public partial class PreparedExtents
+    public partial class PersistentPreparedExtents
     {
         public static readonly Guid ByName = new Guid("2A2246FD-91F8-438F-B6DB-6BA9C3481778");
 
