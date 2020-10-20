@@ -25,9 +25,7 @@ namespace Allors
         IEffectivePermissionCache EffectivePermissionCache { get; }
 
         IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; }
-
-        IBarcodeGenerator BarcodeGenerator { get; }
-
+        
         IDerivationService DerivationService { get; }
 
         IPreparedExtents PreparedExtents { get; }
@@ -36,9 +34,9 @@ namespace Allors
 
         IMetaCache MetaCache { get; }
 
-        IPasswordService PasswordService { get; }
+        IPasswordHasher PasswordHasher { get; }
 
-        IStickyService StickyService { get; }
+        ICaches Caches { get; }
 
         ITimeService TimeService { get; }
 

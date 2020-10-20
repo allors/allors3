@@ -12,13 +12,13 @@ namespace Allors.Domain
         private static readonly Guid SalesInvoiceId = new Guid("92411BF1-835E-41f8-80AF-6611EFCE5B32");
         private static readonly Guid CreditNoteId = new Guid("EF5B7C52-E782-416D-B46F-89C8C7A5C24D");
 
-        private UniquelyIdentifiableSticky<SalesInvoiceType> cache;
+        private UniquelyIdentifiableCache<SalesInvoiceType> cache;
 
         public SalesInvoiceType SalesInvoice => this.Cache[SalesInvoiceId];
 
         public SalesInvoiceType CreditNote => this.Cache[CreditNoteId];
 
-        private UniquelyIdentifiableSticky<SalesInvoiceType> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesInvoiceType>(this.Session);
+        private UniquelyIdentifiableCache<SalesInvoiceType> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesInvoiceType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

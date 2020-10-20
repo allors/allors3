@@ -21,7 +21,7 @@ namespace Allors.Domain
         private static readonly Guid SalesMeetingId = new Guid("344920EA-0903-4213-BC7C-837A74089706");
         private static readonly Guid InterviewId = new Guid("7143C121-1DF5-4a92-90BA-10800022BA12");
 
-        private UniquelyIdentifiableSticky<CommunicationEventPurpose> cache;
+        private UniquelyIdentifiableCache<CommunicationEventPurpose> cache;
 
         public CommunicationEventPurpose SupportCall => this.Cache[SupportCallId];
 
@@ -45,7 +45,7 @@ namespace Allors.Domain
 
         public CommunicationEventPurpose Interview => this.Cache[InterviewId];
 
-        private UniquelyIdentifiableSticky<CommunicationEventPurpose> Cache => this.cache ??= new UniquelyIdentifiableSticky<CommunicationEventPurpose>(this.Session);
+        private UniquelyIdentifiableCache<CommunicationEventPurpose> Cache => this.cache ??= new UniquelyIdentifiableCache<CommunicationEventPurpose>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

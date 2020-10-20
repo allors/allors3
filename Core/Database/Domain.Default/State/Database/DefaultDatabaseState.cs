@@ -32,11 +32,9 @@ namespace Allors
             this.EffectivePermissionCache = new EffectivePermissionCache();
             this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
 
-            this.BarcodeGenerator = new BarcodeGenerator();
-
             this.DerivationService = new DerivationService();
-            this.PasswordService = new PasswordService();
-            this.StickyService = new StickyService();
+            this.PasswordHasher = new PasswordHasher();
+            this.Caches = new Caches();
             this.TimeService = new TimeService();
         }
 
@@ -60,12 +58,11 @@ namespace Allors
 
         public IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; private set; }
 
-        public IBarcodeGenerator BarcodeGenerator { get; private set; }
         public IDerivationService DerivationService { get; private set; }
         public IPreparedExtents PreparedExtents { get; private set; }
         public IPreparedFetches PreparedFetches { get; private set; }
-        public IPasswordService PasswordService { get; private set; }
-        public IStickyService StickyService { get; private set; }
+        public IPasswordHasher PasswordHasher { get; private set; }
+        public ICaches Caches { get; private set; }
         public ITimeService TimeService { get; private set; }
 
         public ISessionStateLifecycle CreateSessionInstance() => new DefaultSessionState(this.httpContextAccessor);

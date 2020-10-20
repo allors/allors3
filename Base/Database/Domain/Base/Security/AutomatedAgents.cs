@@ -12,9 +12,9 @@ namespace Allors.Domain
         public static readonly Guid GuestId = new Guid("1261CB56-67F2-4725-AF7D-604A117ABBEC");
         public static readonly Guid SystemId = new Guid("037C4B36-5950-4D32-BA95-85CCED5668DD");
 
-        private UniquelyIdentifiableSticky<AutomatedAgent> cache;
+        private UniquelyIdentifiableCache<AutomatedAgent> cache;
 
-        public UniquelyIdentifiableSticky<AutomatedAgent> Cache => this.cache ??= new UniquelyIdentifiableSticky<AutomatedAgent>(this.Session);
+        public UniquelyIdentifiableCache<AutomatedAgent> Cache => this.cache ??= new UniquelyIdentifiableCache<AutomatedAgent>(this.Session);
 
         public AutomatedAgent Guest => this.Cache[GuestId];
 

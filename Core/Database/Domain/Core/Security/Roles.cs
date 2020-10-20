@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public static readonly Guid OwnerId = new Guid("E22EA50F-E616-4429-92D5-B91684AD3C2A");
 
-        private UniquelyIdentifiableSticky<Role> cache;
+        private UniquelyIdentifiableCache<Role> cache;
 
         public Role Administrator => this.Cache[AdministratorId];
 
@@ -33,7 +33,7 @@ namespace Allors.Domain
 
         public Role Owner => this.Cache[OwnerId];
 
-        private UniquelyIdentifiableSticky<Role> Cache => this.cache ??= new UniquelyIdentifiableSticky<Role>(this.Session);
+        private UniquelyIdentifiableCache<Role> Cache => this.cache ??= new UniquelyIdentifiableCache<Role>(this.Session);
 
         protected override void CoreSetup(Setup setup)
         {

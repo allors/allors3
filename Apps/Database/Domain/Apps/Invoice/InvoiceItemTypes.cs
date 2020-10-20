@@ -15,7 +15,7 @@ namespace Allors.Domain
         public static readonly Guid ServiceId = new Guid("A4D2E6D0-C6C1-46EC-A1CF-3A64822E7A9E");
         public static readonly Guid TimeId = new Guid("DA178F93-234A-41ed-815C-819AF8CA4E6F");
 
-        private UniquelyIdentifiableSticky<InvoiceItemType> cache;
+        private UniquelyIdentifiableCache<InvoiceItemType> cache;
 
         public InvoiceItemType ProductFeatureItem => this.Cache[ProductFeatureItemId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public InvoiceItemType Time => this.Cache[TimeId];
 
-        private UniquelyIdentifiableSticky<InvoiceItemType> Cache => this.cache ??= new UniquelyIdentifiableSticky<InvoiceItemType>(this.Session);
+        private UniquelyIdentifiableCache<InvoiceItemType> Cache => this.cache ??= new UniquelyIdentifiableCache<InvoiceItemType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

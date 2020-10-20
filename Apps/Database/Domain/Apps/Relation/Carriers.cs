@@ -15,7 +15,7 @@ namespace Allors.Domain
         public static readonly Guid DhlId = new Guid("4901794C-B611-4DE4-8613-183B1C08E0AD");
         public static readonly Guid CustomerId = new Guid("647A4D28-1AAF-415A-B6AD-0CE7162625F1");
 
-        private UniquelyIdentifiableSticky<Carrier> cache;
+        private UniquelyIdentifiableCache<Carrier> cache;
 
         public Carrier Gls => this.Cache[GlsId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public Carrier Customer => this.Cache[CustomerId];
 
-        private UniquelyIdentifiableSticky<Carrier> Cache => this.cache ??= new UniquelyIdentifiableSticky<Carrier>(this.Session);
+        private UniquelyIdentifiableCache<Carrier> Cache => this.cache ??= new UniquelyIdentifiableCache<Carrier>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid SupplierId = new Guid("8C6D629B-1E27-4520-AA8C-E8ADF93A5095");
         private static readonly Guid ManufacturerId = new Guid("32E74BEF-2D79-4427-8902-B093AFA81661");
 
-        private UniquelyIdentifiableSticky<OrganisationRole> cache;
+        private UniquelyIdentifiableCache<OrganisationRole> cache;
 
         public OrganisationRole Customer => this.Cache[CustomerId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public OrganisationRole Manufacturer => this.Cache[ManufacturerId];
 
-        private UniquelyIdentifiableSticky<OrganisationRole> Cache => this.cache ??= new UniquelyIdentifiableSticky<OrganisationRole>(this.Session);
+        private UniquelyIdentifiableCache<OrganisationRole> Cache => this.cache ??= new UniquelyIdentifiableCache<OrganisationRole>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

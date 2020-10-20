@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid AvailableId = new Guid("c60f5741-a93f-48cc-b416-445aeb3fb166");
         private static readonly Guid NotAvailableId = new Guid("74499ac5-cac9-4276-8b9e-e47f977104fd");
 
-        private UniquelyIdentifiableSticky<SerialisedItemAvailability> cache;
+        private UniquelyIdentifiableCache<SerialisedItemAvailability> cache;
 
         public SerialisedItemAvailability Sold => this.Cache[SoldId];
 
@@ -24,8 +24,8 @@ namespace Allors.Domain
 
         public SerialisedItemAvailability NotAvailable => this.Cache[NotAvailableId];
 
-        private UniquelyIdentifiableSticky<SerialisedItemAvailability> Cache =>
-            this.cache ??= new UniquelyIdentifiableSticky<SerialisedItemAvailability>(this.Session);
+        private UniquelyIdentifiableCache<SerialisedItemAvailability> Cache =>
+            this.cache ??= new UniquelyIdentifiableCache<SerialisedItemAvailability>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

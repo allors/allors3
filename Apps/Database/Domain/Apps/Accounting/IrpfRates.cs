@@ -13,7 +13,7 @@ namespace Allors.Domain
         public static readonly Guid fifteenId = new Guid("46eb2dbc-98b2-4a23-9b1b-17edbccda748");
         public static readonly Guid NineteenId = new Guid("8d7ba239-caf8-41e8-a6b8-cbf10fc7223f");
 
-        private UniquelyIdentifiableSticky<IrpfRate> cache;
+        private UniquelyIdentifiableCache<IrpfRate> cache;
 
         public IrpfRate Zero => this.Cache[ZeroId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public IrpfRate nineteen => this.Cache[NineteenId];
 
-        private UniquelyIdentifiableSticky<IrpfRate> Cache => this.cache ??= new UniquelyIdentifiableSticky<IrpfRate>(this.Session);
+        private UniquelyIdentifiableCache<IrpfRate> Cache => this.cache ??= new UniquelyIdentifiableCache<IrpfRate>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

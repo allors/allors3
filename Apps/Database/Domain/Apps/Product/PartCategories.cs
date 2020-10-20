@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     public partial class PartCategories
     {
-        private UniquelyIdentifiableSticky<PartCategory> cache;
+        private UniquelyIdentifiableCache<PartCategory> cache;
 
         public Extent<PartCategory> RootCategories
         {
@@ -19,6 +19,6 @@ namespace Allors.Domain
             }
         }
 
-        private UniquelyIdentifiableSticky<PartCategory> Cache => this.cache ??= new UniquelyIdentifiableSticky<PartCategory>(this.Session);
+        private UniquelyIdentifiableCache<PartCategory> Cache => this.cache ??= new UniquelyIdentifiableCache<PartCategory>(this.Session);
     }
 }

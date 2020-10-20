@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid ServicesId = new Guid("2166066E-3953-448D-AB0A-F3B96A307503");
         private static readonly Guid TriangularTradeId = new Guid("EA231348-081E-4867-B5D7-B85055EF40FB");
 
-        private UniquelyIdentifiableSticky<EuSalesListType> cache;
+        private UniquelyIdentifiableCache<EuSalesListType> cache;
 
         public EuSalesListType Goods => this.Cache[GoodsId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public EuSalesListType TriangularTrade => this.Cache[TriangularTradeId];
 
-        private UniquelyIdentifiableSticky<EuSalesListType> Cache => this.cache ??= new UniquelyIdentifiableSticky<EuSalesListType>(this.Session);
+        private UniquelyIdentifiableCache<EuSalesListType> Cache => this.cache ??= new UniquelyIdentifiableCache<EuSalesListType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

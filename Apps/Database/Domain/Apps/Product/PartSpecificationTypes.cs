@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid TestingRequirementId = new Guid("EC007D79-D657-44BC-B7C5-CB4B7893582E");
         private static readonly Guid ToleranceId = new Guid("E6425782-ACED-47A1-AB5A-4EC97A2C80EA");
 
-        private UniquelyIdentifiableSticky<PartSpecificationType> cache;
+        private UniquelyIdentifiableCache<PartSpecificationType> cache;
 
         public PartSpecificationType ConstraintSpecification => this.Cache[ConstraintSpecificationId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public PartSpecificationType Tolerance => this.Cache[ToleranceId];
 
-        private UniquelyIdentifiableSticky<PartSpecificationType> Cache => this.cache ??= new UniquelyIdentifiableSticky<PartSpecificationType>(this.Session);
+        private UniquelyIdentifiableCache<PartSpecificationType> Cache => this.cache ??= new UniquelyIdentifiableCache<PartSpecificationType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -7,8 +7,8 @@ namespace Allors.Domain
 {
     public partial class PostalCodes
     {
-        private Sticky<string, PostalCode> postalCodeByCode;
+        private Cache<string, PostalCode> postalCodeByCode;
 
-        public Sticky<string, PostalCode> PostalCodeByCode => this.postalCodeByCode ??= new Sticky<string, PostalCode>(this.Session, this.M.PostalCode.Code);
+        public Cache<string, PostalCode> PostalCodeByCode => this.postalCodeByCode ??= new Cache<string, PostalCode>(this.Session, this.M.PostalCode.Code);
     }
 }

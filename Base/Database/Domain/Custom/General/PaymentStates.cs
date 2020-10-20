@@ -14,9 +14,9 @@ namespace Allors.Domain
         private static readonly Guid PartiallyPaidId = new Guid("1801737F-2760-4600-9243-7E6BDD8A224D");
         private static readonly Guid PaidId = new Guid("04FAD96A-2B0F-4F07-ABB7-57657A34E422");
 
-        private UniquelyIdentifiableSticky<PaymentState> cache;
+        private UniquelyIdentifiableCache<PaymentState> cache;
 
-        public Sticky<Guid, PaymentState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PaymentState>(this.Session);
+        public Cache<Guid, PaymentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PaymentState>(this.Session);
 
         public PaymentState Unpaid => this.Cache[UnpaidId];
 

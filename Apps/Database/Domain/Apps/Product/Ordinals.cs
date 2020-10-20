@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid SecondId = new Guid("6593FE82-A00F-4de6-9516-D652FE28A3EA");
         private static readonly Guid ThirdId = new Guid("C207121C-B534-4764-9724-3E829E9C9F21");
 
-        private UniquelyIdentifiableSticky<Ordinal> cache;
+        private UniquelyIdentifiableCache<Ordinal> cache;
 
         public Ordinal First => this.Cache[FirstId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public Ordinal Third => this.Cache[ThirdId];
 
-        private UniquelyIdentifiableSticky<Ordinal> Cache => this.cache ??= new UniquelyIdentifiableSticky<Ordinal>(this.Session);
+        private UniquelyIdentifiableCache<Ordinal> Cache => this.cache ??= new UniquelyIdentifiableCache<Ordinal>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

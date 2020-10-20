@@ -11,8 +11,10 @@ namespace Allors
     {
         ITemplateObjectCache TemplateObjectCache { get; }
 
-        IMailService MailService { get; }
+        IMailer Mailer { get; }
 
-        ISingletonService SingletonService { get; }
+        ISingletonId SingletonId { get; }
+
+        IBarcodeGenerator BarcodeGenerator { get; }
     }
 }

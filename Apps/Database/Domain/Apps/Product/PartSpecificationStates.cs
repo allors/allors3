@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid ApprovedId = new Guid("B1FE3774-BD98-4230-9371-717F97DCD25B");
         private static readonly Guid RequirementSpecifiedId = new Guid("3604C076-EB3E-44c8-B855-D4F20918EC70");
 
-        private UniquelyIdentifiableSticky<PartSpecificationState> cache;
+        private UniquelyIdentifiableCache<PartSpecificationState> cache;
 
         public PartSpecificationState Created => this.Cache[CreatedId];
 
@@ -28,7 +28,7 @@ namespace Allors.Domain
 
         public PartSpecificationState RequirementSpecified => this.Cache[RequirementSpecifiedId];
 
-        private UniquelyIdentifiableSticky<PartSpecificationState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PartSpecificationState>(this.Session);
+        private UniquelyIdentifiableCache<PartSpecificationState> Cache => this.cache ??= new UniquelyIdentifiableCache<PartSpecificationState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -21,7 +21,7 @@ namespace Allors.Domain
         private static readonly Guid CfrId = new Guid("14C74444-F935-4AF2-9108-8CCEBD1920B2");
         private static readonly Guid CifId = new Guid("13C6ACE8-A928-45D4-8F2D-7F2320E38EE0");
 
-        private UniquelyIdentifiableSticky<IncoTermType> cache;
+        private UniquelyIdentifiableCache<IncoTermType> cache;
 
         public IncoTermType Exw => this.Cache[ExwId];
 
@@ -45,7 +45,7 @@ namespace Allors.Domain
 
         public IncoTermType Cif => this.Cache[CifId];
 
-        private UniquelyIdentifiableSticky<IncoTermType> Cache => this.cache ??= new UniquelyIdentifiableSticky<IncoTermType>(this.Session);
+        private UniquelyIdentifiableCache<IncoTermType> Cache => this.cache ??= new UniquelyIdentifiableCache<IncoTermType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -21,7 +21,7 @@ namespace Allors.Domain
         internal static readonly Guid CancelledId = new Guid("8AE3813D-7866-4e1c-AB70-EE695154F8F7");
         internal static readonly Guid RejectedId = new Guid("AE2AB1DC-0E5E-4061-924C-025AB84769C0");
 
-        private UniquelyIdentifiableSticky<SalesOrderState> cache;
+        private UniquelyIdentifiableCache<SalesOrderState> cache;
 
         public SalesOrderState Provisional => this.Cache[ProvisionalId];
 
@@ -45,7 +45,7 @@ namespace Allors.Domain
 
         public SalesOrderState InProcess => this.Cache[InProcessId];
 
-        private UniquelyIdentifiableSticky<SalesOrderState> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesOrderState>(this.Session);
+        private UniquelyIdentifiableCache<SalesOrderState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

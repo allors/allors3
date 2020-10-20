@@ -12,13 +12,13 @@ namespace Allors.Domain
         private static readonly Guid PurchaseInvoiceId = new Guid("D08F0309-A4CB-4ab7-8F75-3BB11DCF3783");
         private static readonly Guid PurchaseReturnId = new Guid("0187D927-81F5-4d6a-9847-58B674AD3E6A");
 
-        private UniquelyIdentifiableSticky<PurchaseInvoiceType> cache;
+        private UniquelyIdentifiableCache<PurchaseInvoiceType> cache;
 
         public PurchaseInvoiceType PurchaseInvoice => this.Cache[PurchaseInvoiceId];
 
         public PurchaseInvoiceType PurchaseReturn => this.Cache[PurchaseReturnId];
 
-        private UniquelyIdentifiableSticky<PurchaseInvoiceType> Cache => this.cache ??= new UniquelyIdentifiableSticky<PurchaseInvoiceType>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseInvoiceType> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -12,13 +12,13 @@ namespace Allors.Domain
         public static readonly Guid SerialisedId = new Guid("2596E2DD-3F5D-4588-A4A2-167D6FBE3FAE");
         public static readonly Guid NonSerialisedId = new Guid("EAA6C331-0DD9-4bb1-8245-12A673304468");
 
-        private UniquelyIdentifiableSticky<InventoryItemKind> cache;
+        private UniquelyIdentifiableCache<InventoryItemKind> cache;
 
         public InventoryItemKind Serialised => this.Cache[SerialisedId];
 
         public InventoryItemKind NonSerialised => this.Cache[NonSerialisedId];
 
-        private UniquelyIdentifiableSticky<InventoryItemKind> Cache => this.cache ??= new UniquelyIdentifiableSticky<InventoryItemKind>(this.Session);
+        private UniquelyIdentifiableCache<InventoryItemKind> Cache => this.cache ??= new UniquelyIdentifiableCache<InventoryItemKind>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

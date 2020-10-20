@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid ReducedRateId = new Guid("7F5A5FE2-BB18-4644-B1CA-81B391AB82D6");
         private static readonly Guid ZeroRateId = new Guid("70C228CA-AE50-4DA2-B209-D115BEE7F4FF");
 
-        private UniquelyIdentifiableSticky<VatTariff> cache;
+        private UniquelyIdentifiableCache<VatTariff> cache;
 
         public VatTariff Standard => this.Cache[StandardId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public VatTariff ZeroRate => this.Cache[ZeroRateId];
 
-        private UniquelyIdentifiableSticky<VatTariff> Cache => this.cache ??= new UniquelyIdentifiableSticky<VatTariff>(this.Session);
+        private UniquelyIdentifiableCache<VatTariff> Cache => this.cache ??= new UniquelyIdentifiableCache<VatTariff>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

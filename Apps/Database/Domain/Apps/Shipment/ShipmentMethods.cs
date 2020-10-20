@@ -15,7 +15,7 @@ namespace Allors.Domain
         private static readonly Guid BoatId = new Guid("CD6A439A-445A-4f8c-8DE2-654A0C504F48");
         private static readonly Guid ExWorksId = new Guid("5E628193-2E06-4C9B-BE86-D9BEB91B7D64");
 
-        private UniquelyIdentifiableSticky<ShipmentMethod> cache;
+        private UniquelyIdentifiableCache<ShipmentMethod> cache;
 
         public ShipmentMethod Ground => this.Cache[GroundId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public ShipmentMethod ExWorks => this.Cache[ExWorksId];
 
-        private UniquelyIdentifiableSticky<ShipmentMethod> Cache => this.cache ??= new UniquelyIdentifiableSticky<ShipmentMethod>(this.Session);
+        private UniquelyIdentifiableCache<ShipmentMethod> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentMethod>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

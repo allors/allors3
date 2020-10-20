@@ -17,7 +17,7 @@ namespace Allors.Domain
         private static readonly Guid FridayId = new Guid("F2164C35-0330-4875-90D9-7225FBE7ED32");
         private static readonly Guid SaturdayId = new Guid("57773FB1-317E-48E0-9D68-40C4D626A020");
 
-        private UniquelyIdentifiableSticky<DayOfWeek> cache;
+        private UniquelyIdentifiableCache<DayOfWeek> cache;
 
         public DayOfWeek Sunday => this.Cache[SundayId];
 
@@ -33,7 +33,7 @@ namespace Allors.Domain
 
         public DayOfWeek Saturday => this.Cache[SaturdayId];
 
-        private UniquelyIdentifiableSticky<DayOfWeek> Cache => this.cache ??= new UniquelyIdentifiableSticky<DayOfWeek>(this.Session);
+        private UniquelyIdentifiableCache<DayOfWeek> Cache => this.cache ??= new UniquelyIdentifiableCache<DayOfWeek>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

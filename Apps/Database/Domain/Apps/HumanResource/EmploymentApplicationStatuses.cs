@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid NotifiedOfNonInterestedId = new Guid("E889B083-22D4-4aa8-85BE-6416AA0839F9");
         private static readonly Guid EmployedId = new Guid("2CB5ABD4-8799-46c1-9E2B-538DB076492E");
 
-        private UniquelyIdentifiableSticky<EmploymentApplicationStatus> cache;
+        private UniquelyIdentifiableCache<EmploymentApplicationStatus> cache;
 
         public EmploymentApplicationStatus Received => this.Cache[ReceivedId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public EmploymentApplicationStatus Employed => this.Cache[EmployedId];
 
-        private UniquelyIdentifiableSticky<EmploymentApplicationStatus> Cache => this.cache ??= new UniquelyIdentifiableSticky<EmploymentApplicationStatus>(this.Session);
+        private UniquelyIdentifiableCache<EmploymentApplicationStatus> Cache => this.cache ??= new UniquelyIdentifiableCache<EmploymentApplicationStatus>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -8,8 +8,8 @@ namespace Allors.Domain
 {
     public partial class Organisations
     {
-        private UniquelyIdentifiableSticky<Organisation> cache;
+        private UniquelyIdentifiableCache<Organisation> cache;
 
-        public UniquelyIdentifiableSticky<Organisation> Cache => this.cache ??= new UniquelyIdentifiableSticky<Organisation>(this.Session);
+        public UniquelyIdentifiableCache<Organisation> Cache => this.cache ??= new UniquelyIdentifiableCache<Organisation>(this.Session);
     }
 }

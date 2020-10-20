@@ -12,13 +12,13 @@ namespace Allors.Domain
         private static readonly Guid RequestedId = new Guid("9CF35CC2-9E16-4c8a-A2F5-2D2DDD056AED");
         private static readonly Guid AssignedId = new Guid("7CA979A0-8CBF-426f-AFD2-F5C519FB206D");
 
-        private UniquelyIdentifiableSticky<AssetAssignmentStatus> cache;
+        private UniquelyIdentifiableCache<AssetAssignmentStatus> cache;
 
         public AssetAssignmentStatus Requested => this.Cache[RequestedId];
 
         public AssetAssignmentStatus Assigned => this.Cache[AssignedId];
 
-        private UniquelyIdentifiableSticky<AssetAssignmentStatus> Cache => this.cache ??= new UniquelyIdentifiableSticky<AssetAssignmentStatus>(this.Session);
+        private UniquelyIdentifiableCache<AssetAssignmentStatus> Cache => this.cache ??= new UniquelyIdentifiableCache<AssetAssignmentStatus>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

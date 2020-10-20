@@ -18,7 +18,7 @@ namespace Allors.Domain
         public static readonly Guid ServiceB2BId = new Guid("4D57C8ED-1DF4-4db2-9AAA-4552257DC2BF");
         public static readonly Guid ExemptId = new Guid("82986030-5E18-43c1-8CBE-9832ACD4151D");
 
-        private UniquelyIdentifiableSticky<VatRegime> cache;
+        private UniquelyIdentifiableCache<VatRegime> cache;
 
         public VatRegime PrivatePerson => this.Cache[PrivatePersonId];
 
@@ -36,7 +36,7 @@ namespace Allors.Domain
 
         public VatRegime Exempt => this.Cache[ExemptId];
 
-        private UniquelyIdentifiableSticky<VatRegime> Cache => this.cache ??= new UniquelyIdentifiableSticky<VatRegime>(this.Session);
+        private UniquelyIdentifiableCache<VatRegime> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRegime>(this.Session);
 
         protected override void AppsPrepare(Setup setup)
         {

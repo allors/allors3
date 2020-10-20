@@ -16,7 +16,7 @@ namespace Allors.Domain
         public static readonly Guid WrittenOffId = new Guid("F4408FD5-CCA3-44ea-BC00-4FFECC5D1EB9");
         public static readonly Guid CancelledByInvoiceId = new Guid("3EE18D08-9AEA-445D-8E19-0616E4A61B0E");
 
-        private UniquelyIdentifiableSticky<SalesInvoiceItemState> cache;
+        private UniquelyIdentifiableCache<SalesInvoiceItemState> cache;
 
         public SalesInvoiceItemState NotPaid => this.Cache[NotPaidId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public SalesInvoiceItemState CancelledByInvoice => this.Cache[CancelledByInvoiceId];
 
-        private UniquelyIdentifiableSticky<SalesInvoiceItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesInvoiceItemState>(this.Session);
+        private UniquelyIdentifiableCache<SalesInvoiceItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesInvoiceItemState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

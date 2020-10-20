@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid DivorcedId = new Guid("B6DE4339-76B0-4675-802D-20AAA482E30F");
         private static readonly Guid WidowedId = new Guid("C3755D4A-FF2E-4c4c-B17E-BCC5BC0599BF");
 
-        private UniquelyIdentifiableSticky<MaritalStatus> cache;
+        private UniquelyIdentifiableCache<MaritalStatus> cache;
 
         public MaritalStatus Single => this.Cache[SingleId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public MaritalStatus Widowed => this.Cache[WidowedId];
 
-        private UniquelyIdentifiableSticky<MaritalStatus> Cache => this.cache ??= new UniquelyIdentifiableSticky<MaritalStatus>(this.Session);
+        private UniquelyIdentifiableCache<MaritalStatus> Cache => this.cache ??= new UniquelyIdentifiableCache<MaritalStatus>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

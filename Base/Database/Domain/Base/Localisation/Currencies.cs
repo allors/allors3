@@ -7,9 +7,9 @@ namespace Allors.Domain
 {
     public partial class Currencies
     {
-        private Sticky<string, Currency> currencyByCode;
+        private Cache<string, Currency> currencyByCode;
 
-        public Sticky<string, Currency> CurrencyByCode => this.currencyByCode ??= new Sticky<string, Currency>(this.Session, this.Meta.IsoCode);
+        public Cache<string, Currency> CurrencyByCode => this.currencyByCode ??= new Cache<string, Currency>(this.Session, this.Meta.IsoCode);
 
         protected override void CoreSetup(Setup setup)
         {

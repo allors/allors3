@@ -16,7 +16,7 @@ namespace Allors.Domain
         public static readonly Guid ShippedId = new Guid("4377658B-7D0E-4B57-BA8A-15AEB368EEE1");
         public static readonly Guid ReceivedId = new Guid("44B78834-64E8-498E-B2E4-E685950BBD95");
 
-        private UniquelyIdentifiableSticky<ShipmentItemState> cache;
+        private UniquelyIdentifiableCache<ShipmentItemState> cache;
 
         public ShipmentItemState Created => this.Cache[CreatedId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public ShipmentItemState Received => this.Cache[ReceivedId];
 
-        private UniquelyIdentifiableSticky<ShipmentItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<ShipmentItemState>(this.Session);
+        private UniquelyIdentifiableCache<ShipmentItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentItemState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

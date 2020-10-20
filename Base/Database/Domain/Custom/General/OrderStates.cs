@@ -15,9 +15,9 @@ namespace Allors.Domain
         private static readonly Guid ClosedId = new Guid("0750D8B3-3B10-465F-BBC0-81D12F40A3DF");
         private static readonly Guid CancelledId = new Guid("F72CEBEE-D12C-4321-83A3-77019A7B8C76");
 
-        private UniquelyIdentifiableSticky<OrderState> cache;
+        private UniquelyIdentifiableCache<OrderState> cache;
 
-        public Sticky<Guid, OrderState> Cache => this.cache ??= new UniquelyIdentifiableSticky<OrderState>(this.Session);
+        public Cache<Guid, OrderState> Cache => this.cache ??= new UniquelyIdentifiableCache<OrderState>(this.Session);
 
         public OrderState Initial => this.Cache[InitialId];
 

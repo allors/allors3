@@ -15,7 +15,7 @@ namespace Allors.Domain
         private static readonly Guid DefectiveId = new Guid("41067E72-5833-461C-8087-308F91C205E4");
         private static readonly Guid ScrapId = new Guid("8FD0680D-28E4-4F85-8BC9-E935B6B64FAE");
 
-        private UniquelyIdentifiableSticky<SerialisedItemState> cache;
+        private UniquelyIdentifiableCache<SerialisedItemState> cache;
 
         public SerialisedItemState NA => this.Cache[NaId];
 
@@ -27,8 +27,8 @@ namespace Allors.Domain
 
         public SerialisedItemState Scrap => this.Cache[ScrapId];
 
-        private UniquelyIdentifiableSticky<SerialisedItemState> Cache =>
-            this.cache ??= new UniquelyIdentifiableSticky<SerialisedItemState>(this.Session);
+        private UniquelyIdentifiableCache<SerialisedItemState> Cache =>
+            this.cache ??= new UniquelyIdentifiableCache<SerialisedItemState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

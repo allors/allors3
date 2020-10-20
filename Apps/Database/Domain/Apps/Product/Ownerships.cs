@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid TradingId = new Guid("3ec25bbf-511c-44f1-a599-4a0330f28c3e");
         private static readonly Guid ThirdPartyId = new Guid("6b613409-bdf4-4a86-815f-6920d2fec8d3");
 
-        private UniquelyIdentifiableSticky<Ownership> cache;
+        private UniquelyIdentifiableCache<Ownership> cache;
 
         public Ownership Own => this.Cache[OwnId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public Ownership ThirdParty => this.Cache[ThirdPartyId];
 
-        private UniquelyIdentifiableSticky<Ownership> Cache => this.cache ??= new UniquelyIdentifiableSticky<Ownership>(this.Session);
+        private UniquelyIdentifiableCache<Ownership> Cache => this.cache ??= new UniquelyIdentifiableCache<Ownership>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid CancelledId = new Guid("CD552AF5-E695-4329-BF87-5644C2EA98F3");
         private static readonly Guid OnHoldId = new Guid("1733E2B0-48CA-4731-8F3C-93C6CF3A9543");
 
-        private UniquelyIdentifiableSticky<PickListState> cache;
+        private UniquelyIdentifiableCache<PickListState> cache;
 
         public PickListState Created => this.Cache[CreatedId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public PickListState OnHold => this.Cache[OnHoldId];
 
-        private UniquelyIdentifiableSticky<PickListState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PickListState>(this.Session);
+        private UniquelyIdentifiableCache<PickListState> Cache => this.cache ??= new UniquelyIdentifiableCache<PickListState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

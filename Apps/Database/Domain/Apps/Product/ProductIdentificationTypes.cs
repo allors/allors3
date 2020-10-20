@@ -18,7 +18,7 @@ namespace Allors.Domain
         private static readonly Guid PartId = new Guid("5735191A-CDC4-4563-96EF-DDDC7B969CA6");
         private static readonly Guid GoodId = new Guid("B640630D-A556-4526-A2E5-60A84AB0DB3F");
 
-        private UniquelyIdentifiableSticky<ProductIdentificationType> cache;
+        private UniquelyIdentifiableCache<ProductIdentificationType> cache;
 
         public ProductIdentificationType Sku => this.Cache[SkuId];
 
@@ -36,7 +36,7 @@ namespace Allors.Domain
 
         public ProductIdentificationType Good => this.Cache[GoodId];
 
-        private UniquelyIdentifiableSticky<ProductIdentificationType> Cache => this.cache ??= new UniquelyIdentifiableSticky<ProductIdentificationType>(this.Session);
+        private UniquelyIdentifiableCache<ProductIdentificationType> Cache => this.cache ??= new UniquelyIdentifiableCache<ProductIdentificationType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

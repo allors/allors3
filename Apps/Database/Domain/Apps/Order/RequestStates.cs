@@ -16,7 +16,7 @@ namespace Allors.Domain
         public static readonly Guid PendingCustomerId = new Guid("671FDA2F-5AA6-4EA5-B5D6-C914F0911690");
         public static readonly Guid RejectedId = new Guid("26B1E962-9799-4C53-AE36-20E8490F757A");
 
-        private UniquelyIdentifiableSticky<RequestState> cache;
+        private UniquelyIdentifiableCache<RequestState> cache;
 
         public RequestState Anonymous => this.Cache[AnonymousId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public RequestState Rejected => this.Cache[RejectedId];
 
-        private UniquelyIdentifiableSticky<RequestState> Cache => this.cache ??= new UniquelyIdentifiableSticky<RequestState>(this.Session);
+        private UniquelyIdentifiableCache<RequestState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

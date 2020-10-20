@@ -7,9 +7,9 @@ namespace Allors.Domain
 {
     public partial class Languages
     {
-        private Sticky<string, Language> languageByCode;
+        private Cache<string, Language> languageByCode;
 
-        public Sticky<string, Language> LanguageByCode => this.languageByCode ??= new Sticky<string, Language>(this.Session, this.Meta.IsoCode);
+        public Cache<string, Language> LanguageByCode => this.languageByCode ??= new Cache<string, Language>(this.Session, this.Meta.IsoCode);
 
         protected override void CoreSetup(Setup setup)
         {

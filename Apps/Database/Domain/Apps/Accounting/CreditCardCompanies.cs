@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid MasterCardId = new Guid("02BEC092-F9AC-49A2-92CC-D1E916E1F240");
         private static readonly Guid AmericanExpressId = new Guid("6977672C-C212-429B-A86B-BA905F0833B2");
 
-        private UniquelyIdentifiableSticky<CreditCardCompany> cache;
+        private UniquelyIdentifiableCache<CreditCardCompany> cache;
 
         public CreditCardCompany Visa => this.Cache[VisaId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public CreditCardCompany Average => this.Cache[AmericanExpressId];
 
-        private UniquelyIdentifiableSticky<CreditCardCompany> Cache => this.cache ??= new UniquelyIdentifiableSticky<CreditCardCompany>(this.Session);
+        private UniquelyIdentifiableCache<CreditCardCompany> Cache => this.cache ??= new UniquelyIdentifiableCache<CreditCardCompany>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

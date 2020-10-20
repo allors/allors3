@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid BeArt39Par1Item2Id = new Guid("103F00B9-C6F9-4717-992B-26ADA4894912");
         private static readonly Guid BeArt14Par2Id = new Guid("CFF6D5E4-C183-4B93-BCA5-B8C81AEE8DCC");
 
-        private UniquelyIdentifiableSticky<VatClause> cache;
+        private UniquelyIdentifiableCache<VatClause> cache;
 
         public VatClause ServiceB2B => this.Cache[ServiceB2BId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public VatClause BeArt14Par2 => this.Cache[BeArt14Par2Id];
 
-        private UniquelyIdentifiableSticky<VatClause> Cache => this.cache ??= new UniquelyIdentifiableSticky<VatClause>(this.Session);
+        private UniquelyIdentifiableCache<VatClause> Cache => this.cache ??= new UniquelyIdentifiableCache<VatClause>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

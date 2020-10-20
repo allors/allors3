@@ -12,13 +12,13 @@ namespace Allors.Domain
         private static readonly Guid RetirementId = new Guid("2D0F0788-EB2B-4ef3-A09A-A7285DAD72CF");
         private static readonly Guid InsuranceId = new Guid("D82A5A9F-068F-4e30-88F5-5E6C81D03BAF");
 
-        private UniquelyIdentifiableSticky<DeductionType> cache;
+        private UniquelyIdentifiableCache<DeductionType> cache;
 
         public DeductionType Retirement => this.Cache[RetirementId];
 
         public DeductionType Insurance => this.Cache[InsuranceId];
 
-        private UniquelyIdentifiableSticky<DeductionType> Cache => this.cache ??= new UniquelyIdentifiableSticky<DeductionType>(this.Session);
+        private UniquelyIdentifiableCache<DeductionType> Cache => this.cache ??= new UniquelyIdentifiableCache<DeductionType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

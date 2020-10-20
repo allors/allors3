@@ -11,11 +11,11 @@ namespace Allors.Domain
     {
         public static readonly Guid ProjectManagementId = new Guid("A8E4E325-8B5C-4f86-AB8E-A3D16C9B7827");
 
-        private UniquelyIdentifiableSticky<Skill> cache;
+        private UniquelyIdentifiableCache<Skill> cache;
 
         public Skill ProjectManagement => this.Cache[ProjectManagementId];
 
-        private UniquelyIdentifiableSticky<Skill> Cache => this.cache ??= new UniquelyIdentifiableSticky<Skill>(this.Session);
+        private UniquelyIdentifiableCache<Skill> Cache => this.cache ??= new UniquelyIdentifiableCache<Skill>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

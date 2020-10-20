@@ -7,8 +7,8 @@ namespace Allors.Domain
 {
     public partial class Counters
     {
-        private UniquelyIdentifiableSticky<Counter> cache;
+        private UniquelyIdentifiableCache<Counter> cache;
 
-        private UniquelyIdentifiableSticky<Counter> Cache => this.cache ??= new UniquelyIdentifiableSticky<Counter>(this.Session);
+        private UniquelyIdentifiableCache<Counter> Cache => this.cache ??= new UniquelyIdentifiableCache<Counter>(this.Session);
     }
 }

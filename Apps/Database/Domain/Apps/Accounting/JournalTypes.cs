@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid SalesId = new Guid("FAE9D5DB-0EAD-46CB-89E8-C32E4001D8D1");
         private static readonly Guid PurchaseId = new Guid("BB8A39C3-9F3E-4D3F-83A2-10100016A78E");
 
-        private UniquelyIdentifiableSticky<JournalType> cache;
+        private UniquelyIdentifiableCache<JournalType> cache;
 
         public JournalType Cash => this.Cache[CashId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public JournalType Purchase => this.Cache[PurchaseId];
 
-        private UniquelyIdentifiableSticky<JournalType> Cache => this.cache ??= new UniquelyIdentifiableSticky<JournalType>(this.Session);
+        private UniquelyIdentifiableCache<JournalType> Cache => this.cache ??= new UniquelyIdentifiableCache<JournalType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

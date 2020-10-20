@@ -36,10 +36,10 @@ namespace Allors
 
             this.DerivationService = new DerivationService();
             this.PreparedFetches = new PreparedFetches(this);
-            this.MailService = new MailService();
-            this.PasswordService = new PasswordService();
-            this.SingletonService = new SingletonService();
-            this.StickyService = new StickyService();
+            this.Mailer = new Mailer();
+            this.PasswordHasher = new PasswordHasher();
+            this.SingletonId = new SingletonId();
+            this.Caches = new Caches();
             this.TimeService = new TimeService();
         }
 
@@ -69,10 +69,10 @@ namespace Allors
         public IDerivationService DerivationService { get; private set; }
         public IPreparedExtents PreparedExtents { get; private set; }
         public IPreparedFetches PreparedFetches { get; private set; }
-        public IMailService MailService { get; private set; }
-        public IPasswordService PasswordService { get; private set; }
-        public ISingletonService SingletonService { get; private set; }
-        public IStickyService StickyService { get; private set; }
+        public IMailer Mailer { get; private set; }
+        public IPasswordHasher PasswordHasher { get; private set; }
+        public ISingletonId SingletonId { get; private set; }
+        public ICaches Caches { get; private set; }
         public ITimeService TimeService { get; private set; }
 
         public ISessionStateLifecycle CreateSessionInstance() => new DefaultSessionState(this.httpContextAccessor);

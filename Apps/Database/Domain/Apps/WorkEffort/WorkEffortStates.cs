@@ -15,7 +15,7 @@ namespace Allors.Domain
         private static readonly Guid CompletedId = new Guid("4D942F82-3B8F-4248-9EBC-22B1E5F05D93");
         private static readonly Guid FinishedId = new Guid("6A9716A1-8174-4B26-86EB-22A265B74E78");
 
-        private UniquelyIdentifiableSticky<WorkEffortState> cache;
+        private UniquelyIdentifiableCache<WorkEffortState> cache;
 
         public WorkEffortState Created => this.Cache[CreatedId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public WorkEffortState Cancelled => this.Cache[CancelledId];
 
-        private UniquelyIdentifiableSticky<WorkEffortState> Cache => this.cache ??= new UniquelyIdentifiableSticky<WorkEffortState>(this.Session);
+        private UniquelyIdentifiableCache<WorkEffortState> Cache => this.cache ??= new UniquelyIdentifiableCache<WorkEffortState>(this.Session);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason);
 

@@ -17,7 +17,6 @@
     <ProjectReference Include="..\Domain.Default\Domain.Default.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
 </Project>
