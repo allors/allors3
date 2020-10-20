@@ -228,8 +228,8 @@
   <data name="FrequencyNotSupported" xml:space="preserve">
     <value>Selected frequency is not supported</value>
   </data>
-  <data name="PaymentAmountIsToSmall" xml:space="preserve">
-    <value>amount is to small</value>
+  <data name="PaymentAmountIsSmallerThanTheAppliedAmount" xml:space="preserve">
+    <value>Payment amount is smaller than the applied amount</value>
   </data>
   <data name="WorkEffortRateError" xml:space="preserve">
     <value>Rate for this type already exists</value>
