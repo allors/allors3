@@ -24,18 +24,21 @@ namespace Allors
             this.MetaCache = new MetaCache(this);
             this.WorkspaceMetaCache = new WorkspaceMetaCache(this);
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
-            this.PreparedExtentCache = new PreparedExtentCache(this);
+            this.PreparedExtents = new PreparedExtents(this);
+            this.PreparedFetches = new PreparedFetches(this);
             this.TreeCache = new TreeCache();
 
             this.PermissionsCache = new PermissionsCache(this);
             this.EffectivePermissionCache = new EffectivePermissionCache();
             this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
 
+            this.TemplateObjectCache = new TemplateObjectCache();
             this.BarcodeGenerator = new BarcodeGenerator();
 
             this.DerivationService = new DerivationService();
-            this.FetchService = new FetchService(this);
+            this.MailService = new MailService();
             this.PasswordService = new PasswordService();
+            this.SingletonService = new SingletonService();
             this.StickyService = new StickyService();
             this.TimeService = new TimeService();
         }
@@ -60,11 +63,15 @@ namespace Allors
 
         public IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; private set; }
 
+        public ITemplateObjectCache TemplateObjectCache { get; private set; }
+
         public IBarcodeGenerator BarcodeGenerator { get; private set; }
         public IDerivationService DerivationService { get; private set; }
-        public IPreparedExtentCache PreparedExtentCache { get; private set; }
-        public IFetchService FetchService { get; private set; }
+        public IPreparedExtents PreparedExtents { get; private set; }
+        public IPreparedFetches PreparedFetches { get; private set; }
+        public IMailService MailService { get; private set; }
         public IPasswordService PasswordService { get; private set; }
+        public ISingletonService SingletonService { get; private set; }
         public IStickyService StickyService { get; private set; }
         public ITimeService TimeService { get; private set; }
 
