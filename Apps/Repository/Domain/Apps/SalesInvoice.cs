@@ -371,14 +371,6 @@ namespace Allors.Repository
         public Store Store { get; set; }
 
         #region Allors
-        [Id("968409E5-9FA6-4085-9707-6ECF38A08272")]
-        [Indexed]
-        #endregion
-        [Required]
-        [Workspace(Default)]
-        public bool IsRepeatingInvoice { get; set; }
-
-        #region Allors
         [Id("CE515051-9555-4810-8175-17B152919C2A")]
         [Indexed]
         #endregion
@@ -417,11 +409,13 @@ namespace Allors.Repository
         public VatClause DerivedVatClause { get; set; }
 
         #region Allors
-        [Id("c9bcb2a1-25e2-450c-b7e8-adbd530aa68c")]
+        [Id("968409E5-9FA6-4085-9707-6ECF38A08272")]
+        [Indexed]
         #endregion
+        [Required]
         [Derived]
         [Workspace(Default)]
-        public bool IsRepeating { get; set; }
+        public bool IsRepeatingInvoice { get; set; }
 
         #region Allors
         [Id("55A60B80-2052-47E6-BD41-2AF414ABB885")]

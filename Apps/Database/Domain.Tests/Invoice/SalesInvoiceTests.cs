@@ -11,6 +11,7 @@ namespace Allors.Domain
     using Allors.Domain.TestPopulation;
     using Resources;
     using Xunit;
+    using Allors.Meta;
 
     public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
@@ -1069,6 +1070,350 @@ namespace Allors.Domain
 
             Assert.Equal(new SalesOrderStates(this.Session).InProcess, order.SalesOrderState);
             Assert.Equal(new SalesOrderPaymentStates(this.Session).NotPaid, order.SalesOrderPaymentState);
+        }
+    }
+
+    public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnCreateDeriveSalesInvoiceState()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.SalesInvoiceState, new SalesInvoiceStates(this.Session).ReadyForPosting);
+        }
+
+        [Fact]
+        public void OnCreateDeriveEntryDate()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistEntryDate);
+        }
+
+        [Fact]
+        public void OnCreateDeriveInvoiceDate()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistInvoiceDate);
+        }
+
+        [Fact]
+        public void OnCreateDeriveSalesInvoiceType()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.SalesInvoiceType, new SalesInvoiceTypes(this.Session).SalesInvoice);
+        }
+
+        [Fact]
+        public void OnCreateDeriveBilledFrom()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.BilledFrom, this.InternalOrganisation);
+        }
+
+        [Fact]
+        public void OnCreateDeriveStore()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Store, new Stores(this.Session).Extent().First);
+        }
+
+        [Fact]
+        public void OnCreateDeriveInvoiceNumber()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            var number = new Stores(this.Session).Extent().First.SalesInvoiceTemporaryCounter.Value;
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.InvoiceNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void OnCreateDeriveSortableInvoiceNumber()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            var number = new Stores(this.Session).Extent().First.SalesInvoiceTemporaryCounter.Value;
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.SortableInvoiceNumber.Value, number + 1);
+        }
+
+        [Fact]
+        public void OnCreateDeriveBilledFromContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.BilledFromContactMechanism, this.InternalOrganisation.BillingAddress);
+        }
+
+        [Fact]
+        public void OnCreateDeriveBillToContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.BillToContactMechanism, customer.BillingAddress);
+        }
+
+        [Fact]
+        public void OnCreateDeriveBillToEndCustomerContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToEndCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.BillToEndCustomerContactMechanism, customer.BillingAddress);
+        }
+
+        [Fact]
+        public void OnCreateDeriveShipToAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.ShipToAddress, customer.ShippingAddress);
+        }
+
+        [Fact]
+        public void OnCreateDeriveShipToEndCustomerAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToEndCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.ShipToEndCustomerAddress, customer.ShippingAddress);
+        }
+
+        [Fact]
+        public void OnCreateDeriveCurrencyFromInternalOrganisationPreferredCurrency()
+        {
+            Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
+
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Currency, this.InternalOrganisation.PreferredCurrency);
+        }
+
+        [Fact]
+        public void OnCreateDeriveCurrencyFromSingletonDefaultLocale()
+        {
+            this.InternalOrganisation.RemovePreferredCurrency();
+
+            this.Session.GetSingleton().DefaultLocale = new LocaleBuilder(this.Session)
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            this.Session.Derive();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Currency, this.Session.GetSingleton().DefaultLocale.Country.Currency);
+        }
+
+        [Fact]
+        public void OnCreateDeriveCurrencyFromBillToCustomerPreferredCurrency()
+        {
+            var newLocale = new LocaleBuilder(this.Session)
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+            customer.PreferredCurrency = newLocale.Country.Currency;
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Currency, customer.PreferredCurrency);
+        }
+
+        [Fact]
+        public void OnCreateDeriveCurrencyFromBillToCustomerLocale()
+        {
+            var newLocale = new LocaleBuilder(this.Session)
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.Locale = newLocale;
+            customer.RemovePreferredCurrency();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Currency, newLocale.Country.Currency);
+        }
+
+        [Fact]
+        public void OnCreateDeriveVatRegimeFromBillToCustomerVatRegime()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+
+            Assert.True(customer.ExistVatRegime);
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.VatRegime, customer.VatRegime);
+        }
+
+        [Fact]
+        public void OnCreateDeriveIrpfRegimeFromBillToCustomerIrpfRegime()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.IrpfRegime, customer.IrpfRegime);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToCustomerDerivePreviousBillToCustomer()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.PreviousBillToCustomer, invoice.BillToCustomer);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToCustomerDeriveBillToContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.BillToContactMechanism, invoice.BillToCustomer.BillingAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.BillToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.BillToEndCustomerContactMechanism, invoice.BillToEndCustomer.BillingAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToCustomerDeriveShipToAddress()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.ShipToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.ShipToAddress, invoice.ShipToCustomer.ShippingAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToEndCustomerDeriveShipToEndCustomerAddress()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.ShipToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.ShipToEndCustomerAddress, invoice.ShipToEndCustomer.ShippingAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleRepeatingSalesInvoiceNextExecutionDateDeriveIsRepeatingInvoice()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive();
+
+            new RepeatingSalesInvoiceBuilder(this.Session)
+                .WithSource(invoice)
+                .WithFrequency(new TimeFrequencies(this.Session).Month)
+                .WithNextExecutionDate(this.Session.Now().AddDays(1))
+                .Build();
+
+            this.Session.Derive();
+
+            Assert.True(invoice.IsRepeatingInvoice);
+        }
+
+        [Fact]
+        public void OnChangedRoleRepeatingSalesInvoiceFinalExecutionDateDeriveIsRepeatingInvoice()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive();
+
+            var repeatingSalesInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
+                .WithSource(invoice)
+                .WithFrequency(new TimeFrequencies(this.Session).Month)
+                .WithNextExecutionDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            this.Session.Derive();
+
+            Assert.True(invoice.IsRepeatingInvoice);
+
+            repeatingSalesInvoice.FinalExecutionDate = this.Session.Now().AddDays(-1);
+
+            this.Session.Derive();
+
+            Assert.False(invoice.IsRepeatingInvoice);
         }
     }
 
