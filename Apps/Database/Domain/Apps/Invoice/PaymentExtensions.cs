@@ -41,7 +41,7 @@ namespace Allors.Domain
 
             //if (@this.ExistAmount && totalAmountApplied > @this.Amount)
             //{
-            //    derivation.Validation.AddError(@this, M.Payment.Amount, ErrorMessages.PaymentAmountIsToSmall);
+            //    derivation.Validation.AddError(@this, M.Payment.Amount, ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount);
             //}
         }
 
