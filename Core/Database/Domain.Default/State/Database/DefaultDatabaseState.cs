@@ -24,7 +24,8 @@ namespace Allors
             this.MetaCache = new MetaCache(this);
             this.WorkspaceMetaCache = new WorkspaceMetaCache(this);
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
-            this.PreparedExtentCache = new PreparedExtentCache(this);
+            this.PreparedFetches = new PreparedFetches(this.M);
+            this.PreparedExtents = new PreparedExtents(this.M);
             this.TreeCache = new TreeCache();
 
             this.PermissionsCache = new PermissionsCache(this);
@@ -34,7 +35,6 @@ namespace Allors
             this.BarcodeGenerator = new BarcodeGenerator();
 
             this.DerivationService = new DerivationService();
-            this.FetchService = new FetchService(this);
             this.PasswordService = new PasswordService();
             this.StickyService = new StickyService();
             this.TimeService = new TimeService();
@@ -62,8 +62,8 @@ namespace Allors
 
         public IBarcodeGenerator BarcodeGenerator { get; private set; }
         public IDerivationService DerivationService { get; private set; }
-        public IPreparedExtentCache PreparedExtentCache { get; private set; }
-        public IFetchService FetchService { get; private set; }
+        public IPreparedExtents PreparedExtents { get; private set; }
+        public IPreparedFetches PreparedFetches { get; private set; }
         public IPasswordService PasswordService { get; private set; }
         public IStickyService StickyService { get; private set; }
         public ITimeService TimeService { get; private set; }

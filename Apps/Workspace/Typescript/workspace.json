@@ -197,27 +197,6 @@
         }
       }
     },
-    "workspace-core": {
-      "root": "libs/workspace/core",
-      "sourceRoot": "libs/workspace/core/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/core/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/workspace/core/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "meta-base": {
       "root": "libs/meta/base",
       "sourceRoot": "libs/meta/base/src",
@@ -276,6 +255,27 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/domain/apps/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-core": {
+      "root": "libs/workspace/core",
+      "sourceRoot": "libs/workspace/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/workspace/core/jest.config.js",
             "passWithNoTests": true
           }
         }

@@ -5,9 +5,11 @@
 
 namespace Tests
 {
+    using System;
     using System.Collections.Generic;
     using Allors;
     using Allors.Domain;
+    using Allors.State;
     using Xunit;
 
     public class PreparedExtentTests : DomainTest, IClassFixture<Fixture>
@@ -19,8 +21,8 @@ namespace Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.Database.State().PreparedExtentCache;
-            var organizationByName = extentService.Get(PreparedExtents.ByName);
+            var extentService = this.Session.Database.State().PreparedExtents;
+            var organizationByName = extentService.Get(PreparedExtents.OrganisationByName);
 
             var arguments = new Dictionary<string, string>
             {
@@ -35,5 +37,6 @@ namespace Tests
 
             Assert.Equal("Acme", organization.Name);
         }
+
     }
 }

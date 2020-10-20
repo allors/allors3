@@ -15,7 +15,7 @@ module.exports = {
     [
       'jest-trx-results-processor',
       {
-        outputFile: '../../../artifacts/tests/meta.trx',
+        outputFile: '../../../artifacts/tests/core.meta.trx',
       },
     ],
   ],

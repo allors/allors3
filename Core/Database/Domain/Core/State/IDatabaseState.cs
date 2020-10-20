@@ -30,9 +30,9 @@ namespace Allors
 
         IDerivationService DerivationService { get; }
 
-        IPreparedExtentCache PreparedExtentCache { get; }
+        IPreparedExtents PreparedExtents { get; }
 
-        IFetchService FetchService { get; }
+        IPreparedFetches PreparedFetches { get; }
 
         IMetaCache MetaCache { get; }
 

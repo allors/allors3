@@ -37,7 +37,7 @@ namespace Allors.Api.Json.Pull
                 throw new Exception("Either an Extent or an ExtentRef is required.");
             }
 
-            var extent = this.pull.Extent ?? this.DatabaseState.PreparedExtentCache.Get(this.pull.ExtentRef.Value);
+            var extent = this.pull.Extent ?? this.DatabaseState.PreparedExtents.Get(this.pull.ExtentRef.Value);
             var objects = extent.Build(this.session, this.pull.Parameters).ToArray();
 
             if (this.pull.Results != null)
@@ -51,7 +51,7 @@ namespace Allors.Api.Json.Pull
                         var fetch = result.Fetch;
                         if (fetch == null && result.FetchRef.HasValue)
                         {
-                            fetch = this.DatabaseState.FetchService.Get(result.FetchRef.Value);
+                            fetch = this.DatabaseState.PreparedFetches.Get(result.FetchRef.Value);
                         }
 
                         if (fetch != null)

@@ -31,7 +31,7 @@ namespace Allors.Domain
 
                 if (paymentExtension.ExistAmount && totalAmountApplied > paymentExtension.Amount)
                 {
-                    cycle.Validation.AddError($"{paymentExtension} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsToSmall}");
+                    cycle.Validation.AddError($"{paymentExtension} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount}");
                 }
             }
         }

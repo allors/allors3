@@ -58,7 +58,7 @@ namespace Allors.Api.Json.Pull
                         var fetch = result.Fetch;
                         if ((fetch == null) && result.FetchRef.HasValue)
                         {
-                            fetch = this.DatabaseState.FetchService.Get(result.FetchRef.Value);
+                            fetch = this.DatabaseState.PreparedFetches.Get(result.FetchRef.Value);
                         }
 
                         if (fetch != null)

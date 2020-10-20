@@ -14,6 +14,7 @@ partial class Build : NukeBuild
 
     Target Install => _ => _
         .DependsOn(this.CoreInstall)
+        .DependsOn(this.BaseInstall)
         .DependsOn(this.AppsInstall);
 
     Target Clean => _ => _
@@ -40,7 +41,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new AbsolutePath[] {this.Paths.System, this.Paths.Core, this.Paths.Apps })
+            foreach (var path in new AbsolutePath[] { this.Paths.System, this.Paths.Core, this.Paths.Apps })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -55,7 +56,9 @@ partial class Build : NukeBuild
         .DependsOn(this.AdaptersGenerate)
         .DependsOn(this.CoreGenerate)
         .DependsOn(this.BaseGenerate)
-        .DependsOn(this.AppsGenerate);
+        .DependsOn(this.AppsGenerate)
+        .DependsOn(this.DerivationGenerate)
+        .DependsOn(this.SecurityGenerate);
 
     Target Default => _ => _
         .DependsOn(this.Generate);

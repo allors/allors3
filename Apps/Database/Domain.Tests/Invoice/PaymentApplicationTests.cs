@@ -145,5 +145,27 @@ namespace Allors.Domain
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
         }
+
+        [Fact]
+        public void DeriveOnCreatePaymentApplicationNotLargerThanInvoiceAmount()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+
+            var fullAmount = salesInvoice.TotalIncVat;
+            var extraAmount = salesInvoice.TotalIncVat + 1;
+            var paymentApp = new PaymentApplicationBuilder(this.Session).WithInvoice(salesInvoice).WithAmountApplied(extraAmount).Build();
+
+            new ReceiptBuilder(this.Session)
+                .WithAmount(fullAmount)
+                .WithPaymentApplication(paymentApp)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+
+            var expectedMessage = $"{paymentApp} { this.M.PaymentApplication.AmountApplied} { ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
+        }
     }
 }
