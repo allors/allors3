@@ -14,6 +14,7 @@ namespace Tests
     using Allors.Domain;
     using Allors.Protocol.Data;
     using Allors.Protocol.Database.Pull;
+    using Allors.State;
     using Xunit;
 
     public class PullTests : ApiTest, IClassFixture<Fixture>
@@ -84,7 +85,7 @@ namespace Tests
                   {
                       new Pull
                           {
-                              ExtentRef = PreparedExtents.ByName,
+                              ExtentRef = PreparedExtents.OrganisationByName,
                               Parameters = new Dictionary<string, string> { ["name"] = "Acme" },
                           },
                   },
@@ -109,7 +110,7 @@ namespace Tests
                   {
                       new Pull
                           {
-                              ExtentRef = PreparedExtents.ByName,
+                              ExtentRef = PreparedExtents.OrganisationByName,
                               Parameters = new Dictionary<string, string> { ["name"] = "Acme" },
                           },
                   },

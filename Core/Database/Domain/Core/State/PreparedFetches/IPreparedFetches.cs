@@ -5,8 +5,12 @@
 
 namespace Allors.State
 {
-    public partial interface IPrefetchPolicyCache
+    using System;
+
+    using Allors.Data;
+
+    public partial interface IPreparedFetches
     {
-        PrefetchPolicy PermissionsWithClass { get; }
+        Fetch Get(Guid id);
     }
 }
