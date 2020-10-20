@@ -12,13 +12,13 @@ namespace Allors.Domain
         private static readonly Guid MisterId = new Guid("510D5267-4E69-45F7-B99E-CABAF7E42EB2");
         private static readonly Guid MissId = new Guid("93275216-70B9-4DBB-A824-AFBAC7A2B32E");
 
-        private UniquelyIdentifiableSticky<PersonalTitle> cache;
+        private UniquelyIdentifiableCache<PersonalTitle> cache;
 
         public PersonalTitle Mister => this.Cache[MisterId];
 
         public PersonalTitle Miss => this.Cache[MissId];
 
-        private UniquelyIdentifiableSticky<PersonalTitle> Cache => this.cache ??= new UniquelyIdentifiableSticky<PersonalTitle>(this.Session);
+        private UniquelyIdentifiableCache<PersonalTitle> Cache => this.cache ??= new UniquelyIdentifiableCache<PersonalTitle>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

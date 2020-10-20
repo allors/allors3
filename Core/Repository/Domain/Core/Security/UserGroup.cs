@@ -15,7 +15,7 @@ namespace Allors.Repository
     #region Allors
     [Id("60065f5d-a3c2-4418-880d-1026ab607319")]
     #endregion
-    public partial class UserGroup : UniquelyIdentifiable, Object
+    public partial class UserGroup : UniquelyIdentifiable
     {
         #region inherited properties
         public Guid UniqueId { get; set; }

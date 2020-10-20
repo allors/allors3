@@ -14,7 +14,7 @@ namespace Allors.Repository
     [Id("6E026CC2-1979-413A-A4B2-54B41667E013")]
     #endregion
     [Workspace(Default)]
-    public partial class Person : User,  Deletable
+    public partial class Person : User
     {
         #region inherited properties
 
@@ -55,8 +55,6 @@ namespace Allors.Repository
         public bool UserLockoutEnabled { get; set; }
 
         public int UserAccessFailedCount { get; set; }
-
-        public IdentityClaim[] IdentityClaims { get; set; }
 
         public Login[] Logins { get; set; }
 
@@ -210,7 +208,11 @@ namespace Allors.Repository
         public void Method() { }
 
         #region inherited methods
-        public void Delete() { }
+
+        public void Delete()
+        {
+        }
+
         #endregion
     }
 }

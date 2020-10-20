@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid OptionalId = new Guid("4210498F-7252-454C-A1D1-E61F5139D8DB");
         private static readonly Guid SelectableId = new Guid("FAD59954-725E-4E40-BCD5-66F1E30990BF");
 
-        private UniquelyIdentifiableSticky<ProductFeatureApplicabilityKind> cache;
+        private UniquelyIdentifiableCache<ProductFeatureApplicabilityKind> cache;
 
         public ProductFeatureApplicabilityKind Required => this.Cache[RequiredId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public ProductFeatureApplicabilityKind Selectable => this.Cache[SelectableId];
 
-        private UniquelyIdentifiableSticky<ProductFeatureApplicabilityKind> Cache => this.cache ??= new UniquelyIdentifiableSticky<ProductFeatureApplicabilityKind>(this.Session);
+        private UniquelyIdentifiableCache<ProductFeatureApplicabilityKind> Cache => this.cache ??= new UniquelyIdentifiableCache<ProductFeatureApplicabilityKind>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

@@ -7,8 +7,8 @@ namespace Allors.Domain
 {
     public partial class PersistentPreparedFetches
     {
-        private UniquelyIdentifiableSticky<PersistentPreparedFetch> cache;
+        private UniquelyIdentifiableCache<PersistentPreparedFetch> cache;
 
-        public UniquelyIdentifiableSticky<PersistentPreparedFetch> Cache => this.cache ??= new UniquelyIdentifiableSticky<PersistentPreparedFetch>(this.Session);
+        public UniquelyIdentifiableCache<PersistentPreparedFetch> Cache => this.cache ??= new UniquelyIdentifiableCache<PersistentPreparedFetch>(this.Session);
     }
 }

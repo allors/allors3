@@ -47,9 +47,7 @@ namespace Allors.Repository
 
         public void OnPostBuild() { }
 
-        public void OnInit()
-        {
-        }
+        public void OnInit() { }
 
         public void OnPreDerive() { }
 
@@ -58,6 +56,7 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         public void Delete() { }
+
         #endregion
     }
 }

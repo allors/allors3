@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid ResourceRequirementId = new Guid("809298A8-9C2A-4E21-9B03-BB5B9F681B2E");
         private static readonly Guid WorkRequirementId = new Guid("3E43DE6A-C68F-4422-A557-C8DE877C2CF6");
 
-        private UniquelyIdentifiableSticky<RequirementType> cache;
+        private UniquelyIdentifiableCache<RequirementType> cache;
 
         public RequirementType CustomerRequirement => this.Cache[CustomerRequirementId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public RequirementType WorkRequirement => this.Cache[WorkRequirementId];
 
-        private UniquelyIdentifiableSticky<RequirementType> Cache => this.cache ??= new UniquelyIdentifiableSticky<RequirementType>(this.Session);
+        private UniquelyIdentifiableCache<RequirementType> Cache => this.cache ??= new UniquelyIdentifiableCache<RequirementType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

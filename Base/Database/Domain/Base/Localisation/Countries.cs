@@ -9,9 +9,9 @@ namespace Allors.Domain
 
     public partial class Countries
     {
-        private Sticky<string, Country> countryByIsoCode;
+        private Cache<string, Country> countryByIsoCode;
 
-        public Sticky<string, Country> CountryByIsoCode => this.countryByIsoCode ??= new Sticky<string, Country>(this.Session, this.M.Country.IsoCode);
+        public Cache<string, Country> CountryByIsoCode => this.countryByIsoCode ??= new Cache<string, Country>(this.Session, this.M.Country.IsoCode);
 
         protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Currency.ObjectType);
 

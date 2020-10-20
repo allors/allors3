@@ -20,7 +20,7 @@ namespace Allors.Domain
         internal static readonly Guid RejectedId = new Guid("F39F2F64-49A8-4a70-ACBC-B7F581F31EEF");
         internal static readonly Guid FinishedId = new Guid("33C0ED0C-FDFE-45ff-A008-7A638094A94A");
 
-        private UniquelyIdentifiableSticky<SalesOrderItemState> cache;
+        private UniquelyIdentifiableCache<SalesOrderItemState> cache;
 
         public SalesOrderItemState Provisional => this.Cache[ProvisionalId];
 
@@ -42,7 +42,7 @@ namespace Allors.Domain
 
         public SalesOrderItemState InProcess => this.Cache[InProcessId];
 
-        private UniquelyIdentifiableSticky<SalesOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesOrderItemState>(this.Session);
+        private UniquelyIdentifiableCache<SalesOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderItemState>(this.Session);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.InventoryTransactionReason.ObjectType);
 

@@ -14,7 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("a0309c3b-6f80-4777-983e-6e69800df5be")]
     #endregion
-    public partial interface User : UniquelyIdentifiable, SecurityTokenOwner
+    public partial interface User : Deletable, UniquelyIdentifiable, SecurityTokenOwner
     {
         #region Allors
         [Id("5e8ab257-1a1c-4448-aacc-71dbaaba525b")]
@@ -105,13 +105,6 @@ namespace Allors.Repository
         #endregion
         [Required]
         int UserAccessFailedCount { get; set; }
-
-        #region Allors
-        [Id("1C53F0D3-FA27-4018-ACBE-88A1E5F5C386")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        IdentityClaim[] IdentityClaims { get; set; }
 
         #region Allors
         [Id("4C9FDD8A-D7D4-4F6C-9584-77C6E1FC90FD")]

@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid BillingForWorkEffortsId = new Guid("580A72F2-E428-43C1-8F3E-2A05B7C61712");
         private static readonly Guid BillingForTimeEntriesId = new Guid("0E480590-CA53-40C6-86A8-92871E18FB38");
 
-        private UniquelyIdentifiableSticky<BillingProcess> cache;
+        private UniquelyIdentifiableCache<BillingProcess> cache;
 
         public BillingProcess BillingForOrderItems => this.Cache[BillingForOrderItemsId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public BillingProcess BillingForTimeEntries => this.Cache[BillingForTimeEntriesId];
 
-        private UniquelyIdentifiableSticky<BillingProcess> Cache => this.cache ??= new UniquelyIdentifiableSticky<BillingProcess>(this.Session);
+        private UniquelyIdentifiableCache<BillingProcess> Cache => this.cache ??= new UniquelyIdentifiableCache<BillingProcess>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

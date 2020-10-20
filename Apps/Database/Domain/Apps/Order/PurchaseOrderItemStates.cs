@@ -19,7 +19,7 @@ namespace Allors.Domain
         public static readonly Guid SentId = new Guid("9A707175-547D-4B2F-9780-1750E7878A59");
         public static readonly Guid FinishedId = new Guid("4166228F-0ECC-444b-A45E-43794184DBB9");
 
-        private UniquelyIdentifiableSticky<PurchaseOrderItemState> cache;
+        private UniquelyIdentifiableCache<PurchaseOrderItemState> cache;
 
         public PurchaseOrderItemState Created => this.Cache[CreatedId];
 
@@ -39,7 +39,7 @@ namespace Allors.Domain
 
         public PurchaseOrderItemState Sent => this.Cache[SentId];
 
-        private UniquelyIdentifiableSticky<PurchaseOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PurchaseOrderItemState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseOrderItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

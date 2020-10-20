@@ -13,7 +13,7 @@ namespace Allors.Domain
         public static readonly Guid DefaultSecurityTokenId = new Guid("EF20E782-0BFB-4C59-B9EB-DC502C2256CA");
         public static readonly Guid AdministratorSecurityTokenId = new Guid("8C7FE74E-A769-49FC-BF69-549DBABD55D8");
 
-        private UniquelyIdentifiableSticky<SecurityToken> cache;
+        private UniquelyIdentifiableCache<SecurityToken> cache;
 
         public SecurityToken InitialSecurityToken => this.Cache[InitialSecurityTokenId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public SecurityToken AdministratorSecurityToken => this.Cache[AdministratorSecurityTokenId];
 
-        private UniquelyIdentifiableSticky<SecurityToken> Cache => this.cache ??= new UniquelyIdentifiableSticky<SecurityToken>(this.Session);
+        private UniquelyIdentifiableCache<SecurityToken> Cache => this.cache ??= new UniquelyIdentifiableCache<SecurityToken>(this.Session);
 
         protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.AccessControl.ObjectType);
 

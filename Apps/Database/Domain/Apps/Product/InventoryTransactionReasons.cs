@@ -20,7 +20,7 @@ namespace Allors.Domain
         private static readonly Guid ReservationId = new Guid("D7785657-3771-40D3-9295-44DD3FC4FCC4");
         private static readonly Guid ConsumptionId = new Guid("FDDFE460-21E9-4A9E-808F-AB7B8E50F0A9");
 
-        private UniquelyIdentifiableSticky<InventoryTransactionReason> cache;
+        private UniquelyIdentifiableCache<InventoryTransactionReason> cache;
 
         public InventoryTransactionReason SalesOrder => this.Cache[SalesOrderId];
 
@@ -42,7 +42,7 @@ namespace Allors.Domain
 
         public InventoryTransactionReason Consumption => this.Cache[ConsumptionId];
 
-        private UniquelyIdentifiableSticky<InventoryTransactionReason> Cache => this.cache ??= new UniquelyIdentifiableSticky<InventoryTransactionReason>(this.Session);
+        private UniquelyIdentifiableCache<InventoryTransactionReason> Cache => this.cache ??= new UniquelyIdentifiableCache<InventoryTransactionReason>(this.Session);
 
         protected override void AppsPrepare(Setup setup)
         {

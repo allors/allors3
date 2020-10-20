@@ -14,7 +14,7 @@ namespace Allors.Domain
         internal static readonly Guid PartiallyShippedId = new Guid("40B4EFB9-42A4-43d9-BCE9-39E55FD9D507");
         internal static readonly Guid InProgressId = new Guid("461CCCC8-8661-47C3-868E-CBFE2146063B");
 
-        private UniquelyIdentifiableSticky<SalesOrderShipmentState> cache;
+        private UniquelyIdentifiableCache<SalesOrderShipmentState> cache;
 
         public SalesOrderShipmentState NotShipped => this.Cache[NotShippedId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public SalesOrderShipmentState InProgress => this.Cache[InProgressId];
 
-        private UniquelyIdentifiableSticky<SalesOrderShipmentState> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesOrderShipmentState>(this.Session);
+        private UniquelyIdentifiableCache<SalesOrderShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesOrderShipmentState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

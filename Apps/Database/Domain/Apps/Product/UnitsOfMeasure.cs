@@ -67,7 +67,7 @@ namespace Allors.Domain
         internal static readonly Guid AmpereId = new Guid("6CAA7DD3-608F-40A6-AE26-9141517D8C45");
         internal static readonly Guid VoltId = new Guid("A15B7AFB-660C-455D-A5C7-03D3D32B29CB");
 
-        private UniquelyIdentifiableSticky<UnitOfMeasure> cache;
+        private UniquelyIdentifiableCache<UnitOfMeasure> cache;
 
         public UnitOfMeasure Pack => this.Cache[PackId];
 
@@ -133,7 +133,7 @@ namespace Allors.Domain
 
         public UnitOfMeasure Volt => this.Cache[VoltId];
 
-        private UniquelyIdentifiableSticky<UnitOfMeasure> Cache => this.cache ??= new UniquelyIdentifiableSticky<UnitOfMeasure>(this.Session);
+        private UniquelyIdentifiableCache<UnitOfMeasure> Cache => this.cache ??= new UniquelyIdentifiableCache<UnitOfMeasure>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

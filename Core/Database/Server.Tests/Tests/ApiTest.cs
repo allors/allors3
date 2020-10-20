@@ -66,14 +66,14 @@ namespace Allors.Server.Tests
         public M M => this.Session.Database.State().M;
 
         public IConfigurationRoot Configuration { get; set; }
-        
+
         protected ISession Session { get; private set; }
 
         protected HttpClient HttpClient { get; set; }
 
         protected HttpClientHandler HttpClientHandler { get; set; }
 
-        protected User Administrator => new Users(this.Session).GetUser("jane@example.com");
+        protected User Administrator => new Users(this.Session).FindBy(M.User.UserName, "jane@example.com");
 
         public void Dispose()
         {

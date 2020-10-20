@@ -14,7 +14,7 @@ namespace Allors.Domain
         internal static readonly Guid ReceivedId = new Guid("AD66619F-BB48-42AF-B019-3E4028AD7B6B");
         internal static readonly Guid NaId = new Guid("6cde2d53-5ab9-49c9-88e5-4484aac27a20");
 
-        private UniquelyIdentifiableSticky<PurchaseOrderItemShipmentState> cache;
+        private UniquelyIdentifiableCache<PurchaseOrderItemShipmentState> cache;
 
         public PurchaseOrderItemShipmentState NotReceived => this.Cache[NotReceivedId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public PurchaseOrderItemShipmentState Na => this.Cache[NaId];
 
-        private UniquelyIdentifiableSticky<PurchaseOrderItemShipmentState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PurchaseOrderItemShipmentState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseOrderItemShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseOrderItemShipmentState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

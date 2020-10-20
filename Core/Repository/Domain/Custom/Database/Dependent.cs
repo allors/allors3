@@ -10,7 +10,7 @@ namespace Allors.Repository
     #region Allors
     [Id("0cb8d2a7-4566-432f-9882-893b05a77f44")]
     #endregion
-    public partial class Dependent : Object, Deletable, DerivationCounted
+    public partial class Dependent : Deletable, DerivationCounted
     {
         #region inherited properties
         public int DerivationCount { get; set; }
@@ -44,9 +44,7 @@ namespace Allors.Repository
 
         public void OnPostBuild() { }
 
-        public void OnInit()
-        {
-        }
+        public void OnInit() { }
 
         public void OnPreDerive() { }
 
@@ -55,6 +53,7 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         public void Delete() { }
+
         #endregion
 
     }

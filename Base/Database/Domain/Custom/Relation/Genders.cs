@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid FemaleId = new Guid("B68704AD-82F1-4d5d-BBAF-A54635B5034F");
         private static readonly Guid OtherId = new Guid("09210D7C-804B-4E76-AD91-0E150D36E86E");
 
-        private UniquelyIdentifiableSticky<Gender> cache;
+        private UniquelyIdentifiableCache<Gender> cache;
 
         public Gender Male => this.Cache[MaleId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public Gender Other => this.Cache[OtherId];
 
-        private UniquelyIdentifiableSticky<Gender> Cache => this.cache ?? (this.cache = new UniquelyIdentifiableSticky<Gender>(this.Session));
+        private UniquelyIdentifiableCache<Gender> Cache => this.cache ?? (this.cache = new UniquelyIdentifiableCache<Gender>(this.Session));
 
         protected override void CustomSetup(Setup setup)
         {

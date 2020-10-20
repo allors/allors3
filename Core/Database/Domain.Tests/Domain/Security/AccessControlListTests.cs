@@ -27,7 +27,7 @@ namespace Tests
             {
                 session.Commit();
 
-                var guest = new AutomatedAgents(this.Session).Guest;
+                var guest = new Users(this.Session).FindBy(M.User.UserName, "guest@example.com");
                 var acls = new DatabaseAccessControlLists(guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation.ObjectType))
                 {

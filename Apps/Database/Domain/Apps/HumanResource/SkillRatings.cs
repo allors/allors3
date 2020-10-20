@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid GoodId = new Guid("374DEE3A-82FA-4bee-B66B-F48CA1B0CBD7");
         private static readonly Guid ExcellentId = new Guid("52029ECD-1752-4b40-A39D-54B0C1CB8297");
 
-        private UniquelyIdentifiableSticky<SkillRating> cache;
+        private UniquelyIdentifiableCache<SkillRating> cache;
 
         public SkillRating Poor => this.Cache[PoorId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public SkillRating Excellent => this.Cache[ExcellentId];
 
-        private UniquelyIdentifiableSticky<SkillRating> Cache => this.cache ??= new UniquelyIdentifiableSticky<SkillRating>(this.Session);
+        private UniquelyIdentifiableCache<SkillRating> Cache => this.cache ??= new UniquelyIdentifiableCache<SkillRating>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

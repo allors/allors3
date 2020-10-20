@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid ReportId = new Guid("633116FD-9843-4356-8261-637170682E2F");
         private static readonly Guid MarketAnalysisId = new Guid("6994E018-CCD5-442f-80C2-F133DC9FAD17");
 
-        private UniquelyIdentifiableSticky<DeliverableType> cache;
+        private UniquelyIdentifiableCache<DeliverableType> cache;
 
         public DeliverableType ProjectPlan => this.Cache[ProjectPlanId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public DeliverableType MarketAnalysis => this.Cache[MarketAnalysisId];
 
-        private UniquelyIdentifiableSticky<DeliverableType> Cache => this.cache ??= new UniquelyIdentifiableSticky<DeliverableType>(this.Session);
+        private UniquelyIdentifiableCache<DeliverableType> Cache => this.cache ??= new UniquelyIdentifiableCache<DeliverableType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

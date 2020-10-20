@@ -135,15 +135,21 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public bool JustDidIt { get; set; }
+        
+        [Id("1869873F-F2F0-4D03-A0F9-7DC73491C117")]
+        [Workspace(Default)]
+        public void JustDoIt() { }
+
+        [Id("2CD2FF48-93FC-4C7D-BF2F-3F411D0DF7C3")]
+        [Workspace(Default)]
+        public void ToggleCanWrite() { }
 
         #region inherited methods
         public void OnBuild() { }
 
         public void OnPostBuild() { }
 
-        public void OnInit()
-        {
-        }
+        public void OnInit() { }
 
         public void OnPreDerive() { }
 
@@ -152,14 +158,7 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         public void Delete() { }
+
         #endregion
-
-        [Id("1869873F-F2F0-4D03-A0F9-7DC73491C117")]
-        [Workspace(Default)]
-        public void JustDoIt() { }
-
-        [Id("2CD2FF48-93FC-4C7D-BF2F-3F411D0DF7C3")]
-        [Workspace(Default)]
-        public void ToggleCanWrite() { }
     }
 }

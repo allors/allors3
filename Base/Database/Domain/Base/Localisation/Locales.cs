@@ -13,9 +13,9 @@ namespace Allors.Domain
         public const string DutchBelgiumName = "nl-BE";
         public const string SpanishName = "es-ES";
 
-        private Sticky<string, Locale> localeByIdentifier;
+        private Cache<string, Locale> localeByIdentifier;
 
-        public Sticky<string, Locale> LocaleByIdentifier => this.localeByIdentifier ??= new Sticky<string, Locale>(this.Session, this.Meta.Name);
+        public Cache<string, Locale> LocaleByIdentifier => this.localeByIdentifier ??= new Cache<string, Locale>(this.Session, this.Meta.Name);
 
         public Locale EnglishGreatBritain => this.FindBy(this.Meta.Name, EnglishGreatBritainName);
 

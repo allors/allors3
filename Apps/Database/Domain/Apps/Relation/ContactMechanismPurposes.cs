@@ -31,7 +31,7 @@ namespace Allors.Domain
         private static readonly Guid MobilePhoneNumberId = new Guid("C81E8F99-169B-4c8e-8C88-761CCCD5BBB0");
         private static readonly Guid OperationsId = new Guid("0078904B-6611-4DFA-BDC9-2A2E139ECD59");
 
-        private UniquelyIdentifiableSticky<ContactMechanismPurpose> cache;
+        private UniquelyIdentifiableCache<ContactMechanismPurpose> cache;
 
         public ContactMechanismPurpose RegisteredOffice => this.Cache[RegisteredOfficeId];
 
@@ -75,7 +75,7 @@ namespace Allors.Domain
 
         public ContactMechanismPurpose Operations => this.Cache[OperationsId];
 
-        private UniquelyIdentifiableSticky<ContactMechanismPurpose> Cache => this.cache ??= new UniquelyIdentifiableSticky<ContactMechanismPurpose>(this.Session);
+        private UniquelyIdentifiableCache<ContactMechanismPurpose> Cache => this.cache ??= new UniquelyIdentifiableCache<ContactMechanismPurpose>(this.Session);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Locale.ObjectType);
 

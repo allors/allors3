@@ -21,7 +21,7 @@ namespace Allors.Domain
         private static readonly Guid TrimesterId = new Guid("E3E9AB81-D44C-4166-8983-917FAF4CCF6D");
         private static readonly Guid YearId = new Guid("F43E9D63-2BF0-4181-8247-B6BF39BA5313");
 
-        private UniquelyIdentifiableSticky<TimeFrequency> cache;
+        private UniquelyIdentifiableCache<TimeFrequency> cache;
 
         public TimeFrequency Millisecond => this.Cache[MillisecondId];
 
@@ -45,7 +45,7 @@ namespace Allors.Domain
 
         public TimeFrequency Year => this.Cache[YearId];
 
-        private UniquelyIdentifiableSticky<TimeFrequency> Cache => this.cache ??= new UniquelyIdentifiableSticky<TimeFrequency>(this.Session);
+        private UniquelyIdentifiableCache<TimeFrequency> Cache => this.cache ??= new UniquelyIdentifiableCache<TimeFrequency>(this.Session);
 
         protected override void AppsPrepare(Setup setup)
         {

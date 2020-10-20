@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid NoticedId = new Guid("811E1661-B788-4c89-BE46-D5DD3B1EE20B");
         private static readonly Guid ReleasedId = new Guid("06B03B0B-3B16-4567-9A43-C64D13FDF06F");
 
-        private UniquelyIdentifiableSticky<EngineeringChangeObjectState> cache;
+        private UniquelyIdentifiableCache<EngineeringChangeObjectState> cache;
 
         public EngineeringChangeObjectState Requested => this.Cache[RequestedId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public EngineeringChangeObjectState Released => this.Cache[ReleasedId];
 
-        private UniquelyIdentifiableSticky<EngineeringChangeObjectState> Cache => this.cache ??= new UniquelyIdentifiableSticky<EngineeringChangeObjectState>(this.Session);
+        private UniquelyIdentifiableCache<EngineeringChangeObjectState> Cache => this.cache ??= new UniquelyIdentifiableCache<EngineeringChangeObjectState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

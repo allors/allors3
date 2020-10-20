@@ -19,7 +19,7 @@ namespace Allors.Domain
         public static readonly Guid RejectedId = new Guid("CA8E48EC-5EF7-4082-8347-648B41585485");
         public static readonly Guid OrderedId = new Guid("BF59B586-C35A-423B-9115-DEA1079D905F");
 
-        private UniquelyIdentifiableSticky<QuoteItemState> cache;
+        private UniquelyIdentifiableCache<QuoteItemState> cache;
 
         public QuoteItemState Draft => this.Cache[DraftId];
 
@@ -39,7 +39,7 @@ namespace Allors.Domain
 
         public QuoteItemState Ordered => this.Cache[OrderedId];
 
-        private UniquelyIdentifiableSticky<QuoteItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<QuoteItemState>(this.Session);
+        private UniquelyIdentifiableCache<QuoteItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<QuoteItemState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

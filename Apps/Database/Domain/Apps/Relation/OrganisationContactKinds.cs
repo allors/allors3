@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid SupportContactId = new Guid("E59022E2-9497-47ED-9443-37EFD791FE44");
         private static readonly Guid SupplierContactId = new Guid("ECE0813F-64DD-4A5F-93AA-147887923581");
 
-        private UniquelyIdentifiableSticky<OrganisationContactKind> cache;
+        private UniquelyIdentifiableCache<OrganisationContactKind> cache;
 
         public OrganisationContactKind GeneralContact => this.Cache[GeneralContactId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public OrganisationContactKind SupplierContact => this.Cache[SupplierContactId];
 
-        private UniquelyIdentifiableSticky<OrganisationContactKind> Cache => this.cache ??= new UniquelyIdentifiableSticky<OrganisationContactKind>(this.Session);
+        private UniquelyIdentifiableCache<OrganisationContactKind> Cache => this.cache ??= new UniquelyIdentifiableCache<OrganisationContactKind>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

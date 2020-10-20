@@ -17,7 +17,7 @@ namespace Allors.Domain
         private static readonly Guid PendingApprovalFromClientId = new Guid("A6216522-44DA-404d-92A3-61160F814A15");
         private static readonly Guid FullfilledByOtherEnterpriseId = new Guid("10E9F384-541D-4fb3-ABDC-539EC291EFC6");
 
-        private UniquelyIdentifiableSticky<RequirementState> cache;
+        private UniquelyIdentifiableCache<RequirementState> cache;
 
         public RequirementState Active => this.Cache[ActiveId];
 
@@ -33,7 +33,7 @@ namespace Allors.Domain
 
         public RequirementState FullfilledByOtherEnterprise => this.Cache[FullfilledByOtherEnterpriseId];
 
-        private UniquelyIdentifiableSticky<RequirementState> Cache => this.cache ??= new UniquelyIdentifiableSticky<RequirementState>(this.Session);
+        private UniquelyIdentifiableCache<RequirementState> Cache => this.cache ??= new UniquelyIdentifiableCache<RequirementState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

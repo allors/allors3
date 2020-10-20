@@ -11,11 +11,11 @@ namespace Allors.Domain
     {
         private static readonly Guid StandardId = new Guid("9DF77458-63C9-48FB-A100-1249B17C7945");
 
-        private UniquelyIdentifiableSticky<InventoryStrategy> cache;
+        private UniquelyIdentifiableCache<InventoryStrategy> cache;
 
         public InventoryStrategy Standard => this.Cache[StandardId];
 
-        private UniquelyIdentifiableSticky<InventoryStrategy> Cache => this.cache ??= new UniquelyIdentifiableSticky<InventoryStrategy>(this.Session);
+        private UniquelyIdentifiableCache<InventoryStrategy> Cache => this.cache ??= new UniquelyIdentifiableCache<InventoryStrategy>(this.Session);
 
         protected override void AppsPrepare(Setup setup)
         {

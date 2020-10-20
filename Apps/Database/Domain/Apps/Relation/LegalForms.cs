@@ -51,7 +51,7 @@ namespace Allors.Domain
         private static readonly Guid NlCowId = new Guid("75F2F089-B9D0-4E5E-A4FF-78567E6144AD");
         private static readonly Guid NlStichtingId = new Guid("7ABC91E5-27C1-4319-8AC4-23EA86DFE7A2");
 
-        private UniquelyIdentifiableSticky<LegalForm> cache;
+        private UniquelyIdentifiableCache<LegalForm> cache;
 
         public LegalForm UKPublicLimitedCompany => this.Cache[UKPublicLimitedCompanyId];
         public LegalForm UKLimitedLiabilityCompany => this.Cache[UKLimitedLiabilityCompanyId];
@@ -92,7 +92,7 @@ namespace Allors.Domain
         public LegalForm NlCow => this.Cache[NlCowId];
         public LegalForm NlStichting => this.Cache[NlStichtingId];
 
-        private UniquelyIdentifiableSticky<LegalForm> Cache => this.cache ??= new UniquelyIdentifiableSticky<LegalForm>(this.Session);
+        private UniquelyIdentifiableCache<LegalForm> Cache => this.cache ??= new UniquelyIdentifiableCache<LegalForm>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

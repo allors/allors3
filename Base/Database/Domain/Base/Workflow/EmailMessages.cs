@@ -14,7 +14,7 @@ namespace Allors.Domain
         {
             var session = this.Session;
 
-            var mailService = session.Database.State().MailService;
+            var mailService = session.Database.State().Mailer;
             var emailMessages = this.Extent();
             emailMessages.Filter.AddNot().AddExists(this.Meta.DateSending);
             emailMessages.Filter.AddNot().AddExists(this.Meta.DateSent);

@@ -18,7 +18,7 @@ namespace Allors.Domain
         public static readonly Guid RejectedId = new Guid("26E27DDC-0782-4C29-B4BE-FF1E7AEE788A");
         public static readonly Guid RevisingId = new Guid("639ba038-d8f3-4672-80b5-c8eb96e3275d");
 
-        private UniquelyIdentifiableSticky<PurchaseInvoiceState> cache;
+        private UniquelyIdentifiableCache<PurchaseInvoiceState> cache;
 
         public PurchaseInvoiceState Created => this.Cache[CreatedId];
 
@@ -36,7 +36,7 @@ namespace Allors.Domain
 
         public PurchaseInvoiceState Revising => this.Cache[RevisingId];
 
-        private UniquelyIdentifiableSticky<PurchaseInvoiceState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PurchaseInvoiceState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseInvoiceState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

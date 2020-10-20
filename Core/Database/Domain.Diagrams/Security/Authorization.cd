@@ -3,7 +3,7 @@
   <Interface Name="Allors.Domain.User" Collapsed="true">
     <Position X="7.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AACBAAAgAACAAAAAAAQAABAAAAHgAAAAAQAQCBICCAA=</HashCode>
+      <HashCode>AACBAAAAAACAAAAAAAQAABAAAAFgAAAAAQAQCBICCAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -89,17 +89,10 @@
       <Property Name="SecurityTokens" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="Allors.Domain.AutomatedAgent" Collapsed="true">
-    <Position X="8.5" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>generated\domain.g.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="Allors.Domain.Person" Collapsed="true">
-    <Position X="6.75" Y="3.25" Width="1.5" />
+    <Position X="7.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAQBAEICQEAAAKCBMEAQAAQAACAAAAAAAAIACAQAEAg=</HashCode>
+      <HashCode>QAABAEICQEAAAAABEEAQAAQAACAAAAAAAAIACAQAEAg=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>

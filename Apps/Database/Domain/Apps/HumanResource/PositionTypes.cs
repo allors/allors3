@@ -7,8 +7,8 @@ namespace Allors.Domain
 {
     public partial class PositionTypes
     {
-        private UniquelyIdentifiableSticky<PositionType> cache;
+        private UniquelyIdentifiableCache<PositionType> cache;
 
-        private UniquelyIdentifiableSticky<PositionType> Cache => this.cache ??= new UniquelyIdentifiableSticky<PositionType>(this.Session);
+        private UniquelyIdentifiableCache<PositionType> Cache => this.cache ??= new UniquelyIdentifiableCache<PositionType>(this.Session);
     }
 }

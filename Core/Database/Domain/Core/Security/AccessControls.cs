@@ -15,9 +15,9 @@ namespace Allors.Domain
         public static readonly Guid AdministratorId = new Guid("282C4874-10EC-437B-9B0D-FAADFDFEC63E");
         public static readonly Guid GuestId = new Guid("07AED92A-84E7-4DA6-96A3-C764093D2A58");
 
-        private UniquelyIdentifiableSticky<AccessControl> cache;
+        private UniquelyIdentifiableCache<AccessControl> cache;
 
-        public UniquelyIdentifiableSticky<AccessControl> Cache => this.cache ??= new UniquelyIdentifiableSticky<AccessControl>(this.Session);
+        public UniquelyIdentifiableCache<AccessControl> Cache => this.cache ??= new UniquelyIdentifiableCache<AccessControl>(this.Session);
 
         public AccessControl Creators => this.Cache[CreatorsId];
 

@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid OvertimeRateId = new Guid("DE4D0A4C-EDDC-460c-BF78-A45A9B881F48");
         private static readonly Guid WeekendRateId = new Guid("2AA92139-E634-444e-9997-89B5F598812F");
 
-        private UniquelyIdentifiableSticky<RateType> cache;
+        private UniquelyIdentifiableCache<RateType> cache;
 
         public RateType InternalRate => this.Cache[InternalRateId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public RateType WeekendRate => this.Cache[WeekendRateId];
 
-        private UniquelyIdentifiableSticky<RateType> Cache => this.cache ??= new UniquelyIdentifiableSticky<RateType>(this.Session);
+        private UniquelyIdentifiableCache<RateType> Cache => this.cache ??= new UniquelyIdentifiableCache<RateType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

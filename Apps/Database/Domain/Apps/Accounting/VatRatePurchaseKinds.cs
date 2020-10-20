@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid ServicesId = new Guid("6B7250E4-F1DA-4BA2-ACB6-CAB351839E9F");
         private static readonly Guid InvestmentsId = new Guid("F317A718-6197-47C6-B231-138EF9C26814");
 
-        private UniquelyIdentifiableSticky<VatRatePurchaseKind> cache;
+        private UniquelyIdentifiableCache<VatRatePurchaseKind> cache;
 
         public VatRatePurchaseKind Goods => this.Cache[GoodsId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public VatRatePurchaseKind Investments => this.Cache[InvestmentsId];
 
-        private UniquelyIdentifiableSticky<VatRatePurchaseKind> Cache => this.cache ??= new UniquelyIdentifiableSticky<VatRatePurchaseKind>(this.Session);
+        private UniquelyIdentifiableCache<VatRatePurchaseKind> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRatePurchaseKind>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

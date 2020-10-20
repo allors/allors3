@@ -13,7 +13,7 @@ namespace Allors.Domain
         public static readonly Guid Assessable19Id = new Guid("a82edb4e-dc92-4864-96fe-26ec6d1ef914");
         public static readonly Guid ExemptId = new Guid("82986030-5E18-43c1-8CBE-9832ACD4151D");
 
-        private UniquelyIdentifiableSticky<IrpfRegime> cache;
+        private UniquelyIdentifiableCache<IrpfRegime> cache;
 
         public IrpfRegime Assessable15 => this.Cache[Assessable15Id];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public IrpfRegime Exempt => this.Cache[ExemptId];
 
-        private UniquelyIdentifiableSticky<IrpfRegime> Cache => this.cache ??= new UniquelyIdentifiableSticky<IrpfRegime>(this.Session);
+        private UniquelyIdentifiableCache<IrpfRegime> Cache => this.cache ??= new UniquelyIdentifiableCache<IrpfRegime>(this.Session);
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.IrpfRate);
 

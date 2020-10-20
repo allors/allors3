@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid AdvancedId = new Guid("C4FD3054-20F4-40e8-B6A3-E91734D75C13");
         private static readonly Guid ExpertId = new Guid("E204AA8A-C61E-44f6-906B-FE45AB15D4B0");
 
-        private UniquelyIdentifiableSticky<SkillLevel> cache;
+        private UniquelyIdentifiableCache<SkillLevel> cache;
 
         public SkillLevel Beginner => this.Cache[BeginnerId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public SkillLevel Expert => this.Cache[ExpertId];
 
-        private UniquelyIdentifiableSticky<SkillLevel> Cache => this.cache ??= new UniquelyIdentifiableSticky<SkillLevel>(this.Session);
+        private UniquelyIdentifiableCache<SkillLevel> Cache => this.cache ??= new UniquelyIdentifiableCache<SkillLevel>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

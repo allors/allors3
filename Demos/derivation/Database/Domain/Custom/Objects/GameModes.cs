@@ -13,7 +13,7 @@ namespace Allors.Domain
         public static readonly Guid TrullId = new Guid("a8f35a76-7b7d-43f9-9514-681fef1d566f");
         public static readonly Guid AbondanceId = new Guid("323b16d4-49ad-46d6-9ff5-f65c6f4c5675");
 
-        private UniquelyIdentifiableSticky<GameMode> cache;
+        private UniquelyIdentifiableCache<GameMode> cache;
 
         public GameMode GrandSlam => this.Cache[GrandSlamId];
 
@@ -32,7 +32,7 @@ namespace Allors.Domain
         public GameMode Abondance => this.Cache[AbondanceId];
 
 
-        private UniquelyIdentifiableSticky<GameMode> Cache => this.cache ??= new UniquelyIdentifiableSticky<GameMode>(this.Session);
+        private UniquelyIdentifiableCache<GameMode> Cache => this.cache ??= new UniquelyIdentifiableCache<GameMode>(this.Session);
 
         protected override void CustomSetup(Setup setup)
         {

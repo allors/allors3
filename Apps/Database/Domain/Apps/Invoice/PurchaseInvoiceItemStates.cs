@@ -18,7 +18,7 @@ namespace Allors.Domain
         public static readonly Guid CancelledByInvoiceId = new Guid("06189E75-4026-41A2-90FD-A5F6A6711992");
         public static readonly Guid RevisingId = new Guid("f3f985eb-6644-428d-87ca-305d746fed21");
 
-        private UniquelyIdentifiableSticky<PurchaseInvoiceItemState> cache;
+        private UniquelyIdentifiableCache<PurchaseInvoiceItemState> cache;
 
         public PurchaseInvoiceItemState Created => this.Cache[CreatedId];
 
@@ -36,7 +36,7 @@ namespace Allors.Domain
 
         public PurchaseInvoiceItemState Revising => this.Cache[RevisingId];
 
-        private UniquelyIdentifiableSticky<PurchaseInvoiceItemState> Cache => this.cache ??= new UniquelyIdentifiableSticky<PurchaseInvoiceItemState>(this.Session);
+        private UniquelyIdentifiableCache<PurchaseInvoiceItemState> Cache => this.cache ??= new UniquelyIdentifiableCache<PurchaseInvoiceItemState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

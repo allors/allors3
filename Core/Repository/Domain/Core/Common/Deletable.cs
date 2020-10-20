@@ -15,7 +15,9 @@ namespace Allors.Repository
     #endregion
     public partial interface Deletable : Object
     {
+        #region Allors
         [Id("430702D2-E02B-45AD-9B22-B8331DC75A3F")]
+        #endregion
         [Workspace(Default)]
         void Delete();
     }

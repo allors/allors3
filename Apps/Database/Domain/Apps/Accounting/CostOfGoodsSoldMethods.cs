@@ -13,7 +13,7 @@ namespace Allors.Domain
         private static readonly Guid LiFoId = new Guid("A4E05005-FEC2-4F81-AD67-4F9C958BF94A");
         private static readonly Guid AverageId = new Guid("857D84FF-18AE-4139-8A4F-8A4BAD78C79E");
 
-        private UniquelyIdentifiableSticky<CostOfGoodsSoldMethod> cache;
+        private UniquelyIdentifiableCache<CostOfGoodsSoldMethod> cache;
 
         public CostOfGoodsSoldMethod FiFo => this.Cache[FiFoId];
 
@@ -21,7 +21,7 @@ namespace Allors.Domain
 
         public CostOfGoodsSoldMethod Average => this.Cache[AverageId];
 
-        private UniquelyIdentifiableSticky<CostOfGoodsSoldMethod> Cache => this.cache ??= new UniquelyIdentifiableSticky<CostOfGoodsSoldMethod>(this.Session);
+        private UniquelyIdentifiableCache<CostOfGoodsSoldMethod> Cache => this.cache ??= new UniquelyIdentifiableCache<CostOfGoodsSoldMethod>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

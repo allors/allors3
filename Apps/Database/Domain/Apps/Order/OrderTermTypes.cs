@@ -15,7 +15,7 @@ namespace Allors.Domain
         private static readonly Guid DaysWithinWhichDeliveraryMustOccurId = new Guid("FEC52109-5169-4e52-9DA3-13C052B34076");
         private static readonly Guid NonReturnableSalesItemId = new Guid("B9A57CAF-3C48-463a-B627-3D0E127E5AF2");
 
-        private UniquelyIdentifiableSticky<OrderTermType> cache;
+        private UniquelyIdentifiableCache<OrderTermType> cache;
 
         public OrderTermType PercentageCancellationCharge => this.Cache[PercentageCancellationChargeId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public OrderTermType NonReturnableSalesItem => this.Cache[NonReturnableSalesItemId];
 
-        private UniquelyIdentifiableSticky<OrderTermType> Cache => this.cache ??= new UniquelyIdentifiableSticky<OrderTermType>(this.Session);
+        private UniquelyIdentifiableCache<OrderTermType> Cache => this.cache ??= new UniquelyIdentifiableCache<OrderTermType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

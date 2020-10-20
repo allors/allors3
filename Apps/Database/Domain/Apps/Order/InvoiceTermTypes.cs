@@ -16,7 +16,7 @@ namespace Allors.Domain
         private static readonly Guid PayHalfBeforeTransportId = new Guid("F5B1107F-A325-4E97-94AE-ACEFC306C465");
         private static readonly Guid OtherId = new Guid("9A8F6C1F-B590-408F-B42E-0AF12F42C14B");
 
-        private UniquelyIdentifiableSticky<InvoiceTermType> cache;
+        private UniquelyIdentifiableCache<InvoiceTermType> cache;
 
         public InvoiceTermType PaymentNetDays => this.Cache[PaymentNetDaysId];
 
@@ -30,7 +30,7 @@ namespace Allors.Domain
 
         public InvoiceTermType Other => this.Cache[OtherId];
 
-        private UniquelyIdentifiableSticky<InvoiceTermType> Cache => this.cache ??= new UniquelyIdentifiableSticky<InvoiceTermType>(this.Session);
+        private UniquelyIdentifiableCache<InvoiceTermType> Cache => this.cache ??= new UniquelyIdentifiableCache<InvoiceTermType>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

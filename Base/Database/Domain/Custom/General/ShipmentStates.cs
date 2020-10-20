@@ -14,9 +14,9 @@ namespace Allors.Domain
         private static readonly Guid PartiallyShippedId = new Guid("1801737F-2760-4600-9243-7E6BDD8A224D");
         private static readonly Guid ShippedId = new Guid("04FAD96A-2B0F-4F07-ABB7-57657A34E422");
 
-        private UniquelyIdentifiableSticky<ShipmentState> cache;
+        private UniquelyIdentifiableCache<ShipmentState> cache;
 
-        public Sticky<Guid, ShipmentState> Cache => this.cache ??= new UniquelyIdentifiableSticky<ShipmentState>(this.Session);
+        public Cache<Guid, ShipmentState> Cache => this.cache ??= new UniquelyIdentifiableCache<ShipmentState>(this.Session);
 
         public ShipmentState NotShipped => this.Cache[NotShippedId];
 

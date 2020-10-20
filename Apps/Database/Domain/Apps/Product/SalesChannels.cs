@@ -19,7 +19,7 @@ namespace Allors.Domain
         private static readonly Guid AffiliateChannelId = new Guid("0FC9C19F-2005-4d7b-80B3-C7C862048CFA");
         private static readonly Guid EbayChannelId = new Guid("93FFD696-F11F-4cc1-A461-367AFCFD0579");
 
-        private UniquelyIdentifiableSticky<SalesChannel> cache;
+        private UniquelyIdentifiableCache<SalesChannel> cache;
 
         public SalesChannel NoChannel => this.Cache[NoChannelId];
 
@@ -39,7 +39,7 @@ namespace Allors.Domain
 
         public SalesChannel EbayChannel => this.Cache[EbayChannelId];
 
-        private UniquelyIdentifiableSticky<SalesChannel> Cache => this.cache ??= new UniquelyIdentifiableSticky<SalesChannel>(this.Session);
+        private UniquelyIdentifiableCache<SalesChannel> Cache => this.cache ??= new UniquelyIdentifiableCache<SalesChannel>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

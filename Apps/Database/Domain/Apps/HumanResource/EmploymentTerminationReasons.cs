@@ -14,7 +14,7 @@ namespace Allors.Domain
         private static readonly Guid NonPerformanceId = new Guid("A83EEE92-54B0-45cc-AC07-C33B0116D33B");
         private static readonly Guid MovedId = new Guid("D1BC9AE6-CD34-4164-B807-FB247B9A6278");
 
-        private UniquelyIdentifiableSticky<EmploymentTerminationReason> cache;
+        private UniquelyIdentifiableCache<EmploymentTerminationReason> cache;
 
         public EmploymentTerminationReason Insubordination => this.Cache[InsubordinationId];
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
 
         public EmploymentTerminationReason Moved => this.Cache[MovedId];
 
-        private UniquelyIdentifiableSticky<EmploymentTerminationReason> Cache => this.cache ??= new UniquelyIdentifiableSticky<EmploymentTerminationReason>(this.Session);
+        private UniquelyIdentifiableCache<EmploymentTerminationReason> Cache => this.cache ??= new UniquelyIdentifiableCache<EmploymentTerminationReason>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

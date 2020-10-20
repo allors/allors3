@@ -11,9 +11,9 @@ namespace Allors.Domain
     {
         public static readonly Guid IndexId = new Guid("A88D6A90-43F0-49B6-83D6-B05B2F783F9D");
 
-        private UniquelyIdentifiableSticky<Page> cache;
+        private UniquelyIdentifiableCache<Page> cache;
 
-        public Sticky<Guid, Page> Cache => this.cache ??= new UniquelyIdentifiableSticky<Page>(this.Session);
+        public Cache<Guid, Page> Cache => this.cache ??= new UniquelyIdentifiableCache<Page>(this.Session);
 
         public Page Index => this.Cache[IndexId];
 

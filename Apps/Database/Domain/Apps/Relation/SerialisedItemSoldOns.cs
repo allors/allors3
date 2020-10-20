@@ -15,7 +15,7 @@ namespace Allors.Domain
         public static readonly Guid PurchaseInvoiceConfirmId = new Guid("c955b5bd-2fc5-45a2-bf97-7d3bfe9aecb1");
         public static readonly Guid PurchaseshipmentReceiveId = new Guid("30fac958-47e5-40ec-83cb-3d8e2593abbf");
 
-        private UniquelyIdentifiableSticky<SerialisedItemSoldOn> cache;
+        private UniquelyIdentifiableCache<SerialisedItemSoldOn> cache;
 
         public SerialisedItemSoldOn SalesOrderAccept => this.Cache[SalesOrderAcceptId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public SerialisedItemSoldOn PurchaseshipmentReceive => this.Cache[PurchaseshipmentReceiveId];
 
-        private UniquelyIdentifiableSticky<SerialisedItemSoldOn> Cache => this.cache ??= new UniquelyIdentifiableSticky<SerialisedItemSoldOn>(this.Session);
+        private UniquelyIdentifiableCache<SerialisedItemSoldOn> Cache => this.cache ??= new UniquelyIdentifiableCache<SerialisedItemSoldOn>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

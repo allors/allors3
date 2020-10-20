@@ -18,7 +18,7 @@ namespace Allors.Domain
         private static readonly Guid WorkFlowId = new Guid("553D67FC-9853-46B3-B87C-9CD1A7CB01A5");
         private static readonly Guid ResearchId = new Guid("6888DBF5-BFFC-4942-A16D-8BB680863261");
 
-        private UniquelyIdentifiableSticky<WorkEffortPurpose> cache;
+        private UniquelyIdentifiableCache<WorkEffortPurpose> cache;
 
         public WorkEffortPurpose Meeting => this.Cache[MeetingId];
 
@@ -36,7 +36,7 @@ namespace Allors.Domain
 
         public WorkEffortPurpose Research => this.Cache[ResearchId];
 
-        private UniquelyIdentifiableSticky<WorkEffortPurpose> Cache => this.cache ??= new UniquelyIdentifiableSticky<WorkEffortPurpose>(this.Session);
+        private UniquelyIdentifiableCache<WorkEffortPurpose> Cache => this.cache ??= new UniquelyIdentifiableCache<WorkEffortPurpose>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

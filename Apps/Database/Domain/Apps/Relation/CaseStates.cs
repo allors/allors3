@@ -15,7 +15,7 @@ namespace Allors.Domain
         private static readonly Guid CompletedId = new Guid("8203E84A-3299-448a-982E-4A79534CAB85");
         private static readonly Guid OpenedId = new Guid("4FF18EE3-C827-47a8-A5DE-EFA29CE9BB68");
 
-        private UniquelyIdentifiableSticky<CaseState> cache;
+        private UniquelyIdentifiableCache<CaseState> cache;
 
         public CaseState Opened => this.Cache[OpenedId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public CaseState Completed => this.Cache[CompletedId];
 
-        private UniquelyIdentifiableSticky<CaseState> Cache => this.cache ??= new UniquelyIdentifiableSticky<CaseState>(this.Session);
+        private UniquelyIdentifiableCache<CaseState> Cache => this.cache ??= new UniquelyIdentifiableCache<CaseState>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {

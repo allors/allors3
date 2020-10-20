@@ -15,7 +15,7 @@ namespace Allors.Domain
         public static readonly Guid MsId = new Guid("BE1E6992-EFB6-4445-BDB6-B7AAE849EEEA");
         public static readonly Guid MmeId = new Guid("DF2FC141-D035-47EB-8135-A880A4EBC93C");
 
-        private UniquelyIdentifiableSticky<Salutation> cache;
+        private UniquelyIdentifiableCache<Salutation> cache;
 
         public Salutation Mr => this.Cache[MrId];
 
@@ -27,7 +27,7 @@ namespace Allors.Domain
 
         public Salutation Mme => this.Cache[MmeId];
 
-        private UniquelyIdentifiableSticky<Salutation> Cache => this.cache ??= new UniquelyIdentifiableSticky<Salutation>(this.Session);
+        private UniquelyIdentifiableCache<Salutation> Cache => this.cache ??= new UniquelyIdentifiableCache<Salutation>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {
