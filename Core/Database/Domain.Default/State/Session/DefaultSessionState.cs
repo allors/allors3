@@ -27,10 +27,12 @@ namespace Allors
 
             if (long.TryParse(nameIdentifier, out var userId))
             {
-                this.User = (User)session.Instantiate(userId) ?? new AutomatedAgents(session).Guest;
+                this.User = (User)session.Instantiate(userId);
             }
-
-            this.User ??= new AutomatedAgents(session).Guest;
+            else
+            {
+                this.User = null;
+            }
         }
 
         public void Dispose()

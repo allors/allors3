@@ -28,6 +28,8 @@ namespace Allors
             var john = new PersonBuilder(this.session).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").Build();
             var jenny = new PersonBuilder(this.session).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").Build();
 
+            var guest = new PersonBuilder(this.session).WithFirstName("Gu").WithLastName("Est").WithUserName("guest@example.com").Build();
+
             jane.SetPassword("jane");
             john.SetPassword("john");
             jenny.SetPassword("jenny");

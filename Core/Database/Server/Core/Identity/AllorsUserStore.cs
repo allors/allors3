@@ -19,7 +19,6 @@ namespace Allors.Security
 
     public class AllorsUserStore : IUserPasswordStore<IdentityUser>,
                                    IUserLoginStore<IdentityUser>,
-                                   IUserClaimStore<IdentityUser>,
                                    IUserSecurityStampStore<IdentityUser>,
                                    IUserTwoFactorStore<IdentityUser>,
                                    IUserEmailStore<IdentityUser>,
@@ -278,113 +277,7 @@ namespace Allors.Security
         }
 
         #endregion
-
-        #region IUserClaimStore
-        public async Task AddClaimsAsync(IdentityUser identityUser, IEnumerable<Claim> claims, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            using (var session = this.database.CreateSession())
-            {
-                var user = identityUser.User(session);
-
-                foreach (var claim in claims)
-                {
-                    var identityClaim = new IdentityClaimBuilder(session)
-                        .WithType(claim.Type)
-                        .WithValueType(claim.ValueType)
-                        .WithValue(claim.Value)
-                        .WithIssuer(claim.Issuer)
-                        .WithOriginalIssuer(claim.OriginalIssuer)
-                        .Build();
-
-                    user.AddIdentityClaim(identityClaim);
-                }
-
-                session.Derive();
-                session.Commit();
-            }
-        }
-
-        public async Task<IList<Claim>> GetClaimsAsync(IdentityUser identityUser, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            using (var session = this.database.CreateSession())
-            {
-                var user = (User)session.Instantiate(identityUser.Id);
-                return user.IdentityClaims.Select(v => v.AsClaim()).ToArray();
-            }
-        }
-
-        public async Task<IList<IdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var m = this.database.State().M;
-
-            using (var session = this.database.CreateSession())
-            {
-                var extent = new IdentityClaims(session).Extent();
-                extent.Filter.AddEquals(m.IdentityClaim.Type, claim.Type);
-                extent.Filter.AddEquals(m.IdentityClaim.ValueType, claim.ValueType);
-                extent.Filter.AddEquals(m.IdentityClaim.Value, claim.Value);
-                extent.Filter.AddEquals(m.IdentityClaim.Issuer, claim.Issuer);
-
-                var users = extent.ToArray().Select(v => v.UserWhereIdentityClaim);
-                return users.Select(v => v.AsIdentityUser()).ToArray();
-            }
-        }
-
-        public async Task RemoveClaimsAsync(IdentityUser identityUser, IEnumerable<Claim> claims, CancellationToken cancellationToken)
-        {
-            using (var session = this.database.CreateSession())
-            {
-                var user = identityUser.User(session);
-                foreach (var claim in claims)
-                {
-                    foreach (var identityClaim in user.IdentityClaims.ToArray())
-                    {
-                        if (identityClaim.Issuer == claim.Issuer &&
-                            identityClaim.Type == claim.Type &&
-                            identityClaim.ValueType == claim.ValueType &&
-                            identityClaim.Value == claim.Value)
-                        {
-                            identityClaim.Delete();
-                        }
-                    }
-                }
-
-                session.Derive();
-                session.Commit();
-            }
-        }
-
-        public async Task ReplaceClaimAsync(IdentityUser identityUser, Claim claim, Claim newClaim, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            using (var session = this.database.CreateSession())
-            {
-                var user = identityUser.User(session);
-                foreach (var identityClaim in user.IdentityClaims.ToArray())
-                {
-                    if (identityClaim.Issuer == claim.Issuer &&
-                        identityClaim.Type == claim.Type &&
-                        identityClaim.ValueType == claim.ValueType)
-                    {
-                        identityClaim.Value = newClaim.Value;
-                        break;
-                    }
-                }
-
-                session.Derive();
-                session.Commit();
-            }
-        }
-
-        #endregion
-
+        
         #region IUserSecurityStampStore
         public async Task<string> GetSecurityStampAsync(IdentityUser identityUser, CancellationToken cancellationToken)
         {

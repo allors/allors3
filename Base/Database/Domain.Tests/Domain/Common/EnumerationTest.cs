@@ -10,9 +10,9 @@ namespace Tests
 {
     using Xunit;
 
-    public class NamedConstantTest : DomainTest, IClassFixture<Fixture>
+    public class EnumerationTest : DomainTest, IClassFixture<Fixture>
     {
-        public NamedConstantTest(Fixture fixture) : base(fixture) { }
+        public EnumerationTest(Fixture fixture) : base(fixture) { }
 
         // TODO: Create tests
 

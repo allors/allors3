@@ -25,8 +25,8 @@ namespace Commands
         typeof(Save),
         typeof(Load),
         typeof(Upgrade),
-        typeof(Populate),
-        typeof(Custom))]
+        typeof(Populate)
+        )]
     public class Program
     {
         private IConfigurationRoot configuration;

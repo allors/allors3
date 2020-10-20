@@ -67,7 +67,7 @@ namespace Tests
         [Fact]
         public void WithoutAccessControl()
         {
-            new AutomatedAgentBuilder(this.Session).WithUserName("noacl").Build();
+            new PersonBuilder(this.Session).WithUserName("noacl").WithFirstName("No").WithLastName("acl").Build();
             this.Session.Derive();
             this.Session.Commit();
 

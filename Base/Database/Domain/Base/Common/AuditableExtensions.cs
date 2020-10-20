@@ -9,6 +9,8 @@ namespace Allors.Domain
     {
         public static void CoreOnDerive(this Auditable @this, ObjectOnDerive method)
         {
+            // TODO: new derivation
+
             //var user = @this.Strategy.Session.State().User;
             //if (user != null)
             //{

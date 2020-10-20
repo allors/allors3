@@ -75,6 +75,7 @@ namespace Allors.Domain
         {
             @this.OwnerAccessControl?.Delete();
             @this.OwnerSecurityToken?.Delete();
+
             foreach (Login login in @this.Logins)
             {
                 login.Delete();

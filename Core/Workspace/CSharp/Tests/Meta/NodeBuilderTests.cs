@@ -42,9 +42,9 @@ namespace Tests.Workspace.Meta
         [Fact]
         public void Interface()
         {
-            var builder = new DeletableNodeBuilder(this.M, deletable =>
+            var builder = new C1NodeBuilder(this.M, deletable =>
             {
-                deletable.Organisation_Employees();
+                deletable.C1C2One2One();
             });
 
             Node[] nodes = builder;
