@@ -13,6 +13,7 @@ namespace Tests
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
+    using Allors.Server.Controllers;
     using Allors.State;
     using Moq;
 
@@ -79,6 +80,9 @@ namespace Tests
             if (populate)
             {
                 new Setup(this.Session, this.Config).Apply();
+                this.Session.Commit();
+
+                new TestPopulation(this.Session, "full").Apply();
                 this.Session.Commit();
             }
         }
