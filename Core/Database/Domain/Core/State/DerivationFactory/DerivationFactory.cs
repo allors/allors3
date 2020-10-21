@@ -1,4 +1,4 @@
-// <copyright file="DerivationService.cs" company="Allors bvba">
+// <copyright file="DerivationFactory.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,7 +9,7 @@ namespace Allors.State
     using Domain;
     using Domain.Derivations.Default;
 
-    public class DerivationService : IDerivationService
+    public class DerivationFactory : IDerivationFactory
     {
         public Func<ISession, IDerivation> Factory { get; set; }
 
