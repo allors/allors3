@@ -382,6 +382,7 @@ namespace Allors.Repository
         [Id("17ED2D23-0D51-4F04-BBD4-572318E91D82")]
         [Indexed]
         #endregion
+        [Derived]
         [Required]
         [Workspace(Default)]
         public int PaymentDays { get; set; }

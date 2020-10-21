@@ -18,7 +18,6 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.UnifiedGood.Class),
-                new CreatedPattern(this.M.InventoryItemTransaction.Class){Steps = new IPropertyType[]{ this.M.InventoryItemTransaction.Part}, OfType = this.M.UnifiedGood.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

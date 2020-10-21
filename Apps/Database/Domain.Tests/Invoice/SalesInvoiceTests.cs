@@ -1310,6 +1310,115 @@ namespace Allors.Domain
         }
 
         [Fact]
+        public void OnCreateDeriveLocaleFromBillToCustomerLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.Locale = swedishLocale;
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Locale, swedishLocale);
+        }
+
+        [Fact]
+        public void OnCreateDeriveLocaleFromsingletonDefaultLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            this.Session.GetSingleton().DefaultLocale = swedishLocale;
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.False(customer.ExistLocale);
+            Assert.Equal(invoice.Locale, swedishLocale);
+        }
+
+        [Fact]
+        public void OnCreateDerivePaymentDays()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.PaymentDays, int.Parse(invoice.SalesTerms.First(v => v.TermType.UniqueId.Equals(InvoiceTermTypes.PaymentNetDaysId)).TermValue));
+        }
+
+        [Fact]
+        public void OnCreateDeriveDueDate()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            var paymentDays = invoice.SalesTerms.First(v => v.TermType.UniqueId.Equals(InvoiceTermTypes.PaymentNetDaysId));
+            var days = int.Parse(paymentDays.TermValue);
+
+            Assert.Equal(invoice.DueDate, invoice.InvoiceDate.AddDays(days));
+        }
+
+        [Fact]
+        public void OnCreateDeriveDerivedVatClauseFromVatRegime()
+        {
+            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithVatRegime(intraCommunautair).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
+        }
+
+        [Fact]
+        public void OnCreateDeriveDerivedVatClauseIsNull()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Null(invoice.DerivedVatClause);
+        }
+
+        [Fact]
+        public void OnCreateDeriveDerivedVatClauseFromAssignedVatClause()
+        {
+            var vatClause = new VatClauses(this.Session).BeArt14Par2;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatClause(vatClause).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, vatClause);
+        }
+
+        [Fact]
+        public void OnCreateDeriveCustomers()
+        {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer1).WithShipToCustomer(customer2).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(2, invoice.Customers.Count);
+            Assert.Contains(customer1, invoice.Customers);
+            Assert.Contains(customer2, invoice.Customers);
+        }
+
+        [Fact]
         public void OnChangedRoleBillToCustomerDerivePreviousBillToCustomer()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
@@ -1414,6 +1523,205 @@ namespace Allors.Domain
             this.Session.Derive();
 
             Assert.False(invoice.IsRepeatingInvoice);
+        }
+
+        [Fact]
+        public void OnChangedRoleOrderItemBillingInvoiceItemDeriveSalesOrders()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+
+            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            salesOrder.SetReadyForPosting();
+            this.Session.Derive();
+
+            salesOrder.Post();
+            this.Session.Derive();
+
+            salesOrder.Accept();
+            this.Session.Derive();
+
+            salesOrder.Invoice();
+            this.Session.Derive();
+
+            var invoice = salesOrder.SalesInvoicesWhereSalesOrder.First;
+
+            Assert.Single(invoice.SalesOrders);
+        }
+
+        [Fact]
+        public void OnChangedRoleWorkEffortBillingInvoiceItemDeriveWorkEfforts()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            //// Work Effort Inventory Assignmets
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithIdentification("Part")
+                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                .Build();
+
+            this.Session.Derive(true);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(1)
+                .Build();
+
+            this.Session.Derive();
+
+            new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workTask)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .Build();
+
+            workTask.Complete();
+            this.Session.Derive();
+
+            workTask.Invoice();
+            this.Session.Derive();
+
+            var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
+
+            Assert.Single(invoice.WorkEfforts);
+        }
+
+        [Fact]
+        public void OnChangedRoleTimeEntryBillingInvoiceItemDeriveWorkEfforts()
+        {
+            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            var yesterday = DateTimeFactory.CreateDateTime(this.Session.Now().AddDays(-1));
+            var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithRateType(new RateTypes(this.Session).StandardRate)
+                .WithFromDate(yesterday)
+                .WithThroughDate(laterYesterday)
+                .WithTimeFrequency(new TimeFrequencies(this.Session).Day)
+                .WithWorkEffort(workTask)
+                .Build();
+
+            employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+
+            this.Session.Derive();
+
+            workTask.Complete();
+            this.Session.Derive();
+
+            workTask.Invoice();
+            this.Session.Derive();
+
+            var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
+
+            Assert.Single(invoice.WorkEfforts);
+        }
+
+        [Fact]
+        public void OnChangedRoleInvoiceTermTermValueDerivePaymentDays()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            var paymentDays = invoice.SalesTerms.First(v => v.TermType.UniqueId.Equals(InvoiceTermTypes.PaymentNetDaysId));
+            var oldValue = int.Parse(paymentDays.TermValue);
+            var newValue = ++oldValue;
+            paymentDays.TermValue = newValue.ToString();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.PaymentDays, newValue);
+        }
+
+        [Fact]
+        public void OnChangedRoleInvoiceTermTermValueDeriveDueDate()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            var paymentDays = invoice.SalesTerms.First(v => v.TermType.UniqueId.Equals(InvoiceTermTypes.PaymentNetDaysId));
+            var oldValue = int.Parse(paymentDays.TermValue);
+            var newValue = ++oldValue;
+            paymentDays.TermValue = newValue.ToString();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DueDate, invoice.InvoiceDate.AddDays(newValue));
+        }
+
+        [Fact]
+        public void OnChangedRoleVatRegimeDeriveDerivedVatClause()
+        {
+            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
+            var assessable9 = new VatRegimes(this.Session).Assessable9;
+
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            invoice.VatRegime = assessable9;
+            this.Session.Derive(false);
+
+            invoice.VatRegime = intraCommunautair;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
+        }
+
+        [Fact]
+        public void OnChangedRoleAssignedVatClauseDeriveDerivedVatClause()
+        {
+            var vatClause = new VatClauses(this.Session).BeArt14Par2;
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.AssignedVatClause = vatClause;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, vatClause);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToCustomerDeriveCustomers()
+        {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer1).Build();
+
+            this.Session.Derive(false);
+
+            invoice.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Single(invoice.Customers);
+            Assert.Contains(customer2, invoice.Customers);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToCustomerDeriveCustomers()
+        {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer1).Build();
+
+            this.Session.Derive(false);
+
+            invoice.ShipToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Single(invoice.Customers);
+            Assert.Contains(customer2, invoice.Customers);
         }
     }
 

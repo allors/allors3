@@ -17,7 +17,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(this.M.NonUnifiedPart.Class),
                 new CreatedPattern(this.M.InventoryItemTransaction.Class) {Steps = new IPropertyType[]{ this.M.InventoryItemTransaction.Part}, OfType = this.M.NonUnifiedPart.Class},
-                new ChangedRolePattern(this.M.InventoryItemTransaction.Part) { OfType = this.M.NonUnifiedPart.Class},
+                new ChangedRolePattern(this.M.InventoryItemTransaction.Part) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part }, OfType = this.M.NonUnifiedPart.Class},
                 new ChangedRolePattern(this.M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
             };
 

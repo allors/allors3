@@ -16,17 +16,23 @@ namespace Allors.Domain
         public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
             this.Patterns = new Pattern[]
         {
-            // Do not listen for changes in InternalOrganisation BillingAddress or GeneralCorrespondence or PreferredCurrency. These values are only used when salesInvoice is created
-            // Do not listen for changes in Singleton DefaultLocale. This value is only used when salesInvoice is created
-            // Do not listen for changes in BillToCustomer VatRegime, IrpfRegime, PreferredCurrency. This value is only used when salesInvoice is created
+            // Do not listen for changes in InternalOrganisation BillingAddress or GeneralCorrespondence or PreferredCurrency.
+            // Do not listen for changes in Singleton DefaultLocale.
+            // Do not listen for changes in BillToCustomer VatRegime, IrpfRegime, PreferredCurrency, Locale.
+            // Do not listen for changes in CustomerRelationship PaymentNetDays. 
+            // Do not listen for changes in Store PaymentNetDays.
+            // All these properties are only used for newly created invoices.
 
             new CreatedPattern(this.M.SalesInvoice.Class),
             new ChangedRolePattern(this.M.SalesInvoice.BillToCustomer),
             new ChangedRolePattern(this.M.SalesInvoice.BillToEndCustomer),
             new ChangedRolePattern(this.M.SalesInvoice.ShipToCustomer),
             new ChangedRolePattern(this.M.SalesInvoice.ShipToEndCustomer),
+            new ChangedRolePattern(this.M.SalesInvoice.VatRegime),
+            new ChangedRolePattern(this.M.SalesInvoice.AssignedVatClause),
             new ChangedRolePattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {this.M.RepeatingSalesInvoice.Source} },
             new ChangedRolePattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {this.M.RepeatingSalesInvoice.Source} },
+            new ChangedRolePattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {this.M.InvoiceTerm.InvoiceWhereSalesTerm} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -106,6 +112,15 @@ namespace Allors.Domain
                     salesInvoice.ShipToAddress = salesInvoice.ShipToCustomer.ShippingAddress;
                 }
 
+                if (salesInvoice.ExistBillToCustomer && salesInvoice.BillToCustomer.ExistLocale)
+                {
+                    salesInvoice.Locale = salesInvoice.BillToCustomer.Locale;
+                }
+                else
+                {
+                    salesInvoice.Locale = session.GetSingleton().DefaultLocale;
+                }
+
                 if (!salesInvoice.ExistCurrency && salesInvoice.ExistBilledFrom)
                 {
                     if (salesInvoice.ExistBillToCustomer && (salesInvoice.BillToCustomer.ExistPreferredCurrency || salesInvoice.BillToCustomer.ExistLocale))
@@ -153,23 +168,7 @@ namespace Allors.Domain
                     }
                 }
 
-                salesInvoice.SalesInvoiceItems = salesInvoice.SalesInvoiceItems.ToArray();
-
-                if (salesInvoice.ExistBillToCustomer && salesInvoice.BillToCustomer.ExistLocale)
-                {
-                    salesInvoice.Locale = salesInvoice.BillToCustomer.Locale;
-                }
-                else
-                {
-                    salesInvoice.Locale = session.GetSingleton().DefaultLocale;
-                }
-
                 salesInvoice.PaymentDays = salesInvoice.PaymentNetDays;
-
-                if (!salesInvoice.ExistPaymentDays)
-                {
-                    salesInvoice.PaymentDays = 0;
-                }
 
                 if (salesInvoice.ExistInvoiceDate)
                 {
@@ -179,17 +178,6 @@ namespace Allors.Domain
                 if (salesInvoice.ExistVatRegime && salesInvoice.VatRegime.ExistVatClause)
                 {
                     salesInvoice.DerivedVatClause = salesInvoice.VatRegime.VatClause;
-                }
-                else
-                {
-                    if (Equals(salesInvoice.VatRegime, new VatRegimes(session).ServiceB2B))
-                    {
-                        salesInvoice.DerivedVatClause = new VatClauses(session).ServiceB2B;
-                    }
-                    else if (Equals(salesInvoice.VatRegime, new VatRegimes(session).IntraCommunautair))
-                    {
-                        salesInvoice.DerivedVatClause = new VatClauses(session).Intracommunautair;
-                    }
                 }
 
                 salesInvoice.DerivedVatClause = salesInvoice.ExistAssignedVatClause ? salesInvoice.AssignedVatClause : salesInvoice.DerivedVatClause;
