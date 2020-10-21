@@ -16,13 +16,15 @@ namespace Allors
 
         public DefaultDatabaseState(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
 
-        public void OnInit(IDatabase database)
+        public virtual void OnInit(IDatabase database)
         {
             this.Database = database;
+            
             this.MetaPopulation = (MetaPopulation)database.ObjectFactory.MetaPopulation;
             this.M = new M(this.MetaPopulation);
             this.MetaCache = new MetaCache(this);
             this.WorkspaceMetaCache = new WorkspaceMetaCache(this);
+
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
             this.PreparedFetches = new PreparedFetches(this.M);
             this.PreparedExtents = new PreparedExtents(this.M);
@@ -32,10 +34,11 @@ namespace Allors
             this.EffectivePermissionCache = new EffectivePermissionCache();
             this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
 
-            this.DerivationService = new DerivationService();
-            this.PasswordHasher = new PasswordHasher();
+            this.DerivationFactory = new DerivationFactory();
+            this.Time = new Time();
             this.Caches = new Caches();
-            this.TimeService = new TimeService();
+
+            this.PasswordHasher = new PasswordHasher();
         }
 
         public IDatabase Database { get; private set; }
@@ -50,6 +53,10 @@ namespace Allors
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
+        public IPreparedFetches PreparedFetches { get; private set; }
+
+        public IPreparedExtents PreparedExtents { get; private set; }
+
         public ITreeCache TreeCache { get; private set; }
 
         public IPermissionsCache PermissionsCache { get; set; }
@@ -58,13 +65,14 @@ namespace Allors
 
         public IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; private set; }
 
-        public IDerivationService DerivationService { get; private set; }
-        public IPreparedExtents PreparedExtents { get; private set; }
-        public IPreparedFetches PreparedFetches { get; private set; }
-        public IPasswordHasher PasswordHasher { get; private set; }
-        public ICaches Caches { get; private set; }
-        public ITimeService TimeService { get; private set; }
+        public IDerivationFactory DerivationFactory { get; private set; }
 
+        public ITime Time { get; private set; }
+
+        public ICaches Caches { get; private set; }
+
+        public IPasswordHasher PasswordHasher { get; private set; }
+        
         public ISessionStateLifecycle CreateSessionInstance() => new DefaultSessionState(this.httpContextAccessor);
 
         public void Dispose()

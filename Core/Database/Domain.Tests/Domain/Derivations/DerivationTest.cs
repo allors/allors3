@@ -99,7 +99,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var derivation = this.DerivationService.CreateDerivation(this.Session);
+            var derivation = this.DerivationFactory.CreateDerivation(this.Session);
             derivation.Mark(first);
             derivation.Derive();
 

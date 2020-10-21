@@ -33,7 +33,7 @@ namespace Allors.Server.Tests
             var response = await this.HttpClient.PostAsync(uri, null);
             var content = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("Guest", content);
+            Assert.Equal("", content);
         }
     }
 }

@@ -1,4 +1,4 @@
-// <copyright file="TimeService.cs" company="Allors bvba">
+// <copyright file="Time.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,9 +7,9 @@ namespace Allors.State
 {
     using System;
 
-    public class TimeService : ITimeService
+    public class Time : ITime
     {
-        public TimeService() => this.Shift = null;
+        public Time() => this.Shift = null;
 
         public TimeSpan? Shift { get; set; }
 

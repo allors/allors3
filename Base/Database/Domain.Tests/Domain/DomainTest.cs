@@ -38,15 +38,15 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.Database.State().TimeService;
+        public ITime Time => this.Session.Database.State().Time;
 
-        public IDerivationService DerivationService => this.Session.Database.State().DerivationService;
+        public IDerivationFactory DerivationFactory => this.Session.Database.State().DerivationFactory;
 
         public TimeSpan? TimeShift
         {
-            get => this.TimeService.Shift;
+            get => this.Time.Shift;
 
-            set => this.TimeService.Shift = value;
+            set => this.Time.Shift = value;
         }
 
         public Mock<IAccessControlLists> AclsMock

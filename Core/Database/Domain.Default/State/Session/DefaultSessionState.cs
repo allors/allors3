@@ -19,7 +19,7 @@ namespace Allors
 
         public User User { get; set; }
 
-        public void OnInit(ISession session)
+        public virtual void OnInit(ISession session)
         {
             var nameIdentifier = this.httpContextAccessor?.HttpContext.User.Claims
                 .FirstOrDefault(v => v.Type == ClaimTypes.NameIdentifier)

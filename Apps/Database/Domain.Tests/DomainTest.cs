@@ -38,13 +38,13 @@ namespace Allors
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.Database.State().TimeService;
+        public ITime Time => this.Session.Database.State().Time;
 
         public TimeSpan? TimeShift
         {
-            get => this.TimeService.Shift;
+            get => this.Time.Shift;
 
-            set => this.TimeService.Shift = value;
+            set => this.Time.Shift = value;
         }
 
         protected Organisation InternalOrganisation => this.Session.Extent<Organisation>().First(v => v.IsInternalOrganisation);

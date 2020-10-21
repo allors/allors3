@@ -13,6 +13,7 @@ namespace Tests
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
+    using Allors.Server.Controllers;
     using Allors.State;
     using Moq;
 
@@ -38,15 +39,15 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITimeService TimeService => this.Session.Database.State().TimeService;
+        public ITime Time => this.Session.Database.State().Time;
 
-        public IDerivationService DerivationService => this.Session.Database.State().DerivationService;
+        public IDerivationFactory DerivationFactory => this.Session.Database.State().DerivationFactory;
 
         public TimeSpan? TimeShift
         {
-            get => this.TimeService.Shift;
+            get => this.Time.Shift;
 
-            set => this.TimeService.Shift = value;
+            set => this.Time.Shift = value;
         }
 
         public Mock<IAccessControlLists> AclsMock
@@ -79,6 +80,9 @@ namespace Tests
             if (populate)
             {
                 new Setup(this.Session, this.Config).Apply();
+                this.Session.Commit();
+
+                new TestPopulation(this.Session, "full").Apply();
                 this.Session.Commit();
             }
         }

@@ -53,7 +53,7 @@ namespace Tests.Workspace.Meta
 
             var mediaContentNode = nodes[0];
 
-            Assert.Equal(this.M.Organisation.Employees, mediaContentNode.PropertyType);
+            Assert.Equal(this.M.C1.C1C2One2One, mediaContentNode.PropertyType);
         }
     }
 }

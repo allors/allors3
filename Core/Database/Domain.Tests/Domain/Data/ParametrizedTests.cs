@@ -157,131 +157,127 @@ namespace Tests
             }
         }
 
-        // TODO: Reactivate
+        [Fact]
+        public void NestedWithParameters()
+        {
+            var filter = new Extent(this.M.C1.ObjectType)
+            {
+                Predicate = new ContainedIn
+                {
+                    PropertyType = this.M.C1.C1C2One2One,
+                    Extent = new Extent(this.M.C2.ObjectType)
+                    {
+                        Predicate = new Equals
+                        {
+                            PropertyType = this.M.C2.C2AllorsString,
+                            Parameter = "nested",
+                        },
+                    },
+                },
+            };
 
-        //[Fact]
-        //public void NestedWithParameters()
-        //{
-        //    var filter = new Extent(this.M.Organisation.ObjectType)
-        //    {
-        //        Predicate = new ContainedIn
-        //        {
-        //            PropertyType = this.M.Organisation.Employees,
-        //            Extent = new Extent(this.M.Person.ObjectType)
-        //            {
-        //                Predicate = new Equals
-        //                {
-        //                    PropertyType = this.M.Person.Gender,
-        //                    Parameter = "gender",
-        //                },
-        //            },
-        //        },
-        //    };
+            var arguments = new Dictionary<string, string> { { "nested", "c2B" } };
+            var queryExtent = filter.Build(this.Session, arguments);
 
-        //    var male = new Genders(this.Session).Male;
+            var c2s = this.Session.Extent(this.M.C2.ObjectType);
+            c2s.Filter.AddEquals(this.M.C2.C2AllorsString, "c2B");
+            var extent = this.Session.Extent(this.M.C1.ObjectType);
+            extent.Filter.AddContainedIn(this.M.C1.C1C2One2One, c2s);
 
-        //    var arguments = new Dictionary<string, string> { { "gender", male.Id.ToString() } };
-        //    var queryExtent = filter.Build(this.Session, arguments);
+            Assert.Equal(extent.ToArray(), queryExtent.ToArray());
+        }
 
-        //    var employees = this.Session.Extent(this.M.Person.ObjectType);
-        //    employees.Filter.AddEquals(this.M.Person.Gender, male);
-        //    var extent = this.Session.Extent(this.M.Organisation.ObjectType);
-        //    extent.Filter.AddContainedIn(this.M.Organisation.Employees, employees);
+        [Fact]
+        public void NestedWithoutParameters()
+        {
+            var filter = new Extent(this.M.C1.ObjectType)
+            {
+                Predicate = new ContainedIn
+                {
+                    PropertyType = this.M.C1.C1C2One2One,
+                    Extent = new Extent(this.M.C2.ObjectType)
+                    {
+                        Predicate = new Equals
+                        {
+                            PropertyType = this.M.C2.C2AllorsString,
+                            Parameter = "nested",
+                        },
+                    },
+                },
+            };
 
-        //    Assert.Equal(extent.ToArray(), queryExtent.ToArray());
-        //}
+            var arguments = new Dictionary<string, string>();
+            var queryExtent = filter.Build(this.Session, arguments);
 
-        //[Fact]
-        //public void NestedWithoutParameters()
-        //{
-        //    var filter = new Extent(this.M.Organisation.ObjectType)
-        //    {
-        //        Predicate = new ContainedIn
-        //        {
-        //            PropertyType = this.M.Organisation.Employees,
-        //            Extent = new Extent(this.M.Person.ObjectType)
-        //            {
-        //                Predicate = new Equals
-        //                {
-        //                    PropertyType = this.M.Person.Gender,
-        //                    Parameter = "gender",
-        //                },
-        //            },
-        //        },
-        //    };
+            var extent = this.Session.Extent(this.M.C1.ObjectType);
 
-        //    var arguments = new Dictionary<string, string>();
-        //    var queryExtent = filter.Build(this.Session, arguments);
+            Assert.Equal(extent.ToArray(), queryExtent.ToArray());
+        }
 
-        //    var extent = this.Session.Extent(this.M.Organisation.ObjectType);
+        [Fact]
+        public void AndNestedContainedInWithoutParameters()
+        {
+            var filter = new Extent(this.M.C1.ObjectType)
+            {
+                Predicate = new And
+                {
+                    Operands = new IPredicate[]
+                    {
+                        new ContainedIn
+                        {
+                            PropertyType = this.M.C1.C1C2One2One,
+                            Extent = new Extent(this.M.C2.ObjectType)
+                            {
+                                Predicate = new Equals
+                                {
+                                    PropertyType = this.M.C2.C2AllorsString,
+                                    Parameter = "nested",
+                                },
+                            },
+                        },
+                    },
+                },
+            };
 
-        //    Assert.Equal(extent.ToArray(), queryExtent.ToArray());
-        //}
+            var parameters = new Dictionary<string, string>();
+            var queryExtent = filter.Build(this.Session, parameters);
 
-        //[Fact]
-        //public void AndNestedContainedInWithoutParameters()
-        //{
-        //    var filter = new Extent(this.M.Organisation.ObjectType)
-        //    {
-        //        Predicate = new And
-        //        {
-        //            Operands = new IPredicate[]
-        //            {
-        //                new ContainedIn
-        //                {
-        //                    PropertyType = this.M.Organisation.Employees,
-        //                    Extent = new Extent(this.M.Person.ObjectType)
-        //                    {
-        //                        Predicate = new ContainedIn
-        //                        {
-        //                            PropertyType = this.M.Person.Gender,
-        //                            Parameter = "gender",
-        //                        },
-        //                    },
-        //                },
-        //            },
-        //        },
-        //    };
+            var extent = this.Session.Extent(this.M.C1.ObjectType);
 
-        //    var parameters = new Dictionary<string, string>();
-        //    var queryExtent = filter.Build(this.Session, parameters);
+            Assert.Equal(extent.ToArray(), queryExtent.ToArray());
+        }
 
-        //    var extent = this.Session.Extent(this.M.Organisation.ObjectType);
+        [Fact]
+        public void AndNestedContainsWithoutParameters()
+        {
+            var filter = new Extent(this.M.C1.ObjectType)
+            {
+                Predicate = new And
+                {
+                    Operands = new IPredicate[]
+                    {
+                        new ContainedIn
+                            {
+                                PropertyType = this.M.C1.C1C2One2One,
+                                Extent = new Extent(this.M.C2.ObjectType)
+                                             {
+                                                 Predicate = new Contains
+                                                                 {
+                                                                     PropertyType = this.M.C2.C1WhereC1C2One2One,
+                                                                     Parameter = "nested",
+                                                                 },
+                                             },
+                            },
+                    },
+                },
+            };
 
-        //    Assert.Equal(extent.ToArray(), queryExtent.ToArray());
-        //}
+            var arguments = new Dictionary<string, string>();
+            var queryExtent = filter.Build(this.Session, arguments);
 
-        //[Fact]
-        //public void AndNestedContainsWithoutParameters()
-        //{
-        //    var filter = new Extent(this.M.Organisation.ObjectType)
-        //    {
-        //        Predicate = new And
-        //        {
-        //            Operands = new IPredicate[]
-        //            {
-        //                new ContainedIn
-        //                    {
-        //                        PropertyType = this.M.Organisation.Employees,
-        //                        Extent = new Extent(this.M.Person.ObjectType)
-        //                                     {
-        //                                         Predicate = new Contains
-        //                                                         {
-        //                                                             PropertyType = this.M.Person.Gender,
-        //                                                             Parameter = "gender",
-        //                                                         },
-        //                                     },
-        //                    },
-        //            },
-        //        },
-        //    };
+            var extent = this.Session.Extent(this.M.C1.ObjectType);
 
-        //    var arguments = new Dictionary<string, string>();
-        //    var queryExtent = filter.Build(this.Session, arguments);
-
-        //    var extent = this.Session.Extent(this.M.Organisation.ObjectType);
-
-        //    Assert.Equal(extent.ToArray(), queryExtent.ToArray());
-        //}
+            Assert.Equal(extent.ToArray(), queryExtent.ToArray());
+        }
     }
 }

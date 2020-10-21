@@ -26,7 +26,7 @@ namespace Allors
 
         IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; }
         
-        IDerivationService DerivationService { get; }
+        IDerivationFactory DerivationFactory { get; }
 
         IPreparedExtents PreparedExtents { get; }
 
@@ -38,7 +38,7 @@ namespace Allors
 
         ICaches Caches { get; }
 
-        ITimeService TimeService { get; }
+        ITime Time { get; }
 
         ITreeCache TreeCache { get; }
     }

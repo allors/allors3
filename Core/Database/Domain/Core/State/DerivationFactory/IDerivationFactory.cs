@@ -1,16 +1,14 @@
-// <copyright file="ITimeService.cs" company="Allors bvba">
+// <copyright file="IDerivationFactory.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.State
 {
-    using System;
+    using Allors.Domain;
 
-    public interface ITimeService
+    public interface IDerivationFactory
     {
-        TimeSpan? Shift { get; set; }
-
-        DateTime Now();
+        IDerivation CreateDerivation(ISession session);
     }
 }
