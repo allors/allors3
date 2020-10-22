@@ -100,6 +100,7 @@ namespace Allors.Domain
                 new RepeatingPurchaseInvoiceDerivation(m),
                 new RepeatingSalesInvoiceDerivation(m),
                 new SalesInvoiceDerivation(m),
+                new SalesInvoiceDeletePermissionDerivation(m),
                 new SalesInvoicePriceDerivation(m),
                 new SalesInvoiceStateDerivation(m),
                 new PartyFinancialRelationshipCreationDerivation(m),

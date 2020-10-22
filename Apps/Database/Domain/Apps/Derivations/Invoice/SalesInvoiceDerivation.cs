@@ -30,9 +30,15 @@ namespace Allors.Domain
             new ChangedRolePattern(this.M.SalesInvoice.ShipToEndCustomer),
             new ChangedRolePattern(this.M.SalesInvoice.VatRegime),
             new ChangedRolePattern(this.M.SalesInvoice.AssignedVatClause),
-            new ChangedRolePattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {this.M.RepeatingSalesInvoice.Source} },
-            new ChangedRolePattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {this.M.RepeatingSalesInvoice.Source} },
-            new ChangedRolePattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {this.M.InvoiceTerm.InvoiceWhereSalesTerm} },
+            new ChangedRolePattern(this.M.SalesInvoice.InvoiceDate),
+            new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
+            new ChangedRolePattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new ChangedRolePattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
+            new ChangedRolePattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
+            new ChangedRolePattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
+            new ChangedRolePattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereBillToCustomer} },
+            new ChangedRolePattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
+            new ChangedRolePattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesInvoicesWhereShipToCustomer} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -42,11 +48,6 @@ namespace Allors.Domain
 
             foreach (var salesInvoice in matches.Cast<SalesInvoice>())
             {
-                if (!salesInvoice.ExistSalesInvoiceState)
-                {
-                    salesInvoice.SalesInvoiceState = new SalesInvoiceStates(session).ReadyForPosting;
-                }
-
                 if (!salesInvoice.ExistEntryDate)
                 {
                     salesInvoice.EntryDate = session.Now();
@@ -195,12 +196,12 @@ namespace Allors.Domain
 
                 if (salesInvoice.ExistBillToCustomer && !salesInvoice.BillToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
                 {
-                    validation.AddError($"{this}  {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{salesInvoice} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 if (salesInvoice.ExistShipToCustomer && !salesInvoice.ShipToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
                 {
-                    validation.AddError($"{this} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{salesInvoice} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 salesInvoice.PreviousBillToCustomer = salesInvoice.BillToCustomer;
@@ -217,21 +218,6 @@ namespace Allors.Domain
                 }
 
                 salesInvoice.ResetPrintDocument();
-
-                var deletePermission = new Permissions(salesInvoice.Strategy.Session).Get(salesInvoice.Meta.ObjectType, salesInvoice.Meta.Delete);
-                if (salesInvoice.SalesInvoiceState.Equals(new SalesInvoiceStates(salesInvoice.Strategy.Session).ReadyForPosting) &&
-                    salesInvoice.SalesInvoiceItems.All(v => v.IsDeletable) &&
-                    !salesInvoice.ExistSalesOrders &&
-                    !salesInvoice.ExistPurchaseInvoice &&
-                    !salesInvoice.ExistRepeatingSalesInvoiceWhereSource &&
-                    !salesInvoice.IsRepeatingInvoice)
-                {
-                    salesInvoice.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    salesInvoice.AddDeniedPermission(deletePermission);
-                }
             }
         }
     }

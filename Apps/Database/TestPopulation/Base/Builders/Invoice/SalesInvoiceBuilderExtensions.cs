@@ -35,7 +35,7 @@ namespace Allors.Domain.TestPopulation
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(otherInternalOrganization.CurrentContacts.FirstOrDefault());
+            @this.WithBillToCustomer(otherInternalOrganization);
             @this.WithBillToContactMechanism(otherInternalOrganization.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
             @this.WithBillToContactPerson(otherInternalOrganization.CurrentContacts.FirstOrDefault());
             @this.WithBillToEndCustomer(endCustomer);
@@ -180,6 +180,40 @@ namespace Allors.Domain.TestPopulation
             @this.WithSalesInvoiceItem(salesInvoiceItem_Default);
             @this.WithSalesInvoiceItem(salesInvoiceItem_Product);
             @this.WithSalesInvoiceItem(salesInvoiceItem_Part);
+            @this.WithAdvancePayment(faker.Random.Decimal());
+            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaultsForPaymentNetDays().Build());
+            @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());
+            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaults().Build());
+            @this.WithSalesTerm(new OrderTermBuilder(@this.Session).WithDefaults().Build());
+
+            return @this;
+        }
+
+        public static SalesInvoiceBuilder WithDefaultsWithoutItems(this SalesInvoiceBuilder @this, Organisation internalOrganisation)
+        {
+            var faker = @this.Session.Faker();
+
+            var customer = internalOrganisation.ActiveCustomers.Where(v => v.GetType().Name == typeof(Organisation).Name).FirstOrDefault();
+
+            var salesInvoiceType = new SalesInvoiceTypes(@this.Session).SalesInvoice;
+            var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
+
+            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
+            @this.WithBilledFrom(internalOrganisation);
+            @this.WithBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
+            @this.WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
+            @this.WithDescription(faker.Lorem.Sentence());
+            @this.WithComment(faker.Lorem.Sentence());
+            @this.WithInternalComment(faker.Lorem.Sentence());
+            @this.WithBillToCustomer(customer);
+            @this.WithBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
+            @this.WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault());
+            @this.WithShipToCustomer(customer);
+            @this.WithShipToAddress(customer.ShippingAddress);
+            @this.WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault());
+            @this.WithSalesInvoiceType(salesInvoiceType);
+            @this.WithTotalListPrice(faker.Random.Decimal());
+            @this.WithPaymentMethod(paymentMethod);
             @this.WithAdvancePayment(faker.Random.Decimal());
             @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaultsForPaymentNetDays().Build());
             @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());

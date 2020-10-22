@@ -18,7 +18,11 @@ namespace Allors.Domain
         {
             new CreatedPattern(this.M.SalesInvoice.Class),
             new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
-            new ChangedRolePattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.SalesInvoice.AdvancePayment),
+            new ChangedRolePattern(this.M.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.SalesInvoiceItem.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -31,7 +35,26 @@ namespace Allors.Domain
                 var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
                 var salesInvoiceStates = new SalesInvoiceStates(session);
 
+                if (!salesInvoice.ExistSalesInvoiceState)
+                {
+                    salesInvoice.SalesInvoiceState = new SalesInvoiceStates(session).ReadyForPosting;
+                }
+
                 var validInvoiceItems = salesInvoice.SalesInvoiceItems.Where(v => v.IsValid).ToArray();
+
+                var amountPaid = salesInvoice.AdvancePayment;
+                amountPaid += salesInvoice.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
+
+                //// Perhaps payments are recorded at the item level.
+                if (amountPaid == 0)
+                {
+                    amountPaid = salesInvoice.InvoiceItems.Sum(v => v.AmountPaid);
+                }
+
+                if (salesInvoice.AmountPaid != amountPaid)
+                {
+                    salesInvoice.AmountPaid = amountPaid;
+                }
 
                 foreach (var invoiceItem in validInvoiceItems)
                 {
@@ -39,9 +62,28 @@ namespace Allors.Domain
                     {
                         if (invoiceItem.AmountPaid == 0)
                         {
-                            invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.NotPaid;
+                            // If receipts are not matched at invoice level
+                            // if only advancedPayment is received do not set to partially paid
+                            // this would disable the invoice for editing and adding new items
+                            if (salesInvoice.AmountPaid - salesInvoice.AdvancePayment > 0)
+                            {
+                                if (salesInvoice.AmountPaid >= salesInvoice.TotalIncVat)
+                                {
+                                    invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
+                                }
+                                else
+                                {
+                                    invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.PartiallyPaid;
+                                }
+                            }
+                            else
+                            {
+                                invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.NotPaid;
+                            }
                         }
-                        else if (invoiceItem.ExistAmountPaid && invoiceItem.AmountPaid > 0 && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)
+                        else if (invoiceItem.ExistAmountPaid
+                                    && invoiceItem.AmountPaid > 0
+                                    && invoiceItem.AmountPaid >= invoiceItem.TotalIncVat)
                         {
                             invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
                         }
@@ -54,60 +96,17 @@ namespace Allors.Domain
 
                 if (validInvoiceItems.Any() && !salesInvoice.SalesInvoiceState.Equals(salesInvoiceStates.ReadyForPosting))
                 {
-                    if (salesInvoice.SalesInvoiceItems.All(v => v.SalesInvoiceItemState.IsPaid))
+                    if (validInvoiceItems.All(v => v.SalesInvoiceItemState.IsPaid))
                     {
                         salesInvoice.SalesInvoiceState = salesInvoiceStates.Paid;
                     }
-                    else if (salesInvoice.SalesInvoiceItems.All(v => v.SalesInvoiceItemState.IsNotPaid))
+                    else if (validInvoiceItems.All(v => v.SalesInvoiceItemState.IsNotPaid))
                     {
                         salesInvoice.SalesInvoiceState = salesInvoiceStates.NotPaid;
                     }
                     else
                     {
                         salesInvoice.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
-                    }
-                }
-
-                salesInvoice.AmountPaid = salesInvoice.AdvancePayment;
-                salesInvoice.AmountPaid += salesInvoice.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
-
-                //// Perhaps payments are recorded at the item level.
-                if (salesInvoice.AmountPaid == 0)
-                {
-                    salesInvoice.AmountPaid = salesInvoice.InvoiceItems.Sum(v => v.AmountPaid);
-                }
-
-                // If receipts are not matched at invoice level
-                // if only advancedPayment is received do not set to partially paid
-                // this would disable the invoice for editing and adding new items
-                if (salesInvoice.AmountPaid - salesInvoice.AdvancePayment > 0)
-                {
-                    if (salesInvoice.AmountPaid >= salesInvoice.TotalIncVat)
-                    {
-                        salesInvoice.SalesInvoiceState = salesInvoiceStates.Paid;
-                    }
-                    else
-                    {
-                        if (salesInvoice.AmountPaid > 0)
-                        {
-                            salesInvoice.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
-                        }
-                    }
-
-                    foreach (var invoiceItem in validInvoiceItems)
-                    {
-                        if (!invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.CancelledByInvoice) &&
-                            !invoiceItem.SalesInvoiceItemState.Equals(salesInvoiceItemStates.WrittenOff))
-                        {
-                            if (salesInvoice.AmountPaid >= salesInvoice.TotalIncVat)
-                            {
-                                invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
-                            }
-                            else
-                            {
-                                invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.PartiallyPaid;
-                            }
-                        }
                     }
                 }
             }
