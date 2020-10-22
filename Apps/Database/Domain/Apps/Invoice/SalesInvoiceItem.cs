@@ -306,9 +306,17 @@ namespace Allors.Domain
             //}
         }
 
-        public void AppsWriteOff() => this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).WrittenOff;
+        public void AppsWriteOff()
+        {
+            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).WrittenOff;
+            this.DerivationTrigger = Guid.NewGuid();
+        }
 
-        public void CancelFromInvoice() => this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).CancelledByInvoice;
+        public void CancelFromInvoice()
+        {
+            this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).CancelledByInvoice;
+            this.DerivationTrigger = Guid.NewGuid();
+        }
 
         public void AppsDelete(DeletableDelete method)
         {

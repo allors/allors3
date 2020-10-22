@@ -17,8 +17,6 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new CreatedPattern(this.M.SalesInvoice.Class),
-            new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
-            new ChangedRolePattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -29,7 +27,8 @@ namespace Allors.Domain
             foreach (var salesInvoice in matches.Cast<SalesInvoice>())
             {
                 var deletePermission = new Permissions(salesInvoice.Strategy.Session).Get(salesInvoice.Meta.ObjectType, salesInvoice.Meta.Delete);
-                if (salesInvoice.SalesInvoiceState.Equals(new SalesInvoiceStates(salesInvoice.Strategy.Session).ReadyForPosting) &&
+                if (salesInvoice.ExistSalesInvoiceState &&
+                    salesInvoice.SalesInvoiceState.Equals(new SalesInvoiceStates(salesInvoice.Strategy.Session).ReadyForPosting) &&
                     salesInvoice.SalesInvoiceItems.All(v => v.IsDeletable) &&
                     !salesInvoice.ExistSalesOrders &&
                     !salesInvoice.ExistPurchaseInvoice &&

@@ -48,11 +48,6 @@ namespace Allors.Domain
 
             foreach (var salesInvoice in matches.Cast<SalesInvoice>())
             {
-                if (!salesInvoice.ExistSalesInvoiceState)
-                {
-                    salesInvoice.SalesInvoiceState = new SalesInvoiceStates(session).ReadyForPosting;
-                }
-
                 if (!salesInvoice.ExistEntryDate)
                 {
                     salesInvoice.EntryDate = session.Now();

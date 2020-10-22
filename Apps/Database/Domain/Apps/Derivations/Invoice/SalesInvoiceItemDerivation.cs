@@ -16,9 +16,11 @@ namespace Allors.Domain
     public class SalesInvoiceItemDerivation : DomainDerivation
     {
         public SalesInvoiceItemDerivation(M m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
-            this.Patterns = new[]
+            this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.SalesInvoiceItem.Class),
+                new ChangedRolePattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new ChangedRolePattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
