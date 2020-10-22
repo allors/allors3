@@ -343,11 +343,11 @@ namespace Allors.Database.Adapters.Memory
                                         switch (unitType.UnitTag)
                                         {
                                             case UnitTags.String:
-                                                strategy.SetUnitRole(relationType, string.Empty);
+                                                strategy.SetUnitRole(relationType.RoleType, string.Empty);
                                                 break;
 
                                             case UnitTags.Binary:
-                                                strategy.SetUnitRole(relationType, emptyByteArray);
+                                                strategy.SetUnitRole(relationType.RoleType, emptyByteArray);
                                                 break;
                                         }
                                     }
@@ -357,7 +357,7 @@ namespace Allors.Database.Adapters.Memory
                                         var unitTypeTag = unitType.UnitTag;
 
                                         var unit = Serialization.ReadString(value, unitTypeTag);
-                                        strategy.SetUnitRole(relationType, unit);
+                                        strategy.SetUnitRole(relationType.RoleType, unit);
                                     }
                                 }
                                 catch
@@ -428,10 +428,8 @@ namespace Allors.Database.Adapters.Memory
                                     if (relationType.RoleType.IsOne)
                                     {
                                         var roleIdString = long.Parse(roleIdStringArray[0]);
-                                        var role = this.LoadInstantiateStrategy(roleIdString);
-                                        if (role == null || !this.session.MemoryDatabase.ContainsConcreteClass(
-                                                (IComposite)relationType.RoleType.ObjectType,
-                                                role.UncheckedObjectType))
+                                        var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
+                                        if (roleStrategy == null || !this.session.MemoryDatabase.ContainsConcreteClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
                                         {
                                             this.session.MemoryDatabase.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                         }
@@ -439,11 +437,11 @@ namespace Allors.Database.Adapters.Memory
                                         {
                                             if (relationType.RoleType.AssociationType.IsMany)
                                             {
-                                                association.SetCompositeRoleMany2One(relationType.RoleType, role.GetObject());
+                                                association.SetCompositeRoleMany2One(relationType.RoleType, roleStrategy);
                                             }
                                             else
                                             {
-                                                association.SetCompositeRoleOne2One(relationType.RoleType, role.GetObject());
+                                                association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
                                             }
                                         }
                                     }
@@ -469,13 +467,11 @@ namespace Allors.Database.Adapters.Memory
 
                                         if (relationType.RoleType.AssociationType.IsMany)
                                         {
-                                            association.SetCompositeRolesMany2Many(relationType.RoleType,
-                                                roleStrategies);
+                                            association.SetCompositesRolesMany2Many(relationType.RoleType, roleStrategies);
                                         }
                                         else
                                         {
-                                            association.SetCompositesRoleOne2Many(relationType.RoleType,
-                                                roleStrategies);
+                                            association.SetCompositesRolesOne2Many(relationType.RoleType, roleStrategies);
                                         }
                                     }
                                 }

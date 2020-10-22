@@ -9,13 +9,13 @@ namespace Allors.Domain
 
     public partial class UnitOfMeasureConversionAccessor
     {
-        private readonly RelationType relationType;
+        private readonly RoleType roleType;
 
-        public UnitOfMeasureConversionAccessor(RoleType roleType) => this.relationType = roleType.RelationType;
+        public UnitOfMeasureConversionAccessor(RoleType roleType) => this.roleType = roleType;
 
         public decimal? Get(IObject @object, TimeFrequency toUnitOfMeasure)
         {
-            var unitOfMeasureConversions = @object.Strategy.GetCompositeRoles(this.relationType);
+            var unitOfMeasureConversions = @object.Strategy.GetCompositeRoles(this.roleType);
             foreach (UnitOfMeasureConversion unitOfMeasureConversion in unitOfMeasureConversions)
             {
                 if (unitOfMeasureConversion?.ToUnitOfMeasure?.Equals(toUnitOfMeasure) == true)
@@ -29,7 +29,7 @@ namespace Allors.Domain
 
         public void Set(IObject @object, TimeFrequency toUnitOfMeasure, decimal conversionFactor)
         {
-            var unitOfMeasureConversions = @object.Strategy.GetCompositeRoles(this.relationType);
+            var unitOfMeasureConversions = @object.Strategy.GetCompositeRoles(this.roleType);
             foreach (UnitOfMeasureConversion existingUnitOfMeasureConversion in unitOfMeasureConversions)
             {
                 if (existingUnitOfMeasureConversion?.ToUnitOfMeasure?.Equals(toUnitOfMeasure) == true)
@@ -43,7 +43,7 @@ namespace Allors.Domain
                 .WithToUnitOfMeasure(toUnitOfMeasure)
                 .WithConversionFactor(conversionFactor)
                 .Build();
-            @object.Strategy.AddCompositeRole(this.relationType, newUnitOfMeasureConversion);
+            @object.Strategy.AddCompositeRole(this.roleType, newUnitOfMeasureConversion);
         }
     }
 }

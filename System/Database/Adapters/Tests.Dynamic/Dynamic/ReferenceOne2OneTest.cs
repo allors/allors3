@@ -58,10 +58,10 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -70,7 +70,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -78,10 +78,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -91,7 +91,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -99,10 +99,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -112,7 +112,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -120,10 +120,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -133,7 +133,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -141,10 +141,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -154,7 +154,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.RemoveRole(relationType);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -162,10 +162,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -175,7 +175,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -183,10 +183,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -196,7 +196,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -204,10 +204,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -217,7 +217,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -225,10 +225,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -238,7 +238,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -246,10 +246,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -259,7 +259,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, null);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -267,10 +267,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -280,7 +280,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -288,10 +288,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -301,7 +301,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -309,10 +309,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -322,7 +322,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -330,10 +330,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -363,10 +363,10 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -375,7 +375,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -383,10 +383,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -396,7 +396,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -404,10 +404,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -417,7 +417,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -425,10 +425,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -438,7 +438,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -446,10 +446,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -459,7 +459,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.RemoveRole(relationType);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -467,10 +467,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -480,7 +480,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -488,10 +488,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -501,7 +501,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -509,10 +509,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -522,7 +522,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -530,10 +530,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -543,7 +543,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -551,10 +551,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -564,7 +564,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, null);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -572,10 +572,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -585,7 +585,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -593,10 +593,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -606,7 +606,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -614,10 +614,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -627,7 +627,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -635,10 +635,10 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -675,40 +675,12 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -718,15 +690,43 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -736,7 +736,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -746,15 +746,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -764,7 +764,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -774,33 +774,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, null);
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -810,33 +792,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, null);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -846,35 +810,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
-                                            association2.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, null);
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -884,10 +828,66 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Equal(role1, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role2, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association2, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }
@@ -917,40 +917,12 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -960,15 +932,43 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -978,7 +978,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -988,15 +988,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role2);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1006,7 +1006,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role1);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1016,33 +1016,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, null);
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1052,33 +1034,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, null);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1088,35 +1052,15 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
-                                            association2.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, null);
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1126,10 +1070,66 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }
@@ -1173,9 +1173,9 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1184,7 +1184,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1192,9 +1192,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1204,7 +1204,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1212,9 +1212,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1224,7 +1224,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1232,9 +1232,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1244,7 +1244,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1252,9 +1252,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1264,7 +1264,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1272,9 +1272,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1284,7 +1284,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1292,9 +1292,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1304,7 +1304,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1312,9 +1312,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1324,7 +1324,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1332,9 +1332,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1344,7 +1344,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1352,9 +1352,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1364,7 +1364,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1372,9 +1372,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association1.Strategy.GetRole(relationType));
-                                                Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1384,7 +1384,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1392,9 +1392,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association1.Strategy.GetRole(relationType));
-                                                Assert.Null(association2.Strategy.GetRole(relationType));
-                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association1.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1423,9 +1423,9 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.False(role.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1434,7 +1434,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1442,9 +1442,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1454,7 +1454,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1462,9 +1462,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1474,7 +1474,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1482,9 +1482,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1494,7 +1494,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.RemoveRole(relationType);
+                                            association1.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1502,9 +1502,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.False(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1514,7 +1514,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1522,9 +1522,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1534,7 +1534,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1542,9 +1542,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1554,7 +1554,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1562,9 +1562,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1574,7 +1574,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1582,9 +1582,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.False(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1594,7 +1594,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1602,9 +1602,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1614,7 +1614,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1622,9 +1622,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association1.Strategy.ExistRole(relationType));
-                                                Assert.True(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1634,7 +1634,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -1642,9 +1642,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association1.Strategy.ExistRole(relationType));
-                                                Assert.False(association2.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -1680,39 +1680,12 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1722,14 +1695,41 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1739,7 +1739,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1749,14 +1749,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role, association1.Strategy.GetRole(relationType));
-                                            Assert.Null(association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role, association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association1, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1766,7 +1766,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1776,31 +1776,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1810,9 +1793,26 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association1.Strategy.GetRole(relationType));
-                                            Assert.Equal(role, association2.Strategy.GetRole(relationType));
-                                            Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Null(association1.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(role, association2.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association2, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }
@@ -1841,39 +1841,12 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.False(role.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1883,14 +1856,41 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.False(role.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1900,7 +1900,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1910,14 +1910,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association1.Strategy.ExistRole(relationType));
-                                            Assert.False(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.SetCompositeRole(relationType, role);
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1927,7 +1927,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association1.Strategy.SetCompositeRole(relationType, role);
+                                            association1.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1937,31 +1937,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association2.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association2.Strategy.SetCompositeRole(relationType, null);
+                                            association2.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -1971,9 +1954,26 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association1.Strategy.ExistRole(relationType));
-                                            Assert.True(association2.Strategy.ExistRole(relationType));
-                                            Assert.True(role.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association2.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.False(association1.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(association2.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }
@@ -2016,9 +2016,9 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2027,7 +2027,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2035,9 +2035,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2047,7 +2047,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2055,9 +2055,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2067,7 +2067,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2075,9 +2075,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2087,7 +2087,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2095,9 +2095,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2107,7 +2107,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2115,9 +2115,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2127,7 +2127,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2135,9 +2135,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2147,7 +2147,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2155,9 +2155,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2167,7 +2167,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2175,9 +2175,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2187,7 +2187,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2195,9 +2195,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2207,7 +2207,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2215,9 +2215,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2227,7 +2227,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2235,9 +2235,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role1, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType));
-                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role1, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                                Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2266,9 +2266,9 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2277,7 +2277,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2285,9 +2285,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2297,7 +2297,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2305,9 +2305,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2317,7 +2317,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2325,9 +2325,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2337,7 +2337,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2345,9 +2345,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2357,7 +2357,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2365,9 +2365,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2377,7 +2377,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2385,9 +2385,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2397,7 +2397,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2405,9 +2405,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2417,7 +2417,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2425,9 +2425,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2437,7 +2437,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2445,9 +2445,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2457,7 +2457,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2465,9 +2465,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2477,7 +2477,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2485,9 +2485,9 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                                Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                                Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2523,39 +2523,12 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Null(association.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2565,14 +2538,41 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2582,7 +2582,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2592,14 +2592,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role1, association.Strategy.GetRole(relationType));
-                                            Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role1, association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association, role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Null(role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2609,7 +2609,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2619,31 +2619,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2653,9 +2636,26 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role2, association.Strategy.GetRole(relationType));
-                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType));
-                                            Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.Equal(role2, association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role1.Strategy.GetCompositeAssociation(relationType.AssociationType));
+                                            Assert.Equal(association, role2.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }
@@ -2684,39 +2684,12 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.False(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2726,14 +2699,41 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2743,7 +2743,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2753,14 +2753,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association.Strategy.ExistRole(relationType));
-                                            Assert.True(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.False(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.False(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role2);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role2);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2770,7 +2770,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role1);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role1);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2780,31 +2780,14 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            this.GetSession().Rollback();
-                                        }
-
-                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
-                                        {
-                                            Assert.True(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
-                                        }
-
-                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
-                                        {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -2814,9 +2797,26 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role1.Strategy.ExistAssociation(relationType));
-                                            Assert.True(role2.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
+                                        }
+
+                                        for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
+                                        {
+                                            this.GetSession().Rollback();
+                                        }
+
+                                        for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
+                                        {
+                                            Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role1.Strategy.ExistAssociation(relationType.AssociationType));
+                                            Assert.True(role2.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }
@@ -2860,8 +2860,8 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association.Strategy.GetRole(relationType));
-                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2870,7 +2870,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2878,8 +2878,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2889,7 +2889,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2897,8 +2897,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association.Strategy.GetRole(relationType));
-                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2908,7 +2908,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2916,8 +2916,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2927,7 +2927,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -2935,8 +2935,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association.Strategy.GetRole(relationType));
-                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2949,7 +2949,7 @@ namespace Allors.Database.Adapters
                                         {
                                             try
                                             {
-                                                association.Strategy.SetCompositeRole(relationType, roleOtherDatabase);
+                                                association.Strategy.SetCompositeRole(relationType.RoleType, roleOtherDatabase);
                                                 Assert.True(false); // Fail
                                             }
                                             catch (ArgumentException exception)
@@ -2964,8 +2964,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Null(association.Strategy.GetRole(relationType));
-                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -2997,8 +2997,8 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -3007,7 +3007,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -3015,8 +3015,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -3026,7 +3026,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -3034,8 +3034,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -3045,7 +3045,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -3053,8 +3053,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.True(association.Strategy.ExistRole(relationType));
-                                                Assert.True(role.Strategy.ExistAssociation(relationType));
+                                                Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -3064,7 +3064,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
                                             if (transactionFlag)
                                             {
                                                 this.GetSession().Commit();
@@ -3072,8 +3072,8 @@ namespace Allors.Database.Adapters
 
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.False(association.Strategy.ExistRole(relationType));
-                                                Assert.False(role.Strategy.ExistAssociation(relationType));
+                                                Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                                Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                                 if (transactionFlag)
                                                 {
                                                     this.GetSession().Commit();
@@ -3108,7 +3108,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3118,13 +3118,13 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Null(association.Strategy.GetRole(relationType));
-                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Null(association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Null(role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3134,7 +3134,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3144,13 +3144,13 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.Equal(role, association.Strategy.GetRole(relationType));
-                                            Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType));
+                                            Assert.Equal(role, association.Strategy.GetRole(relationType.RoleType));
+                                            Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3162,8 +3162,8 @@ namespace Allors.Database.Adapters
                                         {
                                             for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                             {
-                                                Assert.Equal(role, association.Strategy.GetRole(relationType));
-                                                Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType));
+                                                Assert.Equal(role, association.Strategy.GetRole(relationType.RoleType));
+                                                Assert.Equal(association, role.Strategy.GetCompositeAssociation(relationType.AssociationType));
                                             }
                                         }
                                     }
@@ -3192,7 +3192,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3202,13 +3202,13 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.False(association.Strategy.ExistRole(relationType));
-                                            Assert.False(role.Strategy.ExistAssociation(relationType));
+                                            Assert.False(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.False(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, role);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, role);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3218,7 +3218,7 @@ namespace Allors.Database.Adapters
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.RemoveRole(relationType);
+                                            association.Strategy.RemoveRole(relationType.RoleType);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3228,13 +3228,13 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association.Strategy.ExistRole(relationType));
-                                            Assert.True(role.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                         {
-                                            association.Strategy.SetCompositeRole(relationType, null);
+                                            association.Strategy.SetCompositeRole(relationType.RoleType, null);
                                         }
 
                                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
@@ -3244,8 +3244,8 @@ namespace Allors.Database.Adapters
 
                                         for (int testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                         {
-                                            Assert.True(association.Strategy.ExistRole(relationType));
-                                            Assert.True(role.Strategy.ExistAssociation(relationType));
+                                            Assert.True(association.Strategy.ExistRole(relationType.RoleType));
+                                            Assert.True(role.Strategy.ExistAssociation(relationType.AssociationType));
                                         }
                                     }
                                 }

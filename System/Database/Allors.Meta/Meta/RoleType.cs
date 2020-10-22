@@ -113,7 +113,7 @@ namespace Allors.Meta
         /// <returns>
         /// The role value.
         /// </returns>
-        public object Get(IStrategy strategy) => strategy.GetRole(this.RelationType);
+        public object Get(IStrategy strategy) => strategy.GetRole(this);
 
         /// <summary>
         /// Set the value of the role on this object.
@@ -124,7 +124,7 @@ namespace Allors.Meta
         /// <param name="value">
         /// The role value.
         /// </param>
-        public void Set(IStrategy strategy, object value) => strategy.SetRole(this.RelationType, value);
+        public void Set(IStrategy strategy, object value) => strategy.SetRole(this, value);
 
         public override bool Equals(object other) => this.RelationType.Id.Equals((other as RoleType)?.RelationType.Id);
 

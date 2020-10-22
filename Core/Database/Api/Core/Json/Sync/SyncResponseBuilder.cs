@@ -74,15 +74,15 @@ namespace Allors.Api.Json.Sync
 
                 if (roleType.ObjectType.IsUnit)
                 {
-                    syncResponseRole.V = UnitConvert.ToString(@object.Strategy.GetUnitRole(roleType.RelationType));
+                    syncResponseRole.V = UnitConvert.ToString(@object.Strategy.GetUnitRole(roleType));
                 }
                 else if (roleType.IsOne)
                 {
-                    syncResponseRole.V = @object.Strategy.GetCompositeRole(roleType.RelationType)?.Id.ToString();
+                    syncResponseRole.V = @object.Strategy.GetCompositeRole(roleType)?.Id.ToString();
                 }
                 else
                 {
-                    var roles = @object.Strategy.GetCompositeRoles(roleType.RelationType);
+                    var roles = @object.Strategy.GetCompositeRoles(roleType);
                     if (roles.Count > 0)
                     {
                         syncResponseRole.V = string.Join(
@@ -110,7 +110,7 @@ namespace Allors.Api.Json.Sync
                         T = v.Strategy.Class.IdAsString,
                         // TODO: Cache
                         R = @class.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0)
-                            .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w.RelationType))
+                            .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => CreateSyncResponseRole(v, w))
                             .ToArray(),
                         A = this.accessControlsWriter.Write(v),

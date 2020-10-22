@@ -17,15 +17,15 @@ namespace Allors.Domain
             var previousObjectState = objectType.RoleTypes.FirstOrDefault(v => v.Name.Equals("Previous" + roleType.Name));
             var lastObjectState = objectType.RoleTypes.FirstOrDefault(v => v.Name.Equals("Last" + roleType.Name));
 
-            this.ObjectState = roleType.RelationType;
-            this.PreviousObjectState = previousObjectState?.RelationType ?? throw new Exception("Previous ObjectState is not defined for " + roleType.Name + " in type " + roleType.AssociationType.ObjectType.Name);
-            this.LastObjectState = lastObjectState?.RelationType ?? throw new Exception("Last ObjectState is not defined for " + roleType.Name + " in type " + roleType.AssociationType.ObjectType.Name);
+            this.ObjectState = roleType;
+            this.PreviousObjectState = previousObjectState ?? throw new Exception("Previous ObjectState is not defined for " + roleType.Name + " in type " + roleType.AssociationType.ObjectType.Name);
+            this.LastObjectState = lastObjectState ?? throw new Exception("Last ObjectState is not defined for " + roleType.Name + " in type " + roleType.AssociationType.ObjectType.Name);
         }
 
-        public RelationType ObjectState { get; set; }
+        public RoleType ObjectState { get; set; }
 
-        public RelationType PreviousObjectState { get; set; }
+        public RoleType PreviousObjectState { get; set; }
 
-        public RelationType LastObjectState { get; set; }
+        public RoleType LastObjectState { get; set; }
     }
 }

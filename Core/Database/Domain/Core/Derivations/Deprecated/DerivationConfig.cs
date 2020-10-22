@@ -7,6 +7,10 @@ namespace Allors.Domain.Derivations
 {
     public partial class DerivationConfig
     {
-        public int MaxDomainDerivationCycles { get; set; } = 100;
+        public int MaxCycles { get; set; } = 0;
+
+        public int MaxIterations { get; set; } = 0;
+
+        public int MaxPreparations { get; set; } = 0;
     }
 }

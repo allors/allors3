@@ -36,7 +36,7 @@ namespace Allors.Data
                         {
                             if (roleType.IsOne)
                             {
-                                var role = @object.Strategy.GetCompositeRole(roleType.RelationType);
+                                var role = @object.Strategy.GetCompositeRole(roleType);
                                 if (role != null)
                                 {
                                     objects.Add(role);
@@ -48,7 +48,7 @@ namespace Allors.Data
                             }
                             else
                             {
-                                var roles = @object.Strategy.GetCompositeRoles(roleType.RelationType);
+                                var roles = @object.Strategy.GetCompositeRoles(roleType);
                                 foreach (IObject role in roles)
                                 {
                                     objects.Add(role);
@@ -64,7 +64,7 @@ namespace Allors.Data
                     {
                         if (associationType.IsOne)
                         {
-                            var association = @object.Strategy.GetCompositeAssociation(associationType.RelationType);
+                            var association = @object.Strategy.GetCompositeAssociation(associationType);
                             if (association != null)
                             {
                                 objects.Add(association);
@@ -76,7 +76,7 @@ namespace Allors.Data
                         }
                         else
                         {
-                            var associations = @object.Strategy.GetCompositeAssociations(associationType.RelationType);
+                            var associations = @object.Strategy.GetCompositeAssociations(associationType);
                             foreach (IObject association in associations)
                             {
                                 objects.Add(association);

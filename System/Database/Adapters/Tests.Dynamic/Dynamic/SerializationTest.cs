@@ -102,28 +102,28 @@ namespace Allors.Database.Adapters
                                 switch (unitTypeTag)
                                 {
                                     case UnitTags.String:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateString(stringLength));
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateString(stringLength));
                                         break;
                                     case UnitTags.Integer:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateInteger());
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateInteger());
                                         break;
                                     case UnitTags.Decimal:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateDecimal());
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateDecimal());
                                         break;
                                     case UnitTags.Float:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateFloat());
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateFloat());
                                         break;
                                     case UnitTags.Boolean:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateBoolean());
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateBoolean());
                                         break;
                                     case UnitTags.DateTime:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateDateTime());
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateDateTime());
                                         break;
                                     case UnitTags.Unique:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateUnique());
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateUnique());
                                         break;
                                     case UnitTags.Binary:
-                                        allorsObject.Strategy.SetUnitRole(role.RelationType, this.ValueGenerator.GenerateBinary(10));
+                                        allorsObject.Strategy.SetUnitRole(role, this.ValueGenerator.GenerateBinary(10));
                                         break;
                                     default:
                                         throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag);
@@ -162,7 +162,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.SetCompositeRole(relationType, role);
+                                association.Strategy.SetCompositeRole(relationType.RoleType, role);
                             }
                         }
                     }
@@ -207,7 +207,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.SetCompositeRole(relationType, role);
+                                association.Strategy.SetCompositeRole(relationType.RoleType, role);
                             }
                         }
                     }
@@ -253,7 +253,7 @@ namespace Allors.Database.Adapters
                                 roles.Remove(0);
                             }
 
-                            association.Strategy.AddCompositeRole(relationType, role);
+                            association.Strategy.AddCompositeRole(relationType.RoleType, role);
 
                             if (addTwice)
                             {
@@ -264,7 +264,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.AddCompositeRole(relationType, role);
+                                association.Strategy.AddCompositeRole(relationType.RoleType, role);
                             }
                             else
                             {
@@ -324,7 +324,7 @@ namespace Allors.Database.Adapters
                                 roles.Remove(0);
                             }
 
-                            association.Strategy.AddCompositeRole(relationType, role);
+                            association.Strategy.AddCompositeRole(relationType.RoleType, role);
 
                             if (addTwice)
                             {
@@ -335,7 +335,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.AddCompositeRole(relationType, role);
+                                association.Strategy.AddCompositeRole(relationType.RoleType, role);
                             }
                             else
                             {

@@ -21,7 +21,7 @@ namespace Allors.Domain.Derivations.Default
 
         public Derivation(ISession session, DerivationConfig config = null)
         {
-            this.Config = config ?? new DerivationConfig();
+            this.DerivaitonConfig = config ?? new DerivationConfig();
             this.Session = session;
 
             this.Id = Guid.NewGuid();
@@ -34,12 +34,11 @@ namespace Allors.Domain.Derivations.Default
             this.MarkedBacklog = new HashSet<Object>();
 
             this.guard = false;
-            this.DomainDerivationCount = 0;
         }
 
         public ISession Session { get; }
 
-        public DerivationConfig Config { get; }
+        public DerivationConfig DerivaitonConfig { get; }
 
         public Guid Id { get; }
 
@@ -52,8 +51,6 @@ namespace Allors.Domain.Derivations.Default
         ICycle IDerivation.Cycle => this.Cycle;
 
         IAccumulatedChangeSet IDerivation.ChangeSet => this.ChangeSet;
-
-        public int DomainDerivationCount { get; set; }
 
         public object this[string name]
         {
@@ -96,7 +93,7 @@ namespace Allors.Domain.Derivations.Default
 
                 while (derivedObjects.Any() || this.MarkedBacklog.Any())
                 {
-                    if (this.Config.MaxCycles != 0 && count++ > this.Config.MaxCycles)
+                    if (this.DerivaitonConfig.MaxCycles != 0 && count++ > this.DerivaitonConfig.MaxCycles)
                     {
                         throw new Exception("Maximum amount of cycles reached");
                     }

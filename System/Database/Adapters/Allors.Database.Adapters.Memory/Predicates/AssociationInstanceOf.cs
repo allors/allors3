@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal override ThreeValuedLogic Evaluate(Strategy strategy)
         {
-            var association = strategy.GetCompositeAssociation(this.associationType.RelationType);
+            var association = strategy.GetCompositeAssociation(this.associationType);
 
             if (association == null)
             {

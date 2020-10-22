@@ -7,10 +7,10 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Text;
-
-    using Allors;
-    using Allors.Domain;
+    using Domain;
+    using Meta;
     using Xunit;
 
     /// <summary>
@@ -1925,7 +1925,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean, "Oops");
                     }
                     catch (ArgumentException)
                     {
@@ -1938,7 +1938,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal, "Oops");
                     }
                     catch
                     {
@@ -1951,7 +1951,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble, "Oops");
                     }
                     catch
                     {
@@ -1964,7 +1964,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger.RelationType, "Oops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger, "Oops");
                     }
                     catch
                     {
@@ -1977,7 +1977,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsString.RelationType, 0);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsString, 0);
                     }
                     catch
                     {
@@ -1990,7 +1990,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger.RelationType, 0L);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger, 0L);
                     }
                     catch
                     {
@@ -2004,7 +2004,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean, c1B);
                     }
                     catch
                     {
@@ -2017,7 +2017,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal, c1B);
                     }
                     catch
                     {
@@ -2030,7 +2030,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble, c1B);
                     }
                     catch
                     {
@@ -2043,7 +2043,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger.RelationType, c1B);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger, c1B);
                     }
                     catch
                     {
@@ -2056,7 +2056,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsString.RelationType, 0);
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsString, 0);
                     }
                     catch
                     {
@@ -2070,7 +2070,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsBoolean.RelationType, true);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsBoolean, true);
                     }
                     catch
                     {
@@ -2083,7 +2083,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsDecimal.RelationType, DateTime.Now);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsDecimal, DateTime.Now);
                     }
                     catch
                     {
@@ -2096,7 +2096,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsDouble.RelationType, 0.01m);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsDouble, 0.01m);
                     }
                     catch
                     {
@@ -2109,7 +2109,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsInteger.RelationType, 1);
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsInteger, 1);
                     }
                     catch
                     {
@@ -2122,7 +2122,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsString.RelationType, "hello");
+                        c1A.Strategy.SetUnitRole(m.C2.C2AllorsString, "hello");
                     }
                     catch
                     {
@@ -2136,7 +2136,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetUnitRole(m.C1.C1C1one2one.RelationType, "Ooops");
+                        c1A.Strategy.SetUnitRole(m.C1.C1C1one2one, "Ooops");
                     }
                     catch
                     {
@@ -2144,6 +2144,121 @@ namespace Allors.Database.Adapters
                     }
 
                     Assert.True(exceptionThrown);
+                }
+            }
+        }
+
+        [Fact]
+        public virtual void OnAccessUnitRole()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Session.Database.State().M;
+
+                foreach (var mark in this.Markers)
+                {
+                    var list = new List<(IStrategy strategy, IRoleType roleType)>();
+
+                    void OnAccessUnitRole(IStrategy strategy, IRoleType roleType) => list.Add((strategy, roleType));
+
+                    {
+                        this.Session.OnAccessUnitRole = OnAccessUnitRole;
+
+                        var c1 = C1.Create(this.Session);
+
+                        c1.C1AllorsBinary = new byte[] { 0 };
+                        c1.I1AllorsBinary = new byte[] { 1, 2 };
+
+                        c1.C1AllorsBoolean = true;
+                        c1.I1AllorsBoolean = false;
+
+                        c1.C1AllorsDateTime = DateTime.UtcNow;
+                        c1.I1AllorsDateTime = DateTime.UtcNow.AddDays(1);
+
+                        c1.C1AllorsDecimal = 0.1m;
+                        c1.I1AllorsDecimal = 1.0m;
+
+                        c1.C1AllorsDouble = 0.1f;
+                        c1.I1AllorsDouble = 1.0f;
+
+                        c1.C1AllorsInteger = 0;
+                        c1.I1AllorsInteger = 1;
+
+                        c1.C1AllorsString = "a";
+                        c1.I1AllorsString = "b";
+
+                        c1.C1AllorsUnique = new Guid("9A6A32E8-87FA-4423-9885-CF524662D5B8");
+                        c1.I1AllorsUnique = Guid.Empty;
+
+                        mark();
+
+                        var c1AllorsBinary = c1.C1AllorsBinary;
+                        var existI1AllorsBinary = c1.ExistI1AllorsBinary;
+                        var s1AllorsBinary = c1.S1AllorsBinary;
+
+                        var c1AllorsBoolean = c1.C1AllorsBoolean;
+                        var existI1AllorsBoolean = c1.ExistI1AllorsBoolean;
+                        var s1AllorsBoolean = c1.S1AllorsBoolean;
+
+                        var c1AllorsDateTime = c1.C1AllorsDateTime;
+                        var existI1AllorsDateTime = c1.ExistI1AllorsDateTime;
+                        var s1AllorsDateTime = c1.S1AllorsDateTime;
+
+                        var c1AllorsDecimal = c1.C1AllorsDecimal;
+                        var existI1AllorsDecimal = c1.ExistI1AllorsDecimal;
+                        var s1AllorsDecimal = c1.S1AllorsDecimal;
+
+                        var c1AllorsDouble = c1.C1AllorsDouble;
+                        var existI1AllorsDouble = c1.ExistI1AllorsDouble;
+                        var s1AllorsDouble = c1.S1AllorsDouble;
+
+                        var c1AllorsInteger = c1.C1AllorsInteger;
+                        var existI1AllorsInteger = c1.ExistI1AllorsInteger;
+                        var s1AllorsInteger = c1.S1AllorsInteger;
+
+                        var c1AllorsString = c1.C1AllorsString;
+                        var existI1AllorsString = c1.ExistI1AllorsString;
+                        var s1AllorsString = c1.S1AllorsString;
+
+                        var c1AllorsUnique = c1.C1AllorsUnique;
+                        var existI1AllorsUnique = c1.ExistI1AllorsUnique;
+                        var s1AllorsUnique = c1.S1AllorsUnique;
+
+                        Assert.Equal(24, list.Count);
+
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsBinary), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsBinary), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsBinary), list);
+
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsBoolean), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsBoolean), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsBoolean), list);
+
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsDateTime), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsDateTime), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsDateTime), list);
+
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsDecimal), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsDecimal), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsDecimal), list);
+
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsDouble), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsDouble), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsDouble), list);
+
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsInteger), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsInteger), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsInteger), list);
+                        
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsString), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsString), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsString), list);
+                        
+                        Assert.Contains((c1.Strategy, m.C1.C1AllorsUnique), list);
+                        Assert.Contains((c1.Strategy, m.C1.I1AllorsUnique), list);
+                        Assert.Contains((c1.Strategy, m.C1.S1AllorsUnique), list);
+                    }
                 }
             }
         }

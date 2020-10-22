@@ -198,7 +198,7 @@ namespace Allors.Api.Json.Push
                         {
                             var unitType = (IUnit)roleType.ObjectType;
                             var role = UnitConvert.Parse(unitType.Id, pushRequestRole.S);
-                            obj.Strategy.SetUnitRole(roleType.RelationType, role);
+                            obj.Strategy.SetUnitRole(roleType, role);
                         }
                         else
                         {
@@ -207,7 +207,7 @@ namespace Allors.Api.Json.Push
                                 var roleId = (string)pushRequestRole.S;
                                 if (string.IsNullOrEmpty(roleId))
                                 {
-                                    obj.Strategy.RemoveCompositeRole(roleType.RelationType);
+                                    obj.Strategy.RemoveCompositeRole(roleType);
                                 }
                                 else
                                 {
@@ -218,7 +218,7 @@ namespace Allors.Api.Json.Push
                                     }
                                     else
                                     {
-                                        obj.Strategy.SetCompositeRole(roleType.RelationType, role);
+                                        obj.Strategy.SetCompositeRole(roleType, role);
                                     }
                                 }
                             }
@@ -239,7 +239,7 @@ namespace Allors.Api.Json.Push
                                         {
                                             foreach (var role in roles)
                                             {
-                                                obj.Strategy.AddCompositeRole(roleType.RelationType, role);
+                                                obj.Strategy.AddCompositeRole(roleType, role);
                                             }
                                         }
                                     }
@@ -260,7 +260,7 @@ namespace Allors.Api.Json.Push
                                         {
                                             foreach (var role in roles)
                                             {
-                                                obj.Strategy.RemoveCompositeRole(roleType.RelationType, role);
+                                                obj.Strategy.RemoveCompositeRole(roleType, role);
                                             }
                                         }
                                     }

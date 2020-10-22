@@ -83,7 +83,7 @@ namespace Allors.Database.Adapters.Memory
                 return objects;
             }
 
-            return this.defaultObjectArray ?? (this.defaultObjectArray = (IObject[])Array.CreateInstance(clrType, 0));
+            return this.defaultObjectArray ??= (IObject[])Array.CreateInstance(clrType, 0);
         }
 
         public override IObject[] ToArray(Type type)

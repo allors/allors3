@@ -24,6 +24,31 @@ namespace Allors
         /// The scope for this session.
         /// </summary>
         ISessionStateLifecycle StateLifecycle { get; }
+        
+        /// <summary>
+        /// An OnAccessUnitRole receives notifications for get operations for a unit role.
+        /// </summary>
+        Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
+
+        /// <summary>
+        /// An OnAccessCompositeRole receives notifications for get operations for a object role.
+        /// </summary>
+        Action<IStrategy, IRoleType> OnAccessCompositeRole { get; set; }
+
+        /// <summary>
+        /// An OnAccessCompositesRole receives notifications for get operations for objects role.
+        /// </summary>
+        Action<IStrategy, IRoleType> OnAccessCompositesRole { get; set; }
+
+        /// <summary>
+        /// An OnAccessCompositeAssociation receives notifications for get operations for an object association.
+        /// </summary>
+        Action<IStrategy, IAssociationType> OnAccessCompositeAssociation { get; set; }
+
+        /// <summary>
+        /// An OnAccessCompositesAssociation receives notifications for get operations for objects association.
+        /// </summary>
+        Action<IStrategy, IAssociationType> OnAccessCompositesAssociation { get; set; }
 
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,

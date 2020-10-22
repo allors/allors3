@@ -24,18 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\EmbeddedTemplate.odt" />
-    <None Remove="Resources\logo.png" />
-    <None Remove="Resources\PdfAs.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\logo.png" />
-    <EmbeddedResource Include="Resources\PdfAs.jpg" />
-    <EmbeddedResource Include="Resources\EmbeddedTemplate.odt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -100,7 +100,7 @@ namespace Allors.Database.Adapters
                     }
                     else if (!(unit is double))
                     {
-                        throw new ArgumentException("RoleType is not a Double.");
+                        throw new ArgumentException("RoleType is not a Float.");
                     }
 
                     break;

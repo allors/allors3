@@ -28,7 +28,7 @@ namespace Allors.Database.Adapters
         {
             foreach (var role in allorsObject.Strategy.Class.DatabaseRoleTypes)
             {
-                allorsObject.Strategy.GetRole(role.RelationType);
+                allorsObject.Strategy.GetRole(role);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters
         {
             foreach (var association in allorsObject.Strategy.Class.DatabaseAssociationTypes)
             {
-                allorsObject.Strategy.GetAssociation(association.RelationType);
+                allorsObject.Strategy.GetAssociation(association);
             }
         }
     }

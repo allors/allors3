@@ -68,26 +68,22 @@ namespace Allors.Domain
             private readonly Cache<TKey, TObject> cache;
             private readonly ISession session;
             private readonly IClass @class;
-            private readonly IRelationType relationType;
+            private readonly IRoleType roleType;
 
             internal CacheMerger(Cache<TKey, TObject> cache)
             {
                 this.cache = cache;
                 this.session = cache.Session;
                 this.@class = (IClass)this.session.Database.ObjectFactory.GetObjectTypeForType(typeof(TObject));
-                this.relationType = this.cache.RoleType.RelationType;
+                this.roleType = this.cache.RoleType;
             }
 
             public Func<TKey, Action<TObject>, TObject> Action() =>
                 (id, action) =>
                 {
-                    var @object = this.cache[id];
-                    if (@object == null)
-                    {
-                        @object = (TObject)Allors.ObjectBuilder.Build(this.session, this.@class);
-                    }
+                    var @object = this.cache[id] ?? (TObject)Allors.ObjectBuilder.Build(this.session, this.@class);
 
-                    @object.Strategy.SetUnitRole(this.relationType, id);
+                    @object.Strategy.SetUnitRole(this.roleType, id);
                     action(@object);
 
                     return @object;

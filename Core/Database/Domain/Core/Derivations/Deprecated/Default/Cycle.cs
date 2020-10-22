@@ -46,7 +46,7 @@ namespace Allors.Domain.Derivations.Default
         {
             try
             {
-                var config = this.Derivation.Config;
+                var config = this.Derivation.DerivaitonConfig;
                 var count = 1;
 
                 var postDeriveBacklog = new List<Object>();

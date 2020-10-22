@@ -3235,8 +3235,8 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Shortcut
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
-                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
+                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent = this.Session.Except(firstExtent, secondExtent);
 
                 Assert.Empty(extent);
@@ -3245,8 +3245,8 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
-                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
+                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent = this.Session.Except(firstExtent, secondExtent);
 
                 Assert.Single(extent);
@@ -3414,8 +3414,8 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Shortcut
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
-                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
+                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent = this.Session.Intersect(firstExtent, secondExtent);
 
                 Assert.Single(extent);
@@ -3424,8 +3424,8 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
-                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
+                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent = this.Session.Intersect(firstExtent, secondExtent);
 
                 Assert.Empty(extent);
@@ -14306,7 +14306,7 @@ namespace Allors.Database.Adapters
                     this.AssertC4(extent, false, false, false, false);
 
                     // Shortcut
-                    inExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                    inExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
 
                     // if (useOperator)
                     // {
@@ -16735,8 +16735,8 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Shortcut
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
-                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
+                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent = this.Session.Union(firstExtent, secondExtent);
 
                 Assert.Single(extent);
@@ -16745,8 +16745,8 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
-                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
+                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent = this.Session.Union(firstExtent, secondExtent);
 
                 Assert.Equal(3, extent.Count);
@@ -17116,7 +17116,7 @@ namespace Allors.Database.Adapters
 
                 // Sortcut
                 // Shortcut
-                var extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                var extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
 
                 Assert.Single(extent);
                 this.AssertC1(extent, false, true, false, false);
@@ -17126,7 +17126,7 @@ namespace Allors.Database.Adapters
 
                 // With Filter
                 // Shortcut
-                extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbracadabra");
 
                 Assert.Empty(extent);
@@ -17137,7 +17137,7 @@ namespace Allors.Database.Adapters
 
                 // With Sort
                 // Shortcut
-                extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies.RelationType);
+                extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
                 extent.AddSort(m.C1.C1AllorsInteger);
 
                 Assert.Single(extent);

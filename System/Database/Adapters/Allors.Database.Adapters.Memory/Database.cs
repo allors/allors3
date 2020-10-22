@@ -132,24 +132,26 @@ namespace Allors.Database.Adapters.Memory
 
         public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType) => this.CompositeSharedChecks(strategy, roleType, null);
 
-        public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType, IObject role)
+        public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
         {
-            this.CompositeSharedChecks(strategy, roleType, role);
+            this.CompositeSharedChecks(strategy, roleType, roleStrategy);
             if (!roleType.IsOne)
             {
                 throw new ArgumentException("RelationType " + roleType + " has multiplicity many.");
             }
         }
 
-        public void CompositeRolesChecks(IStrategy strategy, IRoleType roleType, IObject role)
+        public Strategy CompositeRolesChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
         {
-            this.CompositeSharedChecks(strategy, roleType, role);
+            this.CompositeSharedChecks(strategy, roleType, roleStrategy);
             if (!roleType.IsMany)
             {
                 throw new ArgumentException("RelationType " + roleType + " has multiplicity one.");
             }
-        }
 
+            return roleStrategy;
+        }
+        
         public virtual void Init()
         {
             this.Session.Init();
@@ -185,33 +187,33 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        private void CompositeSharedChecks(IStrategy strategy, IRoleType roleType, IObject role)
+        private void CompositeSharedChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
         {
             if (!this.ContainsConcreteClass(roleType.AssociationType.ObjectType, strategy.Class))
             {
                 throw new ArgumentException(strategy.Class + " has no roleType with role " + roleType + ".");
             }
 
-            if (role != null)
+            if (roleStrategy != null)
             {
-                if (!strategy.Session.Equals(role.Strategy.Session))
+                if (!strategy.Session.Equals(roleStrategy.Session))
                 {
-                    throw new ArgumentException(role + " is from different session");
+                    throw new ArgumentException(roleStrategy + " is from different session");
                 }
 
-                if (role.Strategy.IsDeleted)
+                if (roleStrategy.IsDeleted)
                 {
                     throw new ArgumentException(roleType + " on object " + strategy + " is removed.");
                 }
 
                 if (!(roleType.ObjectType is IComposite compositeType))
                 {
-                    throw new ArgumentException(role + " has no CompositeType");
+                    throw new ArgumentException(roleStrategy + " has no CompositeType");
                 }
 
-                if (!compositeType.IsAssignableFrom(role.Strategy.Class))
+                if (!compositeType.IsAssignableFrom(roleStrategy.Class))
                 {
-                    throw new ArgumentException(role.Strategy.Class + " is not compatible with type " + roleType.ObjectType + " of role " + roleType + ".");
+                    throw new ArgumentException(roleStrategy.Class + " is not compatible with type " + roleType.ObjectType + " of role " + roleType + ".");
                 }
             }
         }

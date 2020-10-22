@@ -226,7 +226,7 @@ $if(associationType.IsMany)$
 		{
 			get
 			{
-				return Strategy.GetCompositeAssociations(Meta.$associationType.Name$.RelationType);
+				return Strategy.GetCompositeAssociations(Meta.$associationType.Name$);
 			}
 		}
 
@@ -234,7 +234,7 @@ $if(associationType.IsMany)$
 		{
 			get
 			{
-				return Strategy.ExistCompositeAssociations(Meta.$associationType.Name$.RelationType);
+				return Strategy.ExistCompositeAssociations(Meta.$associationType.Name$);
 			}
 		}
 $else$
@@ -242,7 +242,7 @@ $else$
 		{
 			get
 			{
-				return ($associationType.ObjectType.Name$) Strategy.GetCompositeAssociation(Meta.$associationType.Name$.RelationType);
+				return ($associationType.ObjectType.Name$) Strategy.GetCompositeAssociation(Meta.$associationType.Name$);
 			}
 		}
 
@@ -250,7 +250,7 @@ $else$
 		{
 			get
 			{
-				return Strategy.ExistCompositeAssociation(Meta.$associationType.Name$.RelationType);
+				return Strategy.ExistCompositeAssociation(Meta.$associationType.Name$);
 			}
 		}
 $endif$
@@ -263,24 +263,24 @@ $if(roleClass.ObjectType.IsUnit)$
 		{
 			get
 			{
-				return ($roleClass_ObjectType(roleClass)$) Strategy.GetUnitRole(Meta.$roleClass.Name$.RelationType);
+				return ($roleClass_ObjectType(roleClass)$) Strategy.GetUnitRole(Meta.$roleClass.Name$);
 			}
 			set
 			{
-				Strategy.SetUnitRole(Meta.$roleClass.Name$.RelationType, value);
+				Strategy.SetUnitRole(Meta.$roleClass.Name$, value);
 			}
 		}
 
 		virtual public bool Exist$roleClass.SingularName${
 			get
 			{
-				return Strategy.ExistUnitRole(Meta.$roleClass.Name$.RelationType);
+				return Strategy.ExistUnitRole(Meta.$roleClass.Name$);
 			}
 		}
 
 		virtual public void Remove$roleClass.SingularName$()
 		{
-			Strategy.RemoveUnitRole(Meta.$roleClass.Name$.RelationType);
+			Strategy.RemoveUnitRole(Meta.$roleClass.Name$);
 		}
 $else$
 $if(roleClass.IsMany)$
@@ -288,46 +288,46 @@ $if(roleClass.IsMany)$
 		{
 			get
 			{
-				return Strategy.GetCompositeRoles(Meta.$roleClass.Name$.RelationType);
+				return Strategy.GetCompositeRoles(Meta.$roleClass.Name$);
 			}
 			set
 			{
-				Strategy.SetCompositeRoles(Meta.$roleClass.Name$.RelationType, value);
+				Strategy.SetCompositeRoles(Meta.$roleClass.Name$, value);
 			}
 		}
 
 		virtual public void Add$roleClass.SingularName$ ($roleClass_ObjectType(roleClass)$ value)
 		{
-			Strategy.AddCompositeRole(Meta.$roleClass.Name$.RelationType, value);
+			Strategy.AddCompositeRole(Meta.$roleClass.Name$, value);
 		}
 
 		virtual public void Remove$roleClass.SingularName$ ($roleClass_ObjectType(roleClass)$ value)
 		{
-			Strategy.RemoveCompositeRole(Meta.$roleClass.Name$.RelationType, value);
+			Strategy.RemoveCompositeRole(Meta.$roleClass.Name$, value);
 		}
 
 		virtual public bool Exist$roleClass.PluralName$
 		{
 			get
 			{
-				return Strategy.ExistCompositeRoles(Meta.$roleClass.Name$.RelationType);
+				return Strategy.ExistCompositeRoles(Meta.$roleClass.Name$);
 			}
 		}
 
 		virtual public void Remove$roleClass.PluralName$()
 		{
-			Strategy.RemoveCompositeRoles(Meta.$roleClass.Name$.RelationType);
+			Strategy.RemoveCompositeRoles(Meta.$roleClass.Name$);
 		}
 $else$
 		virtual public $roleClass_ObjectType(roleClass)$ $roleClass.SingularName$
 		{
 			get
 			{
-				return ($roleClass_ObjectType(roleClass)$) Strategy.GetCompositeRole(Meta.$roleClass.Name$.RelationType);
+				return ($roleClass_ObjectType(roleClass)$) Strategy.GetCompositeRole(Meta.$roleClass.Name$);
 			}
 			set
 			{
-				Strategy.SetCompositeRole(Meta.$roleClass.Name$.RelationType, value);
+				Strategy.SetCompositeRole(Meta.$roleClass.Name$, value);
 			}
 		}
 
@@ -335,13 +335,13 @@ $else$
 		{
 			get
 			{
-				return Strategy.ExistCompositeRole(Meta.$roleClass.Name$.RelationType);
+				return Strategy.ExistCompositeRole(Meta.$roleClass.Name$);
 			}
 		}
 
 		virtual public void Remove$roleClass.SingularName$()
 		{
-			Strategy.RemoveCompositeRole(Meta.$roleClass.Name$.RelationType);
+			Strategy.RemoveCompositeRole(Meta.$roleClass.Name$);
 		}
 $endif$
 $endif$
