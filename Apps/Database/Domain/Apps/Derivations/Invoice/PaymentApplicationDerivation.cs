@@ -17,7 +17,7 @@ namespace Allors.Domain
         public PaymentApplicationDerivation(M m) : base(m, new Guid("D3D3B1B9-4619-4720-8E73-04419896B3AE")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(this.M.PaymentApplication.Class)
+                new CreatedPattern(m.PaymentApplication.Class)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

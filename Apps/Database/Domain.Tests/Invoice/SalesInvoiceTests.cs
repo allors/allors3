@@ -12,6 +12,7 @@ namespace Allors.Domain
     using Resources;
     using Xunit;
     using Allors.Meta;
+    using System.Collections.Generic;
 
     public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
@@ -1419,6 +1420,48 @@ namespace Allors.Domain
         }
 
         [Fact]
+        public void OnCreateValidateBillToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
+
+            this.Session.Derive(false);
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnCreateValidateShipToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
+
+            this.Session.Derive(false);
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnCreateSyncInvoiceItemSyncedInvoice()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            foreach(InvoiceItem invoiceItem in invoice.InvoiceItems)
+            {
+                Assert.Equal(invoiceItem.SyncedInvoice, invoice);
+            }
+        }
+
+        [Fact]
         public void OnChangedRoleBillToCustomerDerivePreviousBillToCustomer()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
@@ -1722,6 +1765,109 @@ namespace Allors.Domain
 
             Assert.Single(invoice.Customers);
             Assert.Contains(customer2, invoice.Customers);
+        }
+
+        [Fact]
+        public void OnChangedRoleCustomerRelationshipFromDateValidateBillToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+
+            customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleCustomerRelationshipThroughDateValidateBillToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+
+            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleCustomerRelationshipFromDateValidateShipToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+
+            customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleCustomerRelationshipThroughDateValidateShipToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+
+            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleInvoiceDateValidateBillToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+
+            invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First.FromDate.AddDays(-1);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleInvoiceDateValidateShipToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
+
+            var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
+
+            invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First.FromDate.AddDays(-1);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleInvoiceItemSyncInvoiceItemSyncedInvoice()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            var newItem = new SalesInvoiceItemBuilder(this.Session).WithDefaults().Build();
+            invoice.AddSalesInvoiceItem(newItem);
+            this.Session.Derive();
+
+            Assert.Equal(newItem.SyncedInvoice, invoice);
         }
     }
 
