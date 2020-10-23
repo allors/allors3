@@ -179,7 +179,6 @@ namespace Allors.Database.Adapters.SqlClient
         public virtual object GetUnitRole(IRoleType roleType)
         {
             this.AssertExist();
-            this.Session.OnAccessUnitRole?.Invoke(this, roleType);
             return this.Roles.GetUnitRole(roleType);
         }
 
@@ -199,7 +198,6 @@ namespace Allors.Database.Adapters.SqlClient
         public virtual IObject GetCompositeRole(IRoleType roleType)
         {
             this.AssertExist();
-            this.Session.OnAccessCompositeRole?.Invoke(this, roleType);
             var role = this.Roles.GetCompositeRole(roleType);
             return role == null ? null : this.Session.State.GetOrCreateReferenceForExistingObject(role.Value, this.Session).Strategy.GetObject();
         }
@@ -233,7 +231,6 @@ namespace Allors.Database.Adapters.SqlClient
         public virtual Allors.Extent GetCompositeRoles(IRoleType roleType)
         {
             this.AssertExist();
-            this.Session.OnAccessCompositesRole?.Invoke(this, roleType);
             return new ExtentRoles(this, roleType);
         }
 
@@ -328,7 +325,6 @@ namespace Allors.Database.Adapters.SqlClient
         public virtual IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertExist();
-            this.Session.OnAccessCompositeAssociation?.Invoke(this, associationType);
             var association = this.Session.GetAssociation(this, associationType);
             return association?.Strategy.GetObject();
         }
@@ -338,7 +334,6 @@ namespace Allors.Database.Adapters.SqlClient
         public virtual Allors.Extent GetCompositeAssociations(IAssociationType associationType)
         {
             this.AssertExist();
-            this.Session.OnAccessCompositesAssociation?.Invoke(this, associationType);
             return new ExtentAssociations(this, associationType);
         }
 

@@ -2916,52 +2916,5 @@ namespace Allors.Database.Adapters
                 }
             }
         }
-
-        [Fact]
-        public virtual void OnAccessCompositeRole()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Session.Database.State().M;
-
-                foreach (var mark in this.Markers)
-                {
-                    for (var run = 0; run < Settings.NumberOfRuns; run++)
-                    {
-                        var list = new List<(IStrategy strategy, IRoleType roleType)>();
-
-                        void OnAccessCompositeRole(IStrategy strategy, IRoleType roleType) => list.Add((strategy, roleType));
-
-                        this.Session.OnAccessCompositeRole = OnAccessCompositeRole;
-
-                        var c1a = C1.Create(this.Session);
-                        var c1b = C1.Create(this.Session);
-                        var c1c = C1.Create(this.Session);
-                        var c1d = C1.Create(this.Session);
-
-                        var c2a = C2.Create(this.Session);
-                        var c2b = C2.Create(this.Session);
-
-                        c1a.C1C2one2one = c2a;
-                        c1b.C1C2one2one = c2b;
-
-                        mark();
-
-                        var c1aC1C2one2one = c1a.C1C2one2one;
-                        var c1bExistC1C2one2one = c1b.ExistC1C2one2one;
-                        var c1cC1C2one2one = c1c.C1C2one2one;
-                        var c1dExistC1C2one2one = c1d.ExistC1C2one2one;
-
-                        Assert.Equal(4, list.Count);
-
-                        Assert.Contains((c1a.Strategy, m.C1.C1C2one2one), list);
-                        Assert.Contains((c1b.Strategy, m.C1.C1C2one2one), list);
-                        Assert.Contains((c1c.Strategy, m.C1.C1C2one2one), list);
-                        Assert.Contains((c1d.Strategy, m.C1.C1C2one2one), list);
-                    }
-                }
-            }
-        }
     }
 }

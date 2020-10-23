@@ -42,17 +42,7 @@ namespace Allors.Database.Adapters.Npgsql
         IDatabase ISession.Database => this.Database;
 
         public ISessionStateLifecycle StateLifecycle { get; }
-
-        public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
-
-        public Action<IStrategy, IRoleType> OnAccessCompositeRole { get; set; }
-
-        public Action<IStrategy, IRoleType> OnAccessCompositesRole { get; set; }
-
-        public Action<IStrategy, IAssociationType> OnAccessCompositeAssociation { get; set; }
-
-        public Action<IStrategy, IAssociationType> OnAccessCompositesAssociation { get; set; }
-
+        
         public Database Database { get; }
 
         private Prefetcher Prefetcher { get; }

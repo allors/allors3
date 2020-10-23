@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters.Memory
 
         public override IComposite ObjectType => (IComposite)this.roleType.ObjectType;
 
-        internal override Session Session => this.associationStrategy.MemorySession;
+        internal override Session Session => this.associationStrategy.Session;
 
         public override Allors.Extent AddSort(IRoleType sortRoleType) => throw new NotSupportedException();
 
@@ -45,7 +45,7 @@ namespace Allors.Database.Adapters.Memory
         public override bool Contains(object value)
         {
             var strategies = this.GetStrategies();
-            var valueStrategy = this.associationStrategy.MemorySession.InstantiateMemoryStrategy(((IObject)value).Id);
+            var valueStrategy = this.associationStrategy.Session.InstantiateMemoryStrategy(((IObject)value).Id);
             return strategies.Contains(valueStrategy);
         }
 
