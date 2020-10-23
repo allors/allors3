@@ -29,13 +29,14 @@ namespace Allors.Domain
             var credit = this.Meta.Credit;
             var setPaid = this.Meta.SetPaid;
             var delete = this.Meta.Delete;
+            var revise = this.Meta.Revise; // not implemented yet
 
-            config.Deny(this.ObjectType, readyForPosting, reopen, credit, setPaid, writeOff);
-            config.Deny(this.ObjectType, notPaid, send, cancelInvoice, reopen, delete);
-            config.Deny(this.ObjectType, partiallyPaid, send, cancelInvoice, reopen, delete);
-            config.Deny(this.ObjectType, paid, send, writeOff, cancelInvoice, reopen, setPaid, delete);
-            config.Deny(this.ObjectType, writtenOff, send, cancelInvoice, writeOff, credit, setPaid, delete, reopen);
-            config.Deny(this.ObjectType, cancelled, send, cancelInvoice, writeOff, credit, setPaid, delete);
+            config.Deny(this.ObjectType, readyForPosting, reopen, credit, setPaid, revise, writeOff);
+            config.Deny(this.ObjectType, notPaid, send, cancelInvoice, reopen, revise, delete);
+            config.Deny(this.ObjectType, partiallyPaid, send, cancelInvoice, reopen, revise, delete);
+            config.Deny(this.ObjectType, paid, send, writeOff, cancelInvoice, reopen, setPaid, revise, delete);
+            config.Deny(this.ObjectType, writtenOff, send, cancelInvoice, writeOff, credit, setPaid, delete, revise, reopen);
+            config.Deny(this.ObjectType, cancelled, send, cancelInvoice, writeOff, credit, setPaid, revise, delete);
 
             var except = new HashSet<OperandType>
             {

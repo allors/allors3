@@ -39,8 +39,8 @@ namespace Allors.Domain
             config.Deny(this.ObjectType, rejected, approve, reject, confirm, cancel, setPaid, createSalesInvoice, delete, revise, finishRevising);
             config.Deny(this.ObjectType, awaitingApproval, confirm, cancel, reopen, setPaid, delete, revise, finishRevising);
             config.Deny(this.ObjectType, notPaid, cancel, reject, approve, confirm, reopen, createSalesInvoice, delete, finishRevising);
-            config.Deny(this.ObjectType, partiallyPaid, cancel, reject, approve, confirm, reopen, createSalesInvoice, delete, finishRevising);
-            config.Deny(this.ObjectType, paid, cancel, reject, approve, confirm, reopen, createSalesInvoice, delete, finishRevising);
+            config.Deny(this.ObjectType, partiallyPaid, cancel, reject, approve, confirm, reopen, createSalesInvoice, revise, delete, finishRevising);
+            config.Deny(this.ObjectType, paid, cancel, reject, approve, confirm, reopen, createSalesInvoice, delete, revise, finishRevising);
 
             if (revising != null)
             {
