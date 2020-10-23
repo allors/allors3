@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters
     using Meta;
     using Xunit;
 
-    public abstract class NotificationTest : IDisposable
+    public abstract class OnAccessTest : IDisposable
     {
         protected abstract IProfile Profile { get; }
 
@@ -27,7 +27,7 @@ namespace Allors.Database.Adapters
         public abstract void Dispose();
 
         [Fact]
-        public virtual void OnAccessUnitRole()
+        public virtual void UnitRole()
         {
             foreach (var init in this.Inits)
             {
@@ -142,7 +142,7 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
-        public virtual void OnOne2OneAccessCompositeRole()
+        public virtual void RoleOne2One()
         {
             foreach (var init in this.Inits)
             {
@@ -189,7 +189,54 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
-        public virtual void One2ManyOnAccessCompositesRole()
+        public virtual void RoleMany2One()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Session.Database.State().M;
+
+                foreach (var mark in this.Markers)
+                {
+                    for (var run = 0; run < Settings.NumberOfRuns; run++)
+                    {
+                        var list = new List<(IStrategy strategy, IRoleType roleType)>();
+
+                        void OnAccessCompositeRole(IStrategy strategy, IRoleType roleType) => list.Add((strategy, roleType));
+
+                        this.OnAccess.OnAccessCompositeRole = OnAccessCompositeRole;
+
+                        var c1a = C1.Create(this.Session);
+                        var c1b = C1.Create(this.Session);
+                        var c1c = C1.Create(this.Session);
+                        var c1d = C1.Create(this.Session);
+
+                        var c2a = C2.Create(this.Session);
+                        var c2b = C2.Create(this.Session);
+
+                        c1a.C1C2many2one = c2a;
+                        c1b.C1C2many2one = c2b;
+
+                        mark();
+
+                        var c1aC1C2many2one = c1a.C1C2many2one;
+                        var c1bExistC1C2many2one = c1b.ExistC1C2many2one;
+                        var c1cC1C2many2one = c1c.C1C2many2one;
+                        var c1dExistC1C2many2one = c1d.ExistC1C2many2one;
+
+                        Assert.Equal(4, list.Count);
+
+                        Assert.Contains((c1a.Strategy, m.C1.C1C2many2one), list);
+                        Assert.Contains((c1b.Strategy, m.C1.C1C2many2one), list);
+                        Assert.Contains((c1c.Strategy, m.C1.C1C2many2one), list);
+                        Assert.Contains((c1d.Strategy, m.C1.C1C2many2one), list);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public virtual void RoleOne2Many()
         {
             foreach (var init in this.Inits)
             {
@@ -238,9 +285,58 @@ namespace Allors.Database.Adapters
             }
         }
 
+        [Fact]
+        public virtual void RoleMany2Many()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Session.Database.State().M;
+
+                foreach (var mark in this.Markers)
+                {
+                    for (var run = 0; run < Settings.NumberOfRuns; run++)
+                    {
+                        var list = new List<(IStrategy strategy, IRoleType roleType)>();
+
+                        void OnAccessCompositesRole(IStrategy strategy, IRoleType roleType) => list.Add((strategy, roleType));
+
+                        this.OnAccess.OnAccessCompositesRole = OnAccessCompositesRole;
+
+                        var c1a = C1.Create(this.Session);
+                        var c1b = C1.Create(this.Session);
+                        var c1c = C1.Create(this.Session);
+                        var c1d = C1.Create(this.Session);
+
+                        var c2a = C2.Create(this.Session);
+                        var c2b = C2.Create(this.Session);
+                        var c2c = C2.Create(this.Session);
+                        var c2d = C2.Create(this.Session);
+
+                        c1b.AddC1C2many2many(c2b);
+                        c1b.AddC1C2many2many(c2c);
+                        c1b.AddC1C2many2many(c2d);
+
+                        mark();
+
+                        var c1aC1C2many2many = c1a.C1C2many2manies;
+                        var c1bExistC1C2many2one = c1b.ExistC1C2many2manies;
+                        var c1cC1C2many2one = c1c.C1C2many2manies;
+                        var c1dExistC1C2many2one = c1d.ExistC1C2many2manies;
+
+                        Assert.Equal(4, list.Count);
+
+                        Assert.Contains((c1a.Strategy, m.C1.C1C2many2manies), list);
+                        Assert.Contains((c1b.Strategy, m.C1.C1C2many2manies), list);
+                        Assert.Contains((c1c.Strategy, m.C1.C1C2many2manies), list);
+                        Assert.Contains((c1d.Strategy, m.C1.C1C2many2manies), list);
+                    }
+                }
+            }
+        }
 
         [Fact]
-        public virtual void One2OneOnAccessCompositeAssociation()
+        public virtual void AssociationOne2One()
         {
             foreach (var init in this.Inits)
             {
@@ -287,5 +383,157 @@ namespace Allors.Database.Adapters
                 }
             }
         }
+
+        [Fact]
+        public virtual void AssociationOne2Many()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Session.Database.State().M;
+
+                foreach (var mark in this.Markers)
+                {
+                    for (var run = 0; run < Settings.NumberOfRuns; run++)
+                    {
+                        var list = new List<(IStrategy strategy, IAssociationType AssociationType)>();
+
+                        void OnAccessCompositeAssociation(IStrategy strategy, IAssociationType associationType) => list.Add((strategy, associationType));
+
+                        this.OnAccess.OnAccessCompositeAssociation = OnAccessCompositeAssociation;
+
+                        var c1a = C1.Create(this.Session);
+                        var c1b = C1.Create(this.Session);
+                        var c1c = C1.Create(this.Session);
+                        var c1d = C1.Create(this.Session);
+
+                        var c2a = C2.Create(this.Session);
+                        var c2b = C2.Create(this.Session);
+                        var c2c = C2.Create(this.Session);
+                        var c2d = C2.Create(this.Session);
+
+                        c1a.AddC1C2one2many(c2a);
+                        c1b.AddC1C2one2many(c2b);
+                        c1c.AddC1C2one2many(c2b);
+
+                        mark();
+
+                        var c2aC1WhereC1C2one2many = c2a.C1WhereC1C2one2many;
+                        var c2bExistC1WhereC1C2one2many = c2b.ExistC1WhereC1C2one2many;
+                        var c2cC1WhereC1C2one2many = c2c.C1WhereC1C2one2many;
+                        var c2dExistC1WhereC1C2one2many = c2d.ExistC1WhereC1C2one2many;
+
+                        Assert.Equal(4, list.Count);
+
+                        Assert.Contains((c2a.Strategy, m.C2.C1WhereC1C2one2many), list);
+                        Assert.Contains((c2b.Strategy, m.C2.C1WhereC1C2one2many), list);
+                        Assert.Contains((c2c.Strategy, m.C2.C1WhereC1C2one2many), list);
+                        Assert.Contains((c2d.Strategy, m.C2.C1WhereC1C2one2many), list);
+                    }
+                }
+            }
+        }
+        
+        [Fact]
+        public virtual void AssociationMany2One()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Session.Database.State().M;
+
+                foreach (var mark in this.Markers)
+                {
+                    for (var run = 0; run < Settings.NumberOfRuns; run++)
+                    {
+                        var list = new List<(IStrategy strategy, IAssociationType AssociationType)>();
+
+                        void OnAccessCompositesAssociation(IStrategy strategy, IAssociationType associationType) => list.Add((strategy, associationType));
+
+                        this.OnAccess.OnAccessCompositesAssociation = OnAccessCompositesAssociation;
+
+                        var c1a = C1.Create(this.Session);
+                        var c1b = C1.Create(this.Session);
+                        var c1c = C1.Create(this.Session);
+                        var c1d = C1.Create(this.Session);
+
+                        var c2a = C2.Create(this.Session);
+                        var c2b = C2.Create(this.Session);
+                        var c2c = C2.Create(this.Session);
+                        var c2d = C2.Create(this.Session);
+
+                        c1a.C1C2many2one = c2a;
+                        c1b.C1C2many2one = c2b;
+                        c1c.C1C2many2one = c2b;
+
+                        mark();
+
+                        var c2aC1WhereC1C2many2one = c2a.C1sWhereC1C2many2one;
+                        var c2bExistC1WhereC1C2many2one = c2b.ExistC1sWhereC1C2many2one;
+                        var c2cC1WhereC1C2many2one = c2c.C1sWhereC1C2many2one;
+                        var c2dExistC1WhereC1C2many2one = c2d.ExistC1sWhereC1C2many2one;
+
+                        Assert.Equal(4, list.Count);
+
+                        Assert.Contains((c2a.Strategy, m.C2.C1sWhereC1C2many2one), list);
+                        Assert.Contains((c2b.Strategy, m.C2.C1sWhereC1C2many2one), list);
+                        Assert.Contains((c2c.Strategy, m.C2.C1sWhereC1C2many2one), list);
+                        Assert.Contains((c2d.Strategy, m.C2.C1sWhereC1C2many2one), list);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public virtual void AssociationMany2Many()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Session.Database.State().M;
+
+                foreach (var mark in this.Markers)
+                {
+                    for (var run = 0; run < Settings.NumberOfRuns; run++)
+                    {
+                        var list = new List<(IStrategy strategy, IAssociationType AssociationType)>();
+
+                        void OnAccessCompositesAssociation(IStrategy strategy, IAssociationType associationType) => list.Add((strategy, associationType));
+
+                        this.OnAccess.OnAccessCompositesAssociation = OnAccessCompositesAssociation;
+
+                        var c1a = C1.Create(this.Session);
+                        var c1b = C1.Create(this.Session);
+                        var c1c = C1.Create(this.Session);
+                        var c1d = C1.Create(this.Session);
+
+                        var c2a = C2.Create(this.Session);
+                        var c2b = C2.Create(this.Session);
+                        var c2c = C2.Create(this.Session);
+                        var c2d = C2.Create(this.Session);
+
+                        c1a.AddC1C2many2many(c2a);
+                        c1b.AddC1C2many2many(c2a);
+                        c1b.AddC1C2many2many(c2b);
+                        c1c.AddC1C2many2many(c2b);
+
+                        mark();
+
+                        var c2aC1WhereC1C2many2many = c2a.C1sWhereC1C2many2many;
+                        var c2bExistC1WhereC1C2many2many = c2b.ExistC1sWhereC1C2many2many;
+                        var c2cC1WhereC1C2many2many = c2c.C1sWhereC1C2many2many;
+                        var c2dExistC1WhereC1C2many2many = c2d.ExistC1sWhereC1C2many2many;
+
+                        Assert.Equal(4, list.Count);
+
+                        Assert.Contains((c2a.Strategy, m.C2.C1sWhereC1C2many2many), list);
+                        Assert.Contains((c2b.Strategy, m.C2.C1sWhereC1C2many2many), list);
+                        Assert.Contains((c2c.Strategy, m.C2.C1sWhereC1C2many2many), list);
+                        Assert.Contains((c2d.Strategy, m.C2.C1sWhereC1C2many2many), list);
+                    }
+                }
+            }
+        }
+
     }
 }

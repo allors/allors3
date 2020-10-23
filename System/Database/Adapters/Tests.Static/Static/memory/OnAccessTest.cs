@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Memory
 
     using Adapters;
 
-    public class NotificationTest : Adapters.NotificationTest, IDisposable
+    public class OnAccessTest : Adapters.OnAccessTest, IDisposable
     {
         private readonly Profile profile = new Profile();
 

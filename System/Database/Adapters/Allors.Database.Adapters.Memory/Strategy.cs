@@ -355,8 +355,8 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistCompositeAssociations(IAssociationType associationType)
         {
             this.AssertNotDeleted();
+            this.Session.OnAccessCompositesAssociation?.Invoke(this, associationType);
             this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
-
             return strategies != null;
         }
 
