@@ -10,11 +10,11 @@ namespace Allors
     using Microsoft.AspNetCore.Http;
     using State;
 
-    public class DefaultDatabaseState : IDatabaseState
+    public abstract class DatabaseState : IDatabaseState
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public DefaultDatabaseState(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
+        protected DatabaseState(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
 
         public virtual void OnInit(IDatabase database)
         {
@@ -34,7 +34,6 @@ namespace Allors
             this.EffectivePermissionCache = new EffectivePermissionCache();
             this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
 
-            this.DerivationFactory = new DerivationFactory();
             this.Time = new Time();
             this.Caches = new Caches();
             this.SingletonId = new SingletonId();
@@ -69,8 +68,6 @@ namespace Allors
 
         public IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; private set; }
 
-        public IDerivationFactory DerivationFactory { get; private set; }
-
         public ITime Time { get; private set; }
 
         public ICaches Caches { get; private set; }
@@ -84,6 +81,8 @@ namespace Allors
         public IBarcodeGenerator BarcodeGenerator { get; private set; }
 
         public ITemplateObjectCache TemplateObjectCache { get; private set; }
+
+        public IDerivationFactory DerivationFactory { get; protected set; }
 
         public ISessionStateLifecycle CreateSessionInstance() => new DefaultSessionState(this.httpContextAccessor);
 

@@ -22,7 +22,7 @@ namespace Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseState(),
+                new ValidatingDatabaseState(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),

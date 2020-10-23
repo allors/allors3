@@ -6,20 +6,18 @@
 
 namespace Allors
 {
-    using Bogus;
     using Microsoft.AspNetCore.Http;
+    using State;
 
-    public class FakerDatabaseState : DefaultDatabaseState
+    public class DefaultDatabaseState : DatabaseState
     {
-        public FakerDatabaseState(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
+        public DefaultDatabaseState(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
 
         public override void OnInit(IDatabase database)
         {
             base.OnInit(database);
 
-            this.Faker = new Faker();
+            this.DerivationFactory = new DefaultDerivationFactory();
         }
-
-        public Faker Faker { get; set; }
     }
 }
