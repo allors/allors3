@@ -34,7 +34,7 @@ namespace Allors
             this.EffectivePermissionCache = new EffectivePermissionCache();
             this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
 
-            this.DerivationFactory = new DerivationFactory();
+            this.DerivationFactory = new ValidatingDerivationFactory();
             this.Time = new Time();
             this.Caches = new Caches();
             this.SingletonId = new SingletonId();
