@@ -23,7 +23,7 @@ namespace Allors.Domain
             var versionTypeRegex = new Regex(".+Version");
 
             var currentVersionRole = versionedClass.RoleTypes.First(v => v.Name.Equals("CurrentVersion"));
-            var currentVersion = @this.Strategy.GetCompositeRole(currentVersionRole.RelationType);
+            var currentVersion = @this.Strategy.GetCompositeRole(currentVersionRole);
 
             var isNewVersion = currentVersion == null;
             if (!isNewVersion)
@@ -38,8 +38,8 @@ namespace Allors.Domain
 
                     if (versionRoleType.IsMany)
                     {
-                        var versionedRole = @this.Strategy.GetCompositeRoles(versionedRoleType.RelationType);
-                        var versionRole = currentVersion.Strategy.GetCompositeRoles(versionRoleType.RelationType);
+                        var versionedRole = @this.Strategy.GetCompositeRoles(versionedRoleType);
+                        var versionRole = currentVersion.Strategy.GetCompositeRoles(versionRoleType);
                         if (!(versionedRole.Count == 0 && versionRole.Count == 0) ||
                             versionedRole.Count != versionRole.Count ||
                             !versionedRole.ToArray().OrderBy(s => s)
@@ -51,8 +51,8 @@ namespace Allors.Domain
                     }
                     else
                     {
-                        var versionedRole = @this.Strategy.GetRole(versionedRoleType.RelationType);
-                        var versionRole = currentVersion.Strategy.GetRole(versionRoleType.RelationType);
+                        var versionedRole = @this.Strategy.GetRole(versionedRoleType);
+                        var versionRole = currentVersion.Strategy.GetRole(versionRoleType);
                         if (!object.Equals(versionedRole, versionRole))
                         {
                             isNewVersion = true;
@@ -77,14 +77,14 @@ namespace Allors.Domain
                         throw new Exception("Could not find versioned role " + versionRoleType.Name + " on type " + versionedClass.Name);
                     }
 
-                    var versionedRole = @this.Strategy.GetRole(versionedRoleType.RelationType);
-                    newVersion.Strategy.SetRole(versionRoleType.RelationType, versionedRole);
+                    var versionedRole = @this.Strategy.GetRole(versionedRoleType);
+                    newVersion.Strategy.SetRole(versionRoleType, versionedRole);
                 }
 
                 var allVersionsRole = versionedClass.RoleTypes.First(v => v.Name.Equals("AllVersions"));
 
-                @this.Strategy.SetRole(currentVersionRole.RelationType, newVersion);
-                @this.Strategy.AddCompositeRole(allVersionsRole.RelationType, newVersion);
+                @this.Strategy.SetRole(currentVersionRole, newVersion);
+                @this.Strategy.AddCompositeRole(allVersionsRole, newVersion);
             }
         }
     }

@@ -5,12 +5,8 @@
 
 namespace Allors.Domain.Derivations
 {
-    public class DerivationConfig
+    public partial class DerivationConfig
     {
-        public int MaxCycles { get; set; } = 0;
-
-        public int MaxIterations { get; set; } = 0;
-
-        public int MaxPreparations { get; set; } = 0;
+        public int MaxDomainDerivationCycles { get; set; } = 100;
     }
 }

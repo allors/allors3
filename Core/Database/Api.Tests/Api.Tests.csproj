@@ -15,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
     <ProjectReference Include="..\Api\Api.csproj" />
-    <ProjectReference Include="..\Domain.Default\Domain.Default.csproj" />
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
   </ItemGroup>
 
 </Project>

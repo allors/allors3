@@ -24,7 +24,7 @@ namespace Allors
         /// The scope for this session.
         /// </summary>
         ISessionStateLifecycle StateLifecycle { get; }
-
+        
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,
         /// starting from either the beginning of the transaction or

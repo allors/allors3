@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Memory
         internal override ThreeValuedLogic Evaluate(Strategy strategy)
         {
             var containing = new HashSet<IObject>(this.containingEnumerable);
-            var roleStrategy = strategy.GetCompositeRole(this.roleType.RelationType);
+            var roleStrategy = strategy.GetCompositeRole(this.roleType);
 
             if (roleStrategy == null)
             {

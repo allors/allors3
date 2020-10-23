@@ -172,7 +172,7 @@ namespace Allors.Database.Adapters.Memory
                                     }
                                     else
                                     {
-                                        this.session.MemoryDatabase.OnObjectNotLoaded(objectTypeId, objectId);
+                                        this.session.Database.OnObjectNotLoaded(objectTypeId, objectId);
                                     }
                                 }
 
@@ -330,24 +330,24 @@ namespace Allors.Database.Adapters.Memory
 
                             if (strategy == null)
                             {
-                                this.session.MemoryDatabase.OnRelationNotLoaded(relationType.Id, associationId, value);
+                                this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, value);
                             }
                             else
                             {
                                 try
                                 {
-                                    this.session.MemoryDatabase.UnitRoleChecks(strategy, relationType.RoleType);
+                                    this.session.Database.UnitRoleChecks(strategy, relationType.RoleType);
                                     if (this.reader.IsEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
                                         switch (unitType.UnitTag)
                                         {
                                             case UnitTags.String:
-                                                strategy.SetUnitRole(relationType, string.Empty);
+                                                strategy.SetUnitRole(relationType.RoleType, string.Empty);
                                                 break;
 
                                             case UnitTags.Binary:
-                                                strategy.SetUnitRole(relationType, emptyByteArray);
+                                                strategy.SetUnitRole(relationType.RoleType, emptyByteArray);
                                                 break;
                                         }
                                     }
@@ -357,12 +357,12 @@ namespace Allors.Database.Adapters.Memory
                                         var unitTypeTag = unitType.UnitTag;
 
                                         var unit = Serialization.ReadString(value, unitTypeTag);
-                                        strategy.SetUnitRole(relationType, unit);
+                                        strategy.SetUnitRole(relationType.RoleType, unit);
                                     }
                                 }
                                 catch
                                 {
-                                    this.session.MemoryDatabase.OnRelationNotLoaded(relationType.Id, associationId, value);
+                                    this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, value);
                                 }
                             }
                         }
@@ -414,13 +414,13 @@ namespace Allors.Database.Adapters.Memory
                                 var roleIdStringArray = roleIdsString.Split(Serialization.ObjectsSplitterCharArray);
 
                                 if (association == null ||
-                                    !this.session.MemoryDatabase.ContainsConcreteClass(
+                                    !this.session.Database.ContainsConcreteClass(
                                         relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
                                     foreach (var roleId in roleIdStringArray)
                                     {
-                                        this.session.MemoryDatabase.OnRelationNotLoaded(relationType.Id, associationId, roleId);
+                                        this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId);
                                     }
                                 }
                                 else
@@ -428,22 +428,20 @@ namespace Allors.Database.Adapters.Memory
                                     if (relationType.RoleType.IsOne)
                                     {
                                         var roleIdString = long.Parse(roleIdStringArray[0]);
-                                        var role = this.LoadInstantiateStrategy(roleIdString);
-                                        if (role == null || !this.session.MemoryDatabase.ContainsConcreteClass(
-                                                (IComposite)relationType.RoleType.ObjectType,
-                                                role.UncheckedObjectType))
+                                        var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
+                                        if (roleStrategy == null || !this.session.Database.ContainsConcreteClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
                                         {
-                                            this.session.MemoryDatabase.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
+                                            this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                         }
                                         else
                                         {
                                             if (relationType.RoleType.AssociationType.IsMany)
                                             {
-                                                association.SetCompositeRoleMany2One(relationType.RoleType, role.GetObject());
+                                                association.SetCompositeRoleMany2One(relationType.RoleType, roleStrategy);
                                             }
                                             else
                                             {
-                                                association.SetCompositeRoleOne2One(relationType.RoleType, role.GetObject());
+                                                association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
                                             }
                                         }
                                     }
@@ -455,11 +453,11 @@ namespace Allors.Database.Adapters.Memory
                                             var roleId = long.Parse(roleIdString);
                                             var role = this.LoadInstantiateStrategy(roleId);
                                             if (role == null ||
-                                                !this.session.MemoryDatabase.ContainsConcreteClass(
+                                                !this.session.Database.ContainsConcreteClass(
                                                     (IComposite)relationType.RoleType.ObjectType,
                                                     role.UncheckedObjectType))
                                             {
-                                                this.session.MemoryDatabase.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
+                                                this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
                                             }
                                             else
                                             {
@@ -469,13 +467,11 @@ namespace Allors.Database.Adapters.Memory
 
                                         if (relationType.RoleType.AssociationType.IsMany)
                                         {
-                                            association.SetCompositeRolesMany2Many(relationType.RoleType,
-                                                roleStrategies);
+                                            association.SetCompositesRolesMany2Many(relationType.RoleType, roleStrategies);
                                         }
                                         else
                                         {
-                                            association.SetCompositesRoleOne2Many(relationType.RoleType,
-                                                roleStrategies);
+                                            association.SetCompositesRolesOne2Many(relationType.RoleType, roleStrategies);
                                         }
                                     }
                                 }
@@ -520,7 +516,7 @@ namespace Allors.Database.Adapters.Memory
                                 value = this.reader.ReadElementContentAsString();
                             }
 
-                            this.session.MemoryDatabase.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
+                            this.session.Database.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
                         }
 
                         break;
@@ -549,7 +545,7 @@ namespace Allors.Database.Adapters.Memory
 
                             if (this.reader.IsEmptyElement)
                             {
-                                this.session.MemoryDatabase.OnRelationNotLoaded(relationTypeId, associationId, null);
+                                this.session.Database.OnRelationNotLoaded(relationTypeId, associationId, null);
                             }
                             else
                             {
@@ -557,7 +553,7 @@ namespace Allors.Database.Adapters.Memory
                                 var rs = value.Split(Serialization.ObjectsSplitterCharArray);
                                 foreach (var r in rs)
                                 {
-                                    this.session.MemoryDatabase.OnRelationNotLoaded(relationTypeId, associationId, r);
+                                    this.session.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
                                 }
                             }
                         }

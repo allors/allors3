@@ -115,7 +115,7 @@ namespace Allors.Server.Controllers
             c2C.I12AllorsDecimal = 2.2M;
             c2D.I12AllorsDecimal = 2.2M;
 
-            // Double
+            // Float
             c1B.C1AllorsDouble = 1.1d;
             c1C.C1AllorsDouble = 2.2d;
             c1D.C1AllorsDouble = 2.2d;

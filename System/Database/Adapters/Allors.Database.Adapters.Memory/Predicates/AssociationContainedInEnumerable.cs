@@ -29,7 +29,7 @@ namespace Allors.Database.Adapters.Memory
 
             if (this.associationType.IsMany)
             {
-                var associations = strategy.GetCompositeAssociations(this.associationType.RelationType);
+                var associations = strategy.GetCompositeAssociations(this.associationType);
                 foreach (var assoc in associations)
                 {
                     if (containing.Contains((IObject)assoc))
@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.Memory
                 return ThreeValuedLogic.False;
             }
 
-            var association = strategy.GetCompositeAssociation(this.associationType.RelationType);
+            var association = strategy.GetCompositeAssociation(this.associationType);
             if (association != null)
             {
                 return containing.Contains(association)

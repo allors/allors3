@@ -152,7 +152,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //        Assert.Equal(null, error.RelationType);
+        //        Assert.Equal(null, error);
         //        Assert.Equal(c1RelationType.RoleType, error.Role);
 
         // Assert.Equal("c1", error.TableName);
@@ -211,7 +211,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(c1RelationType.RoleType, error.Role);
 
         // Assert.Equal("c1", error.TableName);
@@ -269,7 +269,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(c1RelationType.RoleType, error.Role);
 
         // Assert.Equal("c1", error.TableName);
@@ -404,7 +404,7 @@ namespace Allors.Database.Adapters
         // var error = tableErros[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(fromC1ToC2, error.RelationType);
+        //    Assert.Equal(fromC1ToC2, error);
         //    Assert.Equal(null, error.Role);
 
         // Assert.Equal("c1c2", error.TableName);
@@ -445,7 +445,7 @@ namespace Allors.Database.Adapters
         // var error = tableErros[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(fromC1ToC2.RoleType, error.Role);
         //    Assert.Equal("c1", error.TableName);
         //    Assert.Equal("c2", error.ColumnName);
@@ -486,7 +486,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(fromC1ToC2.RoleType, error.Role);
         //    Assert.Equal("c2", error.TableName);
         //    Assert.Equal("c2c1", error.ColumnName);
@@ -527,7 +527,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(fromC1ToC2.RoleType, error.Role);
         //    Assert.Equal("c1", error.TableName);
         //    Assert.Equal("c2", error.ColumnName);
@@ -582,7 +582,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(c1RelationType.RoleType, error.Role);
 
         // Assert.Equal("c1", error.TableName);
@@ -643,7 +643,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(c1RelationType.RoleType, error.Role);
 
         // Assert.Equal("c1", error.TableName);
@@ -701,7 +701,7 @@ namespace Allors.Database.Adapters
         // var error = tableErrors[0];
 
         // Assert.Equal(null, error.ObjectType);
-        //    Assert.Equal(null, error.RelationType);
+        //    Assert.Equal(null, error);
         //    Assert.Equal(c1RelationType.RoleType, error.Role);
 
         // Assert.Equal("c1", error.TableName);

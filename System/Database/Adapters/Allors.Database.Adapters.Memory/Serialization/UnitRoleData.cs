@@ -15,6 +15,6 @@ namespace Allors.Database.Adapters.Memory.IO
             this.relationType = relationType;
         }
 
-        public object Value => this.strategy.GetUnitRole(this.relationType);
+        public object Value => this.strategy.GetUnitRole(this.relationType.RoleType);
     }
 }

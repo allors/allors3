@@ -15,37 +15,36 @@ namespace Allors
         public static void CoreOnPostBuild(this Allors.Domain.Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
-            foreach (var concreteRoleType in ((Class)@this.Strategy.Class).RoleTypes)
+            foreach (var roleType in ((Class)@this.Strategy.Class).RoleTypes)
             {
-                if (concreteRoleType.IsRequired)
+                if (roleType.IsRequired)
                 {
-                    var relationType = concreteRoleType.RelationType;
-                    if (relationType.RoleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(relationType))
+                    if (roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
                     {
                         switch (unit.UnitTag)
                         {
                             case UnitTags.Boolean:
-                                @this.Strategy.SetUnitRole(relationType, false);
+                                @this.Strategy.SetUnitRole(roleType, false);
                                 break;
 
                             case UnitTags.Decimal:
-                                @this.Strategy.SetUnitRole(relationType, 0m);
+                                @this.Strategy.SetUnitRole(roleType, 0m);
                                 break;
 
                             case UnitTags.Float:
-                                @this.Strategy.SetUnitRole(relationType, 0d);
+                                @this.Strategy.SetUnitRole(roleType, 0d);
                                 break;
 
                             case UnitTags.Integer:
-                                @this.Strategy.SetUnitRole(relationType, 0);
+                                @this.Strategy.SetUnitRole(roleType, 0);
                                 break;
 
                             case UnitTags.Unique:
-                                @this.Strategy.SetUnitRole(relationType, Guid.NewGuid());
+                                @this.Strategy.SetUnitRole(roleType, Guid.NewGuid());
                                 break;
 
                             case UnitTags.DateTime:
-                                @this.Strategy.SetUnitRole(relationType, @this.Strategy.Session.Now());
+                                @this.Strategy.SetUnitRole(roleType, @this.Strategy.Session.Now());
                                 break;
                         }
                     }
@@ -64,30 +63,28 @@ namespace Allors
 
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
             {
-                var relationType = roleType.RelationType;
-                if (!clone.Strategy.ExistRole(relationType))
+                if (!clone.Strategy.ExistRole(roleType))
                 {
-                    var role = @this.Strategy.GetRole(relationType);
-                    clone.Strategy.SetRole(relationType, role);
+                    var role = @this.Strategy.GetRole(roleType);
+                    clone.Strategy.SetRole(roleType, role);
                 }
             }
 
             foreach (var roleType in deepClone)
             {
-                var relationType = roleType.RelationType;
                 if (roleType.IsOne)
                 {
-                    var role = strategy.GetCompositeRole(relationType);
+                    var role = strategy.GetCompositeRole(roleType);
                     if (role != null)
                     {
-                        clone.Strategy.SetCompositeRole(relationType, role.Clone());
+                        clone.Strategy.SetCompositeRole(roleType, role.Clone());
                     }
                 }
                 else
                 {
-                    foreach (IObject role in strategy.GetCompositeRoles(relationType))
+                    foreach (IObject role in strategy.GetCompositeRoles(roleType))
                     {
-                        clone.Strategy.AddCompositeRole(relationType, role.Clone());
+                        clone.Strategy.AddCompositeRole(roleType, role.Clone());
                     }
                 }
             }

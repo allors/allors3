@@ -150,7 +150,7 @@ namespace Allors.Meta
         /// <returns>
         /// The association value.
         /// </returns>
-        public object Get(IStrategy strategy) => strategy.GetAssociation(this.RelationType);
+        public object Get(IStrategy strategy) => strategy.GetAssociation(this);
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.

@@ -95,14 +95,14 @@ namespace Allors.Database.Adapters
 
                             if (binarySize < testRoleType.RoleType.Size)
                             {
-                                allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                                allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                                 if (transactionFlag)
                                 {
                                     this.GetSession().Commit();
                                 }
 
-                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType));
-                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType));
+                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                             }
                         }
                     }
@@ -138,14 +138,14 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -165,16 +165,16 @@ namespace Allors.Database.Adapters
                     {
                         var testRoleType = testRoleTypes[testRoleTypeIndex];
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
                         if (transactionFlag)
                         {
                             this.GetSession().Commit();
                         }
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                     }
                 }
 
@@ -191,16 +191,16 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
@@ -211,11 +211,11 @@ namespace Allors.Database.Adapters
                                 this.GetSession().Commit();
                             }
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -237,12 +237,12 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Rollback();
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -260,20 +260,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
                             bool value2 = !value;
 
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value2);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -291,18 +291,18 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (bool)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -341,20 +341,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            var dateTime = (DateTime)allorsObject.Strategy.GetUnitRole(testRoleType);
+                            var dateTime = (DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType);
                             if (!dateTime.Equals(value))
                             {
                                 Console.WriteLine(dateTime);
                             }
 
-                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
-                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
+                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
+                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
                         }
                     }
                 }
@@ -374,16 +374,16 @@ namespace Allors.Database.Adapters
                     {
                         var testRoleType = testRoleTypes[testRoleTypeIndex];
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
                         if (transactionFlag)
                         {
                             this.GetSession().Commit();
                         }
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                     }
                 }
 
@@ -400,16 +400,16 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
@@ -420,11 +420,11 @@ namespace Allors.Database.Adapters
                                 this.GetSession().Commit();
                             }
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -446,12 +446,12 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Rollback();
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -469,20 +469,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
                             var value2 = this.ValueGenerator.GenerateDateTime();
 
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value2);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
-                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
+                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
                         }
                     }
                 }
@@ -500,18 +500,18 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
-                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
+                            Assert.InRange((DateTime)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType), value.AddMilliseconds(-1), value.AddMilliseconds(1));
                         }
                     }
                 }
@@ -550,14 +550,14 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -577,16 +577,16 @@ namespace Allors.Database.Adapters
                     {
                         var testRoleType = testRoleTypes[testRoleTypeIndex];
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
                         if (transactionFlag)
                         {
                             this.GetSession().Commit();
                         }
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                     }
                 }
 
@@ -603,16 +603,16 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
@@ -623,11 +623,11 @@ namespace Allors.Database.Adapters
                                 this.GetSession().Commit();
                             }
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -649,12 +649,12 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Rollback();
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -672,20 +672,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
                             object value2 = this.ValueGenerator.GenerateDecimal();
 
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value2);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -703,18 +703,18 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (decimal)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -749,14 +749,14 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -776,16 +776,16 @@ namespace Allors.Database.Adapters
                     {
                         var testRoleType = testRoleTypes[testRoleTypeIndex];
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
                         if (transactionFlag)
                         {
                             this.GetSession().Commit();
                         }
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                     }
                 }
 
@@ -802,16 +802,16 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
@@ -822,11 +822,11 @@ namespace Allors.Database.Adapters
                                 this.GetSession().Commit();
                             }
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -848,12 +848,12 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Rollback();
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -871,20 +871,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
                             double value2 = this.ValueGenerator.GenerateFloat();
 
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value2);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -902,18 +902,18 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (double)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -950,14 +950,14 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -977,16 +977,16 @@ namespace Allors.Database.Adapters
                     {
                         var testRoleType = testRoleTypes[testRoleTypeIndex];
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
                         if (transactionFlag)
                         {
                             this.GetSession().Commit();
                         }
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                     }
                 }
 
@@ -1003,16 +1003,16 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
@@ -1023,11 +1023,11 @@ namespace Allors.Database.Adapters
                                 this.GetSession().Commit();
                             }
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1049,12 +1049,12 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Rollback();
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1072,20 +1072,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
                             int value2 = this.ValueGenerator.GenerateInteger();
 
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value2);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1103,18 +1103,18 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (int)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1153,14 +1153,14 @@ namespace Allors.Database.Adapters
 
                             if (stringSize < testRoleType.RoleType.Size)
                             {
-                                allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                                allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                                 if (transactionFlag)
                                 {
                                     this.GetSession().Commit();
                                 }
 
-                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType));
-                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType));
+                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                                Assert.Equal(value, allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                             }
                         }
                     }
@@ -1198,14 +1198,14 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1225,16 +1225,16 @@ namespace Allors.Database.Adapters
                     {
                         var testRoleType = testRoleTypes[testRoleTypeIndex];
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
                         if (transactionFlag)
                         {
                             this.GetSession().Commit();
                         }
 
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                        Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                     }
                 }
 
@@ -1251,16 +1251,16 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
                             }
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
                             if (transactionFlag)
                             {
                                 this.GetSession().Commit();
@@ -1271,11 +1271,11 @@ namespace Allors.Database.Adapters
                                 this.GetSession().Commit();
                             }
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1297,12 +1297,12 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Rollback();
 
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.False(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1320,20 +1320,20 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
                             Guid value2 = this.ValueGenerator.GenerateUnique();
 
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value2);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value2);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }
@@ -1351,18 +1351,18 @@ namespace Allors.Database.Adapters
                         for (int testRoleTypeIndex = 0; testRoleTypeIndex < testRoleTypes.Count(); testRoleTypeIndex++)
                         {
                             var testRoleType = testRoleTypes[testRoleTypeIndex];
-                            allorsObject.Strategy.SetUnitRole(testRoleType, value);
+                            allorsObject.Strategy.SetUnitRole(testRoleType.RoleType, value);
 
                             this.GetSession().Commit();
 
-                            allorsObject.Strategy.RemoveRole(testRoleType);
+                            allorsObject.Strategy.RemoveRole(testRoleType.RoleType);
 
                             this.GetSession().Rollback();
 
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType));
-                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType));
-                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.True(allorsObject.Strategy.ExistRole(testRoleType.RoleType));
+                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
+                            Assert.Equal(value, (Guid)allorsObject.Strategy.GetUnitRole(testRoleType.RoleType));
                         }
                     }
                 }

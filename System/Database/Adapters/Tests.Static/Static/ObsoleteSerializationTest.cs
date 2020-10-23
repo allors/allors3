@@ -10,6 +10,7 @@ namespace Allors.Database.Adapters
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Xml;
 
     using Allors;
@@ -526,9 +527,11 @@ namespace Allors.Database.Adapters
                         this.Population.Save(writer);
                     }
 
-                    ////writer = XmlWriter.Create("population.xml", new UTF8Encoding());
-                    ////this.Population.Save(writer);
-                    ////writer.Close();
+                    //using (var writer = XmlWriter.Create("population.xml"))
+                    //{
+                    //    this.Population.Save(writer);
+                    //    writer.Close();
+                    //}
 
                     var xml = stringWriter.ToString();
 
@@ -1113,9 +1116,9 @@ namespace Allors.Database.Adapters
             Assert.Equal(new byte[] { 0, 1, 2, 3 }, c1BCopy.C1AllorsBinary);
             Assert.Null(c1CCopy.C1AllorsBinary);
 
-            Assert.Equal("a1", c2ACopy.C1WhereC1C2one2one.C1AllorsString);
-            Assert.Equal("a1", c2ACopy.C1WhereC1C2one2many.C1AllorsString);
-            Assert.Equal("a1", c2BCopy.C1WhereC1C2one2many.C1AllorsString);
+            Assert.Equal("c1b", c2ACopy.C1WhereC1C2one2one.C1AllorsString);
+            Assert.Equal("c1b", c2ACopy.C1WhereC1C2one2many.C1AllorsString);
+            Assert.Equal("c1b", c2BCopy.C1WhereC1C2one2many.C1AllorsString);
 
             Assert.Equal("c3a", c3ACopy.I34AllorsString);
             Assert.Equal("c4a", c4ACopy.I34AllorsString);
@@ -1170,7 +1173,7 @@ namespace Allors.Database.Adapters
             this.c1A.C1AllorsUnique = new Guid(GuidString);
             this.c1A.C1AllorsBinary = new byte[0];
 
-            this.c1B.C1AllorsString = "a1";
+            this.c1B.C1AllorsString = "c1b";
             this.c1B.C1AllorsBinary = new byte[] { 0, 1, 2, 3 };
             this.c1B.C1C2one2one = this.c2A;
             this.c1B.C1C2many2one = this.c2A;
@@ -1184,7 +1187,7 @@ namespace Allors.Database.Adapters
             this.c1B.AddC1C2many2many(this.c2C);
             this.c1B.AddC1C2many2many(this.c2D);
 
-            this.c1C.C1AllorsString = "a2";
+            this.c1C.C1AllorsString = "c1c";
             this.c1C.C1AllorsBinary = null;
 
             this.c3A.I34AllorsString = "c3a";

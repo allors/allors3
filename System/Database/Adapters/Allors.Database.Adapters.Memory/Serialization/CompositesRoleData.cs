@@ -16,6 +16,6 @@ namespace Allors.Database.Adapters.Memory.IO
             this.relationType = relationType;
         }
 
-        public object Value => this.strategy.GetCompositeRoles(this.relationType).ToArray().Select(v => v.Id).ToArray();
+        public object Value => this.strategy.GetCompositeRoles(this.relationType.RoleType).ToArray().Select(v => v.Id).ToArray();
     }
 }

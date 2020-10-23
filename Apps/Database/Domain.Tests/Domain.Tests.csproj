@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.SqlClient\Allors.Database.Adapters.SqlClient.csproj" />
-    <ProjectReference Include="..\Domain.Faker\Domain.Faker.csproj" />
+    <ProjectReference Include="..\Configuration.Faker\Configuration.Faker.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
     <ProjectReference Include="..\TestPopulation\TestPopulation.csproj" />

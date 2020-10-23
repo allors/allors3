@@ -8,8 +8,9 @@ namespace Allors
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics;
-
+    using System.Runtime.CompilerServices;
     using Allors.Meta;
 
     /// <summary>
@@ -19,7 +20,7 @@ namespace Allors
     /// The extent can be filtered based on predicates.
     /// </summary>
     [DebuggerTypeProxy(typeof(ExtentDebugView))]
-    public abstract class Extent : IList
+    public abstract class Extent : IList, IEnumerable<IObject>
     {
         /// <summary>
         /// Gets the number of elements contained in the <see cref="T:System.Collections.ICollection"></see>.
@@ -177,6 +178,14 @@ namespace Allors
         /// <exception cref="T:System.ArgumentException">array is multidimensional.-or- index is equal to or greater than the length of array.-or- The number of elements in the source <see cref="T:System.Collections.ICollection"></see> is greater than the available space from index to the end of the destination array. </exception>
         /// <exception cref="T:System.InvalidCastException">The type of the source <see cref="T:System.Collections.ICollection"></see> cannot be cast automatically to the type of the destination array. </exception>
         public abstract void CopyTo(Array array, int index);
+
+        IEnumerator<IObject> IEnumerable<IObject>.GetEnumerator()
+        {
+            foreach (var @object in this)
+            {
+                yield return (IObject)@object;
+            }
+        }
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.

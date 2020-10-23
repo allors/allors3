@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters.Memory.IO
             {
                 var relationType = roleType.RelationType;
 
-                if (this.strategy.ExistRole(relationType))
+                if (this.strategy.ExistRole(relationType.RoleType))
                 {
                     if (roleType.ObjectType.IsUnit)
                     {

@@ -41,8 +41,8 @@ namespace Allors.Database.Adapters.SqlClient
 
         IDatabase ISession.Database => this.Database;
 
-        public ISessionStateLifecycle StateLifecycle { get; set; }
-
+        public ISessionStateLifecycle StateLifecycle { get; }
+        
         public Database Database { get; }
 
         private Prefetcher Prefetcher { get; }

@@ -1753,8 +1753,8 @@ namespace Allors.Database.Adapters
                         from1.AddC1C1many2many(to1);
 
                         mark();
-                        Assert.Single(from1.Strategy.GetCompositeRoles(m.C1.C1C1many2manies.RelationType).ToArray());
-                        Assert.Equal(to1, from1.Strategy.GetCompositeRoles(m.C1.C1C1many2manies.RelationType).ToArray()[0]);
+                        Assert.Single(from1.Strategy.GetCompositeRoles(m.C1.C1C1many2manies).ToArray());
+                        Assert.Equal(to1, from1.Strategy.GetCompositeRoles(m.C1.C1C1many2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray()
                         from1 = C1.Create(this.Session);
@@ -3509,8 +3509,8 @@ namespace Allors.Database.Adapters
                         from1.AddI1I12many2many(to1);
 
                         mark();
-                        Assert.Single(from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies.RelationType).ToArray());
-                        Assert.Equal(to1, from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies.RelationType).ToArray()[0]);
+                        Assert.Single(from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies).ToArray());
+                        Assert.Equal(to1, from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray() I12->C1
                         from1 = C1.Create(this.Session);
@@ -3529,8 +3529,8 @@ namespace Allors.Database.Adapters
                         from1.AddI1I12many2many(to3);
 
                         mark();
-                        Assert.Single(from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies.RelationType).ToArray());
-                        Assert.Equal(to3, from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies.RelationType).ToArray()[0]);
+                        Assert.Single(from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies).ToArray());
+                        Assert.Equal(to3, from1.Strategy.GetCompositeRoles(m.I1.I1I12many2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray() I12->C2
                         from1 = C1.Create(this.Session);
@@ -5234,8 +5234,8 @@ namespace Allors.Database.Adapters
                         from1.AddC3C4many2many(to1);
 
                         mark();
-                        Assert.Single(from1.Strategy.GetCompositeRoles(m.C3.C3C4many2manies.RelationType).ToArray());
-                        Assert.Equal(to1, from1.Strategy.GetCompositeRoles(m.C3.C3C4many2manies.RelationType).ToArray()[0]);
+                        Assert.Single(from1.Strategy.GetCompositeRoles(m.C3.C3C4many2manies).ToArray());
+                        Assert.Equal(to1, from1.Strategy.GetCompositeRoles(m.C3.C3C4many2manies).ToArray()[0]);
 
                         // Extent<T>.ToArray()
                         from1 = C3.Create(this.Session);
@@ -5352,7 +5352,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1C2many2manies.RelationType, c1B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1C2many2manies, c1B);
                     }
                     catch
                     {
@@ -5365,7 +5365,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1C2many2manies.RelationType, c1bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1C2many2manies, c1bs);
                     }
                     catch
                     {
@@ -5378,7 +5378,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1C2many2manies.RelationType, c1B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1C2many2manies, c1B);
                     }
                     catch
                     {
@@ -5392,7 +5392,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1I2many2manies.RelationType, c1B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1I2many2manies, c1B);
                     }
                     catch
                     {
@@ -5405,7 +5405,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1I2many2manies.RelationType, c1bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1I2many2manies, c1bs);
                     }
                     catch
                     {
@@ -5418,7 +5418,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1I2many2manies.RelationType, c1B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1I2many2manies, c1B);
                     }
                     catch
                     {
@@ -5432,7 +5432,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1S2many2manies.RelationType, c1B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1S2many2manies, c1B);
                     }
                     catch
                     {
@@ -5445,7 +5445,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1S2many2manies.RelationType, c1bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1S2many2manies, c1bs);
                     }
                     catch
                     {
@@ -5458,7 +5458,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1S2many2manies.RelationType, c1B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1S2many2manies, c1B);
                     }
                     catch
                     {
@@ -5472,7 +5472,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C2.C1many2manies.RelationType, c1B);
+                        c1A.Strategy.AddCompositeRole(m.C2.C1many2manies, c1B);
                     }
                     catch
                     {
@@ -5485,7 +5485,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C2.C1many2manies.RelationType, c1bs);
+                        c1A.Strategy.SetCompositeRoles(m.C2.C1many2manies, c1bs);
                     }
                     catch
                     {
@@ -5498,7 +5498,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C2.C1many2manies.RelationType, c1B);
+                        c1A.Strategy.RemoveCompositeRole(m.C2.C1many2manies, c1B);
                     }
                     catch
                     {
@@ -5511,7 +5511,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C2.C1many2manies.RelationType, c2B);
+                        c1A.Strategy.AddCompositeRole(m.C2.C1many2manies, c2B);
                     }
                     catch
                     {
@@ -5524,7 +5524,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C2.C1many2manies.RelationType, c2Bs);
+                        c1A.Strategy.SetCompositeRoles(m.C2.C1many2manies, c2Bs);
                     }
                     catch
                     {
@@ -5537,7 +5537,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C2.C1many2manies.RelationType, c2B);
+                        c1A.Strategy.RemoveCompositeRole(m.C2.C1many2manies, c2B);
                     }
                     catch
                     {
@@ -5551,7 +5551,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1AllorsString.RelationType, c1B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1AllorsString, c1B);
                     }
                     catch
                     {
@@ -5564,7 +5564,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1AllorsString.RelationType, c1bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1AllorsString, c1bs);
                     }
                     catch
                     {
@@ -5577,7 +5577,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1AllorsString.RelationType, c1B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1AllorsString, c1B);
                     }
                     catch
                     {
@@ -5590,7 +5590,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1AllorsDecimal.RelationType, c2B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1AllorsDecimal, c2B);
                     }
                     catch
                     {
@@ -5603,7 +5603,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1AllorsDecimal.RelationType, c2Bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1AllorsDecimal, c2Bs);
                     }
                     catch
                     {
@@ -5616,7 +5616,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1AllorsDecimal.RelationType, c2B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1AllorsDecimal, c2B);
                     }
                     catch
                     {
@@ -5630,7 +5630,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1C2many2one.RelationType, c1B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1C2many2one, c1B);
                     }
                     catch
                     {
@@ -5643,7 +5643,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1C1many2one.RelationType, c1bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1C1many2one, c1bs);
                     }
                     catch
                     {
@@ -5656,7 +5656,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1C2many2one.RelationType, c1B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1C2many2one, c1B);
                     }
                     catch
                     {
@@ -5669,7 +5669,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.AddCompositeRole(m.C1.C1C2many2one.RelationType, c2B);
+                        c1A.Strategy.AddCompositeRole(m.C1.C1C2many2one, c2B);
                     }
                     catch
                     {
@@ -5682,7 +5682,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1C2many2one.RelationType, c2Bs);
+                        c1A.Strategy.SetCompositeRoles(m.C1.C1C2many2one, c2Bs);
                     }
                     catch
                     {
@@ -5695,7 +5695,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.RemoveCompositeRole(m.C1.C1C2many2one.RelationType, c2B);
+                        c1A.Strategy.RemoveCompositeRole(m.C1.C1C2many2one, c2B);
                     }
                     catch
                     {

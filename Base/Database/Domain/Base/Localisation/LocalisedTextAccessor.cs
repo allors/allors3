@@ -9,13 +9,13 @@ namespace Allors.Domain
 
     public partial class LocalisedTextAccessor
     {
-        private readonly RelationType relationType;
+        private readonly RoleType roleType;
 
-        public LocalisedTextAccessor(RoleType roleType) => this.relationType = roleType.RelationType;
+        public LocalisedTextAccessor(RoleType roleType) => this.roleType = roleType;
 
         public string Get(IObject @object, Locale locale)
         {
-            var localisedTexts = @object.Strategy.GetCompositeRoles(this.relationType);
+            var localisedTexts = @object.Strategy.GetCompositeRoles(this.roleType);
             foreach (LocalisedText localisedText in localisedTexts)
             {
                 if (localisedText?.Locale?.Equals(locale) == true)
@@ -29,7 +29,7 @@ namespace Allors.Domain
 
         public void Set(IObject @object, Locale locale, string text)
         {
-            var localisedTexts = @object.Strategy.GetCompositeRoles(this.relationType);
+            var localisedTexts = @object.Strategy.GetCompositeRoles(this.roleType);
             foreach (LocalisedText existingLocalisedText in localisedTexts)
             {
                 if (existingLocalisedText?.Locale?.Equals(locale) == true)
@@ -43,7 +43,7 @@ namespace Allors.Domain
                 .WithLocale(locale)
                 .WithText(text)
                 .Build();
-            @object.Strategy.AddCompositeRole(this.relationType, newLocalisedText);
+            @object.Strategy.AddCompositeRole(this.roleType, newLocalisedText);
         }
     }
 }

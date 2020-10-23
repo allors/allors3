@@ -24,12 +24,12 @@ namespace Allors.Database.Adapters.Memory
         {
             if (this.associationType.IsMany)
             {
-                return strategy.ExistCompositeAssociations(this.associationType.RelationType)
+                return strategy.ExistCompositeAssociations(this.associationType)
                         ? ThreeValuedLogic.True
                         : ThreeValuedLogic.False;
             }
 
-            return strategy.ExistCompositeAssociation(this.associationType.RelationType)
+            return strategy.ExistCompositeAssociation(this.associationType)
                     ? ThreeValuedLogic.True
                     : ThreeValuedLogic.False;
         }

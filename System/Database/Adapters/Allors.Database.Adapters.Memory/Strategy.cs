@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml;
@@ -28,11 +29,10 @@ namespace Allors.Database.Adapters.Memory
         private Dictionary<IAssociationType, HashSet<Strategy>> rollbackCompositesAssociationByAssociationType;
         private bool isDeletedOnRollback;
         private WeakReference allorizedObjectWeakReference;
-        private bool isDeleted;
 
         internal Strategy(Session session, IClass objectType, long objectId, long version)
         {
-            this.MemorySession = session;
+            this.Session = session;
             this.UncheckedObjectType = objectType;
             this.ObjectId = objectId;
 
@@ -55,16 +55,7 @@ namespace Allors.Database.Adapters.Memory
             this.rollbackCompositesAssociationByAssociationType = null;
         }
 
-        public bool IsDeleted
-        {
-            get { return this.isDeleted; }
-            private set {
-                if (value == true)
-                {
-                    Console.WriteLine(0);
-                }
-                this.isDeleted = value; }
-        }
+        public bool IsDeleted { get; private set; }
 
         public bool IsNewInSession { get; private set; }
 
@@ -81,317 +72,291 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public ISession Session => this.MemorySession;
+        ISession IStrategy.Session => this.Session;
 
         internal IClass UncheckedObjectType { get; }
 
-        internal Session MemorySession { get; }
+        internal Session Session { get; }
 
-        private ChangeSet ChangeSet => this.MemorySession.MemoryChangeSet;
+        private ChangeSet ChangeSet => this.Session.MemoryChangeSet;
 
-        private Dictionary<IRoleType, object> RollbackUnitRoleByRoleType => this.rollbackUnitRoleByRoleType ?? (this.rollbackUnitRoleByRoleType = new Dictionary<IRoleType, object>());
+        private Dictionary<IRoleType, object> RollbackUnitRoleByRoleType => this.rollbackUnitRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
-        private Dictionary<IRoleType, Strategy> RollbackCompositeRoleByRoleType => this.rollbackCompositeRoleByRoleType ?? (this.rollbackCompositeRoleByRoleType = new Dictionary<IRoleType, Strategy>());
+        private Dictionary<IRoleType, Strategy> RollbackCompositeRoleByRoleType => this.rollbackCompositeRoleByRoleType ??= new Dictionary<IRoleType, Strategy>();
 
-        private Dictionary<IRoleType, HashSet<Strategy>> RollbackCompositesRoleByRoleType => this.rollbackCompositesRoleByRoleType ?? (this.rollbackCompositesRoleByRoleType = new Dictionary<IRoleType, HashSet<Strategy>>());
+        private Dictionary<IRoleType, HashSet<Strategy>> RollbackCompositesRoleByRoleType => this.rollbackCompositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<Strategy>>();
 
-        private Dictionary<IAssociationType, Strategy> RollbackCompositeAssociationByAssociationType => this.rollbackCompositeAssociationByAssociationType ?? (this.rollbackCompositeAssociationByAssociationType = new Dictionary<IAssociationType, Strategy>());
+        private Dictionary<IAssociationType, Strategy> RollbackCompositeAssociationByAssociationType => this.rollbackCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, Strategy>();
 
-        private Dictionary<IAssociationType, HashSet<Strategy>> RollbackCompositesAssociationByAssociationType => this.rollbackCompositesAssociationByAssociationType ?? (this.rollbackCompositesAssociationByAssociationType = new Dictionary<IAssociationType, HashSet<Strategy>>());
+        private Dictionary<IAssociationType, HashSet<Strategy>> RollbackCompositesAssociationByAssociationType => this.rollbackCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<Strategy>>();
 
         public override string ToString() => this.UncheckedObjectType.Name + " " + this.ObjectId;
 
-        public object GetRole(IRelationType relationType)
+        public object GetRole(IRoleType roleType) =>
+            roleType switch
+            {
+                { } unitRole when unitRole.ObjectType.IsUnit => this.GetUnitRole(roleType),
+                { } compositeRole when compositeRole.IsOne => this.GetCompositeRole(roleType),
+                _ => this.GetCompositeRoles(roleType)
+            };
+
+        public void SetRole(IRoleType roleType, object value)
         {
-            var roleType = relationType.RoleType;
-
-            if (roleType.ObjectType is IUnit)
+            switch (roleType)
             {
-                return this.GetUnitRole(relationType);
-            }
-
-            return roleType.IsMany ? (object)this.GetCompositeRoles(relationType) : this.GetCompositeRole(relationType);
-        }
-
-        public void SetRole(IRelationType relationType, object value)
-        {
-            if (relationType.RoleType.ObjectType is IUnit)
-            {
-                this.SetUnitRole(relationType, value);
-            }
-            else
-            {
-                if (relationType.RoleType.IsMany)
-                {
-                    if (!(value is Allors.Extent roles))
-                    {
-                        var roleList = new List<IObject>((IEnumerable<IObject>)value);
-                        roles = roleList.ToArray();
-                    }
-
-                    this.SetCompositeRoles(relationType, roles);
-                }
-                else
-                {
-                    this.SetCompositeRole(relationType, (IObject)value);
-                }
+                case { } unitRole when unitRole.ObjectType.IsUnit:
+                    this.SetUnitRole(roleType, value);
+                    break;
+                case { } compositeRole when compositeRole.IsOne:
+                    this.SetCompositeRole(roleType, (IObject)value);
+                    break;
+                default:
+                    this.SetCompositeRoles(roleType, (IEnumerable<IObject>)value);
+                    break;
             }
         }
 
-        public void RemoveRole(IRelationType relationType)
+        public void RemoveRole(IRoleType roleType)
         {
-            if (relationType.RoleType.ObjectType is IUnit)
+            switch (roleType)
             {
-                this.RemoveUnitRole(relationType);
-            }
-            else
-            {
-                if (relationType.RoleType.IsMany)
-                {
-                    this.RemoveCompositeRoles(relationType);
-                }
-                else
-                {
-                    this.RemoveCompositeRole(relationType);
-                }
+                case { } unitRole when unitRole.ObjectType.IsUnit:
+                    this.RemoveUnitRole(roleType);
+                    break;
+                case { } compositeRole when compositeRole.IsOne:
+                    this.RemoveCompositeRole(roleType);
+                    break;
+                default:
+                    this.RemoveCompositeRoles(roleType);
+                    break;
             }
         }
 
-        public bool ExistRole(IRelationType relationType)
-        {
-            if (relationType.RoleType.ObjectType is IUnit)
+        public bool ExistRole(IRoleType roleType) =>
+            roleType switch
             {
-                return this.ExistUnitRole(relationType);
-            }
+                { } unitRole when unitRole.ObjectType.IsUnit => this.ExistUnitRole(roleType),
+                { } compositeRole when compositeRole.IsOne => this.ExistCompositeRole(roleType),
+                _ => this.ExistCompositeRoles(roleType)
+            };
 
-            return relationType.RoleType.IsMany ? this.ExistCompositeRoles(relationType) : this.ExistCompositeRole(relationType);
-        }
-
-        public object GetUnitRole(IRelationType relationType)
+        public object GetUnitRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-
-            var roleType = relationType.RoleType;
-            this.MemorySession.MemoryDatabase.UnitRoleChecks(this, roleType);
-
+            this.Session.OnAccessUnitRole?.Invoke(this, roleType);
             return this.GetInternalizedUnitRole(roleType);
         }
 
-        public void SetUnitRole(IRelationType relationType, object role)
+        public void SetUnitRole(IRoleType roleType, object role)
         {
             this.AssertNotDeleted();
-            var roleType = relationType.RoleType;
-            this.MemorySession.MemoryDatabase.UnitRoleChecks(this, roleType);
+            this.Session.Database.UnitRoleChecks(this, roleType);
 
             var previousRole = this.GetInternalizedUnitRole(roleType);
             role = roleType.Normalize(role);
 
-            if (role != previousRole)
+            if (role == previousRole)
             {
-                if (!this.RollbackUnitRoleByRoleType.ContainsKey(roleType))
-                {
-                    this.RollbackUnitRoleByRoleType[roleType] = this.GetInternalizedUnitRole(roleType);
-                }
+                return;
+            }
 
-                this.ChangeSet.OnChangingUnitRole(this.ObjectId, roleType);
+            if (!this.RollbackUnitRoleByRoleType.ContainsKey(roleType))
+            {
+                this.RollbackUnitRoleByRoleType[roleType] = this.GetInternalizedUnitRole(roleType);
+            }
 
-                if (role == null)
-                {
+            this.ChangeSet.OnChangingUnitRole(this.ObjectId, roleType);
+
+            switch (role)
+            {
+                case null:
                     this.unitRoleByRoleType.Remove(roleType);
-                }
-                else
-                {
+                    break;
+                default:
                     this.unitRoleByRoleType[roleType] = role;
-                }
+                    break;
             }
         }
 
-        public void RemoveUnitRole(IRelationType relationType) => this.SetUnitRole(relationType, null);
+        public void RemoveUnitRole(IRoleType relationType) => this.SetUnitRole(relationType, null);
 
-        public bool ExistUnitRole(IRelationType relationType)
+        public bool ExistUnitRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            var roleType = relationType.RoleType;
-            this.MemorySession.MemoryDatabase.UnitRoleChecks(this, roleType);
+            this.Session.OnAccessUnitRole?.Invoke(this, roleType);
             return this.unitRoleByRoleType.ContainsKey(roleType);
         }
 
-        public IObject GetCompositeRole(IRelationType relationType)
+        public IObject GetCompositeRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            var roleType = relationType.RoleType;
-
+            this.Session.OnAccessCompositeRole?.Invoke(this, roleType);
             this.compositeRoleByRoleType.TryGetValue(roleType, out var strategy);
-
             return strategy?.GetObject();
         }
 
-        public void SetCompositeRole(IRelationType relationType, IObject newRole)
+        public void SetCompositeRole(IRoleType roleType, IObject newRole)
         {
             if (newRole == null)
             {
-                this.RemoveCompositeRole(relationType);
+                this.RemoveCompositeRole(roleType);
             }
             else
             {
-                if (relationType.AssociationType.IsOne)
+                if (roleType.AssociationType.IsOne)
                 {
                     // 1-1
-                    this.SetCompositeRoleOne2One(relationType.RoleType, newRole);
+                    this.SetCompositeRoleOne2One(roleType, (Strategy)newRole.Strategy);
                 }
                 else
                 {
                     // *-1
-                    this.SetCompositeRoleMany2One(relationType.RoleType, newRole);
+                    this.SetCompositeRoleMany2One(roleType, (Strategy)newRole.Strategy);
                 }
             }
         }
 
-        public void RemoveCompositeRole(IRelationType relationType)
+        public void RemoveCompositeRole(IRoleType roleType)
         {
-            if (relationType.AssociationType.IsOne)
+            if (roleType.AssociationType.IsOne)
             {
                 // 1-1
-                this.RemoveCompositeRoleOne2One(relationType.RoleType);
+                this.RemoveCompositeRoleOne2One(roleType);
             }
             else
             {
                 // *-1
-                this.RemoveCompositeRoleMany2One(relationType.RoleType);
+                this.RemoveCompositeRoleMany2One(roleType);
             }
         }
 
-        public bool ExistCompositeRole(IRelationType relationType)
+        public bool ExistCompositeRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            return this.compositeRoleByRoleType.ContainsKey(relationType.RoleType);
+            this.Session.OnAccessCompositeRole?.Invoke(this, roleType);
+            return this.compositeRoleByRoleType.ContainsKey(roleType);
         }
 
-        public Allors.Extent GetCompositeRoles(IRelationType relationType)
+        public Allors.Extent GetCompositeRoles(IRoleType roleType)
         {
             this.AssertNotDeleted();
-
-            return new ExtentSwitch(this, relationType.RoleType);
+            this.Session.OnAccessCompositesRole?.Invoke(this, roleType);
+            return new ExtentSwitch(this, roleType);
         }
 
-        public void SetCompositeRoles(IRelationType relationType, Allors.Extent roles)
+        public void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles)
         {
-            if (roles == null || roles.Count == 0)
+            if (roles == null || (roles is ICollection<IObject> collection && collection.Count == 0))
             {
-                this.RemoveCompositeRoles(relationType);
+                this.RemoveCompositeRoles(roleType);
             }
             else
             {
-                this.AssertNotDeleted();
-
-                var newStrategies = new HashSet<Strategy>();
-                foreach (IObject role in roles)
+                var strategies = roles
+                    .Where(v => v != null)
+                    .Select(v => this.Session.Database.CompositeRolesChecks(this, roleType, (Strategy)v.Strategy))
+                    .Distinct();
+                
+                if (roleType.AssociationType.IsMany)
                 {
-                    if (role != null)
-                    {
-                        this.MemorySession.MemoryDatabase.CompositeRolesChecks(this, relationType.RoleType, role);
-
-                        var roleStrategy = this.MemorySession.GetStrategy(role.Strategy.ObjectId);
-                        newStrategies.Add(roleStrategy);
-                    }
-                }
-
-                if (relationType.AssociationType.IsMany)
-                {
-                    this.SetCompositeRolesMany2Many(relationType.RoleType, newStrategies);
+                    this.SetCompositesRolesMany2Many(roleType, strategies);
                 }
                 else
                 {
-                    this.SetCompositesRoleOne2Many(relationType.RoleType, newStrategies);
+                    this.SetCompositesRolesOne2Many(roleType, strategies);
                 }
             }
         }
 
-        public void AddCompositeRole(IRelationType relationType, IObject role)
+        public void AddCompositeRole(IRoleType roleType, IObject role)
         {
             this.AssertNotDeleted();
-            if (role != null)
+            if (role == null)
             {
-                this.MemorySession.MemoryDatabase.CompositeRolesChecks(this, relationType.RoleType, role);
-
-                var roleStrategy = this.MemorySession.GetStrategy(role.Strategy.ObjectId);
-
-                if (relationType.AssociationType.IsMany)
-                {
-                    this.AddCompositeRoleMany2Many(relationType.RoleType, roleStrategy);
-                }
-                else
-                {
-                    this.AddCompositeRoleOne2Many(relationType.RoleType, roleStrategy);
-                }
+                return;
             }
-        }
 
-        public void RemoveCompositeRole(IRelationType relationType, IObject role)
-        {
-            this.AssertNotDeleted();
-            if (role != null)
+            var roleStrategy = this.Session.Database.CompositeRolesChecks(this, roleType, (Strategy)role.Strategy);
+
+            if (roleType.AssociationType.IsMany)
             {
-                this.MemorySession.MemoryDatabase.CompositeRolesChecks(this, relationType.RoleType, role);
-
-                var roleStrategy = this.MemorySession.GetStrategy(role.Strategy.ObjectId);
-
-                if (relationType.AssociationType.IsMany)
-                {
-                    this.RemoveCompositeRoleMany2Many(relationType.RoleType, roleStrategy);
-                }
-                else
-                {
-                    this.RemoveCompositeRoleOne2Many(relationType.RoleType, roleStrategy);
-                }
-            }
-        }
-
-        public void RemoveCompositeRoles(IRelationType relationType)
-        {
-            this.AssertNotDeleted();
-            if (relationType.AssociationType.IsMany)
-            {
-                this.RemoveCompositeRolesMany2Many(relationType.RoleType);
+                this.AddCompositeRoleMany2Many(roleType, roleStrategy);
             }
             else
             {
-                this.RemoveCompositeRolesOne2Many(relationType.RoleType);
+                this.AddCompositeRoleOne2Many(roleType, roleStrategy);
             }
         }
 
-        public bool ExistCompositeRoles(IRelationType relationType)
+        public void RemoveCompositeRole(IRoleType roleType, IObject role)
         {
             this.AssertNotDeleted();
-            this.compositesRoleByRoleType.TryGetValue(relationType.RoleType, out var roleStrategies);
+
+            if (role == null)
+            {
+                return;
+            }
+
+            var roleStrategy = this.Session.Database.CompositeRolesChecks(this, roleType, (Strategy)role.Strategy);
+
+            if (roleType.AssociationType.IsMany)
+            {
+                this.RemoveCompositeRoleMany2Many(roleType, roleStrategy);
+            }
+            else
+            {
+                this.RemoveCompositeRoleOne2Many(roleType, roleStrategy);
+            }
+        }
+
+        public void RemoveCompositeRoles(IRoleType roleType)
+        {
+            this.AssertNotDeleted();
+
+            if (roleType.AssociationType.IsMany)
+            {
+                this.RemoveCompositeRolesMany2Many(roleType);
+            }
+            else
+            {
+                this.RemoveCompositeRolesOne2Many(roleType);
+            }
+        }
+
+        public bool ExistCompositeRoles(IRoleType roleType)
+        {
+            this.AssertNotDeleted();
+            this.Session.OnAccessCompositesRole?.Invoke(this, roleType);
+            this.compositesRoleByRoleType.TryGetValue(roleType, out var roleStrategies);
             return roleStrategies != null;
         }
 
-        public object GetAssociation(IRelationType relationType) => relationType.AssociationType.IsMany ? (object)this.GetCompositeAssociations(relationType) : this.GetCompositeAssociation(relationType);
+        public object GetAssociation(IAssociationType associationType) => associationType.IsMany ? (object)this.GetCompositeAssociations(associationType) : this.GetCompositeAssociation(associationType);
 
-        public bool ExistAssociation(IRelationType relationType) => relationType.AssociationType.IsMany ? this.ExistCompositeAssociations(relationType) : this.ExistCompositeAssociation(relationType);
+        public bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositeAssociations(associationType) : this.ExistCompositeAssociation(associationType);
 
-        public IObject GetCompositeAssociation(IRelationType relationType)
+        public IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-            this.compositeAssociationByAssociationType.TryGetValue(relationType.AssociationType, out var strategy);
+            this.Session.OnAccessCompositeAssociation?.Invoke(this, associationType);
+            this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
             return strategy?.GetObject();
         }
 
-        public bool ExistCompositeAssociation(IRelationType relationType) => this.GetCompositeAssociation(relationType) != null;
+        public bool ExistCompositeAssociation(IAssociationType relationType) => this.GetCompositeAssociation(relationType) != null;
 
-        public Allors.Extent GetCompositeAssociations(IRelationType relationType)
+        public Allors.Extent GetCompositeAssociations(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-
-            return new ExtentSwitch(this, relationType.AssociationType);
+            this.Session.OnAccessCompositesAssociation?.Invoke(this, associationType);
+            return new ExtentSwitch(this, associationType);
         }
 
-        public bool ExistCompositeAssociations(IRelationType relationType)
+        public bool ExistCompositeAssociations(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-            this.compositesAssociationByAssociationType.TryGetValue(relationType.AssociationType, out var strategies);
-
+            this.Session.OnAccessCompositesAssociation?.Invoke(this, associationType);
+            this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
             return strategies != null;
         }
 
@@ -402,13 +367,11 @@ namespace Allors.Database.Adapters.Memory
             // Roles
             foreach (var roleType in this.UncheckedObjectType.DatabaseRoleTypes)
             {
-                var relationType = roleType.RelationType;
-
-                if (this.ExistRole(relationType))
+                if (this.ExistRole(roleType))
                 {
                     if (roleType.ObjectType is IUnit)
                     {
-                        this.RemoveUnitRole(relationType);
+                        this.RemoveUnitRole(roleType);
                     }
                     else
                     {
@@ -442,10 +405,9 @@ namespace Allors.Database.Adapters.Memory
             // Associations
             foreach (var associationType in this.UncheckedObjectType.DatabaseAssociationTypes)
             {
-                var relationType = associationType.RelationType;
-                var roleType = relationType.RoleType;
+                var roleType = associationType.RoleType;
 
-                if (this.ExistAssociation(relationType))
+                if (this.ExistAssociation(associationType))
                 {
                     if (associationType.IsMany)
                     {
@@ -496,7 +458,7 @@ namespace Allors.Database.Adapters.Memory
             IObject allorsObject;
             if (this.allorizedObjectWeakReference == null)
             {
-                allorsObject = this.MemorySession.Database.ObjectFactory.Create(this);
+                allorsObject = this.Session.Database.ObjectFactory.Create(this);
                 this.allorizedObjectWeakReference = new WeakReference(allorsObject);
             }
             else
@@ -504,7 +466,7 @@ namespace Allors.Database.Adapters.Memory
                 allorsObject = (IObject)this.allorizedObjectWeakReference.Target;
                 if (allorsObject == null)
                 {
-                    allorsObject = this.MemorySession.Database.ObjectFactory.Create(this);
+                    allorsObject = this.Session.Database.ObjectFactory.Create(this);
                     this.allorizedObjectWeakReference.Target = allorsObject;
                 }
             }
@@ -514,7 +476,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Commit()
         {
-            if (!this.IsDeleted && !this.MemorySession.MemoryDatabase.IsLoading)
+            if (!this.IsDeleted && !this.Session.Database.IsLoading)
             {
                 if (this.rollbackUnitRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
@@ -652,36 +614,32 @@ namespace Allors.Database.Adapters.Memory
             return strategies.ToList();
         }
 
-        internal void SetCompositeRoleOne2One(IRoleType roleType, IObject newRole)
+        internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy newRoleStrategy)
         {
             this.AssertNotDeleted();
-            this.MemorySession.MemoryDatabase.CompositeRoleChecks(this, roleType, newRole);
+            this.Session.Database.CompositeRoleChecks(this, roleType, newRoleStrategy);
 
-            var previousRole = this.GetCompositeRole(roleType.RelationType);
+            this.compositeRoleByRoleType.TryGetValue(roleType, out var previousRoleStrategy);
 
-            if (!newRole.Equals(previousRole))
+            if (!newRoleStrategy.Equals(previousRoleStrategy))
             {
-                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRole?.Id, newRole?.Id);
+                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRoleStrategy?.ObjectId, newRoleStrategy.ObjectId);
 
-                var newRoleStrategy = this.MemorySession.GetStrategy(newRole);
-
-                if (previousRole != null)
+                if (previousRoleStrategy != null)
                 {
                     // previous role
-                    var previousRoleStrategy = this.MemorySession.GetStrategy(previousRole);
                     var associationType = roleType.AssociationType;
                     previousRoleStrategy.Backup(associationType);
                     previousRoleStrategy.compositeAssociationByAssociationType.Remove(associationType);
                 }
 
                 // previous association of newRole
-                var newRolePreviousAssociation = newRoleStrategy.GetCompositeAssociation(roleType.RelationType);
-                if (newRolePreviousAssociation != null)
+                newRoleStrategy.compositeAssociationByAssociationType.TryGetValue(roleType.AssociationType, out var newRolePreviousAssociationStrategy);
+                if (newRolePreviousAssociationStrategy != null)
                 {
-                    var newRolePreviousAssociationStrategy = this.MemorySession.GetStrategy(newRolePreviousAssociation);
                     if (!this.Equals(newRolePreviousAssociationStrategy))
                     {
-                        this.ChangeSet.OnChangingCompositeRole(newRolePreviousAssociationStrategy.ObjectId, roleType, previousRole?.Id, null);
+                        this.ChangeSet.OnChangingCompositeRole(newRolePreviousAssociationStrategy.ObjectId, roleType, previousRoleStrategy?.ObjectId, null);
 
                         newRolePreviousAssociationStrategy.Backup(roleType);
                         newRolePreviousAssociationStrategy.compositeRoleByRoleType.Remove(roleType);
@@ -699,25 +657,23 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        internal void SetCompositeRoleMany2One(IRoleType roleType, IObject newRole)
+        internal void SetCompositeRoleMany2One(IRoleType roleType, Strategy newRoleStrategy)
         {
             this.AssertNotDeleted();
-            this.MemorySession.MemoryDatabase.CompositeRoleChecks(this, roleType, newRole);
+            this.Session.Database.CompositeRoleChecks(this, roleType, newRoleStrategy);
 
-            var previousRole = this.GetCompositeRole(roleType.RelationType);
+            this.compositeRoleByRoleType.TryGetValue(roleType, out var previousRoleStrategy);
 
-            if (!newRole.Equals(previousRole))
+            if (!newRoleStrategy.Equals(previousRoleStrategy))
             {
-                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRole?.Id, newRole?.Id);
+                this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRoleStrategy?.ObjectId, newRoleStrategy.ObjectId);
 
                 var associationType = roleType.AssociationType;
 
                 // Update association of previous role
-                if (previousRole != null)
+                if (previousRoleStrategy != null)
                 {
-                    var previousRoleStrategy = this.MemorySession.GetStrategy(previousRole);
                     previousRoleStrategy.compositesAssociationByAssociationType.TryGetValue(associationType, out var previousRoleStrategies);
-
                     previousRoleStrategy.Backup(associationType);
                     previousRoleStrategies.Remove(this);
                     if (previousRoleStrategies.Count == 0)
@@ -725,8 +681,6 @@ namespace Allors.Database.Adapters.Memory
                         previousRoleStrategy.compositesAssociationByAssociationType.Remove(associationType);
                     }
                 }
-
-                var newRoleStrategy = this.MemorySession.GetStrategy(newRole);
 
                 this.Backup(roleType);
                 this.compositeRoleByRoleType[roleType] = newRoleStrategy;
@@ -744,39 +698,74 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        internal void SetCompositesRoleOne2Many(IRoleType roleType, HashSet<Strategy> roles)
+        internal void SetCompositesRolesOne2Many(IRoleType roleType, IEnumerable<Strategy> roles)
         {
             this.AssertNotDeleted();
 
-            var originalRoles = this.GetStrategies(roleType);
+            this.compositesRoleByRoleType.TryGetValue(roleType, out var originalRoles);
 
-            if (!roles.SetEquals(originalRoles))
+            if (originalRoles == null || originalRoles.Count == 0)
             {
-                // TODO: Optimize
-                this.RemoveCompositeRolesOne2Many(roleType);
-
-                // TODO: Optimize this
-                foreach (var strategy in roles)
+                foreach (var role in roles)
                 {
-                    this.AddCompositeRoleOne2Many(roleType, strategy);
+                    this.AddCompositeRoleOne2Many(roleType, role);
+                }
+            }
+            else
+            {
+                ISet<Strategy> toRemove = new HashSet<Strategy>(originalRoles);
+
+                foreach (var role in roles)
+                {
+                    if (toRemove.Contains(role))
+                    {
+                        toRemove.Remove(role);
+                    }
+                    else
+                    {
+                        this.AddCompositeRoleOne2Many(roleType, role);
+                    }
+                }
+
+                foreach (var strategy in toRemove)
+                {
+                    this.RemoveCompositeRoleOne2Many(roleType, strategy);
                 }
             }
         }
 
-        internal void SetCompositeRolesMany2Many(IRoleType roleType, HashSet<Strategy> roles)
+        internal void SetCompositesRolesMany2Many(IRoleType roleType, IEnumerable<Strategy> roles)
         {
             this.AssertNotDeleted();
 
-            var originalRoles = this.GetStrategies(roleType);
+            this.compositesRoleByRoleType.TryGetValue(roleType, out var originalRoles);
 
-            if (!roles.SetEquals(originalRoles))
+            if (originalRoles == null || originalRoles.Count == 0)
             {
-                this.RemoveCompositeRolesMany2Many(roleType);
-
-                // TODO: Optimize this
-                foreach (var strategy in roles)
+                foreach (var role in roles)
                 {
-                    this.AddCompositeRoleMany2Many(roleType, strategy);
+                    this.AddCompositeRoleMany2Many(roleType, role);
+                }
+            }
+            else
+            {
+                ISet<Strategy> toRemove = new HashSet<Strategy>(originalRoles);
+
+                foreach (var role in roles)
+                {
+                    if (toRemove.Contains(role))
+                    {
+                        toRemove.Remove(role);
+                    }
+                    else
+                    {
+                        this.AddCompositeRoleMany2Many(roleType, role);
+                    }
+                }
+
+                foreach (var strategy in toRemove)
+                {
+                    this.RemoveCompositeRoleMany2Many(roleType, strategy);
                 }
             }
         }
@@ -880,15 +869,6 @@ namespace Allors.Database.Adapters.Memory
             writer.WriteEndElement();
         }
 
-        private void AssertNotDeleted()
-        {
-            if (this.IsDeleted)
-            {
-                throw new Exception("Object of class " + this.UncheckedObjectType.Name + " with id " + this.ObjectId +
-                                    " has been deleted");
-            }
-        }
-
         private void Backup(IRoleType roleType)
         {
             if (roleType.IsMany)
@@ -964,14 +944,14 @@ namespace Allors.Database.Adapters.Memory
         private void RemoveCompositeRoleOne2One(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.MemorySession.MemoryDatabase.CompositeRoleChecks(this, roleType);
+            this.Session.Database.CompositeRoleChecks(this, roleType);
 
-            var previousRole = this.GetCompositeRole(roleType.RelationType);
+            var previousRole = this.GetCompositeRole(roleType);
             if (previousRole != null)
             {
                 this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRole.Id, null);
 
-                var previousRoleStrategy = this.MemorySession.GetStrategy(previousRole);
+                var previousRoleStrategy = this.Session.GetStrategy(previousRole);
                 var associationType = roleType.AssociationType;
                 previousRoleStrategy.Backup(associationType);
                 previousRoleStrategy.compositeAssociationByAssociationType.Remove(associationType);
@@ -985,15 +965,15 @@ namespace Allors.Database.Adapters.Memory
         private void RemoveCompositeRoleMany2One(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.MemorySession.MemoryDatabase.CompositeRoleChecks(this, roleType);
+            this.Session.Database.CompositeRoleChecks(this, roleType);
 
-            var previousRole = this.GetCompositeRole(roleType.RelationType);
+            var previousRole = this.GetCompositeRole(roleType);
 
             if (previousRole != null)
             {
                 this.ChangeSet.OnChangingCompositeRole(this.ObjectId, roleType, previousRole.Id, null);
 
-                var previousRoleStrategy = this.MemorySession.GetStrategy(previousRole);
+                var previousRoleStrategy = this.Session.GetStrategy(previousRole);
                 var associationType = roleType.AssociationType;
 
                 previousRoleStrategy.compositesAssociationByAssociationType.TryGetValue(associationType, out var previousRoleStrategyAssociations);
@@ -1173,6 +1153,14 @@ namespace Allors.Database.Adapters.Memory
                 {
                     this.RemoveCompositeRoleOne2Many(roleType, strategy);
                 }
+            }
+        }
+
+        private void AssertNotDeleted()
+        {
+            if (this.IsDeleted)
+            {
+                throw new Exception($"Object of class {this.UncheckedObjectType.Name} with id {this.ObjectId} has been deleted");
             }
         }
 

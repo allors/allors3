@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.Memory
     using Allors.Serialization;
     using IO;
 
-    public class Session : ISession
+    public class Session : ISession, IOnAccess
     {
         private static readonly HashSet<Strategy> EmptyStrategies = new HashSet<Strategy>();
         private static readonly IObject[] EmptyObjects = { };
@@ -29,7 +29,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal Session(Database database, ISessionStateLifecycle scope)
         {
-            this.MemoryDatabase = database;
+            this.Database = database;
             this.StateLifecycle = scope;
 
             this.busyCommittingOrRollingBack = false;
@@ -43,17 +43,27 @@ namespace Allors.Database.Adapters.Memory
             this.StateLifecycle.OnInit(this);
         }
 
-        public IDatabase Population => this.MemoryDatabase;
+        public IDatabase Population => this.Database;
 
-        public IDatabase Database => this.MemoryDatabase;
+        IDatabase ISession.Database => this.Database;
 
         public ISessionStateLifecycle StateLifecycle { get; }
+
+        public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
+
+        public Action<IStrategy, IRoleType> OnAccessCompositeRole { get; set; }
+
+        public Action<IStrategy, IRoleType> OnAccessCompositesRole { get; set; }
+
+        public Action<IStrategy, IAssociationType> OnAccessCompositeAssociation { get; set; }
+
+        public Action<IStrategy, IAssociationType> OnAccessCompositesAssociation { get; set; }
 
         public bool IsProfilingEnabled => false;
 
         internal ChangeSet MemoryChangeSet { get; private set; }
 
-        internal Database MemoryDatabase { get; }
+        internal Database Database { get; }
 
         public void Commit()
         {
@@ -138,7 +148,7 @@ namespace Allors.Database.Adapters.Memory
 
         public T Create<T>() where T : IObject
         {
-            var objectType = this.MemoryDatabase.ObjectFactory.GetObjectTypeForType(typeof(T));
+            var objectType = this.Database.ObjectFactory.GetObjectTypeForType(typeof(T));
 
             if (!(objectType is IClass @class))
             {
@@ -150,7 +160,7 @@ namespace Allors.Database.Adapters.Memory
 
         public IObject[] Create(IClass objectType, int count)
         {
-            var arrayType = this.MemoryDatabase.ObjectFactory.GetTypeForObjectType(objectType);
+            var arrayType = this.Database.ObjectFactory.GetTypeForObjectType(objectType);
             var allorsObjects = (IObject[])Array.CreateInstance(arrayType, count);
             for (var i = 0; i < count; i++)
             {
@@ -225,7 +235,7 @@ namespace Allors.Database.Adapters.Memory
 
         public Extent<T> Extent<T>() where T : IObject
         {
-            if (!(this.MemoryDatabase.ObjectFactory.GetObjectTypeForType(typeof(T)) is IComposite compositeType))
+            if (!(this.Database.ObjectFactory.GetObjectTypeForType(typeof(T)) is IComposite compositeType))
             {
                 throw new Exception("type should be a CompositeType");
             }
@@ -271,7 +281,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Init() => this.Reset();
 
-        internal Type GetTypeForObjectType(IObjectType objectType) => this.MemoryDatabase.ObjectFactory.GetTypeForObjectType(objectType);
+        internal Type GetTypeForObjectType(IObjectType objectType) => this.Database.ObjectFactory.GetTypeForObjectType(objectType);
 
         internal virtual Strategy InsertStrategy(IClass objectType, long objectId, long objectVersion)
         {

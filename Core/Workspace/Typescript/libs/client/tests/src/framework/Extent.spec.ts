@@ -14,14 +14,14 @@ describe('Extent', () => {
     await fixture.init('full');
   });
 
-  describe('People', () => {
-    it('should return all people', async () => {
+  describe('C1', () => {
+    it('should return all c1s', async () => {
       const { m, ctx } = fixture;
 
       const pulls = [
         new Pull({
           extent: new Extent({
-            objectType: m.Person,
+            objectType: m.C1,
           }),
         }),
       ];
@@ -31,11 +31,11 @@ describe('Extent', () => {
       const pullRequest = new PullRequest({ pulls });
       const loaded = await ctx.load(pullRequest);
 
-      const people = loaded.collections['People'] as Person[];
+      const c1s = loaded.collections['C1s'] as C1[];
 
-      expect(people).toBeArray();
-      expect(people).not.toBeEmpty();
-      expect(8).toBe(people.length);
+      expect(c1s).toBeArray();
+      expect(c1s).not.toBeEmpty();
+      expect(c1s.length).toBe(4);
     });
   });
 
