@@ -9,7 +9,7 @@ namespace Allors
     using Bogus;
     using Microsoft.AspNetCore.Http;
 
-    public class FakerDatabaseState : ValidatingDatabaseState
+    public class FakerDatabaseState : DefaultDatabaseState
     {
         public FakerDatabaseState(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
 
