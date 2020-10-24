@@ -17,8 +17,12 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new CreatedPattern(this.M.SalesInvoice.Class),
-            new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
+            new ChangedRolePattern(this.M.SalesInvoice.ValidInvoiceItems),
+            new ChangedRolePattern(this.M.SalesInvoiceItem.Product) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.SalesInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedRolePattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.PriceComponent.FromDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedRolePattern(this.M.PriceComponent.ThroughDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,10 +30,10 @@ namespace Allors.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            foreach (var salesInvoice in matches.Cast<SalesInvoice>())
+            // calculate prices only if salesinvoice is not posted yet.
+            foreach (var salesInvoice in matches.Cast<SalesInvoice>().Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting))
             {
-                var validInvoiceItems = salesInvoice.SalesInvoiceItems.Where(v => v.IsValid).ToArray();
-                salesInvoice.ValidInvoiceItems = validInvoiceItems;
+                var validInvoiceItems = salesInvoice.ValidInvoiceItems.Cast<SalesInvoiceItem>().ToArray();
 
                 var currentPriceComponents = new PriceComponents(salesInvoice.Strategy.Session).CurrentPriceComponents(salesInvoice.InvoiceDate);
 

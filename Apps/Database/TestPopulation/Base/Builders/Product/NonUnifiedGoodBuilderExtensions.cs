@@ -8,7 +8,7 @@ namespace Allors.Domain.TestPopulation
 {
     public static partial class NonUnifiedGoodBuilderExtensions
     {
-        public static NonUnifiedGoodBuilder WithNonSerialisedPartDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
+        public static NonUnifiedGoodBuilder WithNonSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
             var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();
@@ -69,7 +69,7 @@ namespace Allors.Domain.TestPopulation
             return @this;
         }
 
-        public static NonUnifiedGoodBuilder WithSerialisedPartDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
+        public static NonUnifiedGoodBuilder WithSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
             var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();

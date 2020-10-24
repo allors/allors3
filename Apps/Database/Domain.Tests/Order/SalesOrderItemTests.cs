@@ -181,7 +181,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            // previous basePrice for good
+            // historic basePrice for good
             new BasePriceBuilder(this.Session).WithDescription("previous good")
                 .WithProduct(this.good)
                 .WithPrice(8)
@@ -204,7 +204,7 @@ namespace Allors.Domain
                 .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            // previous basePrice for feature1
+            // historic basePrice for feature1
             new BasePriceBuilder(this.Session).WithDescription("previous feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(0.5M)
@@ -227,7 +227,7 @@ namespace Allors.Domain
                 .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            // previous basePrice for feature2
+            // historic basePrice for feature2
             new BasePriceBuilder(this.Session).WithDescription("previous feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(2)
@@ -251,7 +251,7 @@ namespace Allors.Domain
                 .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            // previous basePrice for good with feature1
+            // historic basePrice for good with feature1
             new BasePriceBuilder(this.Session).WithDescription("previous good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)
@@ -1415,7 +1415,7 @@ namespace Allors.Domain
                 .WithFromDate(this.Session.Now())
                 .Build();
 
-            // previous basePrice for good
+            // historic basePrice for good
             new BasePriceBuilder(this.Session).WithDescription("previous good")
                 .WithProduct(this.good)
                 .WithPrice(8)
@@ -1438,7 +1438,7 @@ namespace Allors.Domain
                 .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            // previous basePrice for feature1
+            // historic basePrice for feature1
             new BasePriceBuilder(this.Session).WithDescription("previous feature1")
                 .WithProductFeature(this.feature1)
                 .WithPrice(0.5M)
@@ -1461,7 +1461,7 @@ namespace Allors.Domain
                 .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            // previous basePrice for feature2
+            // historic basePrice for feature2
             new BasePriceBuilder(this.Session).WithDescription("previous feature2")
                 .WithProductFeature(this.feature2)
                 .WithPrice(2)
@@ -1485,7 +1485,7 @@ namespace Allors.Domain
                 .WithThroughDate(this.Session.Now().AddYears(1).AddDays(-1))
                 .Build();
 
-            // previous basePrice for good with feature1
+            // historic basePrice for good with feature1
             new BasePriceBuilder(this.Session).WithDescription("previous good/feature1")
                 .WithProduct(this.good)
                 .WithProductFeature(this.feature1)

@@ -192,7 +192,7 @@ namespace Allors.Domain
         {
             public PriceComponent PriceComponent;
 
-            public Party Customer;
+            public Party Customer;  
 
             public Product Product;
 
