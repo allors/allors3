@@ -19,6 +19,8 @@ namespace Allors
                 new InterfaceCreationDerivation(m),
                 new PersonFullNameDerivation(m),
                 new PersonGreetingDerivation(m),
+                // Validation
+                new One2OneDerivation(m),
             };
 
             foreach (var derivation in derivations)

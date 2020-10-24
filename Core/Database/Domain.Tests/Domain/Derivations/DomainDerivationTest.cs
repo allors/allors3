@@ -39,7 +39,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Roles()
+        public void UnitRoles()
         {
             var person = new PersonBuilder(this.Session)
                 .WithFirstName("Jane")

@@ -54,8 +54,7 @@ namespace Allors.Domain.Derivations.Validating
                     // Initialization
                     if (changeSet.Created.Any())
                     {
-                        var newObjects = changeSet.Created.Select(v => (Object)v.GetObject());
-                        foreach (var newObject in newObjects)
+                        foreach (var newObject in changeSet.Created.Select(v => (Object)v.GetObject()))
                         {
                             newObject.OnInit();
                         }
@@ -63,7 +62,6 @@ namespace Allors.Domain.Derivations.Validating
 
                     var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = this.Session, Validation = domainValidation };
 
-                    var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
                     foreach (var kvp in domainDerivationById)
                     {
                         var domainDerivation = kvp.Value;
@@ -77,13 +75,13 @@ namespace Allors.Domain.Derivations.Validating
                                     .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
                                     .Select(v => v.GetObject()),
                                 ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
-                                        .AssociationsByRoleType
-                                        .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                        .SelectMany(v => this.Session.Instantiate(v.Value)),
+                                    .AssociationsByRoleType
+                                    .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                    .SelectMany(v => this.Session.Instantiate(v.Value)),
                                 ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
-                                        .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
-                                        .SelectMany(v => this.Session.Instantiate(v.Value))
-                                        .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeClass)),
+                                    .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
+                                    .SelectMany(v => this.Session.Instantiate(v.Value))
+                                    .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeClass)),
                                 ChangedAssociationPattern changedAssociationsPattern => changeSet
                                     .RolesByAssociationType
                                     .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
@@ -108,17 +106,9 @@ namespace Allors.Domain.Derivations.Validating
 
                         if (matches.Count > 0)
                         {
-                            matchesByDerivation[domainDerivation] = matches;
+                            using var validator = new Validator((IOnAccess)this.Session, domainDerivation.Patterns, matches);
+                            domainDerivation.Derive(domainCycle, matches);
                         }
-                    }
-
-                    // TODO: Prefetching
-
-                    foreach (var kvp in matchesByDerivation)
-                    {
-                        var domainDerivation = kvp.Key;
-                        var matches = kvp.Value;
-                        domainDerivation.Derive(domainCycle, matches);
                     }
 
                     changeSet = this.Session.Checkpoint();
