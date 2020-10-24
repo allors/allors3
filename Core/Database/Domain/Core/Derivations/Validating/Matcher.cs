@@ -40,7 +40,12 @@ namespace Allors.Domain.Derivations.Validating
                 ? roleClass.RoleInterface
                 : propertyType;
 
-            if (!this.propertyTypesByStrategies.TryGetValue(strategy, out var propertyTypes) || !propertyTypes.Contains(propertyType))
+            if (!this.propertyTypesByStrategies.TryGetValue(strategy, out var propertyTypes))
+            {
+                throw new Exception($"Could not match [{strategy}].{propertyType}");
+            }
+
+            if (!propertyTypes.Contains(propertyType))
             {
                 throw new Exception($"Could not match [{strategy}].{propertyType}");
             }

@@ -4,17 +4,12 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
+using Allors.Meta;
+
 namespace Allors
 {
-    using Allors.Meta;
-
-    public class ChangedRolePattern : ChangedPropertyPattern
+    public abstract class ChangedPropertyPattern : Pattern
     {
-        public ChangedRolePattern(IRoleType roleType) => this.RoleType = roleType;
-
-        public IRoleType RoleType { get; }
-
-        public override IPropertyType PropertyType => this.RoleType;
-
+        public abstract IPropertyType PropertyType { get; }
     }
 }

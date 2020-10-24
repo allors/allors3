@@ -8,10 +8,12 @@ namespace Allors
 {
     using Allors.Meta;
 
-    public class ChangedAssociationPattern : Pattern
+    public class ChangedAssociationPattern : ChangedPropertyPattern
     {
         public ChangedAssociationPattern(IAssociationType associationType) => this.AssociationType = associationType;
 
         public IAssociationType AssociationType { get; set; }
+
+        public override IPropertyType PropertyType => this.AssociationType;
     }
 }

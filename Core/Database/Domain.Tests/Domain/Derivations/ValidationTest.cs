@@ -14,7 +14,7 @@ namespace Tests
 
     public class ValidationDomainDerivationTest : DomainTest, IClassFixture<Fixture>
     {
-        public ValidationDomainDerivationTest(Fixture fixture) : base(fixture) { }
+        public ValidationDomainDerivationTest(Fixture fixture) : base(fixture, false) { }
 
         [Fact]
         public void One2OneRoles()

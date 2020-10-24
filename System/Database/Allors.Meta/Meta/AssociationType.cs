@@ -158,17 +158,7 @@ namespace Allors.Meta
         /// <returns>
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
-        public override string ToString()
-        {
-            try
-            {
-                return this.RelationType.ToString();
-            }
-            catch
-            {
-                return base.ToString();
-            }
-        }
+        public override string ToString() => $"{this.RoleType.ObjectType.Name}.{this.DisplayName}";
 
         /// <summary>
         /// Validates this object.
