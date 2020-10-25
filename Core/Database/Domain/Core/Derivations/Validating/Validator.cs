@@ -24,10 +24,19 @@ namespace Allors.Domain.Derivations.Validating
                     switch (pattern)
                     {
                         case ChangedRolePattern changedRolePattern:
-                            changedRolePattern.CreatePropertyMatches(match.Strategy, this.Matcher);
+                            foreach (var changedPropertyMatch in changedRolePattern.CreatePropertyMatches(match.Strategy, this.Matcher))
+                            {
+                                this.Matcher.Add(changedPropertyMatch, changedRolePattern.RoleType);
+                            }
+
                             break;
+
                         case ChangedAssociationPattern changedAssociationPattern:
-                            changedAssociationPattern.CreatePropertyMatches(match.Strategy, this.Matcher);
+                            foreach (var changedPropertyMatch in changedAssociationPattern.CreatePropertyMatches(match.Strategy, this.Matcher))
+                            {
+                                this.Matcher.Add(changedPropertyMatch, changedAssociationPattern.AssociationType);
+                            }
+
                             break;
                     }
                 }

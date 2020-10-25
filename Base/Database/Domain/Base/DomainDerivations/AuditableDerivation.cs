@@ -16,7 +16,6 @@ namespace Allors.Domain
             this.Patterns = new[]
             {
                 new CreatedPattern(m.Auditable.Interface),
-                // new ChangedPattern(M.Auditable.Interface)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,17 +25,8 @@ namespace Allors.Domain
                 var user = auditable.Strategy.Session.State().User;
                 if (user != null)
                 {
-                    if (cycle.ChangeSet.Created.Contains(auditable.Strategy))
-                    {
-                        auditable.CreationDate = auditable.Strategy.Session.Now();
-                        auditable.CreatedBy = user;
-                    }
-
-                    if (cycle.ChangeSet.Associations.Contains(auditable.Id))
-                    {
-                        auditable.LastModifiedDate = auditable.Strategy.Session.Now();
-                        auditable.LastModifiedBy = user;
-                    }
+                    auditable.CreationDate = auditable.Strategy.Session.Now();
+                    auditable.CreatedBy = user;
                 }
             }
         }

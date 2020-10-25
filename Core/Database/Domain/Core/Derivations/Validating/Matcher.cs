@@ -36,6 +36,11 @@ namespace Allors.Domain.Derivations.Validating
 
         public void Match(IStrategy strategy, IPropertyType propertyType)
         {
+            if (strategy.IsNewInSession)
+            {
+                return;
+            }
+
             propertyType = propertyType is RoleClass roleClass && roleClass.ExistRoleInterface
                 ? roleClass.RoleInterface
                 : propertyType;

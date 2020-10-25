@@ -20,7 +20,10 @@ namespace Allors
                 new PersonFullNameDerivation(m),
                 new PersonGreetingDerivation(m),
                 // Validation
+                new CreationDerivation(m),
                 new One2OneDerivation(m),
+                new One2ManyDerivation(m),
+                new Many2OneDerivation(m),
             };
 
             foreach (var derivation in derivations)

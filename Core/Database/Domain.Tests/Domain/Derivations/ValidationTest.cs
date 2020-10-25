@@ -38,5 +38,62 @@ namespace Tests
 
             Assert.Equal("x", aa.Derived);
         }
+
+        [Fact]
+        public void Many2OneRoles()
+        {
+            var cc = new CCBuilder(this.Session)
+                .Build();
+
+            var bb = new BBBuilder(this.Session)
+                .WithMany2One(cc)
+                .Build();
+
+            var aa = new AABuilder(this.Session)
+                .WithMany2One(bb)
+                .Build();
+
+            this.Session.Derive();
+
+            cc.Assigned = "x";
+
+            this.Session.Derive();
+
+            Assert.Equal("x", aa.Derived);
+        }
+
+        [Fact]
+        public void One2ManyRoles()
+        {
+            var cc = new CCBuilder(this.Session)
+                .Build();
+
+            var bb = new BBBuilder(this.Session)
+                .WithOne2Many(cc)
+                .Build();
+
+            var aa = new AABuilder(this.Session)
+                .WithOne2Many(bb)
+                .Build();
+
+            this.Session.Derive();
+
+            cc.Assigned = "x";
+
+            this.Session.Derive();
+
+            Assert.Equal("x", aa.Derived);
+        }
+
+        [Fact]
+        public void Create()
+        {
+            var aa = new AABuilder(this.Session)
+                .Build();
+
+            this.Session.Derive();
+
+            Assert.True(aa.IsCreated);
+        }
     }
 }

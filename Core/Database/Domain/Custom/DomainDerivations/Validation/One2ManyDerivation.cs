@@ -10,13 +10,13 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class One2OneDerivation : DomainDerivation
+    public class One2ManyDerivation : DomainDerivation
     {
-        public One2OneDerivation(M m) : base(m, new Guid("1C369F4C-CC12-4064-9261-BF899205E251")) =>
+        public One2ManyDerivation(M m) : base(m, new Guid("d40ab5c5-c248-4455-bad4-8c825f48e080")) =>
             this.Patterns = new[]
             {
-                new ChangedRolePattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereOne2One, m.BB.AAWhereOne2One}},
-                new ChangedRolePattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereUnusedOne2One, m.BB.AAWhereUnusedOne2One}},
+                new ChangedRolePattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereOne2Many, m.BB.AAWhereOne2Many}},
+                new ChangedRolePattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereUnusedOne2Many, m.BB.AAWhereUnusedOne2Many}},
             };
 
 
@@ -24,7 +24,7 @@ namespace Allors.Domain
         {
             foreach (var aa in matches.Cast<AA>())
             {
-                aa.Derived = aa.One2One?.One2One?.Assigned;
+                aa.Derived = aa.One2Many.FirstOrDefault()?.One2Many.FirstOrDefault()?.Assigned;
             }
         }
     }

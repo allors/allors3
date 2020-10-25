@@ -7,13 +7,16 @@
 namespace Allors.Domain.Derivations.Validating
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Meta;
 
     public static class ChangedPropertyPatternExtensions
     {
-        public static IStrategy[] CreatePropertyMatches(this ChangedPropertyPattern @this, IStrategy rootMatch, Matcher matcher, IStrategy[] matches)
+        public static IEnumerable<IStrategy> CreatePropertyMatches(this ChangedPropertyPattern @this, IStrategy rootMatch, Matcher matcher)
         {
+            IEnumerable<IStrategy> matches = new[] { rootMatch };
+
             if (@this.Steps?.Length > 0)
             {
                 var propertyType = @this.Steps[@this.Steps.Length - 1];
@@ -34,8 +37,8 @@ namespace Allors.Domain.Derivations.Validating
                             }
 
                             matches = roleType.IsOne
-                                ? matches.Select(v => v.GetCompositeAssociation(roleType.AssociationType).Strategy).ToArray()
-                                : matches.SelectMany(v => v.GetCompositeAssociations(roleType.AssociationType).Select(w => w.Strategy)).ToArray();
+                                ? matches.Select(v => v.GetCompositeAssociation(roleType.AssociationType).Strategy)
+                                : matches.SelectMany(v => v.GetCompositeAssociations(roleType.AssociationType).Select(w => w.Strategy));
 
                             break;
 
@@ -46,8 +49,8 @@ namespace Allors.Domain.Derivations.Validating
                             }
 
                             matches = associationType.IsOne
-                                ? matches.Select(v => v.GetCompositeRole(associationType.RoleType).Strategy).ToArray()
-                                : matches.SelectMany(v => v.GetCompositeRoles(associationType.RoleType).Select(w => w.Strategy)).ToArray();
+                                ? matches.Select(v => v.GetCompositeRole(associationType.RoleType)?.Strategy).Where(v => v != null)
+                                : matches.SelectMany(v => v.GetCompositeRoles(associationType.RoleType).Select(w => w.Strategy));
 
                             break;
 
