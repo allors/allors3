@@ -22,7 +22,7 @@ namespace Allors.Domain
 
         public Guid Id { get; protected set; }
 
-        public IEnumerable<Pattern> Patterns { get; protected set; }
+        public Pattern[] Patterns { get; protected set; }
 
         public abstract void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches);
     }

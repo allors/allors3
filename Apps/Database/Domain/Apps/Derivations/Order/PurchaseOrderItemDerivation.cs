@@ -18,8 +18,8 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.PurchaseOrderItem.Class),
-                new ChangedRolePattern(this.M.PurchaseOrderItem.PurchaseOrderItemState),
-                // new ChangedRolePattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
+                new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState),
+                // new ChangedPattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

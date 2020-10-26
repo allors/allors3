@@ -8,13 +8,10 @@ namespace Allors
 {
     using Allors.Meta;
 
-    public class ChangedRolePattern : ChangedPropertyPattern
+    public class ChangedPattern : Pattern
     {
-        public ChangedRolePattern(IRoleType roleType) => this.RoleType = roleType;
+        public ChangedPattern(IRoleType roleType) => this.RoleType = roleType;
 
         public IRoleType RoleType { get; }
-
-        public override IPropertyType PropertyType => this.RoleType;
-
     }
 }

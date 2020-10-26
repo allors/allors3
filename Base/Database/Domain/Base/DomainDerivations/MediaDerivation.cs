@@ -19,10 +19,10 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(m.Media.Class),
-                new ChangedRolePattern(m.Media.InType),
-                new ChangedRolePattern(m.Media.InData),
-                new ChangedRolePattern(m.Media.InDataUri),
-                new ChangedRolePattern(m.Media.InFileName),
+                new ChangedPattern(m.Media.InType),
+                new ChangedPattern(m.Media.InData),
+                new ChangedPattern(m.Media.InDataUri),
+                new ChangedPattern(m.Media.InFileName),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

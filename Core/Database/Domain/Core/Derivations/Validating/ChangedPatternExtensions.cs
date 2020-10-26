@@ -11,9 +11,9 @@ namespace Allors.Domain.Derivations.Validating
     using System.Linq;
     using Meta;
 
-    public static class ChangedPropertyPatternExtensions
+    public static class ChangedPatternExtensions
     {
-        public static IEnumerable<IStrategy> CreatePropertyMatches(this ChangedPropertyPattern @this, IStrategy rootMatch, Matcher matcher)
+        public static IEnumerable<IStrategy> CreatePropertyMatches(this ChangedPattern @this, IStrategy rootMatch, Matcher matcher)
         {
             IEnumerable<IStrategy> matches = new[] { rootMatch };
 

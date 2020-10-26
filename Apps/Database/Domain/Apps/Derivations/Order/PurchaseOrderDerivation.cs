@@ -18,10 +18,10 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.PurchaseOrder.Class),
-                new ChangedRolePattern(this.M.PurchaseOrder.PurchaseOrderState),
-                new ChangedRolePattern(this.M.PurchaseOrder.PurchaseOrderItems),
-                new ChangedRolePattern(this.M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
-                new ChangedRolePattern(this.M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] { this.M.InternalOrganisation.ActiveSuppliers, this.M.Organisation.PurchaseOrdersWhereOrderedBy}},
+                new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderState),
+                new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderItems),
+                new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
+                new ChangedPattern(this.M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] { this.M.InternalOrganisation.ActiveSuppliers, this.M.Organisation.PurchaseOrdersWhereOrderedBy}},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

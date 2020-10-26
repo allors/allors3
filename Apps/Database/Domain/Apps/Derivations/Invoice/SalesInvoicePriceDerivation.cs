@@ -17,12 +17,12 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new CreatedPattern(this.M.SalesInvoice.Class),
-            new ChangedRolePattern(this.M.SalesInvoice.ValidInvoiceItems),
-            new ChangedRolePattern(this.M.SalesInvoiceItem.Product) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedRolePattern(this.M.SalesInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedRolePattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedRolePattern(this.M.PriceComponent.FromDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedRolePattern(this.M.PriceComponent.ThroughDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SalesInvoice.ValidInvoiceItems),
+            new ChangedPattern(this.M.SalesInvoiceItem.Product) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SalesInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.PriceComponent.FromDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.PriceComponent.ThroughDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

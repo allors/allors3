@@ -18,7 +18,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(m.PaymentApplication.Class),
-                new ChangedRolePattern(this.M.SalesInvoice.AdvancePayment) { Steps =  new IPropertyType[] {m.SalesInvoice.PaymentApplicationsWhereInvoice} },
+                new ChangedPattern(this.M.SalesInvoice.AdvancePayment) { Steps =  new IPropertyType[] {m.SalesInvoice.PaymentApplicationsWhereInvoice} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

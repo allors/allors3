@@ -16,7 +16,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.PickList.Class),
-                new ChangedRolePattern(this.M.PickList.Picker),
+                new ChangedPattern(this.M.PickList.Picker),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

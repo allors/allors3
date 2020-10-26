@@ -13,7 +13,7 @@ namespace Allors
     {
         Guid Id { get; }
 
-        IEnumerable<Pattern> Patterns { get; }
+        Pattern[] Patterns { get; }
 
         void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches);
     }

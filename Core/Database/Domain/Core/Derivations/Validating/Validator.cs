@@ -11,7 +11,7 @@ namespace Allors.Domain.Derivations.Validating
 
     public class Validator : IDisposable
     {
-        public Validator(IOnAccess onAccess, IEnumerable<Pattern> patterns, HashSet<IObject> matches)
+        public Validator(IOnAccess onAccess, Pattern[] patterns, IEnumerable<IObject> matches)
         {
             this.OnAccess = onAccess;
 
@@ -23,18 +23,10 @@ namespace Allors.Domain.Derivations.Validating
                 {
                     switch (pattern)
                     {
-                        case ChangedRolePattern changedRolePattern:
+                        case ChangedPattern changedRolePattern:
                             foreach (var changedPropertyMatch in changedRolePattern.CreatePropertyMatches(match.Strategy, this.Matcher))
                             {
                                 this.Matcher.Add(changedPropertyMatch, changedRolePattern.RoleType);
-                            }
-
-                            break;
-
-                        case ChangedAssociationPattern changedAssociationPattern:
-                            foreach (var changedPropertyMatch in changedAssociationPattern.CreatePropertyMatches(match.Strategy, this.Matcher))
-                            {
-                                this.Matcher.Add(changedPropertyMatch, changedAssociationPattern.AssociationType);
                             }
 
                             break;

@@ -15,12 +15,12 @@ namespace Allors.Domain
         public PersonGreetingDerivation(M m) =>
             this.Patterns = new[]
             {
-                new ChangedRolePattern(m.Person.DomainFullName)
+                new ChangedPattern(m.Person.DomainFullName)
             };
 
         public Guid Id => new Guid("5FFD5696-E735-4D05-8405-3A444B6F591E");
 
-        public IEnumerable<Pattern> Patterns { get; }
+        public Pattern[] Patterns { get; }
 
         public void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {

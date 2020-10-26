@@ -25,8 +25,14 @@ namespace Allors.Domain
                     },
                     OfType = this.M.NonSerialisedInventoryItem.Class
                 },
-                new ChangedAssociationPattern(this.M.NonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem),
-                new ChangedRolePattern(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
+                new ChangedPattern(this.M.InventoryItemTransaction.InventoryItem)
+                {
+                    Steps = new IPropertyType[]
+                    {
+                        this.M.InventoryItemTransaction.InventoryItem,
+                    },
+                },
+                new ChangedPattern(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
                 {
                     Steps = new IPropertyType[]
                     {

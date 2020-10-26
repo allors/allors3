@@ -76,18 +76,14 @@ namespace Allors.Domain.Derivations.Default
                                 CreatedPattern createdPattern => changeSet.Created
                                     .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
                                     .Select(v => v.GetObject()),
-                                ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
+                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
                                         .AssociationsByRoleType
                                         .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                         .SelectMany(v => this.Session.Instantiate(v.Value)),
-                                ChangedRolePattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
+                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
                                         .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
                                         .SelectMany(v => this.Session.Instantiate(v.Value))
                                         .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeClass)),
-                                ChangedAssociationPattern changedAssociationsPattern => changeSet
-                                    .RolesByAssociationType
-                                    .Where(v => v.Key.Equals(changedAssociationsPattern.AssociationType))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value)),
                                 _ => Array.Empty<IObject>()
                             };
 

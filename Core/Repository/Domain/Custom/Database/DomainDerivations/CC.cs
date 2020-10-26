@@ -26,6 +26,14 @@ namespace Allors.Repository
         [Size(256)]
         public string Assigned { get; set; }
 
+
+        #region Allors
+        [Id("53F7BD1C-BAD4-4FE6-888F-BF33DA2CBD95")]
+        #endregion
+        [Size(256)]
+        [Derived]
+        public string Derived { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

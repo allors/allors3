@@ -20,11 +20,11 @@ namespace Allors.Domain
             // This is used here when salesInvoiceItemState has passed the ReadyForPosting state and by then invoice item changes are not allowed.
 
             new CreatedPattern(this.M.SalesInvoice.Class),
-            new ChangedRolePattern(this.M.SalesInvoice.SalesInvoiceItems),
-            new ChangedRolePattern(this.M.SalesInvoice.AdvancePayment),
-            new ChangedRolePattern(this.M.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedRolePattern(this.M.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedRolePattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice} },
+            new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
+            new ChangedPattern(this.M.SalesInvoice.AdvancePayment),
+            new ChangedPattern(this.M.SalesInvoiceItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SalesInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

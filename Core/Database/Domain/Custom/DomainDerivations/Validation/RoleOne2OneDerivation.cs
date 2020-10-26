@@ -10,13 +10,13 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class One2OneDerivation : DomainDerivation
+    public class RoleOne2OneDerivation : DomainDerivation
     {
-        public One2OneDerivation(M m) : base(m, new Guid("1C369F4C-CC12-4064-9261-BF899205E251")) =>
+        public RoleOne2OneDerivation(M m) : base(m, new Guid("1C369F4C-CC12-4064-9261-BF899205E251")) =>
             this.Patterns = new[]
             {
-                new ChangedRolePattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereOne2One, m.BB.AAWhereOne2One}},
-                new ChangedRolePattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereUnusedOne2One, m.BB.AAWhereUnusedOne2One}},
+                new ChangedPattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereOne2One, m.BB.AAWhereOne2One}},
+                new ChangedPattern(m.CC.Assigned) {Steps = new IPropertyType[]{m.CC.BBWhereUnusedOne2One, m.BB.AAWhereUnusedOne2One}},
             };
 
 

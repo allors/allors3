@@ -83,6 +83,12 @@ namespace Allors.Repository
         public bool IsCreated { get; set; }
 
         #region Allors
+        [Id("3CC45EC4-70C8-4828-A2F2-DFEDAEF01354")]
+        #endregion
+        [Size(256)]
+        public string Assigned { get; set; }
+
+        #region Allors
         [Id("88C2E7B9-3B7F-468D-BB4E-ACCA1F4365FE")]
         #endregion
         [Size(256)]

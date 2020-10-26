@@ -21,9 +21,10 @@ namespace Allors
                 new PersonGreetingDerivation(m),
                 // Validation
                 new CreationDerivation(m),
-                new One2OneDerivation(m),
-                new One2ManyDerivation(m),
-                new Many2OneDerivation(m),
+                new RoleOne2OneDerivation(m),
+                new RoleOne2ManyDerivation(m),
+                new RoleMany2OneDerivation(m),
+                new RoleMany2ManyDerivation(m),
             };
 
             foreach (var derivation in derivations)

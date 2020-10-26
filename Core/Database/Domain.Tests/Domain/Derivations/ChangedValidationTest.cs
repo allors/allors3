@@ -1,4 +1,4 @@
-// <copyright file="DerivationNodesTest.cs" company="Allors bvba">
+// <copyright file="ChangedValidationDomainDerivationTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,12 +12,12 @@ namespace Tests
     using Allors.Domain;
     using Xunit;
 
-    public class ValidationDomainDerivationTest : DomainTest, IClassFixture<Fixture>
+    public class ChangedValidationDomainDerivationTest : DomainTest, IClassFixture<Fixture>
     {
-        public ValidationDomainDerivationTest(Fixture fixture) : base(fixture, false) { }
+        public ChangedValidationDomainDerivationTest(Fixture fixture) : base(fixture, false) { }
 
         [Fact]
-        public void One2OneRoles()
+        public void One2One()
         {
             var cc = new CCBuilder(this.Session)
                 .Build();
@@ -40,7 +40,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Many2OneRoles()
+        public void Many2One()
         {
             var cc = new CCBuilder(this.Session)
                 .Build();
@@ -63,7 +63,7 @@ namespace Tests
         }
 
         [Fact]
-        public void One2ManyRoles()
+        public void One2Many()
         {
             var cc = new CCBuilder(this.Session)
                 .Build();
@@ -86,14 +86,26 @@ namespace Tests
         }
 
         [Fact]
-        public void Create()
+        public void Many2Many()
         {
+            var cc = new CCBuilder(this.Session)
+                .Build();
+
+            var bb = new BBBuilder(this.Session)
+                .WithMany2Many(cc)
+                .Build();
+
             var aa = new AABuilder(this.Session)
+                .WithMany2Many(bb)
                 .Build();
 
             this.Session.Derive();
 
-            Assert.True(aa.IsCreated);
+            cc.Assigned = "x";
+
+            this.Session.Derive();
+
+            Assert.Equal("x", aa.Derived);
         }
     }
 }

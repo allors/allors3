@@ -17,8 +17,8 @@ namespace Allors.Domain
             {
                 new CreatedPattern(this.M.Organisation.Class),
                 new CreatedPattern(this.M.SupplierRelationship.Class){Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
-                new ChangedRolePattern(this.M.Employment.Employer){Steps = new IPropertyType[]{ this.M.Employment.Employer}},
-                new ChangedRolePattern(this.M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
+                new ChangedPattern(this.M.Employment.Employer){Steps = new IPropertyType[]{ this.M.Employment.Employer}},
+                new ChangedPattern(this.M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

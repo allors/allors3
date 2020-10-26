@@ -18,7 +18,7 @@ namespace Allors.Domain
                 new CreatedPattern(this.M.Party.Interface),
                 new CreatedPattern(this.M.PartyContactMechanism.Class) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
                 new CreatedPattern(this.M.CustomerRelationship.Class) {Steps = new IPropertyType[] { this.M.CustomerRelationship.Customer } },
-                new ChangedRolePattern(this.M.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new ChangedPattern(this.M.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

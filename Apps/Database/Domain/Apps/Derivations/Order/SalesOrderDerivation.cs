@@ -18,8 +18,8 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.SalesOrder.Class),
-                new ChangedRolePattern(this.M.SalesOrder.SalesOrderState),
-                new ChangedRolePattern(this.M.SalesOrder.SalesOrderItems)
+                new ChangedPattern(this.M.SalesOrder.SalesOrderState),
+                new ChangedPattern(this.M.SalesOrder.SalesOrderItems)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

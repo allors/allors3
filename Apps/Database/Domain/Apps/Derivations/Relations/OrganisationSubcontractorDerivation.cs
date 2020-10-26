@@ -16,7 +16,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(M.SubContractorRelationship.Class),
-                new ChangedRolePattern(M.SubContractorRelationship.FromDate),
+                new ChangedPattern(M.SubContractorRelationship.FromDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
