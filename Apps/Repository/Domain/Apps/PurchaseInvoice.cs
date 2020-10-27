@@ -100,6 +100,12 @@ namespace Allors.Repository
 
         public int SortableInvoiceNumber { get; set; }
 
+        public Locale DefaultLocale { get; set; }
+
+        public Currency DefaultCurrency { get; set; }
+
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region ObjectStates

@@ -260,6 +260,31 @@ namespace Allors.Repository
         public Media[] ElectronicDocuments { get; set; }
 
         #region Allors
+        [Id("4cf83d30-1fe5-44a8-b849-e2ccf81f1935")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public Locale DefaultLocale { get; set; }
+
+        #region Allors
+        [Id("333a1bd0-5365-42c7-bd97-9b7f1ede3d4f")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public Currency DefaultCurrency { get; set; }
+
+        #region Allors
+        [Id("893734a4-13e6-4740-8c3b-29e28c0137b0")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public Guid DerivationTrigger { get; set; }
+
+        #region Allors
 
         [Id("B9226E72-AD90-4195-9DC7-64A26D12E6A3")]
 

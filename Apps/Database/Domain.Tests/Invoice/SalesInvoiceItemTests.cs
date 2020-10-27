@@ -1867,6 +1867,8 @@ namespace Allors.Domain
                 .WithBillToContactMechanism(this.billToContactMechanismMechelen)
                 .Build();
 
+            this.Session.Derive();
+
             const decimal quantity = 3;
             var item1 = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(quantity).Build();
             newInvoice.AddSalesInvoiceItem(item1);

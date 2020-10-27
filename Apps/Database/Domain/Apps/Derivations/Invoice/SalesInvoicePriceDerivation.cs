@@ -17,12 +17,11 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new CreatedPattern(this.M.SalesInvoice.Class),
+            new ChangedPattern(this.M.SalesInvoice.DerivationTrigger),
             new ChangedPattern(this.M.SalesInvoice.ValidInvoiceItems),
             new ChangedPattern(this.M.SalesInvoiceItem.Product) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedPattern(this.M.PriceComponent.FromDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
-            new ChangedPattern(this.M.PriceComponent.ThroughDate) { Steps =  new IPropertyType[] {m.PriceComponent.Product, m.Product.SalesInvoiceItemsWhereProduct, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -35,7 +34,9 @@ namespace Allors.Domain
             {
                 var validInvoiceItems = salesInvoice.ValidInvoiceItems.Cast<SalesInvoiceItem>().ToArray();
 
-                var currentPriceComponents = new PriceComponents(salesInvoice.Strategy.Session).CurrentPriceComponents(salesInvoice.InvoiceDate);
+                var currentPriceComponents = salesInvoice.BilledFrom?.PriceComponentsWherePricedBy
+                    .Where(v => v.FromDate <= salesInvoice.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= salesInvoice.InvoiceDate))
+                    .ToArray();
 
                 var quantityByProduct = validInvoiceItems
                     .Where(v => v.ExistProduct)

@@ -16,14 +16,8 @@ namespace Allors.Domain
         public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
             this.Patterns = new Pattern[]
         {
-            // Do not listen for changes in InternalOrganisation BillingAddress or GeneralCorrespondence or PreferredCurrency.
-            // Do not listen for changes in Singleton DefaultLocale.
-            // Do not listen for changes in BillToCustomer VatRegime, IrpfRegime, PreferredCurrency, Locale.
-            // Do not listen for changes in CustomerRelationship PaymentNetDays. 
-            // Do not listen for changes in Store PaymentNetDays.
-            // All these properties are only used for newly created invoices.
-
-            new CreatedPattern(this.M.SalesInvoice.Class),
+            new ChangedPattern(this.M.SalesInvoice.BilledFrom),
+            new ChangedPattern(this.M.SalesInvoice.Store),
             new ChangedPattern(this.M.SalesInvoice.BillToCustomer),
             new ChangedPattern(this.M.SalesInvoice.BillToEndCustomer),
             new ChangedPattern(this.M.SalesInvoice.ShipToCustomer),
@@ -48,31 +42,9 @@ namespace Allors.Domain
 
             foreach (var salesInvoice in matches.Cast<SalesInvoice>())
             {
-                if (!salesInvoice.ExistEntryDate)
-                {
-                    salesInvoice.EntryDate = session.Now();
-                }
-
-                if (!salesInvoice.ExistInvoiceDate)
-                {
-                    salesInvoice.InvoiceDate = session.Now();
-                }
-
                 if (salesInvoice.ExistBillToCustomer)
                 {
                     salesInvoice.PreviousBillToCustomer = salesInvoice.BillToCustomer;
-                }
-
-                if (!salesInvoice.ExistSalesInvoiceType)
-                {
-                    salesInvoice.SalesInvoiceType = new SalesInvoiceTypes(session).SalesInvoice;
-                }
-
-                var internalOrganisations = new Organisations(session).InternalOrganisations();
-
-                if (!salesInvoice.ExistBilledFrom && internalOrganisations.Count() == 1)
-                {
-                    salesInvoice.BilledFrom = internalOrganisations.First();
                 }
 
                 if (!salesInvoice.ExistStore && salesInvoice.ExistBilledFrom)
@@ -119,10 +91,11 @@ namespace Allors.Domain
                 }
                 else
                 {
-                    salesInvoice.Locale = session.GetSingleton().DefaultLocale;
+                    salesInvoice.Locale = salesInvoice.DefaultLocale;
                 }
 
-                if (!salesInvoice.ExistCurrency && salesInvoice.ExistBilledFrom)
+                if (!salesInvoice.ExistCurrency
+                    && (salesInvoice.ExistBilledFrom || salesInvoice.ExistBillToCustomer))
                 {
                     if (salesInvoice.ExistBillToCustomer && (salesInvoice.BillToCustomer.ExistPreferredCurrency || salesInvoice.BillToCustomer.ExistLocale))
                     {
@@ -132,7 +105,7 @@ namespace Allors.Domain
                     {
                         salesInvoice.Currency = salesInvoice.BilledFrom.ExistPreferredCurrency ?
                             salesInvoice.BilledFrom.PreferredCurrency :
-                            session.GetSingleton().DefaultLocale.Country.Currency;
+                            salesInvoice.DefaultCurrency;
                     }
                 }
 
@@ -176,9 +149,20 @@ namespace Allors.Domain
                     salesInvoice.DueDate = salesInvoice.InvoiceDate.AddDays(salesInvoice.PaymentNetDays);
                 }
 
-                if (salesInvoice.ExistVatRegime && salesInvoice.VatRegime.ExistVatClause)
+                if (salesInvoice.ExistVatRegime)
                 {
-                    salesInvoice.DerivedVatClause = salesInvoice.VatRegime.VatClause;
+                    if (salesInvoice.VatRegime.ExistVatClause)
+                    {
+                        salesInvoice.DerivedVatClause = salesInvoice.VatRegime.VatClause;
+                    }
+                    else
+                    {
+                        salesInvoice.RemoveDerivedVatClause();
+                    }
+                }
+                else
+                {
+                    salesInvoice.RemoveDerivedVatClause();
                 }
 
                 salesInvoice.DerivedVatClause = salesInvoice.ExistAssignedVatClause ? salesInvoice.AssignedVatClause : salesInvoice.DerivedVatClause;
@@ -194,23 +178,22 @@ namespace Allors.Domain
                     salesInvoice.AddCustomer(salesInvoice.ShipToCustomer);
                 }
 
-                if (salesInvoice.ExistBillToCustomer && !salesInvoice.BillToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
+                if (salesInvoice.ExistBillToCustomer
+                    && salesInvoice.ExistBilledFrom
+                    && !salesInvoice.BillToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
                 {
                     validation.AddError($"{salesInvoice} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
-                if (salesInvoice.ExistShipToCustomer && !salesInvoice.ShipToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
+                if (salesInvoice.ExistShipToCustomer
+                    && salesInvoice.ExistBilledFrom
+                    && !salesInvoice.ShipToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
                 {
                     validation.AddError($"{salesInvoice} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
                 salesInvoice.PreviousBillToCustomer = salesInvoice.BillToCustomer;
                 salesInvoice.PreviousShipToCustomer = salesInvoice.ShipToCustomer;
-
-                // this.AppsOnDeriveRevenues(derivation);
-                var singleton = salesInvoice.Session().GetSingleton();
-
-                salesInvoice.AddSecurityToken(new SecurityTokens(salesInvoice.Session()).DefaultSecurityToken);
 
                 foreach (SalesInvoiceItem invoiceItem in salesInvoice.SalesInvoiceItems)
                 {

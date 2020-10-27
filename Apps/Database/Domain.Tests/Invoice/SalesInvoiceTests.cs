@@ -1080,12 +1080,12 @@ namespace Allors.Domain
         }
     }
 
-    public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceCreateDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceCreateDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnCreateDeriveEntryDate()
+        public void DeriveEntryDate()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1095,7 +1095,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveInvoiceDate()
+        public void DeriveInvoiceDate()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1105,7 +1105,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveSalesInvoiceType()
+        public void DeriveSalesInvoiceType()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1115,7 +1115,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBilledFrom()
+        public void DeriveBilledFrom()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1125,7 +1125,32 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveStore()
+        public void DeriveDefaultLocale()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DefaultLocale, this.Session.GetSingleton().DefaultLocale);
+        }
+
+        [Fact]
+        public void DeriveDefaultCurrency()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DefaultCurrency, this.Session.GetSingleton().DefaultLocale.Country.Currency);
+        }
+    }
+
+    public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBilledFromDeriveStore()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1135,7 +1160,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveInvoiceNumber()
+        public void ChangedStoreDeriveInvoiceNumber()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
             var number = new Stores(this.Session).Extent().First.SalesInvoiceTemporaryCounter.Value;
@@ -1146,7 +1171,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveSortableInvoiceNumber()
+        public void ChangedStoreDeriveSortableInvoiceNumber()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
             var number = new Stores(this.Session).Extent().First.SalesInvoiceTemporaryCounter.Value;
@@ -1157,7 +1182,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBilledFromContactMechanism()
+        public void ChangedBilledFromDeriveBilledFromContactMechanism()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1167,7 +1192,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBillToContactMechanism()
+        public void ChangedBillToCustomerDeriveBillToContactMechanism()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -1178,7 +1203,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBillToEndCustomerContactMechanism()
+        public void ChangedBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToEndCustomer(customer).Build();
@@ -1189,7 +1214,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveShipToAddress()
+        public void ChangedShipToCustomerDeriveShipToAddress()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
@@ -1200,7 +1225,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveShipToEndCustomerAddress()
+        public void ChangedShipToEndCustomerDeriveShipToEndCustomerAddress()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToEndCustomer(customer).Build();
@@ -1211,7 +1236,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromInternalOrganisationPreferredCurrency()
+        public void ChangedBilledFromDeriveCurrencyFromInternalOrganisationPreferredCurrency()
         {
             Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
 
@@ -1223,7 +1248,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromSingletonDefaultLocale()
+        public void ChangedBilledFromDeriveCurrencyFromDefaultLocale()
         {
             this.InternalOrganisation.RemovePreferredCurrency();
 
@@ -1242,7 +1267,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromBillToCustomerPreferredCurrency()
+        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerPreferredCurrency()
         {
             var newLocale = new LocaleBuilder(this.Session)
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1261,7 +1286,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromBillToCustomerLocale()
+        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerLocale()
         {
             var newLocale = new LocaleBuilder(this.Session)
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1280,7 +1305,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveVatRegimeFromBillToCustomerVatRegime()
+        public void ChangedBillToCustomerDeriveVatRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
@@ -1294,7 +1319,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveIrpfRegimeFromBillToCustomerIrpfRegime()
+        public void ChangedBillToCustomerDeriveIrpfRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
@@ -1307,7 +1332,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveLocaleFromBillToCustomerLocale()
+        public void ChangedBillToCustomerDeriveLocaleFromBillToCustomerLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1325,7 +1350,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveLocaleFromsingletonDefaultLocale()
+        public void ChangedBillToCustomerDeriveLocaleFromDefaultLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1342,11 +1367,11 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             Assert.False(customer.ExistLocale);
-            Assert.Equal(invoice.Locale, swedishLocale);
+            Assert.Equal(invoice.Locale, invoice.DefaultLocale);
         }
 
         [Fact]
-        public void OnCreateDerivePaymentDays()
+        public void ChangedInvoiceTermTermValueDerivePaymentDays()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
@@ -1356,7 +1381,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDueDate()
+        public void ChangedInvoiceTermTermValueDeriveDueDate()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
@@ -1369,7 +1394,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDerivedVatClauseFromVatRegime()
+        public void ChangedVatRegimeDeriveDerivedVatClause()
         {
             var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
             var invoice = new SalesInvoiceBuilder(this.Session).WithVatRegime(intraCommunautair).Build();
@@ -1380,7 +1405,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDerivedVatClauseIsNull()
+        public void ChangedVatRegimeDeriveDerivedVatClauseIsNull()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1390,7 +1415,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDerivedVatClauseFromAssignedVatClause()
+        public void ChangedAssignedVatClauseDeriveDerivedVatClause()
         {
             var vatClause = new VatClauses(this.Session).BeArt14Par2;
             var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatClause(vatClause).Build();
@@ -1401,7 +1426,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCustomers()
+        public void DeriveCustomers()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
@@ -1416,7 +1441,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateValidateBillToCustomerIsActiveCustomer()
+        public void ValidateBillToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
@@ -1431,7 +1456,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateValidateShipToCustomerIsActiveCustomer()
+        public void ValidateShipToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
@@ -1446,12 +1471,12 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateSyncInvoiceItemSyncedInvoice()
+        public void SyncInvoiceItemSyncedInvoice()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
 
-            foreach(InvoiceItem invoiceItem in invoice.InvoiceItems)
+            foreach (InvoiceItem invoiceItem in invoice.InvoiceItems)
             {
                 Assert.Equal(invoiceItem.SyncedInvoice, invoice);
             }
@@ -1770,11 +1795,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -1785,11 +1808,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -1800,11 +1821,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -1815,11 +1834,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
