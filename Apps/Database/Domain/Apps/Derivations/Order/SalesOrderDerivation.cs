@@ -588,13 +588,16 @@ namespace Allors.Domain
             void SyncPrices(SalesOrderItem salesOrderItem, SalesOrder salesOrder, bool useValueOrdered = false)
             {
                 var sameProductItems = salesOrder.SalesOrderItems
-            .Where(v => v.IsValid && v.ExistProduct && v.Product.Equals(salesOrderItem.Product))
-            .ToArray();
+                    .Where(v => v.IsValid && v.ExistProduct && v.Product.Equals(salesOrderItem.Product))
+                    .ToArray();
 
                 var quantityOrdered = sameProductItems.Sum(w => w.QuantityOrdered);
                 var valueOrdered = useValueOrdered ? sameProductItems.Sum(w => w.TotalBasePrice) : 0;
 
-                var orderPriceComponents = new PriceComponents(salesOrderItem.Session()).CurrentPriceComponents(salesOrder.OrderDate);
+                var orderPriceComponents = salesOrder.TakenBy?.PriceComponentsWherePricedBy
+                    .Where(v => v.FromDate <= salesOrder.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= salesOrder.OrderDate))
+                    .ToArray();
+
                 var orderItemPriceComponents = Array.Empty<PriceComponent>();
                 if (salesOrderItem.ExistProduct)
                 {
@@ -617,7 +620,20 @@ namespace Allors.Domain
                             ValueOrdered = valueOrdered,
                         })).ToArray();
 
-                var unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+                var unitBasePrice = priceComponents.OfType<BasePrice>()
+                    .Where(v => salesOrderItem.ExistProduct
+                                && salesOrderItem.OrderedWithFeatures.Count > 0
+                                && v.ExistProduct
+                                && v.ExistProductFeature
+                                && v.Product.Equals(salesOrderItem.Product)
+                                && salesOrderItem.OrderedWithFeatures.Contains(v.ProductFeature))
+                    .Min(v => v.Price);
+
+                if (unitBasePrice == null)
+                {
+                    unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+                }
+
 
                 // Calculate Unit Price (with Discounts and Surcharges)
                 if (salesOrderItem.AssignedUnitPrice.HasValue)

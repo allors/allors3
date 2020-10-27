@@ -577,7 +577,10 @@ namespace Allors.Domain
                 var quantityOrdered = sameProductItems.Sum(w => w.QuantityOrdered);
                 var valueOrdered = useValueOrdered ? sameProductItems.Sum(w => w.TotalBasePrice) : 0;
 
-                var orderPriceComponents = new PriceComponents(salesOrderItem.Session()).CurrentPriceComponents(salesOrder.OrderDate);
+                var orderPriceComponents = salesOrder.TakenBy?.PriceComponentsWherePricedBy
+                    .Where(v => v.FromDate <= salesOrder.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= salesOrder.OrderDate))
+                    .ToArray();
+
                 var orderItemPriceComponents = Array.Empty<PriceComponent>();
                 if (salesOrderItem.ExistProduct)
                 {

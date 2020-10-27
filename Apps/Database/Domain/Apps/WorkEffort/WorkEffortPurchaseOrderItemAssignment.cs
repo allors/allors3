@@ -51,7 +51,11 @@ namespace Allors.Domain
                 else
                 {
                     var part = this.PurchaseOrderItem.Part;
-                    var currentPriceComponents = new PriceComponents(this.Strategy.Session).CurrentPriceComponents(this.Assignment.ScheduledStart);
+
+                    var currentPriceComponents = this.Assignment.TakenBy?.PriceComponentsWherePricedBy
+                        .Where(v => v.FromDate <= this.Assignment.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= this.Assignment.ScheduledStart))
+                        .ToArray();
+
                     var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
 
                     var price = currentPartPriceComponents.OfType<BasePrice>().Max(v => v.Price);

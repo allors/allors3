@@ -24,7 +24,9 @@ namespace Allors.Domain
             {
                 productQuote.ValidQuoteItems = productQuote.QuoteItems.Where(v => v.IsValid).ToArray();
 
-                var currentPriceComponents = new PriceComponents(cycle.Session).CurrentPriceComponents(productQuote.IssueDate);
+                var currentPriceComponents = productQuote.Issuer?.PriceComponentsWherePricedBy
+                    .Where(v => v.FromDate <= productQuote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= productQuote.IssueDate))
+                    .ToArray();
 
                 var quantityOrderedByProduct = productQuote.ValidQuoteItems
                     .Where(v => v.ExistProduct)
@@ -322,7 +324,19 @@ namespace Allors.Domain
                             ValueOrdered = totalBasePrice,
                         })).ToArray();
 
-                var unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+                var unitBasePrice = priceComponents.OfType<BasePrice>()
+                    .Where(v => quoteItem.ExistProduct
+                                && quoteItem.QuotedWithFeatures.Count > 0
+                                && v.ExistProduct
+                                && v.ExistProductFeature
+                                && v.Product.Equals(quoteItem.Product)
+                                && quoteItem.QuotedWithFeatures.Contains(v.ProductFeature))
+                    .Min(v => v.Price);
+
+                if (unitBasePrice == null)
+                {
+                    unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+                }
 
                 // Calculate Unit Price (with Discounts and Surcharges)
                 if (quoteItem.AssignedUnitPrice.HasValue)

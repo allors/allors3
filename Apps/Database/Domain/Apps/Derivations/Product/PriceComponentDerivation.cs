@@ -18,21 +18,27 @@ namespace Allors.Domain
                 new CreatedPattern(this.M.PriceComponent.Interface),
                 new ChangedPattern(this.M.BasePrice.FromDate),
                 new ChangedPattern(this.M.BasePrice.ThroughDate),
+                new ChangedPattern(this.M.BasePrice.Price),
                 new ChangedPattern(this.M.BasePrice.Product),
                 new ChangedPattern(this.M.BasePrice.Part),
                 new ChangedPattern(this.M.BasePrice.ProductFeature),
 
                 new ChangedPattern(this.M.DiscountComponent.FromDate),
                 new ChangedPattern(this.M.DiscountComponent.ThroughDate),
+                new ChangedPattern(this.M.DiscountComponent.Price),
                 new ChangedPattern(this.M.DiscountComponent.Product),
                 new ChangedPattern(this.M.DiscountComponent.Part),
                 new ChangedPattern(this.M.DiscountComponent.ProductFeature),
 
                 new ChangedPattern(this.M.SurchargeComponent.FromDate),
                 new ChangedPattern(this.M.SurchargeComponent.ThroughDate),
+                new ChangedPattern(this.M.SurchargeComponent.Price),
                 new ChangedPattern(this.M.SurchargeComponent.Product),
                 new ChangedPattern(this.M.SurchargeComponent.Part),
                 new ChangedPattern(this.M.SurchargeComponent.ProductFeature),
+
+                new ChangedPattern(this.M.DiscountComponent.Percentage),
+                new ChangedPattern(this.M.SurchargeComponent.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

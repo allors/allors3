@@ -19,9 +19,22 @@ namespace Allors.Domain
             new CreatedPattern(this.M.SalesInvoice.Class),
             new ChangedPattern(this.M.SalesInvoice.DerivationTrigger),
             new ChangedPattern(this.M.SalesInvoice.ValidInvoiceItems),
+            new ChangedPattern(this.M.SalesInvoice.BillToCustomer),
+            new ChangedPattern(this.M.SalesInvoice.OrderAdjustments),
             new ChangedPattern(this.M.SalesInvoiceItem.Product) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SalesInvoiceItem.ProductFeatures) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
             new ChangedPattern(this.M.SalesInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SalesInvoiceItem.DiscountAdjustments) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.SalesInvoiceItem.SurchargeAdjustments) { Steps =  new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem} },
+            new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem}, OfType = m.SalesInvoice.Class },
+            new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.SalesInvoice.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -273,7 +286,19 @@ namespace Allors.Domain
                             ValueOrdered = totalBasePrice,
                         })).ToArray();
 
-                var unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+                var unitBasePrice = priceComponents.OfType<BasePrice>()
+                    .Where(v => salesInvoiceItem.ExistProduct
+                                && salesInvoiceItem.ProductFeatures.Count > 0
+                                && v.ExistProduct
+                                && v.ExistProductFeature
+                                && v.Product.Equals(salesInvoiceItem.Product)
+                                && salesInvoiceItem.ProductFeatures.Contains(v.ProductFeature))
+                    .Min(v => v.Price);
+
+                if (unitBasePrice == null)
+                {
+                    unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
+                }
 
                 // Calculate Unit Price (with Discounts and Surcharges)
                 if (salesInvoiceItem.AssignedUnitPrice.HasValue)
