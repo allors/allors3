@@ -2897,6 +2897,66 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
+    public class SalesInvoiceDeletePermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceDeletePermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+
+        [Fact]
+        public void OnChangedSalesInvoiceStateReadyForPostingDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceStateCancelledDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.CancelInvoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedOnChangedSalesInvoiceItemSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedOnChangedSalesInvoiceItemSalesInvoiceItemStateCancelledDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoiceItem.CancelFromInvoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
+    }
+
+    [Trait("Category", "Security")]
     public class SalesInvoiceSecurityTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesInvoiceSecurityTests(Fixture fixture) : base(fixture) { }

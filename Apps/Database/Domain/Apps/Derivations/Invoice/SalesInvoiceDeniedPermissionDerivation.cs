@@ -11,12 +11,13 @@ namespace Allors.Domain
     using Allors.Meta;
     using Resources;
 
-    public class SalesInvoiceDeletePermissionDerivation : DomainDerivation
+    public class SalesInvoiceDeniedPermissionDerivation : DomainDerivation
     {
-        public SalesInvoiceDeletePermissionDerivation(M m) : base(m, new Guid("8726348f-85af-429b-a514-55d00dbb14d9")) =>
+        public SalesInvoiceDeniedPermissionDerivation(M m) : base(m, new Guid("8726348f-85af-429b-a514-55d00dbb14d9")) =>
             this.Patterns = new Pattern[]
         {
-            new CreatedPattern(this.M.SalesInvoice.Class),
+            new ChangedPattern(this.M.SalesInvoice.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,6 +27,7 @@ namespace Allors.Domain
 
             foreach (var salesInvoice in matches.Cast<SalesInvoice>())
             {
+                salesInvoice.DeniedPermissions = salesInvoice.TransitionalDeniedPermissions;
                 var deletePermission = new Permissions(salesInvoice.Strategy.Session).Get(salesInvoice.Meta.ObjectType, salesInvoice.Meta.Delete);
                 if (salesInvoice.ExistSalesInvoiceState &&
                     salesInvoice.SalesInvoiceState.Equals(new SalesInvoiceStates(salesInvoice.Strategy.Session).ReadyForPosting) &&

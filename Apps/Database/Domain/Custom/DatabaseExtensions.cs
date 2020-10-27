@@ -15,6 +15,7 @@ namespace Allors.Domain
                 // Core
                 new AuditableDerivation(m),
                 new MediaDerivation(m),
+                new TransitionalDeniedPermissionDerivation(m),
 
                 // Apps
                 new ShipmentDerivation(m),
@@ -101,7 +102,7 @@ namespace Allors.Domain
                 new RepeatingSalesInvoiceDerivation(m),
                 new SalesInvoiceDerivation(m),
                 new SalesInvoiceCreateDerivation(m),
-                new SalesInvoiceDeletePermissionDerivation(m),
+                new SalesInvoiceDeniedPermissionDerivation(m),
                 new SalesInvoicePriceDerivation(m),
                 new SalesInvoiceStateDerivation(m),
                 new PartyFinancialRelationshipCreationDerivation(m),

@@ -94,19 +94,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            //if (this.IsDeletable)
-            //{
-            //    this.RemoveDeniedPermission(deletePermission);
-            //}
-            //else
-            //{
-            //    this.AddDeniedPermission(deletePermission);
-            //}
-        }
-
         public void AppsSend(SalesInvoiceSend method)
         {
             var singleton = this.Session().GetSingleton();
