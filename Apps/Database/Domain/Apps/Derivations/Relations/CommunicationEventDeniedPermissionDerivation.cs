@@ -10,12 +10,12 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class AccountingPeriodDeniedPermissionDerivation : DomainDerivation
+    public class CommunicationEventDeniedPermissionDerivation : DomainDerivation
     {
-        public AccountingPeriodDeniedPermissionDerivation(M m) : base(m, new Guid("d0807b6c-a7c9-4bd5-a4eb-c84cadcd9a8f")) =>
+        public CommunicationEventDeniedPermissionDerivation(M m) : base(m, new Guid("a2565a9c-cb13-43ba-bcf2-9db538e456ae")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.AccountingPeriod.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.CommunicationEvent.TransitionalDeniedPermissions),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -23,7 +23,7 @@ namespace Allors.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<AccountingPeriod>())
+            foreach (var @this in matches.Cast<CommunicationEvent>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
             }
