@@ -20,10 +20,10 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var organisation in matches.Cast<Organisation>())
+            foreach (var @this in matches.Cast<Organisation>())
             {
-                var partyContactMechanisms = organisation.PartyContactMechanisms.ToArray();
-                foreach (OrganisationContactRelationship organisationContactRelationship in organisation.OrganisationContactRelationshipsWhereOrganisation)
+                var partyContactMechanisms = @this.PartyContactMechanisms.ToArray();
+                foreach (OrganisationContactRelationship organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
                 {
                     foreach (var partyContactMechanism in partyContactMechanisms)
                     {

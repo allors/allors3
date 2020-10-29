@@ -20,9 +20,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var employment in matches.Cast<Employment>())
+            foreach (var @this in matches.Cast<Employment>())
             {
-                employment.Parties = new Party[] { employment.Employee, employment.Employer };
+                @this.Parties = new Party[] { @this.Employee, @this.Employer };
             }
         }
     }

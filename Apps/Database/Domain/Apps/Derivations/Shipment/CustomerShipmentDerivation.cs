@@ -23,41 +23,41 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var customerShipment in matches.Cast<CustomerShipment>())
+            foreach (var @this in matches.Cast<CustomerShipment>())
             {
-                if (!customerShipment.ExistShipmentNumber && customerShipment.ExistStore)
+                if (!@this.ExistShipmentNumber && @this.ExistStore)
                 {
-                    customerShipment.ShipmentNumber = customerShipment.Store.NextShipmentNumber();
-                    customerShipment.SortableShipmentNumber = customerShipment.Session().GetSingleton().SortableNumber(customerShipment.Store.OutgoingShipmentNumberPrefix, customerShipment.ShipmentNumber, customerShipment.CreationDate.Value.Year.ToString());
+                    @this.ShipmentNumber = @this.Store.NextShipmentNumber();
+                    @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.CreationDate.Value.Year.ToString());
                 }
 
-                var internalOrganisations = new Organisations(customerShipment.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                if (!customerShipment.ExistShipFromParty && internalOrganisations.Count() == 1)
+                if (!@this.ExistShipFromParty && internalOrganisations.Count() == 1)
                 {
-                    customerShipment.ShipFromParty = internalOrganisations.First();
+                    @this.ShipFromParty = internalOrganisations.First();
                 }
 
-                cycle.Validation.AssertExists(customerShipment, customerShipment.Meta.ShipToParty);
+                cycle.Validation.AssertExists(@this, @this.Meta.ShipToParty);
 
-                if (!customerShipment.ExistShipToAddress && customerShipment.ExistShipToParty)
+                if (!@this.ExistShipToAddress && @this.ExistShipToParty)
                 {
-                    customerShipment.ShipToAddress = customerShipment.ShipToParty.ShippingAddress;
+                    @this.ShipToAddress = @this.ShipToParty.ShippingAddress;
                 }
 
-                if (!customerShipment.ExistShipFromAddress)
+                if (!@this.ExistShipFromAddress)
                 {
-                    customerShipment.ShipFromAddress = customerShipment.ShipFromParty?.ShippingAddress;
+                    @this.ShipFromAddress = @this.ShipFromParty?.ShippingAddress;
                 }
 
-                if (!customerShipment.ExistShipFromFacility)
+                if (!@this.ExistShipFromFacility)
                 {
-                    customerShipment.ShipFromFacility = ((Organisation)customerShipment.ShipFromParty)?.FacilitiesWhereOwner.FirstOrDefault();
+                    @this.ShipFromFacility = ((Organisation)@this.ShipFromParty)?.FacilitiesWhereOwner.FirstOrDefault();
                 }
 
                 //AppsOnDeriveShipmentValue
                 var shipmentValue = 0M;
-                foreach (ShipmentItem shipmentItem in customerShipment.ShipmentItems)
+                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
                 {
                     foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
@@ -65,18 +65,18 @@ namespace Allors.Domain
                     }
                 }
 
-                customerShipment.ShipmentValue = shipmentValue;
+                @this.ShipmentValue = shipmentValue;
 
                 //AppsOnDeriveCurrentShipmentState
 
-                if (customerShipment.ExistShipToParty && customerShipment.ExistShipmentItems)
+                if (@this.ExistShipToParty && @this.ExistShipmentItems)
                 {
                     ////cancel shipment if nothing left to ship
-                    if (customerShipment.ExistShipmentItems && customerShipment.PendingPickList == null
-                        && !customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Cancelled))
+                    if (@this.ExistShipmentItems && @this.PendingPickList == null
+                        && !@this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Cancelled))
                     {
                         var canCancel = true;
-                        foreach (ShipmentItem shipmentItem in customerShipment.ShipmentItems)
+                        foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
                         {
                             if (shipmentItem.Quantity > 0)
                             {
@@ -87,23 +87,23 @@ namespace Allors.Domain
 
                         if (canCancel)
                         {
-                            customerShipment.Cancel();
+                            @this.Cancel();
                         }
                     }
 
-                    var packed = customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Packed);
-                    var picked = customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Picked);
+                    var packed = @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Packed);
+                    var picked = @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picked);
 
-                    if ((customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Picking) ||
+                    if ((@this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picking) ||
                          picked ||
                          packed) &&
-                         customerShipment.ShipToParty.ExistPickListsWhereShipToParty)
+                         @this.ShipToParty.ExistPickListsWhereShipToParty)
                     {
                         var isPicked = true;
-                        foreach (PickList pickList in customerShipment.ShipToParty.PickListsWhereShipToParty)
+                        foreach (PickList pickList in @this.ShipToParty.PickListsWhereShipToParty)
                         {
-                            if (customerShipment.Store.Equals(pickList.Store) &&
-                                !pickList.PickListState.Equals(new PickListStates(customerShipment.Strategy.Session).Picked))
+                            if (@this.Store.Equals(pickList.Store) &&
+                                !pickList.PickListState.Equals(new PickListStates(@this.Strategy.Session).Picked))
                             {
                                 isPicked = false;
                             }
@@ -113,16 +113,16 @@ namespace Allors.Domain
 
                         if (isPicked && !packed)
                         {
-                            customerShipment.SetPicked();
+                            @this.SetPicked();
                         }
                     }
 
-                    if (customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Picked)
-                        || customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Packed))
+                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picked)
+                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Packed))
                     {
                         var totalShippingQuantity = 0M;
                         var totalPackagedQuantity = 0M;
-                        foreach (ShipmentItem shipmentItem in customerShipment.ShipmentItems)
+                        foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
                         {
                             totalShippingQuantity += shipmentItem.Quantity;
                             foreach (PackagingContent packagingContent in shipmentItem.PackagingContentsWhereShipmentItem)
@@ -131,65 +131,65 @@ namespace Allors.Domain
                             }
                         }
 
-                        if (customerShipment.Store.IsImmediatelyPacked && totalPackagedQuantity == totalShippingQuantity)
+                        if (@this.Store.IsImmediatelyPacked && totalPackagedQuantity == totalShippingQuantity)
                         {
-                            customerShipment.SetPacked();
+                            @this.SetPacked();
                         }
                     }
 
-                    if (customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Created)
-                        || customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Picked)
-                        || customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Picked)
-                        || customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Packed))
+                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Created)
+                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picked)
+                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Picked)
+                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Packed))
                     {
-                        if (customerShipment.ShipmentValue < customerShipment.Store.ShipmentThreshold && !customerShipment.ReleasedManually)
+                        if (@this.ShipmentValue < @this.Store.ShipmentThreshold && !@this.ReleasedManually)
                         {
-                            customerShipment.PutOnHold();
+                            @this.PutOnHold();
                         }
                     }
 
-                    if (customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).OnHold) &&
-                        !customerShipment.HeldManually &&
-                        ((customerShipment.ShipmentValue >= customerShipment.Store.ShipmentThreshold) || customerShipment.ReleasedManually))
+                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).OnHold) &&
+                        !@this.HeldManually &&
+                        ((@this.ShipmentValue >= @this.Store.ShipmentThreshold) || @this.ReleasedManually))
                     {
-                        customerShipment.Continue();
+                        @this.Continue();
                     }
                 }
 
                 //
 
-                if (customerShipment.CanShip && customerShipment.Store.IsAutomaticallyShipped)
+                if (@this.CanShip && @this.Store.IsAutomaticallyShipped)
                 {
-                    customerShipment.Ship();
+                    @this.Ship();
                 }
 
                 //AppsOnDeriveCurrentObjectState
 
-                if (customerShipment.ExistShipmentState && !customerShipment.ShipmentState.Equals(customerShipment.LastShipmentState) &&
-                    customerShipment.ShipmentState.Equals(new ShipmentStates(customerShipment.Strategy.Session).Shipped))
+                if (@this.ExistShipmentState && !@this.ShipmentState.Equals(@this.LastShipmentState) &&
+                    @this.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Shipped))
                 {
-                    if (Equals(customerShipment.Store.BillingProcess, new BillingProcesses(customerShipment.Strategy.Session).BillingForShipmentItems))
+                    if (Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForShipmentItems))
                     {
-                        customerShipment.Invoice();
+                        @this.Invoice();
                     }
                 }
 
                 //
 
-                if (customerShipment.ShipmentState.IsShipped
-                    && (!customerShipment.ExistLastShipmentState || !customerShipment.LastShipmentState.IsShipped))
+                if (@this.ShipmentState.IsShipped
+                    && (!@this.ExistLastShipmentState || !@this.LastShipmentState.IsShipped))
                 {
-                    foreach (var item in customerShipment.ShipmentItems.Where(v => v.ExistSerialisedItem))
+                    foreach (var item in @this.ShipmentItems.Where(v => v.ExistSerialisedItem))
                     {
                         if (item.ExistNextSerialisedItemAvailability)
                         {
                             item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
 
-                            if ((customerShipment.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(customerShipment.Session()).CustomerShipmentShip) == true
-                                && item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(customerShipment.Session()).Sold))
+                            if ((@this.ShipFromParty as InternalOrganisation)?.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).CustomerShipmentShip) == true
+                                && item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Session()).Sold))
                             {
-                                item.SerialisedItem.OwnedBy = customerShipment.ShipToParty;
-                                item.SerialisedItem.Ownership = new Ownerships(customerShipment.Session()).ThirdParty;
+                                item.SerialisedItem.OwnedBy = @this.ShipToParty;
+                                item.SerialisedItem.Ownership = new Ownerships(@this.Session()).ThirdParty;
                             }
                         }
 
@@ -197,7 +197,7 @@ namespace Allors.Domain
                     }
                 }
 
-                Sync(customerShipment);
+                Sync(@this);
             }
 
             void Sync(CustomerShipment customerShipment)

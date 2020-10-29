@@ -22,51 +22,51 @@ namespace Allors.Domain
         {
             var session = cycle.Session;
 
-            foreach (var request in matches.Cast<Request>())
+            foreach (var @this in matches.Cast<Request>())
             {
 
-                if (!request.ExistRecipient)
+                if (!@this.ExistRecipient)
                 {
                     var internalOrganisations = new Organisations(session).InternalOrganisations();
 
                     if (internalOrganisations.Count() == 1)
                     {
-                        request.Recipient = internalOrganisations.Single();
+                        @this.Recipient = internalOrganisations.Single();
                     }
                 }
 
-                if (request.ExistRecipient && !request.ExistRequestNumber)
+                if (@this.ExistRecipient && !@this.ExistRequestNumber)
                 {
-                    request.RequestNumber = request.Recipient.NextRequestNumber(session.Now().Year);
-                    (request).SortableRequestNumber = request.Session().GetSingleton().SortableNumber(request.Recipient.RequestNumberPrefix, request.RequestNumber, request.RequestDate.Year.ToString());
+                    @this.RequestNumber = @this.Recipient.NextRequestNumber(session.Now().Year);
+                    (@this).SortableRequestNumber = @this.Session().GetSingleton().SortableNumber(@this.Recipient.RequestNumberPrefix, @this.RequestNumber, @this.RequestDate.Year.ToString());
                 }
 
-                if (request.ExistRequestState && request.RequestState.Equals(new RequestStates(session).Anonymous) && request.ExistOriginator)
+                if (@this.ExistRequestState && @this.RequestState.Equals(new RequestStates(session).Anonymous) && @this.ExistOriginator)
                 {
-                    request.RequestState = new RequestStates(session).Submitted;
+                    @this.RequestState = new RequestStates(session).Submitted;
 
-                    if (request.ExistEmailAddress
-                        && request.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals(request.EmailAddress)) == null)
+                    if (@this.ExistEmailAddress
+                        && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals(@this.EmailAddress)) == null)
                     {
-                        request.Originator.AddPartyContactMechanism(
+                        @this.Originator.AddPartyContactMechanism(
                             new PartyContactMechanismBuilder(session)
-                                .WithContactMechanism(new EmailAddressBuilder(session).WithElectronicAddressString(request.EmailAddress).Build())
+                                .WithContactMechanism(new EmailAddressBuilder(session).WithElectronicAddressString(@this.EmailAddress).Build())
                                 .WithContactPurpose(new ContactMechanismPurposes(session).GeneralEmail)
                                 .Build());
                     }
 
-                    if (request.ExistTelephoneNumber
-                        && request.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals(request.TelephoneNumber)) == null)
+                    if (@this.ExistTelephoneNumber
+                        && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals(@this.TelephoneNumber)) == null)
                     {
-                        request.Originator.AddPartyContactMechanism(
+                        @this.Originator.AddPartyContactMechanism(
                             new PartyContactMechanismBuilder(session)
-                                .WithContactMechanism(new TelecommunicationsNumberBuilder(session).WithContactNumber(request.TelephoneNumber).WithCountryCode(request.TelephoneCountryCode).Build())
+                                .WithContactMechanism(new TelecommunicationsNumberBuilder(session).WithContactNumber(@this.TelephoneNumber).WithCountryCode(@this.TelephoneCountryCode).Build())
                                 .WithContactPurpose(new ContactMechanismPurposes(session).GeneralPhoneNumber)
                                 .Build());
                     }
                 }
 
-                request.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+                @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
             }
         }
     }

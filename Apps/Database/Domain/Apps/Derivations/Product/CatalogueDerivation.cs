@@ -20,23 +20,23 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var catalogue in matches.Cast<Catalogue>())
+            foreach (var @this in matches.Cast<Catalogue>())
             {
-                var defaultLocale = catalogue.Strategy.Session.GetSingleton().DefaultLocale;
+                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
 
-                if (catalogue.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    catalogue.Name = catalogue.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                if (catalogue.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    catalogue.Description = catalogue.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                if (!catalogue.ExistCatalogueImage)
+                if (!@this.ExistCatalogueImage)
                 {
-                    catalogue.CatalogueImage = catalogue.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
+                    @this.CatalogueImage = @this.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
                 }
             }
         }

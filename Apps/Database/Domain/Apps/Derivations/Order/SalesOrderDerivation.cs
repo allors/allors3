@@ -27,59 +27,59 @@ namespace Allors.Domain
             var validation = cycle.Validation;
             var session = cycle.Session;
 
-            foreach (var salesOrder in matches.Cast<SalesOrder>())
+            foreach (var @this in matches.Cast<SalesOrder>())
             {
                 // SalesOrder Derivations and Validations
-                salesOrder.BillToCustomer ??= salesOrder.ShipToCustomer;
-                salesOrder.ShipToCustomer ??= salesOrder.BillToCustomer;
-                salesOrder.Customers = new[] { salesOrder.BillToCustomer, salesOrder.ShipToCustomer, salesOrder.PlacingCustomer };
-                salesOrder.Locale ??= salesOrder.BillToCustomer?.Locale ?? salesOrder.Strategy.Session.GetSingleton().DefaultLocale;
-                salesOrder.VatRegime ??= salesOrder.BillToCustomer?.VatRegime;
-                salesOrder.IrpfRegime ??= salesOrder.BillToCustomer?.IrpfRegime;
-                salesOrder.Currency ??= salesOrder.BillToCustomer?.PreferredCurrency ?? salesOrder.BillToCustomer?.Locale?.Country?.Currency ?? salesOrder.TakenBy?.PreferredCurrency;
-                salesOrder.TakenByContactMechanism ??= salesOrder.TakenBy?.OrderAddress ?? salesOrder.TakenBy?.BillingAddress ?? salesOrder.TakenBy?.GeneralCorrespondence;
-                salesOrder.BillToContactMechanism ??= salesOrder.BillToCustomer?.BillingAddress ?? salesOrder.BillToCustomer?.ShippingAddress ?? salesOrder.BillToCustomer?.GeneralCorrespondence;
-                salesOrder.BillToEndCustomerContactMechanism ??= salesOrder.BillToEndCustomer?.BillingAddress ?? salesOrder.BillToEndCustomer?.ShippingAddress ?? salesOrder.BillToCustomer?.GeneralCorrespondence;
-                salesOrder.ShipToEndCustomerAddress ??= salesOrder.ShipToEndCustomer?.ShippingAddress ?? salesOrder.ShipToCustomer?.GeneralCorrespondence as PostalAddress;
-                salesOrder.ShipFromAddress ??= salesOrder.TakenBy?.ShippingAddress;
-                salesOrder.ShipToAddress ??= salesOrder.ShipToCustomer?.ShippingAddress;
-                salesOrder.ShipmentMethod ??= salesOrder.ShipToCustomer?.DefaultShipmentMethod ?? salesOrder.Store.DefaultShipmentMethod;
-                salesOrder.PaymentMethod ??= salesOrder.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, salesOrder.TakenBy))?.DefaultPaymentMethod ?? salesOrder.Store.DefaultCollectionMethod;
+                @this.BillToCustomer ??= @this.ShipToCustomer;
+                @this.ShipToCustomer ??= @this.BillToCustomer;
+                @this.Customers = new[] { @this.BillToCustomer, @this.ShipToCustomer, @this.PlacingCustomer };
+                @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.Strategy.Session.GetSingleton().DefaultLocale;
+                @this.VatRegime ??= @this.BillToCustomer?.VatRegime;
+                @this.IrpfRegime ??= @this.BillToCustomer?.IrpfRegime;
+                @this.Currency ??= @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
+                @this.TakenByContactMechanism ??= @this.TakenBy?.OrderAddress ?? @this.TakenBy?.BillingAddress ?? @this.TakenBy?.GeneralCorrespondence;
+                @this.BillToContactMechanism ??= @this.BillToCustomer?.BillingAddress ?? @this.BillToCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
+                @this.BillToEndCustomerContactMechanism ??= @this.BillToEndCustomer?.BillingAddress ?? @this.BillToEndCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
+                @this.ShipToEndCustomerAddress ??= @this.ShipToEndCustomer?.ShippingAddress ?? @this.ShipToCustomer?.GeneralCorrespondence as PostalAddress;
+                @this.ShipFromAddress ??= @this.TakenBy?.ShippingAddress;
+                @this.ShipToAddress ??= @this.ShipToCustomer?.ShippingAddress;
+                @this.ShipmentMethod ??= @this.ShipToCustomer?.DefaultShipmentMethod ?? @this.Store.DefaultShipmentMethod;
+                @this.PaymentMethod ??= @this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, @this.TakenBy))?.DefaultPaymentMethod ?? @this.Store.DefaultCollectionMethod;
 
-                if (!salesOrder.ExistOrderNumber && salesOrder.ExistStore)
+                if (!@this.ExistOrderNumber && @this.ExistStore)
                 {
-                    salesOrder.OrderNumber = salesOrder.Store.NextSalesOrderNumber(salesOrder.OrderDate.Year);
-                    salesOrder.SortableOrderNumber = salesOrder.Session().GetSingleton().SortableNumber(salesOrder.Store.SalesOrderNumberPrefix, salesOrder.OrderNumber, salesOrder.OrderDate.Year.ToString());
+                    @this.OrderNumber = @this.Store.NextSalesOrderNumber(@this.OrderDate.Year);
+                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(@this.Store.SalesOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
                 }
 
-                if (salesOrder.BillToCustomer?.AppsIsActiveCustomer(salesOrder.TakenBy, salesOrder.OrderDate) == false)
+                if (@this.BillToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)
                 {
-                    validation.AddError($"{salesOrder} {this.M.SalesOrder.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{@this} {this.M.SalesOrder.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
-                if (salesOrder.ShipToCustomer?.AppsIsActiveCustomer(salesOrder.TakenBy, salesOrder.OrderDate) == false)
+                if (@this.ShipToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)
                 {
-                    validation.AddError($"{salesOrder} {this.M.SalesOrder.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{@this} {this.M.SalesOrder.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
-                if (salesOrder.SalesOrderState.IsInProcess)
+                if (@this.SalesOrderState.IsInProcess)
                 {
-                    validation.AssertExists(salesOrder, salesOrder.Meta.ShipToAddress);
-                    validation.AssertExists(salesOrder, salesOrder.Meta.BillToContactMechanism);
+                    validation.AssertExists(@this, @this.Meta.ShipToAddress);
+                    validation.AssertExists(@this, @this.Meta.BillToContactMechanism);
                 }
 
                 // SalesOrderItem Derivations and Validations
-                foreach (SalesOrderItem salesOrderItem in salesOrder.SalesOrderItems)
+                foreach (SalesOrderItem salesOrderItem in @this.SalesOrderItems)
                 {
                     var salesOrderItemDerivedRoles = salesOrderItem;
 
-                    salesOrderItem.ShipFromAddress ??= salesOrder.ShipFromAddress;
-                    salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? salesOrder.ShipToAddress;
-                    salesOrderItemDerivedRoles.ShipToParty = salesOrderItem.AssignedShipToParty ?? salesOrder.ShipToCustomer;
-                    salesOrderItemDerivedRoles.DeliveryDate = salesOrderItem.AssignedDeliveryDate ?? salesOrder.DeliveryDate;
-                    salesOrderItemDerivedRoles.VatRegime = salesOrderItem.AssignedVatRegime ?? salesOrder.VatRegime;
+                    salesOrderItem.ShipFromAddress ??= @this.ShipFromAddress;
+                    salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? @this.ShipToAddress;
+                    salesOrderItemDerivedRoles.ShipToParty = salesOrderItem.AssignedShipToParty ?? @this.ShipToCustomer;
+                    salesOrderItemDerivedRoles.DeliveryDate = salesOrderItem.AssignedDeliveryDate ?? @this.DeliveryDate;
+                    salesOrderItemDerivedRoles.VatRegime = salesOrderItem.AssignedVatRegime ?? @this.VatRegime;
                     salesOrderItemDerivedRoles.VatRate = salesOrderItem.VatRegime?.VatRate;
-                    salesOrderItemDerivedRoles.IrpfRegime = salesOrderItem.AssignedIrpfRegime ?? salesOrder.IrpfRegime;
+                    salesOrderItemDerivedRoles.IrpfRegime = salesOrderItem.AssignedIrpfRegime ?? @this.IrpfRegime;
                     salesOrderItemDerivedRoles.IrpfRate = salesOrderItem.IrpfRegime?.IrpfRate;
 
                     // TODO: Use versioning
@@ -129,35 +129,35 @@ namespace Allors.Domain
                     validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.AssignedUnitPrice, this.M.SalesOrderItem.DiscountAdjustments, this.M.SalesOrderItem.SurchargeAdjustments);
                 }
 
-                var validOrderItems = salesOrder.SalesOrderItems.Where(v => v.IsValid).ToArray();
-                salesOrder.ValidOrderItems = validOrderItems;
+                var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
+                @this.ValidOrderItems = validOrderItems;
 
-                if (salesOrder.ExistVatRegime && salesOrder.VatRegime.ExistVatClause)
+                if (@this.ExistVatRegime && @this.VatRegime.ExistVatClause)
                 {
-                    salesOrder.DerivedVatClause = salesOrder.VatRegime.VatClause;
+                    @this.DerivedVatClause = @this.VatRegime.VatClause;
                 }
                 else
                 {
                     string TakenbyCountry = null;
 
-                    if (salesOrder.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
+                    if (@this.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
                     {
                         TakenbyCountry = registeredOffice.Country.IsoCode;
                     }
 
-                    var OutsideEUCustomer = salesOrder.BillToCustomer?.VatRegime?.Equals(new VatRegimes(session).Export);
-                    var shipFromBelgium = salesOrder.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.ShipFromAddress?.Country?.IsoCode));
-                    var shipToEU = salesOrder.ValidOrderItems?.Cast<SalesOrderItem>().Any(v => Equals(true, v.ShipToAddress?.Country?.EuMemberState));
-                    var sellerResponsibleForTransport = salesOrder.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
-                    var buyerResponsibleForTransport = salesOrder.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));
+                    var OutsideEUCustomer = @this.BillToCustomer?.VatRegime?.Equals(new VatRegimes(session).Export);
+                    var shipFromBelgium = @this.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.ShipFromAddress?.Country?.IsoCode));
+                    var shipToEU = @this.ValidOrderItems?.Cast<SalesOrderItem>().Any(v => Equals(true, v.ShipToAddress?.Country?.EuMemberState));
+                    var sellerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
+                    var buyerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));
 
-                    if (Equals(salesOrder.VatRegime, new VatRegimes(session).ServiceB2B))
+                    if (Equals(@this.VatRegime, new VatRegimes(session).ServiceB2B))
                     {
-                        salesOrder.DerivedVatClause = new VatClauses(session).ServiceB2B;
+                        @this.DerivedVatClause = new VatClauses(session).ServiceB2B;
                     }
-                    else if (Equals(salesOrder.VatRegime, new VatRegimes(session).IntraCommunautair))
+                    else if (Equals(@this.VatRegime, new VatRegimes(session).IntraCommunautair))
                     {
-                        salesOrder.DerivedVatClause = new VatClauses(session).Intracommunautair;
+                        @this.DerivedVatClause = new VatClauses(session).Intracommunautair;
                     }
                     else if (TakenbyCountry == "BE"
                              && OutsideEUCustomer.HasValue && OutsideEUCustomer.Value
@@ -167,21 +167,21 @@ namespace Allors.Domain
                         if (sellerResponsibleForTransport)
                         {
                             // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU and you transport the goods and importer is the customer
-                            salesOrder.DerivedVatClause = new VatClauses(session).BeArt39Par1Item1;
+                            @this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item1;
                         }
                         else if (buyerResponsibleForTransport)
                         {
                             // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU  and the customer does the transport of the goods and importer is the customer
-                            salesOrder.DerivedVatClause = new VatClauses(session).BeArt39Par1Item2;
+                            @this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item2;
                         }
                     }
                 }
 
-                salesOrder.DerivedVatClause = salesOrder.ExistAssignedVatClause ? salesOrder.AssignedVatClause : salesOrder.DerivedVatClause;
+                @this.DerivedVatClause = @this.ExistAssignedVatClause ? @this.AssignedVatClause : @this.DerivedVatClause;
 
-                var salesOrderShipmentStates = new SalesOrderShipmentStates(salesOrder.Strategy.Session);
-                var salesOrderPaymentStates = new SalesOrderPaymentStates(salesOrder.Strategy.Session);
-                var salesOrderInvoiceStates = new SalesOrderInvoiceStates(salesOrder.Strategy.Session);
+                var salesOrderShipmentStates = new SalesOrderShipmentStates(@this.Strategy.Session);
+                var salesOrderPaymentStates = new SalesOrderPaymentStates(@this.Strategy.Session);
+                var salesOrderInvoiceStates = new SalesOrderInvoiceStates(@this.Strategy.Session);
 
                 var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(session);
                 var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(session);
@@ -192,102 +192,102 @@ namespace Allors.Domain
                 {
                     if (validOrderItems.All(v => v.SalesOrderItemShipmentState.Shipped))
                     {
-                        salesOrder.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
+                        @this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
                     }
                     else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.NotShipped))
                     {
-                        salesOrder.SalesOrderShipmentState = salesOrderShipmentStates.NotShipped;
+                        @this.SalesOrderShipmentState = salesOrderShipmentStates.NotShipped;
                     }
                     else if (validOrderItems.Any(v => v.SalesOrderItemShipmentState.InProgress))
                     {
-                        salesOrder.SalesOrderShipmentState = salesOrderShipmentStates.InProgress;
+                        @this.SalesOrderShipmentState = salesOrderShipmentStates.InProgress;
                     }
                     else
                     {
-                        salesOrder.SalesOrderShipmentState = salesOrderShipmentStates.PartiallyShipped;
+                        @this.SalesOrderShipmentState = salesOrderShipmentStates.PartiallyShipped;
                     }
 
                     // SalesOrder Payment State
                     if (validOrderItems.All(v => v.SalesOrderItemPaymentState.Paid))
                     {
-                        salesOrder.SalesOrderPaymentState = salesOrderPaymentStates.Paid;
+                        @this.SalesOrderPaymentState = salesOrderPaymentStates.Paid;
                     }
                     else if (validOrderItems.All(v => v.SalesOrderItemPaymentState.NotPaid))
                     {
-                        salesOrder.SalesOrderPaymentState = salesOrderPaymentStates.NotPaid;
+                        @this.SalesOrderPaymentState = salesOrderPaymentStates.NotPaid;
                     }
                     else
                     {
-                        salesOrder.SalesOrderPaymentState = salesOrderPaymentStates.PartiallyPaid;
+                        @this.SalesOrderPaymentState = salesOrderPaymentStates.PartiallyPaid;
                     }
 
                     // SalesOrder Invoice State
                     if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.Invoiced))
                     {
-                        salesOrder.SalesOrderInvoiceState = salesOrderInvoiceStates.Invoiced;
+                        @this.SalesOrderInvoiceState = salesOrderInvoiceStates.Invoiced;
                     }
                     else if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.NotInvoiced))
                     {
-                        salesOrder.SalesOrderInvoiceState = salesOrderInvoiceStates.NotInvoiced;
+                        @this.SalesOrderInvoiceState = salesOrderInvoiceStates.NotInvoiced;
                     }
                     else
                     {
-                        salesOrder.SalesOrderInvoiceState = salesOrderInvoiceStates.PartiallyInvoiced;
+                        @this.SalesOrderInvoiceState = salesOrderInvoiceStates.PartiallyInvoiced;
                     }
 
                     // SalesOrder OrderState
-                    if (salesOrder.SalesOrderShipmentState.Shipped && salesOrder.SalesOrderInvoiceState.Invoiced)
+                    if (@this.SalesOrderShipmentState.Shipped && @this.SalesOrderInvoiceState.Invoiced)
                     {
-                        salesOrder.SalesOrderState = new SalesOrderStates(salesOrder.Strategy.Session).Completed;
+                        @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Completed;
                     }
 
-                    if (salesOrder.SalesOrderState.IsCompleted && salesOrder.SalesOrderPaymentState.Paid)
+                    if (@this.SalesOrderState.IsCompleted && @this.SalesOrderPaymentState.Paid)
                     {
-                        salesOrder.SalesOrderState = new SalesOrderStates(salesOrder.Strategy.Session).Finished;
+                        @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Finished;
                     }
                 }
 
                 // TODO: Move to versioning
-                salesOrder.PreviousBillToCustomer = salesOrder.BillToCustomer;
-                salesOrder.PreviousShipToCustomer = salesOrder.ShipToCustomer;
+                @this.PreviousBillToCustomer = @this.BillToCustomer;
+                @this.PreviousShipToCustomer = @this.ShipToCustomer;
 
                 var singleton = session.GetSingleton();
 
-                salesOrder.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
+                @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
 
-                salesOrder.ResetPrintDocument();
+                @this.ResetPrintDocument();
 
                 // CanShip
-                if (salesOrder.SalesOrderState.Equals(new SalesOrderStates(salesOrder.Strategy.Session).InProcess))
+                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess))
                 {
                     var somethingToShip = false;
                     var allItemsAvailable = true;
 
                     foreach (var salesOrderItem1 in validOrderItems)
                     {
-                        if (!salesOrder.PartiallyShip && salesOrderItem1.QuantityRequestsShipping != salesOrderItem1.QuantityOrdered)
+                        if (!@this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping != salesOrderItem1.QuantityOrdered)
                         {
                             allItemsAvailable = false;
                             break;
                         }
 
-                        if (salesOrder.PartiallyShip && salesOrderItem1.QuantityRequestsShipping > 0)
+                        if (@this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping > 0)
                         {
                             somethingToShip = true;
                         }
                     }
 
-                    salesOrder.CanShip = (!salesOrder.PartiallyShip && allItemsAvailable) || somethingToShip;
+                    @this.CanShip = (!@this.PartiallyShip && allItemsAvailable) || somethingToShip;
                 }
                 else
                 {
-                    salesOrder.CanShip = false;
+                    @this.CanShip = false;
                 }
 
                 // CanInvoice
-                if (salesOrder.SalesOrderState.IsInProcess && object.Equals(salesOrder.Store.BillingProcess, new BillingProcesses(salesOrder.Strategy.Session).BillingForOrderItems))
+                if (@this.SalesOrderState.IsInProcess && object.Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
                 {
-                    salesOrder.CanInvoice = false;
+                    @this.CanInvoice = false;
 
                     foreach (var orderItem2 in validOrderItems)
                     {
@@ -297,40 +297,40 @@ namespace Allors.Domain
 
                         if (leftToInvoice1 > 0)
                         {
-                            salesOrder.CanInvoice = true;
+                            @this.CanInvoice = true;
                         }
                     }
                 }
                 else
                 {
-                    salesOrder.CanInvoice = false;
+                    @this.CanInvoice = false;
                 }
 
-                if (salesOrder.SalesOrderState.Equals(new SalesOrderStates(salesOrder.Strategy.Session).InProcess) &&
-                    Equals(salesOrder.Store.BillingProcess, new BillingProcesses(salesOrder.Strategy.Session).BillingForShipmentItems))
+                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess) &&
+                    Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForShipmentItems))
                 {
-                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
                 }
 
-                if (salesOrder.CanShip && salesOrder.Store.AutoGenerateCustomerShipment)
+                if (@this.CanShip && @this.Store.AutoGenerateCustomerShipment)
                 {
-                    salesOrder.Ship();
+                    @this.Ship();
                 }
 
-                if (salesOrder.SalesOrderState.IsInProcess
-                    && (!salesOrder.ExistLastSalesOrderState || !salesOrder.LastSalesOrderState.IsInProcess)
-                    && salesOrder.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(salesOrder.Session()).SalesOrderAccept))
+                if (@this.SalesOrderState.IsInProcess
+                    && (!@this.ExistLastSalesOrderState || !@this.LastSalesOrderState.IsInProcess)
+                    && @this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).SalesOrderAccept))
                 {
-                    foreach (SalesOrderItem item in salesOrder.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
+                    foreach (SalesOrderItem item in @this.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
                     {
                         if (item.ExistNextSerialisedItemAvailability)
                         {
                             item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
 
-                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(salesOrder.Session()).Sold))
+                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Session()).Sold))
                             {
-                                item.SerialisedItem.OwnedBy = salesOrder.ShipToCustomer;
-                                item.SerialisedItem.Ownership = new Ownerships(salesOrder.Session()).ThirdParty;
+                                item.SerialisedItem.OwnedBy = @this.ShipToCustomer;
+                                item.SerialisedItem.Ownership = new Ownerships(@this.Session()).ThirdParty;
                             }
                         }
 
@@ -338,45 +338,45 @@ namespace Allors.Domain
                     }
                 }
 
-                Sync(validOrderItems, salesOrder);
+                Sync(validOrderItems, @this);
 
-                if (salesOrder.CanShip)
+                if (@this.CanShip)
                 {
-                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Ship));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Ship));
                 }
                 else
                 {
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Ship));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Ship));
                 }
 
-                if (salesOrder.CanInvoice)
+                if (@this.CanInvoice)
                 {
-                    salesOrder.RemoveDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
                 }
                 else
                 {
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Invoice));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
                 }
 
-                if (!salesOrder.SalesOrderInvoiceState.NotInvoiced || !salesOrder.SalesOrderShipmentState.NotShipped)
+                if (!@this.SalesOrderInvoiceState.NotInvoiced || !@this.SalesOrderShipmentState.NotShipped)
                 {
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.SetReadyForPosting));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Post));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reopen));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Approve));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Hold));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Continue));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Accept));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Revise));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Complete));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Reject));
-                    salesOrder.AddDeniedPermission(new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.Class, salesOrder.Meta.Cancel));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.SetReadyForPosting));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Post));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Reopen));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Approve));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Hold));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Continue));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Accept));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Complete));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Reject));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Cancel));
 
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
-                    foreach (Permission permission in salesOrder.Session().Extent<Permission>())
+                    foreach (Permission permission in @this.Session().Extent<Permission>())
                     {
-                        if (permission.ClassPointer == salesOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
+                        if (permission.ClassPointer == @this.Strategy.Class.Id && permission.Operation == Operations.Write)
                         {
                             deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }
@@ -384,21 +384,21 @@ namespace Allors.Domain
 
                     foreach (var keyValuePair in deniablePermissionByOperandTypeId)
                     {
-                        salesOrder.AddDeniedPermission(keyValuePair.Value);
+                        @this.AddDeniedPermission(keyValuePair.Value);
                     }
                 }
 
-                var deletePermission = new Permissions(salesOrder.Strategy.Session).Get(salesOrder.Meta.ObjectType, salesOrder.Meta.Delete);
-                if (salesOrder.IsDeletable)
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
                 {
-                    salesOrder.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    salesOrder.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
 
-                if (salesOrder.HasChangedStates())
+                if (@this.HasChangedStates())
                 {
                     //derivation.Mark(this);
                 }

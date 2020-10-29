@@ -20,38 +20,38 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var Quote in matches.Cast<Quote>())
+            foreach (var @this in matches.Cast<Quote>())
             {
-                if (!Quote.ExistIssuer)
+                if (!@this.ExistIssuer)
                 {
                     var internalOrganisations = new Organisations(cycle.Session).InternalOrganisations();
 
                     if (internalOrganisations.Count() == 1)
                     {
-                        Quote.Issuer = internalOrganisations.First();
+                        @this.Issuer = internalOrganisations.First();
                     }
                 }
 
-                if (!Quote.ExistQuoteNumber && Quote.ExistIssuer)
+                if (!@this.ExistQuoteNumber && @this.ExistIssuer)
                 {
-                    Quote.QuoteNumber = Quote.Issuer.NextQuoteNumber(cycle.Session.Now().Year);
-                    (Quote).SortableQuoteNumber = Quote.Session().GetSingleton().SortableNumber(Quote.Issuer.QuoteNumberPrefix, Quote.QuoteNumber, Quote.IssueDate.Year.ToString());
+                    @this.QuoteNumber = @this.Issuer.NextQuoteNumber(cycle.Session.Now().Year);
+                    (@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
                 }
 
-                Quote.Currency ??= Quote.Receiver?.PreferredCurrency ?? Quote.Issuer?.PreferredCurrency;
+                @this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
 
-                foreach (QuoteItem quoteItem in Quote.QuoteItems)
+                foreach (QuoteItem quoteItem in @this.QuoteItems)
                 {
                     var quoteItemDerivedRoles = quoteItem;
 
-                    quoteItemDerivedRoles.VatRegime = quoteItem.AssignedVatRegime ?? Quote.VatRegime;
+                    quoteItemDerivedRoles.VatRegime = quoteItem.AssignedVatRegime ?? @this.VatRegime;
                     quoteItemDerivedRoles.VatRate = quoteItem.VatRegime?.VatRate;
 
-                    quoteItemDerivedRoles.IrpfRegime = quoteItem.AssignedIrpfRegime ?? Quote.IrpfRegime;
+                    quoteItemDerivedRoles.IrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.IrpfRegime;
                     quoteItemDerivedRoles.IrpfRate = quoteItem.IrpfRegime?.IrpfRate;
                 }
 
-                Quote.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
+                @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
             }
         }
     }

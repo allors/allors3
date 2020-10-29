@@ -21,49 +21,49 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (SupplierRelationship supplierRelationship in matches.Cast<SupplierRelationship>())
+            foreach (var @this in matches.Cast<SupplierRelationship>())
             {
-                if (supplierRelationship.ExistSupplier)
+                if (@this.ExistSupplier)
                 {
-                    var internalOrganisationDerivedRoles = supplierRelationship.InternalOrganisation;
+                    var internalOrganisationDerivedRoles = @this.InternalOrganisation;
                     if (internalOrganisationDerivedRoles != null)
                     {
-                        if (supplierRelationship.FromDate <= supplierRelationship.Session().Now() && (!supplierRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                        if (@this.FromDate <= @this.Session().Now() && (!@this.ExistThroughDate || @this.ThroughDate >= @this.Session().Now()))
                         {
-                            internalOrganisationDerivedRoles.AddActiveSupplier(supplierRelationship.Supplier);
+                            internalOrganisationDerivedRoles.AddActiveSupplier(@this.Supplier);
                         }
 
-                        if (supplierRelationship.FromDate > supplierRelationship.Session().Now() || (supplierRelationship.ExistThroughDate && supplierRelationship.ThroughDate < supplierRelationship.Session().Now()))
+                        if (@this.FromDate > @this.Session().Now() || (@this.ExistThroughDate && @this.ThroughDate < @this.Session().Now()))
                         {
-                            internalOrganisationDerivedRoles.RemoveActiveSupplier(supplierRelationship.Supplier);
+                            internalOrganisationDerivedRoles.RemoveActiveSupplier(@this.Supplier);
                         }
                     }
 
 
-                    if (supplierRelationship.Supplier.ContactsUserGroup != null)
+                    if (@this.Supplier.ContactsUserGroup != null)
                     {
-                        foreach (OrganisationContactRelationship contactRelationship in supplierRelationship.Supplier.OrganisationContactRelationshipsWhereOrganisation)
+                        foreach (OrganisationContactRelationship contactRelationship in @this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
                         {
-                            if (contactRelationship.FromDate <= supplierRelationship.Session().Now() &&
-                                (!contactRelationship.ExistThroughDate || supplierRelationship.ThroughDate >= supplierRelationship.Session().Now()))
+                            if (contactRelationship.FromDate <= @this.Session().Now() &&
+                                (!contactRelationship.ExistThroughDate || @this.ThroughDate >= @this.Session().Now()))
                             {
-                                if (!supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+                                if (!@this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
                                 {
-                                    supplierRelationship.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
+                                    @this.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
                                 }
                             }
                             else
                             {
-                                if (supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+                                if (@this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
                                 {
-                                    supplierRelationship.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
+                                    @this.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
                                 }
                             }
                         }
                     }
                 }
 
-                supplierRelationship.Parties = new Party[] { supplierRelationship.Supplier, supplierRelationship.InternalOrganisation };
+                @this.Parties = new Party[] { @this.Supplier, @this.InternalOrganisation };
             }
         }
     }

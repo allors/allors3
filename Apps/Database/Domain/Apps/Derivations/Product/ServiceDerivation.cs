@@ -20,9 +20,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var serviceExtension in matches.Cast<Service>())
+            foreach (var @this in matches.Cast<Service>())
             {
-                serviceExtension.AppsOnDeriveVirtualProductPriceComponent();
+                @this.AppsOnDeriveVirtualProductPriceComponent();
             }
         }
     }

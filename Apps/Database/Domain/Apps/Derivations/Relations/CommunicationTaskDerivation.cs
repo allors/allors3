@@ -20,21 +20,21 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var communicationTask in matches.Cast<CommunicationTask>())
+            foreach (var @this in matches.Cast<CommunicationTask>())
             {
-                communicationTask.WorkItem = communicationTask.CommunicationEvent;
+                @this.WorkItem = @this.CommunicationEvent;
 
-                communicationTask.Title = communicationTask.CommunicationEvent.WorkItemDescription;
+                @this.Title = @this.CommunicationEvent.WorkItemDescription;
 
                 // Lifecycle
-                if (!communicationTask.ExistDateClosed && communicationTask.CommunicationEvent.ExistActualEnd)
+                if (!@this.ExistDateClosed && @this.CommunicationEvent.ExistActualEnd)
                 {
-                    communicationTask.DateClosed = communicationTask.Session().Now();
+                    @this.DateClosed = @this.Session().Now();
                 }
 
                 // Assignments
-                var participants = communicationTask.ExistDateClosed ? Array.Empty<User>() : new[] { communicationTask.CommunicationEvent.FromParty as User };
-                communicationTask.AssignParticipants(participants);
+                var participants = @this.ExistDateClosed ? Array.Empty<User>() : new[] { @this.CommunicationEvent.FromParty as User };
+                @this.AssignParticipants(participants);
             }
         }
     }

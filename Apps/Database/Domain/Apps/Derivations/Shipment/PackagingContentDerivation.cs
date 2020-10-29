@@ -23,14 +23,14 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var packagingContent in matches.Cast<PackagingContent>())
+            foreach (var @this in matches.Cast<PackagingContent>())
             {
-                if (packagingContent.ExistQuantity && packagingContent.ExistShipmentItem)
+                if (@this.ExistQuantity && @this.ExistShipmentItem)
                 {
-                    var maxQuantity = packagingContent.ShipmentItem.Quantity - packagingContent.ShipmentItem.QuantityShipped;
-                    if (packagingContent.Quantity == 0 || packagingContent.Quantity > maxQuantity)
+                    var maxQuantity = @this.ShipmentItem.Quantity - @this.ShipmentItem.QuantityShipped;
+                    if (@this.Quantity == 0 || @this.Quantity > maxQuantity)
                     {
-                        validation.AddError($"{packagingContent} {this.M.PackagingContent.Quantity} {ErrorMessages.PackagingContentMaximum}");
+                        validation.AddError($"{@this} {this.M.PackagingContent.Quantity} {ErrorMessages.PackagingContentMaximum}");
                     }
                 }
             }

@@ -43,16 +43,16 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var priceComponent in matches.Cast<PriceComponent>())
+            foreach (var @this in matches.Cast<PriceComponent>())
             {
-                var internalOrganisations = new Organisations(priceComponent.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                if (!priceComponent.ExistPricedBy && internalOrganisations.Count() == 1)
+                if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
                 {
-                    priceComponent.PricedBy = internalOrganisations.First();
+                    @this.PricedBy = internalOrganisations.First();
                 }
 
-                var salesInvoices = (priceComponent.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting);
+                var salesInvoices = (@this.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting);
                 foreach (var salesInvoice in salesInvoices)
                 {
                     salesInvoice.DerivationTrigger = Guid.NewGuid();

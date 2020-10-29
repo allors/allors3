@@ -21,10 +21,10 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var singleton in matches.Cast<Singleton>())
+            foreach (var @this in matches.Cast<Singleton>())
             {
-                singleton.Locales = singleton.AdditionalLocales;
-                singleton.AddLocale(singleton.DefaultLocale);
+                @this.Locales = @this.AdditionalLocales;
+                @this.AddLocale(@this.DefaultLocale);
             }
         }
     }

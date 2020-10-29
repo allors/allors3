@@ -20,11 +20,11 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (EmailTemplate emailTemplate in matches.Cast<EmailTemplate>())
+            foreach (var @this in matches.Cast<EmailTemplate>())
             {
-                if (!emailTemplate.ExistDescription)
+                if (!@this.ExistDescription)
                 {
-                    emailTemplate.Description = "Default";
+                    @this.Description = "Default";
                 }
             }
         }

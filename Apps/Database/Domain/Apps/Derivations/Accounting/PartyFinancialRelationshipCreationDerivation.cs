@@ -20,20 +20,20 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var partyFinancialRelationship in matches.Cast<PartyFinancialRelationship>())
+            foreach (var @this in matches.Cast<PartyFinancialRelationship>())
             {
-                if (partyFinancialRelationship != null)
+                if (@this != null)
                 {
-                    var party = partyFinancialRelationship.FinancialParty;
+                    var party = @this.FinancialParty;
 
-                    var internalOrganisations = new Organisations(partyFinancialRelationship.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+                    var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                    if (!partyFinancialRelationship.ExistInternalOrganisation && internalOrganisations.Count() == 1)
+                    if (!@this.ExistInternalOrganisation && internalOrganisations.Count() == 1)
                     {
-                        partyFinancialRelationship.InternalOrganisation = internalOrganisations.First();
+                        @this.InternalOrganisation = internalOrganisations.First();
                     }
 
-                    partyFinancialRelationship.Parties = new Party[] { partyFinancialRelationship.FinancialParty, partyFinancialRelationship.InternalOrganisation };
+                    @this.Parties = new Party[] { @this.FinancialParty, @this.InternalOrganisation };
                 }
             }
         }

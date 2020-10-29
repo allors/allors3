@@ -21,46 +21,46 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var person in matches.Cast<Person>())
+            foreach (var @this in matches.Cast<Person>())
             {
-                var now = person.Session().Now();
+                var now = @this.Session().Now();
 
-                person.Strategy.Session.Prefetch(person.PrefetchPolicy);
+                @this.Strategy.Session.Prefetch(@this.PrefetchPolicy);
 
-                if (person.ExistSalutation
-                    && (person.Salutation.Equals(new Salutations(person.Session()).Mr)
-                        || person.Salutation.Equals(new Salutations(person.Session()).Dr)))
+                if (@this.ExistSalutation
+                    && (@this.Salutation.Equals(new Salutations(@this.Session()).Mr)
+                        || @this.Salutation.Equals(new Salutations(@this.Session()).Dr)))
                 {
-                    person.Gender = new GenderTypes(person.Session()).Male;
+                    @this.Gender = new GenderTypes(@this.Session()).Male;
                 }
 
-                if (person.ExistSalutation
-                    && (person.Salutation.Equals(new Salutations(person.Session()).Mrs)
-                        || person.Salutation.Equals(new Salutations(person.Session()).Ms)
-                        || person.Salutation.Equals(new Salutations(person.Session()).Mme)))
+                if (@this.ExistSalutation
+                    && (@this.Salutation.Equals(new Salutations(@this.Session()).Mrs)
+                        || @this.Salutation.Equals(new Salutations(@this.Session()).Ms)
+                        || @this.Salutation.Equals(new Salutations(@this.Session()).Mme)))
                 {
-                    person.Gender = new GenderTypes(person.Session()).Female;
+                    @this.Gender = new GenderTypes(@this.Session()).Female;
                 }
 
-                person.PartyName = DerivePartyName(person);
+                @this.PartyName = DerivePartyName(@this);
 
-                person.VatRegime = new VatRegimes(person.Session()).PrivatePerson;
+                @this.VatRegime = new VatRegimes(@this.Session()).PrivatePerson;
 
-                person.DeriveRelationships();
+                @this.DeriveRelationships();
 
-                if (!person.ExistTimeSheetWhereWorker && (person.AppsIsActiveEmployee(now) || person.CurrentOrganisationContactRelationships.Count > 0))
+                if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Count > 0))
                 {
-                    new TimeSheetBuilder(person.Strategy.Session).WithWorker(person).Build();
+                    new TimeSheetBuilder(@this.Strategy.Session).WithWorker(@this).Build();
                 }
 
-                var deletePermission = new Permissions(person.Strategy.Session).Get(person.Meta.ObjectType, person.Meta.Delete);
-                if (person.IsDeletable)
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
                 {
-                    person.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    person.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

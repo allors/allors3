@@ -21,9 +21,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var passport in matches.Cast<Passport>())
+            foreach (var @this in matches.Cast<Passport>())
             {
-                cycle.Validation.AssertIsUnique(passport, this.M.Passport.Number, cycle.ChangeSet);
+                cycle.Validation.AssertIsUnique(@this, this.M.Passport.Number, cycle.ChangeSet);
             }
         }
     }

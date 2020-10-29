@@ -31,31 +31,31 @@ namespace Allors.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            foreach (var salesInvoice in matches.Cast<SalesInvoice>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
                 var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
                 var salesInvoiceStates = new SalesInvoiceStates(session);
 
-                if (!salesInvoice.ExistSalesInvoiceState)
+                if (!@this.ExistSalesInvoiceState)
                 {
-                    salesInvoice.SalesInvoiceState = new SalesInvoiceStates(session).ReadyForPosting;
+                    @this.SalesInvoiceState = new SalesInvoiceStates(session).ReadyForPosting;
                 }
 
-                var validInvoiceItems = salesInvoice.SalesInvoiceItems.Where(v => v.IsValid).ToArray();
-                salesInvoice.ValidInvoiceItems = validInvoiceItems;
+                var validInvoiceItems = @this.SalesInvoiceItems.Where(v => v.IsValid).ToArray();
+                @this.ValidInvoiceItems = validInvoiceItems;
 
-                var amountPaid = salesInvoice.AdvancePayment;
-                amountPaid += salesInvoice.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
+                var amountPaid = @this.AdvancePayment;
+                amountPaid += @this.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
 
                 //// Perhaps payments are recorded at the item level.
                 if (amountPaid == 0)
                 {
-                    amountPaid = salesInvoice.InvoiceItems.Sum(v => v.AmountPaid);
+                    amountPaid = @this.InvoiceItems.Sum(v => v.AmountPaid);
                 }
 
-                if (salesInvoice.AmountPaid != amountPaid)
+                if (@this.AmountPaid != amountPaid)
                 {
-                    salesInvoice.AmountPaid = amountPaid;
+                    @this.AmountPaid = amountPaid;
                 }
 
                 foreach (var invoiceItem in validInvoiceItems)
@@ -67,9 +67,9 @@ namespace Allors.Domain
                             // If receipts are not matched at invoice level
                             // if only advancedPayment is received do not set to partially paid
                             // this would disable the invoice for editing and adding new items
-                            if (salesInvoice.AmountPaid - salesInvoice.AdvancePayment > 0)
+                            if (@this.AmountPaid - @this.AdvancePayment > 0)
                             {
-                                if (salesInvoice.AmountPaid >= salesInvoice.TotalIncVat) // TotalIncVat is immutable
+                                if (@this.AmountPaid >= @this.TotalIncVat) // TotalIncVat is immutable
                                 {
                                     invoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.Paid;
                                 }
@@ -96,19 +96,19 @@ namespace Allors.Domain
                     }
                 }
 
-                if (validInvoiceItems.Any() && !salesInvoice.SalesInvoiceState.Equals(salesInvoiceStates.ReadyForPosting))
+                if (validInvoiceItems.Any() && !@this.SalesInvoiceState.Equals(salesInvoiceStates.ReadyForPosting))
                 {
                     if (validInvoiceItems.All(v => v.SalesInvoiceItemState.IsPaid))
                     {
-                        salesInvoice.SalesInvoiceState = salesInvoiceStates.Paid;
+                        @this.SalesInvoiceState = salesInvoiceStates.Paid;
                     }
                     else if (validInvoiceItems.All(v => v.SalesInvoiceItemState.IsNotPaid))
                     {
-                        salesInvoice.SalesInvoiceState = salesInvoiceStates.NotPaid;
+                        @this.SalesInvoiceState = salesInvoiceStates.NotPaid;
                     }
                     else
                     {
-                        salesInvoice.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
+                        @this.SalesInvoiceState = salesInvoiceStates.PartiallyPaid;
                     }
                 }
             }

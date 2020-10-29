@@ -20,9 +20,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var phoneCommunication in matches.Cast<PhoneCommunication>())
+            foreach (var @this in matches.Cast<PhoneCommunication>())
             {
-                phoneCommunication.WorkItemDescription = $"Call to {phoneCommunication.ToParty?.PartyName} about {phoneCommunication.Subject}";
+                @this.WorkItemDescription = $"Call to {@this.ToParty?.PartyName} about {@this.Subject}";
             }
         }
     }

@@ -25,23 +25,23 @@ namespace Allors.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            foreach (var salesInvoice in matches.Cast<SalesInvoice>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                salesInvoice.DeniedPermissions = salesInvoice.TransitionalDeniedPermissions;
-                var deletePermission = new Permissions(salesInvoice.Strategy.Session).Get(salesInvoice.Meta.ObjectType, salesInvoice.Meta.Delete);
-                if (salesInvoice.ExistSalesInvoiceState &&
-                    salesInvoice.SalesInvoiceState.Equals(new SalesInvoiceStates(salesInvoice.Strategy.Session).ReadyForPosting) &&
-                    salesInvoice.SalesInvoiceItems.All(v => v.IsDeletable) &&
-                    !salesInvoice.ExistSalesOrders &&
-                    !salesInvoice.ExistPurchaseInvoice &&
-                    !salesInvoice.ExistRepeatingSalesInvoiceWhereSource &&
-                    !salesInvoice.IsRepeatingInvoice)
+                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.ExistSalesInvoiceState &&
+                    @this.SalesInvoiceState.Equals(new SalesInvoiceStates(@this.Strategy.Session).ReadyForPosting) &&
+                    @this.SalesInvoiceItems.All(v => v.IsDeletable) &&
+                    !@this.ExistSalesOrders &&
+                    !@this.ExistPurchaseInvoice &&
+                    !@this.ExistRepeatingSalesInvoiceWhereSource &&
+                    !@this.IsRepeatingInvoice)
                 {
-                    salesInvoice.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    salesInvoice.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

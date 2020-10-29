@@ -21,30 +21,30 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var inventoryItemExtensions in matches.Cast<InventoryItem>())
+            foreach (var @this in matches.Cast<InventoryItem>())
             {
                 var now = cycle.Session.Now();
 
-                (inventoryItemExtensions).PartDisplayName = inventoryItemExtensions.Part?.DisplayName;
+                (@this).PartDisplayName = @this.Part?.DisplayName;
 
-                if (!inventoryItemExtensions.ExistFacility && inventoryItemExtensions.ExistPart && inventoryItemExtensions.Part.ExistDefaultFacility)
+                if (!@this.ExistFacility && @this.ExistPart && @this.Part.ExistDefaultFacility)
                 {
-                    inventoryItemExtensions.Facility = inventoryItemExtensions.Part.DefaultFacility;
+                    @this.Facility = @this.Part.DefaultFacility;
                 }
 
                 // TODO: Let Sync set Unit of Measure
-                if (!inventoryItemExtensions.ExistUnitOfMeasure)
+                if (!@this.ExistUnitOfMeasure)
                 {
-                    inventoryItemExtensions.UnitOfMeasure = inventoryItemExtensions.Part?.UnitOfMeasure;
+                    @this.UnitOfMeasure = @this.Part?.UnitOfMeasure;
                 }
 
-                var part = inventoryItemExtensions.Part;
+                var part = @this.Part;
 
                 var builder = new StringBuilder();
 
                 builder.Append(part.SearchString);
 
-                inventoryItemExtensions.SearchString = builder.ToString();
+                @this.SearchString = builder.ToString();
             }
 
         }

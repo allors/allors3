@@ -22,90 +22,90 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var unifiedGood in matches.Cast<UnifiedGood>())
+            foreach (var @this in matches.Cast<UnifiedGood>())
             {
-                var defaultLocale = unifiedGood.Strategy.Session.GetSingleton().DefaultLocale;
-                var settings = unifiedGood.Strategy.Session.GetSingleton().Settings;
+                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
+                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
-                if (!unifiedGood.ExistDerivationTrigger)
+                if (!@this.ExistDerivationTrigger)
                 {
-                    unifiedGood.DerivationTrigger = Guid.NewGuid();
+                    @this.DerivationTrigger = Guid.NewGuid();
                 }
 
-                if (cycle.ChangeSet.HasChangedRoles(unifiedGood, new RoleType[] { unifiedGood.Meta.UnitOfMeasure, unifiedGood.Meta.DefaultFacility }))
+                if (cycle.ChangeSet.HasChangedRoles(@this, new RoleType[] { @this.Meta.UnitOfMeasure, @this.Meta.DefaultFacility }))
                 {
                     // SyncDefaultInventoryItem
-                    if (unifiedGood.InventoryItemKind.IsNonSerialised)
+                    if (@this.InventoryItemKind.IsNonSerialised)
                     {
-                        var inventoryItems = unifiedGood.InventoryItemsWherePart;
+                        var inventoryItems = @this.InventoryItemsWherePart;
 
-                        if (!inventoryItems.Any(i => i.Facility.Equals(unifiedGood.DefaultFacility) && i.UnitOfMeasure.Equals(unifiedGood.UnitOfMeasure)))
+                        if (!inventoryItems.Any(i => i.Facility.Equals(@this.DefaultFacility) && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
                         {
-                            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(unifiedGood.Strategy.Session)
-                                .WithFacility(unifiedGood.DefaultFacility)
-                                .WithUnitOfMeasure(unifiedGood.UnitOfMeasure)
-                                .WithPart(unifiedGood)
+                            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Session)
+                                .WithFacility(@this.DefaultFacility)
+                                .WithUnitOfMeasure(@this.UnitOfMeasure)
+                                .WithPart(@this)
                                 .Build();
                         }
                     }
                 }
 
-                var identifications = unifiedGood.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(unifiedGood.Strategy.Session).Good);
+                var identifications = @this.ProductIdentifications;
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
                 if (goodIdentification == null && settings.UseProductNumberCounter)
                 {
-                    goodIdentification = new ProductNumberBuilder(unifiedGood.Strategy.Session)
+                    goodIdentification = new ProductNumberBuilder(@this.Strategy.Session)
                         .WithIdentification(settings.NextProductNumber())
-                        .WithProductIdentificationType(new ProductIdentificationTypes(unifiedGood.Strategy.Session).Good).Build();
+                        .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Good).Build();
 
-                    unifiedGood.AddProductIdentification(goodIdentification);
+                    @this.AddProductIdentification(goodIdentification);
                 }
 
-                unifiedGood.ProductNumber = goodIdentification.Identification;
+                @this.ProductNumber = goodIdentification.Identification;
 
-                if (!unifiedGood.ExistProductIdentifications)
+                if (!@this.ExistProductIdentifications)
                 {
-                    cycle.Validation.AssertExists(unifiedGood, this.M.Good.ProductIdentifications);
+                    cycle.Validation.AssertExists(@this, this.M.Good.ProductIdentifications);
                 }
 
-                if (unifiedGood.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    unifiedGood.Name = unifiedGood.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                if (unifiedGood.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    unifiedGood.Description = unifiedGood.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                foreach (SupplierOffering supplierOffering in unifiedGood.SupplierOfferingsWherePart)
+                foreach (SupplierOffering supplierOffering in @this.SupplierOfferingsWherePart)
                 {
-                    if (supplierOffering.FromDate <= unifiedGood.Session().Now()
-                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= unifiedGood.Session().Now()))
+                    if (supplierOffering.FromDate <= @this.Session().Now()
+                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= @this.Session().Now()))
                     {
-                        unifiedGood.AddSuppliedBy(supplierOffering.Supplier);
+                        @this.AddSuppliedBy(supplierOffering.Supplier);
                     }
 
-                    if (supplierOffering.FromDate > unifiedGood.Session().Now()
-                        || (supplierOffering.ExistThroughDate && supplierOffering.ThroughDate < unifiedGood.Session().Now()))
+                    if (supplierOffering.FromDate > @this.Session().Now()
+                        || (supplierOffering.ExistThroughDate && supplierOffering.ThroughDate < @this.Session().Now()))
                     {
-                        unifiedGood.RemoveSuppliedBy(supplierOffering.Supplier);
+                        @this.RemoveSuppliedBy(supplierOffering.Supplier);
                     }
                 }
 
-                this.DeriveVirtualProductPriceComponent(unifiedGood);
-                this.DeriveProductCharacteristics(unifiedGood);
-                this.DeriveQuantityOnHand(unifiedGood);
-                this.DeriveAvailableToPromise(unifiedGood);
-                this.DeriveQuantityCommittedOut(unifiedGood);
-                this.DeriveQuantityExpectedIn(unifiedGood);
+                this.DeriveVirtualProductPriceComponent(@this);
+                this.DeriveProductCharacteristics(@this);
+                this.DeriveQuantityOnHand(@this);
+                this.DeriveAvailableToPromise(@this);
+                this.DeriveQuantityCommittedOut(@this);
+                this.DeriveQuantityExpectedIn(@this);
 
                 var quantityOnHand = 0M;
                 var totalCost = 0M;
 
-                foreach (InventoryItemTransaction inventoryTransaction in unifiedGood.InventoryItemTransactionsWherePart)
+                foreach (InventoryItemTransaction inventoryTransaction in @this.InventoryItemTransactionsWherePart)
                 {
                     var reason = inventoryTransaction.Reason;
 
@@ -117,98 +117,98 @@ namespace Allors.Domain
                         totalCost += transactionCost;
 
                         var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
-                        (unifiedGood.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
+                        (@this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
                     }
                     else if (reason.IncreasesQuantityOnHand == false)
                     {
                         quantityOnHand -= inventoryTransaction.Quantity;
 
-                        totalCost = quantityOnHand * unifiedGood.PartWeightedAverage.AverageCost;
+                        totalCost = quantityOnHand * @this.PartWeightedAverage.AverageCost;
                     }
                 }
 
-                var deletePermission = new Permissions(unifiedGood.Strategy.Session).Get(unifiedGood.Meta.ObjectType, unifiedGood.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
 
-                if (!unifiedGood.ExistDeploymentsWhereProductOffering &&
-                                !unifiedGood.ExistEngagementItemsWhereProduct &&
-                                !unifiedGood.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
-                                !unifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
-                                !unifiedGood.ExistQuoteItemsWhereProduct &&
-                                !unifiedGood.ExistShipmentItemsWhereGood &&
-                                !unifiedGood.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
-                                !unifiedGood.ExistMarketingPackageWhereProductsUsedIn &&
-                                !unifiedGood.ExistMarketingPackagesWhereProduct &&
-                                !unifiedGood.ExistOrganisationGlAccountsWhereProduct &&
-                                !unifiedGood.ExistProductConfigurationsWhereProductsUsedIn &&
-                                !unifiedGood.ExistProductConfigurationsWhereProduct &&
-                                !unifiedGood.ExistRequestItemsWhereProduct &&
-                                !unifiedGood.ExistSalesInvoiceItemsWhereProduct &&
-                                !unifiedGood.ExistSalesOrderItemsWhereProduct &&
-                                !unifiedGood.ExistWorkEffortTypesWhereProductToProduce &&
-                                !unifiedGood.ExistWorkEffortInventoryProducedsWherePart &&
-                                !unifiedGood.ExistWorkEffortPartStandardsWherePart &&
-                                !unifiedGood.ExistPartBillOfMaterialsWherePart &&
-                                !unifiedGood.ExistPartBillOfMaterialsWhereComponentPart &&
-                                !unifiedGood.ExistInventoryItemTransactionsWherePart &&
-                                !unifiedGood.ExistSerialisedItems)
+                if (!@this.ExistDeploymentsWhereProductOffering &&
+                                !@this.ExistEngagementItemsWhereProduct &&
+                                !@this.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                                !@this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
+                                !@this.ExistQuoteItemsWhereProduct &&
+                                !@this.ExistShipmentItemsWhereGood &&
+                                !@this.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
+                                !@this.ExistMarketingPackageWhereProductsUsedIn &&
+                                !@this.ExistMarketingPackagesWhereProduct &&
+                                !@this.ExistOrganisationGlAccountsWhereProduct &&
+                                !@this.ExistProductConfigurationsWhereProductsUsedIn &&
+                                !@this.ExistProductConfigurationsWhereProduct &&
+                                !@this.ExistRequestItemsWhereProduct &&
+                                !@this.ExistSalesInvoiceItemsWhereProduct &&
+                                !@this.ExistSalesOrderItemsWhereProduct &&
+                                !@this.ExistWorkEffortTypesWhereProductToProduce &&
+                                !@this.ExistWorkEffortInventoryProducedsWherePart &&
+                                !@this.ExistWorkEffortPartStandardsWherePart &&
+                                !@this.ExistPartBillOfMaterialsWherePart &&
+                                !@this.ExistPartBillOfMaterialsWhereComponentPart &&
+                                !@this.ExistInventoryItemTransactionsWherePart &&
+                                !@this.ExistSerialisedItems)
                 {
-                    unifiedGood.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    unifiedGood.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
 
                 var builder = new StringBuilder();
-                if (unifiedGood.ExistProductIdentifications)
+                if (@this.ExistProductIdentifications)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.ProductIdentifications.Select(v => v.Identification)));
+                    builder.Append(string.Join(" ", @this.ProductIdentifications.Select(v => v.Identification)));
                 }
 
-                if (unifiedGood.ExistProductCategoriesWhereAllProduct)
+                if (@this.ExistProductCategoriesWhereAllProduct)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
+                    builder.Append(string.Join(" ", @this.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
                 }
 
-                if (unifiedGood.ExistProductCategoriesWhereAllPart)
+                if (@this.ExistProductCategoriesWhereAllPart)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.ProductCategoriesWhereAllPart.Select(v => v.Name)));
+                    builder.Append(string.Join(" ", @this.ProductCategoriesWhereAllPart.Select(v => v.Name)));
                 }
 
-                if (unifiedGood.ExistSupplierOfferingsWherePart)
+                if (@this.ExistSupplierOfferingsWherePart)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.SupplierOfferingsWherePart.Select(v => v.Supplier.PartyName)));
+                    builder.Append(string.Join(" ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier.PartyName)));
                 }
 
-                if (unifiedGood.ExistSerialisedItems)
+                if (@this.ExistSerialisedItems)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.SerialisedItems.Select(v => v.SerialNumber)));
-                    builder.Append(string.Join(" ", unifiedGood.SerialisedItems.Select(v => v.ItemNumber)));
+                    builder.Append(string.Join(" ", @this.SerialisedItems.Select(v => v.SerialNumber)));
+                    builder.Append(string.Join(" ", @this.SerialisedItems.Select(v => v.ItemNumber)));
                 }
 
-                if (unifiedGood.ExistProductType)
+                if (@this.ExistProductType)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.ProductType.Name));
+                    builder.Append(string.Join(" ", @this.ProductType.Name));
                 }
 
-                if (unifiedGood.ExistBrand)
+                if (@this.ExistBrand)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.Brand.Name));
+                    builder.Append(string.Join(" ", @this.Brand.Name));
                 }
 
-                if (unifiedGood.ExistModel)
+                if (@this.ExistModel)
                 {
-                    builder.Append(string.Join(" ", unifiedGood.Model.Name));
+                    builder.Append(string.Join(" ", @this.Model.Name));
                 }
 
-                foreach (PartCategory partCategory in unifiedGood.PartCategoriesWherePart)
+                foreach (PartCategory partCategory in @this.PartCategoriesWherePart)
                 {
                     builder.Append(string.Join(" ", partCategory.Name));
                 }
 
-                builder.Append(string.Join(" ", unifiedGood.Keywords));
+                builder.Append(string.Join(" ", @this.Keywords));
 
-                unifiedGood.SearchString = builder.ToString();
+                @this.SearchString = builder.ToString();
             }
         }
 

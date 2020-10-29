@@ -22,42 +22,42 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var inventoryItemTransaction in matches.Cast<InventoryItemTransaction>())
+            foreach (var @this in matches.Cast<InventoryItemTransaction>())
             {
 
-                if (inventoryItemTransaction.Part.InventoryItemKind.IsSerialised)
+                if (@this.Part.InventoryItemKind.IsSerialised)
                 {
-                    if (inventoryItemTransaction.Quantity != 1 && inventoryItemTransaction.Quantity != -1 && inventoryItemTransaction.Quantity != 0)
+                    if (@this.Quantity != 1 && @this.Quantity != -1 && @this.Quantity != 0)
                     {
                         var message = "Serialised Inventory Items only accept Quantities of -1, 0, and 1.";
-                        validation.AddError($"{inventoryItemTransaction} {inventoryItemTransaction.Meta.Quantity} {message}");
+                        validation.AddError($"{@this} {@this.Meta.Quantity} {message}");
                     }
 
-                    if (!inventoryItemTransaction.ExistSerialisedItem)
+                    if (!@this.ExistSerialisedItem)
                     {
                         var message = "The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items.";
-                        validation.AddError($"{inventoryItemTransaction} {inventoryItemTransaction.Meta.SerialisedItem} {message}");
+                        validation.AddError($"{@this} {@this.Meta.SerialisedItem} {message}");
                     }
 
-                    if (inventoryItemTransaction.Reason.IncreasesQuantityOnHand == true && (inventoryItemTransaction.Quantity < -1 || inventoryItemTransaction.Quantity > 1))
+                    if (@this.Reason.IncreasesQuantityOnHand == true && (@this.Quantity < -1 || @this.Quantity > 1))
                     {
                         var message = "Invalid transaction";
-                        validation.AddError($"{inventoryItemTransaction} {inventoryItemTransaction.Meta.Reason} {message}");
+                        validation.AddError($"{@this} {@this.Meta.Reason} {message}");
                     }
 
-                    if (inventoryItemTransaction.Reason.IncreasesQuantityOnHand == false && (inventoryItemTransaction.Quantity < -1 || inventoryItemTransaction.Quantity > 1))
+                    if (@this.Reason.IncreasesQuantityOnHand == false && (@this.Quantity < -1 || @this.Quantity > 1))
                     {
                         var message = "Invalid transaction";
-                        validation.AddError($"{inventoryItemTransaction} {inventoryItemTransaction.Meta.Reason} {message}");
+                        validation.AddError($"{@this} {@this.Meta.Reason} {message}");
                     }
 
-                    if (inventoryItemTransaction.Quantity == 1
-                        && inventoryItemTransaction.SerialisedItem.ExistSerialisedInventoryItemsWhereSerialisedItem
-                        && inventoryItemTransaction.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.Any(v => v.Quantity == 1)
-                        && inventoryItemTransaction.Reason.IncreasesQuantityOnHand == true)
+                    if (@this.Quantity == 1
+                        && @this.SerialisedItem.ExistSerialisedInventoryItemsWhereSerialisedItem
+                        && @this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.Any(v => v.Quantity == 1)
+                        && @this.Reason.IncreasesQuantityOnHand == true)
                     {
                         var message = "Serialised item already in inventory";
-                        validation.AddError($"{inventoryItemTransaction} {inventoryItemTransaction.Meta.SerialisedItem} {message}");
+                        validation.AddError($"{@this} {@this.Meta.SerialisedItem} {message}");
                     }
                 }
             }

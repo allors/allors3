@@ -20,25 +20,25 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var purchaseOrderApproval in matches.Cast<PurchaseOrderApprovalLevel1>())
+            foreach (var @this in matches.Cast<PurchaseOrderApprovalLevel1>())
             {
-                purchaseOrderApproval.Title = "Approval of " + purchaseOrderApproval.PurchaseOrder.WorkItemDescription;
+                @this.Title = "Approval of " + @this.PurchaseOrder.WorkItemDescription;
 
-                purchaseOrderApproval.WorkItem = purchaseOrderApproval.PurchaseOrder;
+                @this.WorkItem = @this.PurchaseOrder;
 
                 // Lifecycle
-                if (!purchaseOrderApproval.ExistDateClosed && !purchaseOrderApproval.PurchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel1)
+                if (!@this.ExistDateClosed && !@this.PurchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel1)
                 {
-                    purchaseOrderApproval.DateClosed = purchaseOrderApproval.Session().Now();
+                    @this.DateClosed = @this.Session().Now();
                 }
 
-                if (purchaseOrderApproval.Participants.Count == 0)
+                if (@this.Participants.Count == 0)
                 {
                     // Assignments
-                    var participants = purchaseOrderApproval.ExistDateClosed
+                    var participants = @this.ExistDateClosed
                                            ? (IEnumerable<Person>)Array.Empty<Person>()
-                                           : new UserGroups(purchaseOrderApproval.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-                    purchaseOrderApproval.AssignParticipants(participants);
+                                           : new UserGroups(@this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
+                    @this.AssignParticipants(participants);
                 }
             }
         }

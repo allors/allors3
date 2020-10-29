@@ -20,62 +20,62 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var shipmentReceipt in matches.Cast<ShipmentReceipt>())
+            foreach (var @this in matches.Cast<ShipmentReceipt>())
             {
-                shipmentReceipt.ReceivedDateTime = shipmentReceipt.ReceivedDateTime.Date;
+                @this.ReceivedDateTime = @this.ReceivedDateTime.Date;
 
-                if (shipmentReceipt.ExistOrderItem && shipmentReceipt.ExistShipmentItem)
+                if (@this.ExistOrderItem && @this.ExistShipmentItem)
                 {
-                    var orderShipmentsWhereShipmentItem = shipmentReceipt.ShipmentItem.OrderShipmentsWhereShipmentItem;
-                    orderShipmentsWhereShipmentItem.Filter.AddEquals(this.M.OrderShipment.OrderItem, shipmentReceipt.OrderItem);
+                    var orderShipmentsWhereShipmentItem = @this.ShipmentItem.OrderShipmentsWhereShipmentItem;
+                    orderShipmentsWhereShipmentItem.Filter.AddEquals(this.M.OrderShipment.OrderItem, @this.OrderItem);
 
                     if (orderShipmentsWhereShipmentItem.First == null)
                     {
-                        new OrderShipmentBuilder(shipmentReceipt.Strategy.Session)
-                            .WithOrderItem(shipmentReceipt.OrderItem)
-                            .WithShipmentItem(shipmentReceipt.ShipmentItem)
-                            .WithQuantity(shipmentReceipt.QuantityAccepted)
+                        new OrderShipmentBuilder(@this.Strategy.Session)
+                            .WithOrderItem(@this.OrderItem)
+                            .WithShipmentItem(@this.ShipmentItem)
+                            .WithQuantity(@this.QuantityAccepted)
                             .Build();
                     }
                     else
                     {
-                        orderShipmentsWhereShipmentItem.First.Quantity += shipmentReceipt.QuantityAccepted;
+                        orderShipmentsWhereShipmentItem.First.Quantity += @this.QuantityAccepted;
                     }
                 }
 
                 // AppsOnDeriveInventoryItem
-                if (shipmentReceipt.ExistShipmentItem && shipmentReceipt.ExistFacility)
+                if (@this.ExistShipmentItem && @this.ExistFacility)
                 {
-                    if (shipmentReceipt.ShipmentItem.ExistSerialisedItem)
+                    if (@this.ShipmentItem.ExistSerialisedItem)
                     {
-                        var inventoryItems = shipmentReceipt.ShipmentItem.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem;
-                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, shipmentReceipt.Facility);
-                        inventoryItems.Filter.AddEquals(this.M.SerialisedInventoryItem.SerialisedInventoryItemState, new SerialisedInventoryItemStates(shipmentReceipt.Session()).Good);
-                        shipmentReceipt.InventoryItem = inventoryItems.First;
+                        var inventoryItems = @this.ShipmentItem.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem;
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.Facility);
+                        inventoryItems.Filter.AddEquals(this.M.SerialisedInventoryItem.SerialisedInventoryItemState, new SerialisedInventoryItemStates(@this.Session()).Good);
+                        @this.InventoryItem = inventoryItems.First;
 
-                        if (!shipmentReceipt.ExistInventoryItem)
+                        if (!@this.ExistInventoryItem)
                         {
-                            shipmentReceipt.InventoryItem = new SerialisedInventoryItemBuilder(shipmentReceipt.Strategy.Session)
-                                .WithPart(shipmentReceipt.ShipmentItem.Part)
-                                .WithSerialisedItem(shipmentReceipt.ShipmentItem.SerialisedItem)
-                                .WithFacility(shipmentReceipt.Facility)
-                                .WithUnitOfMeasure(shipmentReceipt.ShipmentItem.Part.UnitOfMeasure)
+                            @this.InventoryItem = new SerialisedInventoryItemBuilder(@this.Strategy.Session)
+                                .WithPart(@this.ShipmentItem.Part)
+                                .WithSerialisedItem(@this.ShipmentItem.SerialisedItem)
+                                .WithFacility(@this.Facility)
+                                .WithUnitOfMeasure(@this.ShipmentItem.Part.UnitOfMeasure)
                                 .Build();
                         }
                     }
                     else
                     {
-                        var inventoryItems = shipmentReceipt.ShipmentItem.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, shipmentReceipt.Facility);
+                        var inventoryItems = @this.ShipmentItem.Part.InventoryItemsWherePart;
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.Facility);
                         //inventoryItems.Filter.AddEquals(M.NonSerialisedInventoryItem.NonSerialisedInventoryItemState, new NonSerialisedInventoryItemStates(this.Session()).Good);
-                        shipmentReceipt.InventoryItem = inventoryItems.First;
+                        @this.InventoryItem = inventoryItems.First;
 
-                        if (!shipmentReceipt.ExistInventoryItem)
+                        if (!@this.ExistInventoryItem)
                         {
-                            shipmentReceipt.InventoryItem = new NonSerialisedInventoryItemBuilder(shipmentReceipt.Strategy.Session)
-                                .WithPart(shipmentReceipt.ShipmentItem.Part)
-                                .WithFacility(shipmentReceipt.Facility)
-                                .WithUnitOfMeasure(shipmentReceipt.ShipmentItem.Part.UnitOfMeasure)
+                            @this.InventoryItem = new NonSerialisedInventoryItemBuilder(@this.Strategy.Session)
+                                .WithPart(@this.ShipmentItem.Part)
+                                .WithFacility(@this.Facility)
+                                .WithUnitOfMeasure(@this.ShipmentItem.Part.UnitOfMeasure)
                                 .Build();
                         }
                     }

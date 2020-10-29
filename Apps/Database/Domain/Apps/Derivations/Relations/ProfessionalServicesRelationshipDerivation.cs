@@ -20,14 +20,14 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var professionalServicesRelationship in matches.Cast<ProfessionalServicesRelationship>())
+            foreach (var @this in matches.Cast<ProfessionalServicesRelationship>())
             {
-                professionalServicesRelationship.Parties = new Party[] { professionalServicesRelationship.Professional, professionalServicesRelationship.ProfessionalServicesProvider };
+                @this.Parties = new Party[] { @this.Professional, @this.ProfessionalServicesProvider };
 
-                if (!professionalServicesRelationship.ExistProfessional | !professionalServicesRelationship.ExistProfessionalServicesProvider)
+                if (!@this.ExistProfessional | !@this.ExistProfessionalServicesProvider)
                 {
                     // TODO: Move Delete
-                    professionalServicesRelationship.Delete();
+                    @this.Delete();
                 }
             }
         }

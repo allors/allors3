@@ -22,21 +22,21 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var partyFinancialRelationship in matches.Cast<PartyFinancialRelationship>())
+            foreach (var @this in matches.Cast<PartyFinancialRelationship>())
             {
-                if (partyFinancialRelationship != null)
+                if (@this != null)
                 {
-                    var party = partyFinancialRelationship.FinancialParty;
+                    var party = @this.FinancialParty;
 
-                    partyFinancialRelationship.AmountDue = 0;
-                    partyFinancialRelationship.AmountOverDue = 0;
+                    @this.AmountDue = 0;
+                    @this.AmountOverDue = 0;
 
                     // Amount Due
-                    foreach (var salesInvoice in party.SalesInvoicesWhereBillToCustomer.Where(v => Equals(v.BilledFrom, partyFinancialRelationship.InternalOrganisation) &&
+                    foreach (var salesInvoice in party.SalesInvoicesWhereBillToCustomer.Where(v => Equals(v.BilledFrom, @this.InternalOrganisation) &&
                         !v.SalesInvoiceState.Equals(new SalesInvoiceStates(party.Strategy.Session).Paid)))
                     {
 
-                        partyFinancialRelationship.AmountDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
+                        @this.AmountDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
 
                         // Amount OverDue
                         var gracePeriod = salesInvoice.Store?.PaymentGracePeriod;
@@ -52,7 +52,7 @@ namespace Allors.Domain
 
                             if (party.Strategy.Session.Now() > dueDate)
                             {
-                                partyFinancialRelationship.AmountOverDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
+                                @this.AmountOverDue += salesInvoice.TotalIncVat - salesInvoice.AmountPaid;
                             }
                         }
                     }

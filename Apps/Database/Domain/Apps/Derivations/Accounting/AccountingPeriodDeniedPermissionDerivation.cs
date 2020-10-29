@@ -10,19 +10,22 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class FaceToFaceCommunicationDerivation : DomainDerivation
+    public class AccountingPeriodDeniedPermissionDerivation : DomainDerivation
     {
-        public FaceToFaceCommunicationDerivation(M m) : base(m, new Guid("165A1691-F94C-40D2-B183-EFC764582784")) =>
+        public AccountingPeriodDeniedPermissionDerivation(M m) : base(m, new Guid("d0807b6c-a7c9-4bd5-a4eb-c84cadcd9a8f")) =>
             this.Patterns = new Pattern[]
-            {
-                new CreatedPattern(this.M.FaceToFaceCommunication.Class),
-            };
+        {
+            new ChangedPattern(this.M.AccountingPeriod.TransitionalDeniedPermissions),
+        };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<FaceToFaceCommunication>())
+            var session = cycle.Session;
+            var validation = cycle.Validation;
+
+            foreach (var @this in matches.Cast<AccountingPeriod>())
             {
-                @this.WorkItemDescription = $"Meeting with {@this.ToParty.PartyName} about {@this.Subject}";
+                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
             }
         }
     }

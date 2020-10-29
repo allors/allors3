@@ -22,85 +22,85 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var communicationEventExtension in matches.Cast<CommunicationEvent>())
+            foreach (var @this in matches.Cast<CommunicationEvent>())
             {
-                if (!communicationEventExtension.ExistOwner && communicationEventExtension.Strategy.Session.State().User is Person owner)
+                if (!@this.ExistOwner && @this.Strategy.Session.State().User is Person owner)
                 {
-                    communicationEventExtension.Owner = owner;
+                    @this.Owner = owner;
                 }
 
-                if (communicationEventExtension.ExistScheduledStart && communicationEventExtension.ExistScheduledEnd && communicationEventExtension.ScheduledEnd < communicationEventExtension.ScheduledStart)
+                if (@this.ExistScheduledStart && @this.ExistScheduledEnd && @this.ScheduledEnd < @this.ScheduledStart)
                 {
-                    validation.AddError($"Scheduled end date before scheduled start date: {communicationEventExtension}");
+                    validation.AddError($"Scheduled end date before scheduled start date: {@this}");
                 }
 
-                if (communicationEventExtension.ExistActualStart && communicationEventExtension.ExistActualEnd && communicationEventExtension.ActualEnd < communicationEventExtension.ActualStart)
+                if (@this.ExistActualStart && @this.ExistActualEnd && @this.ActualEnd < @this.ActualStart)
                 {
-                    validation.AddError($"Actual end date before actual start date: {communicationEventExtension}");
+                    validation.AddError($"Actual end date before actual start date: {@this}");
                 }
 
-                if (!communicationEventExtension.ExistCommunicationEventState)
+                if (!@this.ExistCommunicationEventState)
                 {
-                    if (!communicationEventExtension.ExistActualStart || (communicationEventExtension.ExistActualStart && communicationEventExtension.ActualStart > communicationEventExtension.Strategy.Session.Now()))
+                    if (!@this.ExistActualStart || (@this.ExistActualStart && @this.ActualStart > @this.Strategy.Session.Now()))
                     {
-                        communicationEventExtension.CommunicationEventState = new CommunicationEventStates(communicationEventExtension.Strategy.Session).Scheduled;
+                        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
                     }
 
-                    if (communicationEventExtension.ExistActualStart && communicationEventExtension.ActualStart <= communicationEventExtension.Strategy.Session.Now() &&
-                        ((communicationEventExtension.ExistActualEnd && communicationEventExtension.ActualEnd > communicationEventExtension.Strategy.Session.Now()) || !communicationEventExtension.ExistActualEnd))
+                    if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Session.Now() &&
+                        ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Session.Now()) || !@this.ExistActualEnd))
                     {
-                        communicationEventExtension.CommunicationEventState = new CommunicationEventStates(communicationEventExtension.Strategy.Session).InProgress;
+                        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).InProgress;
                     }
 
-                    if (communicationEventExtension.ExistActualEnd && communicationEventExtension.ActualEnd <= communicationEventExtension.Strategy.Session.Now())
+                    if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Session.Now())
                     {
-                        communicationEventExtension.CommunicationEventState = new CommunicationEventStates(communicationEventExtension.Strategy.Session).Completed;
+                        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
                     }
                 }
 
-                if (!communicationEventExtension.ExistInitialScheduledStart && communicationEventExtension.ExistScheduledStart)
+                if (!@this.ExistInitialScheduledStart && @this.ExistScheduledStart)
                 {
-                    communicationEventExtension.InitialScheduledStart = communicationEventExtension.ScheduledStart;
+                    @this.InitialScheduledStart = @this.ScheduledStart;
                 }
 
-                if (!communicationEventExtension.ExistInitialScheduledEnd && communicationEventExtension.ExistScheduledEnd)
+                if (!@this.ExistInitialScheduledEnd && @this.ExistScheduledEnd)
                 {
-                    communicationEventExtension.InitialScheduledEnd = communicationEventExtension.ScheduledEnd;
+                    @this.InitialScheduledEnd = @this.ScheduledEnd;
                 }
 
-                var openCommunicationTasks = communicationEventExtension.TasksWhereWorkItem
+                var openCommunicationTasks = @this.TasksWhereWorkItem
                     .OfType<CommunicationTask>()
                     .Where(v => !v.ExistDateClosed)
                     .ToArray();
 
-                if (communicationEventExtension.ExistActualEnd)
+                if (@this.ExistActualEnd)
                 {
                     if (openCommunicationTasks.Length > 0)
                     {
-                        openCommunicationTasks.First().DateClosed = communicationEventExtension.Strategy.Session.Now();
+                        openCommunicationTasks.First().DateClosed = @this.Strategy.Session.Now();
                     }
                 }
                 else
                 {
                     if (openCommunicationTasks.Length == 0)
                     {
-                        new CommunicationTaskBuilder(communicationEventExtension.Strategy.Session).WithCommunicationEvent(communicationEventExtension).Build();
+                        new CommunicationTaskBuilder(@this.Strategy.Session).WithCommunicationEvent(@this).Build();
                     }
                 }
 
-                communicationEventExtension.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
-                communicationEventExtension.AddSecurityToken(communicationEventExtension.Owner?.OwnerSecurityToken);
+                @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
+                @this.AddSecurityToken(@this.Owner?.OwnerSecurityToken);
 
-                var now = communicationEventExtension.Strategy.Session.Now();
+                var now = @this.Strategy.Session.Now();
 
-                var parties = new[] { communicationEventExtension.FromParty, communicationEventExtension.ToParty, communicationEventExtension.Owner }.Distinct().ToArray();
+                var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();
 
                 var organisation = parties.OfType<Person>()
                     .SelectMany(v => v.OrganisationContactRelationshipsWhereContact)
                     .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                     .Select(v => v.Organisation);
 
-                communicationEventExtension.InvolvedParties = parties.Union(organisation).ToArray();
+                @this.InvolvedParties = parties.Union(organisation).ToArray();
             }
         }
     }

@@ -20,25 +20,25 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var purchaseOrderApprovalLevel2 in matches.Cast<PurchaseOrderApprovalLevel2>())
+            foreach (var @this in matches.Cast<PurchaseOrderApprovalLevel2>())
             {
-                purchaseOrderApprovalLevel2.Title = "Approval of " + purchaseOrderApprovalLevel2.PurchaseOrder.WorkItemDescription;
+                @this.Title = "Approval of " + @this.PurchaseOrder.WorkItemDescription;
 
-                purchaseOrderApprovalLevel2.WorkItem = purchaseOrderApprovalLevel2.PurchaseOrder;
+                @this.WorkItem = @this.PurchaseOrder;
 
                 // Lifecycle
-                if (!purchaseOrderApprovalLevel2.ExistDateClosed && !purchaseOrderApprovalLevel2.PurchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel2)
+                if (!@this.ExistDateClosed && !@this.PurchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel2)
                 {
-                    purchaseOrderApprovalLevel2.DateClosed = purchaseOrderApprovalLevel2.Session().Now();
+                    @this.DateClosed = @this.Session().Now();
                 }
 
-                if (purchaseOrderApprovalLevel2.Participants.Count == 0)
+                if (@this.Participants.Count == 0)
                 {
                     // Assignments
-                    var participants = purchaseOrderApprovalLevel2.ExistDateClosed
+                    var participants = @this.ExistDateClosed
                                            ? (IEnumerable<Person>)Array.Empty<Person>()
-                                           : new UserGroups(purchaseOrderApprovalLevel2.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-                    purchaseOrderApprovalLevel2.AssignParticipants(participants);
+                                           : new UserGroups(@this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
+                    @this.AssignParticipants(participants);
                 }
             }
         }

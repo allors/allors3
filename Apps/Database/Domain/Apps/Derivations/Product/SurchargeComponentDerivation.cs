@@ -23,24 +23,24 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var surchargeComponent in matches.Cast<SurchargeComponent>())
+            foreach (var @this in matches.Cast<SurchargeComponent>())
             {
-                validation.AssertAtLeastOne(surchargeComponent, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
-                validation.AssertExistsAtMostOne(surchargeComponent, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
+                validation.AssertAtLeastOne(@this, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
+                validation.AssertExistsAtMostOne(@this, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
 
-                if (surchargeComponent.ExistPrice)
+                if (@this.ExistPrice)
                 {
-                    if (!surchargeComponent.ExistCurrency)
+                    if (!@this.ExistCurrency)
                     {
-                        surchargeComponent.Currency = surchargeComponent.PricedBy.PreferredCurrency;
+                        @this.Currency = @this.PricedBy.PreferredCurrency;
                     }
 
-                    validation.AssertExists(surchargeComponent, this.M.BasePrice.Currency);
+                    validation.AssertExists(@this, this.M.BasePrice.Currency);
                 }
 
-                if (surchargeComponent.ExistProduct)
+                if (@this.ExistProduct)
                 {
-                    surchargeComponent.Product.AppsOnDeriveVirtualProductPriceComponent();
+                    @this.Product.AppsOnDeriveVirtualProductPriceComponent();
                 }
             }
         }

@@ -20,27 +20,27 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var requestForQuote in matches.Cast<RequestForQuote>())
+            foreach (var @this in matches.Cast<RequestForQuote>())
             {
                 //session.Prefetch(requestForQuote.SyncPrefetch, requestForQuote);
-                foreach (RequestItem requestItem in requestForQuote.RequestItems)
+                foreach (RequestItem requestItem in @this.RequestItems)
                 {
-                    requestItem.Sync(requestForQuote);
+                    requestItem.Sync(@this);
                 }
 
-                if (!requestForQuote.ExistOriginator)
+                if (!@this.ExistOriginator)
                 {
-                    requestForQuote.AddDeniedPermission(new Permissions(requestForQuote.Strategy.Session).Get(requestForQuote.Meta.Class, requestForQuote.Meta.Submit));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Submit));
                 }
 
-                var deletePermission = new Permissions(requestForQuote.Strategy.Session).Get(requestForQuote.Meta.ObjectType, requestForQuote.Meta.Delete);
-                if (requestForQuote.IsDeletable())
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable())
                 {
-                    requestForQuote.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    requestForQuote.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

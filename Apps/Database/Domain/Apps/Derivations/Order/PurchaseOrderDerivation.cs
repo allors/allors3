@@ -112,60 +112,60 @@ namespace Allors.Domain
              && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
             }
 
-            foreach (var purchaseOrder in matches.Cast<PurchaseOrder>().Where(v => v.OrderedBy?.ActiveSuppliers.Any() == true))
+            foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.OrderedBy?.ActiveSuppliers.Any() == true))
             {
                 var validation = cycle.Validation;
 
-                if (!purchaseOrder.ExistOrderNumber)
+                if (!@this.ExistOrderNumber)
                 {
-                    purchaseOrder.OrderNumber = purchaseOrder.OrderedBy?.NextPurchaseOrderNumber(purchaseOrder.OrderDate.Year);
-                    purchaseOrder.SortableOrderNumber = purchaseOrder.Session().GetSingleton().SortableNumber(purchaseOrder.OrderedBy?.PurchaseOrderNumberPrefix, purchaseOrder.OrderNumber, purchaseOrder.OrderDate.Year.ToString());
+                    @this.OrderNumber = @this.OrderedBy?.NextPurchaseOrderNumber(@this.OrderDate.Year);
+                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(@this.OrderedBy?.PurchaseOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
                 }
 
-                if (purchaseOrder.TakenViaSupplier is Organisation supplier)
+                if (@this.TakenViaSupplier is Organisation supplier)
                 {
-                    if (!purchaseOrder.OrderedBy.ActiveSuppliers.Contains(supplier))
+                    if (!@this.OrderedBy.ActiveSuppliers.Contains(supplier))
                     {
-                        validation.AddError($"{purchaseOrder} {purchaseOrder.Meta.TakenViaSupplier} {ErrorMessages.PartyIsNotASupplier}");
+                        validation.AddError($"{@this} {@this.Meta.TakenViaSupplier} {ErrorMessages.PartyIsNotASupplier}");
                     }
                 }
 
-                if (purchaseOrder.TakenViaSubcontractor is Organisation subcontractor)
+                if (@this.TakenViaSubcontractor is Organisation subcontractor)
                 {
-                    if (!purchaseOrder.OrderedBy.ActiveSubContractors.Contains(subcontractor))
+                    if (!@this.OrderedBy.ActiveSubContractors.Contains(subcontractor))
                     {
-                        validation.AddError($"{purchaseOrder} {purchaseOrder.Meta.TakenViaSubcontractor} {ErrorMessages.PartyIsNotASubcontractor}");
+                        validation.AddError($"{@this} {@this.Meta.TakenViaSubcontractor} {ErrorMessages.PartyIsNotASubcontractor}");
                     }
                 }
 
-                validation.AssertExistsAtMostOne(purchaseOrder, purchaseOrder.Meta.TakenViaSupplier, purchaseOrder.Meta.TakenViaSubcontractor);
-                validation.AssertAtLeastOne(purchaseOrder, purchaseOrder.Meta.TakenViaSupplier, purchaseOrder.Meta.TakenViaSubcontractor);
+                validation.AssertExistsAtMostOne(@this, @this.Meta.TakenViaSupplier, @this.Meta.TakenViaSubcontractor);
+                validation.AssertAtLeastOne(@this, @this.Meta.TakenViaSupplier, @this.Meta.TakenViaSubcontractor);
 
-                if (!purchaseOrder.ExistShipToAddress)
+                if (!@this.ExistShipToAddress)
                 {
-                    purchaseOrder.ShipToAddress = purchaseOrder.OrderedBy.ShippingAddress;
+                    @this.ShipToAddress = @this.OrderedBy.ShippingAddress;
                 }
 
-                if (!purchaseOrder.ExistBillToContactMechanism)
+                if (!@this.ExistBillToContactMechanism)
                 {
-                    purchaseOrder.BillToContactMechanism = purchaseOrder.OrderedBy.ExistBillingAddress ? purchaseOrder.OrderedBy.BillingAddress : purchaseOrder.OrderedBy.GeneralCorrespondence;
+                    @this.BillToContactMechanism = @this.OrderedBy.ExistBillingAddress ? @this.OrderedBy.BillingAddress : @this.OrderedBy.GeneralCorrespondence;
                 }
 
-                if (!purchaseOrder.ExistTakenViaContactMechanism && purchaseOrder.ExistTakenViaSupplier)
+                if (!@this.ExistTakenViaContactMechanism && @this.ExistTakenViaSupplier)
                 {
-                    purchaseOrder.TakenViaContactMechanism = purchaseOrder.TakenViaSupplier.OrderAddress;
+                    @this.TakenViaContactMechanism = @this.TakenViaSupplier.OrderAddress;
                 }
 
-                purchaseOrder.VatRegime ??= purchaseOrder.TakenViaSupplier?.VatRegime;
-                purchaseOrder.IrpfRegime ??= purchaseOrder.TakenViaSupplier?.IrpfRegime;
+                @this.VatRegime ??= @this.TakenViaSupplier?.VatRegime;
+                @this.IrpfRegime ??= @this.TakenViaSupplier?.IrpfRegime;
 
-                purchaseOrder.Locale = purchaseOrder.Strategy.Session.GetSingleton().DefaultLocale;
+                @this.Locale = @this.Strategy.Session.GetSingleton().DefaultLocale;
 
-                var validOrderItems = purchaseOrder.PurchaseOrderItems.Where(v => v.IsValid).ToArray();
-                purchaseOrder.ValidOrderItems = validOrderItems;
+                var validOrderItems = @this.PurchaseOrderItems.Where(v => v.IsValid).ToArray();
+                @this.ValidOrderItems = validOrderItems;
 
-                var purchaseOrderShipmentStates = new PurchaseOrderShipmentStates(purchaseOrder.Strategy.Session);
-                var purchaseOrderPaymentStates = new PurchaseOrderPaymentStates(purchaseOrder.Strategy.Session);
+                var purchaseOrderShipmentStates = new PurchaseOrderShipmentStates(@this.Strategy.Session);
+                var purchaseOrderPaymentStates = new PurchaseOrderPaymentStates(@this.Strategy.Session);
                 var purchaseOrderItemStates = new PurchaseOrderItemStates(cycle.Session);
 
                 // PurchaseOrder Shipment State
@@ -175,53 +175,53 @@ namespace Allors.Domain
                     {
                         if (validOrderItems.Where(v => v.IsReceivable).All(v => v.PurchaseOrderItemShipmentState.IsReceived))
                         {
-                            purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Received;
+                            @this.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Received;
                         }
                         else if (validOrderItems.Where(v => v.IsReceivable).All(v => v.PurchaseOrderItemShipmentState.IsNotReceived))
                         {
-                            purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.NotReceived;
+                            @this.PurchaseOrderShipmentState = purchaseOrderShipmentStates.NotReceived;
                         }
                         else
                         {
-                            purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.PartiallyReceived;
+                            @this.PurchaseOrderShipmentState = purchaseOrderShipmentStates.PartiallyReceived;
                         }
                     }
                     else
                     {
-                        purchaseOrder.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Na;
+                        @this.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Na;
                     }
 
                     // PurchaseOrder Payment State
                     if (validOrderItems.All(v => v.PurchaseOrderItemPaymentState.IsPaid))
                     {
-                        purchaseOrder.PurchaseOrderPaymentState = purchaseOrderPaymentStates.Paid;
+                        @this.PurchaseOrderPaymentState = purchaseOrderPaymentStates.Paid;
                     }
                     else if (validOrderItems.All(v => v.PurchaseOrderItemPaymentState.IsNotPaid))
                     {
-                        purchaseOrder.PurchaseOrderPaymentState = purchaseOrderPaymentStates.NotPaid;
+                        @this.PurchaseOrderPaymentState = purchaseOrderPaymentStates.NotPaid;
                     }
                     else
                     {
-                        purchaseOrder.PurchaseOrderPaymentState = purchaseOrderPaymentStates.PartiallyPaid;
+                        @this.PurchaseOrderPaymentState = purchaseOrderPaymentStates.PartiallyPaid;
                     }
 
                     // PurchaseOrder OrderState
-                    if (purchaseOrder.PurchaseOrderState.IsSent
-                        && (purchaseOrder.PurchaseOrderShipmentState.IsReceived || purchaseOrder.PurchaseOrderShipmentState.IsNa))
+                    if (@this.PurchaseOrderState.IsSent
+                        && (@this.PurchaseOrderShipmentState.IsReceived || @this.PurchaseOrderShipmentState.IsNa))
                     {
-                        purchaseOrder.PurchaseOrderState = new PurchaseOrderStates(purchaseOrder.Strategy.Session).Completed;
+                        @this.PurchaseOrderState = new PurchaseOrderStates(@this.Strategy.Session).Completed;
                     }
 
-                    if (purchaseOrder.PurchaseOrderState.IsCompleted && purchaseOrder.PurchaseOrderPaymentState.IsPaid)
+                    if (@this.PurchaseOrderState.IsCompleted && @this.PurchaseOrderPaymentState.IsPaid)
                     {
-                        purchaseOrder.PurchaseOrderState = new PurchaseOrderStates(purchaseOrder.Strategy.Session).Finished;
+                        @this.PurchaseOrderState = new PurchaseOrderStates(@this.Strategy.Session).Finished;
                     }
                 }
 
                 // Derive Totals
                 var quantityOrderedByPart = new Dictionary<Part, decimal>();
                 var totalBasePriceByPart = new Dictionary<Part, decimal>();
-                foreach (PurchaseOrderItem item in purchaseOrder.ValidOrderItems)
+                foreach (PurchaseOrderItem item in @this.ValidOrderItems)
                 {
                     if (item.ExistPart)
                     {
@@ -238,101 +238,101 @@ namespace Allors.Domain
                     }
                 }
 
-                purchaseOrder.TotalBasePrice = 0;
-                purchaseOrder.TotalDiscount = 0;
-                purchaseOrder.TotalSurcharge = 0;
-                purchaseOrder.TotalVat = 0;
-                purchaseOrder.TotalIrpf = 0;
-                purchaseOrder.TotalExVat = 0;
-                purchaseOrder.TotalExtraCharge = 0;
-                purchaseOrder.TotalIncVat = 0;
-                purchaseOrder.GrandTotal = 0;
+                @this.TotalBasePrice = 0;
+                @this.TotalDiscount = 0;
+                @this.TotalSurcharge = 0;
+                @this.TotalVat = 0;
+                @this.TotalIrpf = 0;
+                @this.TotalExVat = 0;
+                @this.TotalExtraCharge = 0;
+                @this.TotalIncVat = 0;
+                @this.GrandTotal = 0;
 
-                foreach (PurchaseOrderItem orderItem in purchaseOrder.ValidOrderItems)
+                foreach (PurchaseOrderItem orderItem in @this.ValidOrderItems)
                 {
-                    purchaseOrder.TotalBasePrice += orderItem.TotalBasePrice;
-                    purchaseOrder.TotalDiscount += orderItem.TotalDiscount;
-                    purchaseOrder.TotalSurcharge += orderItem.TotalSurcharge;
-                    purchaseOrder.TotalVat += orderItem.TotalVat;
-                    purchaseOrder.TotalIrpf += orderItem.TotalIrpf;
-                    purchaseOrder.TotalExVat += orderItem.TotalExVat;
-                    purchaseOrder.TotalIncVat += orderItem.TotalIncVat;
-                    purchaseOrder.GrandTotal += orderItem.GrandTotal;
+                    @this.TotalBasePrice += orderItem.TotalBasePrice;
+                    @this.TotalDiscount += orderItem.TotalDiscount;
+                    @this.TotalSurcharge += orderItem.TotalSurcharge;
+                    @this.TotalVat += orderItem.TotalVat;
+                    @this.TotalIrpf += orderItem.TotalIrpf;
+                    @this.TotalExVat += orderItem.TotalExVat;
+                    @this.TotalIncVat += orderItem.TotalIncVat;
+                    @this.GrandTotal += orderItem.GrandTotal;
                 }
 
-                purchaseOrder.PreviousTakenViaSupplier = purchaseOrder.TakenViaSupplier;
+                @this.PreviousTakenViaSupplier = @this.TakenViaSupplier;
 
                 // Derive Workflow
-                purchaseOrder.WorkItemDescription = $"PurchaseOrder: {purchaseOrder.OrderNumber} [{purchaseOrder.TakenViaSupplier?.PartyName}]";
-                var openTasks = purchaseOrder.TasksWhereWorkItem.Where(v => !v.ExistDateClosed).ToArray();
-                if (purchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel1)
+                @this.WorkItemDescription = $"PurchaseOrder: {@this.OrderNumber} [{@this.TakenViaSupplier?.PartyName}]";
+                var openTasks = @this.TasksWhereWorkItem.Where(v => !v.ExistDateClosed).ToArray();
+                if (@this.PurchaseOrderState.IsAwaitingApprovalLevel1)
                 {
                     if (!openTasks.OfType<PurchaseOrderApprovalLevel1>().Any())
                     {
-                        new PurchaseOrderApprovalLevel1Builder(purchaseOrder.Session()).WithPurchaseOrder(purchaseOrder).Build();
+                        new PurchaseOrderApprovalLevel1Builder(@this.Session()).WithPurchaseOrder(@this).Build();
                     }
                 }
 
-                if (purchaseOrder.PurchaseOrderState.IsAwaitingApprovalLevel2)
+                if (@this.PurchaseOrderState.IsAwaitingApprovalLevel2)
                 {
                     if (!openTasks.OfType<PurchaseOrderApprovalLevel2>().Any())
                     {
-                        new PurchaseOrderApprovalLevel2Builder(purchaseOrder.Session()).WithPurchaseOrder(purchaseOrder).Build();
+                        new PurchaseOrderApprovalLevel2Builder(@this.Session()).WithPurchaseOrder(@this).Build();
                     }
                 }
 
-                purchaseOrder.ResetPrintDocument();
+                @this.ResetPrintDocument();
 
-                if (CanInvoice(purchaseOrder))
+                if (CanInvoice(@this))
                 {
-                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Invoice));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Invoice));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
                 }
 
-                if (CanRevise(purchaseOrder))
+                if (CanRevise(@this))
                 {
-                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
                 }
 
-                if (purchaseOrder.IsReceivable)
+                if (@this.IsReceivable)
                 {
-                    purchaseOrder.RemoveDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive));
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.QuickReceive));
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.QuickReceive));
                 }
 
-                var deletePermission = new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.ObjectType, purchaseOrder.Meta.Delete);
-                if (IsDeletable(purchaseOrder))
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (IsDeletable(@this))
                 {
-                    purchaseOrder.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    purchaseOrder.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
 
-                if (!purchaseOrder.PurchaseOrderShipmentState.IsNotReceived && !purchaseOrder.PurchaseOrderShipmentState.IsNa)
+                if (!@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
                 {
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Reject));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Cancel));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.QuickReceive));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.Revise));
-                    purchaseOrder.AddDeniedPermission(new Permissions(purchaseOrder.Strategy.Session).Get(purchaseOrder.Meta.Class, purchaseOrder.Meta.SetReadyForProcessing));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Reject));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Cancel));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.QuickReceive));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.SetReadyForProcessing));
 
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
-                    foreach (Permission permission in purchaseOrder.Session().Extent<Permission>())
+                    foreach (Permission permission in @this.Session().Extent<Permission>())
                     {
-                        if (permission.ClassPointer == purchaseOrder.Strategy.Class.Id && permission.Operation == Operations.Write)
+                        if (permission.ClassPointer == @this.Strategy.Class.Id && permission.Operation == Operations.Write)
                         {
                             deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
                         }
@@ -340,7 +340,7 @@ namespace Allors.Domain
 
                     foreach (var keyValuePair in deniablePermissionByOperandTypeId)
                     {
-                        purchaseOrder.AddDeniedPermission(keyValuePair.Value);
+                        @this.AddDeniedPermission(keyValuePair.Value);
                     }
                 }
             }

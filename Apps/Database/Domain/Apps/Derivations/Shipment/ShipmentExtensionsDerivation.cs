@@ -20,9 +20,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var shipment in matches.Cast<Shipment>())
+            foreach (var @this in matches.Cast<Shipment>())
             {
-                shipment.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
+                @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
             }
         }
     }

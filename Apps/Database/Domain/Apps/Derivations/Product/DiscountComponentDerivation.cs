@@ -23,31 +23,31 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var discountComponent in matches.Cast<DiscountComponent>())
+            foreach (var @this in matches.Cast<DiscountComponent>())
             {
-                var internalOrganisations = new Organisations(discountComponent.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                if (!discountComponent.ExistPricedBy && internalOrganisations.Count() == 1)
+                if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
                 {
-                    discountComponent.PricedBy = internalOrganisations.First();
+                    @this.PricedBy = internalOrganisations.First();
                 }
 
-                validation.AssertAtLeastOne(discountComponent, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
-                validation.AssertExistsAtMostOne(discountComponent, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
+                validation.AssertAtLeastOne(@this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
+                validation.AssertExistsAtMostOne(@this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
 
-                if (discountComponent.ExistPrice)
+                if (@this.ExistPrice)
                 {
-                    if (!discountComponent.ExistCurrency && discountComponent.ExistPricedBy)
+                    if (!@this.ExistCurrency && @this.ExistPricedBy)
                     {
-                        discountComponent.Currency = discountComponent.PricedBy.PreferredCurrency;
+                        @this.Currency = @this.PricedBy.PreferredCurrency;
                     }
 
-                    validation.AssertExists(discountComponent, this.M.BasePrice.Currency);
+                    validation.AssertExists(@this, this.M.BasePrice.Currency);
                 }
 
-                if (discountComponent.ExistProduct)
+                if (@this.ExistProduct)
                 {
-                    discountComponent.Product.AppsOnDeriveVirtualProductPriceComponent();
+                    @this.Product.AppsOnDeriveVirtualProductPriceComponent();
                 }
             }
 

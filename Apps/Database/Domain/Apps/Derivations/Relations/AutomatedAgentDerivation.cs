@@ -20,9 +20,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var automatedAgent in matches.Cast<AutomatedAgent>())
+            foreach (var @this in matches.Cast<AutomatedAgent>())
             {
-                automatedAgent.PartyName = automatedAgent.Name;
+                @this.PartyName = @this.Name;
             }
         }
     }

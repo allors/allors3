@@ -25,25 +25,25 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var paymentApplication in matches.Cast<PaymentApplication>())
+            foreach (var @this in matches.Cast<PaymentApplication>())
             {
-                validation.AssertExistsAtMostOne(paymentApplication, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
-                validation.AssertAtLeastOne(paymentApplication, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
+                validation.AssertExistsAtMostOne(@this, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
+                validation.AssertAtLeastOne(@this, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
 
-                if (paymentApplication.ExistPaymentWherePaymentApplication && paymentApplication.AmountApplied > paymentApplication.PaymentWherePaymentApplication.Amount)
+                if (@this.ExistPaymentWherePaymentApplication && @this.AmountApplied > @this.PaymentWherePaymentApplication.Amount)
                 {
-                    validation.AddError($"{paymentApplication} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");
+                    validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount}");
                 }
 
-                var totalInvoiceAmountPaid = paymentApplication.Invoice?.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
-                if (paymentApplication.Invoice is SalesInvoice salesInvoice)
+                var totalInvoiceAmountPaid = @this.Invoice?.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
+                if (@this.Invoice is SalesInvoice salesInvoice)
                 {
                     totalInvoiceAmountPaid += salesInvoice.AdvancePayment;
                 }
 
-                if (paymentApplication.ExistInvoice && totalInvoiceAmountPaid > paymentApplication.Invoice.TotalIncVat)
+                if (@this.ExistInvoice && totalInvoiceAmountPaid > @this.Invoice.TotalIncVat)
                 {
-                    validation.AddError($"{paymentApplication} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
+                    validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount}");
                 }
             }
         }

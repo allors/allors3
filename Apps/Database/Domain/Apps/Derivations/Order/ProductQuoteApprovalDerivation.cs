@@ -20,25 +20,25 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var productQuoteApproval in matches.Cast<ProductQuoteApproval>())
+            foreach (var @this in matches.Cast<ProductQuoteApproval>())
             {
-                productQuoteApproval.Title = "Approval of " + productQuoteApproval.ProductQuote.WorkItemDescription;
+                @this.Title = "Approval of " + @this.ProductQuote.WorkItemDescription;
 
-                productQuoteApproval.WorkItem = productQuoteApproval.ProductQuote;
+                @this.WorkItem = @this.ProductQuote;
 
                 // Lifecycle
-                if (!productQuoteApproval.ExistDateClosed && !productQuoteApproval.ProductQuote.QuoteState.IsCreated)
+                if (!@this.ExistDateClosed && !@this.ProductQuote.QuoteState.IsCreated)
                 {
-                    productQuoteApproval.DateClosed = productQuoteApproval.Session().Now();
+                    @this.DateClosed = @this.Session().Now();
                 }
 
-                if (productQuoteApproval.Participants.Count == 0)
+                if (@this.Participants.Count == 0)
                 {
                     // Assignments
-                    var participants = productQuoteApproval.ExistDateClosed
+                    var participants = @this.ExistDateClosed
                                            ? (IEnumerable<Person>)Array.Empty<Person>()
-                                           : new UserGroups(productQuoteApproval.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-                    productQuoteApproval.AssignParticipants(participants);
+                                           : new UserGroups(@this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
+                    @this.AssignParticipants(participants);
                 }
             }
         }

@@ -25,107 +25,107 @@ namespace Allors.Domain
         {
             var session = cycle.Session;
 
-            foreach (var organisation in matches.Cast<Organisation>())
+            foreach (var @this in matches.Cast<Organisation>())
             {
                 //var singleton = session.GetSingleton();
                 var now = session.Now();
 
-                session.Prefetch(organisation.PrefetchPolicy);
+                session.Prefetch(@this.PrefetchPolicy);
 
-                if (organisation.IsInternalOrganisation)
+                if (@this.IsInternalOrganisation)
                 {
-                    if (!organisation.ExistRequestCounter)
+                    if (!@this.ExistRequestCounter)
                     {
-                        organisation.RequestCounter = new CounterBuilder(session).Build();
+                        @this.RequestCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistQuoteCounter)
+                    if (!@this.ExistQuoteCounter)
                     {
-                        organisation.QuoteCounter = new CounterBuilder(session).Build();
+                        @this.QuoteCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistPurchaseInvoiceCounter)
+                    if (!@this.ExistPurchaseInvoiceCounter)
                     {
-                        organisation.PurchaseInvoiceCounter = new CounterBuilder(session).Build();
+                        @this.PurchaseInvoiceCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistPurchaseOrderCounter)
+                    if (!@this.ExistPurchaseOrderCounter)
                     {
-                        organisation.PurchaseOrderCounter = new CounterBuilder(session).Build();
+                        @this.PurchaseOrderCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistSubAccountCounter)
+                    if (!@this.ExistSubAccountCounter)
                     {
-                        organisation.SubAccountCounter = new CounterBuilder(session).Build();
+                        @this.SubAccountCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistIncomingShipmentCounter)
+                    if (!@this.ExistIncomingShipmentCounter)
                     {
-                        organisation.IncomingShipmentCounter = new CounterBuilder(session).Build();
+                        @this.IncomingShipmentCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistWorkEffortCounter)
+                    if (!@this.ExistWorkEffortCounter)
                     {
-                        organisation.WorkEffortCounter = new CounterBuilder(session).Build();
+                        @this.WorkEffortCounter = new CounterBuilder(session).Build();
                     }
 
-                    if (!organisation.ExistInvoiceSequence)
+                    if (!@this.ExistInvoiceSequence)
                     {
-                        organisation.InvoiceSequence = new InvoiceSequenceBuilder(session)
-                            .WithName(organisation.Name)
+                        @this.InvoiceSequence = new InvoiceSequenceBuilder(session)
+                            .WithName(@this.Name)
                             .Build();
                     }
 
-                    if (organisation.DoAccounting && !organisation.ExistFiscalYearStartMonth)
+                    if (@this.DoAccounting && !@this.ExistFiscalYearStartMonth)
                     {
-                        organisation.FiscalYearStartMonth = 1;
+                        @this.FiscalYearStartMonth = 1;
                     }
 
-                    if (organisation.DoAccounting && !organisation.ExistFiscalYearStartDay)
+                    if (@this.DoAccounting && !@this.ExistFiscalYearStartDay)
                     {
-                        organisation.FiscalYearStartDay = 1;
+                        @this.FiscalYearStartDay = 1;
                     }
                 }
 
-                organisation.PartyName = organisation.Name;
+                @this.PartyName = @this.Name;
 
-                organisation.ActiveEmployees = organisation.EmploymentsWhereEmployer
+                @this.ActiveEmployees = @this.EmploymentsWhereEmployer
                     .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                     .Select(v => v.Employee)
                     .ToArray();
 
-                (organisation).ActiveCustomers = organisation.CustomerRelationshipsWhereInternalOrganisation
+                (@this).ActiveCustomers = @this.CustomerRelationshipsWhereInternalOrganisation
                     .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                     .Select(v => v.Customer)
                     .ToArray();
 
                 // Contacts
-                if (!organisation.ExistContactsUserGroup)
+                if (!@this.ExistContactsUserGroup)
                 {
-                    var customerContactGroupName = $"Customer contacts at {organisation.Name} ({organisation.UniqueId})";
-                    organisation.ContactsUserGroup = new UserGroupBuilder(organisation.Strategy.Session).WithName(customerContactGroupName).Build();
+                    var customerContactGroupName = $"Customer contacts at {@this.Name} ({@this.UniqueId})";
+                    @this.ContactsUserGroup = new UserGroupBuilder(@this.Strategy.Session).WithName(customerContactGroupName).Build();
                 }
 
-                organisation.DeriveRelationships();
+                @this.DeriveRelationships();
 
-                organisation.ContactsUserGroup.Members = organisation.CurrentContacts.ToArray();
+                @this.ContactsUserGroup.Members = @this.CurrentContacts.ToArray();
 
-                var deletePermission = new Permissions(organisation.Strategy.Session).Get(organisation.Meta.ObjectType, organisation.Meta.Delete);
-                if (organisation.IsDeletable)
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
                 {
-                    organisation.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    organisation.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
 
-                organisation.ActiveEmployees = organisation.EmploymentsWhereEmployer
+                @this.ActiveEmployees = @this.EmploymentsWhereEmployer
                     .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                     .Select(v => v.Employee)
                     .ToArray();
 
-                organisation.DeriveRelationships();
+                @this.DeriveRelationships();
             }
         }
     }

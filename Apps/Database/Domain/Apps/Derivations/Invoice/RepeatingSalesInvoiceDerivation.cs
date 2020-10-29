@@ -24,28 +24,28 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var repeatingSalesInvoice in matches.Cast<RepeatingSalesInvoice>())
+            foreach (var @this in matches.Cast<RepeatingSalesInvoice>())
             {
-                if (!repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Month) && !repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Week))
+                if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week))
                 {
-                    validation.AddError($"{repeatingSalesInvoice} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
+                    validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
                 }
 
-                if (repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Week) && !repeatingSalesInvoice.ExistDayOfWeek)
+                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && !@this.ExistDayOfWeek)
                 {
-                    validation.AssertExists(repeatingSalesInvoice, this.M.RepeatingSalesInvoice.DayOfWeek);
+                    validation.AssertExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
                 }
 
-                if (repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Month) && repeatingSalesInvoice.ExistDayOfWeek)
+                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && @this.ExistDayOfWeek)
                 {
-                    validation.AssertNotExists(repeatingSalesInvoice, this.M.RepeatingSalesInvoice.DayOfWeek);
+                    validation.AssertNotExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
                 }
 
-                if (repeatingSalesInvoice.Frequency.Equals(new TimeFrequencies(repeatingSalesInvoice.Strategy.Session).Week) && repeatingSalesInvoice.ExistDayOfWeek && repeatingSalesInvoice.ExistNextExecutionDate)
+                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && @this.ExistDayOfWeek && @this.ExistNextExecutionDate)
                 {
-                    if (!repeatingSalesInvoice.NextExecutionDate.DayOfWeek.ToString().Equals(repeatingSalesInvoice.DayOfWeek.Name))
+                    if (!@this.NextExecutionDate.DayOfWeek.ToString().Equals(@this.DayOfWeek.Name))
                     {
-                        validation.AddError($"{repeatingSalesInvoice} {this.M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
+                        validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
                     }
                 }
             }

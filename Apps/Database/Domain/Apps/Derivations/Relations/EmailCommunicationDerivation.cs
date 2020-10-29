@@ -20,14 +20,14 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (EmailCommunication emailCommunication in matches.Cast<EmailCommunication>())
+            foreach (var @this in matches.Cast<EmailCommunication>())
             {
-                if (!emailCommunication.ExistSubject && emailCommunication.ExistEmailTemplate && emailCommunication.EmailTemplate.ExistSubjectTemplate)
+                if (!@this.ExistSubject && @this.ExistEmailTemplate && @this.EmailTemplate.ExistSubjectTemplate)
                 {
-                    emailCommunication.Subject = emailCommunication.EmailTemplate.SubjectTemplate;
+                    @this.Subject = @this.EmailTemplate.SubjectTemplate;
                 }
 
-                emailCommunication.WorkItemDescription = $"Email to {emailCommunication.ToEmail} about {emailCommunication.Subject}";
+                @this.WorkItemDescription = $"Email to {@this.ToEmail} about {@this.Subject}";
             }
         }
     }

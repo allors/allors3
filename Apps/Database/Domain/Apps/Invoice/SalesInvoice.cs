@@ -65,35 +65,6 @@ namespace Allors.Domain
 
         public InvoiceItem[] InvoiceItems => this.SalesInvoiceItems;
 
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                if (this.ExistBillToCustomer)
-                {
-                    foreach (PartyFinancialRelationship partyFinancialRelationship in this.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty)
-                    {
-                        iteration.AddDependency(partyFinancialRelationship, this);
-                        iteration.Mark(partyFinancialRelationship);
-                    }
-                }
-
-                foreach (var invoiceItem in this.InvoiceItems.OfType<SalesInvoiceItem>())
-                {
-                    iteration.AddDependency(this, invoiceItem);
-                    iteration.Mark(invoiceItem);
-                }
-
-                foreach (SalesOrder salesOrder in this.SalesOrders)
-                {
-                    iteration.AddDependency(salesOrder, this);
-                    iteration.Mark(salesOrder);
-                }
-            }
-        }
-
         public void AppsSend(SalesInvoiceSend method)
         {
             var singleton = this.Session().GetSingleton();

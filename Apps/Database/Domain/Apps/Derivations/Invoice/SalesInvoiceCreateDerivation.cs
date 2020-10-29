@@ -31,34 +31,34 @@ namespace Allors.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            foreach (var salesInvoice in matches.Cast<SalesInvoice>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                if (!salesInvoice.ExistEntryDate)
+                if (!@this.ExistEntryDate)
                 {
-                    salesInvoice.EntryDate = session.Now();
+                    @this.EntryDate = session.Now();
                 }
 
-                if (!salesInvoice.ExistInvoiceDate)
+                if (!@this.ExistInvoiceDate)
                 {
-                    salesInvoice.InvoiceDate = session.Now();
+                    @this.InvoiceDate = session.Now();
                 }
 
-                if (!salesInvoice.ExistSalesInvoiceType)
+                if (!@this.ExistSalesInvoiceType)
                 {
-                    salesInvoice.SalesInvoiceType = new SalesInvoiceTypes(session).SalesInvoice;
+                    @this.SalesInvoiceType = new SalesInvoiceTypes(session).SalesInvoice;
                 }
 
                 var internalOrganisations = new Organisations(session).InternalOrganisations();
 
-                if (!salesInvoice.ExistBilledFrom && internalOrganisations.Count() == 1)
+                if (!@this.ExistBilledFrom && internalOrganisations.Count() == 1)
                 {
-                    salesInvoice.BilledFrom = internalOrganisations.First();
+                    @this.BilledFrom = internalOrganisations.First();
                 }
 
-                salesInvoice.DefaultLocale = session.GetSingleton().DefaultLocale;
-                salesInvoice.DefaultCurrency = session.GetSingleton().DefaultLocale.Country.Currency;
+                @this.DefaultLocale = session.GetSingleton().DefaultLocale;
+                @this.DefaultCurrency = session.GetSingleton().DefaultLocale.Country.Currency;
 
-                salesInvoice.AddSecurityToken(new SecurityTokens(salesInvoice.Session()).DefaultSecurityToken);
+                @this.AddSecurityToken(new SecurityTokens(@this.Session()).DefaultSecurityToken);
             }
         }
     }

@@ -20,37 +20,37 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var salesOrderItemInventoryAssignment in matches.Cast<SalesOrderItemInventoryAssignment>())
+            foreach (var @this in matches.Cast<SalesOrderItemInventoryAssignment>())
             {
-                var salesOrderItem = salesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment;
+                var salesOrderItem = @this.SalesOrderItemWhereSalesOrderItemInventoryAssignment;
                 var state = salesOrderItem.SalesOrderItemState;
-                var inventoryItemChanged = salesOrderItemInventoryAssignment.ExistCurrentVersion && (!Equals(salesOrderItemInventoryAssignment.CurrentVersion.InventoryItem, salesOrderItemInventoryAssignment.InventoryItem));
+                var inventoryItemChanged = @this.ExistCurrentVersion && (!Equals(@this.CurrentVersion.InventoryItem, @this.InventoryItem));
 
                 foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
                 {
-                    SyncInventoryTransactions(salesOrderItemInventoryAssignment, salesOrderItemInventoryAssignment.InventoryItem, salesOrderItemInventoryAssignment.Quantity, createReason, false);
+                    SyncInventoryTransactions(@this, @this.InventoryItem, @this.Quantity, createReason, false);
                 }
 
                 foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
                 {
-                    SyncInventoryTransactions(salesOrderItemInventoryAssignment, salesOrderItemInventoryAssignment.InventoryItem, salesOrderItemInventoryAssignment.Quantity, cancelReason, true);
+                    SyncInventoryTransactions(@this, @this.InventoryItem, @this.Quantity, cancelReason, true);
                 }
 
                 if (inventoryItemChanged)
                 {
                     // CurrentVersion is Previous Version until PostDerive
-                    var previousInventoryItem = salesOrderItemInventoryAssignment.CurrentVersion.InventoryItem;
-                    var previousQuantity = salesOrderItemInventoryAssignment.CurrentVersion.Quantity;
+                    var previousInventoryItem = @this.CurrentVersion.InventoryItem;
+                    var previousQuantity = @this.CurrentVersion.Quantity;
                     state = salesOrderItem.PreviousSalesOrderItemState ?? salesOrderItem.SalesOrderItemState;
 
                     foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
                     {
-                        SyncInventoryTransactions(salesOrderItemInventoryAssignment, previousInventoryItem, previousQuantity, createReason, true);
+                        SyncInventoryTransactions(@this, previousInventoryItem, previousQuantity, createReason, true);
                     }
 
                     foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
                     {
-                        SyncInventoryTransactions(salesOrderItemInventoryAssignment, previousInventoryItem, previousQuantity, cancelReason, true);
+                        SyncInventoryTransactions(@this, previousInventoryItem, previousQuantity, cancelReason, true);
                     }
                 }
             }

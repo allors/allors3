@@ -20,16 +20,16 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var engagement in matches.Cast<Engagement>())
+            foreach (var @this in matches.Cast<Engagement>())
             {
-                if (!engagement.ExistBillToContactMechanism && engagement.ExistBillToParty)
+                if (!@this.ExistBillToContactMechanism && @this.ExistBillToParty)
                 {
-                    engagement.BillToContactMechanism = engagement.BillToParty.BillingAddress;
+                    @this.BillToContactMechanism = @this.BillToParty.BillingAddress;
                 }
 
-                if (!engagement.ExistPlacingContactMechanism && engagement.ExistPlacingParty)
+                if (!@this.ExistPlacingContactMechanism && @this.ExistPlacingParty)
                 {
-                    engagement.PlacingContactMechanism = engagement.PlacingParty.OrderAddress;
+                    @this.PlacingContactMechanism = @this.PlacingParty.OrderAddress;
                 }
             }
         }

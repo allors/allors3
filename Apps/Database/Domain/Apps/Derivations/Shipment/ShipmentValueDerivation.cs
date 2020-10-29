@@ -21,9 +21,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var shipmentValue in matches.Cast<ShipmentValue>())
+            foreach (var @this in matches.Cast<ShipmentValue>())
             {
-                cycle.Validation.AssertAtLeastOne(shipmentValue, this.M.ShipmentValue.FromAmount, this.M.ShipmentValue.ThroughAmount);
+                cycle.Validation.AssertAtLeastOne(@this, this.M.ShipmentValue.FromAmount, this.M.ShipmentValue.ThroughAmount);
             }
         }
     }

@@ -18,6 +18,7 @@ namespace Allors.Domain
                 new TransitionalDeniedPermissionDerivation(m),
 
                 // Apps
+                new AccountingPeriodDeniedPermissionDerivation(m),
                 new ShipmentDerivation(m),
                 new SupplierOfferingDerivation(m),
                 new ServiceDerivation(m),

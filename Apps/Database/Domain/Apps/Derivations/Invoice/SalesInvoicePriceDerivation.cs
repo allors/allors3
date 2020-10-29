@@ -43,12 +43,12 @@ namespace Allors.Domain
             var validation = cycle.Validation;
 
             // calculate prices only if salesinvoice is not posted yet.
-            foreach (var salesInvoice in matches.Cast<SalesInvoice>().Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting))
+            foreach (var @this in matches.Cast<SalesInvoice>().Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting))
             {
-                var validInvoiceItems = salesInvoice.ValidInvoiceItems.Cast<SalesInvoiceItem>().ToArray();
+                var validInvoiceItems = @this.ValidInvoiceItems.Cast<SalesInvoiceItem>().ToArray();
 
-                var currentPriceComponents = salesInvoice.BilledFrom?.PriceComponentsWherePricedBy
-                    .Where(v => v.FromDate <= salesInvoice.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= salesInvoice.InvoiceDate))
+                var currentPriceComponents = @this.BilledFrom?.PriceComponentsWherePricedBy
+                    .Where(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate))
                     .ToArray();
 
                 var quantityByProduct = validInvoiceItems
@@ -66,7 +66,7 @@ namespace Allors.Domain
                         quantityByProduct.TryGetValue(salesInvoiceItem.Product, out quantityOrdered);
                     }
 
-                    CalculatePrices(salesInvoice, salesInvoiceItem, currentPriceComponents, quantityOrdered, 0);
+                    CalculatePrices(@this, salesInvoiceItem, currentPriceComponents, quantityOrdered, 0);
                 }
 
                 var totalBasePriceByProduct = validInvoiceItems
@@ -86,35 +86,35 @@ namespace Allors.Domain
                         totalBasePriceByProduct.TryGetValue(salesInvoiceItem.Product, out totalBasePrice);
                     }
 
-                    CalculatePrices(salesInvoice, salesInvoiceItem, currentPriceComponents, quantityOrdered, totalBasePrice);
+                    CalculatePrices(@this, salesInvoiceItem, currentPriceComponents, quantityOrdered, totalBasePrice);
                 }
 
                 // Calculate Totals
-                salesInvoice.TotalBasePrice = 0;
-                salesInvoice.TotalDiscount = 0;
-                salesInvoice.TotalSurcharge = 0;
-                salesInvoice.TotalExVat = 0;
-                salesInvoice.TotalFee = 0;
-                salesInvoice.TotalShippingAndHandling = 0;
-                salesInvoice.TotalExtraCharge = 0;
-                salesInvoice.TotalVat = 0;
-                salesInvoice.TotalIrpf = 0;
-                salesInvoice.TotalIncVat = 0;
-                salesInvoice.TotalListPrice = 0;
-                salesInvoice.TotalIrpf = 0;
-                salesInvoice.GrandTotal = 0;
+                @this.TotalBasePrice = 0;
+                @this.TotalDiscount = 0;
+                @this.TotalSurcharge = 0;
+                @this.TotalExVat = 0;
+                @this.TotalFee = 0;
+                @this.TotalShippingAndHandling = 0;
+                @this.TotalExtraCharge = 0;
+                @this.TotalVat = 0;
+                @this.TotalIrpf = 0;
+                @this.TotalIncVat = 0;
+                @this.TotalListPrice = 0;
+                @this.TotalIrpf = 0;
+                @this.GrandTotal = 0;
 
                 foreach (var item in validInvoiceItems)
                 {
-                    salesInvoice.TotalBasePrice += item.TotalBasePrice;
-                    salesInvoice.TotalDiscount += item.TotalDiscount;
-                    salesInvoice.TotalSurcharge += item.TotalSurcharge;
-                    salesInvoice.TotalExVat += item.TotalExVat;
-                    salesInvoice.TotalVat += item.TotalVat;
-                    salesInvoice.TotalIrpf += item.TotalIrpf;
-                    salesInvoice.TotalIncVat += item.TotalIncVat;
-                    salesInvoice.TotalListPrice += item.TotalExVat;
-                    salesInvoice.GrandTotal += item.GrandTotal;
+                    @this.TotalBasePrice += item.TotalBasePrice;
+                    @this.TotalDiscount += item.TotalDiscount;
+                    @this.TotalSurcharge += item.TotalSurcharge;
+                    @this.TotalExVat += item.TotalExVat;
+                    @this.TotalVat += item.TotalVat;
+                    @this.TotalIrpf += item.TotalIrpf;
+                    @this.TotalIncVat += item.TotalIncVat;
+                    @this.TotalListPrice += item.TotalExVat;
+                    @this.GrandTotal += item.GrandTotal;
                 }
 
                 var discount = 0M;
@@ -133,111 +133,111 @@ namespace Allors.Domain
                 var miscellaneousVat = 0M;
                 var miscellaneousIrpf = 0M;
 
-                foreach (OrderAdjustment orderAdjustment in salesInvoice.OrderAdjustments)
+                foreach (OrderAdjustment orderAdjustment in @this.OrderAdjustments)
                 {
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                     {
                         discount = orderAdjustment.Percentage.HasValue ?
-                                        Math.Round(salesInvoice.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+                                        Math.Round(@this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
                                         orderAdjustment.Amount ?? 0;
 
-                        salesInvoice.TotalDiscount += discount;
+                        @this.TotalDiscount += discount;
 
-                        if (salesInvoice.ExistVatRegime)
+                        if (@this.ExistVatRegime)
                         {
-                            discountVat = Math.Round(discount * salesInvoice.VatRegime.VatRate.Rate / 100, 2);
+                            discountVat = Math.Round(discount * @this.VatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesInvoice.ExistIrpfRegime)
+                        if (@this.ExistIrpfRegime)
                         {
-                            discountIrpf = Math.Round(discount * salesInvoice.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            discountIrpf = Math.Round(discount * @this.IrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                     {
                         surcharge = orderAdjustment.Percentage.HasValue ?
-                                            Math.Round(salesInvoice.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+                                            Math.Round(@this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
                                             orderAdjustment.Amount ?? 0;
 
-                        salesInvoice.TotalSurcharge += surcharge;
+                        @this.TotalSurcharge += surcharge;
 
-                        if (salesInvoice.ExistVatRegime)
+                        if (@this.ExistVatRegime)
                         {
-                            surchargeVat = Math.Round(surcharge * salesInvoice.VatRegime.VatRate.Rate / 100, 2);
+                            surchargeVat = Math.Round(surcharge * @this.VatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesInvoice.ExistIrpfRegime)
+                        if (@this.ExistIrpfRegime)
                         {
-                            surchargeIrpf = Math.Round(surcharge * salesInvoice.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            surchargeIrpf = Math.Round(surcharge * @this.IrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                     {
                         fee = orderAdjustment.Percentage.HasValue ?
-                                    Math.Round(salesInvoice.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+                                    Math.Round(@this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
                                     orderAdjustment.Amount ?? 0;
 
-                        salesInvoice.TotalFee += fee;
+                        @this.TotalFee += fee;
 
-                        if (salesInvoice.ExistVatRegime)
+                        if (@this.ExistVatRegime)
                         {
-                            feeVat = Math.Round(fee * salesInvoice.VatRegime.VatRate.Rate / 100, 2);
+                            feeVat = Math.Round(fee * @this.VatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesInvoice.ExistIrpfRegime)
+                        if (@this.ExistIrpfRegime)
                         {
-                            feeIrpf = Math.Round(fee * salesInvoice.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            feeIrpf = Math.Round(fee * @this.IrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                     {
                         shipping = orderAdjustment.Percentage.HasValue ?
-                                        Math.Round(salesInvoice.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+                                        Math.Round(@this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
                                         orderAdjustment.Amount ?? 0;
 
-                        salesInvoice.TotalShippingAndHandling += shipping;
+                        @this.TotalShippingAndHandling += shipping;
 
-                        if (salesInvoice.ExistVatRegime)
+                        if (@this.ExistVatRegime)
                         {
-                            shippingVat = Math.Round(shipping * salesInvoice.VatRegime.VatRate.Rate / 100, 2);
+                            shippingVat = Math.Round(shipping * @this.VatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesInvoice.ExistIrpfRegime)
+                        if (@this.ExistIrpfRegime)
                         {
-                            shippingIrpf = Math.Round(shipping * salesInvoice.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            shippingIrpf = Math.Round(shipping * @this.IrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                     {
                         miscellaneous = orderAdjustment.Percentage.HasValue ?
-                                        Math.Round(salesInvoice.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
+                                        Math.Round(@this.TotalExVat * orderAdjustment.Percentage.Value / 100, 2) :
                                         orderAdjustment.Amount ?? 0;
 
-                        salesInvoice.TotalExtraCharge += miscellaneous;
+                        @this.TotalExtraCharge += miscellaneous;
 
-                        if (salesInvoice.ExistVatRegime)
+                        if (@this.ExistVatRegime)
                         {
-                            miscellaneousVat = Math.Round(miscellaneous * salesInvoice.VatRegime.VatRate.Rate / 100, 2);
+                            miscellaneousVat = Math.Round(miscellaneous * @this.VatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesInvoice.ExistIrpfRegime)
+                        if (@this.ExistIrpfRegime)
                         {
-                            miscellaneousIrpf = Math.Round(miscellaneous * salesInvoice.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            miscellaneousIrpf = Math.Round(miscellaneous * @this.IrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
                 }
 
-                salesInvoice.TotalExtraCharge = fee + shipping + miscellaneous;
+                @this.TotalExtraCharge = fee + shipping + miscellaneous;
 
-                salesInvoice.TotalExVat = salesInvoice.TotalExVat - discount + surcharge + fee + shipping + miscellaneous;
-                salesInvoice.TotalVat = salesInvoice.TotalVat - discountVat + surchargeVat + feeVat + shippingVat + miscellaneousVat;
-                salesInvoice.TotalIncVat = salesInvoice.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
-                salesInvoice.TotalIrpf = salesInvoice.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
-                salesInvoice.GrandTotal = salesInvoice.TotalIncVat - salesInvoice.TotalIrpf;
+                @this.TotalExVat = @this.TotalExVat - discount + surcharge + fee + shipping + miscellaneous;
+                @this.TotalVat = @this.TotalVat - discountVat + surchargeVat + feeVat + shippingVat + miscellaneousVat;
+                @this.TotalIncVat = @this.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
+                @this.TotalIrpf = @this.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
+                @this.GrandTotal = @this.TotalIncVat - @this.TotalIrpf;
 
                 //// Only take into account items for which there is data at the item level.
                 //// Skip negative sales.

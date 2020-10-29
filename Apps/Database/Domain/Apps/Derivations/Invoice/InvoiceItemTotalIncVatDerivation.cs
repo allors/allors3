@@ -23,12 +23,12 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var invoiceItem in matches.Cast<InvoiceItem>())
+            foreach (var @this in matches.Cast<InvoiceItem>())
             {
-                var totalInvoiceItemAmountPaid = invoiceItem?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
-                if (totalInvoiceItemAmountPaid > invoiceItem.TotalIncVat)
+                var totalInvoiceItemAmountPaid = @this?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
+                if (totalInvoiceItemAmountPaid > @this.TotalIncVat)
                 {
-                    cycle.Validation.AddError($"{invoiceItem} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
+                    cycle.Validation.AddError($"{@this} {this.M.PaymentApplication.AmountApplied} {ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount}");
                 }
             }
         }

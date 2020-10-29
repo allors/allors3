@@ -21,17 +21,17 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var paymentExtension in matches.Cast<Payment>())
+            foreach (var @this in matches.Cast<Payment>())
             {
                 decimal totalAmountApplied = 0;
-                foreach (PaymentApplication paymentApplication in paymentExtension.PaymentApplications)
+                foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
                 {
                     totalAmountApplied += paymentApplication.AmountApplied;
                 }
 
-                if (paymentExtension.ExistAmount && totalAmountApplied > paymentExtension.Amount)
+                if (@this.ExistAmount && totalAmountApplied > @this.Amount)
                 {
-                    cycle.Validation.AddError($"{paymentExtension} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount}");
+                    cycle.Validation.AddError($"{@this} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount}");
                 }
             }
         }

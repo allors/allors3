@@ -21,23 +21,23 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var partyContactMechanism in matches.Cast<PartyContactMechanism>())
+            foreach (var @this in matches.Cast<PartyContactMechanism>())
             {
-                if (partyContactMechanism.ExistUseAsDefault && partyContactMechanism.UseAsDefault)
+                if (@this.ExistUseAsDefault && @this.UseAsDefault)
                 {
-                    cycle.Validation.AssertExists(partyContactMechanism, this.M.PartyContactMechanism.ContactPurposes);
+                    cycle.Validation.AssertExists(@this, this.M.PartyContactMechanism.ContactPurposes);
                 }
 
-                if (partyContactMechanism.UseAsDefault && partyContactMechanism.ExistPartyWherePartyContactMechanism && partyContactMechanism.ExistContactPurposes)
+                if (@this.UseAsDefault && @this.ExistPartyWherePartyContactMechanism && @this.ExistContactPurposes)
                 {
-                    foreach (var contactMechanismPurpose in partyContactMechanism.ContactPurposes)
+                    foreach (var contactMechanismPurpose in @this.ContactPurposes)
                     {
-                        var partyContactMechanisms = partyContactMechanism.PartyWherePartyContactMechanism.PartyContactMechanisms;
+                        var partyContactMechanisms = @this.PartyWherePartyContactMechanism.PartyContactMechanisms;
                         partyContactMechanisms.Filter.AddContains(this.M.PartyContactMechanism.ContactPurposes, (IObject)contactMechanismPurpose);
 
                         foreach (PartyContactMechanism partyContactMechanismFromOrganisationWherePartyContactMechanism in partyContactMechanisms)
                         {
-                            if (!partyContactMechanismFromOrganisationWherePartyContactMechanism.Equals(partyContactMechanism))
+                            if (!partyContactMechanismFromOrganisationWherePartyContactMechanism.Equals(@this))
                             {
                                 partyContactMechanismFromOrganisationWherePartyContactMechanism.UseAsDefault = false;
                             }
