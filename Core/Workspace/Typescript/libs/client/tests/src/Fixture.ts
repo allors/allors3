@@ -32,7 +32,6 @@ export class Fixture {
     const database: Database = new MemoryDatabase(this.metaPopulation);
     extendDomain(database);
 
-    await this.login('administrator');
     await this.http.get('Test/Setup', { population });
     const client = new Client(this.http);
     this.ctx = new Context(client, database);
@@ -40,6 +39,8 @@ export class Fixture {
     this.tree = new TreeFactory(this.m);
     this.fetch = new FetchFactory(this.m);
     this.pull = new PullFactory(this.m);
+
+    await this.login('administrator');
   }
 
   async login(user: string) {

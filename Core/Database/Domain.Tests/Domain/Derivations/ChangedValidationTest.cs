@@ -107,5 +107,77 @@ namespace Tests
 
             Assert.Equal("x", aa.Derived);
         }
+
+        [Fact]
+        public void C1ChangedRole()
+        {
+            var derivation = new C1ChangedRoleDerivation(this.M);
+            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+
+            var c1 = new C1Builder(this.Session).Build();
+            var c2 = new C2Builder(this.Session).Build();
+
+            c1.ChangedRolePing = true;
+            c2.ChangedRolePing = true;
+
+            this.Session.Derive();
+
+            Assert.True(c1.ChangedRolePong);
+            Assert.Null(c2.ChangedRolePong);
+        }
+
+        [Fact]
+        public void I1ChangedRole()
+        {
+            var derivation = new I1ChangedRoleDerivation(this.M);
+            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+
+            var c1 = new C1Builder(this.Session).Build();
+            var c2 = new C2Builder(this.Session).Build();
+
+            c1.ChangedRolePing = true;
+            c2.ChangedRolePing = true;
+
+            this.Session.Derive();
+
+            Assert.True(c1.ChangedRolePong);
+            Assert.Null(c2.ChangedRolePong);
+        }
+
+        [Fact]
+        public void I12ChangedRole()
+        {
+            var derivation = new I12ChangedRoleDerivation(this.M);
+            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+
+            var c1 = new C1Builder(this.Session).Build();
+            var c2 = new C2Builder(this.Session).Build();
+
+            c1.ChangedRolePing = true;
+            c2.ChangedRolePing = true;
+
+            this.Session.Derive();
+
+            Assert.True(c1.ChangedRolePong);
+            Assert.True(c2.ChangedRolePong);
+        }
+        
+        [Fact]
+        public void S12ChangedRole()
+        {
+            var derivation = new S12ChangedRoleDerivation(this.M);
+            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+
+            var c1 = new C1Builder(this.Session).Build();
+            var c2 = new C2Builder(this.Session).Build();
+
+            c1.ChangedRolePing = true;
+            c2.ChangedRolePing = true;
+
+            this.Session.Derive();
+
+            Assert.True(c1.ChangedRolePong);
+            Assert.True(c2.ChangedRolePong);
+        }
     }
 }

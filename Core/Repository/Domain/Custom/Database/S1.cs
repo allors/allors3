@@ -5,6 +5,7 @@
 
 namespace Allors.Repository
 {
+    using System;
     using Allors.Repository.Attributes;
 
     #region Allors
@@ -12,7 +13,9 @@ namespace Allors.Repository
     #endregion
     public partial interface S1 : Object
     {
+        #region Allors
         [Id("2E52966D-6760-45A0-B687-0A0B6198A770")]
+        #endregion
         void SuperinterfaceMethod();
     }
 }

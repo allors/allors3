@@ -9,6 +9,33 @@
     <Compile Include="..\..\..\System\Repository\Domain\Attributes*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Custom\Database\BadUI.cs" />
+    <Compile Remove="Custom\Database\Dependee.cs" />
+    <Compile Remove="Custom\Database\Dependent.cs" />
+    <Compile Remove="Custom\Database\Extender.cs" />
+    <Compile Remove="Custom\Database\First.cs" />
+    <Compile Remove="Custom\Database\Four.cs" />
+    <Compile Remove="Custom\Database\From.cs" />
+    <Compile Remove="Custom\Database\Left.cs" />
+    <Compile Remove="Custom\Database\Middle.cs" />
+    <Compile Remove="Custom\Database\One.cs" />
+    <Compile Remove="Custom\Database\Post.cs" />
+    <Compile Remove="Custom\Database\Right.cs" />
+    <Compile Remove="Custom\Database\Second.cs" />
+    <Compile Remove="Custom\Database\Shared.cs" />
+    <Compile Remove="Custom\Database\SimpleJob.cs" />
+    <Compile Remove="Custom\Database\StatefulCompany.cs" />
+    <Compile Remove="Custom\Database\Subdependee.cs" />
+    <Compile Remove="Custom\Database\SyncDepth2.cs" />
+    <Compile Remove="Custom\Database\SyncDepthC1.cs" />
+    <Compile Remove="Custom\Database\SyncDepthI1.cs" />
+    <Compile Remove="Custom\Database\SyncRoot.cs" />
+    <Compile Remove="Custom\Database\Third.cs" />
+    <Compile Remove="Custom\Database\Three.cs" />
+    <Compile Remove="Custom\Database\To.cs" />
+    <Compile Remove="Custom\Database\Two.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol\Allors.Protocol.csproj" />
   </ItemGroup>
 </Project>
