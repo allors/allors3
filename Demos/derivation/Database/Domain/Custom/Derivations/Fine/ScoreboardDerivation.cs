@@ -15,7 +15,7 @@ namespace Allors.Domain
         public ScoreboardDerivation(M m) : base(m, new Guid("66659E72-C496-485C-A68D-E940A9A94F9C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedRolePattern(m.Scoreboard.Players),
+                new ChangedPattern(m.Scoreboard.Players),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -38,8 +38,6 @@ namespace Allors.Meta
             }
         }
 
-        #region Exist
-
         public bool ExistClasses
         {
             get
@@ -66,8 +64,6 @@ namespace Allors.Meta
                 return this.derivedClasses.Count > 0;
             }
         }
-
-        #endregion Exist
 
         /// <summary>
         /// Gets the subclasses.
@@ -104,6 +100,8 @@ namespace Allors.Meta
             }
         }
 
+        public IEnumerable<Interface> Subinterfaces => this.Subtypes.OfType<Interface>();
+        
         public override Class ExclusiveClass
         {
             get

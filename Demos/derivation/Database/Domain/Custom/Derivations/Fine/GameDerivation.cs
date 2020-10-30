@@ -16,7 +16,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(m.Game.Class),
-                new ChangedRolePattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
+                new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

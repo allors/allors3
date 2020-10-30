@@ -16,15 +16,15 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(m.Game.Class),
-                new ChangedRolePattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
-                new ChangedRolePattern(m.Scoreboard.Players),
-                new ChangedRolePattern(m.Game.Declarers),
-                new ChangedRolePattern(m.Game.StartDate),
-                new ChangedRolePattern(m.Game.EndDate),
-                new ChangedRolePattern(m.Game.GameMode),
-                new ChangedRolePattern(m.Game.Winners),
-                new ChangedRolePattern(m.Scoreboard.AccumulatedScores),
-                new ChangedRolePattern(m.Score.Value) {Steps = new IPropertyType[]
+                new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
+                new ChangedPattern(m.Scoreboard.Players),
+                new ChangedPattern(m.Game.Declarers),
+                new ChangedPattern(m.Game.StartDate),
+                new ChangedPattern(m.Game.EndDate),
+                new ChangedPattern(m.Game.GameMode),
+                new ChangedPattern(m.Game.Winners),
+                new ChangedPattern(m.Scoreboard.AccumulatedScores),
+                new ChangedPattern(m.Score.Value) {Steps = new IPropertyType[]
                 {
                     m.Score.GameWhereScore,
                     m.Game.ScoreboardWhereGame,

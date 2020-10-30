@@ -463,6 +463,12 @@ namespace Allors.Meta
                     // RoleClasses
                     foreach (var relationType in this.RelationTypes)
                     {
+                        relationType.DeriveRoleInterfaces();
+                    }
+
+                    // RoleClasses
+                    foreach (var relationType in this.RelationTypes)
+                    {
                         relationType.DeriveRoleClasses();
                     }
 

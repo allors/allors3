@@ -15,8 +15,8 @@ namespace Allors.Domain
         public AccumulatedScoreDerivation(M m) : base(m, new Guid("C280BFB1-543D-4B78-9397-DC956E032689")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedRolePattern(m.Scoreboard.AccumulatedScores),
-                new ChangedRolePattern(m.Score.Value) {Steps = new IPropertyType[]
+                new ChangedPattern(m.Scoreboard.AccumulatedScores),
+                new ChangedPattern(m.Score.Value) {Steps = new IPropertyType[]
                 {
                     m.Score.GameWhereScore,
                     m.Game.ScoreboardWhereGame,

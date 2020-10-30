@@ -318,11 +318,12 @@ namespace Allors.Meta
         {
             if (this.AssociationType.ObjectType is Interface @interface)
             {
-                this.derivedRoleClassByAssociationTypeClass = @interface.Classes.ToDictionary(v => v, v =>
-                {
-                    this.derivedRoleClassByAssociationTypeClass.TryGetValue(v, out var roleClass);
-                    return roleClass ?? new RoleClass(this, v, (RoleDefault)this.RoleType);
-                });
+                this.derivedRoleInterfaceByAssociationTypeInterface = @interface.Subinterfaces.ToDictionary(v => v,
+                    v =>
+                    {
+                        this.derivedRoleInterfaceByAssociationTypeInterface.TryGetValue(v, out var roleInterface);
+                        return roleInterface ?? new RoleInterface(this, v, (RoleDefault)this.RoleType);
+                    });
             }
             else
             {

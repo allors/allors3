@@ -15,8 +15,8 @@ namespace Allors.Domain
         public ScoreDerivation(M m) : base(m, new Guid("AD572FC7-CC70-4D3B-9526-D39A23C23FE5")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedRolePattern(m.Game.GameMode),
-                new ChangedRolePattern(m.Game.Winners),
+                new ChangedPattern(m.Game.GameMode),
+                new ChangedPattern(m.Game.Winners),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

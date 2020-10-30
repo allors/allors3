@@ -10,7 +10,7 @@ namespace Allors.Meta
 
     public sealed partial class RoleInterface : RoleType, IRoleInterface
     {
-        public RoleInterface(RelationType relationType, Class associationTypeComposite, RoleDefault @default = null) : base(relationType)
+        public RoleInterface(RelationType relationType, Composite associationTypeComposite, RoleDefault @default = null) : base(relationType)
         {
             this.AssociationTypeComposite = associationTypeComposite;
             this.Default = @default;
