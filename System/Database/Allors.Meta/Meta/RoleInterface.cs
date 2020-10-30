@@ -6,106 +6,76 @@
 
 namespace Allors.Meta
 {
+    using System;
+
     public sealed partial class RoleInterface : RoleType, IRoleInterface
     {
-        private ObjectType objectType;
-
-        private string pluralName;
-        private int? precision;
-        private int? scale;
-        private string singularName;
-        private int? size;
-
-        internal RoleInterface(RelationType relationType) : base(relationType) => this.MetaPopulation.OnRoleInterfaceCreated(this);
-
-        public override ObjectType ObjectType
+        public RoleInterface(RelationType relationType, Class associationTypeComposite, RoleDefault @default = null) : base(relationType)
         {
-            get => this.objectType;
+            this.AssociationTypeComposite = associationTypeComposite;
+            this.Default = @default;
 
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.objectType = value;
-                this.MetaPopulation.Stale();
-            }
+            this.MetaPopulation.OnRoleInterfaceCreated(this);
         }
 
-        public override string SingularName
-        {
-            get => this.singularName;
+        public override RoleDefault Default { get; }
+        IRoleDefault IRoleType.Default => this.Default;
 
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.singularName = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public override string PluralName
-        {
-            get => this.pluralName;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.pluralName = value;
-                this.MetaPopulation.Stale();
-            }
-        }
+        public override Composite AssociationTypeComposite { get; }
+        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
 
         public override int? Size
         {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.size;
-            }
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.size = value;
-                this.MetaPopulation.Stale();
-            }
+            get => this.Default.Size;
+            set => throw new NotSupportedException();
         }
 
         public override int? Precision
         {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.precision;
-            }
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.precision = value;
-                this.MetaPopulation.Stale();
-            }
+            get => this.Default.Precision;
+            set => throw new NotSupportedException();
         }
 
         public override int? Scale
         {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.scale;
-            }
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.scale = value;
-                this.MetaPopulation.Stale();
-            }
+            get => this.Default.Scale;
+            set => throw new NotSupportedException();
         }
 
-        public override string MediaType { get; set; }
+        public override bool IsRequired
+        {
+            get => this.Default.IsRequired;
+            set => throw new NotSupportedException();
+        }
 
-        public override bool IsRequired { get; set; }
+        public override bool IsUnique
+        {
+            get => this.Default.IsUnique;
+            set => throw new NotSupportedException();
+        }
 
-        public override bool IsUnique { get; set; }
+        public override string MediaType
+        {
+            get => this.Default.MediaType;
+            set => throw new NotSupportedException();
+        }
+
+        public override string SingularName
+        {
+            get => this.Default.SingularName;
+            set => throw new NotSupportedException();
+        }
+
+        public override string PluralName
+        {
+            get => this.Default.PluralName;
+            set => throw new NotSupportedException();
+        }
+
+        public override ObjectType ObjectType
+        {
+            get => this.Default.ObjectType;
+            set => throw new NotSupportedException();
+        }
     }
 }

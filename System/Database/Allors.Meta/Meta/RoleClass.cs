@@ -21,30 +21,27 @@ namespace Allors.Meta
         private bool? isRequired;
         private bool? isUnique;
 
-        public RoleClass(Class associationTypeClass, RelationType relationType, RoleInterface roleInterface = null) : base(relationType)
+        public RoleClass(RelationType relationType, Class associationTypeComposite, RoleDefault @default = null) : base(relationType)
         {
-            this.AssociationTypeClass = associationTypeClass;
-            this.RoleInterface = roleInterface;
+            this.AssociationTypeComposite = associationTypeComposite;
+            this.Default = @default;
 
             this.MetaPopulation.OnRoleClassCreated(this);
         }
 
-        public Class AssociationTypeClass { get; }
+        public override RoleDefault Default { get; }
+        IRoleDefault IRoleType.Default => this.Default;
 
-        public bool ExistRoleInterface => this.RoleInterface != null;
-
-        public RoleInterface RoleInterface { get; }
-        IRoleInterface IRoleClass.RoleInterface => this.RoleInterface;
-
-        IClass IRoleClass.AssociationTypeClass => this.AssociationTypeClass;
+        public override Composite AssociationTypeComposite { get; }
+        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
 
         public override ObjectType ObjectType
         {
-            get => this.objectType ?? this.RoleInterface?.ObjectType;
+            get => this.objectType ?? this.Default?.ObjectType;
 
             set
             {
-                if (this.ExistRoleInterface)
+                if (this.ExistDefault)
                 {
                     throw new ArgumentException("ObjectType is readonly when ExistRoleInterface");
                 }
@@ -57,11 +54,11 @@ namespace Allors.Meta
 
         public override string SingularName
         {
-            get => this.singularName ?? this.RoleInterface?.SingularName;
+            get => this.singularName ?? this.Default?.SingularName;
 
             set
             {
-                if (this.ExistRoleInterface)
+                if (this.ExistDefault)
                 {
                     throw new ArgumentException("SingularName is readonly when ExistRoleInterface");
                 }
@@ -74,11 +71,11 @@ namespace Allors.Meta
 
         public override string PluralName
         {
-            get => this.pluralName ?? this.RoleInterface?.PluralName;
+            get => this.pluralName ?? this.Default?.PluralName;
 
             set
             {
-                if (this.ExistRoleInterface)
+                if (this.ExistDefault)
                 {
                     throw new ArgumentException("PluralName is readonly when ExistRoleInterface");
                 }
@@ -94,13 +91,13 @@ namespace Allors.Meta
             get
             {
                 this.MetaPopulation.Derive();
-                return this.size ?? this.RoleInterface?.Size;
+                return this.size ?? this.Default?.Size;
             }
 
             set
             {
                 // TODO: Should we allow smaller sizes?
-                if (this.ExistRoleInterface)
+                if (this.ExistDefault)
                 {
                     throw new ArgumentException("Size is readonly when ExistRoleInterface");
                 }
@@ -116,13 +113,13 @@ namespace Allors.Meta
             get
             {
                 this.MetaPopulation.Derive();
-                return this.precision ?? this.RoleInterface?.Precision;
+                return this.precision ?? this.Default?.Precision;
             }
 
             set
             {
                 // TODO: Should we allow smaller precision?
-                if (this.ExistRoleInterface)
+                if (this.ExistDefault)
                 {
                     throw new ArgumentException("SingularName is readonly when ExistRoleInterface");
                 }
@@ -138,13 +135,13 @@ namespace Allors.Meta
             get
             {
                 this.MetaPopulation.Derive();
-                return this.scale ?? this.RoleInterface?.Scale;
+                return this.scale ?? this.Default?.Scale;
             }
 
             set
             {
                 // TODO: Should we allow smaller precision?
-                if (this.ExistRoleInterface)
+                if (this.ExistDefault)
                 {
                     throw new ArgumentException("Scale is readonly when ExistRoleInterface");
                 }
@@ -157,19 +154,19 @@ namespace Allors.Meta
 
         public override string MediaType
         {
-            get => this.mediaType ?? this.RoleInterface?.MediaType;
+            get => this.mediaType ?? this.Default?.MediaType;
             set => this.mediaType = value;
         }
 
         public override bool IsRequired
         {
-            get => this.isRequired ?? this.RoleInterface?.IsRequired ?? false;
+            get => this.isRequired ?? this.Default?.IsRequired ?? false;
             set => this.isRequired = value;
         }
 
         public override bool IsUnique
         {
-            get => this.isUnique ?? this.RoleInterface?.IsUnique ?? false;
+            get => this.isUnique ?? this.Default?.IsUnique ?? false;
             set => this.isUnique = value;
         }
     }

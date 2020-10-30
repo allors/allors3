@@ -8,6 +8,7 @@ namespace Allors.Meta
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
 
     public abstract partial class Composite : ObjectType, IComposite
@@ -507,6 +508,11 @@ namespace Allors.Meta
                         roleTypes.UnionWith(roleClasses);
                     }
                 }
+            }
+
+            if (roleTypes.Contains(null))
+            {
+                Debugger.Break();
             }
 
             this.derivedRoleTypes = new HashSet<RoleType>(roleTypes);

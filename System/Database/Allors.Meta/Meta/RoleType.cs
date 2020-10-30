@@ -19,6 +19,11 @@ namespace Allors.Meta
 
         protected RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
 
+        public bool ExistDefault => this.Default != null;
+
+        IRoleDefault IRoleType.Default => this.Default;
+        public abstract RoleDefault Default { get; }
+
         public override Origin Origin => this.RelationType.Origin;
 
         public RelationType RelationType { get; }
@@ -30,6 +35,9 @@ namespace Allors.Meta
         /// <value>The association.</value>
         public AssociationType AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
+
+        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
+        public abstract Composite AssociationTypeComposite { get; }
 
         public abstract ObjectType ObjectType { get; set; }
 

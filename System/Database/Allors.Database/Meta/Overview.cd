@@ -54,8 +54,8 @@
     <AssociationLine Name="RoleType" Type="Allors.Meta.IRoleType" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="8.25" Y="4.26" />
-        <Point X="8.25" Y="9.507" />
-        <Point X="12.812" Y="9.507" />
+        <Point X="8.25" Y="9.701" />
+        <Point X="12.812" Y="9.701" />
         <Point X="12.812" Y="9.516" />
       </Path>
     </AssociationLine>
@@ -108,9 +108,9 @@
     <Position X="13.75" Y="10.25" Width="1.5" />
     <AssociationLine Name="AssociationTypeClass" Type="Allors.Meta.IClass" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="14.5" Y="11.247" />
-        <Point X="14.5" Y="11.872" />
-        <Point X="7.625" Y="11.872" />
+        <Point X="14.5" Y="11.482" />
+        <Point X="14.5" Y="12.039" />
+        <Point X="7.625" Y="12.039" />
         <Point X="7.625" Y="10.247" />
       </Path>
     </AssociationLine>
@@ -120,14 +120,14 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="AssociationTypeClass" />
-      <Property Name="RoleInterface" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="Allors.Meta.IRoleInterface">
+  <Interface Name="Allors.Meta.IRoleDefaultInterface">
     <Position X="11" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Meta\IRoleInterface.cs</FileName>
+      <FileName>Meta\IRoleDefaultInterface.cs</FileName>
+      <NewMemberFileName>Meta\IRoleInterface.cs</NewMemberFileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Meta.IMethodClass">
@@ -135,8 +135,8 @@
     <AssociationLine Name="ObjectType" Type="Allors.Meta.IClass" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="19.5" Y="11.247" />
-        <Point X="19.5" Y="11.872" />
-        <Point X="6.75" Y="11.872" />
+        <Point X="19.5" Y="12.039" />
+        <Point X="6.75" Y="12.039" />
         <Point X="6.75" Y="10.247" />
       </Path>
     </AssociationLine>

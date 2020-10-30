@@ -677,5 +677,11 @@ namespace Allors.Meta
 
             return false;
         }
+
+        public RoleType RoleType(IComposite association, string relationTypeId)
+        {
+            var relationType = ((RelationType)this.Find(new Guid(relationTypeId)));
+            return relationType.RoleTypeBy(association);
+        }
     }
 }

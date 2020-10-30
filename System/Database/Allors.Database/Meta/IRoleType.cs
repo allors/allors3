@@ -15,11 +15,15 @@ namespace Allors.Meta
     /// </summary>
     public interface IRoleType : IPropertyType, IComparable
     {
+        IRoleDefault Default { get; }
+
         string SingularFullName { get; }
 
         string PluralFullName { get; }
 
         IAssociationType AssociationType { get; }
+
+        IComposite AssociationTypeComposite { get; }
 
         IRelationType RelationType { get; }
 

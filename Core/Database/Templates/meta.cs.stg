@@ -97,7 +97,7 @@ $interface.AssociationTypes:{associationType|         public AssociationType $as
 $interface.MethodTypes:{methodType|             this.$methodType.Name$ = (MethodType)meta.Find(new System.Guid("$methodType.Id$"));}; separator="\n"$
 
             // Roles
-$interface.RoleTypes:{roleType|             this.$roleType.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType.RelationType.Id$"))).RoleType;}; separator="\n"$
+$interface.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType(this.Interface, "$roleType.RelationType.Id$");}; separator="\n"$
 
             // Associations
 $interface.AssociationTypes:{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$
@@ -114,7 +114,7 @@ meta_class(class) ::= <<
 $class.MethodTypes:{methodType|         public MethodClass $methodType.Name$;}; separator="\n"$
 
 		// Roles
-$class.RoleTypes:{roleType|         public RoleClass $roleType.Name$;}; separator="\n"$
+$class.RoleTypes:{roleType|         public RoleType $roleType.Name$;}; separator="\n"$
 
 		// Associations
 $class.AssociationTypes:{associationType|         public AssociationType $associationType.Name$;}; separator="\n"$
@@ -127,7 +127,7 @@ $class.AssociationTypes:{associationType|         public AssociationType $associ
 $class.MethodTypes:{methodType|             this.$methodType.Name$ = ((MethodType)meta.Find(new System.Guid("$methodType.Id$"))).MethodClassBy(this.Class);}; separator="\n"$
 
             // Roles
-$class.RoleTypes:{roleType|             this.$roleType.Name$ = ((RelationType)meta.Find(new System.Guid("$roleType.RelationType.Id$"))).RoleClassBy(this.Class);}; separator="\n"$
+$class.RoleTypes:{roleType|             this.$roleType.Name$ = meta.RoleType(this.Class, "$roleType.RelationType.Id$");}; separator="\n"$
 
             // Associations
 $class.AssociationTypes:{associationType|           this.$associationType.Name$ = ((RelationType)meta.Find(new System.Guid("$associationType.RelationType.Id$"))).AssociationType;}; separator="\n"$

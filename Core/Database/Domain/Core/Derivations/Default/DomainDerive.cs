@@ -73,17 +73,30 @@ namespace Allors.Domain.Derivations.Default
                         {
                             var source = pattern switch
                             {
+                                // Create
                                 CreatedPattern createdPattern => changeSet.Created
                                     .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
                                     .Select(v => v.GetObject()),
-                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
+
+                                // RoleDefault
+                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
                                         .AssociationsByRoleType
                                         .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
                                         .SelectMany(v => this.Session.Instantiate(v.Value)),
+
+                                // RoleInterface
+                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
+                                        .AssociationsByRoleType
+                                        .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                        .SelectMany(v => this.Session.Instantiate(v.Value))
+                                        .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
+
+                                // RoleClass
                                 ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
                                         .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
                                         .SelectMany(v => this.Session.Instantiate(v.Value))
-                                        .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeClass)),
+                                        .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
+
                                 _ => Array.Empty<IObject>()
                             };
 

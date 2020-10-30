@@ -6,7 +6,7 @@
 
 namespace Allors.Meta
 {
-    public interface IRoleClass : IRoleType
+    public interface IRoleDefault : IRoleType
     {
     }
 }

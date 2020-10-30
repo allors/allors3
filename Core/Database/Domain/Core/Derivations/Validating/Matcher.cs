@@ -24,9 +24,9 @@ namespace Allors.Domain.Derivations.Validating
                 this.propertyTypesByStrategies.Add(strategy, propertyTypes);
             }
 
-            if (propertyType is RoleClass roleClass && roleClass.ExistRoleInterface)
+            if (propertyType is RoleType roleType && roleType.ExistDefault)
             {
-                propertyTypes.Add(roleClass.RoleInterface);
+                propertyTypes.Add(roleType.Default);
             }
             else
             {
@@ -41,8 +41,8 @@ namespace Allors.Domain.Derivations.Validating
                 return;
             }
 
-            propertyType = propertyType is RoleClass roleClass && roleClass.ExistRoleInterface
-                ? roleClass.RoleInterface
+            propertyType = propertyType is RoleType roleType && roleType.ExistDefault
+                ? roleType.Default
                 : propertyType;
 
             if (!this.propertyTypesByStrategies.TryGetValue(strategy, out var propertyTypes))
