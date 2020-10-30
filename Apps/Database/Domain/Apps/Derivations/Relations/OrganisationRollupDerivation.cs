@@ -20,14 +20,14 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var organisationRollUp in matches.Cast<OrganisationRollUp>())
+            foreach (var @this in matches.Cast<OrganisationRollUp>())
             {
-                organisationRollUp.Parties = new Party[] { organisationRollUp.Child, organisationRollUp.Parent };
+                @this.Parties = new Party[] { @this.Child, @this.Parent };
 
-                if (!organisationRollUp.ExistParent | !organisationRollUp.ExistChild)
+                if (!@this.ExistParent | !@this.ExistChild)
                 {
                     // TODO: Move Delete
-                    organisationRollUp.Delete();
+                    @this.Delete();
                 }
             }
         }

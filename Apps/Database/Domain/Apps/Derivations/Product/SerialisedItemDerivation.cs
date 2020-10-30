@@ -25,13 +25,13 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var serialisedItem in matches.Cast<SerialisedItem>())
+            foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                validation.AssertExistsAtMostOne(serialisedItem, serialisedItem.Meta.AcquiredDate, serialisedItem.Meta.AcquisitionYear);
+                validation.AssertExistsAtMostOne(@this, @this.Meta.AcquiredDate, @this.Meta.AcquisitionYear);
 
-                if (!serialisedItem.ExistName && serialisedItem.ExistPartWhereSerialisedItem)
+                if (!@this.ExistName && @this.ExistPartWhereSerialisedItem)
                 {
-                    serialisedItem.Name = serialisedItem.PartWhereSerialisedItem.Name;
+                    @this.Name = @this.PartWhereSerialisedItem.Name;
                 }
 
                 // TODO: Martien
@@ -39,39 +39,39 @@ namespace Allors.Domain
                 //serialisedItem.DerivePurchaseInvoice();
                 //serialisedItem.DerivePurchasePrice();
 
-                serialisedItem.SuppliedBy = serialisedItem.AssignedSuppliedBy ??
-                    serialisedItem.PurchaseOrder?.TakenViaSupplier ??
-                    serialisedItem.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
+                @this.SuppliedBy = @this.AssignedSuppliedBy ??
+                    @this.PurchaseOrder?.TakenViaSupplier ??
+                    @this.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;
 
-                serialisedItem.SuppliedByPartyName = serialisedItem.ExistSuppliedBy ? serialisedItem.SuppliedBy.PartyName : string.Empty;
-                serialisedItem.OwnedByPartyName = serialisedItem.ExistOwnedBy ? serialisedItem.OwnedBy.PartyName : string.Empty;
-                serialisedItem.RentedByPartyName = serialisedItem.ExistRentedBy ? serialisedItem.RentedBy.PartyName : string.Empty;
-                serialisedItem.OwnershipByOwnershipName = serialisedItem.ExistOwnership ? serialisedItem.Ownership.Name : string.Empty;
-                serialisedItem.SerialisedItemAvailabilityName = serialisedItem.ExistSerialisedItemAvailability ? serialisedItem.SerialisedItemAvailability.Name : string.Empty;
+                @this.SuppliedByPartyName = @this.ExistSuppliedBy ? @this.SuppliedBy.PartyName : string.Empty;
+                @this.OwnedByPartyName = @this.ExistOwnedBy ? @this.OwnedBy.PartyName : string.Empty;
+                @this.RentedByPartyName = @this.ExistRentedBy ? @this.RentedBy.PartyName : string.Empty;
+                @this.OwnershipByOwnershipName = @this.ExistOwnership ? @this.Ownership.Name : string.Empty;
+                @this.SerialisedItemAvailabilityName = @this.ExistSerialisedItemAvailability ? @this.SerialisedItemAvailability.Name : string.Empty;
 
-                var doubles = serialisedItem.PartWhereSerialisedItem?.SerialisedItems.Where(v =>
+                var doubles = @this.PartWhereSerialisedItem?.SerialisedItems.Where(v =>
                     !string.IsNullOrEmpty(v.SerialNumber)
                     && v.SerialNumber != "."
-                    && v.SerialNumber.Equals(serialisedItem.SerialNumber)).ToArray();
+                    && v.SerialNumber.Equals(@this.SerialNumber)).ToArray();
                 if (doubles?.Length > 1)
                 {
-                    validation.AddError($"{serialisedItem} {serialisedItem.Meta.SerialNumber} {ErrorMessages.SameSerialNumber}");
+                    validation.AddError($"{@this} {@this.Meta.SerialNumber} {ErrorMessages.SameSerialNumber}");
                 }
 
-                serialisedItem.OnQuote = serialisedItem.QuoteItemsWhereSerialisedItem.Any(v => v.QuoteItemState.IsDraft
+                @this.OnQuote = @this.QuoteItemsWhereSerialisedItem.Any(v => v.QuoteItemState.IsDraft
                             || v.QuoteItemState.IsSubmitted || v.QuoteItemState.IsApproved
                             || v.QuoteItemState.IsAwaitingAcceptance || v.QuoteItemState.IsAccepted);
 
-                serialisedItem.OnSalesOrder = serialisedItem.SalesOrderItemsWhereSerialisedItem.Any(v => v.SalesOrderItemState.IsProvisional
+                @this.OnSalesOrder = @this.SalesOrderItemsWhereSerialisedItem.Any(v => v.SalesOrderItemState.IsProvisional
                             || v.SalesOrderItemState.IsReadyForPosting || v.SalesOrderItemState.IsRequestsApproval
                             || v.SalesOrderItemState.IsAwaitingAcceptance || v.SalesOrderItemState.IsOnHold || v.SalesOrderItemState.IsInProcess);
 
-                serialisedItem.OnWorkEffort = serialisedItem.WorkEffortFixedAssetAssignmentsWhereFixedAsset.Any(v => v.Assignment.WorkEffortState.IsCreated
+                @this.OnWorkEffort = @this.WorkEffortFixedAssetAssignmentsWhereFixedAsset.Any(v => v.Assignment.WorkEffortState.IsCreated
                             || v.Assignment.WorkEffortState.IsInProgress);
 
-                this.DeriveProductCharacteristics(serialisedItem);
+                this.DeriveProductCharacteristics(@this);
 
-                serialisedItem.DeriveDisplayProductCategories();
+                @this.DeriveDisplayProductCategories();
             }
         }
 

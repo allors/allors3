@@ -16,17 +16,46 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.PriceComponent.Interface),
+                new ChangedPattern(this.M.BasePrice.FromDate),
+                new ChangedPattern(this.M.BasePrice.ThroughDate),
+                new ChangedPattern(this.M.BasePrice.Price),
+                new ChangedPattern(this.M.BasePrice.Product),
+                new ChangedPattern(this.M.BasePrice.Part),
+                new ChangedPattern(this.M.BasePrice.ProductFeature),
+
+                new ChangedPattern(this.M.DiscountComponent.FromDate),
+                new ChangedPattern(this.M.DiscountComponent.ThroughDate),
+                new ChangedPattern(this.M.DiscountComponent.Price),
+                new ChangedPattern(this.M.DiscountComponent.Product),
+                new ChangedPattern(this.M.DiscountComponent.Part),
+                new ChangedPattern(this.M.DiscountComponent.ProductFeature),
+
+                new ChangedPattern(this.M.SurchargeComponent.FromDate),
+                new ChangedPattern(this.M.SurchargeComponent.ThroughDate),
+                new ChangedPattern(this.M.SurchargeComponent.Price),
+                new ChangedPattern(this.M.SurchargeComponent.Product),
+                new ChangedPattern(this.M.SurchargeComponent.Part),
+                new ChangedPattern(this.M.SurchargeComponent.ProductFeature),
+
+                new ChangedPattern(this.M.DiscountComponent.Percentage),
+                new ChangedPattern(this.M.SurchargeComponent.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var priceComponentExtensions in matches.Cast<PriceComponent>())
+            foreach (var @this in matches.Cast<PriceComponent>())
             {
-                var internalOrganisations = new Organisations(priceComponentExtensions.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                if (!priceComponentExtensions.ExistPricedBy && internalOrganisations.Count() == 1)
+                if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
                 {
-                    priceComponentExtensions.PricedBy = internalOrganisations.First();
+                    @this.PricedBy = internalOrganisations.First();
+                }
+
+                var salesInvoices = (@this.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting);
+                foreach (var salesInvoice in salesInvoices)
+                {
+                    salesInvoice.DerivationTrigger = Guid.NewGuid();
                 }
             }
         }

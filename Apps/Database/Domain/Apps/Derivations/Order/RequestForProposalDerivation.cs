@@ -20,21 +20,21 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var requestForProposal in matches.Cast<RequestForProposal>())
+            foreach (var @this in matches.Cast<RequestForProposal>())
             {
-                foreach (RequestItem requestItem in requestForProposal.RequestItems)
+                foreach (RequestItem requestItem in @this.RequestItems)
                 {
-                    requestItem.Sync(requestForProposal);
+                    requestItem.Sync(@this);
                 }
 
-                var deletePermission = new Permissions(requestForProposal.Strategy.Session).Get(requestForProposal.Meta.ObjectType, requestForProposal.Meta.Delete);
-                if (requestForProposal.IsDeletable())
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable())
                 {
-                    requestForProposal.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    requestForProposal.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

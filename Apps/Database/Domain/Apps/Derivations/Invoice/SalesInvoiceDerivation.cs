@@ -16,14 +16,8 @@ namespace Allors.Domain
         public SalesInvoiceDerivation(M m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
             this.Patterns = new Pattern[]
         {
-            // Do not listen for changes in InternalOrganisation BillingAddress or GeneralCorrespondence or PreferredCurrency.
-            // Do not listen for changes in Singleton DefaultLocale.
-            // Do not listen for changes in BillToCustomer VatRegime, IrpfRegime, PreferredCurrency, Locale.
-            // Do not listen for changes in CustomerRelationship PaymentNetDays. 
-            // Do not listen for changes in Store PaymentNetDays.
-            // All these properties are only used for newly created invoices.
-
-            new CreatedPattern(this.M.SalesInvoice.Class),
+            new ChangedPattern(this.M.SalesInvoice.BilledFrom),
+            new ChangedPattern(this.M.SalesInvoice.Store),
             new ChangedPattern(this.M.SalesInvoice.BillToCustomer),
             new ChangedPattern(this.M.SalesInvoice.BillToEndCustomer),
             new ChangedPattern(this.M.SalesInvoice.ShipToCustomer),
@@ -46,178 +40,167 @@ namespace Allors.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            foreach (var salesInvoice in matches.Cast<SalesInvoice>())
+            foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                if (!salesInvoice.ExistEntryDate)
+                if (@this.ExistBillToCustomer)
                 {
-                    salesInvoice.EntryDate = session.Now();
+                    @this.PreviousBillToCustomer = @this.BillToCustomer;
                 }
 
-                if (!salesInvoice.ExistInvoiceDate)
-                {
-                    salesInvoice.InvoiceDate = session.Now();
-                }
-
-                if (salesInvoice.ExistBillToCustomer)
-                {
-                    salesInvoice.PreviousBillToCustomer = salesInvoice.BillToCustomer;
-                }
-
-                if (!salesInvoice.ExistSalesInvoiceType)
-                {
-                    salesInvoice.SalesInvoiceType = new SalesInvoiceTypes(session).SalesInvoice;
-                }
-
-                var internalOrganisations = new Organisations(session).InternalOrganisations();
-
-                if (!salesInvoice.ExistBilledFrom && internalOrganisations.Count() == 1)
-                {
-                    salesInvoice.BilledFrom = internalOrganisations.First();
-                }
-
-                if (!salesInvoice.ExistStore && salesInvoice.ExistBilledFrom)
+                if (!@this.ExistStore && @this.ExistBilledFrom)
                 {
                     var stores = new Stores(session).Extent();
-                    stores.Filter.AddEquals(this.M.Store.InternalOrganisation, salesInvoice.BilledFrom);
-                    salesInvoice.Store = stores.FirstOrDefault();
+                    stores.Filter.AddEquals(this.M.Store.InternalOrganisation, @this.BilledFrom);
+                    @this.Store = stores.FirstOrDefault();
                 }
 
-                if (!salesInvoice.ExistInvoiceNumber && salesInvoice.ExistStore)
+                if (!@this.ExistInvoiceNumber && @this.ExistStore)
                 {
-                    salesInvoice.InvoiceNumber = salesInvoice.Store.NextTemporaryInvoiceNumber();
-                    salesInvoice.SortableInvoiceNumber = salesInvoice.Session().GetSingleton().SortableNumber(null, salesInvoice.InvoiceNumber, salesInvoice.InvoiceDate.Year.ToString());
+                    @this.InvoiceNumber = @this.Store.NextTemporaryInvoiceNumber();
+                    @this.SortableInvoiceNumber = @this.Session().GetSingleton().SortableNumber(null, @this.InvoiceNumber, @this.InvoiceDate.Year.ToString());
                 }
 
-                if (!salesInvoice.ExistBilledFromContactMechanism && salesInvoice.ExistBilledFrom)
+                if (!@this.ExistBilledFromContactMechanism && @this.ExistBilledFrom)
                 {
-                    salesInvoice.BilledFromContactMechanism = salesInvoice.BilledFrom.ExistBillingAddress ? salesInvoice.BilledFrom.BillingAddress : salesInvoice.BilledFrom.GeneralCorrespondence;
+                    @this.BilledFromContactMechanism = @this.BilledFrom.ExistBillingAddress ? @this.BilledFrom.BillingAddress : @this.BilledFrom.GeneralCorrespondence;
                 }
 
-                if (!salesInvoice.ExistBillToContactMechanism && salesInvoice.ExistBillToCustomer)
+                if (!@this.ExistBillToContactMechanism && @this.ExistBillToCustomer)
                 {
-                    salesInvoice.BillToContactMechanism = salesInvoice.BillToCustomer.BillingAddress;
+                    @this.BillToContactMechanism = @this.BillToCustomer.BillingAddress;
                 }
 
-                if (!salesInvoice.ExistBillToEndCustomerContactMechanism && salesInvoice.ExistBillToEndCustomer)
+                if (!@this.ExistBillToEndCustomerContactMechanism && @this.ExistBillToEndCustomer)
                 {
-                    salesInvoice.BillToEndCustomerContactMechanism = salesInvoice.BillToEndCustomer.BillingAddress;
+                    @this.BillToEndCustomerContactMechanism = @this.BillToEndCustomer.BillingAddress;
                 }
 
-                if (!salesInvoice.ExistShipToEndCustomerAddress && salesInvoice.ExistShipToEndCustomer)
+                if (!@this.ExistShipToEndCustomerAddress && @this.ExistShipToEndCustomer)
                 {
-                    salesInvoice.ShipToEndCustomerAddress = salesInvoice.ShipToEndCustomer.ShippingAddress;
+                    @this.ShipToEndCustomerAddress = @this.ShipToEndCustomer.ShippingAddress;
                 }
 
-                if (!salesInvoice.ExistShipToAddress && salesInvoice.ExistShipToCustomer)
+                if (!@this.ExistShipToAddress && @this.ExistShipToCustomer)
                 {
-                    salesInvoice.ShipToAddress = salesInvoice.ShipToCustomer.ShippingAddress;
+                    @this.ShipToAddress = @this.ShipToCustomer.ShippingAddress;
                 }
 
-                if (salesInvoice.ExistBillToCustomer && salesInvoice.BillToCustomer.ExistLocale)
+                if (@this.ExistBillToCustomer && @this.BillToCustomer.ExistLocale)
                 {
-                    salesInvoice.Locale = salesInvoice.BillToCustomer.Locale;
+                    @this.Locale = @this.BillToCustomer.Locale;
                 }
                 else
                 {
-                    salesInvoice.Locale = session.GetSingleton().DefaultLocale;
+                    @this.Locale = @this.DefaultLocale;
                 }
 
-                if (!salesInvoice.ExistCurrency && salesInvoice.ExistBilledFrom)
+                if (!@this.ExistCurrency
+                    && (@this.ExistBilledFrom || @this.ExistBillToCustomer))
                 {
-                    if (salesInvoice.ExistBillToCustomer && (salesInvoice.BillToCustomer.ExistPreferredCurrency || salesInvoice.BillToCustomer.ExistLocale))
+                    if (@this.ExistBillToCustomer && (@this.BillToCustomer.ExistPreferredCurrency || @this.BillToCustomer.ExistLocale))
                     {
-                        salesInvoice.Currency = salesInvoice.BillToCustomer.ExistPreferredCurrency ? salesInvoice.BillToCustomer.PreferredCurrency : salesInvoice.BillToCustomer.Locale.Country.Currency;
+                        @this.Currency = @this.BillToCustomer.ExistPreferredCurrency ? @this.BillToCustomer.PreferredCurrency : @this.BillToCustomer.Locale.Country.Currency;
                     }
                     else
                     {
-                        salesInvoice.Currency = salesInvoice.BilledFrom.ExistPreferredCurrency ?
-                            salesInvoice.BilledFrom.PreferredCurrency :
-                            session.GetSingleton().DefaultLocale.Country.Currency;
+                        @this.Currency = @this.BilledFrom.ExistPreferredCurrency ?
+                            @this.BilledFrom.PreferredCurrency :
+                            @this.DefaultCurrency;
                     }
                 }
 
-                salesInvoice.VatRegime ??= salesInvoice.BillToCustomer?.VatRegime;
-                salesInvoice.IrpfRegime ??= salesInvoice.BillToCustomer?.IrpfRegime;
-                salesInvoice.IsRepeatingInvoice = salesInvoice.ExistRepeatingSalesInvoiceWhereSource
-                        && (!salesInvoice.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate
-                            || salesInvoice.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= salesInvoice.Strategy.Session.Now().Date);
+                @this.VatRegime ??= @this.BillToCustomer?.VatRegime;
+                @this.IrpfRegime ??= @this.BillToCustomer?.IrpfRegime;
+                @this.IsRepeatingInvoice = @this.ExistRepeatingSalesInvoiceWhereSource
+                        && (!@this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate
+                            || @this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= @this.Strategy.Session.Now().Date);
 
-                foreach (SalesInvoiceItem salesInvoiceItem in salesInvoice.SalesInvoiceItems)
+                foreach (SalesInvoiceItem salesInvoiceItem in @this.SalesInvoiceItems)
                 {
                     foreach (OrderItemBilling orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
                     {
-                        if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem && !salesInvoice.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))
+                        if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem && !@this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))
                         {
-                            salesInvoice.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
+                            @this.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
                         }
                     }
 
                     foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
                     {
-                        if (!salesInvoice.WorkEfforts.Contains(workEffortBilling.WorkEffort))
+                        if (!@this.WorkEfforts.Contains(workEffortBilling.WorkEffort))
                         {
-                            salesInvoice.AddWorkEffort(workEffortBilling.WorkEffort);
+                            @this.AddWorkEffort(workEffortBilling.WorkEffort);
                         }
                     }
 
                     foreach (TimeEntryBilling timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
                     {
-                        if (!salesInvoice.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
+                        if (!@this.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
                         {
-                            salesInvoice.AddWorkEffort(timeEntryBilling.TimeEntry.WorkEffort);
+                            @this.AddWorkEffort(timeEntryBilling.TimeEntry.WorkEffort);
                         }
                     }
                 }
 
-                salesInvoice.PaymentDays = salesInvoice.PaymentNetDays;
+                @this.PaymentDays = @this.PaymentNetDays;
 
-                if (salesInvoice.ExistInvoiceDate)
+                if (@this.ExistInvoiceDate)
                 {
-                    salesInvoice.DueDate = salesInvoice.InvoiceDate.AddDays(salesInvoice.PaymentNetDays);
+                    @this.DueDate = @this.InvoiceDate.AddDays(@this.PaymentNetDays);
                 }
 
-                if (salesInvoice.ExistVatRegime && salesInvoice.VatRegime.ExistVatClause)
+                if (@this.ExistVatRegime)
                 {
-                    salesInvoice.DerivedVatClause = salesInvoice.VatRegime.VatClause;
+                    if (@this.VatRegime.ExistVatClause)
+                    {
+                        @this.DerivedVatClause = @this.VatRegime.VatClause;
+                    }
+                    else
+                    {
+                        @this.RemoveDerivedVatClause();
+                    }
+                }
+                else
+                {
+                    @this.RemoveDerivedVatClause();
                 }
 
-                salesInvoice.DerivedVatClause = salesInvoice.ExistAssignedVatClause ? salesInvoice.AssignedVatClause : salesInvoice.DerivedVatClause;
+                @this.DerivedVatClause = @this.ExistAssignedVatClause ? @this.AssignedVatClause : @this.DerivedVatClause;
 
-                salesInvoice.RemoveCustomers();
-                if (salesInvoice.ExistBillToCustomer && !salesInvoice.Customers.Contains(salesInvoice.BillToCustomer))
+                @this.RemoveCustomers();
+                if (@this.ExistBillToCustomer && !@this.Customers.Contains(@this.BillToCustomer))
                 {
-                    salesInvoice.AddCustomer(salesInvoice.BillToCustomer);
+                    @this.AddCustomer(@this.BillToCustomer);
                 }
 
-                if (salesInvoice.ExistShipToCustomer && !salesInvoice.Customers.Contains(salesInvoice.ShipToCustomer))
+                if (@this.ExistShipToCustomer && !@this.Customers.Contains(@this.ShipToCustomer))
                 {
-                    salesInvoice.AddCustomer(salesInvoice.ShipToCustomer);
+                    @this.AddCustomer(@this.ShipToCustomer);
                 }
 
-                if (salesInvoice.ExistBillToCustomer && !salesInvoice.BillToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
+                if (@this.ExistBillToCustomer
+                    && @this.ExistBilledFrom
+                    && !@this.BillToCustomer.AppsIsActiveCustomer(@this.BilledFrom, @this.InvoiceDate))
                 {
-                    validation.AddError($"{salesInvoice} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{@this} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
-                if (salesInvoice.ExistShipToCustomer && !salesInvoice.ShipToCustomer.AppsIsActiveCustomer(salesInvoice.BilledFrom, salesInvoice.InvoiceDate))
+                if (@this.ExistShipToCustomer
+                    && @this.ExistBilledFrom
+                    && !@this.ShipToCustomer.AppsIsActiveCustomer(@this.BilledFrom, @this.InvoiceDate))
                 {
-                    validation.AddError($"{salesInvoice} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
+                    validation.AddError($"{@this} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}");
                 }
 
-                salesInvoice.PreviousBillToCustomer = salesInvoice.BillToCustomer;
-                salesInvoice.PreviousShipToCustomer = salesInvoice.ShipToCustomer;
+                @this.PreviousBillToCustomer = @this.BillToCustomer;
+                @this.PreviousShipToCustomer = @this.ShipToCustomer;
 
-                // this.AppsOnDeriveRevenues(derivation);
-                var singleton = salesInvoice.Session().GetSingleton();
-
-                salesInvoice.AddSecurityToken(new SecurityTokens(salesInvoice.Session()).DefaultSecurityToken);
-
-                foreach (SalesInvoiceItem invoiceItem in salesInvoice.SalesInvoiceItems)
+                foreach (SalesInvoiceItem invoiceItem in @this.SalesInvoiceItems)
                 {
-                    invoiceItem.Sync(salesInvoice);
+                    invoiceItem.Sync(@this);
                 }
 
-                salesInvoice.ResetPrintDocument();
+                @this.ResetPrintDocument();
             }
         }
     }

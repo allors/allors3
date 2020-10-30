@@ -24,59 +24,59 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var requestItem in matches.Cast<RequestItem>())
+            foreach (var @this in matches.Cast<RequestItem>())
             {
-                validation.AssertAtLeastOne(requestItem, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.SerialisedItem, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
-                validation.AssertExistsAtMostOne(requestItem, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
-                validation.AssertExistsAtMostOne(requestItem, this.M.RequestItem.SerialisedItem, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
+                validation.AssertAtLeastOne(@this, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.SerialisedItem, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
+                validation.AssertExistsAtMostOne(@this, this.M.RequestItem.Product, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
+                validation.AssertExistsAtMostOne(@this, this.M.RequestItem.SerialisedItem, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
 
                 var requestItemStates = new RequestItemStates(cycle.Session);
-                if (requestItem.IsValid)
+                if (@this.IsValid)
                 {
-                    if (requestItem.RequestWhereRequestItem.RequestState.IsSubmitted && requestItem.RequestItemState.IsDraft)
+                    if (@this.RequestWhereRequestItem.RequestState.IsSubmitted && @this.RequestItemState.IsDraft)
                     {
-                        requestItem.RequestItemState = requestItemStates.Submitted;
+                        @this.RequestItemState = requestItemStates.Submitted;
                     }
 
-                    if (requestItem.RequestWhereRequestItem.RequestState.IsCancelled)
+                    if (@this.RequestWhereRequestItem.RequestState.IsCancelled)
                     {
-                        requestItem.RequestItemState = requestItemStates.Cancelled;
+                        @this.RequestItemState = requestItemStates.Cancelled;
                     }
 
-                    if (requestItem.RequestWhereRequestItem.RequestState.IsRejected)
+                    if (@this.RequestWhereRequestItem.RequestState.IsRejected)
                     {
-                        requestItem.RequestItemState = requestItemStates.Rejected;
+                        @this.RequestItemState = requestItemStates.Rejected;
                     }
 
-                    if (requestItem.RequestWhereRequestItem.RequestState.IsQuoted)
+                    if (@this.RequestWhereRequestItem.RequestState.IsQuoted)
                     {
-                        requestItem.RequestItemState = requestItemStates.Quoted;
+                        @this.RequestItemState = requestItemStates.Quoted;
                     }
                 }
 
-                if (!requestItem.ExistUnitOfMeasure)
+                if (!@this.ExistUnitOfMeasure)
                 {
-                    requestItem.UnitOfMeasure = new UnitsOfMeasure(requestItem.Strategy.Session).Piece;
+                    @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
                 }
 
-                if (requestItem.ExistRequestWhereRequestItem && new RequestStates(requestItem.Strategy.Session).Cancelled.Equals(requestItem.RequestWhereRequestItem.RequestState))
+                if (@this.ExistRequestWhereRequestItem && new RequestStates(@this.Strategy.Session).Cancelled.Equals(@this.RequestWhereRequestItem.RequestState))
                 {
-                    requestItem.Cancel();
+                    @this.Cancel();
                 }
 
-                if (requestItem.ExistSerialisedItem && requestItem.Quantity != 1)
+                if (@this.ExistSerialisedItem && @this.Quantity != 1)
                 {
-                    validation.AddError($"{requestItem} {requestItem.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
+                    validation.AddError($"{@this} {@this.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
                 }
 
-                var deletePermission = new Permissions(requestItem.Strategy.Session).Get(requestItem.Meta.ObjectType, requestItem.Meta.Delete);
-                if (requestItem.IsDeletable)
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
                 {
-                    requestItem.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    requestItem.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

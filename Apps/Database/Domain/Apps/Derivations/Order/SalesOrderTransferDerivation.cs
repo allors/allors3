@@ -20,32 +20,32 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var salesOrderTransfer in matches.Cast<SalesOrderTransfer>())
+            foreach (var @this in matches.Cast<SalesOrderTransfer>())
             {
-                if (salesOrderTransfer.ExistFrom && salesOrderTransfer.ExistInternalOrganisation && !salesOrderTransfer.ExistTo)
+                if (@this.ExistFrom && @this.ExistInternalOrganisation && !@this.ExistTo)
                 {
-                    var acl = new DatabaseAccessControlLists(cycle.Session.State().User)[salesOrderTransfer.From];
+                    var acl = new DatabaseAccessControlLists(cycle.Session.State().User)[@this.From];
                     if (!acl.CanExecute(this.M.SalesOrder.DoTransfer))
                     {
-                        cycle.Validation.AddError($"{salesOrderTransfer} {salesOrderTransfer.Meta.To} No rights to transfer salesorder");
+                        cycle.Validation.AddError($"{@this} {@this.Meta.To} No rights to transfer salesorder");
                     }
                     else
                     {
-                        salesOrderTransfer.To = salesOrderTransfer.From.Clone(salesOrderTransfer.From.Meta.SalesOrderItems);
-                        salesOrderTransfer.To.TakenBy = salesOrderTransfer.InternalOrganisation;
+                        @this.To = @this.From.Clone(@this.From.Meta.SalesOrderItems);
+                        @this.To.TakenBy = @this.InternalOrganisation;
 
                         // TODO: Make sure 'from' customer is also a customer in 'to' internal organisation
-                        if (!salesOrderTransfer.To.TakenBy.ActiveCustomers.Contains(salesOrderTransfer.To.BillToCustomer))
+                        if (!@this.To.TakenBy.ActiveCustomers.Contains(@this.To.BillToCustomer))
                         {
-                            new CustomerRelationshipBuilder(salesOrderTransfer.Strategy.Session)
-                                .WithInternalOrganisation(salesOrderTransfer.To.TakenBy)
-                                .WithCustomer(salesOrderTransfer.To.BillToCustomer)
+                            new CustomerRelationshipBuilder(@this.Strategy.Session)
+                                .WithInternalOrganisation(@this.To.TakenBy)
+                                .WithCustomer(@this.To.BillToCustomer)
                                 .Build();
                         }
 
                         //TODO: ShipToCustomer
 
-                        salesOrderTransfer.From.SalesOrderState = new SalesOrderStates(salesOrderTransfer.Strategy.Session).Transferred;
+                        @this.From.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Transferred;
                     }
                 }
             }

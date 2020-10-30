@@ -20,26 +20,26 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var settings in matches.Cast<Settings>())
+            foreach (var @this in matches.Cast<Settings>())
             {
-                if (!settings.ExistSkuCounter)
+                if (!@this.ExistSkuCounter)
                 {
-                    settings.SkuCounter = new CounterBuilder(settings.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                    @this.SkuCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                 }
 
-                if (!settings.ExistSerialisedItemCounter)
+                if (!@this.ExistSerialisedItemCounter)
                 {
-                    settings.SerialisedItemCounter = new CounterBuilder(settings.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                    @this.SerialisedItemCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                 }
 
-                if (!settings.ExistProductNumberCounter)
+                if (!@this.ExistProductNumberCounter)
                 {
-                    settings.ProductNumberCounter = new CounterBuilder(settings.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                    @this.ProductNumberCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                 }
 
-                if (!settings.ExistPartNumberCounter)
+                if (!@this.ExistPartNumberCounter)
                 {
-                    settings.PartNumberCounter = new CounterBuilder(settings.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                    @this.PartNumberCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                 }
             }
         }

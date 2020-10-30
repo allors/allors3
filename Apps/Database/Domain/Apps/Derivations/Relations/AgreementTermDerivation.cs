@@ -21,9 +21,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var agreementTerm in matches.Cast<AgreementTerm>())
+            foreach (var @this in matches.Cast<AgreementTerm>())
             {
-                cycle.Validation.AssertAtLeastOne(agreementTerm, this.M.AgreementTerm.TermType, this.M.AgreementTerm.Description);
+                cycle.Validation.AssertAtLeastOne(@this, this.M.AgreementTerm.TermType, this.M.AgreementTerm.Description);
             }
         }
     }

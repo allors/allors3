@@ -20,25 +20,25 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var purchaseInvoiceApproval in matches.Cast<PurchaseInvoiceApproval>())
+            foreach (var @this in matches.Cast<PurchaseInvoiceApproval>())
             {
-                purchaseInvoiceApproval.Title = "Approval of " + purchaseInvoiceApproval.PurchaseInvoice.WorkItemDescription;
+                @this.Title = "Approval of " + @this.PurchaseInvoice.WorkItemDescription;
 
-                purchaseInvoiceApproval.WorkItem = purchaseInvoiceApproval.PurchaseInvoice;
+                @this.WorkItem = @this.PurchaseInvoice;
 
                 // Lifecycle
-                if (!purchaseInvoiceApproval.ExistDateClosed && !purchaseInvoiceApproval.PurchaseInvoice.PurchaseInvoiceState.IsAwaitingApproval)
+                if (!@this.ExistDateClosed && !@this.PurchaseInvoice.PurchaseInvoiceState.IsAwaitingApproval)
                 {
-                    purchaseInvoiceApproval.DateClosed = purchaseInvoiceApproval.Session().Now();
+                    @this.DateClosed = @this.Session().Now();
                 }
 
-                if (purchaseInvoiceApproval.Participants.Count == 0)
+                if (@this.Participants.Count == 0)
                 {
                     // Assignments
-                    var participants = purchaseInvoiceApproval.ExistDateClosed
+                    var participants = @this.ExistDateClosed
                         ? (IEnumerable<Person>)Array.Empty<Person>()
-                        : new UserGroups(purchaseInvoiceApproval.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-                    purchaseInvoiceApproval.AssignParticipants(participants);
+                        : new UserGroups(@this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
+                    @this.AssignParticipants(participants);
                 }
             }
         }

@@ -27,51 +27,51 @@ namespace Allors.Domain
             //changeSet.AssociationsByRoleType.TryGetValue(M.BasePrice, out var changedEmployer);
             //var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<BasePrice>();
 
-            foreach (var basePrice in matches.Cast<BasePrice>())
+            foreach (var @this in matches.Cast<BasePrice>())
             {
-                var internalOrganisations = new Organisations(basePrice.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
-                if (!basePrice.ExistPricedBy && internalOrganisations.Count() == 1)
+                if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
                 {
-                    basePrice.PricedBy = internalOrganisations.First();
+                    @this.PricedBy = internalOrganisations.First();
                 }
 
-                validation.AssertAtLeastOne(basePrice, this.M.BasePrice.Part, this.M.BasePrice.Product, this.M.BasePrice.ProductFeature);
+                validation.AssertAtLeastOne(@this, this.M.BasePrice.Part, this.M.BasePrice.Product, this.M.BasePrice.ProductFeature);
 
-                if (basePrice.ExistOrderQuantityBreak)
+                if (@this.ExistOrderQuantityBreak)
                 {
-                    validation.AddError($"{basePrice} { this.M.BasePrice.OrderQuantityBreak} {ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}");
+                    validation.AddError($"{@this} { this.M.BasePrice.OrderQuantityBreak} {ErrorMessages.BasePriceOrderQuantityBreakNotAllowed}");
                 }
 
-                if (basePrice.ExistOrderValue)
+                if (@this.ExistOrderValue)
                 {
-                    validation.AddError($"{basePrice} {this.M.BasePrice.OrderValue} {ErrorMessages.BasePriceOrderValueNotAllowed}");
+                    validation.AddError($"{@this} {this.M.BasePrice.OrderValue} {ErrorMessages.BasePriceOrderValueNotAllowed}");
                 }
 
-                if (basePrice.ExistPrice)
+                if (@this.ExistPrice)
                 {
-                    if (!basePrice.ExistCurrency && basePrice.ExistPricedBy)
+                    if (!@this.ExistCurrency && @this.ExistPricedBy)
                     {
-                        basePrice.Currency = basePrice.PricedBy.PreferredCurrency;
+                        @this.Currency = @this.PricedBy.PreferredCurrency;
                     }
 
-                    validation.AssertExists(basePrice, this.M.BasePrice.Currency);
+                    validation.AssertExists(@this, this.M.BasePrice.Currency);
                 }
 
-                if (basePrice.ExistProduct && !basePrice.ExistProductFeature)
+                if (@this.ExistProduct && !@this.ExistProductFeature)
                 {
                     // HACK: DerivedRoles
-                    basePrice.Product.AddBasePrice(basePrice);
+                    @this.Product.AddBasePrice(@this);
                 }
 
-                if (basePrice.ExistProductFeature)
+                if (@this.ExistProductFeature)
                 {
-                    basePrice.ProductFeature.AddToBasePrice(basePrice);
+                    @this.ProductFeature.AddToBasePrice(@this);
                 }
 
-                if (basePrice.ExistProduct)
+                if (@this.ExistProduct)
                 {
-                    basePrice.Product.AppsOnDeriveVirtualProductPriceComponent();
+                    @this.Product.AppsOnDeriveVirtualProductPriceComponent();
                 }
             }
         }

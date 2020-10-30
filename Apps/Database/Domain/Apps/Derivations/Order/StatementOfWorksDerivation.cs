@@ -20,19 +20,19 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var statementOfWork in matches.Cast<StatementOfWork>())
+            foreach (var @this in matches.Cast<StatementOfWork>())
             {
-                Sync(statementOfWork);
+                Sync(@this);
 
-                var deletePermission = new Permissions(statementOfWork.Strategy.Session).Get(statementOfWork.Meta.ObjectType, statementOfWork.Meta.Delete);
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
 
-                if (statementOfWork.IsDeletable)
+                if (@this.IsDeletable)
                 {
-                    statementOfWork.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    statementOfWork.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
 

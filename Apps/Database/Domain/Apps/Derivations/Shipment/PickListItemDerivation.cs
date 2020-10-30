@@ -21,30 +21,30 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var pickListItems in matches.Cast<PickListItem>())
+            foreach (var @this in matches.Cast<PickListItem>())
             {
-                if (pickListItems.Quantity > 0 && pickListItems.QuantityPicked > pickListItems.Quantity)
+                if (@this.Quantity > 0 && @this.QuantityPicked > @this.Quantity)
                 {
-                    cycle.Validation.AddError($"{pickListItems} {this.M.PickListItem.QuantityPicked} {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
+                    cycle.Validation.AddError($"{@this} {this.M.PickListItem.QuantityPicked} {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
                 }
 
-                if (pickListItems.QuantityPicked > 0 && pickListItems.ExistPickListWherePickListItem && pickListItems.PickListWherePickListItem.PickListState.Equals(new PickListStates(pickListItems.Session()).Picked))
+                if (@this.QuantityPicked > 0 && @this.ExistPickListWherePickListItem && @this.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Session()).Picked))
                 {
-                    var quantityProcessed = pickListItems.ItemIssuancesWherePickListItem.SelectMany(v => v.ShipmentItem.OrderShipmentsWhereShipmentItem).Sum(v => v.Quantity);
-                    var diff = quantityProcessed - pickListItems.QuantityPicked;
+                    var quantityProcessed = @this.ItemIssuancesWherePickListItem.SelectMany(v => v.ShipmentItem.OrderShipmentsWhereShipmentItem).Sum(v => v.Quantity);
+                    var diff = quantityProcessed - @this.QuantityPicked;
 
-                    foreach (ItemIssuance itemIssuance in pickListItems.ItemIssuancesWherePickListItem)
+                    foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWherePickListItem)
                     {
-                        itemIssuance.IssuanceDateTime = pickListItems.Session().Now();
+                        itemIssuance.IssuanceDateTime = @this.Session().Now();
                         foreach (OrderShipment orderShipment in itemIssuance.ShipmentItem.OrderShipmentsWhereShipmentItem)
                         {
                             if (orderShipment.OrderItem is SalesOrderItem salesOrderItem)
                             {
-                                if (diff > 0 && pickListItems.QuantityPicked != orderShipment.Quantity)
+                                if (diff > 0 && @this.QuantityPicked != orderShipment.Quantity)
                                 {
                                     if (orderShipment.Quantity >= diff)
                                     {
-                                        new OrderShipmentBuilder(pickListItems.Strategy.Session)
+                                        new OrderShipmentBuilder(@this.Strategy.Session)
                                             .WithOrderItem(salesOrderItem)
                                             .WithShipmentItem(orderShipment.ShipmentItem)
                                             .WithQuantity(diff * -1)
@@ -54,7 +54,7 @@ namespace Allors.Domain
                                     }
                                     else
                                     {
-                                        new OrderShipmentBuilder(pickListItems.Strategy.Session)
+                                        new OrderShipmentBuilder(@this.Strategy.Session)
                                             .WithOrderItem(salesOrderItem)
                                             .WithShipmentItem(orderShipment.ShipmentItem)
                                             .WithQuantity(orderShipment.Quantity * -1)

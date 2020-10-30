@@ -20,39 +20,39 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var subcontractorRelationship in matches.Cast<SubContractorRelationship>())
+            foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
-                subcontractorRelationship.Parties = new[] { subcontractorRelationship.Contractor, subcontractorRelationship.SubContractor };
+                @this.Parties = new[] { @this.Contractor, @this.SubContractor };
 
-                if (subcontractorRelationship.ExistContractor && subcontractorRelationship.ExistSubContractor)
+                if (@this.ExistContractor && @this.ExistSubContractor)
                 {
-                    if (subcontractorRelationship.FromDate <= subcontractorRelationship.Session().Now() && (!subcontractorRelationship.ExistThroughDate || subcontractorRelationship.ThroughDate >= subcontractorRelationship.Session().Now()))
+                    if (@this.FromDate <= @this.Session().Now() && (!@this.ExistThroughDate || @this.ThroughDate >= @this.Session().Now()))
                     {
-                        subcontractorRelationship.Contractor.AddActiveSubContractor(subcontractorRelationship.SubContractor);
+                        @this.Contractor.AddActiveSubContractor(@this.SubContractor);
                     }
 
-                    if (subcontractorRelationship.FromDate > subcontractorRelationship.Session().Now() || (subcontractorRelationship.ExistThroughDate && subcontractorRelationship.ThroughDate < subcontractorRelationship.Session().Now()))
+                    if (@this.FromDate > @this.Session().Now() || (@this.ExistThroughDate && @this.ThroughDate < @this.Session().Now()))
                     {
-                        subcontractorRelationship.Contractor.RemoveActiveSubContractor(subcontractorRelationship.SubContractor);
+                        @this.Contractor.RemoveActiveSubContractor(@this.SubContractor);
                     }
 
-                    if (subcontractorRelationship.SubContractor?.ContactsUserGroup != null)
+                    if (@this.SubContractor?.ContactsUserGroup != null)
                     {
-                        foreach (OrganisationContactRelationship contactRelationship in subcontractorRelationship.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
+                        foreach (OrganisationContactRelationship contactRelationship in @this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
                         {
-                            if (contactRelationship.FromDate <= subcontractorRelationship.Session().Now() &&
-                                (!contactRelationship.ExistThroughDate || subcontractorRelationship.ThroughDate >= subcontractorRelationship.Session().Now()))
+                            if (contactRelationship.FromDate <= @this.Session().Now() &&
+                                (!contactRelationship.ExistThroughDate || @this.ThroughDate >= @this.Session().Now()))
                             {
-                                if (!subcontractorRelationship.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+                                if (!@this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
                                 {
-                                    subcontractorRelationship.SubContractor.ContactsUserGroup.AddMember(contactRelationship.Contact);
+                                    @this.SubContractor.ContactsUserGroup.AddMember(contactRelationship.Contact);
                                 }
                             }
                             else
                             {
-                                if (subcontractorRelationship.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
+                                if (@this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
                                 {
-                                    subcontractorRelationship.SubContractor.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
+                                    @this.SubContractor.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
                                 }
                             }
                         }

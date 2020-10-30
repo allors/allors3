@@ -24,83 +24,83 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var quoteItem in matches.Cast<QuoteItem>())
+            foreach (var @this in matches.Cast<QuoteItem>())
             {
-                if (quoteItem.InvoiceItemType.IsPartItem
-            || quoteItem.InvoiceItemType.IsProductFeatureItem
-            || quoteItem.InvoiceItemType.IsProductItem)
+                if (@this.InvoiceItemType.IsPartItem
+            || @this.InvoiceItemType.IsProductFeatureItem
+            || @this.InvoiceItemType.IsProductItem)
                 {
-                    validation.AssertAtLeastOne(quoteItem, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
-                    validation.AssertExistsAtMostOne(quoteItem, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
-                    validation.AssertExistsAtMostOne(quoteItem, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
+                    validation.AssertAtLeastOne(@this, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
+                    validation.AssertExistsAtMostOne(@this, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
+                    validation.AssertExistsAtMostOne(@this, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
                 }
                 else
                 {
-                    quoteItem.Quantity = 1;
+                    @this.Quantity = 1;
                 }
 
-                if (quoteItem.ExistSerialisedItem && quoteItem.Quantity != 1)
+                if (@this.ExistSerialisedItem && @this.Quantity != 1)
                 {
-                    validation.AddError($"{quoteItem} {quoteItem.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
+                    validation.AddError($"{@this} {@this.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
                 }
 
-                if (cycle.ChangeSet.IsCreated(quoteItem) && !quoteItem.ExistDetails)
+                if (cycle.ChangeSet.IsCreated(@this) && !@this.ExistDetails)
                 {
-                    quoteItem.DeriveDetails();
+                    @this.DeriveDetails();
                 }
 
-                if (quoteItem.ExistRequestItem)
+                if (@this.ExistRequestItem)
                 {
-                    quoteItem.RequiredByDate = quoteItem.RequestItem.RequiredByDate;
+                    @this.RequiredByDate = @this.RequestItem.RequiredByDate;
                 }
 
-                if (!quoteItem.ExistUnitOfMeasure)
+                if (!@this.ExistUnitOfMeasure)
                 {
-                    quoteItem.UnitOfMeasure = new UnitsOfMeasure(quoteItem.Strategy.Session).Piece;
+                    @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
                 }
 
-                quoteItem.UnitVat = quoteItem.ExistVatRate ? quoteItem.UnitPrice * quoteItem.VatRate.Rate / 100 : 0;
+                @this.UnitVat = @this.ExistVatRate ? @this.UnitPrice * @this.VatRate.Rate / 100 : 0;
 
                 // Calculate Totals
-                quoteItem.TotalBasePrice = quoteItem.UnitBasePrice * quoteItem.Quantity;
-                quoteItem.TotalDiscount = quoteItem.UnitDiscount * quoteItem.Quantity;
-                quoteItem.TotalSurcharge = quoteItem.UnitSurcharge * quoteItem.Quantity;
+                @this.TotalBasePrice = @this.UnitBasePrice * @this.Quantity;
+                @this.TotalDiscount = @this.UnitDiscount * @this.Quantity;
+                @this.TotalSurcharge = @this.UnitSurcharge * @this.Quantity;
 
-                if (quoteItem.TotalBasePrice > 0)
+                if (@this.TotalBasePrice > 0)
                 {
-                    quoteItem.TotalDiscountAsPercentage = Math.Round(quoteItem.TotalDiscount / quoteItem.TotalBasePrice * 100, 2);
-                    quoteItem.TotalSurchargeAsPercentage = Math.Round(quoteItem.TotalSurcharge / quoteItem.TotalBasePrice * 100, 2);
+                    @this.TotalDiscountAsPercentage = Math.Round(@this.TotalDiscount / @this.TotalBasePrice * 100, 2);
+                    @this.TotalSurchargeAsPercentage = Math.Round(@this.TotalSurcharge / @this.TotalBasePrice * 100, 2);
                 }
                 else
                 {
-                    quoteItem.TotalDiscountAsPercentage = 0;
-                    quoteItem.TotalSurchargeAsPercentage = 0;
+                    @this.TotalDiscountAsPercentage = 0;
+                    @this.TotalSurchargeAsPercentage = 0;
                 }
 
-                quoteItem.TotalExVat = quoteItem.UnitPrice * quoteItem.Quantity;
-                quoteItem.TotalVat = quoteItem.UnitVat * quoteItem.Quantity;
-                quoteItem.TotalIncVat = quoteItem.TotalExVat + quoteItem.TotalVat;
+                @this.TotalExVat = @this.UnitPrice * @this.Quantity;
+                @this.TotalVat = @this.UnitVat * @this.Quantity;
+                @this.TotalIncVat = @this.TotalExVat + @this.TotalVat;
 
                 // CurrentVersion is Previous Version until PostDerive
-                var previousSerialisedItem = quoteItem.CurrentVersion?.SerialisedItem;
-                if (previousSerialisedItem != null && !Equals(previousSerialisedItem, quoteItem.SerialisedItem))
+                var previousSerialisedItem = @this.CurrentVersion?.SerialisedItem;
+                if (previousSerialisedItem != null && !Equals(previousSerialisedItem, @this.SerialisedItem))
                 {
                     previousSerialisedItem.DerivationTrigger = Guid.NewGuid();
                 }
 
-                if (!quoteItem.ExistUnitPrice)
+                if (!@this.ExistUnitPrice)
                 {
-                    validation.AddError($"{quoteItem} {quoteItem.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
+                    validation.AddError($"{@this} {@this.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
                 }
 
-                var deletePermission = new Permissions(quoteItem.Strategy.Session).Get(quoteItem.Meta.ObjectType, quoteItem.Meta.Delete);
-                if (quoteItem.IsDeletable)
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
                 {
-                    quoteItem.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    quoteItem.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

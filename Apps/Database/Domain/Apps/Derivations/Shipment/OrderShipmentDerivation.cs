@@ -23,48 +23,48 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var orderShipment in matches.Cast<OrderShipment>())
+            foreach (var @this in matches.Cast<OrderShipment>())
             {
-                if (orderShipment.ShipmentItem.ShipmentWhereShipmentItem is CustomerShipment customerShipment && orderShipment.OrderItem is SalesOrderItem salesOrderItem)
+                if (@this.ShipmentItem.ShipmentWhereShipmentItem is CustomerShipment customerShipment && @this.OrderItem is SalesOrderItem salesOrderItem)
                 {
-                    var quantityPendingShipment = orderShipment.OrderItem?.OrderShipmentsWhereOrderItem?
+                    var quantityPendingShipment = @this.OrderItem?.OrderShipmentsWhereOrderItem?
                         .Where(v => v.ExistShipmentItem
-                                    && !((CustomerShipment)v.ShipmentItem.ShipmentWhereShipmentItem).ShipmentState.Equals(new ShipmentStates(orderShipment.Session()).Shipped))
+                                    && !((CustomerShipment)v.ShipmentItem.ShipmentWhereShipmentItem).ShipmentState.Equals(new ShipmentStates(@this.Session()).Shipped))
                         .Sum(v => v.Quantity);
 
                     if (salesOrderItem.QuantityPendingShipment > quantityPendingShipment)
                     {
-                        var diff = orderShipment.Quantity * -1;
+                        var diff = @this.Quantity * -1;
 
                         // HACK: DerivedRoles
                         (salesOrderItem).QuantityPendingShipment -= diff;
-                        customerShipment.AppsOnDeriveQuantityDecreased(orderShipment.ShipmentItem, salesOrderItem, diff);
+                        customerShipment.AppsOnDeriveQuantityDecreased(@this.ShipmentItem, salesOrderItem, diff);
                     }
 
-                    if (orderShipment.Strategy.IsNewInSession)
+                    if (@this.Strategy.IsNewInSession)
                     {
-                        var quantityPicked = orderShipment.OrderItem.OrderShipmentsWhereOrderItem.Select(v => v.ShipmentItem?.ItemIssuancesWhereShipmentItem.Sum(z => z.PickListItem.Quantity)).Sum();
-                        var pendingFromOthers = salesOrderItem.QuantityPendingShipment - orderShipment.Quantity;
+                        var quantityPicked = @this.OrderItem.OrderShipmentsWhereOrderItem.Select(v => v.ShipmentItem?.ItemIssuancesWhereShipmentItem.Sum(z => z.PickListItem.Quantity)).Sum();
+                        var pendingFromOthers = salesOrderItem.QuantityPendingShipment - @this.Quantity;
 
                         if (salesOrderItem.QuantityRequestsShipping > 0)
                         {
                             // HACK: DerivedRoles
-                            (salesOrderItem).QuantityRequestsShipping -= orderShipment.Quantity;
+                            (salesOrderItem).QuantityRequestsShipping -= @this.Quantity;
                         }
 
-                        if (salesOrderItem.ExistReservedFromNonSerialisedInventoryItem && orderShipment.Quantity > salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand + quantityPicked)
+                        if (salesOrderItem.ExistReservedFromNonSerialisedInventoryItem && @this.Quantity > salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand + quantityPicked)
                         {
-                            validation.AddError($"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
+                            validation.AddError($"{@this} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
                         }
-                        else if (orderShipment.Quantity > salesOrderItem.QuantityOrdered)
+                        else if (@this.Quantity > salesOrderItem.QuantityOrdered)
                         {
-                            validation.AddError($"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
+                            validation.AddError($"{@this} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
                         }
                         else
                         {
-                            if (orderShipment.Quantity > salesOrderItem.QuantityOrdered - salesOrderItem.QuantityShipped - pendingFromOthers + salesOrderItem.QuantityReturned + quantityPicked)
+                            if (@this.Quantity > salesOrderItem.QuantityOrdered - salesOrderItem.QuantityShipped - pendingFromOthers + salesOrderItem.QuantityReturned + quantityPicked)
                             {
-                                validation.AddError($"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
+                                validation.AddError($"{@this} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
                             }
                         }
                     }

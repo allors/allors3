@@ -20,11 +20,11 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var singleton in matches.Cast<Singleton>())
+            foreach (var @this in matches.Cast<Singleton>())
             {
-                if (!singleton.ExistLogoImage)
+                if (!@this.ExistLogoImage)
                 {
-                    singleton.LogoImage = new MediaBuilder(singleton.Strategy.Session).WithInFileName("allors.png").WithInData(singleton.GetResourceBytes("allors.png")).Build();
+                    @this.LogoImage = new MediaBuilder(@this.Strategy.Session).WithInFileName("allors.png").WithInData(@this.GetResourceBytes("allors.png")).Build();
                 }
             }
         }

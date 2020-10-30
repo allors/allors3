@@ -23,21 +23,21 @@ namespace Allors.Domain
         {
             var session = cycle.Session;
 
-            foreach (var subContractorRelationship in matches.Cast<SubContractorRelationship>())
+            foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
-                if (subContractorRelationship.Contractor != null)
+                if (@this.Contractor != null)
                 {
-                    if (!(subContractorRelationship.FromDate <= session.Now()
-                          && (!subContractorRelationship.ExistThroughDate
-                              || subContractorRelationship.ThroughDate >= session.Now())))
+                    if (!(@this.FromDate <= session.Now()
+                          && (!@this.ExistThroughDate
+                              || @this.ThroughDate >= session.Now())))
                     {
-                        subContractorRelationship.Contractor
-                            .RemoveActiveSubContractor(subContractorRelationship.SubContractor);
+                        @this.Contractor
+                            .RemoveActiveSubContractor(@this.SubContractor);
                     }
                     else
                     {
-                        subContractorRelationship.Contractor
-                            .AddActiveSubContractor(subContractorRelationship.SubContractor);
+                        @this.Contractor
+                            .AddActiveSubContractor(@this.SubContractor);
                     }
                 }
             }

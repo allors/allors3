@@ -20,61 +20,61 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var serialisedInventoryItem in matches.Cast<SerialisedInventoryItem>())
+            foreach (var @this in matches.Cast<SerialisedInventoryItem>())
             {
-                if (!serialisedInventoryItem.ExistName)
+                if (!@this.ExistName)
                 {
-                    serialisedInventoryItem.Name = $"{serialisedInventoryItem.Part?.Name} at {serialisedInventoryItem.Facility?.Name} with state {serialisedInventoryItem.SerialisedInventoryItemState?.Name}";
+                    @this.Name = $"{@this.Part?.Name} at {@this.Facility?.Name} with state {@this.SerialisedInventoryItemState?.Name}";
                 }
 
                 // AppsOnDeriveQuantity
-                serialisedInventoryItem.Quantity = 0;
+                @this.Quantity = 0;
 
-                foreach (InventoryItemTransaction inventoryTransaction in serialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem)
+                foreach (InventoryItemTransaction inventoryTransaction in @this.InventoryItemTransactionsWhereInventoryItem)
                 {
                     var reason = inventoryTransaction.Reason;
 
                     if (reason.IncreasesQuantityOnHand == true)
                     {
-                        serialisedInventoryItem.Quantity += (int)inventoryTransaction.Quantity;
+                        @this.Quantity += (int)inventoryTransaction.Quantity;
                     }
                     else if (reason.IncreasesQuantityOnHand == false)
                     {
-                        serialisedInventoryItem.Quantity -= (int)inventoryTransaction.Quantity;
+                        @this.Quantity -= (int)inventoryTransaction.Quantity;
                     }
                 }
 
-                foreach (PickListItem pickListItem in serialisedInventoryItem.PickListItemsWhereInventoryItem)
+                foreach (PickListItem pickListItem in @this.PickListItemsWhereInventoryItem)
                 {
-                    if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(serialisedInventoryItem.Strategy.Session).Picked))
+                    if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Strategy.Session).Picked))
                     {
                         foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
                             if (!itemIssuance.ShipmentItem.ShipmentItemState.Shipped)
                             {
-                                serialisedInventoryItem.Quantity -= (int)pickListItem.QuantityPicked;
+                                @this.Quantity -= (int)pickListItem.QuantityPicked;
                             }
                         }
                     }
                 }
 
-                foreach (ShipmentReceipt shipmentReceipt in serialisedInventoryItem.ShipmentReceiptsWhereInventoryItem)
+                foreach (ShipmentReceipt shipmentReceipt in @this.ShipmentReceiptsWhereInventoryItem)
                 {
                     // serialised items are handled via InventoryItemTransactions
                     if (shipmentReceipt.ExistShipmentItem && !shipmentReceipt.ShipmentItem.Part.InventoryItemKind.IsSerialised)
                     {
                         var purchaseShipment = (PurchaseShipment)shipmentReceipt.ShipmentItem.ShipmentWhereShipmentItem;
-                        if (purchaseShipment.ShipmentState.Equals(new ShipmentStates(serialisedInventoryItem.Strategy.Session).Received))
+                        if (purchaseShipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Session).Received))
                         {
-                            serialisedInventoryItem.Quantity += (int)shipmentReceipt.QuantityAccepted;
+                            @this.Quantity += (int)shipmentReceipt.QuantityAccepted;
                         }
                     }
                 }
 
-                if (serialisedInventoryItem.Quantity < 0 || serialisedInventoryItem.Quantity > 1)
+                if (@this.Quantity < 0 || @this.Quantity > 1)
                 {
                     var message = "Invalid transaction";
-                    cycle.Validation.AddError($"{serialisedInventoryItem} {serialisedInventoryItem.Meta.Quantity} {message}");
+                    cycle.Validation.AddError($"{@this} {@this.Meta.Quantity} {message}");
                 }
 
                 // TODO: Remove OnDerive

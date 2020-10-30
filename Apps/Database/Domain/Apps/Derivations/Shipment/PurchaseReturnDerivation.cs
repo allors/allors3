@@ -20,22 +20,22 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var purchaseReturn in matches.Cast<PurchaseReturn>())
+            foreach (var @this in matches.Cast<PurchaseReturn>())
             {
-                if (!purchaseReturn.ExistShipToAddress && purchaseReturn.ExistShipToParty)
+                if (!@this.ExistShipToAddress && @this.ExistShipToParty)
                 {
-                    purchaseReturn.ShipToAddress = purchaseReturn.ShipToParty.ShippingAddress;
+                    @this.ShipToAddress = @this.ShipToParty.ShippingAddress;
                 }
 
-                if (!purchaseReturn.ExistShipFromAddress && purchaseReturn.ExistShipFromParty)
+                if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
                 {
-                    purchaseReturn.ShipFromAddress = purchaseReturn.ShipFromParty.ShippingAddress;
+                    @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
                 }
 
                 // session.Prefetch(this.SyncPrefetch, this);
-                foreach (ShipmentItem shipmentItem in purchaseReturn.ShipmentItems)
+                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
                 {
-                    shipmentItem.Sync(purchaseReturn);
+                    shipmentItem.Sync(@this);
                 }
             }
         }

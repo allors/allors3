@@ -21,28 +21,28 @@ namespace Allors.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var m = cycle.Session.Database.State().M;
-            foreach (var supplierOffering in matches.Cast<SupplierOffering>())
+            foreach (var @this in matches.Cast<SupplierOffering>())
             {
-                if (!supplierOffering.ExistCurrency)
+                if (!@this.ExistCurrency)
                 {
-                    supplierOffering.Currency = supplierOffering.Session().GetSingleton().Settings.PreferredCurrency;
+                    @this.Currency = @this.Session().GetSingleton().Settings.PreferredCurrency;
                 }
 
-                if (supplierOffering.ExistPart && supplierOffering.Part.ExistInventoryItemKind &&
-                    supplierOffering.Part.InventoryItemKind.Equals(new InventoryItemKinds(supplierOffering.Strategy.Session).NonSerialised))
+                if (@this.ExistPart && @this.Part.ExistInventoryItemKind &&
+                    @this.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Strategy.Session).NonSerialised))
                 {
-                    var warehouses = supplierOffering.Strategy.Session.Extent<Facility>();
-                    warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(supplierOffering.Session()).Warehouse);
+                    var warehouses = @this.Strategy.Session.Extent<Facility>();
+                    warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(@this.Session()).Warehouse);
 
                     foreach (Facility facility in warehouses)
                     {
-                        var inventoryItems = supplierOffering.Part.InventoryItemsWherePart;
+                        var inventoryItems = @this.Part.InventoryItemsWherePart;
                         inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, facility);
                         var inventoryItem = inventoryItems.First;
 
                         if (inventoryItem == null)
                         {
-                            new NonSerialisedInventoryItemBuilder(supplierOffering.Strategy.Session).WithPart(supplierOffering.Part).WithFacility(facility).Build();
+                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Session).WithPart(@this.Part).WithFacility(facility).Build();
                         }
                     }
                 }

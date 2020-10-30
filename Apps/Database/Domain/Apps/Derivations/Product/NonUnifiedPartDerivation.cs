@@ -23,55 +23,55 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var nonUnifiedPart in matches.Cast<NonUnifiedPart>())
+            foreach (var @this in matches.Cast<NonUnifiedPart>())
             {
-                var setings = nonUnifiedPart.Strategy.Session.GetSingleton().Settings;
+                var setings = @this.Strategy.Session.GetSingleton().Settings;
 
-                if (cycle.ChangeSet.HasChangedRoles(nonUnifiedPart, new RoleType[] { nonUnifiedPart.Meta.UnitOfMeasure, nonUnifiedPart.Meta.DefaultFacility }))
+                if (cycle.ChangeSet.HasChangedRoles(@this, new RoleType[] { @this.Meta.UnitOfMeasure, @this.Meta.DefaultFacility }))
                 {
-                    this.SyncDefaultInventoryItem(nonUnifiedPart);
+                    this.SyncDefaultInventoryItem(@this);
                 }
 
-                if (!nonUnifiedPart.ExistName)
+                if (!@this.ExistName)
                 {
-                    nonUnifiedPart.Name = "Part " + (nonUnifiedPart.PartIdentification() ?? nonUnifiedPart.UniqueId.ToString());
+                    @this.Name = "Part " + (@this.PartIdentification() ?? @this.UniqueId.ToString());
                 }
 
-                var identifications = nonUnifiedPart.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(nonUnifiedPart.Strategy.Session).Part);
+                var identifications = @this.ProductIdentifications;
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Part);
                 var partIdentification = identifications.FirstOrDefault();
 
                 if (partIdentification == null && setings.UsePartNumberCounter)
                 {
-                    partIdentification = new PartNumberBuilder(nonUnifiedPart.Strategy.Session)
+                    partIdentification = new PartNumberBuilder(@this.Strategy.Session)
                         .WithIdentification(setings.NextPartNumber())
-                        .WithProductIdentificationType(new ProductIdentificationTypes(nonUnifiedPart.Strategy.Session).Part).Build();
+                        .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Part).Build();
 
-                    nonUnifiedPart.AddProductIdentification(partIdentification);
+                    @this.AddProductIdentification(partIdentification);
                 }
 
-                nonUnifiedPart.ProductNumber = partIdentification.Identification;
+                @this.ProductNumber = partIdentification.Identification;
 
-                nonUnifiedPart.RemoveSuppliedBy();
-                foreach (SupplierOffering supplierOffering in nonUnifiedPart.SupplierOfferingsWherePart)
+                @this.RemoveSuppliedBy();
+                foreach (SupplierOffering supplierOffering in @this.SupplierOfferingsWherePart)
                 {
-                    if (supplierOffering.FromDate <= nonUnifiedPart.Session().Now()
-                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= nonUnifiedPart.Session().Now()))
+                    if (supplierOffering.FromDate <= @this.Session().Now()
+                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= @this.Session().Now()))
                     {
-                        nonUnifiedPart.AddSuppliedBy(supplierOffering.Supplier);
+                        @this.AddSuppliedBy(supplierOffering.Supplier);
                     }
                 }
 
-                this.ProductCharacteristics(nonUnifiedPart);
-                this.QuantityOnHand(nonUnifiedPart);
-                this.AvailableToPromise(nonUnifiedPart);
-                this.QuantityCommittedOut(nonUnifiedPart);
-                this.QuantityExpectedIn(nonUnifiedPart);
+                this.ProductCharacteristics(@this);
+                this.QuantityOnHand(@this);
+                this.AvailableToPromise(@this);
+                this.QuantityCommittedOut(@this);
+                this.QuantityExpectedIn(@this);
 
                 var quantityOnHand = 0M;
                 var totalCost = 0M;
 
-                foreach (InventoryItemTransaction inventoryTransaction in nonUnifiedPart.InventoryItemTransactionsWherePart)
+                foreach (InventoryItemTransaction inventoryTransaction in @this.InventoryItemTransactionsWherePart)
                 {
                     var reason = inventoryTransaction.Reason;
 
@@ -83,27 +83,27 @@ namespace Allors.Domain
                         totalCost += transactionCost;
 
                         var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
-                        (nonUnifiedPart.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
+                        (@this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
                     }
                     else if (reason.IncreasesQuantityOnHand == false)
                     {
                         quantityOnHand -= inventoryTransaction.Quantity;
 
-                        totalCost = quantityOnHand * nonUnifiedPart.PartWeightedAverage.AverageCost;
+                        totalCost = quantityOnHand * @this.PartWeightedAverage.AverageCost;
                     }
 
-                    var deletePermission = new Permissions(nonUnifiedPart.Strategy.Session).Get(nonUnifiedPart.Meta.ObjectType, nonUnifiedPart.Meta.Delete);
-                    if (!nonUnifiedPart.ExistWorkEffortInventoryProducedsWherePart &&
-                           !nonUnifiedPart.ExistWorkEffortPartStandardsWherePart &&
-                           !nonUnifiedPart.ExistPartBillOfMaterialsWherePart &&
-                           !nonUnifiedPart.ExistPartBillOfMaterialsWhereComponentPart &&
-                           !nonUnifiedPart.ExistInventoryItemTransactionsWherePart)
+                    var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                    if (!@this.ExistWorkEffortInventoryProducedsWherePart &&
+                           !@this.ExistWorkEffortPartStandardsWherePart &&
+                           !@this.ExistPartBillOfMaterialsWherePart &&
+                           !@this.ExistPartBillOfMaterialsWhereComponentPart &&
+                           !@this.ExistInventoryItemTransactionsWherePart)
                     {
-                        nonUnifiedPart.RemoveDeniedPermission(deletePermission);
+                        @this.RemoveDeniedPermission(deletePermission);
                     }
                     else
                     {
-                        nonUnifiedPart.AddDeniedPermission(deletePermission);
+                        @this.AddDeniedPermission(deletePermission);
                     }
                 }
             }

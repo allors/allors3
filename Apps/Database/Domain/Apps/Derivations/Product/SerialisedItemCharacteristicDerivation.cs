@@ -20,32 +20,32 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var serialisedItemCharacteristic in matches.Cast<SerialisedItemCharacteristic>())
+            foreach (var @this in matches.Cast<SerialisedItemCharacteristic>())
             {
-                if (serialisedItemCharacteristic.SerialisedItemCharacteristicType.ExistUnitOfMeasure)
+                if (@this.SerialisedItemCharacteristicType.ExistUnitOfMeasure)
                 {
-                    var existingLocalisedtexts = serialisedItemCharacteristic.LocalisedValues.ToDictionary(d => d.Locale);
+                    var existingLocalisedtexts = @this.LocalisedValues.ToDictionary(d => d.Locale);
 
-                    foreach (Locale locale in serialisedItemCharacteristic.Strategy.Session.GetSingleton().AdditionalLocales)
+                    foreach (Locale locale in @this.Strategy.Session.GetSingleton().AdditionalLocales)
                     {
                         if (existingLocalisedtexts.TryGetValue(locale, out var localisedText))
                         {
-                            localisedText.Text = serialisedItemCharacteristic.Value;
+                            localisedText.Text = @this.Value;
                             existingLocalisedtexts.Remove(locale);
                         }
                         else
                         {
-                            localisedText = new LocalisedTextBuilder(serialisedItemCharacteristic.Strategy.Session)
+                            localisedText = new LocalisedTextBuilder(@this.Strategy.Session)
                                 .WithLocale(locale)
                                 .Build();
 
-                            serialisedItemCharacteristic.AddLocalisedValue(localisedText);
+                            @this.AddLocalisedValue(localisedText);
                         }
                     }
 
                     foreach (var localisedText in existingLocalisedtexts.Values)
                     {
-                        serialisedItemCharacteristic.RemoveLocalisedValue(localisedText);
+                        @this.RemoveLocalisedValue(localisedText);
                     }
                 }
             }

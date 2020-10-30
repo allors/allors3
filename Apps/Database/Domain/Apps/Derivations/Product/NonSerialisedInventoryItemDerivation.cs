@@ -43,27 +43,27 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var nonSerialisedInventoryItem in matches.Cast<NonSerialisedInventoryItem>())
+            foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())
             {
-                var settings = nonSerialisedInventoryItem.Strategy.Session.GetSingleton().Settings;
+                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
-                if (!nonSerialisedInventoryItem.ExistName)
+                if (!@this.ExistName)
                 {
-                    nonSerialisedInventoryItem.Name = $"{nonSerialisedInventoryItem.Part?.Name} at {nonSerialisedInventoryItem.Facility?.Name} with state {nonSerialisedInventoryItem.NonSerialisedInventoryItemState?.Name}";
+                    @this.Name = $"{@this.Part?.Name} at {@this.Facility?.Name} with state {@this.NonSerialisedInventoryItemState?.Name}";
                 }
 
-                if (nonSerialisedInventoryItem.ExistPart)
+                if (@this.ExistPart)
                 {
-                    nonSerialisedInventoryItem.UnitOfMeasure = nonSerialisedInventoryItem.Part.UnitOfMeasure;
+                    @this.UnitOfMeasure = @this.Part.UnitOfMeasure;
                 }
 
-                this.QuantityOnHand(nonSerialisedInventoryItem, settings);
+                this.QuantityOnHand(@this, settings);
 
-                this.QuantityCommittedOut(nonSerialisedInventoryItem);
+                this.QuantityCommittedOut(@this);
 
-                this.AvaibleToPromise(nonSerialisedInventoryItem);
+                this.AvaibleToPromise(@this);
 
-                this.QuantityExpectedIn(nonSerialisedInventoryItem);
+                this.QuantityExpectedIn(@this);
             }
         }
 

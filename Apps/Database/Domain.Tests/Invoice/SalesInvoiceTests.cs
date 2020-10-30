@@ -617,8 +617,8 @@ namespace Allors.Domain
                 .Build();
 
             var item1 = new SalesInvoiceItemBuilder(this.Session)
-                .WithProduct(good)
                 .WithInvoiceItemType(productItem)
+                .WithProduct(good)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(8)
                 .Build();
@@ -634,15 +634,15 @@ namespace Allors.Domain
             Assert.Equal(8.16M, invoice.GrandTotal);
 
             var item2 = new SalesInvoiceItemBuilder(this.Session)
-                .WithProduct(good)
                 .WithInvoiceItemType(productItem)
+                .WithProduct(good)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(8)
                 .Build();
 
             var item3 = new SalesInvoiceItemBuilder(this.Session)
-                .WithProduct(good)
                 .WithInvoiceItemType(productItem)
+                .WithProduct(good)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(8)
                 .Build();
@@ -1080,12 +1080,12 @@ namespace Allors.Domain
         }
     }
 
-    public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceCreateDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceCreateDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnCreateDeriveEntryDate()
+        public void DeriveEntryDate()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1095,7 +1095,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveInvoiceDate()
+        public void DeriveInvoiceDate()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1105,7 +1105,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveSalesInvoiceType()
+        public void DeriveSalesInvoiceType()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1115,7 +1115,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBilledFrom()
+        public void DeriveBilledFrom()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1125,7 +1125,32 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveStore()
+        public void DeriveDefaultLocale()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DefaultLocale, this.Session.GetSingleton().DefaultLocale);
+        }
+
+        [Fact]
+        public void DeriveDefaultCurrency()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DefaultCurrency, this.Session.GetSingleton().DefaultLocale.Country.Currency);
+        }
+    }
+
+    public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBilledFromDeriveStore()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1135,7 +1160,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveInvoiceNumber()
+        public void ChangedStoreDeriveInvoiceNumber()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
             var number = new Stores(this.Session).Extent().First.SalesInvoiceTemporaryCounter.Value;
@@ -1146,7 +1171,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveSortableInvoiceNumber()
+        public void ChangedStoreDeriveSortableInvoiceNumber()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
             var number = new Stores(this.Session).Extent().First.SalesInvoiceTemporaryCounter.Value;
@@ -1157,7 +1182,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBilledFromContactMechanism()
+        public void ChangedBilledFromDeriveBilledFromContactMechanism()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1167,7 +1192,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBillToContactMechanism()
+        public void ChangedBillToCustomerDeriveBillToContactMechanism()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -1178,7 +1203,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveBillToEndCustomerContactMechanism()
+        public void ChangedBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToEndCustomer(customer).Build();
@@ -1189,7 +1214,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveShipToAddress()
+        public void ChangedShipToCustomerDeriveShipToAddress()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
@@ -1200,7 +1225,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveShipToEndCustomerAddress()
+        public void ChangedShipToEndCustomerDeriveShipToEndCustomerAddress()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToEndCustomer(customer).Build();
@@ -1211,7 +1236,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromInternalOrganisationPreferredCurrency()
+        public void ChangedBilledFromDeriveCurrencyFromInternalOrganisationPreferredCurrency()
         {
             Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
 
@@ -1223,7 +1248,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromSingletonDefaultLocale()
+        public void ChangedBilledFromDeriveCurrencyFromDefaultLocale()
         {
             this.InternalOrganisation.RemovePreferredCurrency();
 
@@ -1242,7 +1267,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromBillToCustomerPreferredCurrency()
+        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerPreferredCurrency()
         {
             var newLocale = new LocaleBuilder(this.Session)
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1261,7 +1286,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCurrencyFromBillToCustomerLocale()
+        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerLocale()
         {
             var newLocale = new LocaleBuilder(this.Session)
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1280,7 +1305,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveVatRegimeFromBillToCustomerVatRegime()
+        public void ChangedBillToCustomerDeriveVatRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
@@ -1294,7 +1319,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveIrpfRegimeFromBillToCustomerIrpfRegime()
+        public void ChangedBillToCustomerDeriveIrpfRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
@@ -1307,7 +1332,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveLocaleFromBillToCustomerLocale()
+        public void ChangedBillToCustomerDeriveLocaleFromBillToCustomerLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1325,7 +1350,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveLocaleFromsingletonDefaultLocale()
+        public void ChangedBillToCustomerDeriveLocaleFromDefaultLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1342,11 +1367,11 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             Assert.False(customer.ExistLocale);
-            Assert.Equal(invoice.Locale, swedishLocale);
+            Assert.Equal(invoice.Locale, invoice.DefaultLocale);
         }
 
         [Fact]
-        public void OnCreateDerivePaymentDays()
+        public void ChangedInvoiceTermTermValueDerivePaymentDays()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
@@ -1356,7 +1381,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDueDate()
+        public void ChangedInvoiceTermTermValueDeriveDueDate()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
@@ -1369,7 +1394,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDerivedVatClauseFromVatRegime()
+        public void ChangedVatRegimeDeriveDerivedVatClause()
         {
             var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
             var invoice = new SalesInvoiceBuilder(this.Session).WithVatRegime(intraCommunautair).Build();
@@ -1380,7 +1405,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDerivedVatClauseIsNull()
+        public void ChangedVatRegimeDeriveDerivedVatClauseIsNull()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1390,7 +1415,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveDerivedVatClauseFromAssignedVatClause()
+        public void ChangedAssignedVatClauseDeriveDerivedVatClause()
         {
             var vatClause = new VatClauses(this.Session).BeArt14Par2;
             var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatClause(vatClause).Build();
@@ -1401,7 +1426,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateDeriveCustomers()
+        public void DeriveCustomers()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
@@ -1416,7 +1441,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateValidateBillToCustomerIsActiveCustomer()
+        public void ValidateBillToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
@@ -1431,7 +1456,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateValidateShipToCustomerIsActiveCustomer()
+        public void ValidateShipToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
@@ -1446,12 +1471,12 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnCreateSyncInvoiceItemSyncedInvoice()
+        public void SyncInvoiceItemSyncedInvoice()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
 
-            foreach(InvoiceItem invoiceItem in invoice.InvoiceItems)
+            foreach (InvoiceItem invoiceItem in invoice.InvoiceItems)
             {
                 Assert.Equal(invoiceItem.SyncedInvoice, invoice);
             }
@@ -1770,11 +1795,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -1785,11 +1808,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -1800,11 +1821,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -1815,11 +1834,9 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
 
             var expectedMessage = $"{invoice} {this.M.SalesInvoice.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.DoesNotContain(errors, e => e.Message.Contains(expectedMessage));
 
             customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
-            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
@@ -2212,7 +2229,7 @@ namespace Allors.Domain
         public SalesInvoicePriceDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnChangedRoleValidInvoiceItemsCalculatePrice()
+        public void OnChangedValidInvoiceItemsCalculatePrice()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -2227,7 +2244,46 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnChangedRolePriceComponentFromDateCalculatePrice()
+        public void OnChangedSalesInvoiceItemsCalculatePriceForProductFeature()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            var productFeature = new ColourBuilder(this.Session)
+                .WithName("a colour")
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProductFeature(productFeature)
+                .WithPrice(0.2M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            var invoiceFeatureItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceFeatureItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2256,34 +2312,69 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnChangedRolePriceComponentThroughDateCalculatePrice()
+        public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
-            var basePrice = new BasePriceBuilder(this.Session)
+            new BasePriceBuilder(this.Session)
                 .WithProduct(product)
                 .WithPrice(1)
-                .WithFromDate(this.Session.Now().AddMinutes(-2))
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
                 .Build();
 
             var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
             this.Session.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(product).WithQuantity(1).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
             invoice.AddSalesInvoiceItem(invoiceItem);
             this.Session.Derive(false);
 
-            Assert.Equal(basePrice.Price, invoice.TotalIncVat);
+            Assert.Equal(1, invoice.TotalIncVat);
 
-            basePrice.ThroughDate = basePrice.FromDate;
+            new DiscountComponentBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(0.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
 
-            var expectedMessage = $"{invoiceItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
-            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemQuantityCalculatePrice()
+        public void OnChangedDerivationTriggerTriggeredBySurchargeComponentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            new SurchargeComponentBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(0.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemQuantityCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2303,7 +2394,27 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemProductCalculatePrice()
+        public void OnChangedSalesInvoiceItemAssignedUnitPriceCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            invoiceItem.AssignedUnitPrice = 3;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemProductCalculatePrice()
         {
             var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
             var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
@@ -2323,7 +2434,7 @@ namespace Allors.Domain
             var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
             this.Session.Derive(false);
 
-            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(product1).WithQuantity(1).Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product1).WithQuantity(1).Build();
             invoice.AddSalesInvoiceItem(invoiceItem);
             this.Session.Derive(false);
 
@@ -2333,6 +2444,515 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             Assert.Equal(2, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemProductFeatureCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            var productFeature = new ColourBuilder(this.Session)
+                .WithName("a colour")
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithProductFeature(productFeature)
+                .WithPrice(1.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            invoiceItem.AddProductFeature(productFeature);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedBillToCustomerCalculatePrice()
+        {
+            var theGood = new CustomOrganisationClassificationBuilder(this.Session).WithName("good customer").Build();
+            var theBad = new CustomOrganisationClassificationBuilder(this.Session).WithName("bad customer").Build();
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.AddPartyClassification(theGood);
+
+            var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
+            customer2.AddPartyClassification(theBad);
+
+            this.Session.Derive(false);
+
+            Assert.NotEqual(customer1, customer2);
+
+            new BasePriceBuilder(this.Session)
+                .WithPartyClassification(theGood)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPartyClassification(theBad)
+                .WithProduct(product)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer1).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            invoice.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceItemDiscountAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemDiscountAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoiceItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, invoice.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceItemSurchargeAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoiceItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, invoice.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDiscountAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDiscountAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoice.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, invoice.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSurchargeAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithInvoiceDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoice.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, invoice.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, invoice.TotalIncVat);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class SalesInvoiceDeletePermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceDeletePermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+
+        [Fact]
+        public void OnChangedSalesInvoiceStateReadyForPostingDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceStateCancelledDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.CancelInvoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedOnChangedSalesInvoiceItemSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedOnChangedSalesInvoiceItemSalesInvoiceItemStateCancelledDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoiceItem.CancelFromInvoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
         }
     }
 

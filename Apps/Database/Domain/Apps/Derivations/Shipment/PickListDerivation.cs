@@ -21,25 +21,25 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var pickLists in matches.Cast<PickList>())
+            foreach (var @this in matches.Cast<PickList>())
             {
-                if (pickLists.Store.IsImmediatelyPicked)
+                if (@this.Store.IsImmediatelyPicked)
                 {
-                    pickLists.SetPicked();
+                    @this.SetPicked();
 
-                    foreach (PickListItem pickListItem in pickLists.PickListItems)
+                    foreach (PickListItem pickListItem in @this.PickListItems)
                     {
                         foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
                             var shipment = itemIssuance.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
                             var package = shipment?.ShipmentPackages.FirstOrDefault();
 
-                            if (pickLists.Store.AutoGenerateShipmentPackage
+                            if (@this.Store.AutoGenerateShipmentPackage
                                 && package != null
                                 && package.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)
                             {
                                 package.AddPackagingContent(
-                                    new PackagingContentBuilder(pickLists.Strategy.Session)
+                                    new PackagingContentBuilder(@this.Strategy.Session)
                                         .WithShipmentItem(itemIssuance.ShipmentItem)
                                         .WithQuantity(itemIssuance.Quantity)
                                         .Build());

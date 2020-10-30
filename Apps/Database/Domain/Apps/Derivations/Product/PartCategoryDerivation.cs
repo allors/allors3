@@ -22,35 +22,35 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var partCategory in matches.Cast<PartCategory>())
+            foreach (var @this in matches.Cast<PartCategory>())
             {
-                var defaultLocale = partCategory.Strategy.Session.GetSingleton().DefaultLocale;
+                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
 
-                if (partCategory.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    partCategory.Name = partCategory.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                if (partCategory.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    partCategory.Description = partCategory.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                if (!partCategory.ExistCategoryImage)
+                if (!@this.ExistCategoryImage)
                 {
-                    partCategory.CategoryImage = partCategory.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
+                    @this.CategoryImage = @this.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
                 }
 
                 {
                     var primaryAncestors = new List<PartCategory>();
-                    var primaryAncestor = partCategory.PrimaryParent;
+                    var primaryAncestor = @this.PrimaryParent;
 
                     while (primaryAncestor != null)
                     {
                         if (primaryAncestors.Contains(primaryAncestor))
                         {
                             var cyclic = string.Join(" -> ", primaryAncestors.Append(primaryAncestor).Select(v => v.Name));
-                            validation.AddError($"{partCategory} {partCategory.Meta.PrimaryParent} Cycle detected in " + cyclic);
+                            validation.AddError($"{@this} {@this.Meta.PrimaryParent} Cycle detected in " + cyclic);
                             break;
                         }
 
@@ -58,19 +58,19 @@ namespace Allors.Domain
                         primaryAncestor = primaryAncestor.PrimaryParent;
                     }
 
-                    partCategory.PrimaryAncestors = primaryAncestors.ToArray();
+                    @this.PrimaryAncestors = primaryAncestors.ToArray();
                 }
 
-                partCategory.Children = partCategory.PartCategoriesWherePrimaryParent.Union(partCategory.PartCategoriesWhereSecondaryParent).ToArray();
+                @this.Children = @this.PartCategoriesWherePrimaryParent.Union(@this.PartCategoriesWhereSecondaryParent).ToArray();
                 {
                     var descendants = new List<PartCategory>();
-                    var children = partCategory.Children.ToArray();
+                    var children = @this.Children.ToArray();
                     while (children.Length > 0)
                     {
                         if (children.Any(v => descendants.Contains(v)))
                         {
                             var cyclic = string.Join(" -> ", descendants.Union(children).Select(v => v.Name));
-                            validation.AddError($"{partCategory} {partCategory.Meta.Children} Cycle detected in " + cyclic);
+                            validation.AddError($"{@this} {@this.Meta.Children} Cycle detected in " + cyclic);
                             break;
                         }
 
@@ -78,10 +78,10 @@ namespace Allors.Domain
                         children = children.SelectMany(v => v.Children).ToArray();
                     }
 
-                    partCategory.Descendants = descendants.ToArray();
+                    @this.Descendants = descendants.ToArray();
                 }
 
-                var descendantsAndSelf = partCategory.Descendants.Append(partCategory).ToArray();
+                var descendantsAndSelf = @this.Descendants.Append(@this).ToArray();
             }
         }
     }

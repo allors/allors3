@@ -20,65 +20,65 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var internalOrganisationExtension in matches.Cast<InternalOrganisation>())
+            foreach (var @this in matches.Cast<InternalOrganisation>())
             {
-                var organisation = (Organisation)internalOrganisationExtension;
+                var organisation = (Organisation)@this;
                 if (organisation.IsInternalOrganisation)
                 {
-                    if (!internalOrganisationExtension.ExistDefaultCollectionMethod && internalOrganisationExtension.Strategy.Session.Extent<PaymentMethod>().Count == 1)
+                    if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Session.Extent<PaymentMethod>().Count == 1)
                     {
-                        internalOrganisationExtension.DefaultCollectionMethod = internalOrganisationExtension.Strategy.Session.Extent<PaymentMethod>().First;
+                        @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
                     }
 
-                    if (!internalOrganisationExtension.ExistPurchaseInvoiceCounter)
+                    if (!@this.ExistPurchaseInvoiceCounter)
                     {
-                        internalOrganisationExtension.PurchaseInvoiceCounter = new CounterBuilder(internalOrganisationExtension.Strategy.Session)
+                        @this.PurchaseInvoiceCounter = new CounterBuilder(@this.Strategy.Session)
                             .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                     }
 
-                    if (!internalOrganisationExtension.ExistRequestCounter)
+                    if (!@this.ExistRequestCounter)
                     {
-                        internalOrganisationExtension.RequestCounter = new CounterBuilder(internalOrganisationExtension.Strategy.Session).WithUniqueId(Guid.NewGuid())
+                        @this.RequestCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
                             .WithValue(0).Build();
                     }
 
-                    if (!internalOrganisationExtension.ExistQuoteCounter)
+                    if (!@this.ExistQuoteCounter)
                     {
-                        internalOrganisationExtension.QuoteCounter = new CounterBuilder(internalOrganisationExtension.Strategy.Session).WithUniqueId(Guid.NewGuid())
+                        @this.QuoteCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
                             .WithValue(0).Build();
                     }
 
-                    if (!internalOrganisationExtension.ExistPurchaseOrderCounter)
+                    if (!@this.ExistPurchaseOrderCounter)
                     {
-                        internalOrganisationExtension.PurchaseOrderCounter = new CounterBuilder(internalOrganisationExtension.Strategy.Session).WithUniqueId(Guid.NewGuid())
+                        @this.PurchaseOrderCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
                             .WithValue(0).Build();
                     }
 
-                    if (!internalOrganisationExtension.ExistIncomingShipmentCounter)
+                    if (!@this.ExistIncomingShipmentCounter)
                     {
-                        internalOrganisationExtension.IncomingShipmentCounter = new CounterBuilder(internalOrganisationExtension.Strategy.Session)
+                        @this.IncomingShipmentCounter = new CounterBuilder(@this.Strategy.Session)
                             .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
                     }
 
-                    if (!internalOrganisationExtension.ExistSubAccountCounter)
+                    if (!@this.ExistSubAccountCounter)
                     {
-                        internalOrganisationExtension.SubAccountCounter = new CounterBuilder(internalOrganisationExtension.Strategy.Session).WithUniqueId(Guid.NewGuid())
+                        @this.SubAccountCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
                             .WithValue(0).Build();
                     }
 
-                    if (!internalOrganisationExtension.ExistInvoiceSequence)
+                    if (!@this.ExistInvoiceSequence)
                     {
-                        internalOrganisationExtension.InvoiceSequence = new InvoiceSequences(internalOrganisationExtension.Strategy.Session).RestartOnFiscalYear;
+                        @this.InvoiceSequence = new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear;
                     }
 
-                    if (!internalOrganisationExtension.ExistFiscalYearStartMonth)
+                    if (!@this.ExistFiscalYearStartMonth)
                     {
-                        internalOrganisationExtension.FiscalYearStartMonth = 1;
+                        @this.FiscalYearStartMonth = 1;
                     }
 
-                    if (!internalOrganisationExtension.ExistFiscalYearStartDay)
+                    if (!@this.ExistFiscalYearStartDay)
                     {
-                        internalOrganisationExtension.FiscalYearStartDay = 1;
+                        @this.FiscalYearStartDay = 1;
                     }
                 }
             }

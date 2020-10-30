@@ -20,13 +20,13 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var serialisedItemCharacteristicType in matches.Cast<SerialisedItemCharacteristicType>())
+            foreach (var @this in matches.Cast<SerialisedItemCharacteristicType>())
             {
-                var defaultLocale = serialisedItemCharacteristicType.Strategy.Session.GetSingleton().DefaultLocale;
+                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
 
-                if (serialisedItemCharacteristicType.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    serialisedItemCharacteristicType.Name = serialisedItemCharacteristicType.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
             }
         }

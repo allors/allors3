@@ -21,12 +21,12 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var shipmentPackage in matches.Cast<ShipmentPackage>())
+            foreach (var @this in matches.Cast<ShipmentPackage>())
             {
                 var highestNumber = 0;
-                if (shipmentPackage.ExistShipmentWhereShipmentPackage)
+                if (@this.ExistShipmentWhereShipmentPackage)
                 {
-                    foreach (ShipmentPackage shipmentPackageShipmentWhereShipmentPackage in shipmentPackage.ShipmentWhereShipmentPackage.ShipmentPackages)
+                    foreach (ShipmentPackage shipmentPackageShipmentWhereShipmentPackage in @this.ShipmentWhereShipmentPackage.ShipmentPackages)
                     {
                         if (shipmentPackageShipmentWhereShipmentPackage.ExistSequenceNumber && shipmentPackageShipmentWhereShipmentPackage.SequenceNumber > highestNumber)
                         {
@@ -34,17 +34,17 @@ namespace Allors.Domain
                         }
                     }
 
-                    if (!shipmentPackage.ExistSequenceNumber || shipmentPackage.SequenceNumber == 0)
+                    if (!@this.ExistSequenceNumber || @this.SequenceNumber == 0)
                     {
-                        shipmentPackage.SequenceNumber = highestNumber + 1;
+                        @this.SequenceNumber = highestNumber + 1;
                     }
                 }
 
-                if (!shipmentPackage.ExistDocuments)
+                if (!@this.ExistDocuments)
                 {
                     var name =
-                        $"Package {(shipmentPackage.ExistSequenceNumber ? shipmentPackage.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
-                    shipmentPackage.AddDocument(new PackagingSlipBuilder(shipmentPackage.Strategy.Session).WithName(name).Build());
+                        $"Package {(@this.ExistSequenceNumber ? @this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
+                    @this.AddDocument(new PackagingSlipBuilder(@this.Strategy.Session).WithName(name).Build());
                 }
             }
         }

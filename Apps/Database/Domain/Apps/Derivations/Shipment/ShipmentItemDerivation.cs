@@ -25,72 +25,72 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var shipmentItem in matches.Cast<ShipmentItem>())
+            foreach (var @this in matches.Cast<ShipmentItem>())
             {
-                if (!shipmentItem.ExistDerivationTrigger)
+                if (!@this.ExistDerivationTrigger)
                 {
-                    shipmentItem.DerivationTrigger = Guid.NewGuid();
+                    @this.DerivationTrigger = Guid.NewGuid();
                 }
 
-                if ((shipmentItem.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(CustomerShipment).Name) || shipmentItem.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(PurchaseReturn).Name))
-                    && shipmentItem.ExistSerialisedItem
-                    && !shipmentItem.ExistNextSerialisedItemAvailability)
+                if ((@this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(CustomerShipment).Name) || @this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(PurchaseReturn).Name))
+                    && @this.ExistSerialisedItem
+                    && !@this.ExistNextSerialisedItemAvailability)
                 {
-                    validation.AssertExists(shipmentItem, shipmentItem.Meta.NextSerialisedItemAvailability);
+                    validation.AssertExists(@this, @this.Meta.NextSerialisedItemAvailability);
                 }
 
-                if (shipmentItem.ExistSerialisedItem && shipmentItem.Quantity != 1)
+                if (@this.ExistSerialisedItem && @this.Quantity != 1)
                 {
-                    validation.AddError($"{shipmentItem} {shipmentItem.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
-                }
-
-                // AppsOnDeriveCustomerShipmentItem
-                if (shipmentItem.ShipmentWhereShipmentItem is CustomerShipment)
-                {
-                    shipmentItem.QuantityPicked = 0;
-                    foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
-                    {
-                        if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(shipmentItem.Strategy.Session).Picked))
-                        {
-                            shipmentItem.QuantityPicked += itemIssuance.Quantity;
-                        }
-                    }
-
-                    if (Equals(shipmentItem.ShipmentWhereShipmentItem.ShipmentState, new ShipmentStates(shipmentItem.Strategy.Session).Shipped))
-                    {
-                        shipmentItem.QuantityShipped = 0;
-                        foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
-                        {
-                            shipmentItem.QuantityShipped += itemIssuance.Quantity;
-                        }
-                    }
+                    validation.AddError($"{@this} {@this.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
                 }
 
                 // AppsOnDeriveCustomerShipmentItem
-                if (shipmentItem.ExistShipmentWhereShipmentItem
-                    && shipmentItem.ShipmentWhereShipmentItem is PurchaseShipment
-                    && shipmentItem.ExistPart
-                    && shipmentItem.Part.InventoryItemKind.IsNonSerialised
-                    && !shipmentItem.ExistUnitPurchasePrice)
+                if (@this.ShipmentWhereShipmentItem is CustomerShipment)
                 {
-                    validation.AssertExists(shipmentItem, shipmentItem.Meta.UnitPurchasePrice);
+                    @this.QuantityPicked = 0;
+                    foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWhereShipmentItem)
+                    {
+                        if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Strategy.Session).Picked))
+                        {
+                            @this.QuantityPicked += itemIssuance.Quantity;
+                        }
+                    }
+
+                    if (Equals(@this.ShipmentWhereShipmentItem.ShipmentState, new ShipmentStates(@this.Strategy.Session).Shipped))
+                    {
+                        @this.QuantityShipped = 0;
+                        foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWhereShipmentItem)
+                        {
+                            @this.QuantityShipped += itemIssuance.Quantity;
+                        }
+                    }
                 }
 
-                if (shipmentItem.ExistShipmentWhereShipmentItem
-                    && shipmentItem.ShipmentWhereShipmentItem is PurchaseShipment
-                    && !shipmentItem.ExistStoredInFacility
-                    && shipmentItem.ShipmentWhereShipmentItem.ExistShipToFacility)
+                // AppsOnDeriveCustomerShipmentItem
+                if (@this.ExistShipmentWhereShipmentItem
+                    && @this.ShipmentWhereShipmentItem is PurchaseShipment
+                    && @this.ExistPart
+                    && @this.Part.InventoryItemKind.IsNonSerialised
+                    && !@this.ExistUnitPurchasePrice)
                 {
-                    shipmentItem.StoredInFacility = shipmentItem.ShipmentWhereShipmentItem.ShipToFacility;
+                    validation.AssertExists(@this, @this.Meta.UnitPurchasePrice);
                 }
 
-                if (shipmentItem.ExistShipmentWhereShipmentItem
-                    && shipmentItem.ShipmentWhereShipmentItem is PurchaseShipment
-                    && shipmentItem.ExistShipmentReceiptWhereShipmentItem)
+                if (@this.ExistShipmentWhereShipmentItem
+                    && @this.ShipmentWhereShipmentItem is PurchaseShipment
+                    && !@this.ExistStoredInFacility
+                    && @this.ShipmentWhereShipmentItem.ExistShipToFacility)
                 {
-                    shipmentItem.Quantity = 0;
-                    var shipmentReceipt = shipmentItem.ShipmentReceiptWhereShipmentItem;
-                    shipmentItem.Quantity += shipmentReceipt.QuantityAccepted + shipmentReceipt.QuantityRejected;
+                    @this.StoredInFacility = @this.ShipmentWhereShipmentItem.ShipToFacility;
+                }
+
+                if (@this.ExistShipmentWhereShipmentItem
+                    && @this.ShipmentWhereShipmentItem is PurchaseShipment
+                    && @this.ExistShipmentReceiptWhereShipmentItem)
+                {
+                    @this.Quantity = 0;
+                    var shipmentReceipt = @this.ShipmentReceiptWhereShipmentItem;
+                    @this.Quantity += shipmentReceipt.QuantityAccepted + shipmentReceipt.QuantityRejected;
                 }
             }
         }

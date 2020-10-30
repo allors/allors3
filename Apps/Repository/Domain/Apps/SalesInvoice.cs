@@ -75,6 +75,8 @@ namespace Allors.Repository
 
         public Permission[] DeniedPermissions { get; set; }
 
+        public Permission[] TransitionalDeniedPermissions { get; set; }
+
         public SecurityToken[] SecurityTokens { get; set; }
 
         public Locale Locale { get; set; }
@@ -98,6 +100,12 @@ namespace Allors.Repository
         public decimal TotalIrpf { get; set; }
 
         public int SortableInvoiceNumber { get; set; }
+
+        public Locale DefaultLocale { get; set; }
+
+        public Currency DefaultCurrency { get; set; }
+
+        public Guid DerivationTrigger { get; set; }
 
         #endregion
 

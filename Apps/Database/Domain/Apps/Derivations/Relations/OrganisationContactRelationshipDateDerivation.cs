@@ -23,21 +23,21 @@ namespace Allors.Domain
         {
             var session = cycle.Session;
 
-            foreach (var organisationContactRelationship in matches.Cast<OrganisationContactRelationship>())
+            foreach (var @this in matches.Cast<OrganisationContactRelationship>())
             {
-                if (organisationContactRelationship.Organisation?.ContactsUserGroup != null)
+                if (@this.Organisation?.ContactsUserGroup != null)
                 {
-                    if (!(organisationContactRelationship.FromDate <= session.Now()
-                        && (!organisationContactRelationship.ExistThroughDate
-                        || organisationContactRelationship.ThroughDate >= session.Now())))
+                    if (!(@this.FromDate <= session.Now()
+                        && (!@this.ExistThroughDate
+                        || @this.ThroughDate >= session.Now())))
                     {
-                        organisationContactRelationship.Organisation.ContactsUserGroup
-                            .RemoveMember(organisationContactRelationship.Contact);
+                        @this.Organisation.ContactsUserGroup
+                            .RemoveMember(@this.Contact);
                     }
                     else
                     {
-                        organisationContactRelationship.Organisation.ContactsUserGroup
-                            .AddMember(organisationContactRelationship.Contact);
+                        @this.Organisation.ContactsUserGroup
+                            .AddMember(@this.Contact);
                     }
                 }
             }

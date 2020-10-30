@@ -29,87 +29,87 @@ namespace Allors.Domain
             var validation = cycle.Validation;
             var changeSet = cycle.ChangeSet;
 
-            foreach (var SalesInvoiceItem in matches.Cast<SalesInvoiceItem>())
+            foreach (var @this in matches.Cast<SalesInvoiceItem>())
             {
-                var salesInvoice = SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem;
+                var salesInvoice = @this.SalesInvoiceWhereSalesInvoiceItem;
                 var salesInvoiceItemStates = new SalesInvoiceItemStates(session);
 
-                validation.AssertExistsAtMostOne(SalesInvoiceItem, this.M.SalesInvoiceItem.Product, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
-                validation.AssertExistsAtMostOne(SalesInvoiceItem, this.M.SalesInvoiceItem.SerialisedItem, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
+                validation.AssertExistsAtMostOne(@this, this.M.SalesInvoiceItem.Product, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
+                validation.AssertExistsAtMostOne(@this, this.M.SalesInvoiceItem.SerialisedItem, this.M.SalesInvoiceItem.ProductFeatures, this.M.SalesInvoiceItem.Part);
 
-                if (!SalesInvoiceItem.ExistDerivationTrigger)
+                if (!@this.ExistDerivationTrigger)
                 {
-                    SalesInvoiceItem.DerivationTrigger = Guid.NewGuid();
+                    @this.DerivationTrigger = Guid.NewGuid();
                 }
 
-                if (SalesInvoiceItem.ExistSerialisedItem && !SalesInvoiceItem.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(SalesInvoiceItem.Session()).SalesInvoice))
+                if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability && salesInvoice.SalesInvoiceType.Equals(new SalesInvoiceTypes(@this.Session()).SalesInvoice))
                 {
-                    validation.AssertExists(SalesInvoiceItem, SalesInvoiceItem.Meta.NextSerialisedItemAvailability);
+                    validation.AssertExists(@this, @this.Meta.NextSerialisedItemAvailability);
                 }
 
-                if (SalesInvoiceItem.Part != null && SalesInvoiceItem.Part.InventoryItemKind.IsSerialised && SalesInvoiceItem.Quantity != 1)
+                if (@this.Part != null && @this.Part.InventoryItemKind.IsSerialised && @this.Quantity != 1)
                 {
-                    validation.AddError($"{SalesInvoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
                 }
 
-                if (SalesInvoiceItem.Part != null && SalesInvoiceItem.Part.InventoryItemKind.IsNonSerialised && SalesInvoiceItem.Quantity == 0)
+                if (@this.Part != null && @this.Part.InventoryItemKind.IsNonSerialised && @this.Quantity == 0)
                 {
-                    validation.AddError($"{SalesInvoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
                 }
 
-                if (SalesInvoiceItem.ExistInvoiceItemType && SalesInvoiceItem.InvoiceItemType.MaxQuantity.HasValue && SalesInvoiceItem.Quantity > SalesInvoiceItem.InvoiceItemType.MaxQuantity.Value)
+                if (@this.ExistInvoiceItemType && @this.InvoiceItemType.MaxQuantity.HasValue && @this.Quantity > @this.InvoiceItemType.MaxQuantity.Value)
                 {
-                    validation.AddError($"{SalesInvoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
+                    validation.AddError($"{@this}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}");
                 }
 
-                SalesInvoiceItem.VatRegime = SalesInvoiceItem.ExistAssignedVatRegime ? SalesInvoiceItem.AssignedVatRegime : SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem?.VatRegime;
-                SalesInvoiceItem.VatRate = SalesInvoiceItem.VatRegime?.VatRate;
+                @this.VatRegime = @this.ExistAssignedVatRegime ? @this.AssignedVatRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.VatRegime;
+                @this.VatRate = @this.VatRegime?.VatRate;
 
-                SalesInvoiceItem.IrpfRegime = SalesInvoiceItem.ExistAssignedIrpfRegime ? SalesInvoiceItem.AssignedIrpfRegime : SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem?.IrpfRegime;
-                SalesInvoiceItem.IrpfRate = SalesInvoiceItem.IrpfRegime?.IrpfRate;
+                @this.IrpfRegime = @this.ExistAssignedIrpfRegime ? @this.AssignedIrpfRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.IrpfRegime;
+                @this.IrpfRate = @this.IrpfRegime?.IrpfRate;
 
-                if (SalesInvoiceItem.ExistInvoiceItemType && SalesInvoiceItem.IsSubTotalItem().Result == true && SalesInvoiceItem.Quantity <= 0)
+                if (@this.ExistInvoiceItemType && @this.IsSubTotalItem().Result == true && @this.Quantity <= 0)
                 {
-                    validation.AssertExists(SalesInvoiceItem, SalesInvoiceItem.Meta.Quantity);
+                    validation.AssertExists(@this, @this.Meta.Quantity);
                 }
 
-                SalesInvoiceItem.AmountPaid = 0;
-                foreach (PaymentApplication paymentApplication in SalesInvoiceItem.PaymentApplicationsWhereInvoiceItem)
+                @this.AmountPaid = 0;
+                foreach (PaymentApplication paymentApplication in @this.PaymentApplicationsWhereInvoiceItem)
                 {
-                    SalesInvoiceItem.AmountPaid += paymentApplication.AmountApplied;
+                    @this.AmountPaid += paymentApplication.AmountApplied;
                 }
 
                 if (salesInvoice != null
                     && salesInvoice.ExistSalesInvoiceState
                     && salesInvoice.SalesInvoiceState.IsReadyForPosting
-                    && SalesInvoiceItem.SalesInvoiceItemState.IsCancelledByInvoice)
+                    && @this.SalesInvoiceItemState.IsCancelledByInvoice)
                 {
-                    SalesInvoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.ReadyForPosting;
+                    @this.SalesInvoiceItemState = salesInvoiceItemStates.ReadyForPosting;
                 }
 
                 // SalesInvoiceItem States
                 if (salesInvoice != null
                     && salesInvoice.ExistSalesInvoiceState
-                    && SalesInvoiceItem.IsValid)
+                    && @this.IsValid)
                 {
                     if (salesInvoice.SalesInvoiceState.IsWrittenOff)
                     {
-                        SalesInvoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.WrittenOff;
+                        @this.SalesInvoiceItemState = salesInvoiceItemStates.WrittenOff;
                     }
 
                     if (salesInvoice.SalesInvoiceState.IsCancelled)
                     {
-                        SalesInvoiceItem.SalesInvoiceItemState = salesInvoiceItemStates.CancelledByInvoice;
+                        @this.SalesInvoiceItemState = salesInvoiceItemStates.CancelledByInvoice;
                     }
                 }
 
                 // TODO: Move to Custom
-                if (changeSet.IsCreated(SalesInvoiceItem) && !SalesInvoiceItem.ExistDescription)
+                if (changeSet.IsCreated(@this) && !@this.ExistDescription)
                 {
-                    if (SalesInvoiceItem.ExistSerialisedItem)
+                    if (@this.ExistSerialisedItem)
                     {
                         var builder = new StringBuilder();
-                        var part = SalesInvoiceItem.SerialisedItem.PartWhereSerialisedItem;
+                        var part = @this.SerialisedItem.PartWhereSerialisedItem;
 
                         if (part != null && part.ExistManufacturedBy)
                         {
@@ -126,14 +126,14 @@ namespace Allors.Domain
                             builder.Append($", Model: {part.Model.Name}");
                         }
 
-                        builder.Append($", SN: {SalesInvoiceItem.SerialisedItem.SerialNumber}");
+                        builder.Append($", SN: {@this.SerialisedItem.SerialNumber}");
 
-                        if (SalesInvoiceItem.SerialisedItem.ExistManufacturingYear)
+                        if (@this.SerialisedItem.ExistManufacturingYear)
                         {
-                            builder.Append($", YOM: {SalesInvoiceItem.SerialisedItem.ManufacturingYear}");
+                            builder.Append($", YOM: {@this.SerialisedItem.ManufacturingYear}");
                         }
 
-                        foreach (SerialisedItemCharacteristic characteristic in SalesInvoiceItem.SerialisedItem.SerialisedItemCharacteristics)
+                        foreach (SerialisedItemCharacteristic characteristic in @this.SerialisedItem.SerialisedItemCharacteristics)
                         {
                             if (characteristic.ExistValue)
                             {
@@ -160,10 +160,10 @@ namespace Allors.Domain
                             details = details.Substring(2);
                         }
 
-                        SalesInvoiceItem.Description = details;
+                        @this.Description = details;
 
                     }
-                    else if (SalesInvoiceItem.ExistProduct && SalesInvoiceItem.Product is UnifiedGood unifiedGood)
+                    else if (@this.ExistProduct && @this.Product is UnifiedGood unifiedGood)
                     {
                         var builder = new StringBuilder();
 
@@ -208,17 +208,17 @@ namespace Allors.Domain
                             details = details.Substring(2);
                         }
 
-                        SalesInvoiceItem.Description = details;
+                        @this.Description = details;
                     }
                 }
-                var deletePermission = new Permissions(SalesInvoiceItem.Strategy.Session).Get(SalesInvoiceItem.Meta.ObjectType, SalesInvoiceItem.Meta.Delete);
-                if (SalesInvoiceItem.IsDeletable)
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
                 {
-                    SalesInvoiceItem.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    SalesInvoiceItem.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
             }
         }

@@ -24,71 +24,71 @@ namespace Allors.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var nonUnifiedGood in matches.Cast<NonUnifiedGood>())
+            foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
-                var defaultLocale = nonUnifiedGood.Strategy.Session.GetSingleton().DefaultLocale;
-                var settings = nonUnifiedGood.Strategy.Session.GetSingleton().Settings;
+                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
+                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
-                var identifications = nonUnifiedGood.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(nonUnifiedGood.Strategy.Session).Good);
+                var identifications = @this.ProductIdentifications;
+                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
                 if (goodIdentification == null && settings.UseProductNumberCounter)
                 {
-                    goodIdentification = new ProductNumberBuilder(nonUnifiedGood.Strategy.Session)
+                    goodIdentification = new ProductNumberBuilder(@this.Strategy.Session)
                         .WithIdentification(settings.NextProductNumber())
-                        .WithProductIdentificationType(new ProductIdentificationTypes(nonUnifiedGood.Strategy.Session).Good).Build();
+                        .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Good).Build();
 
-                    nonUnifiedGood.AddProductIdentification(goodIdentification);
+                    @this.AddProductIdentification(goodIdentification);
                 }
 
-                nonUnifiedGood.ProductNumber = goodIdentification.Identification;
+                @this.ProductNumber = goodIdentification.Identification;
 
-                if (!nonUnifiedGood.ExistProductIdentifications)
+                if (!@this.ExistProductIdentifications)
                 {
-                    validation.AssertExists(nonUnifiedGood, this.M.Good.ProductIdentifications);
+                    validation.AssertExists(@this, this.M.Good.ProductIdentifications);
                 }
 
-                if (!nonUnifiedGood.ExistVariants)
+                if (!@this.ExistVariants)
                 {
-                    validation.AssertExists(nonUnifiedGood, this.M.NonUnifiedGood.Part);
+                    validation.AssertExists(@this, this.M.NonUnifiedGood.Part);
                 }
 
-                if (nonUnifiedGood.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    nonUnifiedGood.Name = nonUnifiedGood.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                if (nonUnifiedGood.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
+                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    nonUnifiedGood.Description = nonUnifiedGood.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
 
-                DeriveVirtualProductPriceComponent(nonUnifiedGood);
+                DeriveVirtualProductPriceComponent(@this);
 
                 var builder = new StringBuilder();
-                if (nonUnifiedGood.ExistProductIdentifications)
+                if (@this.ExistProductIdentifications)
                 {
-                    builder.Append(string.Join(" ", nonUnifiedGood.ProductIdentifications.Select(v => v.Identification)));
+                    builder.Append(string.Join(" ", @this.ProductIdentifications.Select(v => v.Identification)));
                 }
 
-                if (nonUnifiedGood.ExistProductCategoriesWhereAllProduct)
+                if (@this.ExistProductCategoriesWhereAllProduct)
                 {
-                    builder.Append(string.Join(" ", nonUnifiedGood.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
+                    builder.Append(string.Join(" ", @this.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
                 }
 
-                builder.Append(string.Join(" ", nonUnifiedGood.Keywords));
+                builder.Append(string.Join(" ", @this.Keywords));
 
-                nonUnifiedGood.SearchString = builder.ToString();
+                @this.SearchString = builder.ToString();
 
-                var deletePermission = new Permissions(nonUnifiedGood.Strategy.Session).Get(nonUnifiedGood.Meta.ObjectType, nonUnifiedGood.Meta.Delete);
-                if (IsDeletable(nonUnifiedGood))
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (IsDeletable(@this))
                 {
-                    nonUnifiedGood.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveDeniedPermission(deletePermission);
                 }
                 else
                 {
-                    nonUnifiedGood.AddDeniedPermission(deletePermission);
+                    @this.AddDeniedPermission(deletePermission);
                 }
 
             }

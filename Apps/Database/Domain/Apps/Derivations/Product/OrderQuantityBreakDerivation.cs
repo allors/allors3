@@ -21,9 +21,9 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var orderQuantityBreak in matches.Cast<OrderQuantityBreak>())
+            foreach (var @this in matches.Cast<OrderQuantityBreak>())
             {
-                cycle.Validation.AssertAtLeastOne(orderQuantityBreak, this.M.OrderQuantityBreak.FromAmount, this.M.OrderQuantityBreak.ThroughAmount);
+                cycle.Validation.AssertAtLeastOne(@this, this.M.OrderQuantityBreak.FromAmount, this.M.OrderQuantityBreak.ThroughAmount);
             }
         }
     }

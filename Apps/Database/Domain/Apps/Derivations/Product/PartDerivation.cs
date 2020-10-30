@@ -21,64 +21,64 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var partExtensions in matches.Cast<Part>())
+            foreach (var @this in matches.Cast<Part>())
             {
-                partExtensions.SetDisplayName();
+                @this.SetDisplayName();
 
                 var builder = new StringBuilder();
 
-                builder.Append(partExtensions.Name);
+                builder.Append(@this.Name);
 
-                foreach (LocalisedText localisedText in partExtensions.LocalisedNames)
+                foreach (LocalisedText localisedText in @this.LocalisedNames)
                 {
                     builder.Append(string.Join(", ", localisedText.Text));
                 }
 
-                if (partExtensions.ExistProductIdentifications)
+                if (@this.ExistProductIdentifications)
                 {
-                    builder.Append(string.Join(", ", partExtensions.ProductIdentifications.Select(v => v.Identification)));
+                    builder.Append(string.Join(", ", @this.ProductIdentifications.Select(v => v.Identification)));
                 }
 
-                if (partExtensions.ExistProductCategoriesWhereAllPart)
+                if (@this.ExistProductCategoriesWhereAllPart)
                 {
-                    builder.Append(string.Join(", ", partExtensions.ProductCategoriesWhereAllPart.Select(v => v.Name)));
+                    builder.Append(string.Join(", ", @this.ProductCategoriesWhereAllPart.Select(v => v.Name)));
                 }
 
-                if (partExtensions.ExistSupplierOfferingsWherePart)
+                if (@this.ExistSupplierOfferingsWherePart)
                 {
-                    builder.Append(string.Join(", ", partExtensions.SupplierOfferingsWherePart.Select(v => v.Supplier.PartyName)));
-                    builder.Append(string.Join(", ", partExtensions.SupplierOfferingsWherePart.Select(v => v.SupplierProductId)));
-                    builder.Append(string.Join(", ", partExtensions.SupplierOfferingsWherePart.Select(v => v.SupplierProductName)));
+                    builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier.PartyName)));
+                    builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.SupplierProductId)));
+                    builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.SupplierProductName)));
                 }
 
-                if (partExtensions.ExistSerialisedItems)
+                if (@this.ExistSerialisedItems)
                 {
-                    builder.Append(string.Join(", ", partExtensions.SerialisedItems.Select(v => v.SerialNumber)));
+                    builder.Append(string.Join(", ", @this.SerialisedItems.Select(v => v.SerialNumber)));
                 }
 
-                if (partExtensions.ExistProductType)
+                if (@this.ExistProductType)
                 {
-                    builder.Append(string.Join(", ", partExtensions.ProductType.Name));
+                    builder.Append(string.Join(", ", @this.ProductType.Name));
                 }
 
-                if (partExtensions.ExistBrand)
+                if (@this.ExistBrand)
                 {
-                    builder.Append(string.Join(", ", partExtensions.Brand.Name));
+                    builder.Append(string.Join(", ", @this.Brand.Name));
                 }
 
-                if (partExtensions.ExistModel)
+                if (@this.ExistModel)
                 {
-                    builder.Append(string.Join(", ", partExtensions.Model.Name));
+                    builder.Append(string.Join(", ", @this.Model.Name));
                 }
 
-                foreach (PartCategory partCategory in partExtensions.PartCategoriesWherePart)
+                foreach (PartCategory partCategory in @this.PartCategoriesWherePart)
                 {
                     builder.Append(string.Join(", ", partCategory.Name));
                 }
 
-                builder.Append(string.Join(", ", partExtensions.Keywords));
+                builder.Append(string.Join(", ", @this.Keywords));
 
-                partExtensions.SearchString = builder.ToString();
+                @this.SearchString = builder.ToString();
             }
         }
     }
