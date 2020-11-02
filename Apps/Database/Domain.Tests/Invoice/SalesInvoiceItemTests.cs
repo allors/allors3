@@ -1960,6 +1960,21 @@ namespace Allors.Domain
         }
     }
 
+    public class SalesInvoiceItemCreateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void DeriveDerivationTrigger()
+        {
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(invoiceitem.ExistDerivationTrigger);
+        }
+    }
+
     public class SalesInvoiceItemDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesInvoiceItemDerivationTests(Fixture fixture) : base(fixture) { }
