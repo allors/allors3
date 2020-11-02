@@ -509,12 +509,7 @@ namespace Allors.Meta
                     }
                 }
             }
-
-            if (roleTypes.Contains(null))
-            {
-                Debugger.Break();
-            }
-
+            
             this.derivedRoleTypes = new HashSet<RoleType>(roleTypes);
             this.derivedDatabaseRoleTypes = new HashSet<RoleType>(roleTypes.Where(v => v.Origin == Origin.Database));
         }
