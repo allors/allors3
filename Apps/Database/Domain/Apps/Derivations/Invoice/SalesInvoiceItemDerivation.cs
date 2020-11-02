@@ -18,8 +18,16 @@ namespace Allors.Domain
         public SalesInvoiceItemDerivation(M m) : base(m, new Guid("37C0910B-7C48-46B5-8F7A-F6B2E70BE05C")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.SalesInvoiceItem.Class),
+                new ChangedPattern(m.SalesInvoiceItem.Product),
+                new ChangedPattern(m.SalesInvoiceItem.ProductFeatures),
+                new ChangedPattern(m.SalesInvoiceItem.Part),
+                new ChangedPattern(m.SalesInvoiceItem.SerialisedItem),
+                new ChangedPattern(m.SalesInvoiceItem.InvoiceItemType),
+                new ChangedPattern(m.SalesInvoiceItem.AssignedVatRegime),
+                new ChangedPattern(m.SalesInvoiceItem.AssignedIrpfRegime),
                 new ChangedPattern(m.SalesInvoice.SalesInvoiceState) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new ChangedPattern(m.SalesInvoice.VatRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
+                new ChangedPattern(m.SalesInvoice.IrpfRegime) { Steps =  new IPropertyType[] {this.M.SalesInvoice.SalesInvoiceItems} },
                 new ChangedPattern(m.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {this.M.PaymentApplication.InvoiceItem} },
             };
 

@@ -7,6 +7,10 @@
 namespace Allors.Domain
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Allors.Domain.TestPopulation;
+    using Resources;
     using Xunit;
 
     public class SalesInvoiceItemTests : DomainTest, IClassFixture<Fixture>
@@ -1980,13 +1984,271 @@ namespace Allors.Domain
         public SalesInvoiceItemDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedBilledFromDeriveStore()
+        public void ValidateAtmostOneProductAndPart()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.Store, new Stores(this.Session).Extent().First);
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithProduct(product).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+        }
+
+        [Fact]
+        public void ValidateAtmostOneProductAndProductFeature()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var colour = new ColourBuilder(this.Session).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProductFeature(colour).WithProduct(product).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+        }
+
+        [Fact]
+        public void ValidateAtmostOneSerialisedItemAndProductFeature()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var colour = new ColourBuilder(this.Session).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+        }
+
+        [Fact]
+        public void ValidateAtmostOneSerialisedItemAndPart()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithSerialisedItem(serialisedItem).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+        }
+
+        [Fact]
+        public void ValidateNextSerialisedItemAvailability()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
+        }
+
+        [Fact]
+        public void ValidateSerialisedPartQuantityValid()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation, this.Session.Faker()).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(1).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ValidateSerialisedPartQuantityInvalid()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation, this.Session.Faker()).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(2).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+        }
+
+        [Fact]
+        public void ValidateSerialisedPartQuantityInvalidAgain()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation, this.Session.Faker()).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(0).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+        }
+
+        [Fact]
+        public void ValidateNonSerialisedPartQuantityInvalid()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithPart(part).WithQuantity(0).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+        }
+
+        [Fact]
+        public void ValidateServiceInvoiceItemQuantityInvalid()
+        {
+            var service = new InvoiceItemTypes(this.Session).Service;
+            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity + 1).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+        }
+
+        [Fact]
+        public void ValidateServiceInvoiceItemQuantityvalid()
+        {
+            var service = new InvoiceItemTypes(this.Session).Service;
+            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+
+            var expectedMessage = $"{invoiceItem}, {this.M.SalesInvoiceItem.Quantity},{ ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void OnChangedRoleAssignedVatRegimeDeriveVatRegime()
+        {
+            var assignedVatRegime = new VatRegimes(this.Session).Assessable10;
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithVatRegime(new VatRegimes(this.Session).Exempt).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoiceItem.AssignedVatRegime = assignedVatRegime;
+            this.Session.Derive(false);
+
+            Assert.Equal(assignedVatRegime, invoiceItem.VatRegime);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceVatRegimeDeriveVatRegime()
+        {
+            var vatRegime = new VatRegimes(this.Session).Assessable10;
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.VatRegime = vatRegime;
+            this.Session.Derive(false);
+
+            Assert.Equal(vatRegime, invoiceItem.VatRegime);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceVatRegimeDeriveVatRate()
+        {
+            var vatRegime = new VatRegimes(this.Session).Assessable10;
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.VatRegime = vatRegime;
+            this.Session.Derive(false);
+
+            Assert.Equal(vatRegime.VatRate, invoiceItem.VatRate);
+        }
+
+        [Fact]
+        public void OnChangedRoleAssignedIrpfRegimeDeriveIrpfRegime()
+        {
+            var assignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithIrpfRegime(new IrpfRegimes(this.Session).Exempt).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoiceItem.AssignedIrpfRegime = assignedIrpfRegime;
+            this.Session.Derive(false);
+
+            Assert.Equal(assignedIrpfRegime, invoiceItem.IrpfRegime);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceIrpfRegimeDeriveIrpfRegime()
+        {
+            var irpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.IrpfRegime = irpfRegime;
+            this.Session.Derive(false);
+
+            Assert.Equal(irpfRegime, invoiceItem.IrpfRegime);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceIrpfRegimeDeriveIrpfRate()
+        {
+            var irpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.IrpfRegime = irpfRegime;
+            this.Session.Derive(false);
+
+            Assert.Equal(irpfRegime.IrpfRate, invoiceItem.IrpfRate);
         }
     }
 
