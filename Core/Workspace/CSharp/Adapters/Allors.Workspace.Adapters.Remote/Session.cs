@@ -125,6 +125,8 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy.Object;
         }
 
+        public IEnumerable<IObject> Instantiate(IEnumerable<long> ids) => ids.Select(this.Instantiate);
+
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
             var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };

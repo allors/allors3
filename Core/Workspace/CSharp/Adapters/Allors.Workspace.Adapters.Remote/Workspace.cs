@@ -6,13 +6,14 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Net.Http;
+    using Derivations;
     using Meta;
 
     public class Workspace : IWorkspace
     {
-
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
@@ -25,6 +26,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.Population = new Population();
             this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
 
+            this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
+
             this.StateLifecycle.OnInit(this);
         }
 
@@ -32,19 +35,27 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IWorkspaceStateLifecycle StateLifecycle { get; }
 
+        internal ISet<Session> Sessions { get; }
+        IEnumerable<ISession> IWorkspace.Sessions => this.Sessions;
+
+        public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
+
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
 
         internal ObjectFactory ObjectFactory { get; }
 
         internal Database Database { get; }
 
-        internal ISet<Session> Sessions { get; }
-
         internal Population Population { get; }
         
         internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
+
+        public IChangeSet Checkpoint()
+        {
+            throw new NotImplementedException();
+        }
 
         internal void RegisterSession(Session session) => this.Sessions.Add(session);
 

@@ -355,15 +355,16 @@ namespace Allors.Repository
 
         #region Allors
         [Id("6def7988-4bcf-4964-9de6-c6ede41d5e5a")]
-        [Workspace(Default)]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
+        [Workspace(Default)]
         public I2 C1I2One2One { get; set; }
 
         #region Allors
         [Id("AB63E425-E1E1-44A8-9DC2-177271CBA092")]
         #endregion
+        [Workspace(Default)]
         [Derived]
         public bool C1CreationDerivation { get; set; }
 
