@@ -21,13 +21,6 @@ namespace Allors.Domain
 
         public bool WasValid => this.ExistLastObjectStates && !(this.LastQuoteItemState.IsCancelled || this.LastQuoteItemState.IsRejected);
 
-        internal bool IsDeletable =>
-            (this.QuoteItemState.Equals(new QuoteItemStates(this.Strategy.Session).Draft)
-                || this.QuoteItemState.Equals(new QuoteItemStates(this.Strategy.Session).Submitted)
-                || this.QuoteItemState.Equals(new QuoteItemStates(this.Strategy.Session).Cancelled))
-            && !this.ExistEngagementItemsWhereQuoteItem
-            && !this.ExistOrderItemsWhereQuoteItem;
-
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistQuoteItemState)
