@@ -16,26 +16,12 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.PriceComponent.Interface),
-                new ChangedPattern(this.M.BasePrice.FromDate),
-                new ChangedPattern(this.M.BasePrice.ThroughDate),
-                new ChangedPattern(this.M.BasePrice.Price),
-                new ChangedPattern(this.M.BasePrice.Product),
-                new ChangedPattern(this.M.BasePrice.Part),
-                new ChangedPattern(this.M.BasePrice.ProductFeature),
-
-                new ChangedPattern(this.M.DiscountComponent.FromDate),
-                new ChangedPattern(this.M.DiscountComponent.ThroughDate),
-                new ChangedPattern(this.M.DiscountComponent.Price),
-                new ChangedPattern(this.M.DiscountComponent.Product),
-                new ChangedPattern(this.M.DiscountComponent.Part),
-                new ChangedPattern(this.M.DiscountComponent.ProductFeature),
-
-                new ChangedPattern(this.M.SurchargeComponent.FromDate),
-                new ChangedPattern(this.M.SurchargeComponent.ThroughDate),
-                new ChangedPattern(this.M.SurchargeComponent.Price),
-                new ChangedPattern(this.M.SurchargeComponent.Product),
-                new ChangedPattern(this.M.SurchargeComponent.Part),
-                new ChangedPattern(this.M.SurchargeComponent.ProductFeature),
+                new ChangedPattern(this.M.PriceComponent.FromDate),
+                new ChangedPattern(this.M.PriceComponent.ThroughDate),
+                new ChangedPattern(this.M.PriceComponent.Price),
+                new ChangedPattern(this.M.PriceComponent.Product),
+                new ChangedPattern(this.M.PriceComponent.Part),
+                new ChangedPattern(this.M.PriceComponent.ProductFeature),
 
                 new ChangedPattern(this.M.DiscountComponent.Percentage),
                 new ChangedPattern(this.M.SurchargeComponent.Percentage),

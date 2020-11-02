@@ -16,6 +16,8 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.PurchaseInvoice.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.PurchaseInvoice.BilledFrom),
+            new ChangedPattern(this.M.SalesInvoice.PurchaseInvoice) { Steps =  new IPropertyType[] {m.SalesInvoice.PurchaseInvoice} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

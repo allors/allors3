@@ -239,36 +239,6 @@ namespace Allors.Domain
             //this.ResetPrintDocument();
         }
 
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            //if (this.IsDeletable)
-            //{
-            //    this.RemoveDeniedPermission(deletePermission);
-            //}
-            //else
-            //{
-            //    this.AddDeniedPermission(deletePermission);
-            //}
-
-            //var revisePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Revise);
-            //if (this.BilledTo.DoAccounting)
-            //{
-            //    this.AddDeniedPermission(revisePermission);
-            //}
-
-            //if (!this.ExistSalesInvoiceWherePurchaseInvoice
-            //    && (this.BilledFrom as Organisation)?.IsInternalOrganisation == true
-            //    && (this.PurchaseInvoiceState.IsPaid || this.PurchaseInvoiceState.IsPartiallyPaid || this.PurchaseInvoiceState.IsNotPaid))
-            //{
-            //    this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
-            //}
-            //else
-            //{
-            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice));
-            //}
-        }
-
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)
