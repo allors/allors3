@@ -17,6 +17,7 @@ namespace Allors.Domain
         {
             new ChangedPattern(this.M.PurchaseInvoice.TransitionalDeniedPermissions),
             new ChangedPattern(this.M.PurchaseInvoice.BilledFrom),
+            new ChangedPattern(this.M.PurchaseInvoice.PurchaseInvoiceState),
             new ChangedPattern(this.M.SalesInvoice.PurchaseInvoice) { Steps =  new IPropertyType[] {m.SalesInvoice.PurchaseInvoice} },
         };
 
@@ -39,15 +40,16 @@ namespace Allors.Domain
                     @this.AddDeniedPermission(deletePermission);
                 }
 
+                var createSalesInvoicePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.CreateSalesInvoice);
                 if (!@this.ExistSalesInvoiceWherePurchaseInvoice
                     && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
                     && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.CreateSalesInvoice));
+                    @this.RemoveDeniedPermission(createSalesInvoicePermission);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.CreateSalesInvoice));
+                    @this.AddDeniedPermission(createSalesInvoicePermission);
                 }
             }
         }
