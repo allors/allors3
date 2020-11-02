@@ -16,6 +16,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.ProductQuote.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.ProductQuote.ValidQuoteItems),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,6 +27,30 @@ namespace Allors.Domain
             foreach (var @this in matches.Cast<ProductQuote>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+
+                var SetReadyPermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.SetReadyForProcessing);
+
+                if (@this.QuoteState.IsCreated)
+                {
+                    if (@this.ExistValidQuoteItems)
+                    {
+                        @this.RemoveDeniedPermission(SetReadyPermission);
+                    }
+                    else
+                    {
+                        @this.AddDeniedPermission(SetReadyPermission);
+                    }
+                }
+
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable())
+                {
+                    @this.RemoveDeniedPermission(deletePermission);
+                }
+                else
+                {
+                    @this.AddDeniedPermission(deletePermission);
+                }
             }
         }
     }

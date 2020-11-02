@@ -172,4 +172,167 @@ namespace Allors.Domain
             Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), quote.QuoteNumber.Split('-').Last())), quote.SortableQuoteNumber);
         }
     }
+
+    [Trait("Category", "Security")]
+    public class ProductQuoteSecurityTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProductQuoteSecurityTests(Fixture fixture) : base(fixture)
+        {
+            this.deletePermission = new Permissions(this.Session).Get(this.M.ProductQuote.ObjectType, this.M.ProductQuote.Delete);
+            this.setReadyPermission = new Permissions(this.Session).Get(this.M.ProductQuote.ObjectType, this.M.ProductQuote.SetReadyForProcessing);
+        }
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+        private readonly Permission setReadyPermission;
+
+
+        [Fact]
+        public void OnChangedProductQuoteQuoteItemStateCreatedDeriveSetReadyPermission()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                    .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                    .WithAssignedUnitPrice(1)
+                    .Build();
+            productQuote.AddQuoteItem(quoteItem);
+
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.setReadyPermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteWithoutQuoteItemStateCreatedDeriveSetReadyPermission()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteStateNotCreatedDeriveSetReadyPermission()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            productQuote.Send();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteStateCreatedDeriveDeletePermission()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteStateCreatedWithRequestDeriveDeletePermission()
+        {
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var productQuote = new ProductQuoteBuilder(this.Session).WithRequest(request).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteStateApprovalDeriveDeletePermission()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            productQuote.Send();
+            this.Session.Derive(false);
+
+            productQuote.Accept();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteStateOrderedWithSalesOrderDeriveDeletePermission()
+        {
+            var party = new PersonBuilder(this.Session).WithLastName("party").Build();
+
+            var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+             
+            var quote = new ProductQuoteBuilder(this.Session)
+                .WithReceiver(party)
+                .WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
+                .Build();
+
+            var item1 = new QuoteItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(1000).Build();
+            var item2 = new QuoteItemBuilder(this.Session).WithProduct(good).WithQuantity(3).WithAssignedUnitPrice(100).Build();
+
+            quote.AddQuoteItem(item1);
+            quote.AddQuoteItem(item2);
+
+            this.Session.Derive(false);
+
+            quote.Send();
+            this.Session.Derive(false);
+
+            quote.Accept();
+            this.Session.Derive(false);
+
+            quote.Send();
+            this.Session.Derive(false);
+
+            var productQuoteOrder = quote.Order();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class ProposalSecurityTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProposalSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+
+
+        [Fact]
+        public void OnChangedProposalStateCreatedDeriveDeletePermission()
+        {
+            var proposal = new ProposalBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, proposal.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedProposalStateZDeriveDeletePermission()
+        {
+            var proposal = new ProposalBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            proposal.Accept();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, proposal.DeniedPermissions);
+        }
+    }
 }

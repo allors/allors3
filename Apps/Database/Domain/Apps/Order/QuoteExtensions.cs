@@ -7,6 +7,27 @@ namespace Allors.Domain
 {
     public static partial class QuoteExtensions
     {
+        public static bool IsDeletable(this Quote @this)
+        {
+            var productQuote = @this as ProductQuote;
+
+            if(@this is ProductQuote)
+            {
+                return ((@this.QuoteState.Equals(new QuoteStates(@this.Strategy.Session).Created)
+                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Session).Cancelled)
+                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Session).Rejected))
+                  && !@this.ExistRequest
+                  && !productQuote.ExistSalesOrderWhereQuote);
+            }
+            else
+            {
+                return ((@this.QuoteState.Equals(new QuoteStates(@this.Strategy.Session).Created)
+                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Session).Cancelled)
+                  || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Session).Rejected))
+                  && !@this.ExistRequest);
+            }
+        } 
+
         public static void AppsOnBuild(this Quote @this, ObjectOnBuild method)
         {
             if (!@this.ExistQuoteState)
@@ -60,7 +81,7 @@ namespace Allors.Domain
             var propasal = @this as Proposal;
             var statementOfWork = @this as StatementOfWork;
 
-            if ((productQuote != null && productQuote.IsDeletable)
+            if ((productQuote != null && productQuote.IsDeletable())
                 || (propasal != null && propasal.IsDeletable)
                 || (statementOfWork != null && statementOfWork.IsDeletable))
             {

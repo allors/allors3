@@ -182,4 +182,81 @@ namespace Allors.Domain
             Assert.False(acl.CanExecute(this.M.PurchaseInvoice.CreateSalesInvoice));
         }
     }
+
+    [Trait("Category", "Security")]
+    public class PurchaseInvoiceSecurityDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceSecurityDerivationTests(Fixture fixture) : base(fixture)
+        {
+            this.deletePermission = new Permissions(this.Session).Get(this.M.PurchaseInvoice.ObjectType, this.M.PurchaseInvoice.Delete);
+            this.createSalesInvoicePermission = new Permissions(this.Session).Get(this.M.PurchaseInvoice.ObjectType, this.M.PurchaseInvoice.CreateSalesInvoice);
+        }
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+        private readonly Permission createSalesInvoicePermission;
+
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateCreatedDeriveDeletePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateApprovedDeriveDeletePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            purchaseInvoice.Approve();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateCreatedWithSalesInvoiceDeriveDeletePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateCreatedDeriveCreateSalesInvoicePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.createSalesInvoicePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateNotPaidWithInternalOrganisationDeriveCreateSalesInvoicePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            purchaseInvoice.Approve();
+            this.Session.Derive(false);
+
+            purchaseInvoice.SetPaid();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.createSalesInvoicePermission, purchaseInvoice.DeniedPermissions);
+        }
+    }
 }
