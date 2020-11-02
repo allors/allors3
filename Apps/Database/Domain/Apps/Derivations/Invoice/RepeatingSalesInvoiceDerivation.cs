@@ -26,30 +26,32 @@ namespace Allors.Domain
 
             foreach (var @this in matches.Cast<RepeatingSalesInvoice>())
             {
-                if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week))
+                if (@this.ExistFrequency)
                 {
-                    validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
-                }
-
-                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && !@this.ExistDayOfWeek)
-                {
-                    validation.AssertExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
-                }
-
-                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && @this.ExistDayOfWeek)
-                {
-                    validation.AssertNotExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
-                }
-
-                if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && @this.ExistDayOfWeek && @this.ExistNextExecutionDate)
-                {
-                    if (!@this.NextExecutionDate.DayOfWeek.ToString().Equals(@this.DayOfWeek.Name))
+                    if (!@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && !@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week))
                     {
-                        validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
+                        validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.Frequency} {ErrorMessages.FrequencyNotSupported}");
+                    }
+
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && !@this.ExistDayOfWeek)
+                    {
+                        validation.AssertExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
+                    }
+
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Month) && @this.ExistDayOfWeek)
+                    {
+                        validation.AssertNotExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
+                    }
+
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && @this.ExistDayOfWeek && @this.ExistNextExecutionDate)
+                    {
+                        if (!@this.NextExecutionDate.DayOfWeek.ToString().Equals(@this.DayOfWeek.Name))
+                        {
+                            validation.AddError($"{@this} {this.M.RepeatingSalesInvoice.DayOfWeek} {ErrorMessages.DateDayOfWeek}");
+                        }
                     }
                 }
             }
-
         }
     }
 }

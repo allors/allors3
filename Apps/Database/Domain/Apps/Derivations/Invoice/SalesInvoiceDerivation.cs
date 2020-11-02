@@ -49,8 +49,7 @@ namespace Allors.Domain
 
                 if (!@this.ExistStore && @this.ExistBilledFrom)
                 {
-                    var stores = new Stores(session).Extent();
-                    stores.Filter.AddEquals(this.M.Store.InternalOrganisation, @this.BilledFrom);
+                    var stores = @this.BilledFrom.StoresWhereInternalOrganisation;
                     @this.Store = stores.FirstOrDefault();
                 }
 

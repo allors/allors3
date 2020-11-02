@@ -2927,7 +2927,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnChangedOnChangedSalesInvoiceItemSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
+        public void OnChangedSalesInvoiceItemSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
             this.Session.Derive(false);
@@ -2940,7 +2940,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void OnChangedOnChangedSalesInvoiceItemSalesInvoiceItemStateCancelledDeriveDeletePermission()
+        public void OnChangedSalesInvoiceItemSalesInvoiceItemStateCancelledDeriveDeletePermission()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
             this.Session.Derive(false);
@@ -2950,6 +2950,18 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             invoiceItem.CancelFromInvoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedRepeatingSalesInvoiceSourceDeriveDeletePermission()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new RepeatingSalesInvoiceBuilder(this.Session).WithSource(invoice).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, invoice.DeniedPermissions);

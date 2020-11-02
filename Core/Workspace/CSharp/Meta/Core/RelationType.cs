@@ -17,6 +17,7 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public sealed partial class RelationType : MetaObjectBase, IRelationType, IComparable
     {
+        private static readonly IReadOnlyDictionary<Interface, RoleInterface> EmptyInterfaceByAssociationTypeInterface = new ReadOnlyDictionary<Interface, RoleInterface>(new Dictionary<Interface, RoleInterface>());
         private static readonly IReadOnlyDictionary<Class, RoleClass> EmptyRoleClassByAssociationTypeClass = new ReadOnlyDictionary<Class, RoleClass>(new Dictionary<Class, RoleClass>());
 
         private Multiplicity assignedMultiplicity;
@@ -28,6 +29,8 @@ namespace Allors.Workspace.Meta
 
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
+
+        private IReadOnlyDictionary<Interface, RoleInterface> derivedRoleInterfaceByAssociationTypeInterface = EmptyInterfaceByAssociationTypeInterface;
 
         private IReadOnlyDictionary<Class, RoleClass> derivedRoleClassByAssociationTypeClass = EmptyRoleClassByAssociationTypeClass;
 
@@ -45,14 +48,12 @@ namespace Allors.Workspace.Meta
 
             this.RoleType = associationTypeComposite switch
             {
-                Interface _ => new RoleInterface(this),
-                Class @class => new RoleClass(@class, this),
+                Interface _ => new RoleDefault(this),
+                Class @class => new RoleClass(this, @class),
             };
 
             this.MetaPopulation.OnRelationTypeCreated(this);
         }
-
-        //public Dictionary<string, bool> InternalWorkspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
         public IReadOnlyDictionary<string, IEnumerable<RoleClass>> WorkspaceRoleClassesByWorkspaceName
         {
@@ -172,6 +173,15 @@ namespace Allors.Workspace.Meta
 
         public RoleType RoleType { get; set; }
 
+        public IReadOnlyDictionary<Interface, RoleInterface> RoleInterfaceByAssociationTypeInterface
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.derivedRoleInterfaceByAssociationTypeInterface;
+            }
+        }
+
         public IReadOnlyDictionary<Class, RoleClass> RoleClassByAssociationTypeClass
         {
             get
@@ -184,9 +194,22 @@ namespace Allors.Workspace.Meta
         public RoleClass RoleClassBy(Class @class) =>
             this.RoleType switch
             {
+                RoleDefault roleDefaultInterface when this.RoleClassByAssociationTypeClass.ContainsKey(@class) => this.RoleClassByAssociationTypeClass[@class],
                 RoleClass roleClass when Equals(this.AssociationType.ObjectType, @class) => roleClass,
-                RoleInterface roleInterface when this.RoleClassByAssociationTypeClass.ContainsKey(@class) => this.RoleClassByAssociationTypeClass[@class],
                 _ => null,
+            };
+
+        public RoleType RoleTypeBy(IComposite composite) =>
+            composite switch
+            {
+                Class @class => this.RoleClassBy(@class),
+                Interface @interface => this.RoleType switch
+                {
+                    RoleDefault roleDefaultInterface when Equals(this.AssociationType.ObjectType, @interface) => roleDefaultInterface,
+                    _ when this.RoleInterfaceByAssociationTypeInterface.ContainsKey(@interface) => this.RoleInterfaceByAssociationTypeInterface[@interface],
+                    _ => null
+                },
+                _ => null
             };
 
         /// <summary>
@@ -291,6 +314,23 @@ namespace Allors.Workspace.Meta
             }
         }
 
+        internal void DeriveRoleInterfaces()
+        {
+            if (this.AssociationType.ObjectType is Interface @interface)
+            {
+                this.derivedRoleInterfaceByAssociationTypeInterface = @interface.Subinterfaces.ToDictionary(v => v,
+                    v =>
+                    {
+                        this.derivedRoleInterfaceByAssociationTypeInterface.TryGetValue(v, out var roleInterface);
+                        return roleInterface ?? new RoleInterface(this, v, (RoleDefault)this.RoleType);
+                    });
+            }
+            else
+            {
+                this.derivedRoleInterfaceByAssociationTypeInterface = EmptyInterfaceByAssociationTypeInterface;
+            }
+        }
+
         internal void DeriveRoleClasses()
         {
             if (this.AssociationType.ObjectType is Interface @interface)
@@ -298,7 +338,7 @@ namespace Allors.Workspace.Meta
                 this.derivedRoleClassByAssociationTypeClass = @interface.Classes.ToDictionary(v => v, v =>
                 {
                     this.derivedRoleClassByAssociationTypeClass.TryGetValue(v, out var roleClass);
-                    return roleClass ?? new RoleClass(v, this, (RoleInterface)this.RoleType);
+                    return roleClass ?? new RoleClass(this, v, (RoleDefault)this.RoleType);
                 });
             }
             else
