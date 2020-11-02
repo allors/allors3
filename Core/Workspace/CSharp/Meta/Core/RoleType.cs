@@ -19,6 +19,11 @@ namespace Allors.Workspace.Meta
 
         protected RoleType(RelationType relationType) : base(relationType.MetaPopulation) => this.RelationType = relationType;
 
+        public bool ExistDefault => this.Default != null;
+
+        IRoleDefault IRoleType.Default => this.Default;
+        public abstract RoleDefault Default { get; }
+
         public override Origin Origin => this.RelationType.Origin;
 
         public RelationType RelationType { get; }
@@ -30,6 +35,9 @@ namespace Allors.Workspace.Meta
         /// <value>The association.</value>
         public AssociationType AssociationType => this.RelationType.AssociationType;
         IAssociationType IRoleType.AssociationType => this.AssociationType;
+
+        IComposite IRoleType.AssociationTypeComposite => this.AssociationTypeComposite;
+        public abstract Composite AssociationTypeComposite { get; }
 
         public abstract ObjectType ObjectType { get; set; }
 
@@ -91,9 +99,9 @@ namespace Allors.Workspace.Meta
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance has a multiplicity of one.
+        /// Gets a value indicating whether this state has a multiplicity of one.
         /// </summary>
-        /// <value><c>true</c> if this instance is one; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if this state is one; otherwise, <c>false</c>.</value>
         public bool IsOne => !this.IsMany;
 
         public abstract int? Size { get; set; }
@@ -113,7 +121,7 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The role value.
         ///// </returns>
-        //public object Instantiate(IStrategy strategy) => strategy.GetRole(this.RelationType);
+        public object Get(IStrategy strategy) => strategy.Get(this.RelationType.RoleType);
 
         ///// <summary>
         ///// Set the value of the role on this object.
@@ -124,7 +132,7 @@ namespace Allors.Workspace.Meta
         ///// <param name="value">
         ///// The role value.
         ///// </param>
-        //public void Set(IStrategy strategy, object value) => strategy.SetRole(this.RelationType, value);
+        public void Set(IStrategy strategy, object value) => strategy.Set(this.RelationType.RoleType, value);
 
         public override bool Equals(object other) => this.RelationType.Id.Equals((other as RoleType)?.RelationType.Id);
 
@@ -147,7 +155,7 @@ namespace Allors.Workspace.Meta
         /// <returns>
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
-        public override string ToString() => this.RelationType.ToString();
+        public override string ToString() => $"{this.AssociationType.ObjectType.Name}.{this.Name}";
 
         /// <summary>
         /// Derive multiplicity, scale and size.

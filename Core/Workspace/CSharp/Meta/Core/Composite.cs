@@ -8,6 +8,7 @@ namespace Allors.Workspace.Meta
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
 
     public abstract partial class Composite : ObjectType, IComposite
@@ -27,7 +28,7 @@ namespace Allors.Workspace.Meta
 
         protected Composite(MetaPopulation metaPopulation, Guid id) : base(metaPopulation, id) => this.AssignedOrigin = Origin.Database;
 
-        //public Dictionary<string, bool> InternalWorkspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
+        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
 
         public override Origin Origin => this.AssignedOrigin;
 
@@ -220,7 +221,7 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<AssociationType> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Database);
 
-        #region InternalWorkspace
+        #region Workspace
 
         public IEnumerable<Composite> RelatedComposites
         {
@@ -260,7 +261,7 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<AssociationType> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.HasSessionOrigin);
 
-        #endregion InternalWorkspace
+        #endregion Workspace
 
         public IEnumerable<IAssociationType> DatabaseAssociationTypes
         {
@@ -325,6 +326,17 @@ namespace Allors.Workspace.Meta
                 return this.WorkspaceNames
                     .ToDictionary(v => v,
                         v => this.RoleTypes.Where(w => w.ObjectType.IsComposite && w.RelationType.WorkspaceNames.Contains(v)));
+            }
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<RoleType>> WorkspaceExclusiveRoleTypesByWorkspaceName
+        {
+            get
+            {
+                this.MetaPopulation.Derive();
+                return this.WorkspaceNames
+                    .ToDictionary(v => v,
+                        v => this.ExclusiveRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)));
             }
         }
 

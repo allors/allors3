@@ -13,9 +13,10 @@ namespace Allors.Domain
     public class ProductQuoteDerivation : DomainDerivation
     {
         public ProductQuoteDerivation(M m) : base(m, new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218")) =>
-            this.Patterns = new[]
+            this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.ProductQuote.Class)
+                new CreatedPattern(this.M.ProductQuote.Class),
+                new ChangedPattern(this.M.ProductQuote.QuoteItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -269,29 +270,6 @@ namespace Allors.Domain
 
                 @this.ResetPrintDocument();
 
-                var SetReadyPermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.SetReadyForProcessing);
-
-                if (@this.QuoteState.IsCreated)
-                {
-                    if (@this.ExistValidQuoteItems)
-                    {
-                        @this.RemoveDeniedPermission(SetReadyPermission);
-                    }
-                    else
-                    {
-                        @this.AddDeniedPermission(SetReadyPermission);
-                    }
-                }
-
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
             }
 
             void CalculatePrices(
@@ -304,13 +282,17 @@ namespace Allors.Domain
                 var quoteItemDeriveRoles = quoteItem;
 
                 var currentGenericOrProductOrFeaturePriceComponents = Array.Empty<PriceComponent>();
-                if (quoteItem.ExistProduct)
+
+                if (currentPriceComponents != null)
                 {
-                    currentGenericOrProductOrFeaturePriceComponents = quoteItem.Product.GetPriceComponents(currentPriceComponents);
-                }
-                else if (quoteItem.ExistProductFeature)
-                {
-                    currentGenericOrProductOrFeaturePriceComponents = quoteItem.ProductFeature.GetPriceComponents(quoteItem.QuoteItemWhereQuotedWithFeature.Product, currentPriceComponents);
+                    if (quoteItem.ExistProduct)
+                    {
+                        currentGenericOrProductOrFeaturePriceComponents = quoteItem.Product?.GetPriceComponents(currentPriceComponents);
+                    }
+                    else if (quoteItem.ExistProductFeature)
+                    {
+                        currentGenericOrProductOrFeaturePriceComponents = quoteItem.ProductFeature?.GetPriceComponents(quoteItem.QuoteItemWhereQuotedWithFeature.Product, currentPriceComponents);
+                    }
                 }
 
                 var priceComponents = currentGenericOrProductOrFeaturePriceComponents.Where(

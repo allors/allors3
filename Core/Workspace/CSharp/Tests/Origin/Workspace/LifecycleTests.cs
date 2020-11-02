@@ -3,27 +3,25 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Session.ToDatabase
+namespace Tests.Workspace.Origin.Workspace
 {
-    using System.Linq;
-    using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
     public class LifecycleTests : Test
     {
         [Fact]
-        public async void SetRole()
+        public async void Instantiate()
         {
             var session1 = this.Workspace.CreateSession();
 
-            var sessionOrganisation1 = session1.Create<SessionOrganisation>();
-            
+            var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
+
             var session2 = this.Workspace.CreateSession();
 
-            var sessionOrganisation2 = session2.Instantiate(sessionOrganisation1);
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
 
-            Assert.Null(sessionOrganisation2);
+            Assert.NotNull(workspaceOrganisation1);
         }
     }
 }

@@ -96,8 +96,6 @@ namespace Allors.Workspace.Meta
 
         public IEnumerable<MethodType> MethodTypes => this.methodTypes;
 
-        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
-
         public IEnumerable<Composite> Composites
         {
             get
@@ -106,6 +104,8 @@ namespace Allors.Workspace.Meta
                 return this.derivedComposites;
             }
         }
+
+        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
 
         public IEnumerable<Composite> SortedComposites => this.Composites.OrderBy(v => v.Name);
 
@@ -354,12 +354,12 @@ namespace Allors.Workspace.Meta
                     unit.Bind();
                 }
 
-                foreach (var @interface in this.Interfaces)
+                foreach (Interface @interface in this.DatabaseInterfaces)
                 {
                     @interface.Bind(typeByName);
                 }
 
-                foreach (var @class in this.Classes)
+                foreach (Class @class in this.DatabaseClasses)
                 {
                     @class.Bind(typeByName);
                 }
@@ -369,7 +369,7 @@ namespace Allors.Workspace.Meta
 
                 var actionByMethodInfoByType = new Dictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
 
-                foreach (var @class in this.Classes)
+                foreach (Class @class in this.DatabaseClasses)
                 {
                     foreach (MethodClass concreteMethodType in @class.MethodTypes)
                     {
@@ -460,6 +460,12 @@ namespace Allors.Workspace.Meta
                     foreach (var type in this.Interfaces)
                     {
                         type.DeriveExclusiveSubclass();
+                    }
+
+                    // RoleClasses
+                    foreach (var relationType in this.RelationTypes)
+                    {
+                        relationType.DeriveRoleInterfaces();
                     }
 
                     // RoleClasses
@@ -678,6 +684,12 @@ namespace Allors.Workspace.Meta
             }
 
             return false;
+        }
+
+        public RoleType RoleType(IComposite association, string relationTypeId)
+        {
+            var relationType = ((RelationType)this.Find(new Guid(relationTypeId)));
+            return relationType.RoleTypeBy(association);
         }
     }
 }

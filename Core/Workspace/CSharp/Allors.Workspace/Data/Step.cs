@@ -15,6 +15,10 @@ namespace Allors.Workspace.Data
         {
         }
 
+        public Step(params IPropertyType[] propertyTypes) : this(propertyTypes, 0)
+        {
+        }
+
         internal Step(IPropertyType[] propertyTypes, int index)
         {
             this.PropertyType = propertyTypes[index];
@@ -74,19 +78,19 @@ namespace Allors.Workspace.Data
             name.Append(this.PropertyType.Name);
             if (this.ExistNext)
             {
-                this.Next.AppendToName(name);
+                this.Next.ToStringAppendToName(name);
             }
 
             return name.ToString();
         }
 
-        private void AppendToName(StringBuilder name)
+        private void ToStringAppendToName(StringBuilder name)
         {
             name.Append("." + this.PropertyType.Name);
 
             if (this.ExistNext)
             {
-                this.Next.AppendToName(name);
+                this.Next.ToStringAppendToName(name);
             }
         }
     }

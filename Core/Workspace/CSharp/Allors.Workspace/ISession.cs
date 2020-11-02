@@ -9,6 +9,7 @@ namespace Allors.Workspace
     using Protocol.Database.Invoke;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
+    using System.Collections.Generic;
 
     public interface ISession
     {
@@ -23,6 +24,8 @@ namespace Allors.Workspace
         T Instantiate<T>(T @object) where T : IObject;
 
         IObject Instantiate(long id);
+
+        IEnumerable<IObject> Instantiate(IEnumerable<long> ids);
 
         void Reset();
 

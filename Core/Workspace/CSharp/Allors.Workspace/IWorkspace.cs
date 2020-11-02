@@ -5,6 +5,9 @@
 
 namespace Allors.Workspace
 {
+    using System;
+    using System.Collections.Generic;
+    using Derivations;
     using Meta;
 
     public interface IWorkspace
@@ -15,6 +18,12 @@ namespace Allors.Workspace
 
         IWorkspaceStateLifecycle StateLifecycle { get; }
 
+        IEnumerable<ISession> Sessions { get; }
+
         ISession CreateSession();
+
+        IChangeSet Checkpoint();
+
+        IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
     }
 }

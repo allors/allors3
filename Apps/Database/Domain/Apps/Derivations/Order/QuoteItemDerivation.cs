@@ -94,7 +94,7 @@ namespace Allors.Domain
                 }
 
                 var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.IsDeletable)
+                if (@this.QuoteWhereQuoteItem.IsDeletable())
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

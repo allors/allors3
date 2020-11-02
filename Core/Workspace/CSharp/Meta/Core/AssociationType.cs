@@ -150,7 +150,7 @@ namespace Allors.Workspace.Meta
         ///// <returns>
         ///// The association value.
         ///// </returns>
-        //public object Instantiate(IStrategy strategy) => strategy.GetAssociation(this.RelationType);
+        public object Get(IStrategy strategy) => strategy.GetAssociation(this);
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -158,17 +158,7 @@ namespace Allors.Workspace.Meta
         /// <returns>
         /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </returns>
-        public override string ToString()
-        {
-            try
-            {
-                return this.RelationType.ToString();
-            }
-            catch
-            {
-                return base.ToString();
-            }
-        }
+        public override string ToString() => $"{this.RoleType.ObjectType.Name}.{this.DisplayName}";
 
         /// <summary>
         /// Validates this object.

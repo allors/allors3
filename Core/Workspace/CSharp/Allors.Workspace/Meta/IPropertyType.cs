@@ -23,6 +23,6 @@ namespace Allors.Workspace.Meta
 
         bool IsMany { get; }
 
-        //object Instantiate(IStrategy strategy);
+        object Get(IStrategy strategy);
     }
 }

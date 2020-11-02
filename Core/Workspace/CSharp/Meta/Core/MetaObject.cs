@@ -18,6 +18,8 @@ namespace Allors.Workspace.Meta
 
         public abstract Origin Origin { get; }
 
+        public int OriginAsInt => (int)this.Origin;
+
         public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
         public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
