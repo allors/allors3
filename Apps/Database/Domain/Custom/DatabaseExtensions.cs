@@ -131,6 +131,7 @@ namespace Allors.Domain
                 new PaymentDerivation(m),
                 new PurchaseInvoiceApprovalDerivation(m),
                 new SalesInvoiceItemDerivation(m),
+                new SalesInvoiceItemCreateDerivation(m),
                 new RepeatingPurchaseInvoiceDerivation(m),
                 new RepeatingSalesInvoiceDerivation(m),
                 new SalesInvoiceDerivation(m),

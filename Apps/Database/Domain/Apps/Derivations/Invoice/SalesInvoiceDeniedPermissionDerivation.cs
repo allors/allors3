@@ -18,6 +18,7 @@ namespace Allors.Domain
         {
             new ChangedPattern(this.M.SalesInvoice.TransitionalDeniedPermissions),
             new ChangedPattern(this.M.SalesInvoiceItem.SalesInvoiceItemState) { Steps = new IPropertyType[] {m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem } },
+            new ChangedPattern(this.M.RepeatingSalesInvoice.Source) { Steps = new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,8 +35,7 @@ namespace Allors.Domain
                     @this.SalesInvoiceItems.All(v => v.IsDeletable) &&
                     !@this.ExistSalesOrders &&
                     !@this.ExistPurchaseInvoice &&
-                    !@this.ExistRepeatingSalesInvoiceWhereSource &&
-                    !@this.IsRepeatingInvoice)
+                    !@this.ExistRepeatingSalesInvoiceWhereSource)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

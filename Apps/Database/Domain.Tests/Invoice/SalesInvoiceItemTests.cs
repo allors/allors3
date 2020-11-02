@@ -1959,4 +1959,65 @@ namespace Allors.Domain
             this.vatRate21 = (VatRate)session.Instantiate(this.vatRate21);
         }
     }
+
+    public class SalesInvoiceItemCreateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void DeriveDerivationTrigger()
+        {
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(invoiceitem.ExistDerivationTrigger);
+        }
+    }
+
+    public class SalesInvoiceItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBilledFromDeriveStore()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.Store, new Stores(this.Session).Extent().First);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class SalesInvoiceItemDeletePermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceItemDeletePermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoiceItem.ObjectType, this.M.SalesInvoice.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
+        {
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, invoiceItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesInvoiceItemStateCancelledDeriveDeletePermission()
+        {
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoiceItem.CancelFromInvoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, invoiceItem.DeniedPermissions);
+        }
+    }
 }
