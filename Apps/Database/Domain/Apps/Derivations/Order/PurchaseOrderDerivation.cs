@@ -283,66 +283,6 @@ namespace Allors.Domain
 
                 @this.ResetPrintDocument();
 
-                if (CanInvoice(@this))
-                {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
-                }
-                else
-                {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
-                }
-
-                if (CanRevise(@this))
-                {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
-                }
-                else
-                {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
-                }
-
-                if (@this.IsReceivable)
-                {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.QuickReceive));
-                }
-                else
-                {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.QuickReceive));
-                }
-
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (IsDeletable(@this))
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
-
-                if (!@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
-                {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Reject));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Cancel));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.QuickReceive));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Revise));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.SetReadyForProcessing));
-
-                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
-
-                    foreach (Permission permission in @this.Session().Extent<Permission>())
-                    {
-                        if (permission.ClassPointer == @this.Strategy.Class.Id && permission.Operation == Operations.Write)
-                        {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
-                        }
-                    }
-
-                    foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-                    {
-                        @this.AddDeniedPermission(keyValuePair.Value);
-                    }
-                }
             }
         }
     }

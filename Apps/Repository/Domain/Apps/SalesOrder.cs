@@ -523,6 +523,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         public VatClause DerivedVatClause { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
         #region Allors
 
         [Id("393446ab-59ea-4f23-b1bc-f8fd4e3dfb1b")]

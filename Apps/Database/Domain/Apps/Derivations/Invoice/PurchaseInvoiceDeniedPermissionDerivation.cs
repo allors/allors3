@@ -17,7 +17,6 @@ namespace Allors.Domain
         {
             new ChangedPattern(this.M.PurchaseInvoice.TransitionalDeniedPermissions),
             new ChangedPattern(this.M.PurchaseInvoice.BilledFrom),
-            new ChangedPattern(this.M.PurchaseInvoice.PurchaseInvoiceState),
             new ChangedPattern(this.M.SalesInvoice.PurchaseInvoice) { Steps =  new IPropertyType[] {m.SalesInvoice.PurchaseInvoice} },
         };
 
