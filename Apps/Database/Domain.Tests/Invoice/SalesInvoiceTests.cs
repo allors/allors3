@@ -155,22 +155,22 @@ namespace Allors.Domain
         {
             var customer = new OrganisationBuilder(this.Session)
                 .WithName("customer")
-
                 .Build();
+
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            new SalesInvoiceBuilder(this.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
                 .WithBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
-            var expectedError = ErrorMessages.PartyIsNotACustomer;
+            var expectedError = $"{salesInvoice} {this.M.SalesInvoice.BillToCustomer} {ErrorMessages.PartyIsNotACustomer}";
             Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
@@ -189,7 +189,7 @@ namespace Allors.Domain
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            new SalesInvoiceBuilder(this.Session)
+            var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(billtoCcustomer)
                 .WithShipToCustomer(shipToCustomer)
@@ -197,12 +197,12 @@ namespace Allors.Domain
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
-            var expectedError = ErrorMessages.PartyIsNotACustomer;
-            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+            var expectedError = $"{salesInvoice} {this.M.SalesInvoice.ShipToCustomer} {ErrorMessages.PartyIsNotACustomer}";
+            Assert.Contains(expectedError, this.Session.Derive(false).Errors.Select(v => v.Message));
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(shipToCustomer).Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.DoesNotContain(expectedError, this.Session.Derive(false).Errors.Select(v => v.Message));
         }
 
         [Fact]

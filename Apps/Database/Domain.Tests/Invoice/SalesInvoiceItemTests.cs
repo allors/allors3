@@ -1885,7 +1885,6 @@ namespace Allors.Domain
             Assert.Equal(0, item1.TotalSurcharge);
         }
 
-
         [Fact]
         public void GiveninvoiceItem_WhenPartialPaymentIsReceived_ThenInvoiceItemStateIsSetToPartiallyPaid()
         {
@@ -1899,7 +1898,9 @@ namespace Allors.Domain
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
+            this.Session.Derive();
 
+            this.invoice.Send();
             this.Session.Derive();
 
             new ReceiptBuilder(this.Session)
@@ -1927,7 +1928,9 @@ namespace Allors.Domain
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);
+            this.Session.Derive();
 
+            this.invoice.Send();
             this.Session.Derive();
 
             new ReceiptBuilder(this.Session)
