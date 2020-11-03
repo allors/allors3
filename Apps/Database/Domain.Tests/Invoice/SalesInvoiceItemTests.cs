@@ -2250,6 +2250,73 @@ namespace Allors.Domain
 
             Assert.Equal(irpfRegime.IrpfRate, invoiceItem.IrpfRate);
         }
+
+        [Fact]
+        public void OnChangedRolePaymentApplicationAmountAppliedDeriveAmountPaid()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoiceItem.AmountPaid);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateCancelled()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.CancelInvoice();
+            this.Session.Derive(false);
+
+            Assert.Equal(new SalesInvoiceItemStates(this.Session).CancelledByInvoice, invoiceItem.SalesInvoiceItemState);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateWrittenOff()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.WriteOff();
+            this.Session.Derive(false);
+
+            Assert.Equal(new SalesInvoiceItemStates(this.Session).WrittenOff, invoiceItem.SalesInvoiceItemState);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateReadyForPosting()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            salesInvoice.CancelInvoice();
+            this.Session.Derive(false);
+
+            salesInvoice.Reopen();
+            this.Session.Derive(false);
+
+            Assert.Equal(new SalesInvoiceItemStates(this.Session).ReadyForPosting, invoiceItem.SalesInvoiceItemState);
+        }
     }
 
     [Trait("Category", "Security")]
