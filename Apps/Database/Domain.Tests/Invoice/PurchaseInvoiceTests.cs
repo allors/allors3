@@ -184,9 +184,9 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class PurchaseInvoiceSecurityDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceSecurityDerivationTests(Fixture fixture) : base(fixture)
+        public PurchaseInvoiceDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Session).Get(this.M.PurchaseInvoice.ObjectType, this.M.PurchaseInvoice.Delete);
             this.createSalesInvoicePermission = new Permissions(this.Session).Get(this.M.PurchaseInvoice.ObjectType, this.M.PurchaseInvoice.CreateSalesInvoice);

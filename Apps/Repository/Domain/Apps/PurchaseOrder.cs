@@ -317,6 +317,8 @@ namespace Allors.Repository
         [Derived]
         public bool OverDue { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

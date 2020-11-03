@@ -301,4 +301,284 @@ namespace Allors.Domain
             Assert.Equal(new PurchaseOrderItemStates(this.Session).InProcess, item3.PurchaseOrderItemState);
         }
     }
+
+    [Trait("Category", "Security")]
+    public class PurchaseOrderSecurityTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderSecurityTests(Fixture fixture) : base(fixture)
+        {
+            this.deletePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Delete);
+            this.setReadyPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.SetReadyForProcessing);
+            this.invoicePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Invoice);
+            this.revisePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Revise);
+            this.quickReceivePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.QuickReceive);
+            this.rejectPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Reject);
+            this.cancelPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Cancel);
+        }
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+        private readonly Permission setReadyPermission;
+        private readonly Permission invoicePermission;
+        private readonly Permission revisePermission;
+        private readonly Permission quickReceivePermission;
+        private readonly Permission rejectPermission;
+        private readonly Permission cancelPermission;
+
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateIsCompletedDeriveInvoicePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.invoicePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateApproveDeriveInvoicePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.invoicePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateIsCompletedWithoutValidItemsDeriveInvoicePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.invoicePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateIsCompletedDeriveRevisePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.revisePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedDeriveRevisePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.revisePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateIsCompletedWithPurchaseInvoiceDeriveRevisePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            purchaseOrder.Invoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.revisePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateSentDeriveQuickReceivePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedDeriveQuickReceivePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateSentWithoutRecievableItemsDeriveQuickReceivePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(false)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedDeriveDeletePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateSentDeriveDeletePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateSentWithPurchaseInvoiceDeriveDeletePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            purchaseOrder.Approve();
+            this.Session.Derive(false);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
+
+            purchaseOrder.Invoice();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedWithSerialisedItemDeriveDeletePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItems = new SerialisedItemBuilder(this.Session).Build();
+
+            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedWithWorkEffortPurchaseOrderItemAssignmentDeriveDeletePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workEffortPurchaseOrderItemAssignments = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Session).Build();
+            
+            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedWithNotDeletablePurchaseOrderItemsDeriveDeletePermission()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrderItem.Approve();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+    }
 }
