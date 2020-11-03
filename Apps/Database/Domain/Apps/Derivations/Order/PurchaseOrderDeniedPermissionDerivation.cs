@@ -17,6 +17,8 @@ namespace Allors.Domain
         {
             new ChangedPattern(this.M.PurchaseOrder.TransitionalDeniedPermissions),
             new ChangedPattern(this.M.PurchaseOrder.DerivationTrigger),
+            new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderShipmentState),
+            new ChangedPattern(this.M.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder) { Steps =  new IPropertyType[] {m.WorkEffortPurchaseOrderItemAssignment.PurchaseOrder} },
             new ChangedPattern(this.M.PurchaseInvoice.PurchaseOrders) { Steps =  new IPropertyType[] {m.PurchaseInvoice.PurchaseOrders} },
             new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState) { Steps =  new IPropertyType[] {m.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem} },
         };
