@@ -8,10 +8,7 @@ namespace Allors.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using Allors.Domain.Derivations;
     using Allors.Meta;
-    using Resources;
 
     public class SalesInvoiceItemCreateDerivation : DomainDerivation
     {
@@ -25,6 +22,16 @@ namespace Allors.Domain
         {
             foreach (var @this in matches.Cast<SalesInvoiceItem>())
             {
+                if (!@this.ExistSalesInvoiceItemState)
+                {
+                    @this.SalesInvoiceItemState = new SalesInvoiceItemStates(@this.Strategy.Session).ReadyForPosting;
+                }
+
+                if (@this.ExistProduct && !@this.ExistInvoiceItemType)
+                {
+                    @this.InvoiceItemType = new InvoiceItemTypes(@this.Strategy.Session).ProductItem;
+                }
+
                 if (!@this.ExistDerivationTrigger)
                 {
                     @this.DerivationTrigger = Guid.NewGuid();

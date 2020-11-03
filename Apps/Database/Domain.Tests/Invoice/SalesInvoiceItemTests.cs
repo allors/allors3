@@ -1972,6 +1972,27 @@ namespace Allors.Domain
         public SalesInvoiceItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void DeriveSalesInvoiceItemState()
+        {
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(new SalesInvoiceItemStates(this.Session).ReadyForPosting, invoiceitem.SalesInvoiceItemState);
+        }
+
+        [Fact]
+        public void DeriveInvoiceItemType()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var invoiceitem = new SalesInvoiceItemBuilder(this.Session).WithProduct(product).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(new InvoiceItemTypes(this.Session).ProductItem, invoiceitem.InvoiceItemType);
+        }
+
+        [Fact]
         public void DeriveDerivationTrigger()
         {
             var invoiceitem = new SalesInvoiceItemBuilder(this.Session).Build();
@@ -2323,9 +2344,9 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class SalesInvoiceItemDeletePermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemDeletePermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoiceItem.ObjectType, this.M.SalesInvoice.Delete);
+        public SalesInvoiceItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoiceItem.ObjectType, this.M.SalesInvoice.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
