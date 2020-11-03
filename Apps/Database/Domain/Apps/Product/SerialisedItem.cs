@@ -209,19 +209,19 @@ namespace Allors.Domain
 
         public void AppsDerivePurchaseOrder(SerialisedItemDerivePurchaseOrder method)
         {
-            if (!method.Result.HasValue)
-            {
-                this.PurchaseOrder = this.PurchaseOrderItemsWhereSerialisedItem
-                    .LastOrDefault(v => v.ExistOrderWhereValidOrderItem
-                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
-                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem))
-                                        && (((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Sent)
-                                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Completed)
-                                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Finished)))?
-                    .PurchaseOrderWherePurchaseOrderItem;
+            //if (!method.Result.HasValue)
+            //{
+            //this.PurchaseOrder = this.PurchaseOrderItemsWhereSerialisedItem
+            //    .LastOrDefault(v => v.ExistOrderWhereValidOrderItem
+            //                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
+            //                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem))
+            //                        && (((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Sent)
+            //                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Completed)
+            //                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Finished)))?
+            //    .PurchaseOrderWherePurchaseOrderItem;
 
-                method.Result = true;
-            }
+            //    method.Result = true;
+            //}
         }
 
         public void AppsDerivePurchaseInvoice(SerialisedItemDerivePurchaseInvoice method)

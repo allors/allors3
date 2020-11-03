@@ -47,6 +47,7 @@ namespace Allors.Domain
                 new SalesOrderItemDeniedPermissionDerivation(m),
                 new SalesOrderDeniedPermissionDerivation(m),
                 new SerialisedInventoryItemDeniedPermissionDerivation(m),
+                new SerialisedItemPurchasedOrderDervivation(m),
                 new ShipmentItemDeniedPermissionDerivation(m),
                 new StatementOfWorkDeniedPermissionDerivation(m),
                 new TransferDeniedPermissionDerivation(m),

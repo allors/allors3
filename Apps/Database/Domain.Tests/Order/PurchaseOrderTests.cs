@@ -7,6 +7,7 @@
 namespace Allors.Domain
 {
     using System.Linq;
+    using Allors.Domain.TestPopulation;
     using Resources;
     using Xunit;
 
@@ -543,10 +544,20 @@ namespace Allors.Domain
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedWithSerialisedItemDeriveDeletePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
             this.Session.Derive(false);
 
-            var serialisedItems = new SerialisedItemBuilder(this.Session).Build();
+            var serializedPart = new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
+            var serializedItem = new SerialisedItemBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+            serializedPart.AddSerialisedItem(serializedItem);
+
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
         }
@@ -577,7 +588,6 @@ namespace Allors.Domain
 
             purchaseOrderItem.Approve();
             this.Session.Derive(false);
-
             Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
         }
     }
