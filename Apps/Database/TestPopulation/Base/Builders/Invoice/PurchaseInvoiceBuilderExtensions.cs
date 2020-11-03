@@ -50,9 +50,6 @@ namespace Allors.Domain.TestPopulation
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Defaullt).Build();
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Product).Build();
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Part).Build();
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Session).WithDefaults().Build());
 
             return @this;
         }
@@ -84,9 +81,6 @@ namespace Allors.Domain.TestPopulation
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Defaullt);
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Product);
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Part);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Session).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Session).WithDefaults().Build());
             @this.WithVatRegime(faker.Random.ListItem(@this.Session.Extent<VatRegime>()));
 
             return @this;
