@@ -117,8 +117,6 @@ namespace Allors.Domain
 
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 
-                    // TODO 1 loop instead of 2 loops?
-
                     foreach (Permission permission in @this.Session().Extent<Permission>())
                     {
                         if (permission.ClassPointer == @this.Strategy.Class.Id && permission.Operation == Operations.Write)

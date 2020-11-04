@@ -12,9 +12,9 @@ namespace Allors.Domain
     using Derivations;
     using Resources;
 
-    public class SerialisedItemPurchasedOrderDervivation : DomainDerivation
+    public class SerialisedItemPurchaseOrderDervivation : DomainDerivation
     {
-        public SerialisedItemPurchasedOrderDervivation(M m) : base(m, new Guid("401c31c7-09cf-4091-aee1-eccc460b8578")) =>
+        public SerialisedItemPurchaseOrderDervivation(M m) : base(m, new Guid("401c31c7-09cf-4091-aee1-eccc460b8578")) =>
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.PurchaseOrderItem.SerialisedItem) { Steps = new IPropertyType[] {m.PurchaseOrderItem.SerialisedItem} },

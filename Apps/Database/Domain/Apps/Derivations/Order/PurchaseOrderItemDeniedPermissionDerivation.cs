@@ -15,10 +15,11 @@ namespace Allors.Domain
         public PurchaseOrderItemDeniedPermissionDerivation(M m) : base(m, new Guid("68b556f7-00ae-49a7-8d51-49c52ae18b4d")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.PurchaseOrderItem.TransitionalDeniedPermissions),
-            new ChangedPattern(this.M.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { this.M.OrderItemBilling.OrderItem}},
-            new ChangedPattern(this.M.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { this.M.OrderRequirementCommitment.OrderItem}},
-            new ChangedPattern(this.M.WorkEffort.OrderItemFulfillment) { Steps = new IPropertyType[] { this.M.WorkEffort.OrderItemFulfillment}},
+            new ChangedPattern(m.PurchaseOrderItem.TransitionalDeniedPermissions),
+            new ChangedPattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}},
+            new ChangedPattern(m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}},
+            new ChangedPattern(m.WorkEffort.OrderItemFulfillment) { Steps = new IPropertyType[] { m.WorkEffort.OrderItemFulfillment}},
+            new ChangedPattern(m.OrderShipment.OrderItem) { Steps = new IPropertyType[] { m.OrderShipment.OrderItem}, OfType = m.PurchaseOrderItem.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

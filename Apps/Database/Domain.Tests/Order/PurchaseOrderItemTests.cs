@@ -982,17 +982,25 @@ namespace Allors.Domain
         [Fact]
         public void OnChangedPurchaseOrderItemStateCreatedWithOrderShipmentDeriveDeletePermission()
         {
-            //TODO Is order nodig?
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session)
+                .WithDefaults(this.InternalOrganisation)
+                .Build();
             this.Session.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithNonSerializedPartDefaults(part)
+                .Build();
 
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Session.Derive(false);
 
-            var orderShipment = new OrderShipmentBuilder(this.Session)
-                .WithOrderItem(purchaseOrderItem).Build();
+            purchaseOrder.Send();
+
+            this.Session.Derive(false);
+
+            purchaseOrder.QuickReceive();
 
             this.Session.Derive(false);
 

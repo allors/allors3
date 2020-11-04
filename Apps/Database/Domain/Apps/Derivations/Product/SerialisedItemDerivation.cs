@@ -34,11 +34,6 @@ namespace Allors.Domain
                     @this.Name = @this.PartWhereSerialisedItem.Name;
                 }
 
-                // TODO: Martien
-                //serialisedItem.DerivePurchaseOrder();
-                //serialisedItem.DerivePurchaseInvoice();
-                //serialisedItem.DerivePurchasePrice();
-
                 @this.SuppliedBy = @this.AssignedSuppliedBy ??
                     @this.PurchaseOrder?.TakenViaSupplier ??
                     @this.PartWhereSerialisedItem?.SupplierOfferingsWherePart?.FirstOrDefault()?.Supplier;

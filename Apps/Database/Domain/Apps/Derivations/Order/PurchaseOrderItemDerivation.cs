@@ -19,6 +19,7 @@ namespace Allors.Domain
             {
                 new CreatedPattern(this.M.PurchaseOrderItem.Class),
                 new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState),
+                new ChangedPattern(this.M.PurchaseOrderItem.IsReceivable),
                 // new ChangedPattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
             };
 
@@ -38,9 +39,6 @@ namespace Allors.Domain
                 {
                     @this.StoredInFacility = @this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
                 }
-
-                // TODO: Martien
-                //purchaseOrderItem.DeriveIsReceivable();
 
                 if (!@this.ExistPurchaseOrderItemShipmentState)
                 {
