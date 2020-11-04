@@ -2019,7 +2019,7 @@ namespace Allors.Domain
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            Assert.True(errors.Any(e => e.Message.StartsWith("AssertExistsAtMostOne")));
         }
 
         [Fact]
@@ -2034,7 +2034,7 @@ namespace Allors.Domain
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            Assert.True(errors.Any(e => e.Message.StartsWith("AssertExistsAtMostOne")));
         }
 
         [Fact]

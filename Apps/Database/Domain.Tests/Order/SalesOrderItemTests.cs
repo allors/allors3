@@ -1239,6 +1239,26 @@ namespace Allors.Domain
         }
     }
 
+    public class SalesOrderItemCreateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    [Trait("Category", "Security")]
+    public class SalesOrderItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+    }
+
     [Trait("Category", "Security")]
     public class SalesOrderItemSecurityTests : DomainTest, IClassFixture<Fixture>
     {
