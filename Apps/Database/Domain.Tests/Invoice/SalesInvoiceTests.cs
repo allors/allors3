@@ -985,10 +985,11 @@ namespace Allors.Domain
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
+            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(billToCustomer).Build();
+
             var good = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
 
             this.Session.Derive();
-            this.Session.Commit();
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(billToCustomer)
@@ -997,10 +998,9 @@ namespace Allors.Domain
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
+            this.Session.Derive();
 
             invoice.WriteOff();
-
             this.Session.Derive();
 
             Assert.Equal(new SalesInvoiceStates(this.Session).WrittenOff, invoice.SalesInvoiceState);
@@ -1056,13 +1056,13 @@ namespace Allors.Domain
                 .WithShipToCustomer(customer)
                 .Build();
 
+            this.Session.Derive();
+
             var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
             order.AddSalesOrderItem(item1);
-
             this.Session.Derive();
 
             order.SetReadyForPosting();
-
             this.Session.Derive();
 
             order.Post();
@@ -2897,9 +2897,9 @@ namespace Allors.Domain
     }
 
     [Trait("Category", "Security")]
-    public class SalesInvoiceDeletePermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceDeletePermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
+        public SalesInvoiceDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

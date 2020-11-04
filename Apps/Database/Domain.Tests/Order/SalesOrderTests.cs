@@ -2714,6 +2714,36 @@ namespace Allors.Domain
         }
     }
 
+    public class SalesOrderCreateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderCreateDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderPriceDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    [Trait("Category", "Security")]
+    public class SalesOrderDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+    }
+
     [Trait("Category", "Security")]
     public class SalesOrderSecurityTests : DomainTest, IClassFixture<Fixture>
     {
