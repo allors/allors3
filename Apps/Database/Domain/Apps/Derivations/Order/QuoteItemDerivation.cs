@@ -92,16 +92,6 @@ namespace Allors.Domain
                 {
                     validation.AddError($"{@this} {@this.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
                 }
-
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.QuoteWhereQuoteItem.IsDeletable())
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
             }
         }
     }

@@ -26,16 +26,6 @@ namespace Allors.Domain
                 {
                     requestItem.Sync(@this);
                 }
-
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.IsDeletable())
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
             }
         }
     }

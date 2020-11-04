@@ -58,12 +58,12 @@ namespace Allors.Domain
                 var states = new PurchaseOrderItemStates(@this.Session());
 
                 var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState;
-                if (purchaseOrderState.IsCreated
-                    && !@this.PurchaseOrderItemState.IsCancelled
-                    && !@this.PurchaseOrderItemState.IsRejected)
-                {
-                    @this.PurchaseOrderItemState = states.Created;
-                }
+                //if (purchaseOrderState.IsCreated
+                //    && !@this.PurchaseOrderItemState.IsCancelled
+                //    && !@this.PurchaseOrderItemState.IsRejected)
+                //{
+                //    @this.PurchaseOrderItemState = states.Created;
+                //}
 
                 if (purchaseOrderState.IsInProcess &&
                     (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
@@ -268,16 +268,6 @@ namespace Allors.Domain
                 else
                 {
                     @this.CanInvoice = false;
-                }
-
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
                 }
 
                 if (!@this.PurchaseOrderItemShipmentState.IsNotReceived && !@this.PurchaseOrderItemShipmentState.IsNa)

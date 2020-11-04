@@ -16,6 +16,9 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.PurchaseOrderItem.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { this.M.OrderItemBilling.OrderItem}},
+            new ChangedPattern(this.M.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { this.M.OrderRequirementCommitment.OrderItem}},
+            new ChangedPattern(this.M.WorkEffort.OrderItemFulfillment) { Steps = new IPropertyType[] { this.M.WorkEffort.OrderItemFulfillment}},
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,6 +29,16 @@ namespace Allors.Domain
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
+                {
+                    @this.RemoveDeniedPermission(deletePermission);
+                }
+                else
+                {
+                    @this.AddDeniedPermission(deletePermission);
+                }
             }
         }
     }

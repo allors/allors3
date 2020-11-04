@@ -7,6 +7,7 @@
 namespace Allors.Domain
 {
     using System.Linq;
+    using Allors.Domain.TestPopulation;
     using Resources;
     using Xunit;
 
@@ -543,10 +544,20 @@ namespace Allors.Domain
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedWithSerialisedItemDeriveDeletePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
             this.Session.Derive(false);
 
-            var serialisedItems = new SerialisedItemBuilder(this.Session).Build();
+            var serializedPart = new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
+            var serializedItem = new SerialisedItemBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+            serializedPart.AddSerialisedItem(serializedItem);
+
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+
+            purchaseOrder.Send();
+            this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
         }
@@ -557,8 +568,22 @@ namespace Allors.Domain
             var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var workEffortPurchaseOrderItemAssignments = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Session).Build();
-            
+            var serializedPart = new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
+            var serializedItem = new SerialisedItemBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+            serializedPart.AddSerialisedItem(serializedItem);
+
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+
+            var workEffortPurchaseOrderItemAssignments = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Session)
+                .WithAssignment(new WorkTaskBuilder(this.Session).Build())
+                .WithPurchaseOrderItem(purchaseOrderItem)
+                .WithPurchaseOrder(purchaseOrder)
+                .Build();
+            this.Session.Derive(false);
+
             Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
         }
 
@@ -579,6 +604,34 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateCreatedPurchaseOrderShipmentStateIsNaDeriveMultiplePermissions()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithAssignedUnitPrice(1)
+            .Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Session)
+                .WithOrderItem(purchaseOrderItem)
+                .WithQuantityAccepted(1)
+                .Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.rejectPermission, purchaseOrder.DeniedPermissions);
+            Assert.Contains(this.cancelPermission, purchaseOrder.DeniedPermissions);
+            Assert.Contains(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+            Assert.Contains(this.revisePermission, purchaseOrder.DeniedPermissions);
+            Assert.Contains(this.setReadyPermission, purchaseOrder.DeniedPermissions);
         }
     }
 }
