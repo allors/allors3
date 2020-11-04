@@ -22,7 +22,7 @@ namespace Allors.Workspace
 
         ISession CreateSession();
 
-        IChangeSet Checkpoint();
+        IChangeSet[] Checkpoint();
 
         IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
     }

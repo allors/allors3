@@ -22,6 +22,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private readonly IList<DatabaseStrategy> existingDatabaseStrategies;
         private ISet<DatabaseStrategy> newDatabaseStrategies;
+        private SessionChangeSet sessionChangeSet;
 
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
@@ -33,7 +34,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.existingDatabaseStrategies = new List<DatabaseStrategy>();
 
-            this.Population = new Population();
+            this.State = new State();
+            this.sessionChangeSet = new SessionChangeSet();
             this.StateLifecycle.OnInit(this);
         }
 
@@ -49,7 +51,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
-        internal Population Population { get; }
+        internal State State { get; }
 
         public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
 
@@ -220,6 +222,18 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return new SaveResult(pushResponse);
+        }
+
+        internal SessionChangeSet Checkpoint()
+        {
+            try
+            {
+                return this.sessionChangeSet;
+            }
+            finally
+            {
+                this.sessionChangeSet = null;
+            }
         }
 
         internal IEnumerable<IObject> GetAssociation(IDatabaseObject @object, IAssociationType associationType)

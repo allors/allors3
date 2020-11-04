@@ -68,25 +68,5 @@ namespace Allors.Domain
 
             return false;
         }
-
-        public static bool HasChangedAssociation(this IChangeSet @this, Object derivable, AssociationType associationType)
-        {
-            @this.AssociationTypesByRole.TryGetValue(derivable.Id, out var changedAssociationTypes);
-            return changedAssociationTypes?.Contains(associationType) ?? false;
-        }
-
-        public static bool HasChangedAssociations(this IChangeSet @this, Object derivable, params AssociationType[] associationTypes)
-        {
-            @this.AssociationTypesByRole.TryGetValue(derivable.Id, out var changedAssociationTypes);
-            if (changedAssociationTypes != null)
-            {
-                if (associationTypes.Length == 0 || associationTypes.Any(associationType => changedAssociationTypes.Contains(associationType)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }

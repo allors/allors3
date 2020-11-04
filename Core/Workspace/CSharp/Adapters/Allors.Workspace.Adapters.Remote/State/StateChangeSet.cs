@@ -9,12 +9,12 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    public class ChangeSet
+    public class StateChangeSet
     {
         private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
         private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByRoleType;
 
-        public ChangeSet(Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType)
+        public StateChangeSet(Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType, Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType)
         {
             this.roleByAssociationByRoleType = roleByAssociationByRoleType;
             this.associationByRoleByRoleType = associationByRoleByAssociationType;

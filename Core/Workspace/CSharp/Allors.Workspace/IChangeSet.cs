@@ -20,6 +20,11 @@ namespace Allors.Workspace
     public interface IChangeSet
     {
         /// <summary>
+        /// Gets the session.
+        /// </summary>
+        ISession Session { get; }
+
+        /// <summary>
         /// Gets the created objects.
         /// </summary>
         ISet<IStrategy> Created { get; }

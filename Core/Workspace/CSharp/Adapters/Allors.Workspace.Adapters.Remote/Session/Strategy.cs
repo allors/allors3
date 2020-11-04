@@ -115,6 +115,6 @@ namespace Allors.Workspace.Adapters.Remote
             return ids?.Select(v => this.Session.Instantiate(v)).ToArray() ?? Array.Empty<IObject>();
         }
         
-        internal abstract Population GetPopulation(Origin origin);
+        internal abstract State GetPopulation(Origin origin);
     }
 }

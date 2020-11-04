@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    internal class Population
+    internal class State
     {
         private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
         private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType;
@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRoleType, Dictionary<long, object>> changedRoleByAssociationByRoleType;
         private Dictionary<IAssociationType, Dictionary<long, object>> changedAssociationByRoleByAssociationType;
 
-        internal Population()
+        internal State()
         {
             this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
             this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
         }
 
-        internal ChangeSet Snapshot()
+        internal StateChangeSet Checkpoint()
         {
             foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
             {
@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            var snapshot = new ChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
+            var snapshot = new StateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
             this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();

@@ -7,14 +7,15 @@ namespace Allors.Workspace.Derivations.Default
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
     using Domain;
 
-    public class DomainDerive 
+    public class DomainDerive
     {
-        public DomainDerive(IWorkspace workspace,int maxDomainDerivationCycles)
+        public DomainDerive(IWorkspace workspace, int maxDomainDerivationCycles)
         {
             this.Workspace = workspace;
             this.MaxDomainDerivationCycles = maxDomainDerivationCycles;
@@ -36,12 +37,14 @@ namespace Allors.Workspace.Derivations.Default
             var domainDerivationById = this.Workspace.DomainDerivationById;
             if (domainDerivationById.Any())
             {
-                var changeSet = this.Workspace.Checkpoint();
+                var changeSets = this.Workspace.Checkpoint();
 
-                while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
+                while (changeSets.Any(v => v.Associations.Any() || v.Roles.Any() || v.Created.Any() || v.Deleted.Any()))
                 {
-                    foreach (ISession session in this.Workspace.Sessions)
+                    foreach (var changeSet in changeSets)
                     {
+                        var session = changeSet.Session;
+
                         if (++domainCycles > this.MaxDomainDerivationCycles)
                         {
                             throw new Exception("Maximum amount of domain derivation cycles detected");
@@ -108,7 +111,7 @@ namespace Allors.Workspace.Derivations.Default
                         }
                     }
 
-                    changeSet = this.Workspace.Checkpoint();
+                    changeSets = this.Workspace.Checkpoint();
                 }
             }
         }
