@@ -918,4 +918,124 @@ namespace Allors.Domain
             this.supplier = (Organisation)session.Instantiate(this.supplier);
         }
     }
+
+    [Trait("Category", "Security")]
+    public class PurchaseOrderItemDeniedPermissonDerivationSecurityTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderItemDeniedPermissonDerivationSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.PurchaseOrderItem.ObjectType, this.M.PurchaseOrderItem.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemStateCreatedDeriveDeletePermission()
+        {
+            //TODO Is order nodig?
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, purchaseOrderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemStateApprovedDeriveDeletePermission()
+        {
+            //TODO Is order nodig?
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            purchaseOrderItem.Approve();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemStateCreatedWithOrderItemBillingDeriveDeletePermission()
+        {
+            //TODO Is order nodig?
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            var orderItemBilling = new OrderItemBillingBuilder(this.Session).WithOrderItem(purchaseOrderItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemStateCreatedWithOrderShipmentDeriveDeletePermission()
+        {
+            //TODO Is order nodig?
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            var orderShipment = new OrderShipmentBuilder(this.Session)
+                .WithOrderItem(purchaseOrderItem).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemStateCreatedWithOrderRequirementCommitmentDeriveDeletePermission()
+        {
+            //TODO Is order nodig?
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            var orderRequirementCommitment = new OrderRequirementCommitmentBuilder(this.Session)
+                .WithOrderItem(purchaseOrderItem).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrderItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemStateCreatedWithWorkEffortDeriveDeletePermission()
+        {
+            //TODO Is order nodig?
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            var workTask = new WorkTaskBuilder(this.Session).WithOrderItemFulfillment(purchaseOrderItem).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, purchaseOrderItem.DeniedPermissions);
+        }
+    }
 }

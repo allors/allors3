@@ -15,7 +15,8 @@ namespace Allors.Domain
         public RequestForInformationDeniedPermissionDerivation(M m) : base(m, new Guid("3227f658-588b-42eb-bf4f-f76d1d4b85c4")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.RequestForInformation.TransitionalDeniedPermissions),
+            new ChangedPattern(m.RequestForInformation.TransitionalDeniedPermissions),
+            new ChangedPattern(m.Quote.Request) { Steps =  new IPropertyType[] { m.Quote.Request } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,6 +27,16 @@ namespace Allors.Domain
             foreach (var @this in matches.Cast<RequestForInformation>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable())
+                {
+                    @this.RemoveDeniedPermission(deletePermission);
+                }
+                else
+                {
+                    @this.AddDeniedPermission(deletePermission);
+                }
             }
         }
     }

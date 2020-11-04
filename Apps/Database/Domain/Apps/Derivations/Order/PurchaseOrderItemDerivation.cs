@@ -270,16 +270,6 @@ namespace Allors.Domain
                     @this.CanInvoice = false;
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
-
                 if (!@this.PurchaseOrderItemShipmentState.IsNotReceived && !@this.PurchaseOrderItemShipmentState.IsNa)
                 {
                     var deniablePermissionByOperandType = new Dictionary<OperandType, Permission>();
