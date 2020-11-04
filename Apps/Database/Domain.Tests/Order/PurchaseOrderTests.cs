@@ -439,11 +439,12 @@ namespace Allors.Domain
             var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
+            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithIsReceivable(true)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
+                .WithNonSerializedPartDefaults(part)
+                .Build();
+
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Session.Derive(false);
 
@@ -612,11 +613,11 @@ namespace Allors.Domain
             var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
+            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithIsReceivable(true)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
+                .WithNonSerializedPartDefaults(part)
+                .Build();
 
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
 

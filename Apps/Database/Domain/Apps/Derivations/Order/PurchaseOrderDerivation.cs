@@ -20,6 +20,7 @@ namespace Allors.Domain
                 new CreatedPattern(this.M.PurchaseOrder.Class),
                 new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderState),
                 new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderItems),
+                new ChangedPattern(this.M.PurchaseOrderItem.IsReceivable) { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
                 new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
                 new ChangedPattern(this.M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] { this.M.InternalOrganisation.ActiveSuppliers, this.M.Organisation.PurchaseOrdersWhereOrderedBy}},
             };

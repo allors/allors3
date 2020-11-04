@@ -22,7 +22,7 @@ namespace Allors.Domain
                 new ChangedPattern(m.SalesOrderItem.SalesOrderItemState),
                 new ChangedPattern(m.SalesOrderItem.QuantityOrdered),
                 new ChangedPattern(m.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{ m.SalesOrder.SalesOrderItems} },
-                new ChangedPattern(m.OrderShipment.Quantity){Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}},
+                new ChangedPattern(m.OrderShipment.Quantity){Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
