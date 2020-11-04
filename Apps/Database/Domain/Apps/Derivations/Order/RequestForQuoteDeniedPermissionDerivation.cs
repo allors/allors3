@@ -26,6 +26,21 @@ namespace Allors.Domain
             foreach (var @this in matches.Cast<RequestForQuote>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+
+                if (!@this.ExistOriginator)
+                {
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Submit));
+                }
+
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable())
+                {
+                    @this.RemoveDeniedPermission(deletePermission);
+                }
+                else
+                {
+                    @this.AddDeniedPermission(deletePermission);
+                }
             }
         }
     }
