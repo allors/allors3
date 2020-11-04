@@ -315,11 +315,11 @@ namespace Allors.Workspace.Adapters.Remote
             return value;
         }
 
-        internal override Population GetPopulation(Origin origin) =>
+        internal override State GetPopulation(Origin origin) =>
             origin switch
             {
-                Origin.Workspace => this.Session.Workspace.Population,
-                Origin.Session => this.Session.Population,
+                Origin.Workspace => this.Session.Workspace.State,
+                Origin.Session => this.Session.State,
                 _ => throw new Exception($"Unsupported origin: {origin}")
             };
 

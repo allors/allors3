@@ -15,7 +15,8 @@ namespace Allors.Domain
         public PartyFinancialRelationshipOpenOrderAmountDerivation(M m) : base(m, new Guid("3132e3d6-69be-4dde-b06c-f0162f8aa5ed")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(M.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {M.SalesOrder.BillToCustomer, M.Party.PartyFinancialRelationshipsWhereFinancialParty } }
+                new ChangedPattern(m.SalesOrder.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new ChangedPattern(m.SalesOrder.SalesOrderState) { Steps =  new IPropertyType[] {m.SalesOrder.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -29,9 +30,10 @@ namespace Allors.Domain
                     // Open Order Amount
                     @this.OpenOrderAmount = party.SalesOrdersWhereBillToCustomer
                         .Where(v =>
-                            Equals(v.TakenBy, @this.InternalOrganisation) &&
-                            !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Finished) &&
-                            !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Cancelled))
+                            Equals(v.TakenBy, @this.InternalOrganisation)
+                            && v.ExistSalesOrderState
+                            && !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Finished)
+                            && !v.SalesOrderState.Equals(new SalesOrderStates(party.Strategy.Session).Cancelled))
                         .Sum(v => v.TotalIncVat);
                 }
             }

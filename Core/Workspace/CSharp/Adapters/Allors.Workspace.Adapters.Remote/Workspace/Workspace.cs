@@ -8,12 +8,15 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using Derivations;
     using Meta;
 
     public class Workspace : IWorkspace
     {
+        private WorkspaceChangeSet workspaceChangeSet;
+
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
@@ -23,10 +26,12 @@ namespace Allors.Workspace.Adapters.Remote
             this.Database = new Database(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
 
-            this.Population = new Population();
+            this.State = new State();
             this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
+
+            this.workspaceChangeSet = new WorkspaceChangeSet();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -46,15 +51,22 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Database Database { get; }
 
-        internal Population Population { get; }
+        internal State State { get; }
         
         internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
 
-        public IChangeSet Checkpoint()
+        public IChangeSet[] Checkpoint()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return this.Sessions.Select(v => new ChangeSet(v, this.workspaceChangeSet)).ToArray();
+            }
+            finally
+            {
+                this.workspaceChangeSet = new WorkspaceChangeSet();
+            }
         }
 
         internal void RegisterSession(Session session) => this.Sessions.Add(session);

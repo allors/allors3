@@ -6,18 +6,21 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Allors.Workspace.Meta;
 
-    public class WorkspaceStrategy : Strategy
+    public class SessionStrategy : Strategy
     {
-        public WorkspaceStrategy(Session session, IClass @class, long workspaceId) : base(session, workspaceId, @class)
+        public SessionStrategy(Session session, IClass @class, long workspaceId) : base(session, workspaceId, @class)
         {
         }
 
-        internal override Population GetPopulation(Origin origin) =>
+        internal override State GetPopulation(Origin origin) =>
             origin switch
             {
-                Origin.Workspace => this.Session.Workspace.Population,
+                Origin.Workspace => this.Session.Workspace.State,
+                Origin.Session => this.Session.State,
                 _ => throw new Exception($"Unsupported origin: {origin}")
             };
     }

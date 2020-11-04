@@ -35,6 +35,11 @@ namespace Allors.Domain
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
                 var shipped = new ShipmentStates(@this.Session()).Shipped;
 
+                if (@this.ExistProduct && !@this.ExistInvoiceItemType)
+                {
+                    @this.InvoiceItemType = new InvoiceItemTypes(@this.Session()).ProductItem;
+                }
+
                 if (!@this.ExistDerivationTrigger)
                 {
                     @this.DerivationTrigger = Guid.NewGuid();
@@ -104,7 +109,7 @@ namespace Allors.Domain
                 }
 
                 // SalesOrderItem States
-                if (@this.IsValid)
+                if (@this.IsValid && salesOrder.ExistSalesOrderState)
                 {
                     if (salesOrder.SalesOrderState.IsProvisional)
                     {

@@ -148,12 +148,15 @@ namespace Allors.Domain
                 new SupplierRelationshipDerivation(m),
                 new PurchaseOrderItemIsReceivableDerivation(m),
                 new PurchaseOrderDerivation(m), //Has Dependency on SupplierRelationship
-
                 new ShipmentItemDerivation(m),
                 new CustomerShipmentDerivation(m),
                 new OrderShipmentDerivation(m),
-                new SalesOrderItemDerivation(m), //Has Dependency on OrderShipment
-                new SalesOrderDerivation(m), //Has Dependency on SalesOrderItem
+                new SalesOrderItemCreateDerivation(m),
+                new SalesOrderItemDerivation(m),
+                new SalesOrderCreateDerivation(m),
+                new SalesOrderDerivation(m),
+                new SalesOrderPriceDerivation(m),
+                new SalesOrderStateDerivation(m),
 
                 new InvoiceItemTotalIncVatDerivation(m),
             };
