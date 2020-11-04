@@ -105,13 +105,15 @@ namespace Allors.Domain.Derivations.Default
                                 if (pattern.Steps?.Length > 0)
                                 {
                                     var step = new Step(pattern.Steps);
-                                    var stepped = source.SelectMany(v => step.Get(v));
-                                    matches.UnionWith(stepped);
+                                    source = source.SelectMany(v => step.Get(v));
                                 }
-                                else
+
+                                if (pattern.OfType != null)
                                 {
-                                    matches.UnionWith(source);
+                                    source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
                                 }
+
+                                matches.UnionWith(source);
                             }
                         }
 
