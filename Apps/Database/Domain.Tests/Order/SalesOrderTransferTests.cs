@@ -3144,6 +3144,8 @@ namespace Allors.Domain
                 .WithBillToContactMechanism(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
+            this.Session.Derive();
+
             var item = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(good)
                 .WithQuantityOrdered(1)
@@ -3151,7 +3153,6 @@ namespace Allors.Domain
                 .Build();
 
             order.AddSalesOrderItem(item);
-
             this.Session.Derive();
 
             order.SetReadyForPosting();

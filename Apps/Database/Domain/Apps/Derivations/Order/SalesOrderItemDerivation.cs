@@ -18,7 +18,6 @@ namespace Allors.Domain
         public SalesOrderItemDerivation(M m) : base(m, new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SalesOrderItem.Class),
                 new ChangedPattern(M.SalesOrderItem.SalesOrderItemState),
                 new ChangedPattern(M.SalesOrderItem.QuantityOrdered),
                 new ChangedPattern(M.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{M.SalesOrder.SalesOrderItems} },
@@ -34,6 +33,11 @@ namespace Allors.Domain
             {
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
                 var shipped = new ShipmentStates(@this.Session()).Shipped;
+
+                if (@this.ExistProduct && !@this.ExistInvoiceItemType)
+                {
+                    @this.InvoiceItemType = new InvoiceItemTypes(@this.Session()).ProductItem;
+                }
 
                 if (!@this.ExistDerivationTrigger)
                 {
@@ -104,7 +108,7 @@ namespace Allors.Domain
                 }
 
                 // SalesOrderItem States
-                if (@this.IsValid)
+                if (@this.IsValid && salesOrder.ExistSalesOrderState)
                 {
                     if (salesOrder.SalesOrderState.IsProvisional)
                     {

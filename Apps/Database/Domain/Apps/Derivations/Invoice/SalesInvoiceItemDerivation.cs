@@ -90,6 +90,7 @@ namespace Allors.Domain
                 if (salesInvoice != null
                     && salesInvoice.ExistSalesInvoiceState
                     && salesInvoice.SalesInvoiceState.IsReadyForPosting
+                    && @this.ExistSalesInvoiceItemState
                     && @this.SalesInvoiceItemState.IsCancelledByInvoice)
                 {
                     @this.SalesInvoiceItemState = salesInvoiceItemStates.ReadyForPosting;
@@ -98,6 +99,7 @@ namespace Allors.Domain
                 // SalesInvoiceItem States
                 if (salesInvoice != null
                     && salesInvoice.ExistSalesInvoiceState
+                    && @this.ExistSalesInvoiceItemState
                     && @this.IsValid)
                 {
                     if (salesInvoice.SalesInvoiceState.IsWrittenOff)
