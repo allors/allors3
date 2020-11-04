@@ -207,55 +207,55 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsDerivePurchaseOrder(SerialisedItemDerivePurchaseOrder method)
-        {
-            //if (!method.Result.HasValue)
-            //{
-            //this.PurchaseOrder = this.PurchaseOrderItemsWhereSerialisedItem
-            //    .LastOrDefault(v => v.ExistOrderWhereValidOrderItem
-            //                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
-            //                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem))
-            //                        && (((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Sent)
-            //                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Completed)
-            //                            || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Finished)))?
-            //    .PurchaseOrderWherePurchaseOrderItem;
+        //public void AppsDerivePurchaseOrder(SerialisedItemDerivePurchaseOrder method)
+        //{
+        //    if (!method.Result.HasValue)
+        //    {
+        //        this.PurchaseOrder = this.PurchaseOrderItemsWhereSerialisedItem
+        //            .LastOrDefault(v => v.ExistOrderWhereValidOrderItem
+        //                                && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
+        //                                    || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem))
+        //                                && (((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Sent)
+        //                                    || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Completed)
+        //                                    || ((PurchaseOrder)v.OrderWhereValidOrderItem).PurchaseOrderState.Equals(new PurchaseOrderStates(this.Session()).Finished)))?
+        //            .PurchaseOrderWherePurchaseOrderItem;
 
-            //    method.Result = true;
-            //}
-        }
+        //        method.Result = true;
+        //    }
+        //}
 
-        public void AppsDerivePurchaseInvoice(SerialisedItemDerivePurchaseInvoice method)
-        {
-            if (!method.Result.HasValue)
-            {
-                this.PurchaseInvoice = this.PurchaseInvoiceItemsWhereSerialisedItem
-                    .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
-                                            && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
-                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem))
-                                        && (((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Session()).NotPaid)
-                                            || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Session()).PartiallyPaid)
-                                            || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Session()).Paid)))?
-                    .PurchaseInvoiceWherePurchaseInvoiceItem;
+        //public void AppsDerivePurchaseInvoice(SerialisedItemDerivePurchaseInvoice method)
+        //{
+        //    if (!method.Result.HasValue)
+        //    {
+        //        this.PurchaseInvoice = this.PurchaseInvoiceItemsWhereSerialisedItem
+        //            .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
+        //                                    && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
+        //                                    || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem))
+        //                                && (((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Session()).NotPaid)
+        //                                    || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Session()).PartiallyPaid)
+        //                                    || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(this.Session()).Paid)))?
+        //            .PurchaseInvoiceWherePurchaseInvoiceItem;
 
-                method.Result = true;
-            }
-        }
+        //        method.Result = true;
+        //    }
+        //}
 
-        public void AppsDerivePurchasePrice(SerialisedItemDerivePurchasePrice method)
-        {
-            if (!method.Result.HasValue && this.ExistPurchaseInvoice)
-            {
-                this.PurchasePrice = this.PurchaseInvoiceItemsWhereSerialisedItem
-                    .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
-                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
-                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem)))?
-                    .UnitPrice ?? 0M;
+        //public void AppsDerivePurchasePrice(SerialisedItemDerivePurchasePrice method)
+        //{
+        //    if (!method.Result.HasValue && this.ExistPurchaseInvoice)
+        //    {
+        //        this.PurchasePrice = this.PurchaseInvoiceItemsWhereSerialisedItem
+        //            .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
+        //                                && (v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
+        //                                    || v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem)))?
+        //            .UnitPrice ?? 0M;
 
-                this.RemoveAssignedPurchasePrice();
+        //        this.RemoveAssignedPurchasePrice();
 
-                method.Result = true;
-            }
-        }
+        //        method.Result = true;
+        //    }
+        //}
 
         //private void DeriveProductCharacteristics(IDerivation derivation)
         //{

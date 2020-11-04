@@ -19,8 +19,7 @@ namespace Allors.Domain
             && (this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Draft)
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Submitted)
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Rejected)
-                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Cancelled))
-            && !this.ExistQuoteItemsWhereRequestItem;
+                || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Cancelled));
 
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {

@@ -47,7 +47,9 @@ namespace Allors.Domain
                 new SalesOrderItemDeniedPermissionDerivation(m),
                 new SalesOrderDeniedPermissionDerivation(m),
                 new SerialisedInventoryItemDeniedPermissionDerivation(m),
-                new SerialisedItemPurchasedOrderDervivation(m),
+                new SerialisedItemPurchaseOrderDervivation(m),
+                new SerialisedItemPurchaseInvoiceDervivation(m),
+                new SerialisedItemPurchasePriceDervivation(m),
                 new ShipmentItemDeniedPermissionDerivation(m),
                 new StatementOfWorkDeniedPermissionDerivation(m),
                 new TransferDeniedPermissionDerivation(m),
@@ -144,6 +146,7 @@ namespace Allors.Domain
                 new PartyFinancialRelationshipOpenOrderAmountDerivation(m),
                 new PaymentApplicationDerivation(m),
                 new SupplierRelationshipDerivation(m),
+                new PurchaseOrderItemIsReceivableDerivation(m),
                 new PurchaseOrderDerivation(m), //Has Dependency on SupplierRelationship
                 new ShipmentItemDerivation(m),
                 new CustomerShipmentDerivation(m),

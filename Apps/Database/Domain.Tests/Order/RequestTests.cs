@@ -82,53 +82,34 @@ namespace Allors.Domain
         [Fact]
         public void OnChangedRequestStateSubmittedDeriveDeletePermission()
         {
-            var requestForInformatiopn = new RequestForInformationBuilder(this.Session)
+            var requestForInformation = new RequestForInformationBuilder(this.Session)
                 .WithOriginator(this.InternalOrganisation).Build();
             this.Session.Derive(false);
 
-            Assert.DoesNotContain(this.deletePermission, requestForInformatiopn.DeniedPermissions);
+            Assert.DoesNotContain(this.deletePermission, requestForInformation.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedRequestStateAnonymousDeriveDeletePermission()
         {
-            var requestForInformatiopn = new RequestForInformationBuilder(this.Session).WithEmailAddress("test@test.com").Build();
+            var requestForInformation = new RequestForInformationBuilder(this.Session).WithEmailAddress("test@test.com").Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, requestForInformatiopn.DeniedPermissions);
+            Assert.Contains(this.deletePermission, requestForInformation.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedRequestStateSubmittedWithQuoteDeriveDeletePermission()
         {
-            var requestForInformatiopn = new RequestForInformationBuilder(this.Session)
+            var requestForInformation = new RequestForInformationBuilder(this.Session)
                 .WithOriginator(this.InternalOrganisation)
                 .Build();
             this.Session.Derive(false);
 
-            var quote = new ProductQuoteBuilder(this.Session).WithRequest(requestForInformatiopn).Build();
+            var quote = new ProductQuoteBuilder(this.Session).WithRequest(requestForInformation).Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, requestForInformatiopn.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedRequestStateSubmittedWithItemsDeriveDeletePermission()
-        {
-            var serialisedItem = new SerialisedItemBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
-
-            var requestItem = new RequestItemBuilder(this.Session)
-                .WithSerialisedItem(serialisedItem)
-                .Build();
-
-            var requestForInformatiopn = new RequestForInformationBuilder(this.Session)
-                .WithOriginator(this.InternalOrganisation)
-                .WithRequestItem(requestItem)
-                .Build();
-
-            this.Session.Derive(false);
-
-            Assert.Contains(this.deletePermission, requestForInformatiopn.DeniedPermissions);
+            Assert.Contains(this.deletePermission, requestForInformation.DeniedPermissions);
         }
     }
 }

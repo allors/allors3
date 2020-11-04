@@ -425,17 +425,17 @@ namespace Allors.Domain
 
         public void AppsReopen(OrderItemReopen method) => this.PurchaseOrderItemState = this.PreviousPurchaseOrderItemState;
 
-        public void AppsDeriveIsReceivable(PurchaseOrderItemDeriveIsReceivable method)
-        {
-            if (!method.Result.HasValue)
-            {
-                this.IsReceivable = this.ExistPart
-                    && (this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
-                        || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem));
+        //public void AppsDeriveIsReceivable(PurchaseOrderItemDeriveIsReceivable method)
+        //{
+        //    if (!method.Result.HasValue)
+        //    {
+        //        this.IsReceivable = this.ExistPart
+        //            && (this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).PartItem)
+        //                || this.InvoiceItemType.Equals(new InvoiceItemTypes(this.Session()).ProductItem));
 
-                method.Result = true;
-            }
-        }
+        //        method.Result = true;
+        //    }
+        //}
 
         public void Sync(Order order) => this.SyncedOrder = order;
     }
