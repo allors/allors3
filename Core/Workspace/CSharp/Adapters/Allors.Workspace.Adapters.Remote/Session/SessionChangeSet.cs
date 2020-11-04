@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    internal sealed class SessionChangeSet 
+    internal sealed class SessionChangeSet : IChangeSet
     {
         private static readonly HashSet<IRoleType> EmptyRoleTypeSet = new HashSet<IRoleType>();
         private static readonly HashSet<IAssociationType> EmptyAssociationTypeSet = new HashSet<IAssociationType>();
@@ -29,8 +29,9 @@ namespace Allors.Workspace.Adapters.Remote
         private IDictionary<IRoleType, ISet<long>> associationsByRoleType;
         private IDictionary<IAssociationType, ISet<long>> rolesByAssociationType;
 
-        internal SessionChangeSet()
+        internal SessionChangeSet(Session session)
         {
+            this.Session = session;
             this.created = new HashSet<IStrategy>();
             this.deleted = new HashSet<IStrategy>();
             this.associations = new HashSet<long>();
@@ -38,6 +39,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.roleTypesByAssociation = new Dictionary<long, ISet<IRoleType>>();
             this.associationTypesByRole = new Dictionary<long, ISet<IAssociationType>>();
         }
+
+        ISession IChangeSet.Session => this.Session;
+        public Session Session { get; }
 
         public ISet<IStrategy> Created => this.created;
 
@@ -106,6 +110,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleTypes(association).Add(roleType);
         }
 
+        internal void Merge(WorkspaceChangeSet workspaceChangeSet, StateChangeSet checkpoint)
+        {
+        }
+
         private ISet<IRoleType> RoleTypes(long associationId)
         {
             if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))
@@ -126,10 +134,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return associationTypes;
-        }
-
-        public void Checkpoint(WorkspaceChangeSet workspaceChangeSet, StateChangeSet checkpoint)
-        {
         }
     }
 }

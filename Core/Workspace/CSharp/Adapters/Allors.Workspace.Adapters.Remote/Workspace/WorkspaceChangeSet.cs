@@ -106,6 +106,10 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleTypes(association).Add(roleType);
         }
 
+        internal void Merge(StateChangeSet checkpoint)
+        {
+        }
+
         private ISet<IRoleType> RoleTypes(long associationId)
         {
             if (!this.RoleTypesByAssociation.TryGetValue(associationId, out var roleTypes))

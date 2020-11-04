@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.existingDatabaseStrategies = new List<DatabaseStrategy>();
 
             this.State = new State();
-            this.sessionChangeSet = new SessionChangeSet();
+            this.sessionChangeSet = new SessionChangeSet(this);
             this.StateLifecycle.OnInit(this);
         }
 
@@ -224,10 +224,11 @@ namespace Allors.Workspace.Adapters.Remote
             return new SaveResult(pushResponse);
         }
 
-        internal SessionChangeSet Checkpoint()
+        internal IChangeSet Checkpoint(WorkspaceChangeSet workspaceChangeSet)
         {
             try
             {
+                this.sessionChangeSet.Merge(workspaceChangeSet, this.State.Checkpoint());
                 return this.sessionChangeSet;
             }
             finally

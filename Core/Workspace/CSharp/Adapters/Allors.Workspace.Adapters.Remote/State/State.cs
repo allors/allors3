@@ -88,12 +88,12 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            var snapshot = new StateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
+            var changeSet = new StateChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
 
             this.changedRoleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
 
-            return snapshot;
+            return changeSet;
         }
 
         internal void GetRole(long association, IRoleType roleType, out object role)

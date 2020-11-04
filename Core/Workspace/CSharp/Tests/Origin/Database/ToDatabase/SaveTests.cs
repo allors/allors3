@@ -6,6 +6,7 @@
 namespace Tests.Workspace.Origin.Database.ToDatabase
 {
     using System;
+    using System.Linq;
     using Allors.Workspace.Adapters.Remote;
     using Xunit;
 
@@ -20,10 +21,10 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
 
             var saved = await session.Save();
 
-            foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
+            foreach (var roleType in this.M.C1.ObjectType.RoleTypes.Except(new[] { this.M.C1.C1CreationDerivation }))
             {
                 var role = newObject.Strategy.Get(roleType);
-                Assert.True(role == null || role is Array array && array.Length == 0);
+                Assert.True(role == null || (role is Array array && (array.Length == 0)));
             }
 
             foreach (var associationType in this.M.C1.ObjectType.AssociationTypes)

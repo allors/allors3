@@ -61,7 +61,8 @@ namespace Allors.Workspace.Adapters.Remote
         {
             try
             {
-                return this.Sessions.Select(v => new ChangeSet(v, this.workspaceChangeSet)).ToArray();
+                this.workspaceChangeSet.Merge(this.State.Checkpoint());
+                return this.Sessions.Select(v => v.Checkpoint(this.workspaceChangeSet)).ToArray();
             }
             finally
             {
