@@ -93,6 +93,7 @@ namespace Allors.Domain
                 new UnifiedGoodDerivation(m),
                 new NonSerialisedInventoryItemDerivation(m),
                 new NonUnifiedPartDerivation(m),
+                new NonUnifiedGoodDeniedPermissionDerivation(m),
                 new PartDerivation(m),
                 new InventoryItemTransactionDerivation(m),
                 new InventoryItemDerivation(m),
