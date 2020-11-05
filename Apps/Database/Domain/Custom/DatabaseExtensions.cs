@@ -117,6 +117,7 @@ namespace Allors.Domain
                 new OrganisationDerivation(m),
                 new OrganisationDeniedPermissionDerivation(m),
                 new PersonDerivation(m),
+                new PersonDeniedPermissionDerivation(m),
                 new PartyDerivation(m),
                 new EmailTemplateDerivation(m),
                 new WebSiteCommunicationsDerivation(m),

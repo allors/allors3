@@ -25,7 +25,6 @@ namespace Allors.Domain
             && !this.ExistShipmentsWhereShipToParty
             && !this.ExistPaymentsWhereReceiver
             && !this.ExistPaymentsWhereSender
-            && !this.ExistPaymentsWhereSender
             && !this.ExistEngagementsWhereBillToParty
             && !this.ExistEngagementsWherePlacingParty
             && !this.ExistPartsWhereManufacturedBy
@@ -63,10 +62,10 @@ namespace Allors.Domain
             && !this.ExistCommunicationEventsWhereOwner
             && !this.ExistEngagementItemsWhereCurrentAssignedProfessional
             && !this.ExistEmploymentsWhereEmployee
-            && !this.ExistEngineeringChangesWhereAuthorizer
-            && !this.ExistEngineeringChangesWhereDesigner
-            && !this.ExistEngineeringChangesWhereRequestor
-            && !this.ExistEngineeringChangesWhereTester
+            && !this.ExistEngineeringChangesWhereAuthorizer // Test Not Done
+            && !this.ExistEngineeringChangesWhereDesigner // Test Not Made
+            && !this.ExistEngineeringChangesWhereRequestor // Test Not Made
+            && !this.ExistEngineeringChangesWhereTester // Test Not Made
             && !this.ExistEventRegistrationsWherePerson
             && !this.ExistOwnCreditCardsWhereOwner
             && !this.ExistPerformanceNotesWhereEmployee
