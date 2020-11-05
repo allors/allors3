@@ -108,16 +108,6 @@ namespace Allors.Domain
                 serialisedItem.RemoveSerialisedItemCharacteristic(characteristic);
             }
 
-            var deletePermission = new Permissions(serialisedItem.Strategy.Session).Get(serialisedItem.Meta.ObjectType, serialisedItem.Meta.Delete);
-            if (this.IsDeletable(serialisedItem))
-            {
-                serialisedItem.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                serialisedItem.AddDeniedPermission(deletePermission);
-            }
-
             var builder = new StringBuilder();
 
             builder.Append(serialisedItem.ItemNumber);
@@ -149,15 +139,5 @@ namespace Allors.Domain
 
             serialisedItem.SearchString = builder.ToString();
         }
-
-        bool IsDeletable(SerialisedItem serialised) =>
-            !serialised.ExistInventoryItemTransactionsWhereSerialisedItem
-            && !serialised.ExistPurchaseInvoiceItemsWhereSerialisedItem
-            && !serialised.ExistPurchaseOrderItemsWhereSerialisedItem
-            && !serialised.ExistQuoteItemsWhereSerialisedItem
-            && !serialised.ExistSalesInvoiceItemsWhereSerialisedItem
-            && !serialised.ExistSalesOrderItemsWhereSerialisedItem
-            && !serialised.ExistSerialisedInventoryItemsWhereSerialisedItem
-            && !serialised.ExistShipmentItemsWhereSerialisedItem;
     }
 }
