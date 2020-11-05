@@ -21,7 +21,9 @@ namespace Allors.Domain
         public void OnChangedRequestForProposalStateCreatedDeriveDeletePermission()
         {
             var requestForProposal = new RequestForProposalBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
+            requestForProposal.Submit();
             this.Session.Derive(false);
 
             Assert.DoesNotContain(this.deletePermission, requestForProposal.DeniedPermissions);
@@ -46,6 +48,16 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, requestForProposal.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedRequestForProposalStateCreatedWithDeletableRequestItemsDeriveDeletePermission()
+        {
+            var requestItem = new RequestItemBuilder(this.Session).Build();
+            var requestForProposal = new RequestForQuoteBuilder(this.Session).WithRequestItem(requestItem).Build();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, requestForProposal.DeniedPermissions);
         }
     }
 }
