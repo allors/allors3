@@ -30,6 +30,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
         private long worskpaceIdCounter;
+        private DatabaseChangeSet databaseChangeSet;
 
         public Database(IMetaPopulation metaPopulation, HttpClient httpClient)
         {
@@ -51,6 +52,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.worskpaceIdCounter = 0;
             this.WorkspaceIdByDatabaseId = new Dictionary<long, long>();
             this.DatabaseIdByWorkspaceId = new Dictionary<long, long>();
+
+            this.databaseChangeSet = new DatabaseChangeSet();
         }
 
         ~Database() => this.HttpClient.Dispose();
@@ -412,6 +415,18 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        internal DatabaseChangeSet Checkpoint()
+        {
+            try
+            {
+                return this.databaseChangeSet;
+            }
+            finally
+            {
+                this.databaseChangeSet = null;
+            }
         }
 
         public class AuthenticationTokenResponse

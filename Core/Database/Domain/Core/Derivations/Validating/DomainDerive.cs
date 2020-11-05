@@ -29,102 +29,99 @@ namespace Allors.Domain.Derivations.Validating
 
         public AccumulatedChangeSet Execute()
         {
-            // Domain Derivations
+            var createDerivations = this.Session.Database.CreateDerivations;
+            var changeDerivations = this.Session.Database.ChangeDerivations;
+
             var maxDomainDerivationCycles = this.DerivationConfig.MaxDomainDerivationCycles;
             var domainCycles = 0;
 
             AccumulatedChangeSet domainAccumulatedChangeSet = null;
 
-            var domainDerivationById = this.Session.Database.DomainDerivationById;
-            if (domainDerivationById.Any())
+            domainAccumulatedChangeSet = new AccumulatedChangeSet();
+            var domainValidation = new DomainValidation(this.Validation);
+
+            var changeSet = this.Session.Checkpoint();
+            domainAccumulatedChangeSet.Add(changeSet);
+
+            while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
             {
-                domainAccumulatedChangeSet = new AccumulatedChangeSet();
-                var domainValidation = new DomainValidation(this.Validation);
-
-                var changeSet = this.Session.Checkpoint();
-                domainAccumulatedChangeSet.Add(changeSet);
-
-                while (changeSet.Associations.Any() || changeSet.Roles.Any() || changeSet.Created.Any() || changeSet.Deleted.Any())
+                if (++domainCycles > maxDomainDerivationCycles)
                 {
-                    if (++domainCycles > maxDomainDerivationCycles)
-                    {
-                        throw new Exception("Maximum amount of domain derivation cycles detected");
-                    }
-
-                    // Initialization
-                    if (changeSet.Created.Any())
-                    {
-                        foreach (var newObject in changeSet.Created.Select(v => (Object)v.GetObject()))
-                        {
-                            newObject.OnInit();
-                        }
-                    }
-
-                    var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = this.Session, Validation = domainValidation };
-
-                    foreach (var kvp in domainDerivationById)
-                    {
-                        var domainDerivation = kvp.Value;
-                        var matches = new HashSet<IObject>();
-
-                        foreach (var pattern in domainDerivation.Patterns)
-                        {
-                            var source = pattern switch
-                            {
-                                // Create
-                                CreatedPattern createdPattern => changeSet.Created
-                                    .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
-                                    .Select(v => v.GetObject()),
-
-                                // RoleDefault
-                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
-                                    .AssociationsByRoleType
-                                    .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value)),
-
-                                // RoleInterface
-                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
-                                    .AssociationsByRoleType
-                                    .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value))
-                                    .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
-
-                                // RoleClass
-                                ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
-                                    .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
-                                    .SelectMany(v => this.Session.Instantiate(v.Value))
-                                    .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
-
-                                _ => Array.Empty<IObject>()
-                            };
-
-                            if (source != null)
-                            {
-                                if (pattern.Steps?.Length > 0)
-                                {
-                                    var step = new Step(pattern.Steps);
-                                    source = source.SelectMany(v => step.Get(v));
-                                }
-
-                                if (pattern.OfType != null)
-                                {
-                                    source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
-                                }
-
-                                matches.UnionWith(source);
-                            }
-                        }
-
-                        if (matches.Count > 0)
-                        {
-                            using var validator = new Validator((IOnAccess)this.Session, domainDerivation.Patterns, matches);
-                            domainDerivation.Derive(domainCycle, matches);
-                        }
-                    }
-
-                    changeSet = this.Session.Checkpoint();
-                    domainAccumulatedChangeSet.Add(changeSet);
+                    throw new Exception("Maximum amount of domain derivation cycles detected");
                 }
+
+                // Initialization
+                if (changeSet.Created.Any())
+                {
+                    foreach (var newObject in changeSet.Created.Select(v => (Object)v.GetObject()))
+                    {
+                        newObject.OnInit();
+                    }
+                }
+
+                var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = this.Session, Validation = domainValidation };
+
+                foreach (var domainDerivation in createDerivations.Union(changeDerivations))
+                {
+                    var matches = new HashSet<IObject>();
+
+                    foreach (var pattern in domainDerivation.Patterns)
+                    {
+                        var source = pattern switch
+                        {
+                            // Create
+                            CreatedPattern createdPattern => changeSet.Created
+                                .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
+                                .Select(v => v.GetObject()),
+
+                            // RoleDefault
+                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
+                                .AssociationsByRoleType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Session.Instantiate(v.Value)),
+
+                            // RoleInterface
+                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleInterface roleInterface => changeSet
+                                .AssociationsByRoleType
+                                .Where(v => v.Key.RelationType.Equals(roleInterface.RelationType))
+                                .SelectMany(v => this.Session.Instantiate(v.Value))
+                                .Where(v => roleInterface.AssociationTypeComposite.IsAssignableFrom(v.Strategy.Class)),
+
+                            // RoleClass
+                            ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleClass roleClass => changeSet
+                                .AssociationsByRoleType.Where(v => v.Key.Equals(roleClass))
+                                .SelectMany(v => this.Session.Instantiate(v.Value))
+                                .Where(v => v.Strategy.Class.Equals(roleClass.AssociationTypeComposite)),
+
+                            _ => Array.Empty<IObject>()
+                        };
+
+                        if (source != null)
+                        {
+                            if (pattern.Steps?.Length > 0)
+                            {
+                                var step = new Step(pattern.Steps);
+                                source = source.SelectMany(v => step.Get(v));
+                            }
+
+                            if (pattern.OfType != null)
+                            {
+                                source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                            }
+
+                            matches.UnionWith(source);
+                        }
+                    }
+
+                    if (matches.Count > 0)
+                    {
+                        using var validator = new Validator((IOnAccess)this.Session, domainDerivation.Patterns, matches);
+                        domainDerivation.Derive(domainCycle, matches);
+                    }
+                }
+
+                changeSet = this.Session.Checkpoint();
+                domainAccumulatedChangeSet.Add(changeSet);
             }
 
             return domainAccumulatedChangeSet;

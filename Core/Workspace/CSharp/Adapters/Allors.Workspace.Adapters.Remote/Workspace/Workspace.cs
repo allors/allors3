@@ -15,8 +15,6 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class Workspace : IWorkspace
     {
-        private WorkspaceChangeSet workspaceChangeSet;
-
         public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
@@ -30,8 +28,6 @@ namespace Allors.Workspace.Adapters.Remote
             this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
 
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
-
-            this.workspaceChangeSet = new WorkspaceChangeSet();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -52,28 +48,20 @@ namespace Allors.Workspace.Adapters.Remote
         internal Database Database { get; }
 
         internal State State { get; }
-        
+
         internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
 
         public IChangeSet[] Checkpoint()
         {
-            try
-            {
-                this.workspaceChangeSet.Merge(this.State.Checkpoint());
-                return this.Sessions.Select(v => v.Checkpoint(this.workspaceChangeSet)).ToArray();
-            }
-            finally
-            {
-                this.workspaceChangeSet = new WorkspaceChangeSet();
-            }
+            var workspaceChangeSet = new WorkspaceChangeSet(this.Database.Checkpoint(), this.State.Checkpoint());
+            return this.Sessions.Select(v => v.Checkpoint(workspaceChangeSet)).ToArray();
         }
 
         internal void RegisterSession(Session session) => this.Sessions.Add(session);
 
         internal void UnregisterSession(Session session) => this.Sessions.Remove(session);
-
 
         internal void RegisterWorkspaceIdForWorkspaceObject(IClass @class, long workspaceId) => this.WorkspaceOrSessionClassByWorkspaceId.Add(workspaceId, @class);
 

@@ -2,21 +2,10 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Allors.Workspace.Adapters.Remote.Session">
     <Position X="0.5" Y="8.25" Width="2.25" />
-    <AssociationLine Name="Population" Type="Allors.Workspace.Adapters.Remote.Population" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="2.25" Y="8.25" />
-        <Point X="2.25" Y="5.137" />
-        <Point X="4.5" Y="5.137" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAQAwMAAAUBABgQoAAQAAAgEAAAgAEAAAIAQAQBAAAA=</HashCode>
-      <FileName>Session.cs</FileName>
+      <HashCode>AAQAwMAAAUBABgQgAAQEAAgEAAAgAEAAAIAQBQBAAAA=</HashCode>
+      <FileName>Session\Session.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Workspace" />
-      <Property Name="Population" />
-    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Field Name="strategyByWorkspaceId" />
       <Field Name="existingDatabaseStrategies" />
@@ -34,39 +23,18 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>YAAAICEIgAAIAADAgQIBAAgACgggAAAABAAUABjAyAA=</HashCode>
+      <HashCode>YAAAICEIgAAIAgDAgQIBAAgACgggAAAABAAUABjAyAE=</HashCode>
       <FileName>Database\Database.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Field Name="databaseObjectByDatabaseId" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Allors.Workspace.Adapters.Remote.Workspace">
-    <Position X="0.5" Y="0.5" Width="3" />
-    <AssociationLine Name="Sessions" Type="Allors.Workspace.Adapters.Remote.Session" FixedToPoint="true">
-      <Path>
-        <Point X="1.875" Y="3.786" />
-        <Point X="1.875" Y="8.25" />
-      </Path>
-    </AssociationLine>
-    <TypeIdentifier>
-      <HashCode>AAQBAAAAAEAAABAIACAAAAAEAAEAAAAAAAAAAAZAAIA=</HashCode>
-      <FileName>Workspace.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Database" />
-      <Property Name="Population" />
-    </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="Sessions" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Allors.Workspace.Adapters.Remote.Population">
+  <Class Name="Allors.Workspace.Adapters.Remote.State">
     <Position X="4.5" Y="2.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>EBAAAAUACAAgAAEAgAAAAAABAAAAAgAAIAAQAAAIAAA=</HashCode>
-      <FileName>Population\Population.cs</FileName>
+      <HashCode>EBAAAAUACAAAAgEAgAAAAAABAAAAAgAAIAAQAAAIAAA=</HashCode>
+      <FileName>State\State.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseObject">
@@ -80,21 +48,21 @@
     <Position X="9.5" Y="12.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Strategies\SessionStrategy.cs</FileName>
+      <FileName>Session\SessionStrategy.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.WorkspaceStrategy">
     <Position X="7.5" Y="12.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Strategies\WorkspaceStrategy.cs</FileName>
+      <FileName>Session\WorkspaceStrategy.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseStrategy">
     <Position X="4.75" Y="12.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>JAICAAAAQIBABABAEEAABAgAAAAiAAAAQAAUIAFIAAI=</HashCode>
-      <FileName>Strategies\DatabaseStrategy.cs</FileName>
+      <FileName>Session\DatabaseStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -102,7 +70,7 @@
     <Position X="6.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAICAAAAAIAABQBgAAIABEAAAAIAAAAAAAAQAAEAAAA=</HashCode>
-      <FileName>Strategies\Strategy.cs</FileName>
+      <FileName>Session\Strategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
