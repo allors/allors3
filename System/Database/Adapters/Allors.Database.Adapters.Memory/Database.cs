@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Xml;
 
     using Allors.Meta;
@@ -36,7 +37,8 @@ namespace Allors.Database.Adapters.Memory
 
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
-            this.DomainDerivationById = new Dictionary<Guid, IDomainDerivation>();
+            this.CreateDerivations = Array.Empty<IDomainDerivation>();
+            this.ChangeDerivations = Array.Empty<IDomainDerivation>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -44,6 +46,10 @@ namespace Allors.Database.Adapters.Memory
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
+
+        public IDomainDerivation[] CreateDerivations { get; private set; }
+
+        public IDomainDerivation[] ChangeDerivations { get; private set; }
 
         public string Id { get; }
 
@@ -58,14 +64,24 @@ namespace Allors.Database.Adapters.Memory
         internal bool IsLoading { get; private set; }
 
         protected virtual Session Session => this.session ??= new Session(this, this.StateLifecycle.CreateSessionInstance());
-
-        public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
-
+        
         public ISession CreateSession() => this.CreateDatabaseSession();
 
         ISession IDatabase.CreateSession() => this.CreateDatabaseSession();
 
         public ISession CreateDatabaseSession() => this.Session;
+
+        public void AddDerivation(IDomainDerivation derivation)
+        {
+            if (derivation.Patterns.OfType<CreatedPattern>().Any())
+            {
+                this.CreateDerivations = new List<IDomainDerivation>(this.CreateDerivations) { derivation }.ToArray();
+            }
+            else
+            {
+                this.ChangeDerivations = new List<IDomainDerivation>(this.ChangeDerivations) { derivation }.ToArray();
+            }
+        }
 
         public void Load(XmlReader reader)
         {

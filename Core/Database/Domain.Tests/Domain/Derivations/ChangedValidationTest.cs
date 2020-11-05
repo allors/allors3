@@ -112,7 +112,7 @@ namespace Tests
         public void C1ChangedRole()
         {
             var derivation = new C1ChangedRoleDerivation(this.M);
-            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+            this.Session.Database.AddDerivation(derivation);
 
             var c1 = new C1Builder(this.Session).Build();
             var c2 = new C2Builder(this.Session).Build();
@@ -130,7 +130,7 @@ namespace Tests
         public void I1ChangedRole()
         {
             var derivation = new I1ChangedRoleDerivation(this.M);
-            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+            this.Session.Database.AddDerivation(derivation);
 
             var c1 = new C1Builder(this.Session).Build();
             var c2 = new C2Builder(this.Session).Build();
@@ -148,7 +148,7 @@ namespace Tests
         public void I12ChangedRole()
         {
             var derivation = new I12ChangedRoleDerivation(this.M);
-            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+            this.Session.Database.AddDerivation(derivation);
 
             var c1 = new C1Builder(this.Session).Build();
             var c2 = new C2Builder(this.Session).Build();
@@ -166,7 +166,7 @@ namespace Tests
         public void S12ChangedRole()
         {
             var derivation = new S12ChangedRoleDerivation(this.M);
-            this.Session.Database.DomainDerivationById.Add(derivation.Id, derivation);
+            this.Session.Database.AddDerivation(derivation);
 
             var c1 = new C1Builder(this.Session).Build();
             var c2 = new C2Builder(this.Session).Build();

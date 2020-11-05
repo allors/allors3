@@ -8,13 +8,24 @@
 
 namespace Tests
 {
+    using System.Linq;
     using Allors;
+    using Allors.Data;
     using Allors.Domain;
     using Xunit;
 
     public class DomainDerivationTest : DomainTest, IClassFixture<Fixture>
     {
         public DomainDerivationTest(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void Database()
+        {
+            var database = this.Session.Database;
+
+            Assert.True(database.CreateDerivations.All(v => v.Patterns.OfType<CreatedPattern>().Any()));
+            Assert.True(database.ChangeDerivations.All(v => !v.Patterns.OfType<CreatedPattern>().Any()));
+        }
 
         [Fact]
         public void ClassCreation()
