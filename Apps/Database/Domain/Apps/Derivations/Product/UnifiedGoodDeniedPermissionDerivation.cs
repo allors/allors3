@@ -30,7 +30,13 @@ namespace Allors.Domain
             new ChangedPattern(m.RequestItem.Product){ Steps =  new IPropertyType[] {m.RequestItem.Product}, OfType = m.UnifiedGood.Class },
             new ChangedPattern(m.SalesInvoiceItem.Product){ Steps =  new IPropertyType[] {m.SalesInvoiceItem.Product}, OfType = m.UnifiedGood.Class },
             new ChangedPattern(m.SalesOrderItem.Product){ Steps =  new IPropertyType[] {m.SalesOrderItem.Product}, OfType = m.UnifiedGood.Class },
-
+            new ChangedPattern(m.WorkEffortType.ProductToProduce){ Steps =  new IPropertyType[] {m.WorkEffortType.ProductToProduce}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.WorkEffortInventoryProduced.Part){ Steps =  new IPropertyType[] {m.WorkEffortInventoryProduced.Part}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.WorkEffortPartStandard.Part){ Steps =  new IPropertyType[] {m.WorkEffortPartStandard.Part}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.PartBillOfMaterial.Part){ Steps =  new IPropertyType[] {m.PartBillOfMaterial.Part}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.PartBillOfMaterial.ComponentPart){ Steps =  new IPropertyType[] {m.PartBillOfMaterial.ComponentPart}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.InventoryItemTransaction.Part){ Steps =  new IPropertyType[] {m.InventoryItemTransaction.Part}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.UnifiedGood.SerialisedItems),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -56,7 +62,6 @@ namespace Allors.Domain
                                 !@this.ExistProductConfigurationsWhereProduct &&
                                 !@this.ExistRequestItemsWhereProduct &&
                                 !@this.ExistSalesInvoiceItemsWhereProduct &&
-
                                 !@this.ExistSalesOrderItemsWhereProduct &&
                                 !@this.ExistWorkEffortTypesWhereProductToProduce &&
                                 !@this.ExistWorkEffortInventoryProducedsWherePart &&
