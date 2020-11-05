@@ -126,4 +126,156 @@ namespace Allors.Domain
             Assert.Equal(newItem.Ownership.Name, newItem.OwnershipByOwnershipName);
         }
     }
+
+    [Trait("Category", "Security")]
+    public class SerialisedItemDeniedPermissionTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemDeniedPermissionTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SerialisedItem.ObjectType, this.M.SerialisedItem.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
+
+
+        [Fact]
+        public void OnChangeSerialisedItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithInventoryItemTransactionDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Session)
+                .WithReason(new InventoryTransactionReasonBuilder(this.Session).Build())
+                .WithPart(new NonUnifiedPartBuilder(this.Session).Build())
+                .WithSerialisedItem(serialisedItem).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithPurchaseInvoiceItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseInvoiceItem = new PurchaseInvoiceItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithPurchaseOrderItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithAssignedUnitPrice(1)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithSerialisedItem(serialisedItem).Build();
+
+            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithQuoteItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quote = new ProposalBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
+                .WithSerialisedItem(serialisedItem).Build();
+
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithSalesInvoiceItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+
+            salesInvoice.AddSalesInvoiceItem(salesInvoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithSalesOrderItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrderItem = new SalesOrderItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+
+            salesOrder.AddSalesOrderItem(salesOrderItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithSerialisedInventoryItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Session)
+                .WithPart(new NonUnifiedPartBuilder(this.Session).Build())
+                .WithSerialisedItem(serialisedItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeSerialisedItemWithShipmentItemDeriveDeletePermission()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipment = new TransferBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+        }
+    }
 }

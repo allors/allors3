@@ -91,20 +91,6 @@ namespace Allors.Domain
 
                         totalCost = quantityOnHand * @this.PartWeightedAverage.AverageCost;
                     }
-
-                    var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                    if (!@this.ExistWorkEffortInventoryProducedsWherePart &&
-                           !@this.ExistWorkEffortPartStandardsWherePart &&
-                           !@this.ExistPartBillOfMaterialsWherePart &&
-                           !@this.ExistPartBillOfMaterialsWhereComponentPart &&
-                           !@this.ExistInventoryItemTransactionsWherePart)
-                    {
-                        @this.RemoveDeniedPermission(deletePermission);
-                    }
-                    else
-                    {
-                        @this.AddDeniedPermission(deletePermission);
-                    }
                 }
             }
         }

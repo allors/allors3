@@ -2717,11 +2717,285 @@ namespace Allors.Domain
     public class SalesOrderCreateDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderCreateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void DeriveSalesOrderState()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderState);
+        }
+
+        [Fact]
+        public void DeriveSalesOrderShipmentState()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderShipmentState);
+        }
+
+        [Fact]
+        public void DeriveSalesOrderPaymentState()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderPaymentState);
+        }
+
+        [Fact]
+        public void DeriveOrderDate()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistOrderDate);
+        }
+
+        [Fact]
+        public void DeriveEntryDate()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistEntryDate);
+        }
+
+        [Fact]
+        public void DeriveTakenBy()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.TakenBy, this.InternalOrganisation);
+        }
+
+        [Fact]
+        public void DeriveStore()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.Store, this.InternalOrganisation.StoresWhereInternalOrganisation.First);
+        }
+
+        [Fact]
+        public void DeriveOriginFacility()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.OriginFacility, this.InternalOrganisation.StoresWhereInternalOrganisation.First.DefaultFacility);
+        }
     }
 
     public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderCanInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void InvoicableOrderDeriveCanInvoiceFalse()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanInvoice);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveCanInvoiceFalse()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanInvoice);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveCanInvoiceTrue()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanInvoice);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemStateDeriveCanInvoice()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanInvoice);
+
+            foreach(SalesOrderItem salesOrderItem in order.SalesOrderItems)
+            {
+                salesOrderItem.Cancel();
+            }
+
+            this.Session.Derive(false);
+
+            Assert.False(order.CanInvoice);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingAmountDeriveCanInvoiceTrue()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanInvoice);
+
+            var orderItem = order.SalesOrderItems[0];
+            var fullAmount = orderItem.QuantityOrdered * orderItem.UnitPrice;
+
+            new OrderItemBillingBuilder(this.Session)
+                .WithOrderItem(order.SalesOrderItems[0])
+                .WithAmount(fullAmount)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanInvoice);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingAmountDeriveCanInvoiceFalse()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanInvoice);
+
+            foreach (SalesOrderItem salesOrderItem in order.SalesOrderItems)
+            {
+                var fullAmount = salesOrderItem.QuantityOrdered * salesOrderItem.UnitPrice;
+
+                new OrderItemBillingBuilder(this.Session)
+                    .WithOrderItem(salesOrderItem)
+                    .WithAmount(fullAmount)
+                    .Build();
+            }
+
+            this.Session.Derive(false);
+
+            Assert.False(order.CanInvoice);
+        }
+    }
+
+    public class SalesOrderCanShipDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderCanShipDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveCanShipFalse()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveCanShipTrue()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session).WithQuantity(item.QuantityOrdered).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(item.Part).Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+        }
     }
 
     public class SalesOrderPriceDerivationTests : DomainTest, IClassFixture<Fixture>

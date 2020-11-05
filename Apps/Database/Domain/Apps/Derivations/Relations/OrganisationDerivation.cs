@@ -110,16 +110,6 @@ namespace Allors.Domain
 
                 @this.ContactsUserGroup.Members = @this.CurrentContacts.ToArray();
 
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
-
                 @this.ActiveEmployees = @this.EmploymentsWhereEmployer
                     .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                     .Select(v => v.Employee)
