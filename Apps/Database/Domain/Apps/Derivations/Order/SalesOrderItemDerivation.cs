@@ -455,9 +455,9 @@ namespace Allors.Domain
                         {
                             if (!salesOrderItem.ExistReservedFromNonSerialisedInventoryItem)
                             {
-                                var inventoryItems = salesOrderItem.Part.InventoryItemsWherePart;
-                                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
-                                salesOrderItem.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
+                                //var inventoryItems = salesOrderItem.Part.InventoryItemsWherePart;
+                                //inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
+                                //salesOrderItem.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
                             }
                         }
                     }

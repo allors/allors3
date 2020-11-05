@@ -60,24 +60,20 @@ namespace Allors.Domain.TestPopulation
             return @this;
         }
 
-        public static SalesOrderItemBuilder WithPartItemDefaults(this SalesOrderItemBuilder @this)
+        public static SalesOrderItemBuilder WithNonSerialisedPartItemDefaults(this SalesOrderItemBuilder @this)
         {
             var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
 
-            var unifiedGoodExtent = @this.Session.Extent<UnifiedGood>();
-            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Session).Serialised);
-            var serializedPart = unifiedGoodExtent.First();
+            var product = @this.Session.Extent<NonUnifiedGood>().First(v => v.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Session).NonSerialised));
 
             @this.WithDescription(faker.Lorem.Sentences(2));
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithInvoiceItemType(invoiceItemType);
-            @this.WithProduct(serializedPart);
-            @this.WithSerialisedItem(serializedPart.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Session.Extent<SerialisedItemAvailability>()));
-            @this.WithQuantityOrdered(1);
+            @this.WithProduct(product);
+            @this.WithQuantityOrdered(faker.Random.UInt(2, 100));
             @this.WithAssignedUnitPrice(faker.Random.UInt());
 
             return @this;

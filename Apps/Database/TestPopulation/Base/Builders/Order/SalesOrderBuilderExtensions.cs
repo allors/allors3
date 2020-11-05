@@ -38,7 +38,7 @@ namespace Allors.Domain.TestPopulation
 
             var salesOrderItem_Default = new SalesOrderItemBuilder(@this.Session).WithDefaults().Build();
             var salesOrderItem_Product = new SalesOrderItemBuilder(@this.Session).WithProductItemDefaults().Build();
-            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithPartItemDefaults().Build();
+            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithNonSerialisedPartItemDefaults().Build();
 
             var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
 
@@ -90,7 +90,7 @@ namespace Allors.Domain.TestPopulation
 
             var salesOrderItem_Default = new SalesOrderItemBuilder(@this.Session).WithDefaults().Build();
             var salesOrderItem_Product = new SalesOrderItemBuilder(@this.Session).WithProductItemDefaults().Build();
-            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithPartItemDefaults().Build();
+            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithNonSerialisedPartItemDefaults().Build();
 
             var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
 
@@ -144,7 +144,7 @@ namespace Allors.Domain.TestPopulation
 
             var salesOrderItem_Default = new SalesOrderItemBuilder(@this.Session).WithDefaults().Build();
             var salesOrderItem_Product = new SalesOrderItemBuilder(@this.Session).WithProductItemDefaults().Build();
-            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithPartItemDefaults().Build();
+            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithNonSerialisedPartItemDefaults().Build();
 
             var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
 
@@ -192,7 +192,7 @@ namespace Allors.Domain.TestPopulation
 
             var salesOrderItem_Default = new SalesOrderItemBuilder(@this.Session).WithDefaults().Build();
             var salesOrderItem_Product = new SalesOrderItemBuilder(@this.Session).WithProductItemDefaults().Build();
-            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithPartItemDefaults().Build();
+            var salesOrderItem_Part = new SalesOrderItemBuilder(@this.Session).WithNonSerialisedPartItemDefaults().Build();
 
             var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
 

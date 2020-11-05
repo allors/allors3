@@ -34,15 +34,17 @@ namespace Allors.Domain
             {
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
-                if (@this.SalesOrderState.IsInProcess && object.Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
+                if (@this.ExistSalesOrderState
+                    && @this.SalesOrderState.IsInProcess
+                    && object.Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
                 {
                     @this.CanInvoice = false;
 
-                    foreach (var orderItem2 in validOrderItems)
+                    foreach (var salesOrderItem in validOrderItems)
                     {
-                        var amountAlreadyInvoiced1 = orderItem2.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
+                        var amountAlreadyInvoiced1 = salesOrderItem.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
 
-                        var leftToInvoice1 = (orderItem2.QuantityOrdered * orderItem2.UnitPrice) - amountAlreadyInvoiced1;
+                        var leftToInvoice1 = (salesOrderItem.QuantityOrdered * salesOrderItem.UnitPrice) - amountAlreadyInvoiced1;
 
                         if (leftToInvoice1 > 0)
                         {

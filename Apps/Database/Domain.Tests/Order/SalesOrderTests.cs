@@ -2960,6 +2960,42 @@ namespace Allors.Domain
     public class SalesOrderCanShipDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderCanShipDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveCanShipFalse()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveCanShipTrue()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session).WithQuantity(item.QuantityOrdered).WithReason(new InventoryTransactionReasons(this.Session).Unknown).WithPart(item.Part).Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+        }
     }
 
     public class SalesOrderPriceDerivationTests : DomainTest, IClassFixture<Fixture>
