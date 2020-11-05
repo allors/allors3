@@ -1085,13 +1085,13 @@ namespace Allors.Domain
         public SalesInvoiceCreateDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void DeriveEntryDate()
+        public void DeriveSalesOrderState()
         {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            var order = new SalesOrderBuilder(this.Session).Build();
 
             this.Session.Derive(false);
 
-            Assert.True(invoice.ExistEntryDate);
+            Assert.True(order.ExistSalesOrderState);
         }
 
         [Fact]

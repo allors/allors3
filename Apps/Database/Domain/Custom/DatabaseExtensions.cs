@@ -155,6 +155,8 @@ namespace Allors.Domain
                 new OrderShipmentDerivation(m),
                 new SalesOrderItemCreateDerivation(m),
                 new SalesOrderItemDerivation(m),
+                new SalesOrderCanInvoiceDerivation(m),
+                new SalesOrderCanShipDerivation(m),
                 new SalesOrderCreateDerivation(m),
                 new SalesOrderDerivation(m),
                 new SalesOrderPriceDerivation(m),

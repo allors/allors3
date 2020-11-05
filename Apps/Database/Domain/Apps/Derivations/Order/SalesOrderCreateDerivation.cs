@@ -57,11 +57,6 @@ namespace Allors.Domain
                     @this.EntryDate = @this.Session().Now();
                 }
 
-                if (!@this.ExistPartiallyShip)
-                {
-                    @this.PartiallyShip = true;
-                }
-
                 if (!@this.ExistTakenBy)
                 {
                     var internalOrganisations = new Organisations(@this.Session()).InternalOrganisations();

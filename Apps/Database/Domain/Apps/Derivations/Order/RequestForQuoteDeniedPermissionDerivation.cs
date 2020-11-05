@@ -16,6 +16,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.RequestForQuote.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.RequestForQuote.RequestState),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
