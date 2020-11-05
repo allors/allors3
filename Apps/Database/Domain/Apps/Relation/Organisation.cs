@@ -50,7 +50,6 @@ namespace Allors.Domain
             && !this.ExistShipmentsWhereShipToParty
             && !this.ExistPaymentsWhereReceiver
             && !this.ExistPaymentsWhereSender
-            && !this.ExistPaymentsWhereSender
             && !this.ExistEmploymentsWhereEmployer
             && !this.ExistEngagementsWhereBillToParty
             && !this.ExistEngagementsWherePlacingParty

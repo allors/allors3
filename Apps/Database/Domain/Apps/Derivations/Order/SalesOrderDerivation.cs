@@ -202,55 +202,6 @@ namespace Allors.Domain
 
                 @this.ResetPrintDocument();
 
-                // CanShip
-                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess))
-                {
-                    var somethingToShip = false;
-                    var allItemsAvailable = true;
-
-                    foreach (var salesOrderItem1 in validOrderItems)
-                    {
-                        if (!@this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping != salesOrderItem1.QuantityOrdered)
-                        {
-                            allItemsAvailable = false;
-                            break;
-                        }
-
-                        if (@this.PartiallyShip && salesOrderItem1.QuantityRequestsShipping > 0)
-                        {
-                            somethingToShip = true;
-                        }
-                    }
-
-                    @this.CanShip = (!@this.PartiallyShip && allItemsAvailable) || somethingToShip;
-                }
-                else
-                {
-                    @this.CanShip = false;
-                }
-
-                // CanInvoice
-                if (@this.SalesOrderState.IsInProcess && object.Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
-                {
-                    @this.CanInvoice = false;
-
-                    foreach (var orderItem2 in validOrderItems)
-                    {
-                        var amountAlreadyInvoiced1 = orderItem2.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
-
-                        var leftToInvoice1 = (orderItem2.QuantityOrdered * orderItem2.UnitPrice) - amountAlreadyInvoiced1;
-
-                        if (leftToInvoice1 > 0)
-                        {
-                            @this.CanInvoice = true;
-                        }
-                    }
-                }
-                else
-                {
-                    @this.CanInvoice = false;
-                }
-
                 if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess) &&
                     Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForShipmentItems))
                 {
