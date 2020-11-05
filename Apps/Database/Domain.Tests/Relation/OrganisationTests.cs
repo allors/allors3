@@ -9,6 +9,7 @@
 namespace Allors.Domain
 {
     using System;
+    using Allors.Domain.TestPopulation;
     using Xunit;
     using ZXing.OneD;
 
@@ -270,6 +271,467 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             var organisationRollUp = new OrganisationRollUpBuilder(this.Session).WithParent(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPartyFixedAssetAssignmentDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var partyFixedAssetAssignment = new PartyFixedAssetAssignmentBuilder(this.Session).WithParty(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPickListDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var pickList = new PickListBuilder(this.Session).WithShipToParty(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithQuoteIssuerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithQuoteCounter(new CounterBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var quote = new ProposalBuilder(this.Session).WithIssuer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithQuoteReceiverDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithQuoteCounter(new CounterBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var quote = new ProposalBuilder(this.Session).WithReceiver(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseInvoiceBilledToDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithBilledTo(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseInvoiceBilledFromDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseInvoiceShipToCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithShipToCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseInvoiceBillToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithBillToEndCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseInvoiceShipToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithShipToEndCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseOrderTakenViaSupplierDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithPurchaseOrderTakenViaSubcontractorDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSubcontractor(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithRequestOriginatorDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithRequestCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var request = new RequestForQuoteBuilder(this.Session).WithOriginator(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithRequestRecipientDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session)
+                .WithRequestCounter(new CounterBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var request = new RequestForQuoteBuilder(this.Session).WithRecipient(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithRequirementAuthorizerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var requirement = new RequirementBuilder(this.Session).WithAuthorizer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithRequirementNeededForDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var requirement = new RequirementBuilder(this.Session).WithNeededFor(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithRequirementOriginatorDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var requirement = new RequirementBuilder(this.Session).WithOriginator(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithRequirementServicedByDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var requirement = new RequirementBuilder(this.Session).WithServicedBy(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesInvoiceBilledFromDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithBilledFrom(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesInvoiceBillToCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesInvoiceBillToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithBillToEndCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesInvoiceShipToCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesInvoiceShipToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithShipToEndCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderBillToCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderBillToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderShipToCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).WithShipToCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderShipToEndCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).WithShipToEndCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderPlacingCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).WithPlacingCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderTakenByDeletePermission()
+        {
+            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, this.InternalOrganisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSalesOrderItemAssignedShipToPartyDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+
+            var salesOrderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipToParty(organisation).Build();
+
+            salesOrder.AddSalesOrderItem(salesOrderItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSerialisedItemSuppliedByDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).WithAssignedSuppliedBy(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSerialisedItemOwnedByDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).WithOwnedBy(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSerialisedItemRentedByDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).WithRentedBy(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSerialisedItemBuyerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).WithBuyer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithSerialisedItemSellerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).WithSeller(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithWorkTaskCustomerDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workTask = new WorkTaskBuilder(this.Session).WithCustomer(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithWorkTaskExecutedByDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workTask = new WorkTaskBuilder(this.Session).WithExecutedBy(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangeOrganisationWithWorkEffortPartyAssignmentPartyDeletePermission()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workTask = new WorkEffortPartyAssignmentBuilder(this.Session).WithParty(organisation).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
