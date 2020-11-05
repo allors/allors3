@@ -60,7 +60,10 @@ namespace Allors.Domain
             var requestForQuote = new RequestForQuoteBuilder(this.Session).WithRequestItem(requestItem).Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, requestForQuote.DeniedPermissions);
+            requestForQuote.Cancel();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.deletePermission, requestForQuote.DeniedPermissions);
         }
 
         [Fact]
@@ -81,18 +84,7 @@ namespace Allors.Domain
             var requestForQuote = new RequestForQuoteBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, requestForQuote.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedRequestForQuoteStateCreatedWithOriginatorDeriveSubmitPermission()
-        {
-            var originator = new PersonBuilder(this.Session).Build();
-
-            var requestForQuote = new RequestForQuoteBuilder(this.Session).WithOriginator(originator).Build();
-            this.Session.Derive(false);
-
-            Assert.DoesNotContain(this.deletePermission, requestForQuote.DeniedPermissions);
+            Assert.Contains(this.submitPermission, requestForQuote.DeniedPermissions);
         }
     }
 }
