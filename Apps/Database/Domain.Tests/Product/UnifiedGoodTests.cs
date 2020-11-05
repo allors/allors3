@@ -6,6 +6,8 @@
 
 namespace Allors.Domain
 {
+    using System.Linq;
+    using Allors.Domain.TestPopulation;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using Xunit;
 
@@ -195,20 +197,102 @@ namespace Allors.Domain
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
 
-        //[Fact]
-        //public void OnChangedNonUnifiedGoodWithSalesOrderItemDeriveDeletePermission()
-        //{
-        //    var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
-        //    this.Session.Derive(false);
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithSalesOrderItemDeriveDeletePermission()
+        {
+            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
 
-        //    var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            var item = salesOrder.SalesOrderItems.Where(v => v.Product.GetType().Name == typeof(UnifiedGood).Name).Select(v => v.Product).First();
 
-        //    var salesOrderItem = new SalesOrderItemBuilder(this.Session).WithProduct(unifiedGood).Build();
-        //    salesOrder.AddSalesOrderItem(salesOrderItem);
-        //    this.Session.Derive(false);
+            Assert.Contains(this.deletePermission, item.DeniedPermissions);
+        }
 
-        //    Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
-        //}
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithWorkEffortTypeDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workEffortType = new WorkEffortTypeBuilder(this.Session).WithProductToProduce(unifiedGood).Build();          
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithWorkEffortInventoryProducedDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workEffortInventoryProduced = new WorkEffortInventoryProducedBuilder(this.Session).WithPart(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithWorkEffortPartStandardDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workEffortPartStandard = new WorkEffortPartStandardBuilder(this.Session).WithPart(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithPartBillOfMaterialPartDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var partBillOfMaterial = new EngineeringBomBuilder(this.Session).WithPart(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithPartBillOfMaterialComponentPartDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var partBillOfMaterial = new EngineeringBomBuilder(this.Session).WithComponentPart(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithInventoryItemTransactionDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Session).WithReason(new InventoryTransactionReasonBuilder(this.Session).Build()).WithPart(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithSerialisedItemDeriveDeletePermission()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            unifiedGood.AddSerialisedItem(serialisedItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+        }
+
 
     }
 }
