@@ -130,6 +130,8 @@ namespace Allors.Domain
 
         public void SyncInventoryTransactions(IDerivation derivation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
         {
+            // TODO: Move sync to new derivations  
+
             var adjustmentQuantity = 0M;
             var existingQuantity = 0M;
             var matchingTransactions = this.InventoryItemTransactions

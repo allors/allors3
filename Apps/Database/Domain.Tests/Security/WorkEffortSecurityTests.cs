@@ -160,4 +160,50 @@ namespace Allors.Domain
             Assert.False(acl.CanWrite(this.M.TimeEntry.AmountOfTime));
         }
     }
+
+
+    [Trait("Category", "Security")]
+    public class WorkEffortDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
+        {
+            this.invoicePermission = new Permissions(this.Session).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Invoice);
+            this.completePermission = new Permissions(this.Session).Get(this.M.WorkTask.ObjectType, this.M.WorkTask.Complete);
+        }
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission invoicePermission;
+        private readonly Permission completePermission;
+
+        [Fact]
+        public void OnChangedWorkTaskDeriveInvoicePermission()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.invoicePermission, workEffort.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedWorkTaskStateCompletedDeriveInvoicePermission()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            workEffort.Complete();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.invoicePermission, workEffort.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedWorkTaskDeriveCompletePermission()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
+        }
+    }
 }

@@ -16,6 +16,8 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.WorkTask.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.WorkTask.CanInvoice),
+
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,6 +28,29 @@ namespace Allors.Domain
             foreach (var @this in matches.Cast<WorkTask>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+
+                if (!@this.CanInvoice)
+                {
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
+                }
+                else
+                {
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
+                }
+
+                var completePermission = new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete);
+
+                if (@this.ServiceEntriesWhereWorkEffort.Any(v => !v.ExistThroughDate))
+                {
+                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
+                }
+                else
+                {
+                    if (@this.WorkEffortState.IsInProgress)
+                    {
+                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
+                    }
+                }
             }
         }
     }
