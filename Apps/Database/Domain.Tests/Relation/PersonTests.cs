@@ -753,15 +753,15 @@ namespace Allors.Domain
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
         }
-        
+
+        // TODO: Relooking in EngineeringChange
         [Fact]
         public void OnChangedPersonWithEngineeringChangesWhereAuthorizerDeletePermission()
         {
-            var person = new PersonBuilder(this.Session).Build(); // CreatedDerivation initial state
+            var person = new PersonBuilder(this.Session).Build();
             this.Session.Derive(false);
 
             var engineeringChange = new EngineeringChangeBuilder(this.Session).WithAuthorizer(person).Build();
-            
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, person.DeniedPermissions);
