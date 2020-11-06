@@ -31,45 +31,6 @@ namespace Allors.Domain
             }
         }
 
-        public static void AppsOnPreDerive(this Request @this, ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-            //{
-            //    foreach (RequestItem requestItem in @this.RequestItems)
-            //    {
-            //        iteration.AddDependency(requestItem, @this);
-            //        iteration.Mark(requestItem);
-            //    }
-            //}
-        }
-
-        public static void AppsOnDerive(this Request @this, ObjectOnDerive method)
-        {
-            //var session = @this.Strategy.Session;
-            //if (!@this.ExistRecipient)
-            //{
-            //    var internalOrganisations = new Organisations(session).InternalOrganisations();
-
-            //    if (internalOrganisations.Count() == 1)
-            //    {
-            //        @this.Recipient = internalOrganisations.Single();
-            //    }
-            //}
-
-            //if (@this.ExistRecipient && !@this.ExistRequestNumber)
-            //{
-            //    @this.RequestNumber = @this.Recipient.NextRequestNumber(session.Now().Year);
-            //    (@this).SortableRequestNumber = @this.Session().GetSingleton().SortableNumber(@this.Recipient.RequestNumberPrefix, @this.RequestNumber, @this.RequestDate.Year.ToString());
-            //}
-
-            //@this.DeriveInitialObjectState();
-
-
-            //@this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
-        }
-
         public static void AppsDelete(this Request @this, DeletableDelete method)
         {
             if (@this.IsDeletable())
