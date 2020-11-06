@@ -34,14 +34,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistRequestItemState)
-            {
-                this.RequestItemState = new RequestItemStates(this.Strategy.Session).Submitted;
-            }
-        }
-
         public void AppsCancel(RequestItemCancel method) => this.RequestItemState = new RequestItemStates(this.Strategy.Session).Cancelled;
 
         public void Sync(Request request) => this.SyncedRequest = request;

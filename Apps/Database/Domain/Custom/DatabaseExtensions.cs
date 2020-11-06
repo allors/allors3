@@ -18,7 +18,17 @@ namespace Allors.Domain
                 new TransitionalDeniedPermissionDerivation(m),
 
                 // Apps
+                new OwnBankAccountCreationDerivation(m),
+                new OwnCreditCardCreationDerivation(m),
+                new FiscalYearInvoiceNumberCreationDerivation(m),
+                new PurchaseInvoiceCreationDerivation(m),
+                new PurchaseInvoiceItemCreationDerivation(m),
                 new AccountingPeriodDerivation(m),
+                new StoreCreationDerivation(m),
+                new PurchaseOrderItemCreationDerivation(m),
+                new QuoteItemCreationDerivation(m),
+                new RequestItemCreationDerivation(m),
+                new RequirementCreationDerivation(m),
                 new BankDerivation(m),
                 new BankAccountDerivation(m),
                 new CashDerivation(m),
@@ -206,6 +216,19 @@ namespace Allors.Domain
                 new WorkEffortPartyAssignmentDerivation(m),
                 new WorkEffortPurchaseOrderItemAssignmentDerivation(m),
                 new WorkEffortTypeDerivation(m),
+                new CustomerReturnCreateDerivation(m),
+                new CustomerShipmentCreateDerivation(m),
+                new DropShipmentCreateDerivation(m),
+                new PickListCreateDerivation(m),
+                new PurchaseReturnCreateDerivation(m),
+                new PurchaseShipmentCreateDerivation(m),
+                new ShipmentItemCreateDerivation(m),
+                new ShipmentPackageCreateDerivation(m),
+                new ShipmentReceiptCreateDerivation(m),
+                new TransferCreateDerivation(m),
+                new TimeEntryCreateDerivation(m),
+                new WorkEffortAssignmentRateCreateDerivation(m),
+                new WorkTaskCreateDerivation(m),
             };
 
             foreach (var derivation in derivations)

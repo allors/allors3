@@ -16,17 +16,6 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.WorkTask, this.M.WorkTask.WorkEffortState),
         };
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent()
-                .Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-            if (!this.ExistTakenBy && internalOrganisations.Count() == 1)
-            {
-                this.TakenBy = internalOrganisations.First();
-            }
-        }
-
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)
