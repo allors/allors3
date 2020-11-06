@@ -92,5 +92,6 @@ namespace Allors.Domain
                     journal.PreviousJournalType = journal.JournalType;
                 }
             }
+        }
     }
 }

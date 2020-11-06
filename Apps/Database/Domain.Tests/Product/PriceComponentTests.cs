@@ -320,4 +320,22 @@ namespace Allors.Domain
             Assert.False(physicalService.ExistVirtualProductPriceComponents);
         }
     }
+
+    public class PriceComponentDerivationsTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PriceComponentDerivationsTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
+        {
+            var basePrice = new BasePriceBuilder(this.Session).Build();
+            
+            this.Session.Derive();
+
+            Assert.False(this.Session.Derive(false).HasErrors);
+        }
+
+    }
 }
+
+
