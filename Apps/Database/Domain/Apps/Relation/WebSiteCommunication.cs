@@ -11,7 +11,5 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.WebSiteCommunication, this.M.WebSiteCommunication.CommunicationEventState),
         };
-
-        public void AppsOnDerive(ObjectOnDerive method) { /*this.WorkItemDescription = $"Access website of {this.ToParty.PartyName} about {this.Subject}";*/ }
     }
 }

@@ -100,40 +100,6 @@ namespace Allors.Domain
                        .Any(v => v.FromDate.Date <= date && (!v.ExistThroughDate || v.ThroughDate >= date));
         }
 
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-            //var now = this.Session().Now();
-
-            //this.Strategy.Session.Prefetch(this.PrefetchPolicy);
-
-            //if (this.ExistSalutation
-            //    && (this.Salutation.Equals(new Salutations(this.Session()).Mr)
-            //        || this.Salutation.Equals(new Salutations(this.Session()).Dr)))
-            //{
-            //    this.Gender = new GenderTypes(this.Session()).Male;
-            //}
-
-            //if (this.ExistSalutation
-            //    && (this.Salutation.Equals(new Salutations(this.Session()).Mrs)
-            //        || this.Salutation.Equals(new Salutations(this.Session()).Ms)
-            //        || this.Salutation.Equals(new Salutations(this.Session()).Mme)))
-            //{
-            //    this.Gender = new GenderTypes(this.Session()).Female;
-            //}
-
-            //this.PartyName = this.DerivePartyName();
-
-            //this.VatRegime = new VatRegimes(this.Session()).PrivatePerson;
-
-            //DeriveRelationships();
-
-            //if (!this.ExistTimeSheetWhereWorker && (this.AppsIsActiveEmployee(now) || this.CurrentOrganisationContactRelationships.Count > 0))
-            //{
-            //    new TimeSheetBuilder(this.Strategy.Session).WithWorker(this).Build();
-            //}
-        }
-
         public void DeriveRelationships()
         {
             var now = this.Session().Now();
@@ -146,19 +112,6 @@ namespace Allors.Domain
             this.InactiveOrganisationContactRelationships = allOrganisationContactRelationships
                 .Except(this.CurrentOrganisationContactRelationships)
                 .ToArray();
-        }
-
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            //if (this.IsDeletable)
-            //{
-            //    this.RemoveDeniedPermission(deletePermission);
-            //}
-            //else
-            //{
-            //    this.AddDeniedPermission(deletePermission);
-            //}
         }
 
         public void AppsDelete(DeletableDelete method)
@@ -220,56 +173,5 @@ namespace Allors.Domain
                 this.OwnerSecurityToken.Delete();
             }
         }
-
-        public void Sync(PartyContactMechanism[] organisationContactMechanisms)
-        {
-            //foreach (var partyContactMechanism in organisationContactMechanisms)
-            //{
-            //    this.RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
-
-            //    if (partyContactMechanism.FromDate <= this.Session().Now() &&
-            //        (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= this.Session().Now()))
-            //    {
-            //        this.AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
-            //    }
-            //}
-        }
-
-        //public string DerivePartyName()
-        //{
-        //    var partyName = new StringBuilder();
-
-        //    if (this.ExistFirstName)
-        //    {
-        //        partyName.Append(this.FirstName);
-        //    }
-
-        //    if (this.ExistMiddleName)
-        //    {
-        //        if (partyName.Length > 0)
-        //        {
-        //            partyName.Append(" ");
-        //        }
-
-        //        partyName.Append(this.MiddleName);
-        //    }
-
-        //    if (this.ExistLastName)
-        //    {
-        //        if (partyName.Length > 0)
-        //        {
-        //            partyName.Append(" ");
-        //        }
-
-        //        partyName.Append(this.LastName);
-        //    }
-
-        //    if (partyName.Length == 0)
-        //    {
-        //        partyName.Append($"[{this.UserName}]");
-        //    }
-
-        //    return partyName.ToString();
-        //}
     }
 }

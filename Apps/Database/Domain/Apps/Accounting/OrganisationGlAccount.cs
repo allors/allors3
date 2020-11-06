@@ -62,16 +62,5 @@ namespace Allors.Domain
 
             this.HasBankStatementTransactions = false;
         }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-            if (!this.ExistInternalOrganisation && internalOrganisations.Count() == 1)
-            {
-                this.InternalOrganisation = internalOrganisations.First();
-            }
-        }
     }
 }

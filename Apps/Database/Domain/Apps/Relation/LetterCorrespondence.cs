@@ -11,7 +11,5 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.LetterCorrespondence, this.M.LetterCorrespondence.CommunicationEventState),
         };
-
-        //public void AppsOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Letter to {this.ToParty.PartyName} about {this.Subject}";
     }
 }

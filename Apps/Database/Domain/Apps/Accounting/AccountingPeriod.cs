@@ -24,25 +24,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var stringBuilder = new StringBuilder();
-            if (this.ExistFromDate)
-            {
-                stringBuilder.AppendFormat("{0:d}", this.FromDate);
-            }
-
-            if (this.ExistThroughDate)
-            {
-                if (stringBuilder.Length > 0)
-                {
-                    stringBuilder.Append(" through ");
-                }
-
-                stringBuilder.AppendFormat("{0:d}", this.ThroughDate);
-            }
-        }
-
         private AccountingPeriod AppsAddNextMonth()
         {
             var allPeriods = new AccountingPeriods(this.Strategy.Session).Extent();

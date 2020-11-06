@@ -7,23 +7,6 @@ namespace Allors.Domain
 {
     public partial class CommunicationTask
     {
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //this.WorkItem = this.CommunicationEvent;
-
-            //this.Title = this.CommunicationEvent.WorkItemDescription;
-
-            //// Lifecycle
-            //if (!this.ExistDateClosed && this.CommunicationEvent.ExistActualEnd)
-            //{
-            //    this.DateClosed = this.Session().Now();
-            //}
-
-            //// Assignments
-            //var participants = this.ExistDateClosed ? Array.Empty<User>() : new[] { this.CommunicationEvent.FromParty as User };
-            //this.AssignParticipants(participants);
-        }
-
         public void ManageNotification(TaskAssignment taskAssignment)
         {
             if (!taskAssignment.ExistNotification && this.CommunicationEvent.SendNotification == true && this.CommunicationEvent.RemindAt < this.Strategy.Session.Now())

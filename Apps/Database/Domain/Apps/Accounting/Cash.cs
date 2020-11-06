@@ -14,17 +14,5 @@ namespace Allors.Domain
                 this.IsActive = true;
             }
         }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            if (this.InternalOrganisationWhereActiveCollectionMethod?.DoAccounting ?? false)
-            {
-                derivation.Validation.AssertAtLeastOne(this, this.Meta.GeneralLedgerAccount, this.Meta.Journal);
-            }
-
-            derivation.Validation.AssertExistsAtMostOne(this, this.Meta.GeneralLedgerAccount, this.Meta.Journal);
-        }
     }
 }
