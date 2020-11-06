@@ -28,39 +28,5 @@ namespace Allors.Domain
                 this.CreationDate = this.Session().Now();
             }
         }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-
-            //this.AppsOnDeriveSequenceNumber(derivation);
-
-            //if (!this.ExistDocuments)
-            //{
-            //    var name =
-            //        $"Package {(this.ExistSequenceNumber ? this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
-            //    this.AddDocument(new PackagingSlipBuilder(this.Strategy.Session).WithName(name).Build());
-            //}
-        }
-
-        //public void AppsOnDeriveSequenceNumber(IDerivation derivation)
-        //{
-        //    var highestNumber = 0;
-        //    if (this.ExistShipmentWhereShipmentPackage)
-        //    {
-        //        foreach (ShipmentPackage shipmentPackage in this.ShipmentWhereShipmentPackage.ShipmentPackages)
-        //        {
-        //            if (shipmentPackage.ExistSequenceNumber && shipmentPackage.SequenceNumber > highestNumber)
-        //            {
-        //                highestNumber = shipmentPackage.SequenceNumber;
-        //            }
-        //        }
-
-        //        if (!this.ExistSequenceNumber || this.SequenceNumber == 0)
-        //        {
-        //            this.SequenceNumber = highestNumber + 1;
-        //        }
-        //    }
-        //}
     }
 }

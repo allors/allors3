@@ -27,8 +27,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnDerive(ObjectOnDerive method) => this.ResetPrintDocument();
-
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)
@@ -57,18 +55,5 @@ namespace Allors.Domain
                 this.PrintDocument.Media.InFileName = $"{this.WorkEffortNumber}.odt";
             }
         }
-
-        // public void AppsDelete(DeletableDelete method)
-        // {
-        //    foreach (WorkEffortStatus workEffortStatus in this.WorkEffortStatuses)
-        //    {
-        //        workEffortStatus.Delete();
-        //    }
-
-        // foreach (WorkEffortAssignment workEffortAssignment in this.WorkEffortAssignmentsWhereAssignment)
-        //    {
-        //        workEffortAssignment.Delete();
-        //    }
-        // }
     }
 }

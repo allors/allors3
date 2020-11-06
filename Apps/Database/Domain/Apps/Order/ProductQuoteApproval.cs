@@ -7,28 +7,7 @@ namespace Allors.Domain
 {
     public partial class ProductQuoteApproval
     {
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //this.Title = "Approval of " + this.ProductQuote.WorkItemDescription;
-
-            //this.WorkItem = this.ProductQuote;
-
-            //// Lifecycle
-            //if (!this.ExistDateClosed && !this.ProductQuote.QuoteState.IsCreated)
-            //{
-            //    this.DateClosed = this.Session().Now();
-            //}
-
-            //if (this.Participants.Count == 0)
-            //{
-            //    // Assignments
-            //    var participants = this.ExistDateClosed
-            //                           ? (IEnumerable<Person>)Array.Empty<Person>()
-            //                           : new UserGroups(this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-            //    this.AssignParticipants(participants);
-            //}
-        }
-
+       
         public void AppsApprove(ProductQuoteApprovalApprove method)
         {
             this.AssignPerformer();

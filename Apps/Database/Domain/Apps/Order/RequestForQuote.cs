@@ -14,39 +14,10 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.RequestForQuote, this.M.RequestForQuote.RequestState),
         };
 
-        //public void AppsOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
-
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            //if (!this.ExistOriginator)
-            //{
-            //    this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Submit));
-            //}
-
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            //if (this.IsDeletable())
-            //{
-            //    this.RemoveDeniedPermission(deletePermission);
-            //}
-            //else
-            //{
-            //    this.AddDeniedPermission(deletePermission);
-            //}
-        }
-
         public void AppsCreateQuote(RequestForQuoteCreateQuote Method)
         {
             this.RequestState = new RequestStates(this.Strategy.Session).Quoted;
             this.QuoteThis();
-        }
-
-        private void Sync(ISession session)
-        {
-            //session.Prefetch(this.SyncPrefetch, this);
-            //foreach (RequestItem requestItem in this.RequestItems)
-            //{
-            //    requestItem.Sync(this);
-            //}
         }
 
         private ProductQuote QuoteThis()

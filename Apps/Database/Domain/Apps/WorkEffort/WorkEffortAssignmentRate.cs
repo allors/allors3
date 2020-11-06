@@ -31,26 +31,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            if (!this.ExistWorkEffort && this.ExistWorkEffortPartyAssignment)
-            {
-                this.WorkEffort = this.WorkEffortPartyAssignment.Assignment;
-            }
-
-            if (this.ExistRateType)
-            {
-                var extent = this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort;
-                extent.Filter.AddEquals(this.M.WorkEffortAssignmentRate.RateType, this.RateType);
-                if (extent.Count > 1)
-                {
-                    derivation.Validation.AddError(this, this.Meta.RateType, ErrorMessages.WorkEffortRateError);
-                }
-            }
-        }
-
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)

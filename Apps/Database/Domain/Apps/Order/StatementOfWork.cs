@@ -18,29 +18,5 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.StatementOfWork, this.M.StatementOfWork.QuoteState),
         };
-
-        //public void AppsOnDerive(ObjectOnDerive method) => this.Sync(this.Strategy.Session);
-
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            //var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            //if (this.IsDeletable)
-            //{
-            //    this.RemoveDeniedPermission(deletePermission);
-            //}
-            //else
-            //{
-            //    this.AddDeniedPermission(deletePermission);
-            //}
-        }
-
-        //private void Sync(ISession session)
-        //{
-        //    // session.Prefetch(this.SyncPrefetch, this);
-        //    foreach (QuoteItem quoteItem in this.QuoteItems)
-        //    {
-        //        quoteItem.Sync(this);
-        //    }
-        //}
     }
 }

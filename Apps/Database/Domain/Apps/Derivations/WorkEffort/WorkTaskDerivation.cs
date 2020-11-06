@@ -28,6 +28,8 @@ namespace Allors.Domain
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
+                @this.ResetPrintDocument();
+
                 if (!@this.ExistDerivationTrigger)
                 {
                     @this.DerivationTrigger = Guid.NewGuid();

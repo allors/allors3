@@ -9,24 +9,6 @@ namespace Allors.Domain
 
     public partial class WorkEffortPurchaseOrderItemAssignment
     {
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            if (this.ExistPurchaseOrderItem)
-            {
-                this.PurchaseOrder = this.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem;
-                this.UnitPurchasePrice = this.PurchaseOrderItem.UnitPrice;
-            }
-
-            this.CalculateSellingPrice();
-
-            if (this.ExistAssignment)
-            {
-                this.Assignment.ResetPrintDocument();
-            }
-        }
-
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)

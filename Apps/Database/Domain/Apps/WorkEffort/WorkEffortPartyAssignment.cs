@@ -9,16 +9,6 @@ namespace Allors.Domain
 
     public partial class WorkEffortPartyAssignment
     {
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            if (this.ExistAssignmentRates)
-            {
-                derivation.Validation.AddError(this, this.Meta.AssignmentRates, ErrorMessages.WorkEffortRateError);
-            }
-        }
-
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)

@@ -24,44 +24,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            var state = this.Assignment.WorkEffortState;
-            var inventoryItemChanged = this.ExistCurrentVersion &&
-                                       (!Equals(this.CurrentVersion.InventoryItem, this.InventoryItem));
-
-            if (inventoryItemChanged)
-            {
-                // CurrentVersion is Previous Version until PostDerive
-                var previousInventoryItem = this.CurrentVersion.InventoryItem;
-                var previousQuantity = this.CurrentVersion.Quantity;
-                state = this.CurrentVersion.Assignment.PreviousWorkEffortState ??
-                        this.CurrentVersion.Assignment.WorkEffortState;
-
-                foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
-                {
-                    this.SyncInventoryTransactions(derivation, previousInventoryItem, previousQuantity, createReason, true);
-                }
-
-                foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
-                {
-                    this.SyncInventoryTransactions(derivation, previousInventoryItem, previousQuantity, cancelReason, true);
-                }
-            }
-
-            this.CalculatePurchasePrice();
-            this.CalculateSellingPrice();
-            // TODO: Martien
-            //this.CalculateBillableQuantity();
-
-            if (this.ExistAssignment)
-            {
-                this.Assignment.ResetPrintDocument();
-            }
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             var session = this.strategy.Session;

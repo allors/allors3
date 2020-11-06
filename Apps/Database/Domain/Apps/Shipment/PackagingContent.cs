@@ -24,30 +24,5 @@ namespace Allors.Domain
                 return this.ShipmentItem.ContentsDescription;
             }
         }
-
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.ChangeSet.Associations.Contains(this.Id))
-            //{
-            //    iteration.AddDependency(this.ShipmentItem, this);
-            //    iteration.Mark(this.ShipmentItem);
-            //}
-        }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-
-            //if (this.ExistQuantity && this.ExistShipmentItem)
-            //{
-            //    var maxQuantity = this.ShipmentItem.Quantity - this.ShipmentItem.QuantityShipped;
-            //    if (this.Quantity == 0 || this.Quantity > maxQuantity)
-            //    {
-            //        derivation.Validation.AddError(this, M.PackagingContent.Quantity, ErrorMessages.PackagingContentMaximum);
-            //    }
-            //}
-        }
     }
 }

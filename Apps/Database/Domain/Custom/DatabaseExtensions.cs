@@ -166,8 +166,16 @@ namespace Allors.Domain
                 new SalesOrderDerivation(m),
                 new SalesOrderPriceDerivation(m),
                 new SalesOrderStateDerivation(m),
-
                 new InvoiceItemTotalIncVatDerivation(m),
+                new DeliverableTurnoverDerivation(m),
+                new ExpenseEntryDerivation(m),
+                new MaterialsUsageDerivation(m),
+                new TimeEntryDerivation(m),
+                new WorkEffortAssignmentRateDerivation(m),
+                new WorkEffortInventoryAssignmentDerivation(m),
+                new WorkEffortPartyAssignmentDerivation(m),
+                new WorkEffortPurchaseOrderItemAssignmentDerivation(m),
+                new WorkEffortTypeDerivation(m),
             };
 
             foreach (var derivation in derivations)
