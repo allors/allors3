@@ -20,24 +20,6 @@ namespace Allors.Domain
             && !this.ExistSerialisedInventoryItemsWhereSerialisedItem
             && !this.ExistShipmentItemsWhereSerialisedItem;
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistSerialisedItemState)
-            {
-                this.SerialisedItemState = new SerialisedItemStates(this.Strategy.Session).NA;
-            }
-
-            if (!this.ExistItemNumber)
-            {
-                this.ItemNumber = this.Strategy.Session.GetSingleton().Settings.NextSerialisedItemNumber();
-            }
-
-            if (!this.ExistDerivationTrigger)
-            {
-                this.DerivationTrigger = Guid.NewGuid();
-            }
-        }
-
         public void AppsDeriveDisplayProductCategories(SerialisedItemDeriveDisplayProductCategories method)
         {
             if (!method.Result.HasValue)

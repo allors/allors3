@@ -12,14 +12,6 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.Case, this.M.Case.CaseState),
         };
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistCaseState)
-            {
-                this.CaseState = new CaseStates(this.Strategy.Session).Opened;
-            }
-        }
-
         public void AppsClose()
         {
             var closed = new CaseStates(this.Strategy.Session).Closed;

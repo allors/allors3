@@ -9,14 +9,6 @@ namespace Allors.Domain
 
     public partial class InventoryItemTransaction
     {
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistTransactionDate)
-            {
-                this.TransactionDate = this.Session().Now();
-            }
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             if (!this.ExistPart)

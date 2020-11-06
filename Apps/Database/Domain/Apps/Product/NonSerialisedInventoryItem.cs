@@ -13,14 +13,6 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.NonSerialisedInventoryItem, this.M.NonSerialisedInventoryItem.NonSerialisedInventoryItemState),
         };
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistNonSerialisedInventoryItemState)
-            {
-                this.NonSerialisedInventoryItemState = new NonSerialisedInventoryItemStates(this.Strategy.Session).Good;
-            }
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             foreach (InventoryItemVersion version in this.AllVersions)
