@@ -15,3 +15,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("94474285-cafb-4a71-aed2-d6a80564f543")]
 
 [assembly: InternalsVisibleTo("Workspace.Tests")]
+[assembly: InternalsVisibleTo("Workspace.Tests.Remote")]

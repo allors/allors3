@@ -144,7 +144,7 @@ partial class Build
                 .SetCommand("test:client"));
         });
 
-    Target CoreWorkspaceCSharpDomainTests => _ => _
+    Target CoreWorkspaceCSharpTests => _ => _
         .DependsOn(this.CorePublishServer)
         .DependsOn(this.CorePublishCommands)
         .DependsOn(this.CoreResetDatabase)
@@ -153,8 +153,14 @@ partial class Build
             DotNet("Commands.dll Populate", this.Paths.ArtifactsCoreCommands);
             using var server = new Server(this.Paths.ArtifactsCoreServer);
             await server.Ready();
+
             DotNetTest(s => s
                 .SetProjectFile(this.Paths.CoreWorkspaceCSharpTests)
+                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
+                .SetResultsDirectory(this.Paths.ArtifactsTests));
+
+            DotNetTest(s => s
+                .SetProjectFile(this.Paths.CoreWorkspaceCSharpRemoteTests)
                 .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
@@ -170,7 +176,7 @@ partial class Build
         .DependsOn(this.CoreWorkspaceTypescriptClient);
 
     Target CoreWorkspaceCSharpTest => _ => _
-        .DependsOn(this.CoreWorkspaceCSharpDomainTests);
+        .DependsOn(this.CoreWorkspaceCSharpTests);
 
     Target CoreWorkspaceTest => _ => _
         .DependsOn(this.CoreWorkspaceCSharpTest)

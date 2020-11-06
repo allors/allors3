@@ -165,6 +165,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration.Faker", "Apps
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.Local", "Core\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj", "{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote", "Core\Workspace\CSharp\Adapters\Tests.Remote\Workspace.Tests.Remote.csproj", "{5C9459C4-A8EE-4D3B-8A71-B691A1719217}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -419,6 +421,10 @@ Global
 		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C9459C4-A8EE-4D3B-8A71-B691A1719217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C9459C4-A8EE-4D3B-8A71-B691A1719217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C9459C4-A8EE-4D3B-8A71-B691A1719217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C9459C4-A8EE-4D3B-8A71-B691A1719217}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -501,6 +507,7 @@ Global
 		{1C01DD6C-77D7-4152-B39D-586307D84779} = {3E9C6582-CCF0-4A7C-B501-9F1308F04A7B}
 		{0D7051D6-1EBD-4002-BE20-F35FB2BC785F} = {3E9C6582-CCF0-4A7C-B501-9F1308F04A7B}
 		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E} = {1C62BCEE-DC47-4093-8359-22F448216C7F}
+		{5C9459C4-A8EE-4D3B-8A71-B691A1719217} = {1C62BCEE-DC47-4093-8359-22F448216C7F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}
