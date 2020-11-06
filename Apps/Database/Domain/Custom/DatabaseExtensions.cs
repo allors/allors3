@@ -163,6 +163,7 @@ namespace Allors.Domain
                 new PartyDerivation(m),
                 new EmailTemplateDerivation(m),
                 new WebSiteCommunicationsDerivation(m),
+                new CustomerRelationshipCreateDerivation(m),
                 new CustomerRelationshipDerivation(m),
                 new FaxCommunicationDerivation(m),
                 new LetterCorrespondenceDerivation(m),
@@ -196,6 +197,7 @@ namespace Allors.Domain
                 new PurchaseOrderDerivation(m), //Has Dependency on SupplierRelationship
                 new ShipmentItemDerivation(m),
                 new CustomerShipmentDerivation(m),
+                new ItemIssuanceCreateDerivation(m),
                 new OrderShipmentDerivation(m),
                 new SalesOrderItemCreateDerivation(m),
                 new SalesOrderItemDerivation(m),
