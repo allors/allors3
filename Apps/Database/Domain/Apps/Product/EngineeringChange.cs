@@ -7,9 +7,15 @@ namespace Allors.Domain
 {
     public partial class EngineeringChange
     {
-        // TODO: Cache
+        // TODO: Cache 
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.EngineeringChange, this.M.EngineeringChange.CurrentObjectState),
         };
+
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            this.AddPreviousObjectState(new EngineeringChangeObjectStates(this.Strategy.Session).Requested);
+            this.CurrentObjectState ??= new EngineeringChangeObjectStates(this.Strategy.Session).Noticed;
+        }
     }
 }
