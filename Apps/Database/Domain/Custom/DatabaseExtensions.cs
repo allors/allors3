@@ -19,6 +19,8 @@ namespace Allors.Domain
 
                 // Apps
                 new OwnBankAccountCreationDerivation(m),
+                new RepeatingPurchaseInvoiceCreateDerivation(m),
+                new PurchaseOrderCreateDerivation(m),
                 new OwnCreditCardCreationDerivation(m),
                 new FiscalYearInvoiceNumberCreationDerivation(m),
                 new PurchaseInvoiceCreationDerivation(m),
