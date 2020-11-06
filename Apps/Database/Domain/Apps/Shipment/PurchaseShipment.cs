@@ -14,28 +14,6 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.PurchaseShipment, this.M.PurchaseShipment.ShipmentState),
         };
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistShipToParty)
-            {
-                var internalOrganisations = new Organisations(this.Strategy.Session).InternalOrganisations();
-                if (internalOrganisations.Length == 1)
-                {
-                    this.ShipToParty = internalOrganisations.First();
-                }
-            }
-
-            if (!this.ExistShipmentState)
-            {
-                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
-            }
-
-            if (!this.ExistEstimatedArrivalDate)
-            {
-                this.EstimatedArrivalDate = this.Session().Now().Date;
-            }
-        }
-
         public void AppsReceive(PurchaseShipmentReceive method)
         {
             this.ShipmentState = new ShipmentStates(this.Strategy.Session).Received;

@@ -193,6 +193,19 @@ namespace Allors.Domain
                 new WorkEffortPartyAssignmentDerivation(m),
                 new WorkEffortPurchaseOrderItemAssignmentDerivation(m),
                 new WorkEffortTypeDerivation(m),
+                new CustomerReturnCreateDerivation(m),
+                new CustomerShipmentCreateDerivation(m),
+                new DropShipmentCreateDerivation(m),
+                new PickListCreateDerivation(m),
+                new PurchaseReturnCreateDerivation(m),
+                new PurchaseShipmentCreateDerivation(m),
+                new ShipmentItemCreateDerivation(m),
+                new ShipmentPackageCreateDerivation(m),
+                new ShipmentReceiptCreateDerivation(m),
+                new TransferCreateDerivation(m),
+                new TimeEntryCreateDerivation(m),
+                new WorkEffortAssignmentRateCreateDerivation(m),
+                new WorkTaskCreateDerivation(m),
             };
 
             foreach (var derivation in derivations)

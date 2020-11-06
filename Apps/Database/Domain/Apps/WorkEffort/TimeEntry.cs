@@ -28,20 +28,7 @@ namespace Allors.Domain
 
         public void AppsOnBuild(ObjectOnBuild method)
         {
-            if (!this.ExistBillingFrequency)
-            {
-                this.BillingFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
-            }
-
-            if (!this.ExistTimeFrequency)
-            {
-                this.TimeFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
-            }
-
-            if (!this.ExistIsBillable)
-            {
-                this.IsBillable = true;
-            }
+            
         }
 
         public void AppsOnInit(ObjectOnInit method)
