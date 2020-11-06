@@ -26,36 +26,6 @@ namespace Allors.Domain
 
         private int DecimalScale => this.Meta.AmountOfTime.Scale ?? 2;
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            
-        }
-
-        public void AppsOnInit(ObjectOnInit method)
-        {
-            var useInternalRate = this.WorkEffort?.Customer is Organisation organisation && organisation.IsInternalOrganisation;
-
-            if (!this.ExistRateType)
-            {
-                this.RateType = useInternalRate ? new RateTypes(this.Session()).InternalRate : new RateTypes(this.Session()).StandardRate;
-            }
-
-            if (!this.ExistBillingFrequency)
-            {
-                this.BillingFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
-            }
-
-            if (!this.ExistTimeFrequency)
-            {
-                this.TimeFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
-            }
-
-            if (!this.ExistIsBillable)
-            {
-                this.IsBillable = true;
-            }
-        }
-
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)

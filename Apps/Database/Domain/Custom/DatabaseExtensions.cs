@@ -19,6 +19,8 @@ namespace Allors.Domain
 
                 // Apps
                 new OwnBankAccountCreationDerivation(m),
+                new RepeatingPurchaseInvoiceCreateDerivation(m),
+                new PurchaseOrderCreateDerivation(m),
                 new OwnCreditCardCreationDerivation(m),
                 new FiscalYearInvoiceNumberCreationDerivation(m),
                 new PurchaseInvoiceCreationDerivation(m),
@@ -44,6 +46,7 @@ namespace Allors.Domain
                 new CustomerShipmentDeniedPermissionDerivation(m),
                 new DropShipmentDeniedPermissionDerivation(m),
                 new CommunicationEventDeniedPermissionDerivation(m),
+                new EngineeringChangeCreateDerivation(m),
                 new EngineeringChangeDeniedPermissionDerivation(m),
                 new NonSerialisedInventoryItemDeniedPermissionDerivation(m),
                 new PartSpecificationDeniedPermissionDerivation(m),

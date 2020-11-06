@@ -47,14 +47,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnInit(ObjectOnInit method)
-        {
-            if (!this.ExistCurrency)
-            {
-                this.Currency = this.BilledTo?.PreferredCurrency;
-            }
-        }
-
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)
