@@ -231,6 +231,9 @@ namespace Allors.Domain
                 new TimeEntryCreateDerivation(m),
                 new WorkEffortAssignmentRateCreateDerivation(m),
                 new WorkTaskCreateDerivation(m),
+                new EmploymentCreateDerivation(m),
+                new SubContractorRelationshipCreateDerivation(m),
+                new SupplierRelationshipCreateDerivation(m),
             };
 
             foreach (var derivation in derivations)
