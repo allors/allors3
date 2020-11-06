@@ -6,6 +6,8 @@
 
 namespace Allors.Domain
 {
+    using System.Linq;
+    using Allors.Domain.TestPopulation;
     using Xunit;
 
     [Trait("Category", "Security")]
@@ -213,21 +215,26 @@ namespace Allors.Domain
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
-
+        
         [Fact]
         public void OnChangedNonUnifiedGoodWithSalesOrderItemsWhereProductDeriveDeletePermission()
         {
+            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var product = salesOrder.SalesOrderItems.Where(v => v.Product.GetType().Name == typeof(NonUnifiedGood).Name).Select(v => v.Product).First();
+
+            Assert.Contains(this.deletePermission, product.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedNonUnifiedGoodWithWorkEffortTypesWhereProductToProduceDeriveDeletePermission()
+        {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
-            //nonUnifiedGood.AddBasePrice(new BasePriceBuilder(this.Session).WithPrice(1).Build());
             this.Session.Derive(false);
 
-
-            var organisation = new OrganisationBuilder(this.Session).Build();
-            var salesOrderItem = new SalesOrderItemBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
-            var salesOrder = new SalesOrderBuilder(this.Session).WithTakenBy(organisation).Build();
-            salesOrder.AddSalesOrderItem(salesOrderItem);
+            var workEffortType = new WorkEffortTypeBuilder(this.Session).WithProductToProduce(nonUnifiedGood).Build();
             this.Session.Derive(false);
-
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }

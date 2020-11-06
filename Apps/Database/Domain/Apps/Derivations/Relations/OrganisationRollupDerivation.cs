@@ -24,7 +24,7 @@ namespace Allors.Domain
             {
                 @this.Parties = new Party[] { @this.Child, @this.Parent };
 
-                if (!@this.ExistParent | !@this.ExistChild)
+                if (!@this.ExistParent && !@this.ExistChild)
                 {
                     // TODO: Move Delete
                     @this.Delete();

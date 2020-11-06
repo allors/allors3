@@ -30,6 +30,7 @@ namespace Allors.Domain
             new ChangedPattern(this.M.RequestItem.Product) { Steps = new IPropertyType[] {m.RequestItem.Product }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.SalesInvoiceItem.Product) { Steps = new IPropertyType[] {m.SalesInvoiceItem.Product }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.SalesOrderItem.Product) { Steps = new IPropertyType[] {m.SalesOrderItem.Product }, OfType = m.NonUnifiedGood.Class },
+            new ChangedPattern(this.M.WorkEffortType.ProductToProduce) { Steps = new IPropertyType[] {m.WorkEffortType.ProductToProduce }, OfType = m.NonUnifiedGood.Class },
         };
         
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
