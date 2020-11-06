@@ -200,7 +200,7 @@ namespace Allors.Domain
         [Fact]
         public void OnChangedNonUnifiedGoodWithSalesOrderItemDeriveDeletePermission()
         {
-            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            var salesOrder = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
             this.Session.Derive(false);
 
             var item = salesOrder.SalesOrderItems.Where(v => v.Product.GetType().Name == typeof(UnifiedGood).Name).Select(v => v.Product).First();

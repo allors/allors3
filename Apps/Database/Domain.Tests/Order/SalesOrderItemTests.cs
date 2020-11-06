@@ -308,6 +308,8 @@ namespace Allors.Domain
                 .WithVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
+            this.Session.Derive();
+
             var orderItem = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(1)
@@ -331,6 +333,8 @@ namespace Allors.Domain
                 .WithVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
+            this.Session.Derive();
+
             var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
@@ -352,6 +356,8 @@ namespace Allors.Domain
                 .WithVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
+            this.Session.Derive();
+
             var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
@@ -372,6 +378,8 @@ namespace Allors.Domain
                 .WithShipToAddress(this.shipToContactMechanismMechelen)
                 .WithVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
+
+            this.Session.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(this.good)
@@ -398,6 +406,8 @@ namespace Allors.Domain
                 .WithVatRegime(new VatRegimes(this.Session).Export)
                 .WithDeliveryDate(this.Session.Now().AddMonths(1))
                 .Build();
+
+            this.Session.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(this.good)
@@ -467,6 +477,8 @@ namespace Allors.Domain
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
+            this.Session.Derive();
+
             var productOrderItem = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(this.good)
                 .WithQuantityOrdered(3)
@@ -499,6 +511,8 @@ namespace Allors.Domain
 
             var salesOrder = new SalesOrderBuilder(this.Session).WithBillToCustomer(this.billToCustomer).Build();
 
+            this.Session.Derive();
+
             var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
@@ -518,6 +532,8 @@ namespace Allors.Domain
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
+            this.Session.Derive();
+
             var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
@@ -536,6 +552,8 @@ namespace Allors.Domain
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
 
+            this.Session.Derive();
+
             var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
 
@@ -553,6 +571,8 @@ namespace Allors.Domain
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .Build();
+
+            this.Session.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(this.good).WithQuantityOrdered(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
@@ -635,6 +655,8 @@ namespace Allors.Domain
         //        .WithBillToCustomer(this.billToCustomer)
         //        .WithPartiallyShip(false)
         //        .Build();
+
+            //this.Session.Derive();
 
         //    var salesOrderItem = new SalesOrderItemBuilder(this.Session)
         //        .WithProduct(this.good)
@@ -1142,6 +1164,8 @@ namespace Allors.Domain
                 .WithShipToAddress(this.shipToContactMechanismMechelen)
                 .WithOrderKind(manual)
                 .Build();
+
+            this.Session.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(this.good)

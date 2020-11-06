@@ -1594,7 +1594,7 @@ namespace Allors.Domain
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
 
-            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            var salesOrder = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
             this.Session.Derive();
 
             salesOrder.SetReadyForPosting();

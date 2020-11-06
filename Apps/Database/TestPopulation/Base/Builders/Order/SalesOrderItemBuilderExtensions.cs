@@ -37,7 +37,7 @@ namespace Allors.Domain.TestPopulation
             return @this;
         }
 
-        public static SalesOrderItemBuilder WithProductItemDefaults(this SalesOrderItemBuilder @this)
+        public static SalesOrderItemBuilder WithSerialisedProductDefaults(this SalesOrderItemBuilder @this)
         {
             var m = @this.Session.Database.State().M;
             var faker = @this.Session.Faker();

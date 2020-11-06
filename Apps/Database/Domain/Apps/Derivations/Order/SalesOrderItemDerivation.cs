@@ -21,8 +21,11 @@ namespace Allors.Domain
                 new CreatedPattern(m.SalesOrderItem.Class),
                 new ChangedPattern(m.SalesOrderItem.SalesOrderItemState),
                 new ChangedPattern(m.SalesOrderItem.QuantityOrdered),
-                new ChangedPattern(m.SalesOrder.SalesOrderState){Steps = new IPropertyType[]{ m.SalesOrder.SalesOrderItems} },
-                new ChangedPattern(m.OrderShipment.Quantity){Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
+                new ChangedPattern(m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
+                new ChangedPattern(m.SalesOrder.SalesOrderState) {Steps = new IPropertyType[]{ m.SalesOrder.SalesOrderItems} },
+                new ChangedPattern(m.OrderShipment.Quantity) {Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityOnHand) {Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -455,9 +458,9 @@ namespace Allors.Domain
                         {
                             if (!salesOrderItem.ExistReservedFromNonSerialisedInventoryItem)
                             {
-                                //var inventoryItems = salesOrderItem.Part.InventoryItemsWherePart;
-                                //inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
-                                //salesOrderItem.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
+                                var inventoryItems = salesOrderItem.Part.InventoryItemsWherePart;
+                                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
+                                salesOrderItem.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
                             }
                         }
                     }
