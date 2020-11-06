@@ -59,52 +59,6 @@ namespace Allors.Domain
             }
         }
 
-        //public void AppsOnPostDerive(ObjectOnPostDerive method)
-        //{
-        //    var derivation = method.Derivation;
-
-        //    this.PreviousReservedFromNonSerialisedInventoryItem = this.ReservedFromNonSerialisedInventoryItem;
-        //    this.PreviousQuantity = this.QuantityOrdered;
-        //    this.PreviousProduct = this.Product;
-
-        //    if (this.ExistReservedFromNonSerialisedInventoryItem)
-        //    {
-        //        if (!this.ReservedFromNonSerialisedInventoryItem.Equals(this.PreviousReservedFromNonSerialisedInventoryItem))
-        //        {
-        //            derivation.Mark(this.PreviousReservedFromNonSerialisedInventoryItem);
-        //        }
-        //    }
-
-        //    if (!this.SalesOrderItemInvoiceState.NotInvoiced || !this.SalesOrderItemShipmentState.NotShipped)
-        //    {
-        //        var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
-
-        //        foreach (Permission permission in this.Session().Extent<Permission>())
-        //        {
-        //            if (permission.ClassPointer == this.strategy.Class.Id
-        //                && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
-        //            {
-        //                deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
-        //            }
-        //        }
-
-        //        foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-        //        {
-        //            this.AddDeniedPermission(keyValuePair.Value);
-        //        }
-        //    }
-
-        //    var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-        //    if (this.IsDeletable)
-        //    {
-        //        this.RemoveDeniedPermission(deletePermission);
-        //    }
-        //    else
-        //    {
-        //        this.AddDeniedPermission(deletePermission);
-        //    }
-        //}
-
         public void AppsDelete(SalesOrderItemDelete method)
         {
             foreach (SalesTerm salesTerm in this.SalesTerms)

@@ -9,6 +9,8 @@ namespace Allors.Domain
     {
         public void AppsOnBuild(ObjectOnBuild method)
         {
+            // TODO: OnBuild
+
             if (!this.ExistIsActive)
             {
                 this.IsActive = true;

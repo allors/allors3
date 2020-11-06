@@ -21,23 +21,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            //var derivation = method.Derivation;
-
-            //if (this.ExistPreviousQuantityOnHand && this.QuantityOnHand > this.PreviousQuantityOnHand)
-            //{
-            //    this.AppsReplenishSalesOrders(derivation);
-            //}
-
-            //if (this.ExistPreviousQuantityOnHand && this.QuantityOnHand < this.PreviousQuantityOnHand)
-            //{
-            //    this.AppsDepleteSalesOrders(derivation);
-            //}
-
-            //this.PreviousQuantityOnHand = this.QuantityOnHand;
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             foreach (InventoryItemVersion version in this.AllVersions)

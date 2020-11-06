@@ -16,14 +16,6 @@ namespace Allors.Domain
 
         public AccountingPeriod AddNextMonth() => this.AppsAddNextMonth();
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistActive)
-            {
-                this.Active = true;
-            }
-        }
-
         private AccountingPeriod AppsAddNextMonth()
         {
             var allPeriods = new AccountingPeriods(this.Strategy.Session).Extent();
