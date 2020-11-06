@@ -28,14 +28,6 @@ namespace Allors.Domain
             }
         } 
 
-        public static void AppsOnBuild(this Quote @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistQuoteState)
-            {
-                @this.QuoteState = new QuoteStates(@this.Strategy.Session).Created;
-            }
-        }
-
         public static void AppsDelete(this Quote @this, DeletableDelete method)
         {
             var productQuote = @this as ProductQuote;

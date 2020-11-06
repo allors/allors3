@@ -9,14 +9,6 @@ namespace Allors.Domain
 
     public static partial class PartExtensions
     {
-        public static void AppsOnBuild(this Part @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistPartWeightedAverage)
-            {
-                @this.PartWeightedAverage = new PartWeightedAverageBuilder(@this.Session()).Build();
-            }
-        }
-
         public static string PartIdentification(this Part @this)
         {
             if (@this.ProductIdentifications.Count == 0)

@@ -18,19 +18,6 @@ namespace Allors.Domain
             && !@this.ExistQuoteWhereRequest
             && @this.RequestItems.All(v => v.IsDeletable);
 
-        public static void AppsOnBuild(this Request @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistRequestState && !@this.ExistOriginator)
-            {
-                @this.RequestState = new RequestStates(@this.Session()).Anonymous;
-            }
-
-            if (!@this.ExistRequestState && @this.ExistOriginator)
-            {
-                @this.RequestState = new RequestStates(@this.Session()).Submitted;
-            }
-        }
-
         public static void AppsDelete(this Request @this, DeletableDelete method)
         {
             if (@this.IsDeletable())
