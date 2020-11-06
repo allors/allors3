@@ -91,7 +91,7 @@ namespace Allors.Domain
             Assert.True(derivation.HasErrors);
             Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.AssociationType.Equals(this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment));
 
-            //// Re-Arrange
+            // Re-Arrange
             employee.TimeSheetWhereWorker.RemoveTimeEntries();
 
             var assignment = new WorkEffortPartyAssignmentBuilder(this.Session)
