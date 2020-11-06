@@ -44,30 +44,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-            var invoice = this.PurchaseInvoiceWherePurchaseInvoiceItem;
-
-            if (invoice != null && iteration.ChangeSet.Associations.Contains(this.Id))
-            {
-                iteration.AddDependency(invoice, this);
-                iteration.Mark(invoice);
-            }
-
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this.SerialisedItem, this);
-                iteration.Mark(this.SerialisedItem);
-            }
-
-            foreach (OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
-            {
-                iteration.AddDependency(orderItemBilling.OrderItem, this);
-                iteration.Mark(orderItemBilling.OrderItem);
-            }
-        }
-
         public void CancelFromInvoice() => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).CancelledByinvoice;
 
         public void AppsDelete(DeletableDelete method)

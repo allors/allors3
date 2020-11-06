@@ -73,21 +73,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-            var internalOrganisation = this.Strategy.Session.GetSingleton();
-
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this, internalOrganisation);
-                iteration.Mark(internalOrganisation);
-
-                iteration.AddDependency(this, this.BilledFrom);
-                iteration.Mark(this.BilledFrom);
-            }
-        }
-
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)

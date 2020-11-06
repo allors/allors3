@@ -8,16 +8,5 @@ namespace Allors.Domain
     public partial class AccountingTransactionDetail
     {
         public string AppsDebitCreditString => this.Debit ? "Debit" : "Credit";
-
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-                iteration.AddDependency(this, this.OrganisationGlAccountBalance.AccountingPeriod);
-                iteration.Mark(this.OrganisationGlAccountBalance.AccountingPeriod);
-            }
-        }
     }
 }

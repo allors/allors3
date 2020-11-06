@@ -17,17 +17,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            //{
-            //    iteration.AddDependency(this.InventoryItem, this);
-            //    iteration.Mark(this.InventoryItem);
-            //}
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             if (!this.ExistPart)

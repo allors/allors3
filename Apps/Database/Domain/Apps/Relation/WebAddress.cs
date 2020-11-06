@@ -9,21 +9,6 @@ namespace Allors.Domain
     {
         public bool IsPostalAddress => false;
 
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            {
-
-                foreach (PartyContactMechanism partyContactMechanism in this.PartyContactMechanismsWhereContactMechanism)
-                {
-                    iteration.AddDependency(partyContactMechanism, this);
-                    iteration.Mark(partyContactMechanism);
-                }
-            }
-        }
-
         public override string ToString() => this.ElectronicAddressString;
     }
 }

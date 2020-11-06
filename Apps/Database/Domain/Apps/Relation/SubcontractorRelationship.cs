@@ -9,32 +9,6 @@ namespace Allors.Domain
 {
     public partial class SubContractorRelationship
     {
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            //{
-            //    if (this.ExistSubContractor)
-            //    {
-            //        iteration.AddDependency(this.SubContractor, this);
-            //        iteration.Mark(this.SubContractor);
-
-            //        foreach (OrganisationContactRelationship contactRelationship in this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
-            //        {
-            //            iteration.AddDependency(this, contactRelationship);
-            //            iteration.Mark(contactRelationship);
-            //        }
-            //    }
-
-            //    if (this.ExistContractor)
-            //    {
-            //        iteration.AddDependency(this.Contractor, this);
-            //        iteration.Mark(this.Contractor);
-            //    }
-            //}
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
