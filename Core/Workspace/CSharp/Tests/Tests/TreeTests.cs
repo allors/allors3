@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database.ToDatabase
+namespace Tests.Workspace
 {
     using System.Linq;
     using Allors.Workspace.Data;
@@ -12,7 +12,7 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
-    public class TreeTests : Test
+    public abstract class TreeTests : Test
     {
         [Fact]
         public async void C1()

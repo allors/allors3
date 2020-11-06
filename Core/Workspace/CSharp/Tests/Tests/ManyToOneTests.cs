@@ -3,17 +3,17 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Workspace.ToDatabase
+namespace Tests.Workspace
 {
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
-    public class Many2OneTests : Test
+    public abstract class Many2OneTests : Test
     {
         [Fact]
-        public async void SetRole()
+        public async void WorkspaceDatabase_SetRole()
         {
             var session1 = this.Workspace.CreateSession();
 
@@ -40,7 +40,7 @@ namespace Tests.Workspace.Origin.Workspace.ToDatabase
         }
 
         [Fact]
-        public async void RemoveRole()
+        public async void WorkspaceDatabase_RemoveRole()
         {
             var session1 = this.Workspace.CreateSession();
 
@@ -56,6 +56,45 @@ namespace Tests.Workspace.Origin.Workspace.ToDatabase
             var databasePerson1 = result.GetCollection<Person>().First();
 
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
+
+            var session2 = this.Workspace.CreateSession();
+
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+
+            workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
+
+            Assert.Null(workspaceOrganisation2.WorkspaceWorkspaceOwner);
+            Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
+        }
+
+        [Fact]
+        public void WorkspaceWorkspace_SetRole()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
+            var workspacePerson1 = session1.Create<WorkspacePerson>();
+
+            workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
+
+            var session2 = this.Workspace.CreateSession();
+
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+            var workspacePerson2 = session2.Instantiate(workspacePerson1);
+
+            Assert.Equal(workspacePerson2, workspaceOrganisation2.WorkspaceWorkspaceOwner);
+            Assert.Equal(workspacePerson1, workspaceOrganisation1.WorkspaceWorkspaceOwner);
+        }
+
+        [Fact]
+        public void WorkspaceWorkspace_RemoveRole()
+        {
+            var session = this.Workspace.CreateSession();
+
+            var workspaceOrganisation1 = session.Create<WorkspaceOrganisation>();
+            var workspacePerson1 = session.Create<WorkspacePerson>();
+
+            workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
 
             var session2 = this.Workspace.CreateSession();
 

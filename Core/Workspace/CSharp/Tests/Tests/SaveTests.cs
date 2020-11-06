@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database.ToDatabase
+namespace Tests.Workspace
 {
     using System;
     using System.Linq;
     using Allors.Workspace.Adapters.Remote;
     using Xunit;
 
-    public class SaveTests : Test
+    public abstract class SaveTests : Test
     {
         [Fact]
         public async void ShouldSyncNewlyCreatedObject()
@@ -31,12 +31,12 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
             {
                 if (associationType.IsOne)
                 {
-                    var association = ((DatabaseStrategy)newObject.Strategy).GetAssociation(associationType);
+                    var association = newObject.Strategy.GetAssociation(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = ((DatabaseStrategy)newObject.Strategy).GetAssociations(associationType);
+                    var association = newObject.Strategy.GetAssociations(associationType);
                     Assert.Empty(association);
                 }
             }

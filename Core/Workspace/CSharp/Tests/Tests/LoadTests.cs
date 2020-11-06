@@ -3,15 +3,17 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database.ToDatabase
+namespace Tests.Workspace
 {
     using System;
+    using System.Threading.Tasks;
+    using Allors.Workspace;
     using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
-    public class LoadTests : Test
+    public abstract class LoadTests : Test
     {
         [Fact]
         public void WithAccessControl()
@@ -35,9 +37,9 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
         }
 
         [Fact]
-        public void WithoutAccessControl()
+        public async void WithoutAccessControl()
         {
-            this.Login("noacl");
+            await this.Login("noacl");
 
             var session = this.Workspace.CreateSession();
 
@@ -62,12 +64,12 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
                 {
                     if (associationType.IsOne)
                     {
-                        var association = ((DatabaseStrategy)c1.Strategy).GetAssociation(associationType);
+                        var association = c1.Strategy.GetAssociation(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = ((DatabaseStrategy)c1.Strategy).GetAssociations(associationType);
+                        var association = c1.Strategy.GetAssociations(associationType);
                         Assert.Empty(association);
                     }
                 }
@@ -102,12 +104,12 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
                 {
                     if (associationType.IsOne)
                     {
-                        var association = ((DatabaseStrategy)c1.Strategy).GetAssociation(associationType);
+                        var association = c1.Strategy.GetAssociation(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = ((DatabaseStrategy)c1.Strategy).GetAssociations(associationType);
+                        var association = c1.Strategy.GetAssociations(associationType);
                         Assert.Empty(association);
                     }
                 }

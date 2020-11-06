@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database.ToDatabase
+namespace Tests.Workspace
 {
     using System.Linq;
     using Allors.Workspace.Data;
@@ -11,33 +11,33 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
-    public class AssociationTests : Test
+    public abstract class AssociationTests : Test
     {
         [Fact]
-        public async void GetOne2Many()
+        public async void Database_GetOne2Many()
         {
             var session = this.Workspace.CreateSession();
 
             var pull = new[]
             {
-                        new Pull
+                new Pull
+                {
+                    Extent = new Extent(this.M.C2.ObjectType)
+                    {
+                        Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
+                    },
+                    Results = new[]
+                    {
+                        new Result
                         {
-                            Extent = new Extent(this.M.C2.ObjectType)
+                            Fetch = new Fetch
                             {
-                                Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
-                            },
-                            Results = new[]
-                            {
-                                new Result
-                                {
-                                    Fetch = new Fetch
-                                    {
-                                        Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many),},
-                                    },
-                                },
+                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2Many),},
                             },
                         },
-                    };
+                    },
+                },
+            };
 
             var result = await session.Load(pull);
 
@@ -53,30 +53,30 @@ namespace Tests.Workspace.Origin.Database.ToDatabase
         }
 
         [Fact]
-        public async void GetOne2One()
+        public async void Database_GetOne2One()
         {
             var session = this.Workspace.CreateSession();
 
             var pull = new[]
             {
-                        new Pull
+                new Pull
+                {
+                    Extent = new Extent(this.M.C2.ObjectType)
+                    {
+                        Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
+                    },
+                    Results = new[]
+                    {
+                        new Result
                         {
-                            Extent = new Extent(this.M.C2.ObjectType)
+                            Fetch = new Fetch
                             {
-                                Predicate = new Equals(this.M.C2.Name) {Value = "c2C"},
-                            },
-                            Results = new[]
-                            {
-                                new Result
-                                {
-                                    Fetch = new Fetch
-                                    {
-                                        Include = new[] {new Node(this.M.C2.C1WhereC1C2One2One),},
-                                    },
-                                },
+                                Include = new[] {new Node(this.M.C2.C1WhereC1C2One2One),},
                             },
                         },
-                    };
+                    },
+                },
+            };
 
             var result = await session.Load(pull);
 

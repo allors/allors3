@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database.ToDatabase
+namespace Tests.Workspace
 {
     using System;
     using Allors.Workspace.Domain;
 
     using Xunit;
 
-    public class UnitSamplesTests : Test
+    public abstract class UnitSamplesTests : Test
     {
         [Fact]
         public async void Null()

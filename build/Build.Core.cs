@@ -161,7 +161,7 @@ partial class Build
 
             DotNetTest(s => s
                 .SetProjectFile(this.Paths.CoreWorkspaceCSharpRemoteTests)
-                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
+                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpRemoteTests.trx")
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 

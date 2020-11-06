@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Origin.Database.ToDatabase
+namespace Tests.Workspace
 {
     using System.Net.Http;
     using Xunit;
 
-    public class ObjectTests : Test
+    public abstract class ObjectTests : Test
     {
         [Fact]
         public async void NonExistingPullController()

@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Meta
+namespace Tests.Workspace
 {
     using Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
     using Xunit;
 
-    public class NodeBuilderTests : Test
+    public abstract class NodeBuilderTests : Test
     {
         [Fact]
         public void Class()
