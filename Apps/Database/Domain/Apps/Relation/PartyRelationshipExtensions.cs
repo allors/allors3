@@ -7,14 +7,6 @@ namespace Allors.Domain
 {
     public static partial class PartyRelationshipExtensions
     {
-        public static void AppsOnBuild(this PartyRelationship @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistFromDate)
-            {
-                @this.FromDate = @this.Strategy.Session.Now();
-            }
-        }
-
         public static int? PaymentNetDays(this PartyRelationship @this)
         {
             int? customerPaymentNetDays = null;

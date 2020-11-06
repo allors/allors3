@@ -21,19 +21,6 @@ namespace Allors.Domain
             .Select(v => v)
             .ToArray();
 
-        public static void AppsOnBuild(this WorkEffort @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistWorkEffortState)
-            {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
-            }
-
-            if (!@this.ExistOwner && @this.Strategy.Session.State().User is Person owner)
-            {
-                @this.Owner = owner;
-            }
-        }
-
         public static void AppsComplete(this WorkEffort @this, WorkEffortComplete method)
         {
             if (!method.Result.HasValue)

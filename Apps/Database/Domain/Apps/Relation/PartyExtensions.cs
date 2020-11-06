@@ -10,17 +10,6 @@ namespace Allors.Domain
 
     public static class PartyExtensions
     {
-        public static void AppsOnBuild(this Party @this, ObjectOnBuild method)
-        {
-            var session = @this.Strategy.Session;
-
-            if (!@this.ExistPreferredCurrency)
-            {
-                var singleton = session.GetSingleton();
-                @this.PreferredCurrency = singleton.Settings.PreferredCurrency;
-            }
-        }
-
         public static bool AppsIsActiveCustomer(this Party @this, InternalOrganisation internalOrganisation, DateTime? date)
         {
             if (date == DateTime.MinValue || internalOrganisation == null)
