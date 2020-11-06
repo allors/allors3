@@ -18,7 +18,17 @@ namespace Allors.Domain
                 new TransitionalDeniedPermissionDerivation(m),
 
                 // Apps
+                new OwnBankAccountCreationDerivation(m),
+                new OwnCreditCardCreationDerivation(m),
+                new FiscalYearInvoiceNumberCreationDerivation(m),
+                new PurchaseInvoiceCreationDerivation(m),
+                new PurchaseInvoiceItemCreationDerivation(m),
                 new AccountingPeriodDerivation(m),
+                new StoreCreationDerivation(m),
+                new PurchaseOrderItemCreationDerivation(m),
+                new QuoteItemCreationDerivation(m),
+                new RequestItemCreationDerivation(m),
+                new RequirementCreationDerivation(m),
                 new BankDerivation(m),
                 new BankAccountDerivation(m),
                 new CashDerivation(m),
