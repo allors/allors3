@@ -49,6 +49,7 @@ namespace Allors.Domain
                 new CustomerShipmentDeniedPermissionDerivation(m),
                 new DropShipmentDeniedPermissionDerivation(m),
                 new CommunicationEventDeniedPermissionDerivation(m),
+                new EngineeringChangeCreateDerivation(m),
                 new EngineeringChangeDeniedPermissionDerivation(m),
                 new NonSerialisedInventoryItemDeniedPermissionDerivation(m),
                 new PartSpecificationDeniedPermissionDerivation(m),
@@ -236,6 +237,9 @@ namespace Allors.Domain
                 new TimeEntryCreateDerivation(m),
                 new WorkEffortAssignmentRateCreateDerivation(m),
                 new WorkTaskCreateDerivation(m),
+                new EmploymentCreateDerivation(m),
+                new SubContractorRelationshipCreateDerivation(m),
+                new SupplierRelationshipCreateDerivation(m),
             };
 
             foreach (var derivation in derivations)
