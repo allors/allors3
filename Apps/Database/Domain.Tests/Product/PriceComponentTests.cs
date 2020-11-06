@@ -6,6 +6,7 @@
 
 namespace Allors.Domain
 {
+    using System.Linq;
     using Xunit;
 
     public class PriceComponentTests : DomainTest, IClassFixture<Fixture>
@@ -326,15 +327,155 @@ namespace Allors.Domain
         public PriceComponentDerivationsTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenBasePrice_WhenDeriving_ThenRequiredRelationsMustExist()
+        public void GivenBasePriceWhenDerivingThenRequiredRelationsMustExist()
         {
             var basePrice = new BasePriceBuilder(this.Session).Build();
-            
-            this.Session.Derive();
+            this.Session.Derive(false);
 
+            Assert.Equal(basePrice.PricedBy, new Organisations(this.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray().First());
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingeWithPriceByThenPricedByEqualOrganisation()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session).WithPricedBy(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(basePrice.PricedBy, organisation);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingeWithTwoInternalOrganisationsThenPricedByMustNull()
+        {
+            var organisation1 = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var organisation2 = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var organisation3 = new OrganisationBuilder(this.Session).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session).WithPricedBy(organisation3).Build();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(basePrice.PricedBy, organisation1);
+            Assert.NotEqual(basePrice.PricedBy, organisation2);
+            Assert.Equal(basePrice.PricedBy, organisation3);
+            Assert.True(new Organisations(this.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray().Length > 1);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingThenHasErrors()
+        {
+            var basePrice = new BasePriceBuilder(this.Session).Build();
+
+            Assert.True(this.Session.Derive(false).HasErrors);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithPartThenHasErrors()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).WithName("Part").Build();
+            var basePrice = new BasePriceBuilder(this.Session).WithPart(part).Build();
+
+            Assert.Equal(basePrice.Part, part);
             Assert.False(this.Session.Derive(false).HasErrors);
         }
 
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithProductThenHasErrors()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithName("Product").Build();
+            var basePrice = new BasePriceBuilder(this.Session).WithProduct(product).Build();
+
+            Assert.Equal(basePrice.Product, product);
+            Assert.False(this.Session.Derive(false).HasErrors);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithProductFeatureThenHasErrors()
+        {
+            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
+            var basePrice = new BasePriceBuilder(this.Session).WithProductFeature(Colour).Build();
+
+            Assert.Equal(basePrice.ProductFeature, Colour);
+            Assert.False(this.Session.Derive(false).HasErrors);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithPartWithProductWithProductFeatureThenHasNoErrors()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).WithName("part").Build();
+            var product = new UnifiedGoodBuilder(this.Session).WithName("product").Build();
+            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
+
+            var basePrice = new BasePriceBuilder(this.Session).WithPart(part).WithProduct(product).WithProductFeature(Colour).Build();
+
+            Assert.Equal(basePrice.Part, part);
+            Assert.Equal(basePrice.Product, product);
+            Assert.Equal(basePrice.ProductFeature, Colour);
+            Assert.False(this.Session.Derive(true).HasErrors);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithPartWithProductWithProductFeatureThenHasErrors()
+        {
+            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
+            var orderQuantityBreak = new OrderQuantityBreakBuilder(this.Session).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session).WithOrderQuantityBreak(orderQuantityBreak).WithProductFeature(Colour).Build();
+
+            Assert.True(this.Session.Derive(false).HasErrors);
+        }
+
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithPartWithProductWithOrderValueThenHasErrors()
+        {
+            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
+            var orderValue = new OrderValueBuilder(this.Session).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session).WithOrderValue(orderValue).WithProductFeature(Colour).Build();
+
+            Assert.True(this.Session.Derive(false).HasErrors);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithPriceWithCurrencyThenCurrenyMustExist()
+        {
+            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
+            var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
+            var euro = belgium.Currency;
+
+            var basePrice = new BasePriceBuilder(this.Session)
+                .WithCurrency(euro)
+                .WithPrice(1)
+                .WithProductFeature(Colour)
+                .Build();
+
+            Assert.Equal(1, basePrice.Price);
+            Assert.Equal(euro, basePrice.Currency);
+            Assert.False(this.Session.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void GivenBasePriceWhenDerivingWithPriceWithPricedByThenCurrenyMustExist()
+        {
+            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
+            var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
+            var euro = belgium.Currency;
+            var organisation = new OrganisationBuilder(this.Session).WithPreferredCurrency(euro).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session)
+                .WithPricedBy(organisation)
+                .WithPrice(1)
+                .WithProductFeature(Colour)
+                .Build();
+
+            var validation = this.Session.Derive(false);
+
+            Assert.Equal(1, basePrice.Price);
+            Assert.Equal(organisation.PreferredCurrency, basePrice.Currency);
+            Assert.False(validation.HasErrors);
+        }
     }
 }
 
