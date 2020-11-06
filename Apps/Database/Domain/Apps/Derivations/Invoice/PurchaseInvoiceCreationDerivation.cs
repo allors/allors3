@@ -36,6 +36,11 @@ namespace Allors.Domain
                 {
                     @this.EntryDate = @this.Session().Now();
                 }
+
+                if (!@this.ExistCurrency)
+                {
+                    @this.Currency = @this.BilledTo?.PreferredCurrency;
+                }
             }
         }
     }
