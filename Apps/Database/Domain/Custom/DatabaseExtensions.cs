@@ -44,6 +44,7 @@ namespace Allors.Domain
                 new CustomerShipmentDeniedPermissionDerivation(m),
                 new DropShipmentDeniedPermissionDerivation(m),
                 new CommunicationEventDeniedPermissionDerivation(m),
+                new EngineeringChangeCreateDerivation(m),
                 new EngineeringChangeDeniedPermissionDerivation(m),
                 new NonSerialisedInventoryItemDeniedPermissionDerivation(m),
                 new PartSpecificationDeniedPermissionDerivation(m),

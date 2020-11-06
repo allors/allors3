@@ -42,6 +42,28 @@ namespace Allors.Domain
                 {
                     @this.IsBillable = true;
                 }
+
+                var useInternalRate = @this.WorkEffort?.Customer is Organisation organisation && organisation.IsInternalOrganisation;
+
+                if (!@this.ExistRateType)
+                {
+                    @this.RateType = useInternalRate ? new RateTypes(@this.Session()).InternalRate : new RateTypes(@this.Session()).StandardRate;
+                }
+
+                if (!@this.ExistBillingFrequency)
+                {
+                    @this.BillingFrequency = new TimeFrequencies(@this.Strategy.Session).Hour;
+                }
+
+                if (!@this.ExistTimeFrequency)
+                {
+                    @this.TimeFrequency = new TimeFrequencies(@this.Strategy.Session).Hour;
+                }
+
+                if (!@this.ExistIsBillable)
+                {
+                    @this.IsBillable = true;
+                }
             }
         }
     }
