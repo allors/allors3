@@ -14,26 +14,6 @@ namespace Allors.Domain
                                !this.ExistPartBillOfMaterialsWhereComponentPart &&
                                !this.ExistInventoryItemTransactionsWherePart;
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistInventoryItemKind)
-            {
-                this.InventoryItemKind = new InventoryItemKinds(this.Strategy.Session).NonSerialised;
-            }
-
-            if (!this.ExistUnitOfMeasure)
-            {
-                this.UnitOfMeasure = new UnitsOfMeasure(this.Strategy.Session).Piece;
-            }
-
-            if (!this.ExistDefaultFacility)
-            {
-                this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
-            }
-
-            this.DeriveName();
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             if (this.IsDeletable)
@@ -72,14 +52,6 @@ namespace Allors.Domain
                 {
                     supplierOffering.Delete();
                 }
-            }
-        }
-
-        private void DeriveName()
-        {
-            if (!this.ExistName)
-            {
-                this.Name = "Part " + (this.PartIdentification() ?? this.UniqueId.ToString());
             }
         }
     }
