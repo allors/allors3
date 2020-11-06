@@ -9,32 +9,6 @@ namespace Allors.Domain
 
     public partial class SupplierRelationship
     {
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            //{
-            //    if (this.ExistSupplier)
-            //    {
-            //        iteration.AddDependency(this.Supplier, this);
-            //        iteration.Mark(this.Supplier);
-
-            //        foreach (OrganisationContactRelationship contactRelationship in this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
-            //        {
-            //            iteration.AddDependency(this, contactRelationship);
-            //            iteration.Mark(contactRelationship);
-            //        }
-            //    }
-
-            //    if (this.ExistInternalOrganisation)
-            //    {
-            //        iteration.AddDependency(this.InternalOrganisation, this);
-            //        iteration.Mark(this.InternalOrganisation);
-            //    }
-            //}
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
@@ -58,49 +32,6 @@ namespace Allors.Domain
             {
                 this.ApprovalThresholdLevel2 = this.InternalOrganisation.PurchaseOrderApprovalThresholdLevel2;
             }
-        }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-
-            // this.AppsOnDeriveInternalOrganisationSupplier(derivation);
-            //  this.AppsOnDeriveMembership(derivation);
-
-            //this.Parties = new Party[] { this.Supplier, this.InternalOrganisation };
-        }
-
-        public void AppsOnDeriveInternalOrganisationSupplier()
-        {
-
-        }
-
-        public void AppsOnDeriveMembership()
-        {
-            //if (this.ExistSupplier)
-            //{
-            //    if (this.Supplier.ContactsUserGroup != null)
-            //    {
-            //        foreach (OrganisationContactRelationship contactRelationship in this.Supplier.OrganisationContactRelationshipsWhereOrganisation)
-            //        {
-            //            if (contactRelationship.FromDate <= this.Session().Now() &&
-            //                (!contactRelationship.ExistThroughDate || this.ThroughDate >= this.Session().Now()))
-            //            {
-            //                if (!this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-            //                {
-            //                    this.Supplier.ContactsUserGroup.AddMember(contactRelationship.Contact);
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (this.Supplier.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-            //                {
-            //                    this.Supplier.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
         }
     }
 }

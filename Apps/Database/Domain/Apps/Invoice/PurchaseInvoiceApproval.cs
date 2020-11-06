@@ -61,28 +61,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //this.Title = "Approval of " + this.PurchaseInvoice.WorkItemDescription;
-
-            //this.WorkItem = this.PurchaseInvoice;
-
-            //// Lifecycle
-            //if (!this.ExistDateClosed && !this.PurchaseInvoice.PurchaseInvoiceState.IsAwaitingApproval)
-            //{
-            //    this.DateClosed = this.Session().Now();
-            //}
-
-            //if (this.Participants.Count == 0)
-            //{
-            //    // Assignments
-            //    var participants = this.ExistDateClosed
-            //        ? (IEnumerable<Person>)Array.Empty<Person>()
-            //        : new UserGroups(this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-            //    this.AssignParticipants(participants);
-            //}
-        }
-
         public void ManageNotification(TaskAssignment taskAssignment)
         {
             if (!taskAssignment.ExistNotification)

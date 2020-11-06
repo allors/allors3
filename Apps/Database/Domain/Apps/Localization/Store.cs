@@ -103,44 +103,5 @@ namespace Allors.Domain
                 this.CreditNoteCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
             }
         }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-            if (!this.ExistInternalOrganisation && internalOrganisations.Length == 1)
-            {
-                this.InternalOrganisation = internalOrganisations.First();
-            }
-
-            if (this.ExistDefaultCollectionMethod && !this.CollectionMethods.Contains(this.DefaultCollectionMethod))
-            {
-                this.AddCollectionMethod(this.DefaultCollectionMethod);
-            }
-
-            if (!this.ExistDefaultCollectionMethod && this.CollectionMethods.Count == 1)
-            {
-                this.DefaultCollectionMethod = this.CollectionMethods.First;
-            }
-
-            if (!this.ExistDefaultCollectionMethod && this.InternalOrganisation.ExistDefaultCollectionMethod)
-            {
-                this.DefaultCollectionMethod = this.InternalOrganisation.DefaultCollectionMethod;
-
-                if (!this.ExistCollectionMethods || !this.CollectionMethods.Contains(this.DefaultCollectionMethod))
-                {
-                    this.AddCollectionMethod(this.DefaultCollectionMethod);
-                }
-            }
-
-            if (!this.ExistDefaultFacility)
-            {
-                this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
-            }
-
-            derivation.Validation.AssertExistsAtMostOne(this, this.M.Store.FiscalYearInvoiceNumbers, this.M.Store.SalesInvoiceCounter);
-        }
     }
 }

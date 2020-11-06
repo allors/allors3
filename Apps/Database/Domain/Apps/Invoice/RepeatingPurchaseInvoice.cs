@@ -21,33 +21,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-            //if (!this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Month) && !this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week))
-            //{
-            //    derivation.Validation.AddError(this, M.RepeatingPurchaseInvoice.Frequency, ErrorMessages.FrequencyNotSupported);
-            //}
-
-            //if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week) && !this.ExistDayOfWeek)
-            //{
-            //    derivation.Validation.AssertExists(this, M.RepeatingPurchaseInvoice.DayOfWeek);
-            //}
-
-            //if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Month) && this.ExistDayOfWeek)
-            //{
-            //    derivation.Validation.AssertNotExists(this, M.RepeatingPurchaseInvoice.DayOfWeek);
-            //}
-
-            //if (this.Frequency.Equals(new TimeFrequencies(this.Strategy.Session).Week) && this.ExistDayOfWeek && this.ExistNextExecutionDate)
-            //{
-            //    if (!this.NextExecutionDate.DayOfWeek.ToString().Equals(this.DayOfWeek.Name))
-            //    {
-            //        derivation.Validation.AddError(this, M.RepeatingPurchaseInvoice.DayOfWeek, ErrorMessages.DateDayOfWeek);
-            //    }
-            //}
-        }
-
         public void Repeat()
         {
             var now = this.Strategy.Session.Now().Date;

@@ -14,26 +14,5 @@ namespace Allors.Domain
                 this.CatScope = new CatScopes(this.Strategy.Session).Public;
             }
         }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-            //var defaultLocale = this.Strategy.Session.GetSingleton().DefaultLocale;
-
-            //if (this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-            //{
-            //    this.Name = this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-            //}
-
-            //if (this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
-            //{
-            //    this.Description = this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
-            //}
-
-            //if (!this.ExistCatalogueImage)
-            //{
-            //    this.CatalogueImage = this.Strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
-            //}
-        }
     }
 }
