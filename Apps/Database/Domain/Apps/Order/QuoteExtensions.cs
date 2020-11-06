@@ -28,53 +28,6 @@ namespace Allors.Domain
             }
         } 
 
-        public static void AppsOnBuild(this Quote @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistQuoteState)
-            {
-                @this.QuoteState = new QuoteStates(@this.Strategy.Session).Created;
-            }
-        }
-
-        public static void AppsOnDerive(this Quote @this, ObjectOnDerive method)
-        {
-            //var session = @this.Strategy.Session;
-            //var derivation = method.Derivation;
-
-            //if (!@this.ExistIssuer)
-            //{
-            //    var internalOrganisations = new Organisations(session).InternalOrganisations();
-
-            //    if (internalOrganisations.Count() == 1)
-            //    {
-            //        @this.Issuer = internalOrganisations.First();
-            //    }
-            //}
-
-            //if (!@this.ExistQuoteNumber && @this.ExistIssuer)
-            //{
-            //    @this.QuoteNumber = @this.Issuer.NextQuoteNumber(session.Now().Year);
-            //    (@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
-            //}
-
-            //@this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
-
-            //foreach (QuoteItem quoteItem in @this.QuoteItems)
-            //{
-            //    var quoteItemDerivedRoles = quoteItem;
-
-            //    quoteItemDerivedRoles.VatRegime = quoteItem.AssignedVatRegime ?? @this.VatRegime;
-            //    quoteItemDerivedRoles.VatRate = quoteItem.VatRegime?.VatRate;
-
-            //    quoteItemDerivedRoles.IrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.IrpfRegime;
-            //    quoteItemDerivedRoles.IrpfRate = quoteItem.IrpfRegime?.IrpfRate;
-            //}
-
-            //@this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
-
-            //@this.Sync(derivation);
-        }
-
         public static void AppsDelete(this Quote @this, DeletableDelete method)
         {
             var productQuote = @this as ProductQuote;
@@ -207,11 +160,6 @@ namespace Allors.Domain
                     }
                 }
             }
-        }
-
-        private static void Sync(this Quote @this, IDerivation derivation)
-        {
-            //var QuoteDerivedRoles = @this;
         }
     }
 }

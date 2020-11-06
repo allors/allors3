@@ -36,14 +36,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistShipmentItemState)
-            {
-                this.ShipmentItemState = new ShipmentItemStates(this.Strategy.Session).Created;
-            }
-        }
-
         public void Sync(Shipment shipment) => this.SyncedShipment = shipment;
     }
 }

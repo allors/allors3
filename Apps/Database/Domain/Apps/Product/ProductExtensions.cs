@@ -9,20 +9,6 @@ namespace Allors.Domain
 
     public static partial class ProductExtensions
     {
-        public static void AppsOnPreDerive(this Product @this, ObjectOnPreDerive method)
-        {
-            var (iteration, changeSet, derivedObjects) = method;
-
-            if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-            {
-                foreach (ProductCategory productCategory in @this.ProductCategoriesWhereProduct)
-                {
-                    iteration.AddDependency(productCategory, @this);
-                    iteration.Mark(productCategory);
-                }
-            }
-        }
-
         public static void AppsOnDeriveVirtualProductPriceComponent(this Product @this)
         {
             if (!@this.ExistProductWhereVariant)

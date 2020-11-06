@@ -7,44 +7,6 @@ namespace Allors.Domain
 {
     public static partial class PaymentExtensions
     {
-        public static void AppsOnBuild(this Payment @this, ObjectOnBuild method)
-        {
-            if (!@this.ExistEffectiveDate)
-            {
-                @this.EffectiveDate = @this.Strategy.Session.Now().Date;
-            }
-        }
-
-        public static void AppsOnPreDerive(this Payment @this, ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(@this) || changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-            //{
-            //    foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
-            //    {
-            //        iteration.AddDependency(@this, paymentApplication);
-            //        iteration.Mark(paymentApplication);
-            //    }
-            //}
-        }
-
-        public static void AppsOnDerive(this Payment @this, ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-
-            //decimal totalAmountApplied = 0;
-            //foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
-            //{
-            //    totalAmountApplied += paymentApplication.AmountApplied;
-            //}
-
-            //if (@this.ExistAmount && totalAmountApplied > @this.Amount)
-            //{
-            //    derivation.Validation.AddError(@this, M.Payment.Amount, ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount);
-            //}
-        }
-
         public static void AppsDelete(this Payment @this, DeletableDelete method)
         {
             foreach (PaymentApplication paymentApplication in @this.PaymentApplications)

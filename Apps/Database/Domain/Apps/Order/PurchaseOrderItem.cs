@@ -68,24 +68,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistPurchaseOrderItemState)
-            {
-                this.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Strategy.Session).Created;
-            }
-
-            if (!this.ExistPurchaseOrderItemPaymentState)
-            {
-                this.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Strategy.Session).NotPaid;
-            }
-
-            if (this.ExistPart && !this.ExistInvoiceItemType)
-            {
-                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).PartItem;
-            }
-        }
-
         public void AppsDelete(PurchaseOrderItemDelete method)
         {
             if (this.ExistSerialisedItem)
