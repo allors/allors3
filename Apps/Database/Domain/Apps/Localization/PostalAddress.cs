@@ -8,21 +8,5 @@ namespace Allors.Domain
     public partial class PostalAddress
     {
         public bool IsPostalAddress => true;
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            var derivation = method.Derivation;
-
-            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.Locality);
-            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.Region);
-            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.PostalCode);
-            derivation.Validation.AssertExistsAtMostOne(this, this.M.PostalAddress.PostalAddressBoundaries, this.M.PostalAddress.Country);
-
-            if (!this.ExistPostalAddressBoundaries)
-            {
-                derivation.Validation.AssertExists(this, this.M.PostalAddress.Locality);
-                derivation.Validation.AssertExists(this, this.M.PostalAddress.Country);
-            }
-        }
     }
 }

@@ -19,46 +19,5 @@ namespace Allors.Domain
                 this.UseAsDefault = false;
             }
         }
-
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            //{
-            //    if (this.ExistPartyWherePartyContactMechanism)
-            //    {
-            //        iteration.AddDependency(this.PartyWherePartyContactMechanism, this);
-            //        iteration.Mark(this.PartyWherePartyContactMechanism);
-            //    }
-            //}
-        }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //var derivation = method.Derivation;
-
-            //if (this.ExistUseAsDefault && this.UseAsDefault)
-            //{
-            //    derivation.Validation.AssertExists(this, M.PartyContactMechanism.ContactPurposes);
-            //}
-
-            //if (this.UseAsDefault && this.ExistPartyWherePartyContactMechanism && this.ExistContactPurposes)
-            //{
-            //    foreach (var contactMechanismPurpose in this.ContactPurposes)
-            //    {
-            //        var partyContactMechanisms = this.PartyWherePartyContactMechanism.PartyContactMechanisms;
-            //        partyContactMechanisms.Filter.AddContains(M.PartyContactMechanism.ContactPurposes, (IObject)contactMechanismPurpose);
-
-            //        foreach (PartyContactMechanism partyContactMechanism in partyContactMechanisms)
-            //        {
-            //            if (!partyContactMechanism.Equals(this))
-            //            {
-            //                partyContactMechanism.UseAsDefault = false;
-            //            }
-            //        }
-            //    }
-            //}
-        }
     }
 }

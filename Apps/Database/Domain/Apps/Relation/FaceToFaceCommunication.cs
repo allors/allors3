@@ -11,7 +11,5 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.FaceToFaceCommunication, this.M.FaceToFaceCommunication.CommunicationEventState),
         };
-
-        //public void AppsOnDerive(ObjectOnDerive method) => this.WorkItemDescription = $"Meeting with {this.ToParty.PartyName} about {this.Subject}";
     }
 }

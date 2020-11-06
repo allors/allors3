@@ -9,35 +9,6 @@ namespace Allors.Domain
 
     public partial class CustomerRelationship
     {
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            //{
-            //    if (this.ExistCustomer)
-            //    {
-            //        iteration.AddDependency(this.Customer, this);
-            //        iteration.Mark(this.Customer);
-
-            //        if (this.Customer is Organisation customer)
-            //        {
-            //            foreach (OrganisationContactRelationship contactRelationship in customer.OrganisationContactRelationshipsWhereOrganisation)
-            //            {
-            //                iteration.AddDependency(this, contactRelationship);
-            //                iteration.Mark(contactRelationship);
-            //            }
-            //        }
-            //    }
-
-            //    if (this.ExistInternalOrganisation)
-            //    {
-            //        iteration.AddDependency(this.InternalOrganisation, this);
-            //        iteration.Mark(this.InternalOrganisation);
-            //    }
-            //}
-        }
-
         public void AppsOnPostBuild(ObjectOnPostBuild method)
         {
             // TODO: Don't extent for InternalOrganisations
@@ -48,7 +19,5 @@ namespace Allors.Domain
                 this.InternalOrganisation = internalOrganisations.First();
             }
         }
-
-        //public void AppsOnDerive(ObjectOnDerive method) => this.Parties = new Party[] { this.Customer, this.InternalOrganisation };
     }
 }

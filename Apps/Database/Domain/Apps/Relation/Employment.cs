@@ -9,17 +9,6 @@ namespace Allors.Domain
 
     public partial class Employment
     {
-        public void AppsOnPreDerive(ObjectOnPreDerive method)
-        {
-            //var (iteration, changeSet, derivedObjects) = method;
-
-            //if (iteration.IsMarked(this) || changeSet.IsCreated(this) || changeSet.HasChangedRoles(this))
-            //{
-            //    iteration.Mark(this.Employer);
-            //    iteration.Mark(this.Employee);
-            //}
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             // TODO: Don't extent for InternalOrganisations
@@ -29,11 +18,6 @@ namespace Allors.Domain
             {
                 this.Employer = internalOrganisations.First();
             }
-        }
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //this.Parties = new Party[] { this.Employee, this.Employer };
         }
     }
 }

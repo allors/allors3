@@ -11,15 +11,5 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.EmailCommunication, this.M.EmailCommunication.CommunicationEventState),
         };
-
-        public void AppsOnDerive(ObjectOnDerive method)
-        {
-            //if (!this.ExistSubject && this.ExistEmailTemplate && this.EmailTemplate.ExistSubjectTemplate)
-            //{
-            //    this.Subject = this.EmailTemplate.SubjectTemplate;
-            //}
-
-            //this.WorkItemDescription = $"Email to {this.ToEmail} about {this.Subject}";
-        }
     }
 }

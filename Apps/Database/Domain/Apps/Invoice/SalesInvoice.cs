@@ -442,20 +442,6 @@ namespace Allors.Domain
             return salesInvoice;
         }
 
-        public void AppsOnDeriveCustomers(IDerivation derivation)
-        {
-            //this.RemoveCustomers();
-            //if (this.ExistBillToCustomer && !this.Customers.Contains(this.BillToCustomer))
-            //{
-            //    this.AddCustomer(this.BillToCustomer);
-            //}
-
-            //if (this.ExistShipToCustomer && !this.Customers.Contains(this.ShipToCustomer))
-            //{
-            //    this.AddCustomer(this.ShipToCustomer);
-            //}
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             if (this.IsDeletable)
