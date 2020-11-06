@@ -205,5 +205,45 @@ namespace Allors.Domain
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
+
+        [Fact]
+        public void OnChangedWorkTaskServiceEntriesWhereWorkEffortDeriveCompletePermission()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            workEffort.Complete();
+            this.Session.Derive(false);
+
+            var serviceEntrie = new ExpenseEntryBuilder(this.Session).WithWorkEffort(workEffort).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedWorkTaskWorkEffortExistThroughDateNotInProgressStateDeriveCompletePermission()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serviceEntrie = new ExpenseEntryBuilder(this.Session).WithWorkEffort(workEffort).WithThroughDate(this.Session.Now().AddDays(1)).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedWorkTaskWorkEffortExistThroughDateInProgressStateDeriveCompletePermission()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).WithActualStart(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var serviceEntrie = new ExpenseEntryBuilder(this.Session).WithWorkEffort(workEffort).WithThroughDate(this.Session.Now().AddDays(1)).Build();
+            this.Session.Derive(false);
+            // HOW TO IN PROGRESS
+
+            Assert.DoesNotContain(this.completePermission, workEffort.DeniedPermissions);
+        }
     }
 }
