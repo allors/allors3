@@ -3,12 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Adapters.Remote;
     using Protocol.Database.Pull;
 
     public class LoadResult : Result, ILoadResult

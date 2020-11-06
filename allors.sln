@@ -163,6 +163,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "Apps\Datab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration.Faker", "Apps\Database\Configuration.Faker\Configuration.Faker.csproj", "{0D7051D6-1EBD-4002-BE20-F35FB2BC785F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.Local", "Core\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj", "{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -413,6 +415,10 @@ Global
 		{0D7051D6-1EBD-4002-BE20-F35FB2BC785F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D7051D6-1EBD-4002-BE20-F35FB2BC785F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D7051D6-1EBD-4002-BE20-F35FB2BC785F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -494,6 +500,7 @@ Global
 		{8BAA0F97-9EB8-4F63-90D3-C612B28DF1B8} = {BF224751-0EE7-4C58-ABB9-4072587F1C01}
 		{1C01DD6C-77D7-4152-B39D-586307D84779} = {3E9C6582-CCF0-4A7C-B501-9F1308F04A7B}
 		{0D7051D6-1EBD-4002-BE20-F35FB2BC785F} = {3E9C6582-CCF0-4A7C-B501-9F1308F04A7B}
+		{DA9E01B3-7E2E-452D-B051-DCE7714ACB9E} = {1C62BCEE-DC47-4093-8359-22F448216C7F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}
