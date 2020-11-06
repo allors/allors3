@@ -12,14 +12,6 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.PartSpecification, this.M.PartSpecification.PartSpecificationState),
         };
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistPartSpecificationState)
-            {
-                this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Session).Created;
-            }
-        }
-
         public void AppsApprove(PartSpecificationApprove method) => this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Session).Approved;
     }
 }

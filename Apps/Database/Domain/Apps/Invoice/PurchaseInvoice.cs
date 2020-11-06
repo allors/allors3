@@ -47,24 +47,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            if (!this.ExistPurchaseInvoiceState)
-            {
-                this.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Strategy.Session).Created;
-            }
-
-            if (!this.ExistInvoiceDate)
-            {
-                this.InvoiceDate = this.Session().Now();
-            }
-
-            if (!this.ExistEntryDate)
-            {
-                this.EntryDate = this.Session().Now();
-            }
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             if (!this.ExistCurrency)
