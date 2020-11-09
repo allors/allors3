@@ -28,7 +28,6 @@ namespace Allors.Domain
                 new OwnCreditCardCreationDerivation(m),
                 new FiscalYearInvoiceNumberCreationDerivation(m),
                 new PurchaseInvoiceCreationDerivation(m),
-                new PurchaseInvoiceItemCreationDerivation(m),
                 new AccountingPeriodDerivation(m),
                 new StoreCreationDerivation(m),
                 new PurchaseOrderItemCreationDerivation(m),
