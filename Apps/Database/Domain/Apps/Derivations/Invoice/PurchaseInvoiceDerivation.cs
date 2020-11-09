@@ -17,6 +17,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new CreatedPattern(this.M.PurchaseInvoice.Class),
+                new ChangedPattern(this.M.PurchaseInvoice.PurchaseInvoiceState),
                 new ChangedPattern(this.M.PurchaseInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
                 new ChangedPattern(this.M.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
             };
