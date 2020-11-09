@@ -7,6 +7,14 @@ namespace Allors.Domain
 {
     public static partial class QuoteExtensions
     {
+        public static void AppsOnBuild(this Quote @this, ObjectOnBuild method)
+        {
+            if (!@this.ExistQuoteState)
+            {
+                @this.QuoteState = new QuoteStates(@this.Strategy.Session).Created;
+            }
+        }
+
         public static bool IsDeletable(this Quote @this)
         {
             var productQuote = @this as ProductQuote;

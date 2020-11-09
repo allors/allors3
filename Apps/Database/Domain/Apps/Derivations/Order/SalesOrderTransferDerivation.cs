@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SalesOrderTransferDerivation(M m) : base(m, new Guid("7E5895C6-712C-42F9-8B1C-964D8B8CBC1D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.SalesOrderTransfer.Class),
+                new ChangedPattern(this.M.SalesOrderTransfer.InternalOrganisation),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

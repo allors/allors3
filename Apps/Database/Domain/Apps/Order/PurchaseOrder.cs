@@ -134,6 +134,39 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            this.OrderDate = this.Session().Now();
+
+            this.PurchaseOrderState ??= new PurchaseOrderStates(this.Strategy.Session).Created;
+            this.PurchaseOrderShipmentState ??= new PurchaseOrderShipmentStates(this.Strategy.Session).NotReceived;
+            this.PurchaseOrderPaymentState ??= new PurchaseOrderPaymentStates(this.Strategy.Session).NotPaid;
+
+            if (!this.ExistEntryDate)
+            {
+                this.EntryDate = this.Session().Now();
+            }
+
+            if (!this.ExistOrderedBy)
+            {
+                var internalOrganisations = new Organisations(this.Strategy.Session).InternalOrganisations();
+                if (internalOrganisations.Count() == 1)
+                {
+                    this.OrderedBy = internalOrganisations.First();
+                }
+            }
+
+            if (!this.ExistCurrency)
+            {
+                this.Currency = this.OrderedBy?.PreferredCurrency;
+            }
+
+            if (!this.ExistStoredInFacility && this.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+            {
+                this.StoredInFacility = this.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
+            }
+        }
+
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)

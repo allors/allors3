@@ -16,7 +16,6 @@ namespace Allors.Domain
         public SalesInvoiceStateDerivation(M m) : base(m, new Guid("c273de35-fd1c-4353-8354-d3640ba5dff8")) =>
             this.Patterns = new Pattern[]
         {
-            new CreatedPattern(this.M.SalesInvoice.Class),
             new ChangedPattern(this.M.PaymentApplication.AmountApplied) { Steps =  new IPropertyType[] {m.PaymentApplication.Invoice} },
             new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
             new ChangedPattern(this.M.SalesInvoice.AdvancePayment),

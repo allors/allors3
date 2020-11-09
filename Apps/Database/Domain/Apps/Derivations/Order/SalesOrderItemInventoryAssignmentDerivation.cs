@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SalesOrderItemInventoryAssignmentDerivation(M m) : base(m, new Guid("2B36132A-5557-4FBD-8611-F80302E8550C")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.SalesOrderItemInventoryAssignment.Class),
+                new ChangedPattern(this.M.SalesOrderItemInventoryAssignment.InventoryItemTransactions),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

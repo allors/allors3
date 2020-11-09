@@ -8,6 +8,19 @@ namespace Allors.Domain
     // TODO: Why not use Counters?
     public partial class FiscalYearInvoiceNumber
     {
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistNextSalesInvoiceNumber)
+            {
+                this.NextSalesInvoiceNumber = 1;
+            }
+
+            if (!this.ExistNextCreditNoteNumber)
+            {
+                this.NextCreditNoteNumber = 1;
+            }
+        }
+
         public int DeriveNextSalesInvoiceNumber() => this.NextSalesInvoiceNumber++;
 
         public int DeriveNextCreditNoteNumber() => this.NextCreditNoteNumber++;

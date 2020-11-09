@@ -67,6 +67,69 @@ namespace Allors.Domain
             && !this.ExistSalesInvoicesWhereSalesOrder
             && this.SalesOrderItems.All(v => v.IsDeletable);
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistSalesOrderState)
+            {
+                this.SalesOrderState = new SalesOrderStates(this.Strategy.Session).Provisional;
+            }
+
+            if (!this.ExistSalesOrderShipmentState)
+            {
+                this.SalesOrderShipmentState = new SalesOrderShipmentStates(this.Strategy.Session).NotShipped;
+            }
+
+            if (!this.ExistSalesOrderInvoiceState)
+            {
+                this.SalesOrderInvoiceState = new SalesOrderInvoiceStates(this.Strategy.Session).NotInvoiced;
+            }
+
+            if (!this.ExistSalesOrderPaymentState)
+            {
+                this.SalesOrderPaymentState = new SalesOrderPaymentStates(this.Strategy.Session).NotPaid;
+            }
+
+            if (!this.ExistOrderDate)
+            {
+                this.OrderDate = this.Session().Now();
+            }
+
+            if (!this.ExistEntryDate)
+            {
+                this.EntryDate = this.Session().Now();
+            }
+
+            if (!this.ExistPartiallyShip)
+            {
+                this.PartiallyShip = true;
+            }
+
+            if (!this.ExistTakenBy)
+            {
+                var internalOrganisations = new Organisations(this.Strategy.Session).InternalOrganisations();
+                if (internalOrganisations.Count() == 1)
+                {
+                    this.TakenBy = internalOrganisations.First();
+                }
+            }
+
+            if (!this.ExistStore && this.ExistTakenBy)
+            {
+                var stores = new Stores(this.Strategy.Session).Extent();
+                stores.Filter.AddEquals(M.Store.InternalOrganisation, this.TakenBy);
+
+                if (stores.Any())
+                {
+                    this.Store = stores.First;
+                }
+            }
+
+            if (!this.ExistOriginFacility)
+            {
+                this.OriginFacility = this.ExistStore ? this.Store.DefaultFacility : this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+            }
+        }
+
         public void AppsDelete(SalesOrderDelete method)
         {
             if (this.IsDeletable)

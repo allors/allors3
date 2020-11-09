@@ -15,7 +15,6 @@ namespace Allors.Domain
         public OrganisationSubContractorChangedDerivation(M m) : base(m, new Guid("C7C44D1F-11F1-4A48-8385-491089090F44")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SubContractorRelationship.Class),
                 new ChangedPattern(M.SubContractorRelationship.FromDate),
             };
 

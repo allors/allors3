@@ -52,5 +52,15 @@ namespace Allors.Domain
         public bool IsCostAccount() => false;
 
         public bool IsCashAccount() => false;
+
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistFromDate)
+            {
+                this.FromDate = this.Session().Now();
+            }
+
+            this.HasBankStatementTransactions = false;
+        }
     }
 }

@@ -59,6 +59,42 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistSalesOrderItemState)
+            {
+                this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Provisional;
+            }
+
+            if (this.ExistProduct && !this.ExistInvoiceItemType)
+            {
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+            }
+
+            if (!this.ExistSalesOrderItemShipmentState)
+            {
+                this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Session).NotShipped;
+            }
+
+            if (!this.ExistSalesOrderItemInvoiceState)
+            {
+                this.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Strategy.Session).NotInvoiced;
+            }
+
+            if (!this.ExistSalesOrderItemPaymentState)
+            {
+                this.SalesOrderItemPaymentState = new SalesOrderItemPaymentStates(this.Strategy.Session).NotPaid;
+            }
+        }
+
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            if (this.ExistProduct && !this.ExistInvoiceItemType)
+            {
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+            }
+        }
+
         public void AppsDelete(SalesOrderItemDelete method)
         {
             foreach (SalesTerm salesTerm in this.SalesTerms)

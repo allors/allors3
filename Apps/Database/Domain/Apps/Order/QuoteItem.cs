@@ -21,6 +21,19 @@ namespace Allors.Domain
 
         public bool WasValid => this.ExistLastObjectStates && !(this.LastQuoteItemState.IsCancelled || this.LastQuoteItemState.IsRejected);
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistQuoteItemState)
+            {
+                this.QuoteItemState = new QuoteItemStates(this.Strategy.Session).Draft;
+            }
+
+            if (this.ExistProduct && !this.ExistInvoiceItemType)
+            {
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+            }
+        }
+
         public void AppsDeriveDetails(QuoteItemDeriveDetails method)
         {
             if (!method.Result.HasValue)

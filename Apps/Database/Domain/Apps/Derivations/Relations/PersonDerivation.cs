@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PersonDerivation(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.Person.Class),
+                new ChangedPattern(this.M.Person.Salutation),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

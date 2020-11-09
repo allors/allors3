@@ -14,6 +14,14 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.AccountingPeriod, this.M.AccountingPeriod.BudgetState),
         };
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistActive)
+            {
+                this.Active = true;
+            }
+        }
+
         public AccountingPeriod AddNextMonth() => this.AppsAddNextMonth();
 
         private AccountingPeriod AppsAddNextMonth()

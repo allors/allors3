@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SubcontractorRelationshipDerivation(M m) : base(m, new Guid("CF18B16D-C8BD-4097-A959-3AA3929D4A3D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.SubContractorRelationship.Class),
+                new ChangedPattern(this.M.SubContractorRelationship.Contractor),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -12,6 +12,14 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.Requirement, this.M.Requirement.RequirementState),
         };
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistRequirementState)
+            {
+                this.RequirementState = new RequirementStates(this.Strategy.Session).Active;
+            }
+        }
+
         public void AppsClose(RequirementClose method) => this.RequirementState = new RequirementStates(this.Strategy.Session).Closed;
 
         public void AppsReopen(RequirementReopen method) => this.RequirementState = new RequirementStates(this.Strategy.Session).Active;

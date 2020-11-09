@@ -28,6 +28,24 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistCreationDate)
+            {
+                this.CreationDate = this.Session().Now();
+            }
+
+            if (!this.ExistPickListState)
+            {
+                this.PickListState = new PickListStates(this.Strategy.Session).Created;
+            }
+
+            if (!this.ExistStore)
+            {
+                this.Store = this.Strategy.Session.Extent<Store>().First;
+            }
+        }
+
         public void AppsDelete(PickListDelete method)
         {
             foreach (PickListItem pickListItem in this.PickListItems)

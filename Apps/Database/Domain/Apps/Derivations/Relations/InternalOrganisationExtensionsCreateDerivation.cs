@@ -15,7 +15,7 @@ namespace Allors.Domain
         public InternalOrganisationExtensionsCreateDerivation(M m) : base(m, new Guid("f1f61876-17a7-44cc-b58c-b826350554ad")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.InternalOrganisation.Interface),
+                new ChangedPattern(m.InternalOrganisation.ProductQuoteTemplate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

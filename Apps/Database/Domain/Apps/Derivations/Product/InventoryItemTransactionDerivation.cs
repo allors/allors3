@@ -15,7 +15,7 @@ namespace Allors.Domain
         public InventoryItemTransactionDerivation(M m) : base(m, new Guid("E1F9D2DA-9C99-473D-B49F-17465CDEDBC9")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(this.M.InventoryItemTransaction.Class)
+                new ChangedPattern(this.M.InventoryItemTransaction.Quantity)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

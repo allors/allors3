@@ -15,7 +15,6 @@ namespace Allors.Domain
         public SupplierRelationshipDerivation(M m) : base(m, new Guid("D0B8E2E4-3A11-474A-99FC-B39E4DDAD6E5")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.SupplierRelationship.Class),
                 new ChangedPattern(M.SupplierRelationship.FromDate),
             };
 

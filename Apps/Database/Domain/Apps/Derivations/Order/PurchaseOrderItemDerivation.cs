@@ -17,7 +17,6 @@ namespace Allors.Domain
         public PurchaseOrderItemDerivation(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.PurchaseOrderItem.Class),
                 new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState),
                 new ChangedPattern(this.M.PurchaseOrderItem.IsReceivable),
                 // new ChangedPattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },

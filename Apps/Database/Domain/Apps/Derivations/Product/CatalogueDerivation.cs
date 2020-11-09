@@ -15,7 +15,7 @@ namespace Allors.Domain
         public CatalogueDerivation(M m) : base(m, new Guid("7B3BA380-A703-4E29-8D2D-0D2F74C6E7D8")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(this.M.Catalogue.Class)
+                new ChangedPattern(this.M.Catalogue.CatalogueImage)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

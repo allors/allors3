@@ -11,6 +11,16 @@ namespace Allors.Domain
 
     public partial class RepeatingPurchaseInvoice
     {
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistInternalOrganisation && internalOrganisations.Count() == 1)
+            {
+                this.InternalOrganisation = internalOrganisations.First();
+            }
+        }
+
         public void Repeat()
         {
             var now = this.Strategy.Session.Now().Date;

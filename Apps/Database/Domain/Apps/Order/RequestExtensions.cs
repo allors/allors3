@@ -9,6 +9,19 @@ namespace Allors.Domain
 
     public static partial class RequestExtensions
     {
+        public static void AppsOnBuild(this Request @this, ObjectOnBuild method)
+        {
+            if (!@this.ExistRequestState && !@this.ExistOriginator)
+            {
+                @this.RequestState = new RequestStates(@this.Session()).Anonymous;
+            }
+
+            if (!@this.ExistRequestState && @this.ExistOriginator)
+            {
+                @this.RequestState = new RequestStates(@this.Session()).Submitted;
+            }
+        }
+
         public static bool IsDeletable(this Request @this) =>
             // EmailAddress is used whith anonymous request form website
             !@this.ExistEmailAddress

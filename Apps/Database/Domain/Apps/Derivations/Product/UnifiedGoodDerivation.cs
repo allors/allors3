@@ -17,7 +17,7 @@ namespace Allors.Domain
         public UnifiedGoodDerivation(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.UnifiedGood.Class),
+                new ChangedPattern(this.M.UnifiedGood.DerivationTrigger),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

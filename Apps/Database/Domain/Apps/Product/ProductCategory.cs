@@ -8,5 +8,13 @@ namespace Allors.Domain
     public partial class ProductCategory
     {
         public override string ToString() => this.Name;
+
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistCatScope)
+            {
+                this.CatScope = new CatScopes(this.Strategy.Session).Public;
+            }
+        }
     }
 }

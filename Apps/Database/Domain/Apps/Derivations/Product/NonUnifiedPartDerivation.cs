@@ -15,8 +15,8 @@ namespace Allors.Domain
         public NonUnifiedPartDerivation(M m) : base(m, new Guid("280E12F5-C2EA-4D9A-BEDA-D30F229D46A3")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.NonUnifiedPart.Class),
-                new CreatedPattern(this.M.InventoryItemTransaction.Class) {Steps = new IPropertyType[]{ this.M.InventoryItemTransaction.Part}, OfType = this.M.NonUnifiedPart.Class},
+                new ChangedPattern(this.M.NonUnifiedPart.ProductIdentifications),
+                new ChangedPattern(this.M.NonUnifiedPart.UniqueId),
                 new ChangedPattern(this.M.InventoryItemTransaction.Part) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part }, OfType = this.M.NonUnifiedPart.Class},
                 new ChangedPattern(this.M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
             };

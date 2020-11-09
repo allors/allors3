@@ -16,7 +16,6 @@ namespace Allors.Domain
         public PurchaseInvoiceDerivation(M m) : base(m, new Guid("7F6A083E-1409-4158-B302-603F0973A98C")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.PurchaseInvoice.Class),
                 new ChangedPattern(this.M.PurchaseInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
                 new ChangedPattern(this.M.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
             };

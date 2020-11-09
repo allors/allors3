@@ -65,5 +65,43 @@ namespace Allors.Domain
         public string NextShipmentNumber() => string.Concat(this.OutgoingShipmentNumberPrefix, this.OutgoingShipmentCounter.NextValue());
 
         public string NextSalesOrderNumber(int year) => string.Concat(this.SalesOrderNumberPrefix, this.SalesOrderCounter.NextValue()).Replace("{year}", year.ToString());
+
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistAutoGenerateCustomerShipment)
+            {
+                this.AutoGenerateCustomerShipment = true;
+            }
+
+            if (!this.ExistAutoGenerateShipmentPackage)
+            {
+                this.AutoGenerateShipmentPackage = true;
+            }
+
+            if (!this.ExistSalesOrderCounter)
+            {
+                this.SalesOrderCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            }
+
+            if (!this.ExistOutgoingShipmentCounter)
+            {
+                this.OutgoingShipmentCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            }
+
+            if (!this.ExistBillingProcess)
+            {
+                this.BillingProcess = new BillingProcesses(this.Strategy.Session).BillingForShipmentItems;
+            }
+
+            if (!this.ExistSalesInvoiceTemporaryCounter)
+            {
+                this.SalesInvoiceTemporaryCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            }
+
+            if (!this.ExistCreditNoteCounter)
+            {
+                this.CreditNoteCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            }
+        }
     }
 }

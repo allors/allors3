@@ -17,7 +17,6 @@ namespace Allors.Domain
         public WorkTaskDerivation(M m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
             this.Patterns = new Pattern[]
         {
-            new CreatedPattern(this.M.WorkTask.Class),
             new ChangedPattern(this.M.WorkTask.TransitionalDeniedPermissions),
         };
 

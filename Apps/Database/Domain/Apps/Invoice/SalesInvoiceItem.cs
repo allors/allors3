@@ -58,6 +58,27 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistSalesInvoiceItemState)
+            {
+                this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).ReadyForPosting;
+            }
+
+            if (this.ExistProduct && !this.ExistInvoiceItemType)
+            {
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+            }
+        }
+
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            if (this.ExistProduct && !this.ExistInvoiceItemType)
+            {
+                this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
+            }
+        }
+
         public void AppsWriteOff()
         {
             this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).WrittenOff;

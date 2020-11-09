@@ -15,7 +15,6 @@ namespace Allors.Domain
         public PriceComponentDerivation(M m) : base(m, new Guid("34F7833F-170D-45C3-92F0-B8AD33C3A028")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.PriceComponent.Interface),
                 new ChangedPattern(this.M.PriceComponent.FromDate),
                 new ChangedPattern(this.M.PriceComponent.ThroughDate),
                 new ChangedPattern(this.M.PriceComponent.Price),

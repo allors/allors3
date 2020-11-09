@@ -15,7 +15,7 @@ namespace Allors.Domain
         public ShipmentReceiptDerivation(M m) : base(m, new Guid("BE525828-2AAC-4996-98A0-08293485D7DD")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.ShipmentReceipt.Class),
+                new ChangedPattern(this.M.ShipmentReceipt.ShipmentItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

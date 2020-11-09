@@ -15,16 +15,6 @@ namespace Allors.Domain
         public NonSerialisedInventoryItemDerivation(M m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.NonSerialisedInventoryItem.Class),
-                new CreatedPattern(this.M.InventoryItemTransaction.Class)
-                {
-                    Steps = new IPropertyType[]
-                    {
-                        this.M.InventoryItemTransaction.Part,
-                        this.M.Part.InventoryItemsWherePart
-                    },
-                    OfType = this.M.NonSerialisedInventoryItem.Class
-                },
                 new ChangedPattern(this.M.InventoryItemTransaction.InventoryItem)
                 {
                     Steps = new IPropertyType[]
