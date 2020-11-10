@@ -17,7 +17,7 @@ namespace Tests.Workspace
         {
             var session = this.Workspace.CreateSession();
 
-            var result = await session.Load(new { step = 0 }, "TestUnitSamples");
+            var result = await session.Load("TestUnitSamples", new { step = 0 });
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -36,7 +36,7 @@ namespace Tests.Workspace
         {
             var session = this.Workspace.CreateSession();
 
-            var result = await session.Load(new { step = 1 }, "TestUnitSamples");
+            var result = await session.Load("TestUnitSamples", new { step = 1 });
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 

@@ -12,9 +12,6 @@ namespace Allors.Workspace.Adapters.Local
     using Data;
     using Meta;
     using Protocol.Database.Invoke;
-    using Protocol.Database.Pull;
-    using Protocol.Database.Push;
-    using Protocol.Database.Sync;
 
     public class Session : ISession
     {
@@ -27,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
         public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
         {
             this.Workspace = workspace;
-            this.Database = this.Workspace.Database;
+            this.WorkspaceDatabase = this.Workspace.WorkspaceDatabase;
             this.StateLifecycle = stateLifecycle;
             this.Workspace.RegisterSession(this);
 
@@ -47,7 +44,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Workspace Workspace { get; }
 
-        internal Database Database { get; }
+        internal WorkspaceDatabase WorkspaceDatabase { get; }
 
         internal bool HasDatabaseChanges => this.newDatabaseStrategies?.Count > 0 || this.existingDatabaseStrategies.Any(v => v.HasDatabaseChanges);
 
@@ -55,32 +52,9 @@ namespace Allors.Workspace.Adapters.Local
 
         public async Task<ICallResult> Call(Method method, CallOptions options = null) => await this.Call(new[] { method }, options);
 
-        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null)
-        {
-            var invokeRequest = new InvokeRequest
-            {
-                I = methods.Select(v => new Invocation
-                {
-                    I = v.Object.DatabaseId?.ToString(),
-                    V = v.Object.Strategy.Version.ToString(),
-                    M = v.MethodType.IdAsString,
-                }).ToArray(),
-                O = options != null ? new InvokeOptions
-                {
-                    C = options.ContinueOnError,
-                    I = options.Isolated
-                } : null,
-            };
+        public async Task<ICallResult> Call(Method[] methods, CallOptions options = null) => throw new NotImplementedException();
 
-            var invokeResponse = await this.Database.Invoke(invokeRequest);
-            return new CallResult(invokeResponse);
-        }
-
-        public async Task<ICallResult> Call(string service, object args)
-        {
-            var invokeResponse = await this.Database.Invoke(service, args);
-            return new CallResult(invokeResponse);
-        }
+        public async Task<ICallResult> Call(string service, object args) => throw new NotImplementedException();
 
         public T Create<T>() where T : class, IObject => (T)this.Create((IClass)this.Workspace.ObjectFactory.GetObjectType<T>());
 
@@ -96,7 +70,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IObject Instantiate(long id)
         {
-            var workspaceId = this.Database.ToWorkspaceId(id);
+            var workspaceId = this.WorkspaceDatabase.ToWorkspaceId(id);
 
             if (workspaceId == 0)
             {
@@ -112,12 +86,12 @@ namespace Allors.Workspace.Adapters.Local
                 }
                 else
                 {
-                    if (!this.Database.DatabaseIdByWorkspaceId.TryGetValue(workspaceId, out var databaseId))
+                    if (!this.WorkspaceDatabase.DatabaseIdByWorkspaceId.TryGetValue(workspaceId, out var databaseId))
                     {
                         return null;
                     }
 
-                    var databaseObject = this.Database.Get(databaseId);
+                    var databaseObject = this.WorkspaceDatabase.Get(databaseId);
                     strategy = new DatabaseStrategy(this, databaseObject, workspaceId);
                     this.existingDatabaseStrategies.Add((DatabaseStrategy)strategy);
                     this.strategyByWorkspaceId[workspaceId] = strategy;
@@ -131,39 +105,12 @@ namespace Allors.Workspace.Adapters.Local
 
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
-            var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
-            var pullResponse = await this.Database.Pull(pullRequest);
-            var syncRequest = this.Database.Diff(pullResponse);
-            if (syncRequest.Objects.Length > 0)
-            {
-                await this.Load(syncRequest);
-            }
-
-            return new LoadResult(this, pullResponse);
+            var loadResult = new LoadResult(this.Workspace);
+            this.WorkspaceDatabase.Load(pulls, loadResult);
+            return loadResult;
         }
 
-        public async Task<ILoadResult> Load(object args, string pullService = null)
-        {
-            if (args is Pull pull)
-            {
-                args = new PullRequest { P = new[] { pull.ToJson() } };
-            }
-
-            if (args is IEnumerable<Pull> pulls)
-            {
-                args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
-            }
-
-            var pullResponse = await this.Database.Pull(pullService, args);
-            var syncRequest = this.Database.Diff(pullResponse);
-
-            if (syncRequest.Objects.Length > 0)
-            {
-                await this.Load(syncRequest);
-            }
-
-            return new LoadResult(this, pullResponse);
-        }
+        public async Task<ILoadResult> Load(string service, object args) => throw new NotImplementedException();
 
         public void Reset()
         {
@@ -197,32 +144,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public async Task<ISaveResult> Save()
-        {
-            var saveRequest = this.PushRequest();
-            var pushResponse = await this.Database.Push(saveRequest);
-            if (!pushResponse.HasErrors)
-            {
-                this.PushResponse(pushResponse);
-
-                var objects = saveRequest.Objects.Select(v => v.I).ToArray();
-                if (pushResponse.NewObjects != null)
-                {
-                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.I)).ToArray();
-                }
-
-                var syncRequests = new SyncRequest
-                {
-                    Objects = objects,
-                };
-
-                await this.Load(syncRequests);
-
-                this.Reset();
-            }
-
-            return new SaveResult(pushResponse);
-        }
+        public async Task<ISaveResult> Save() => throw new NotImplementedException();
 
         internal IChangeSet Checkpoint(WorkspaceChangeSet workspaceChangeSet)
         {
@@ -241,7 +163,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             var roleType = associationType.RoleType;
 
-            foreach (var association in this.Database.Get(associationType.ObjectType).Select(v => this.Instantiate(v.DatabaseId)))
+            foreach (var association in this.WorkspaceDatabase.Get(associationType.ObjectType).Select(v => this.Instantiate(v.DatabaseId)))
             {
                 if (((IDatabaseObject)association).Strategy.CanRead(roleType))
                 {
@@ -267,7 +189,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal IObject GetForAssociation(long id)
         {
-            var workspaceId = this.Database.ToWorkspaceId(id);
+            var workspaceId = this.WorkspaceDatabase.ToWorkspaceId(id);
             if (workspaceId == 0)
             {
                 return null;
@@ -276,45 +198,10 @@ namespace Allors.Workspace.Adapters.Local
             this.strategyByWorkspaceId.TryGetValue(workspaceId, out var strategy);
             return strategy?.Object;
         }
-
-        internal PushRequest PushRequest() => new PushRequest
-        {
-            NewObjects = this.newDatabaseStrategies?.Select(v => v.SaveNew()).ToArray(),
-            Objects = this.existingDatabaseStrategies.Where(v => v.HasDatabaseChanges).Select(v => v.SaveExisting()).ToArray(),
-        };
-
-        internal void PushResponse(PushResponse pushResponse)
-        {
-            if (pushResponse.NewObjects != null && pushResponse.NewObjects.Length > 0)
-            {
-                foreach (var pushResponseNewObject in pushResponse.NewObjects)
-                {
-                    var workspaceId = long.Parse(pushResponseNewObject.WI);
-                    var databaseId = long.Parse(pushResponseNewObject.I);
-
-                    this.Database.WorkspaceIdByDatabaseId[databaseId] = workspaceId;
-                    this.Database.DatabaseIdByWorkspaceId[workspaceId] = databaseId;
-
-                    var strategy = (DatabaseStrategy)this.strategyByWorkspaceId[workspaceId];
-                    this.newDatabaseStrategies.Remove(strategy);
-                    this.existingDatabaseStrategies.Add(strategy);
-
-                    var databaseObject = this.Database.PushResponse(databaseId, strategy.Class);
-                    strategy.PushResponse(databaseObject);
-                }
-            }
-
-            if (this.newDatabaseStrategies?.Count > 0)
-            {
-                throw new Exception("Not all new objects received ids");
-            }
-
-            this.newDatabaseStrategies = null;
-        }
-
+        
         private IObject CreateDatabaseObject(IClass @class)
         {
-            var workspaceId = this.Database.NextWorkspaceId();
+            var workspaceId = this.WorkspaceDatabase.NextWorkspaceId();
             var strategy = new DatabaseStrategy(this, @class, workspaceId);
             this.newDatabaseStrategies ??= new HashSet<DatabaseStrategy>();
             this.newDatabaseStrategies.Add(strategy);
@@ -324,7 +211,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private IObject CreateWorkspaceObject(IClass @class)
         {
-            var workspaceId = this.Database.NextWorkspaceId();
+            var workspaceId = this.WorkspaceDatabase.NextWorkspaceId();
             this.Workspace.RegisterWorkspaceIdForWorkspaceObject(@class, workspaceId);
             var strategy = new WorkspaceStrategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
@@ -333,35 +220,10 @@ namespace Allors.Workspace.Adapters.Local
 
         private IObject CreateSessionObject(IClass @class)
         {
-            var workspaceId = this.Database.NextWorkspaceId();
+            var workspaceId = this.WorkspaceDatabase.NextWorkspaceId();
             var strategy = new SessionStrategy(this, @class, workspaceId);
             this.strategyByWorkspaceId[strategy.WorkspaceId] = strategy;
             return strategy.Object;
-        }
-
-        private async Task Load(SyncRequest syncRequest)
-        {
-            var syncResponse = await this.Database.Sync(syncRequest);
-            var securityRequest = this.Database.SyncResponse(syncResponse);
-
-            if (securityRequest != null)
-            {
-                var securityResponse = await this.Database.Security(securityRequest);
-                securityRequest = this.Database.SecurityResponse(securityResponse);
-
-                if (securityRequest != null)
-                {
-                    securityResponse = await this.Database.Security(securityRequest);
-                    this.Database.SecurityResponse(securityResponse);
-                }
-            }
-        }
-
-        internal IObject Object(long workspaceId)
-        {
-            var strategyProxy = this.strategyByWorkspaceId[workspaceId];
-            var @object = this.Workspace.ObjectFactory.Create(strategyProxy);
-            return @object;
         }
     }
 }
