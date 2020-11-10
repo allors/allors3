@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="..\..\..\Base\Database\Domain\Base\Workflow\TaskDeriveParticipants.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Templates\allors.png" />
     <None Remove="Templates\ProductQuote.odt" />
     <None Remove="Templates\PurchaseInvoice.odt" />

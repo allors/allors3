@@ -187,6 +187,10 @@ namespace Allors.Domain
                 new WorkEffortPartyAssignmentDerivation(m),
                 new WorkEffortPurchaseOrderItemAssignmentDerivation(m),
                 new WorkEffortTypeDerivation(m),
+                new PurchaseInvoiceApprovalParticipantsDerivation(m),
+                new PurchaseOrderApprovalLevel1ParticipantsDerivation(m),
+                new PurchaseOrderApprovalLevel2ParticipantsDerivation(m),
+                new CommunicationTaskParticipantsDerivation(m),
             };
 
             foreach (var derivation in derivations)

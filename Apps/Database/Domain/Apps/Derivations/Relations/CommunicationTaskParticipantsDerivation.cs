@@ -10,27 +10,20 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class CommunicationTaskDerivation : DomainDerivation
+    public class CommunicationTaskParticipantsDerivation : DomainDerivation
     {
-        public CommunicationTaskDerivation(M m) : base(m, new Guid("0001CEF2-6A6F-4DB7-A932-07F854C66478")) =>
+        public CommunicationTaskParticipantsDerivation(M m) : base(m, new Guid("888c676f-3a56-4a99-8da5-70c3b4c7f9f9")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.CommunicationTask.CommunicationEvent),
+                new ChangedPattern(this.M.CommunicationTask.DateClosed)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<CommunicationTask>())
             {
-                @this.WorkItem = @this.CommunicationEvent;
-
-                @this.Title = @this.CommunicationEvent.WorkItemDescription;
-
-                // Lifecycle
-                if (!@this.ExistDateClosed && @this.CommunicationEvent.ExistActualEnd)
-                {
-                    @this.DateClosed = @this.Session().Now();
-                }
+                var participants = @this.ExistDateClosed ? Array.Empty<User>() : new[] { @this.CommunicationEvent.FromParty as User };
+                @this.AssignParticipants(participants);
             }
         }
     }
