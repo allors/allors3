@@ -197,7 +197,7 @@ namespace Allors.Domain
         }
 
         [Fact]
-        public void M_Correct()
+        public void GivenValidIbanNumber_WhenValidatingIban_ThenValidationNoError()
         {
             new BankAccountBuilder(this.Session).WithIban("TR330006100519786457841326").Build();
 
