@@ -16,7 +16,7 @@ namespace Allors.Domain
         public OrderValueDerivation(M m) : base(m, new Guid("F851B888-11BE-4FD4-A96C-F8760853AA43")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.OrderValue.Class),
+                new ChangedPattern(this.M.OrderValue.FromAmount),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

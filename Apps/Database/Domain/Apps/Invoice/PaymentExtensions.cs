@@ -7,6 +7,14 @@ namespace Allors.Domain
 {
     public static partial class PaymentExtensions
     {
+        public static void AppsOnBuild(this Payment @this, ObjectOnBuild method)
+        {
+            if (!@this.ExistEffectiveDate)
+            {
+                @this.EffectiveDate = @this.Strategy.Session.Now().Date;
+            }
+        }
+
         public static void AppsDelete(this Payment @this, DeletableDelete method)
         {
             foreach (PaymentApplication paymentApplication in @this.PaymentApplications)

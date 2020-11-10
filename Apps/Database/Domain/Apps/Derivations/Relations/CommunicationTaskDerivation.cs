@@ -15,7 +15,7 @@ namespace Allors.Domain
         public CommunicationTaskDerivation(M m) : base(m, new Guid("0001CEF2-6A6F-4DB7-A932-07F854C66478")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.CommunicationTask.Class),
+                new ChangedPattern(this.M.CommunicationTask.CommunicationEvent),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,9 +32,7 @@ namespace Allors.Domain
                     @this.DateClosed = @this.Session().Now();
                 }
 
-                // Assignments
-                var participants = @this.ExistDateClosed ? Array.Empty<User>() : new[] { @this.CommunicationEvent.FromParty as User };
-                @this.AssignParticipants(participants);
+                @this.DeriveParticipants();
             }
         }
     }

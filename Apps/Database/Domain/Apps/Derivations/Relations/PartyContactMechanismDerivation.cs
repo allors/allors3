@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PartyContactMechanismDerivation(M m) : base(m, new Guid("7C4E6217-8D71-4544-B8E4-8B2C51F6A5C1")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.PartyContactMechanism.Class),
+                new ChangedPattern(this.M.PartyContactMechanism.ContactPurposes),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

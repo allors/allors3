@@ -15,7 +15,7 @@ namespace Allors.Domain
         public AutomatedAgentDerivation(M m) : base(m, new Guid("98237B56-E163-4FFC-84E7-2BB8E60BBEB8")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.AutomatedAgent.Class),
+                new ChangedPattern(this.M.AutomatedAgent.Name),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

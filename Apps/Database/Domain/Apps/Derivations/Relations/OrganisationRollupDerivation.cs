@@ -15,7 +15,7 @@ namespace Allors.Domain
         public OrganisationRollupDerivation(M m) : base(m, new Guid("F34E1F40-B1DD-4F0D-A87C-78F44ACF8512")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.OrganisationRollUp.Class),
+                new ChangedPattern(this.M.OrganisationRollUp.Parent),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -65,6 +65,34 @@ namespace Allors.Domain
 
         public InvoiceItem[] InvoiceItems => this.SalesInvoiceItems;
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistSalesInvoiceState)
+            {
+                this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting;
+            }
+
+            if (!this.ExistEntryDate)
+            {
+                this.EntryDate = this.Session().Now();
+            }
+
+            if (!this.ExistInvoiceDate)
+            {
+                this.InvoiceDate = this.Session().Now();
+            }
+
+            if (this.ExistBillToCustomer)
+            {
+                this.PreviousBillToCustomer = this.BillToCustomer;
+            }
+
+            if (!this.ExistSalesInvoiceType)
+            {
+                this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice;
+            }
+        }
+
         public void AppsSend(SalesInvoiceSend method)
         {
             var singleton = this.Session().GetSingleton();

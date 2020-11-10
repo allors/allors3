@@ -21,6 +21,7 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.OwnBankAccount.BankAccount) { Steps =  new IPropertyType[] { m.OwnBankAccount.BankAccount} },
+                new ChangedPattern(m.BankAccount.Iban),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

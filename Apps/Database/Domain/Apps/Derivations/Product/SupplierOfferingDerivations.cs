@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SupplierOfferingDerivation(M m) : base(m, new Guid("0927C224-0233-4211-BB4F-5F62506D9635")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.SupplierOffering.Class),
+                new ChangedPattern(m.SupplierOffering.Currency),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

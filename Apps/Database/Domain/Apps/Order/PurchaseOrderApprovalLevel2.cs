@@ -3,6 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Allors.Domain
 {
     public partial class PurchaseOrderApprovalLevel2
@@ -58,6 +62,19 @@ namespace Allors.Domain
                     .Build();
 
                 this.PurchaseOrder.CreatedBy.NotificationList.AddNotification(this.RejectionNotification);
+            }
+        }
+
+        public void AppsDeriveParticipants(TaskDeriveParticipants method)
+        {
+            if (!method.Result.HasValue)
+            {
+                var participants = this.ExistDateClosed
+                                       ? (IEnumerable<Person>)Array.Empty<Person>()
+                                       : new UserGroups(this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
+                this.AssignParticipants(participants);
+
+                method.Result = true;
             }
         }
 

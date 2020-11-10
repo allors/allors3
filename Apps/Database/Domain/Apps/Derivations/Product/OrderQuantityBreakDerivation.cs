@@ -16,7 +16,7 @@ namespace Allors.Domain
         public OrderQuantityBreakDerivation(M m) : base(m, new Guid("CFEBA3D7-4B3F-4E56-80CA-E84228DAE2E9")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.OrderQuantityBreak.Class),
+                new ChangedPattern(this.M.OrderQuantityBreak.FromAmount),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

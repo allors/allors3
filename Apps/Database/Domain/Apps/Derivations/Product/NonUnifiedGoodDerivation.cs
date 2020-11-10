@@ -17,7 +17,7 @@ namespace Allors.Domain
         public NonUnifiedGoodDerivation(M m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.NonUnifiedGood.Class),
+                new ChangedPattern(this.M.NonUnifiedGood.ProductIdentifications),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

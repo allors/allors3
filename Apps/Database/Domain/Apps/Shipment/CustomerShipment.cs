@@ -62,6 +62,44 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistShipmentState)
+            {
+                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+            }
+
+            if (!this.ExistReleasedManually)
+            {
+                this.ReleasedManually = false;
+            }
+
+            if (!this.ExistHeldManually)
+            {
+                this.HeldManually = false;
+            }
+
+            if (!this.ExistWithoutCharges)
+            {
+                this.WithoutCharges = false;
+            }
+
+            if (!this.ExistStore)
+            {
+                this.Store = this.Strategy.Session.Extent<Store>().First;
+            }
+
+            if (!this.ExistEstimatedShipDate)
+            {
+                this.EstimatedShipDate = this.Session().Now().Date;
+            }
+
+            if (!this.ExistCarrier && this.ExistStore)
+            {
+                this.Carrier = this.Store.DefaultCarrier;
+            }
+        }
+
         public void AppsCancel(CustomerShipmentCancel method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).Cancelled;
 
         public void AppsPick(CustomerShipmentPick method)

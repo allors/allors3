@@ -3,10 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Allors.Domain
 {
     public partial class CommunicationTask
     {
+        public void AppsDeriveParticipants(TaskDeriveParticipants method)
+        {
+            if (!method.Result.HasValue)
+            {
+                var participants = this.ExistDateClosed ? Array.Empty<User>() : new[] { this.CommunicationEvent.FromParty as User };
+                this.AssignParticipants(participants);
+
+                method.Result = true;
+            }
+        }
+
         public void ManageNotification(TaskAssignment taskAssignment)
         {
             if (!taskAssignment.ExistNotification && this.CommunicationEvent.SendNotification == true && this.CommunicationEvent.RemindAt < this.Strategy.Session.Now())

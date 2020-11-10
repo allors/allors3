@@ -15,7 +15,7 @@ namespace Allors.Domain
         public SerialisedItemCharacteristicDerivation(M m) : base(m, new Guid("B9EB094F-4E60-4ABD-8AE6-CAA02D38AFA1")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.SerialisedItemCharacteristic.Class),
+                new ChangedPattern(m.SerialisedItemCharacteristic.SerialisedItemCharacteristicType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

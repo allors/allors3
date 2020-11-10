@@ -16,7 +16,7 @@ namespace Allors.Domain
         public AgreementTermDerivation(M m) : base(m, new Guid("2F28CF03-571A-4F7B-B71C-D8ACEBC734AC")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.AgreementTerm.Interface),
+                new ChangedPattern(this.M.AgreementTerm.TermType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

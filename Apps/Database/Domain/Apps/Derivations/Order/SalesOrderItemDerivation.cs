@@ -18,7 +18,6 @@ namespace Allors.Domain
         public SalesOrderItemDerivation(M m) : base(m, new Guid("FEF4E104-A0F0-4D83-A248-A1A606D93E41")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.SalesOrderItem.Class),
                 new ChangedPattern(m.SalesOrderItem.SalesOrderItemState),
                 new ChangedPattern(m.SalesOrderItem.QuantityOrdered),
                 new ChangedPattern(m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),

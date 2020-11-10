@@ -15,7 +15,7 @@ namespace Allors.Domain
         public FaceToFaceCommunicationDerivation(M m) : base(m, new Guid("165A1691-F94C-40D2-B183-EFC764582784")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.FaceToFaceCommunication.Class),
+                new ChangedPattern(this.M.FaceToFaceCommunication.Subject),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

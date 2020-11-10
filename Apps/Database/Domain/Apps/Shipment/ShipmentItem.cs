@@ -12,6 +12,14 @@ namespace Allors.Domain
             new TransitionalConfiguration(this.M.ShipmentItem, this.M.ShipmentItem.ShipmentItemState),
         };
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistShipmentItemState)
+            {
+                this.ShipmentItemState = new ShipmentItemStates(this.Strategy.Session).Created;
+            }
+        }
+
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)

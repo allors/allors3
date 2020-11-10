@@ -16,7 +16,6 @@ namespace Allors.Domain
         public CustomerShipmentDerivation(M m) : base(m, new Guid("7FE90E97-A4B4-4991-9063-91BF5670B4A9")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(M.CustomerShipment.Class),
                 new ChangedPattern(M.CustomerShipment.ShipmentState),
                 new ChangedPattern(M.CustomerShipment.ShipmentPackages),
             };

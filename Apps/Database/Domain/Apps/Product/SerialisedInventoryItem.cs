@@ -21,6 +21,14 @@ namespace Allors.Domain
         public int AvailableToPromise
             => this.InventoryStrategy.AvailableToPromiseSerialisedStates.Contains(this.SerialisedInventoryItemState) ? this.Quantity : 0;
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistSerialisedInventoryItemState)
+            {
+                this.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Strategy.Session).Good;
+            }
+        }
+
         public void AppsDelete(DeletableDelete method)
         {
             foreach (InventoryItemVersion version in this.AllVersions)

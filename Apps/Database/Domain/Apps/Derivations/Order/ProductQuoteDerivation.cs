@@ -15,7 +15,6 @@ namespace Allors.Domain
         public ProductQuoteDerivation(M m) : base(m, new Guid("6F421122-37A0-4F8E-A08A-996F16CC0218")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.ProductQuote.Class),
                 new ChangedPattern(this.M.ProductQuote.QuoteItems),
             };
 

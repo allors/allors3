@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PassportDerivation(M m) : base(m, new Guid("BB960F7C-2B67-4B4D-967A-84B50F55BE6E")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.Passport.Class),
+                new ChangedPattern(this.M.Passport.Number),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -18,7 +18,6 @@ namespace Allors.Domain
         public MediaDerivation(M m) : base(m, new Guid("436E574A-FE3E-46ED-8AD2-A59CACC2C9C4")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.Media.Class),
                 new ChangedPattern(m.Media.InType),
                 new ChangedPattern(m.Media.InData),
                 new ChangedPattern(m.Media.InDataUri),

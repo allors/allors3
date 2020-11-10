@@ -16,7 +16,7 @@ namespace Allors.Domain
         public DiscountComponentDerivation(M m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.DiscountComponent.Class),
+                new ChangedPattern(this.M.DiscountComponent.PricedBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

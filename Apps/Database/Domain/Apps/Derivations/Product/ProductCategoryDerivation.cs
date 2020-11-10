@@ -15,7 +15,6 @@ namespace Allors.Domain
         public ProductCategoryDerivation(M m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.ProductCategory.Class),
                 new ChangedPattern(m.ProductCategory.PrimaryParent),
                 new ChangedPattern(m.ProductCategory.SecondaryParents),
             };

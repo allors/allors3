@@ -30,6 +30,24 @@ namespace Allors.Domain
                                     !this.ExistInventoryItemTransactionsWherePart &&
                                     !this.ExistSerialisedItems;
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistInventoryItemKind)
+            {
+                this.InventoryItemKind = new InventoryItemKinds(this.Strategy.Session).NonSerialised;
+            }
+
+            if (!this.ExistUnitOfMeasure)
+            {
+                this.UnitOfMeasure = new UnitsOfMeasure(this.Strategy.Session).Piece;
+            }
+
+            if (!this.ExistDefaultFacility)
+            {
+                this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+            }
+        }
+
         public void AppsDelete(DeletableDelete method)
         {
             if (this.IsDeletable)

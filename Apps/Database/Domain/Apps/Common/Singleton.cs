@@ -17,6 +17,14 @@ namespace Allors.Domain
     /// </summary>
     public partial class Singleton
     {
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistLogoImage)
+            {
+                this.LogoImage = new MediaBuilder(this.Strategy.Session).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
+            }
+        }
+
         private byte[] GetResourceBytes(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;

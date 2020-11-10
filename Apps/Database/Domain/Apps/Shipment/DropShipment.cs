@@ -11,5 +11,12 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.DropShipment, this.M.DropShipment.ShipmentState),
         };
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistShipmentState)
+            {
+                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Created;
+            }
+        }
     }
 }

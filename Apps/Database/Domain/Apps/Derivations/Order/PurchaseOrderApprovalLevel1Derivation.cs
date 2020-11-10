@@ -15,7 +15,7 @@ namespace Allors.Domain
         public PurchaseOrderApprovalLevel1Derivation(M m) : base(m, new Guid("C2585A88-209B-4C1D-9781-04138F4CFBF7")) =>
             this.Patterns = new[]
             {
-                new CreatedPattern(this.M.PurchaseOrderApprovalLevel1.Class)
+                new ChangedPattern(this.M.PurchaseOrderApprovalLevel1.PurchaseOrder)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,14 +32,7 @@ namespace Allors.Domain
                     @this.DateClosed = @this.Session().Now();
                 }
 
-                if (@this.Participants.Count == 0)
-                {
-                    // Assignments
-                    var participants = @this.ExistDateClosed
-                                           ? (IEnumerable<Person>)Array.Empty<Person>()
-                                           : new UserGroups(@this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-                    @this.AssignParticipants(participants);
-                }
+                @this.DeriveParticipants();
             }
         }
     }

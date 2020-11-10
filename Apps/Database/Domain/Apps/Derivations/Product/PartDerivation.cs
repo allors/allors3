@@ -16,7 +16,7 @@ namespace Allors.Domain
         public PartDerivation(M m) : base(m, new Guid("4F894B49-4922-4FC8-9172-DC600CCDB1CA")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.Part.Interface),
+                new ChangedPattern(this.M.Part.Name),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -15,7 +15,7 @@ namespace Allors.Domain
         public LetterCorrespondenceDerivation(M m) : base(m, new Guid("7C1C3F73-2FE2-4713-8006-682E979E38CE")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.LetterCorrespondence.Class),
+                new ChangedPattern(this.M.LetterCorrespondence.Subject),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -11,5 +11,13 @@ namespace Allors.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.CustomerReturn, this.M.CustomerReturn.ShipmentState),
         };
+
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistShipmentState)
+            {
+                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Received;
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace Allors.Domain
         public RequestDerivation(M m) : base(m, new Guid("AF5D09BF-9ACF-4C29-9445-6D24BE2F04E6")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.Request.Interface),
+                new ChangedPattern(this.M.Request.Recipient),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

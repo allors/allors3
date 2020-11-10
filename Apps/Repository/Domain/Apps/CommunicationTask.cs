@@ -58,6 +58,8 @@ namespace Allors.Repository
 
         public void Delete() { }
 
+        public void DeriveParticipants() { }
+
         #endregion
     }
 }

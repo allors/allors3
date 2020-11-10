@@ -15,7 +15,6 @@ namespace Allors.Domain
         public PickListDerivation(M m) : base(m, new Guid("8D9F3C91-DBA7-44AA-AA60-C1A58CAFDF0D")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(this.M.PickList.Class),
                 new ChangedPattern(this.M.PickList.Picker),
             };
 
