@@ -3,9 +3,53 @@
   <Interface Name="Allors.Workspace.IWorkspace">
     <Position X="0.5" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAACAAAAAAABDAAAAAAAAAAEAAAAAAAAAEAAgAAAA=</HashCode>
+      <HashCode>gAQAAAAAAAAAAhAAACAAAAAEAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>IWorkspace.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sessions" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Allors.Workspace.ISession">
+    <Position X="4" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAwIAAAABABAAAAAQAAAAEAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>ISession.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Workspace.IObject">
+    <Position X="9.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>IObject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Strategy" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Workspace.IStrategy">
+    <Position X="12.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAABQBgAAIABAAAAAIAAAAAAAAQAAEAAAA=</HashCode>
+      <FileName>IStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Workspace.IDatabaseStrategy">
+    <Position X="12.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAEEAAAAAAAAAAAAAAQAAAAAAIAAA=</HashCode>
+      <FileName>IDatabaseStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Workspace.IDatabaseObject">
+    <Position X="9.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAABAAAAA=</HashCode>
+      <FileName>IDatabaseObject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Strategy" />
+    </ShowAsAssociation>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

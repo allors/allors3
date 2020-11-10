@@ -1967,9 +1967,9 @@ namespace Allors.Domain
         }
     }
 
-    public class SalesInvoiceItemCreateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceItemBuildDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceItemBuildDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeriveSalesInvoiceItemState()

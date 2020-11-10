@@ -31,10 +31,6 @@ namespace Allors.Domain
                 {
                     @this.DateClosed = @this.Session().Now();
                 }
-
-                // Assignments
-                var participants = @this.ExistDateClosed ? Array.Empty<User>() : new[] { @this.CommunicationEvent.FromParty as User };
-                @this.AssignParticipants(participants);
             }
         }
     }

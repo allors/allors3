@@ -15,6 +15,7 @@ namespace Allors.Domain
         public PartyDerivation(M m) : base(m, new Guid("C57CD79C-F75E-4282-BFAD-B2F5F54FD4A4")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.Party.PartyContactMechanisms),
                 new ChangedPattern(this.M.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
             };
 

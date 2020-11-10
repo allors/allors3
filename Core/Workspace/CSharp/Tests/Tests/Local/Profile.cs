@@ -5,54 +5,66 @@
 
 namespace Tests.Workspace.Local
 {
-    using System;
-    using System.Net.Http;
-    using System.Threading.Tasks;
+    using Allors;
     using Allors.Workspace;
-    using Allors.Workspace.Adapters.Local;
-    using Allors.Workspace.Domain;
-    using Allors.Workspace.Meta;
-    using Xunit;
 
     public class Profile : IProfile
     {
-        public const string Url = "http://localhost:5000";
-
-        public const string SetupUrl = "/Test/Setup?population=full";
-        public const string LoginUrl = "/TestAuthentication/Token";
-
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public Workspace Workspace { get; }
+        public Allors.Workspace.Adapters.Local.Workspace Workspace { get; }
 
-        public Database Database => this.Workspace.Database;
+        public Allors.Workspace.Adapters.Local.WorkspaceDatabase WorkspaceDatabase => this.Workspace.WorkspaceDatabase;
 
-        public M M => this.Workspace.State().M;
+        public Allors.Workspace.Meta.M M => this.Workspace.State().M;
 
-        public Profile() =>
-            this.Workspace = new Workspace(
-                new MetaBuilder().Build(),
-                typeof(User),
-                new WorkspaceState(),
-                new HttpClient()
-                {
-                    BaseAddress = new Uri(Url),
-                });
-        
-        public async Task InitializeAsync()
+        public Allors.Database.Adapters.Memory.Database Database { get; }
+
+        public Profile()
         {
-            var response = await this.Database.HttpClient.GetAsync(SetupUrl);
-            Assert.True(response.IsSuccessStatusCode);
-            await this.Login("administrator");
+            var metaPopulation = new Allors.Meta.MetaBuilder().Build();
+            this.Database = new Allors.Database.Adapters.Memory.Database(
+                new ValidatingDatabaseState(),
+                new Allors.Database.Adapters.Memory.Configuration
+                {
+                    ObjectFactory = new Allors.ObjectFactory(metaPopulation, typeof(Allors.Domain.C1)),
+                });
+
+            this.Workspace = new Allors.Workspace.Adapters.Local.Workspace(
+                new Allors.Workspace.Meta.MetaBuilder().Build(),
+                typeof(Allors.Workspace.Domain.User),
+                new WorkspaceState(),
+                this.Database);
         }
 
-        public Task DisposeAsync() => Task.CompletedTask;
-
-        public async Task Login(string user)
+        public async System.Threading.Tasks.Task InitializeAsync()
         {
-            var uri = new Uri(LoginUrl, UriKind.Relative);
-            var response = await this.Database.Login(uri, user, null);
-            Assert.True(response);
+            var database = this.Database;
+            database.Init();
+
+            using var session = database.CreateSession();
+            var config = new Config();
+            new Setup(session, config).Apply();
+            session.Derive();
+            session.Commit();
+
+            var administrator = new Allors.Domain.PersonBuilder(session).WithUserName("administrator").Build();
+            new Allors.Domain.UserGroups(session).Administrators.AddMember(administrator);
+            session.State().User = administrator;
+
+            new TestPopulation(session, "full").Apply();
+            session.Derive();
+            session.Commit();
+        }
+
+        public System.Threading.Tasks.Task DisposeAsync() => System.Threading.Tasks.Task.CompletedTask;
+
+        public async System.Threading.Tasks.Task Login(string user)
+        {
+            var m = this.Database.State().M;
+
+            using var session = this.Database.CreateSession();
+            session.State().User = new Allors.Domain.Users(session).FindBy(m.User.UserName, user);
         }
     }
 }

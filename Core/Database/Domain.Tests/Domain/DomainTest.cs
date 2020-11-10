@@ -13,7 +13,6 @@ namespace Tests
     using Allors.Database.Adapters.Memory;
     using Allors.Domain;
     using Allors.Meta;
-    using Allors.Server.Controllers;
     using Allors.State;
     using Moq;
 

@@ -11,9 +11,9 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Allors.Workspace.Meta;
-    using Newtonsoft.Json;
     using Polly;
     using Protocol.Database.Invoke;
     using Protocol.Database.Pull;
@@ -405,7 +405,8 @@ namespace Allors.Workspace.Adapters.Remote
             await this.Policy.ExecuteAsync(
                 async () =>
                 {
-                    var json = JsonConvert.SerializeObject(args);
+                    // TODO: use SerializeToUtf8Bytes()
+                    var json = JsonSerializer.Serialize(args);
                     return await this.HttpClient.PostAsync(
                         uri,
                         new StringContent(json, Encoding.UTF8, "application/json"));
@@ -414,7 +415,7 @@ namespace Allors.Workspace.Adapters.Remote
         internal async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonSerializer.Deserialize<T>(json);
         }
 
         internal DatabaseChangeSet Checkpoint()
