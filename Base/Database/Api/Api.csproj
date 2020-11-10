@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
+    <ProjectReference Include="..\..\..\Core\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

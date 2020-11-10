@@ -11,10 +11,4 @@
     <ProjectReference Include="..\Allors.Database.Adapters.Npgsql\Allors.Database.Adapters.Npgsql.csproj" />
     <ProjectReference Include="..\Allors.Database.Adapters.SqlClient\Allors.Database.Adapters.SqlClient.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 </Project>

@@ -6,9 +6,10 @@
 namespace Allors.Protocol.Data
 {
     using System.Runtime.Serialization;
-    using System.Text.Json.Serialization;
+    //using System.Text.Json.Serialization;
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    // TODO: Check JsonConverter
+    //[JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PredicateKind
     {
         [EnumMember(Value = "And")]
