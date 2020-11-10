@@ -18,7 +18,7 @@ namespace Allors.Domain
         public OwnCreditCardDerivation(M m) : base(m, new Guid("838dbea6-9123-4cfe-acfe-1c6347ec7ff2")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.InternalOrganisation.PaymentMethods),
+                new ChangedPattern(m.InternalOrganisation.PaymentMethods) { Steps =  new IPropertyType[] {m.InternalOrganisation.PaymentMethods }, OfType = m.OwnCreditCard.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -29,7 +29,7 @@ namespace Allors.Domain
             {
                 if (@this.ExistInternalOrganisationWherePaymentMethod && @this.InternalOrganisationWherePaymentMethod.DoAccounting)
                 {
-                    validation.AssertAtLeastOne(@this, @this.M.Cash.GeneralLedgerAccount, @this.M.Cash.Journal);
+                    validation.AssertAtLeastOne(@this, @this.M.PaymentMethod.GeneralLedgerAccount, @this.M.PaymentMethod.Journal);
                 }
 
                 if (@this.ExistCreditCard)
@@ -40,7 +40,7 @@ namespace Allors.Domain
                     }
                 }
 
-                validation.AssertExistsAtMostOne(@this, @this.M.Cash.GeneralLedgerAccount, @this.M.Cash.Journal);
+                validation.AssertExistsAtMostOne(@this, @this.M.PaymentMethod.GeneralLedgerAccount, @this.M.PaymentMethod.Journal);
             }
         }
     }
