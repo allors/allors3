@@ -5,27 +5,22 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System.Linq;
-    using Protocol.Database;
+    using System;
 
     public abstract class Result : IResult
     {
         private IDerivationError[] derivationErrors;
 
-        protected Result(Response response) => this.Response = response;
+        public bool HasErrors => throw new NotImplementedException();
 
-        public Response Response { get; }
+        public string ErrorMessage => throw new NotImplementedException();
 
-        public bool HasErrors => this.Response.HasErrors;
+        public string[] VersionErrors => throw new NotImplementedException();
 
-        public string ErrorMessage => this.Response.ErrorMessage;
+        public string[] AccessErrors => throw new NotImplementedException();
 
-        public string[] VersionErrors => this.Response.VersionErrors;
+        public string[] MissingErrors => throw new NotImplementedException();
 
-        public string[] AccessErrors => this.Response.AccessErrors;
-
-        public string[] MissingErrors => this.Response.MissingErrors;
-
-        public IDerivationError[] DerivationErrors => this.derivationErrors ??= this.Response.DerivationErrors.Select(v => (IDerivationError)new DerivationError(v)).ToArray();
+        public IDerivationError[] DerivationErrors => throw new NotImplementedException();
     }
 }

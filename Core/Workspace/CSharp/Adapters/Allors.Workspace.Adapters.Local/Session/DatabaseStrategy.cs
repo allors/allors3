@@ -10,8 +10,6 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Workspace.Meta;
-    using Protocol.Data;
-    using Protocol.Database.Push;
 
     public class DatabaseStrategy : Strategy, IDatabaseStrategy
     {
@@ -53,7 +51,7 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Read);
+            var permission = this.Session.Workspace.WorkspaceDatabase.GetPermission(this.Class, roleType, Operations.Read);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -64,7 +62,7 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Write);
+            var permission = this.Session.Workspace.WorkspaceDatabase.GetPermission(this.Class, roleType, Operations.Write);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -75,7 +73,7 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
+            var permission = this.Session.Workspace.WorkspaceDatabase.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseObject.IsPermitted(permission);
         }
 
@@ -229,26 +227,12 @@ namespace Allors.Workspace.Adapters.Local
         public override IEnumerable<IObject> GetAssociations(IAssociationType associationType) => associationType.Origin != Origin.Database ?
             base.GetAssociations(associationType) :
             this.Session.GetAssociation((IDatabaseObject)this.Object, associationType);
-
-        internal PushRequestNewObject SaveNew() => new PushRequestNewObject
-        {
-            NI = this.WorkspaceId.ToString(),
-            T = this.Class.IdAsString,
-            Roles = this.SaveRoles(),
-        };
-
-        internal PushRequestObject SaveExisting() => new PushRequestObject
-        {
-            I = this.DatabaseId?.ToString(),
-            V = this.Version.ToString(),
-            Roles = this.SaveRoles(),
-        };
-
+        
         internal void Reset()
         {
             if (this.DatabaseObject != null)
             {
-                this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
+                this.DatabaseObject = this.Session.Workspace.WorkspaceDatabase.Get(this.DatabaseId.Value);
             }
 
             this.changedRoleByRoleType = null;
@@ -270,7 +254,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     if (this.DatabaseObject != null)
                     {
-                        this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
+                        this.DatabaseObject = this.Session.Workspace.WorkspaceDatabase.Get(this.DatabaseId.Value);
                     }
                 }
             }
@@ -322,67 +306,5 @@ namespace Allors.Workspace.Adapters.Local
                 Origin.Session => this.Session.State,
                 _ => throw new Exception($"Unsupported origin: {origin}")
             };
-
-        private PushRequestRole[] SaveRoles()
-        {
-            if (this.changedRoleByRoleType?.Count > 0)
-            {
-                var saveRoles = new List<PushRequestRole>();
-
-                foreach (var keyValuePair in this.changedRoleByRoleType)
-                {
-                    var roleType = keyValuePair.Key;
-                    var roleValue = keyValuePair.Value;
-
-                    var pushRequestRole = new PushRequestRole { T = roleType.RelationType.IdAsString };
-
-                    if (roleType.ObjectType.IsUnit)
-                    {
-                        pushRequestRole.S = UnitConvert.ToString(roleValue);
-                    }
-                    else
-                    {
-                        if (roleType.IsOne)
-                        {
-                            var sessionRole = (IDatabaseObject)roleValue;
-                            pushRequestRole.S = sessionRole?.DatabaseId?.ToString() ??
-                                                sessionRole?.WorkspaceId.ToString();
-                        }
-                        else
-                        {
-                            var sessionRoles = (IDatabaseObject[])roleValue;
-                            var roleIds = sessionRoles
-                                .Select(item => item.DatabaseId?.ToString() ?? item.WorkspaceId.ToString()).ToArray();
-                            if (!this.ExistDatabaseObject)
-                            {
-                                pushRequestRole.A = roleIds;
-                            }
-                            else
-                            {
-                                var databaseRole = this.DatabaseObject.GetRole(roleType);
-                                if (databaseRole == null)
-                                {
-                                    pushRequestRole.A = roleIds;
-                                }
-                                else
-                                {
-                                    var originalRoleIds = ((IEnumerable<long>)databaseRole)
-                                        .Select(v => v.ToString())
-                                        .ToArray();
-                                    pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();
-                                    pushRequestRole.R = originalRoleIds.Except(roleIds).ToArray();
-                                }
-                            }
-                        }
-                    }
-
-                    saveRoles.Add(pushRequestRole);
-                }
-
-                return saveRoles.ToArray();
-            }
-
-            return null;
-        }
     }
 }

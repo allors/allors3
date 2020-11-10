@@ -5,36 +5,31 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Protocol.Database.Pull;
-
+    
     public class LoadResult : Result, ILoadResult
     {
-        public LoadResult(ISession session, PullResponse response) : base(response)
+        public LoadResult(Workspace workspace)
         {
-            this.Workspace = session.Workspace;
+            this.Workspace = workspace;
 
-            this.Objects = response.NamedObjects.ToDictionary(
-                pair => pair.Key,
-                pair => session.Instantiate(long.Parse(pair.Value)),
-                StringComparer.OrdinalIgnoreCase);
-            this.Collections = response.NamedCollections.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value.Select(v => session.Instantiate(long.Parse(v))).ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-            this.Values = response.NamedValues.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value,
-                StringComparer.OrdinalIgnoreCase);
+            this.Objects = new Dictionary<string, IObject>();
+            this.Collections = new Dictionary<string, IObject[]>();
+            this.Values = new Dictionary<string, object>();
         }
 
-        public IReadOnlyDictionary<string, IObject> Objects { get; }
+        IReadOnlyDictionary<string, IObject> ILoadResult.Objects => this.Objects;
 
-        public IReadOnlyDictionary<string, IObject[]> Collections { get; }
+        IReadOnlyDictionary<string, IObject[]> ILoadResult.Collections => this.Collections;
 
-        public IReadOnlyDictionary<string, object> Values { get; }
+        IReadOnlyDictionary<string, object> ILoadResult.Values => this.Values;
+
+        public Dictionary<string, IObject> Objects { get; }
+
+        public Dictionary<string, IObject[]> Collections { get; }
+
+        public Dictionary<string, object> Values { get; }
 
         private IWorkspace Workspace { get; }
 

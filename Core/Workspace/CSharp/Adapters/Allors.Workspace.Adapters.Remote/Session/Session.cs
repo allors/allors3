@@ -142,7 +142,7 @@ namespace Allors.Workspace.Adapters.Remote
             return new LoadResult(this, pullResponse);
         }
 
-        public async Task<ILoadResult> Load(object args, string pullService = null)
+        public async Task<ILoadResult> Load(string service, object args)
         {
             if (args is Pull pull)
             {
@@ -154,7 +154,7 @@ namespace Allors.Workspace.Adapters.Remote
                 args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
             }
 
-            var pullResponse = await this.Database.Pull(pullService, args);
+            var pullResponse = await this.Database.Pull(service, args);
             var syncRequest = this.Database.Diff(pullResponse);
 
             if (syncRequest.Objects.Length > 0)

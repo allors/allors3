@@ -11,14 +11,14 @@ namespace Tests.Workspace
     public abstract class ObjectTests : Test
     {
         [Fact]
-        public async void NonExistingPullController()
+        public async void NonExistingPullService()
         {
             var session = this.Workspace.CreateSession();
 
             var exceptionThrown = false;
             try
             {
-                await session.Load(new { step = 0 }, "ThisIsWrong");
+                await session.Load("ThisIsWrong", new { step = 0 });
             }
             catch (HttpRequestException)
             {

@@ -9,19 +9,18 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Http;
     using Derivations;
     using Meta;
 
     public class Workspace : IWorkspace
     {
-        public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, HttpClient httpClient)
+        public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, IDatabase database)
         {
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
-            this.Database = new Database(this.MetaPopulation, httpClient);
+            this.WorkspaceDatabase = new WorkspaceDatabase(this.MetaPopulation, database);
             this.Sessions = new HashSet<Session>();
 
             this.State = new State();
@@ -45,7 +44,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal ObjectFactory ObjectFactory { get; }
 
-        internal Database Database { get; }
+        internal WorkspaceDatabase WorkspaceDatabase { get; }
 
         internal State State { get; }
 
@@ -55,7 +54,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IChangeSet[] Checkpoint()
         {
-            var workspaceChangeSet = new WorkspaceChangeSet(this.Database.Checkpoint(), this.State.Checkpoint());
+            var workspaceChangeSet = new WorkspaceChangeSet(this.WorkspaceDatabase.Checkpoint(), this.State.Checkpoint());
             return this.Sessions.Select(v => v.Checkpoint(workspaceChangeSet)).ToArray();
         }
 
