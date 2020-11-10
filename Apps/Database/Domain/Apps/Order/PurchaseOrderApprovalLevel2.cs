@@ -65,19 +65,6 @@ namespace Allors.Domain
             }
         }
 
-        public void AppsDeriveParticipants(TaskDeriveParticipants method)
-        {
-            if (!method.Result.HasValue)
-            {
-                var participants = this.ExistDateClosed
-                                       ? (IEnumerable<Person>)Array.Empty<Person>()
-                                       : new UserGroups(this.Strategy.Session).Administrators.Members.Select(v => (Person)v).ToArray();
-                this.AssignParticipants(participants);
-
-                method.Result = true;
-            }
-        }
-
         public void ManageNotification(TaskAssignment taskAssignment)
         {
             if (!taskAssignment.ExistNotification)

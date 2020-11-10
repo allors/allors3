@@ -76,8 +76,6 @@ namespace Allors.Repository
 
         public void Reject() { }
 
-        public void DeriveParticipants() { }
-
         #endregion
     }
 }

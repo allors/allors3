@@ -10,9 +10,9 @@ namespace Allors.Domain
     using System.Linq;
     using Allors.Meta;
 
-    public class PurchaseInvoiceApprovalDerivation : DomainDerivation
+    public class PurchaseInvoiceApprovalParticipantsDerivation : DomainDerivation
     {
-        public PurchaseInvoiceApprovalDerivation(M m) : base(m, new Guid("5F1021C3-39B5-4BAB-936D-F7203F04281F")) =>
+        public PurchaseInvoiceApprovalParticipantsDerivation(M m) : base(m, new Guid("24dd13f4-270e-4ed7-b1d2-0520e74a992a")) =>
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.PurchaseInvoiceApproval.DateClosed)
@@ -22,15 +22,10 @@ namespace Allors.Domain
         {
             foreach (var @this in matches.Cast<PurchaseInvoiceApproval>())
             {
-                @this.Title = "Approval of " + @this.PurchaseInvoice.WorkItemDescription;
-
-                @this.WorkItem = @this.PurchaseInvoice;
-
-                // Lifecycle
-                if (!@this.ExistDateClosed && !@this.PurchaseInvoice.PurchaseInvoiceState.IsAwaitingApproval)
-                {
-                    @this.DateClosed = @this.Session().Now();
-                }
+                var participants = @this.ExistDateClosed
+                    ? (IEnumerable<Person>)Array.Empty<Person>()
+                    : new UserGroups(@this.Session()).Administrators.Members.Select(v => (Person)v).ToArray();
+                @this.AssignParticipants(participants);
             }
         }
     }

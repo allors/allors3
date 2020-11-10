@@ -31,8 +31,6 @@ namespace Allors.Domain
                 {
                     @this.DateClosed = @this.Session().Now();
                 }
-
-                @this.DeriveParticipants();
             }
         }
     }
