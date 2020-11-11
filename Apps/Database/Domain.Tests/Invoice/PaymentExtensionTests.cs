@@ -31,7 +31,7 @@ namespace Allors.Domain
                 .WithEffectiveDate(this.Session.Now())
                 .Build();
 
-            var expectedMessage = $"{receipt} { this.M.Receipt.Amount} { ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount}";
+            var expectedMessage = $"{receipt} { this.M.Receipt.Amount} { ErrorMessages.PaymentAmountIsToSmall}";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
         }

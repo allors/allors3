@@ -33,8 +33,7 @@ namespace Allors.Domain
             {
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
-                if (@this.ExistSalesOrderState
-                    && @this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess))
+                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess))
                 {
                     var somethingToShip = false;
                     var allItemsAvailable = true;

@@ -472,7 +472,7 @@ namespace Allors.Domain
                                 || !salesOrder.ExistOrderKind || salesOrder.OrderKind.ScheduleManually == false)
                             {
                                 var committedOutSameProductOtherItem = salesOrder.SalesOrderItems
-                                    .Where(v => !Equals(v, this) && Equals(v.Product, salesOrderItem.Product))
+                                    .Where(v => !Equals(v, salesOrderItem) && Equals(v.Product, salesOrderItem.Product))
                                     .Sum(v => v.QuantityRequestsShipping);
 
                                 var qoh = salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand;

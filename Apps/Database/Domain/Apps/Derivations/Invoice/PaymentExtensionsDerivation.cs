@@ -16,6 +16,7 @@ namespace Allors.Domain
         public PaymentDerivation(M m) : base(m, new Guid("4C7D0834-A7F2-4ED6-AC58-9B2DFD719ED9")) =>
             this.Patterns = new[]
             {
+                new ChangedPattern(this.M.Payment.PaymentApplications),
                 new ChangedPattern(this.M.Payment.Amount)
             };
 
@@ -31,7 +32,7 @@ namespace Allors.Domain
 
                 if (@this.ExistAmount && totalAmountApplied > @this.Amount)
                 {
-                    cycle.Validation.AddError($"{@this} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsSmallerThanTheAppliedAmount}");
+                    cycle.Validation.AddError($"{@this} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsToSmall}");
                 }
             }
         }
