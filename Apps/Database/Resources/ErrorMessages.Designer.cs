@@ -322,11 +322,11 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Payment amount is smaller than the applied amount.
+        ///   Looks up a localized string similar to amount is to small.
         /// </summary>
-        public static string PaymentAmountIsSmallerThanTheAppliedAmount {
+        public static string PaymentAmountIsToSmall {
             get {
-                return ResourceManager.GetString("PaymentAmountIsSmallerThanTheAppliedAmount", resourceCulture);
+                return ResourceManager.GetString("PaymentAmountIsToSmall", resourceCulture);
             }
         }
         

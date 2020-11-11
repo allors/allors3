@@ -183,7 +183,7 @@
   <data name="PartyIsNotASupplier" xml:space="preserve">
     <value>Gekozen partij is geen leverancier voor deze interne organisatie</value>
   </data>
-  <data name="PaymentApplicationNotLargerThanInvoiceAmount" xml:space="preserve">
+  <data name="PaymentAmountIsToSmall" xml:space="preserve">
     <value>bedrag kan niet groter zijn dan bedrag van factuur</value>
   </data>
   <data name="PaymentApplicationNotLargerThanInvoiceItemAmount" xml:space="preserve">
