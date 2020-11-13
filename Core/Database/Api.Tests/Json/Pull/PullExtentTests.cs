@@ -89,7 +89,10 @@ namespace Tests
 
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull { ObjectType = m.WorkspaceXObject1.ObjectType };
+            var pull = new Allors.Data.Pull
+            {
+                Extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType)
+            };
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
