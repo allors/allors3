@@ -95,9 +95,9 @@ namespace Allors.Domain
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenIllegalCharactersResultInValidationError()
         {
-            var expectedErrorMessage = ErrorMessages.IbanIllegalCharacters;
+            var bankAccount = new BankAccountBuilder(this.Session).WithIban("-=jw").Build();
 
-            new BankAccountBuilder(this.Session).WithIban("-=jw").Build();
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIllegalCharacters}";
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
@@ -113,9 +113,9 @@ namespace Allors.Domain
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWrongStructureResultsInValidationError()
         {
-            var expectedErrorMessage = ErrorMessages.IbanStructuralFailure;
+            var bankAccount = new BankAccountBuilder(this.Session).WithIban("D497888").Build();
 
-            new BankAccountBuilder(this.Session).WithIban("D497888").Build();
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}";
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
@@ -124,9 +124,9 @@ namespace Allors.Domain
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWrongCheckDigitsResultInValidationError()
         {
-            var expectedErrorMessage = ErrorMessages.IbanCheckDigitsError;
+            var bankAccount = new BankAccountBuilder(this.Session).WithIban("TR000006100519786457841326").Build();
 
-            new BankAccountBuilder(this.Session).WithIban("TR000006100519786457841326").Build();
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanCheckDigitsError}";
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
@@ -159,9 +159,9 @@ namespace Allors.Domain
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWronglengthResultsInValidationError()
         {
-            var expectedErrorMessage = ErrorMessages.IbanLengthFailure;
+            var bankAccount = new BankAccountBuilder(this.Session).WithIban("TR3300061005196457841326").Build();
 
-            new BankAccountBuilder(this.Session).WithIban("TR3300061005196457841326").Build();
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanLengthFailure}";
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
@@ -177,9 +177,9 @@ namespace Allors.Domain
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenWrongStuctureForCountryResultsInValidationError()
         {
-            var expectedErrorMessage = ErrorMessages.IbanStructuralFailure;
+            var bankAccount = new BankAccountBuilder(this.Session).WithIban("LV80B12K0000435195001").Build();
 
-            new BankAccountBuilder(this.Session).WithIban("LV80B12K0000435195001").Build();
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}";
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
@@ -188,16 +188,16 @@ namespace Allors.Domain
         [Fact]
         public void GivenBankAccount_WhenValidatingIban_ThenInvalidIbanResultsInValidationError()
         {
-            var expectedErrorMessage = ErrorMessages.IbanIncorrect;
+            var bankAccount=  new BankAccountBuilder(this.Session).WithIban("TR330006100519716457841326").Build();
 
-            new BankAccountBuilder(this.Session).WithIban("TR330006100519716457841326").Build();
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}";
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
         }
 
         [Fact]
-        public void M_Correct()
+        public void GivenValidIbanNumber_WhenValidatingIban_ThenValidationNoError()
         {
             new BankAccountBuilder(this.Session).WithIban("TR330006100519786457841326").Build();
 

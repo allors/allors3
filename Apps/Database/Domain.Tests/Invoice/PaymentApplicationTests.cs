@@ -17,36 +17,6 @@ namespace Allors.Domain
         public PaymentApplicationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenPaymentApplication_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            var billToContactMechanism = new EmailAddressBuilder(this.Session).WithElectronicAddressString("info@allors.com").Build();
-
-            var customer = new PersonBuilder(this.Session).WithLastName("customer").Build();
-            new CustomerRelationshipBuilder(this.Session)
-                .WithCustomer(customer)
-                .Build();
-
-            var good1 = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
-
-            new SalesInvoiceBuilder(this.Session)
-                .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(billToContactMechanism)
-                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
-                .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session)
-                                        .WithProduct(good1)
-                                        .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
-                                        .WithQuantity(1)
-                                        .WithAssignedUnitPrice(100M)
-                                        .Build())
-                .Build();
-
-            var builder = new PaymentApplicationBuilder(this.Session);
-            builder.Build();
-
-            Assert.False(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
         public void GivenPaymentApplication_WhenDeriving_ThenAmountAppliedCannotBeLargerThenAmountReceived()
         {
             var contactMechanism = new ContactMechanisms(this.Session).Extent().First;
@@ -77,13 +47,12 @@ namespace Allors.Domain
                 .Build();
 
             this.Session.Derive();
-            this.Session.Commit();
 
             receipt.AddPaymentApplication(paymentApplication);
 
-            var derivationLog = this.Session.Derive(false);
-            Assert.True(derivationLog.HasErrors);
-            Assert.Contains(this.M.PaymentApplication.AmountApplied, derivationLog.Errors[0].RoleTypes);
+            var expectedMessage = $"{paymentApplication} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsToSmall}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
         }
 
         [Fact]

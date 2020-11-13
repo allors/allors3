@@ -6,6 +6,7 @@
 
 namespace Allors.Domain
 {
+    using System.Linq;
     using Xunit;
 
     public class ReceiptTests : DomainTest, IClassFixture<Fixture>
@@ -153,7 +154,7 @@ namespace Allors.Domain
 
             var derivationLog = this.Session.Derive(false);
             Assert.True(derivationLog.HasErrors);
-            Assert.Contains(this.M.Receipt.Amount, derivationLog.Errors[0].RoleTypes);
+            Assert.Contains(this.M.Payment.Amount, derivationLog.Errors[0].RoleTypes);
         }
 
         private void InstantiateObjects(ISession session)

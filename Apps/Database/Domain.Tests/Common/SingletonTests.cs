@@ -12,7 +12,7 @@ namespace Allors.Domain
         public SingletonTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenSingleton_WhenCreated_ThenLogoImageMustExist()
+        public void GivenSingleton_WhenBuild_ThenLogoImageMustExist()
         {
             var singleton = this.Session.GetSingleton();
 

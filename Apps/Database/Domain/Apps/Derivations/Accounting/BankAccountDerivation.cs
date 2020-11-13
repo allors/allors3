@@ -87,33 +87,37 @@ namespace Allors.Domain
                         }
                     }
 
-                    //if (!validation.HasErrors)
-                    //{
-                    //    // ******* from wikipedia.org
-                    //    // The checksum is a basic ISO 7064 mod 97-10 calculation where the remainder must equal 1.
-                    //    // To validate the checksum:
-                    //    // 1- Check that the total IBAN length is correct as per the country. If not, the IBAN is invalid.
-                    //    // 2- Move the four initial characters to the end of the string.
-                    //    // 3- Replace each letter in the string with two digits, thereby expanding the string, where A=10, B=11, ..., Z=35.
-                    //    // 4- Interpret the string as a decimal integer and compute the remainder of that number on division by 97.
-                    //    // The IBAN number can only be valid if the remainder is 1.
-                    //    var modifiedIban = iban.ToUpper().Substring(4) + iban.Substring(0, 4);
-                    //    modifiedIban = Regex.Replace(modifiedIban, @"\D", m => (m.Value[0] - 55).ToString(CultureInfo.InvariantCulture));
+                    try
+                    {
+                        // ******* from wikipedia.org
+                        // The checksum is a basic ISO 7064 mod 97-10 calculation where the remainder must equal 1.
+                        // To validate the checksum:
+                        // 1- Check that the total IBAN length is correct as per the country. If not, the IBAN is invalid.
+                        // 2- Move the four initial characters to the end of the string.
+                        // 3- Replace each letter in the string with two digits, thereby expanding the string, where A=10, B=11, ..., Z=35.
+                        // 4- Interpret the string as a decimal integer and compute the remainder of that number on division by 97.
+                        // The IBAN number can only be valid if the remainder is 1.
+                        var modifiedIban = iban.ToUpper().Substring(4) + iban.Substring(0, 4);
+                        modifiedIban = Regex.Replace(modifiedIban, @"\D", m => (m.Value[0] - 55).ToString(CultureInfo.InvariantCulture));
 
-                    //    var remainer = 0;
-                    //    while (modifiedIban.Length >= 7)
-                    //    {
-                    //        remainer = int.Parse(remainer + modifiedIban.Substring(0, 7)) % 97;
-                    //        modifiedIban = modifiedIban.Substring(7);
-                    //    }
+                        var remainer = 0;
+                        while (modifiedIban.Length >= 7)
+                        {
+                            remainer = int.Parse(remainer + modifiedIban.Substring(0, 7)) % 97;
+                            modifiedIban = modifiedIban.Substring(7);
+                        }
 
-                    //    remainer = int.Parse(remainer + modifiedIban) % 97;
+                        remainer = int.Parse(remainer + modifiedIban) % 97;
 
-                    //    if (remainer != 1)
-                    //    {
-                    //        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
-                    //    }
-                    //}
+                        if (remainer != 1)
+                        {
+                            validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
+                    }
                 }
             }
         }

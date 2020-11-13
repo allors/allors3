@@ -93,6 +93,44 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            if (!this.ExistSalesInvoiceState)
+            {
+                this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting;
+            }
+
+            if (!this.ExistEntryDate)
+            {
+                this.EntryDate = this.Session().Now();
+            }
+
+            if (!this.ExistInvoiceDate)
+            {
+                this.InvoiceDate = this.Session().Now();
+            }
+
+            if (this.ExistBillToCustomer)
+            {
+                this.PreviousBillToCustomer = this.BillToCustomer;
+            }
+
+            if (!this.ExistSalesInvoiceType)
+            {
+                this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice;
+            }
+
+            var internalOrganisations = new Organisations(this.Session()).InternalOrganisations();
+
+            if (!this.ExistBilledFrom && internalOrganisations.Length == 1)
+            {
+                this.BilledFrom = internalOrganisations[0];
+            }
+
+            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
+            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
+        }
+
         public void AppsSend(SalesInvoiceSend method)
         {
             var singleton = this.Session().GetSingleton();

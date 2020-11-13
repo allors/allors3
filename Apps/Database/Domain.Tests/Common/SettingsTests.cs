@@ -13,20 +13,16 @@ namespace Allors.Domain
         public SettingsTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenNewSettings_WhenDeriving_ThenCreatePatternIsMatched()
+        public void DeriveCounters()
         {
-            var newSettings = new SettingsBuilder(this.Session).Build();
+            var settings = this.Session.GetSingleton().Settings;
 
             this.Session.Derive();
 
-            Assert.True(newSettings.ExistPartNumberCounter);
-            Assert.True(newSettings.ExistProductNumberCounter);
-            Assert.True(newSettings.ExistSerialisedItemCounter);
-            Assert.True(newSettings.ExistSkuCounter);
-            Assert.Equal(0, newSettings.PartNumberCounter.Value);
-            Assert.Equal(0, newSettings.ProductNumberCounter.Value);
-            Assert.Equal(0, newSettings.SerialisedItemCounter.Value);
-            Assert.Equal(0, newSettings.SkuCounter.Value);
+            Assert.True(settings.ExistPartNumberCounter);
+            Assert.True(settings.ExistProductNumberCounter);
+            Assert.True(settings.ExistSerialisedItemCounter);
+            Assert.True(settings.ExistSkuCounter);
         }
     }
 }
