@@ -35,7 +35,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull { ObjectType = m.Data.ObjectType };
+            var pull = new Allors.Data.Pull { Extent = new Allors.Data.Extent(m.Data.ObjectType) };
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -134,7 +134,7 @@ namespace Tests
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
-            var pull = new Allors.Data.Pull { ObjectType = this.M.Data.ObjectType };
+            var pull = new Allors.Data.Pull { Extent = new Allors.Data.Extent(this.M.Data.ObjectType) };
 
             var pullRequest = new PullRequest
             {
@@ -183,7 +183,7 @@ namespace Tests
 
             var pull = new Allors.Data.Pull
             {
-                ObjectType = this.M.Data.ObjectType,
+                Extent = new Allors.Data.Extent(this.M.Data.ObjectType),
                 Results = new[]
                 {
                     new  Allors.Data.Result { Name = "Datas" },
