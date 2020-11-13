@@ -33,6 +33,10 @@ namespace Allors.Protocol.Json.Workspace
 
         public Json.Pull Pull { get; private set; }
 
+        public Json.Extent Extent => this.extents?.Peek();
+
+        public Json.Fetch Fetch => this.fetches?.Peek();
+
         public void VisitAnd(And visited)
         {
             var predicate = new Predicate

@@ -34,16 +34,16 @@ namespace Allors.Server
         {
             if (this.ModelState.IsValid)
             {
-                var user = await this.UserManager.FindByNameAsync(request.userName);
+                var user = await this.UserManager.FindByNameAsync(request.UserName);
 
                 if (user != null)
                 {
                     var token = user.CreateToken(this.Configuration);
                     var response = new AuthenticationTokenResponse
                     {
-                        authenticated = true,
-                        userId = user.Id,
-                        token = token,
+                        Authenticated = true,
+                        UserId = user.Id,
+                        Token = token,
                     };
                     return this.Ok(response);
                 }

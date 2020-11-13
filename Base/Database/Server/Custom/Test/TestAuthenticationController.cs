@@ -32,18 +32,18 @@ namespace Allors.Server
         [HttpPost]
         public async Task<IActionResult> Token([FromBody]AuthenticationTokenRequest request)
         {
-            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.userName))
+            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.UserName))
             {
-                var user = await this.UserManager.FindByNameAsync(request.userName);
+                var user = await this.UserManager.FindByNameAsync(request.UserName);
 
                 if (user != null)
                 {
                     var token = user.CreateToken(this.Configuration);
                     var response = new AuthenticationTokenResponse
                     {
-                        authenticated = true,
-                        userId = user.Id,
-                        token = token,
+                        Authenticated = true,
+                        UserId = user.Id,
+                        Token = token,
                     };
                     return this.Ok(response);
                 }

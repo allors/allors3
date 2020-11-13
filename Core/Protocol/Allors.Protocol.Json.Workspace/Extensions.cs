@@ -15,5 +15,19 @@ namespace Allors.Protocol.Json.Workspace
             pull.Accept(toJsonVisitor);
             return toJsonVisitor.Pull;
         }
+
+        public static Json.Extent ToJson(this IExtent extent)
+        {
+            var toJsonVisitor = new ToJsonVisitor();
+            extent.Accept(toJsonVisitor);
+            return toJsonVisitor.Extent;
+        }
+
+        public static Json.Fetch ToJson(this Fetch fetch)
+        {
+            var toJsonVisitor = new ToJsonVisitor();
+            fetch.Accept(toJsonVisitor);
+            return toJsonVisitor.Fetch;
+        }
     }
 }

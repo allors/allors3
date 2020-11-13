@@ -39,6 +39,10 @@ namespace Allors.Protocol.Json.Database
 
         public Data.Pull Pull { get; private set; }
 
+        public Data.IExtent Extent => this.extents?.Peek();
+
+        public Data.Fetch Fetch => this.fetches?.Peek();
+
         public void VisitExtent(Extent visited)
         {
             Data.IExtentOperator extentOperator = null;
