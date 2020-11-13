@@ -9,7 +9,7 @@ namespace Allors.Api.Json.Sync
     using Allors.Domain;
     using Allors.Meta;
     using Protocol.Database.Sync;
-    using Protocol.Data;
+    using Protocol.Json;
     using Protocol.Database;
     using Server;
     using State;
@@ -70,22 +70,22 @@ namespace Allors.Api.Json.Sync
 
             SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType)
             {
-                var syncResponseRole = new SyncResponseRole { T = roleType.RelationType.IdAsString };
+                var syncResponseRole = new SyncResponseRole { RoleType = roleType.RelationType.IdAsString };
 
                 if (roleType.ObjectType.IsUnit)
                 {
-                    syncResponseRole.V = UnitConvert.ToString(@object.Strategy.GetUnitRole(roleType));
+                    syncResponseRole.Value = UnitConvert.ToString(@object.Strategy.GetUnitRole(roleType));
                 }
                 else if (roleType.IsOne)
                 {
-                    syncResponseRole.V = @object.Strategy.GetCompositeRole(roleType)?.Id.ToString();
+                    syncResponseRole.Value = @object.Strategy.GetCompositeRole(roleType)?.Id.ToString();
                 }
                 else
                 {
                     var roles = @object.Strategy.GetCompositeRoles(roleType);
                     if (roles.Count > 0)
                     {
-                        syncResponseRole.V = string.Join(
+                        syncResponseRole.Value = string.Join(
                             separator: Encoding.Separator,
                             values: roles
                                 .Cast<IObject>()
@@ -105,16 +105,16 @@ namespace Allors.Api.Json.Sync
 
                     return new SyncResponseObject
                     {
-                        I = v.Id.ToString(),
-                        V = v.Strategy.ObjectVersion.ToString(),
-                        T = v.Strategy.Class.IdAsString,
+                        Id = v.Id.ToString(),
+                        Version = v.Strategy.ObjectVersion.ToString(),
+                        ObjectTypeOrKey = v.Strategy.Class.IdAsString,
                         // TODO: Cache
-                        R = @class.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0)
+                        Roles = @class.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => CreateSyncResponseRole(v, w))
                             .ToArray(),
-                        A = this.accessControlsWriter.Write(v),
-                        D = this.permissionsWriter.Write(v),
+                        AccessControls = this.accessControlsWriter.Write(v),
+                        DeniedPermissions = this.permissionsWriter.Write(v),
                     };
                 }).ToArray(),
             };

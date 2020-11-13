@@ -5,16 +5,14 @@
 
 namespace Allors.Protocol.Database.Push
 {
+    using System.Text.Json.Serialization;
+
     public class PushResponseNewObject
     {
-        /// <summary>
-        /// Gets or sets the workspace id.
-        /// </summary>
-        public string WI { get; set; }
+        [JsonPropertyName("wi")]
+        public string WorkspaceId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the database id.
-        /// </summary>
-        public string I { get; set; }
+        [JsonPropertyName("i")]
+        public string DatabaseId { get; set; }
     }
 }

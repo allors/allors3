@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Workspace.Meta;
     using System.Linq;
     using Protocol.Database;
-    using Protocol.Data;
+    using Protocol.Json;
 
     public class DatabaseObject
     {
@@ -32,12 +32,12 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseObject(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.Database = database;
-            this.DatabaseId = long.Parse(syncResponseObject.I);
-            this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.T));
-            this.Version = !string.IsNullOrEmpty(syncResponseObject.V) ? long.Parse(syncResponseObject.V) : 0;
-            this.syncResponseRoles = syncResponseObject.R;
-            this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.A);
-            this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.D);
+            this.DatabaseId = long.Parse(syncResponseObject.Id);
+            this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.ObjectTypeOrKey));
+            this.Version = !string.IsNullOrEmpty(syncResponseObject.Version) ? long.Parse(syncResponseObject.Version) : 0;
+            this.syncResponseRoles = syncResponseObject.Roles;
+            this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.AccessControls);
+            this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.DeniedPermissions);
         }
 
         public Database Database { get; }
@@ -60,11 +60,11 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var metaPopulation = this.Database.MetaPopulation;
                     this.roleByRelationTypeId = this.syncResponseRoles.ToDictionary(
-                        v => Guid.Parse(v.T),
+                        v => Guid.Parse(v.RoleType),
                         v =>
                         {
-                            var value = v.V;
-                            var RoleType = ((IRelationType)metaPopulation.Find(Guid.Parse(v.T))).RoleType;
+                            var value = v.Value;
+                            var RoleType = ((IRelationType)metaPopulation.Find(Guid.Parse(v.RoleType))).RoleType;
 
                             var objectType = RoleType.ObjectType;
                             if (objectType.IsUnit)

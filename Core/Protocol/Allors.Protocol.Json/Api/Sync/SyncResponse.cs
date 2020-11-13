@@ -5,10 +5,14 @@
 
 namespace Allors.Protocol.Database.Sync
 {
+    using System.Text.Json.Serialization;
+
     public class SyncResponse
     {
+        [JsonPropertyName("accessControls")]
         public string[][] AccessControls { get; set; }
 
+        [JsonPropertyName("objects")]
         public SyncResponseObject[] Objects { get; set; }
     }
 }

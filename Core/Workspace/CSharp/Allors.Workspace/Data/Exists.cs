@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
-    using Allors.Protocol.Data;
+    
     using Allors.Workspace.Meta;
 
     public class Exists : IPropertyPredicate
@@ -18,14 +18,6 @@ namespace Allors.Workspace.Data
 
         public IPropertyType PropertyType { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Exists,
-                Dependencies = this.Dependencies,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Parameter = this.Parameter,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitExists(this);
     }
 }

@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
-    using Allors.Protocol.Data;
+    
 
     public class Not : ICompositePredicate
     {
@@ -17,12 +17,6 @@ namespace Allors.Workspace.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operand = predicate;
 
-        public Predicate ToJson() =>
-            new Predicate()
-            {
-                Kind = PredicateKind.Not,
-                Dependencies = this.Dependencies,
-                Operand = this.Operand?.ToJson(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitNot(this);
     }
 }

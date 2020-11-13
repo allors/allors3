@@ -10,8 +10,9 @@ namespace Allors.Domain
     using System.Xml.Serialization;
 
     using Allors.Data;
-    using Allors.Protocol.Data;
-    using Extent = Protocol.Data.Extent;
+    using Protocol.Database.Load;
+    using Protocol.Database.Save;
+    using Extent = Protocol.Json.Extent;
 
     public partial class PersistentPreparedExtent
     {
@@ -19,21 +20,17 @@ namespace Allors.Domain
         {
             get
             {
-                using (TextReader reader = new StringReader(this.Content))
-                {
-                    var protocolExtent = (Extent)XmlSerializer.Deserialize(reader);
-                    return protocolExtent.Load(this.Strategy.Session);
-                }
+                using TextReader reader = new StringReader(this.Content);
+                var protocolExtent = (Extent)XmlSerializer.Deserialize(reader);
+                return protocolExtent.Load(this.Strategy.Session);
             }
 
             set
             {
                 var stringBuilder = new StringBuilder();
-                using (TextWriter writer = new StringWriter(stringBuilder))
-                {
-                    XmlSerializer.Serialize(writer, value.Save());
-                    this.Content = stringBuilder.ToString();
-                }
+                using TextWriter writer = new StringWriter(stringBuilder);
+                XmlSerializer.Serialize(writer, value.Save());
+                this.Content = stringBuilder.ToString();
             }
         }
 

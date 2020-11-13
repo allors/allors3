@@ -12,8 +12,9 @@ namespace Tests
     using Allors;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Data;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Database.Pull;
+    using Allors.Protocol.Json.Database;
     using Allors.State;
     using Xunit;
 
@@ -34,15 +35,12 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.Data.ObjectType);
+            var pull = new Allors.Data.Pull { ObjectType = m.Data.ObjectType };
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
-                    new Pull
-                    {
-                        Extent = extent.Save(),
-                    },
+                    pull.ToJson()
                 },
             };
 
@@ -81,7 +79,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                   {
                       new Pull
                           {
@@ -106,7 +104,7 @@ namespace Tests
 
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                   {
                       new Pull
                           {
@@ -136,16 +134,13 @@ namespace Tests
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
-            var extent = new Allors.Data.Extent(this.M.Data.ObjectType);
+            var pull = new Allors.Data.Pull { ObjectType = this.M.Data.ObjectType };
 
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                       {
-                          new Pull
-                              {
-                                  Extent = extent.Save(),
-                              },
+                          pull.ToJson()
                       },
             };
 
@@ -186,22 +181,22 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(this.M.Data.ObjectType);
+            var pull = new Allors.Data.Pull
+            {
+                ObjectType = this.M.Data.ObjectType,
+                Results = new[]
+                {
+                    new  Allors.Data.Result { Name = "Datas" },
+                }
+            };
 
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
-                    new Pull
-                    {
-                        Extent = extent.Save(),
-                        Results = new[]
-                        {
-                            new Result { Name = "Datas" },
-                        },
-                        },
-                    },
-                };
+                    pull.ToJson()
+                },
+            };
 
             var api = new Api(this.Session, "Default");
             var pullResponse = api.Pull(pullRequest);

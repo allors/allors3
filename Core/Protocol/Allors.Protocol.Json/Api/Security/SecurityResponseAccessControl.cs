@@ -5,21 +5,17 @@
 
 namespace Allors.Protocol.Database.Security
 {
+    using System.Text.Json.Serialization;
+
     public class SecurityResponseAccessControl
     {
-        /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
-        public string I { get; set; }
+        [JsonPropertyName("i")]
+        public string Id { get; set; }
 
-        /// <summary>
-        /// Gets or sets the version.
-        /// </summary>
-        public string V { get; set; }
+        [JsonPropertyName("v")]
+        public string Version { get; set; }
 
-        /// <summary>
-        /// Gets or sets the permissions ids.
-        /// </summary>
-        public string P { get; set; }
+        [JsonPropertyName("p")]
+        public string PermissionIds { get; set; }
     }
 }

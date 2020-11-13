@@ -12,6 +12,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Allors.Security;
+    using Protocol.Json;
 
     public class TestAuthenticationController : Controller
     {
@@ -31,18 +32,18 @@ namespace Allors.Server
         [HttpPost]
         public async Task<IActionResult> Token([FromBody]AuthenticationTokenRequest request)
         {
-            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.UserName))
+            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.userName))
             {
-                var user = await this.UserManager.FindByNameAsync(request.UserName);
+                var user = await this.UserManager.FindByNameAsync(request.userName);
 
                 if (user != null)
                 {
                     var token = user.CreateToken(this.Configuration);
                     var response = new AuthenticationTokenResponse
                     {
-                        Authenticated = true,
-                        UserId = user.Id,
-                        Token = token,
+                        authenticated = true,
+                        userId = user.Id,
+                        token = token,
                     };
                     return this.Ok(response);
                 }

@@ -3,16 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Data
+namespace Allors.Workspace.Data
 {
-    using System;
-
-    public class Node
+    public interface IVisitable
     {
-        public Guid? AssociationType { get; set; }
-
-        public Guid? RoleType { get; set; }
-
-        public Node[] Nodes { get; set; }
+        void Accept(IVisitor visitor);
     }
 }

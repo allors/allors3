@@ -9,7 +9,7 @@ namespace Allors.Workspace.Data
     using System.Linq;
     using Allors.Workspace.Meta;
 
-    public class Fetch
+    public class Fetch : IVisitable
     {
         public Fetch()
         {
@@ -32,11 +32,6 @@ namespace Allors.Workspace.Data
 
         public Step Step { get; set; }
 
-        public Protocol.Data.Fetch ToJson() =>
-            new Protocol.Data.Fetch
-            {
-                Step = this.Step?.ToJson(),
-                Include = this.Include?.Select(v => v.ToData()).ToArray(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitFetch(this);
     }
 }

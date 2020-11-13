@@ -5,26 +5,20 @@
 
 namespace Allors.Protocol.Database.Push
 {
+    using System.Text.Json.Serialization;
+
     public class PushRequestRole
     {
-        /// <summary>
-        /// Gets or sets the role type.
-        /// </summary>
-        public string T { get; set; }
+        [JsonPropertyName("t")]
+        public string RelationType { get; set; }
 
-        /// <summary>
-        /// Gets or sets the set role.
-        /// </summary>
-        public string S { get; set; }
+        [JsonPropertyName("s")]
+        public string SetRole { get; set; }
 
-        /// <summary>
-        /// Gets or sets the add roles.
-        /// </summary>
-        public string[] A { get; set; }
+        [JsonPropertyName("a")]
+        public string[] AddRole { get; set; }
 
-        /// <summary>
-        /// Gets or sets the remove roles.
-        /// </summary>
-        public string[] R { get; set; }
+        [JsonPropertyName("r")]
+        public string[] RemoveRole { get; set; }
     }
 }

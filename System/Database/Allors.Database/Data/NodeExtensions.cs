@@ -20,8 +20,5 @@ namespace Allors.Data
 
             return prefetchPolicyBuilder.Build();
         }
-
-        public static Protocol.Data.Node[] Save(this Node[] treeNodes) =>
-            treeNodes.Select(v => v.Save()).ToArray();
     }
 }

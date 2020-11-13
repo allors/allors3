@@ -6,11 +6,8 @@
 namespace Allors.Data
 {
     using System.Collections.Generic;
-    using System.Linq;
-
     using Allors.Meta;
-    using Allors.Protocol.Data;
-
+    
     public class ContainedIn : IPropertyPredicate
     {
         public string[] Dependencies { get; set; }
@@ -28,17 +25,6 @@ namespace Allors.Data
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || this.HasMissingArguments(parameters);
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.HasMissingArguments(parameters);
-
-        public Predicate Save() =>
-            new Predicate
-            {
-                Kind = PredicateKind.ContainedIn,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Extent = this.Extent?.Save(),
-                Values = this.Objects.Select(v => v.Id.ToString()).ToArray(),
-                Parameter = this.Parameter,
-            };
 
         void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Allors.ICompositePredicate compositePredicate)
         {
@@ -73,5 +59,7 @@ namespace Allors.Data
         }
 
         private bool HasMissingArguments(IDictionary<string, string> parameters) => (this.Parameter != null && (parameters?.ContainsKey(this.Parameter) == false)) || this.Extent?.HasMissingArguments(parameters) == true;
+
+        public void Accept(IVisitor visitor) => visitor.VisitContainedIn(this);
     }
 }

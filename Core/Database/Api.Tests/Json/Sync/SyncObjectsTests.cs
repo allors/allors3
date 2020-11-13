@@ -58,9 +58,9 @@ namespace Tests
             Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 
-            Assert.Equal(person.Id.ToString(), syncObject.I);
-            Assert.Equal($"{this.M.Person.Class.IdAsString}", syncObject.T);
-            Assert.Equal(person.Strategy.ObjectVersion.ToString(), syncObject.V);
+            Assert.Equal(person.Id.ToString(), syncObject.Id);
+            Assert.Equal($"{this.M.Person.Class.IdAsString}", syncObject.ObjectTypeOrKey);
+            Assert.Equal(person.Strategy.ObjectVersion.ToString(), syncObject.Version);
         }
 
 
@@ -87,8 +87,8 @@ namespace Tests
             Assert.Single(syncResponse.Objects);
             var syncObject = syncResponse.Objects[0];
 
-            Assert.Null(syncObject.A);
-            Assert.Null(syncObject.D);
+            Assert.Null(syncObject.AccessControls);
+            Assert.Null(syncObject.DeniedPermissions);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Tests
 {
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Data;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Database.Pull;
     using Xunit;
 
@@ -29,7 +29,7 @@ namespace Tests
             var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
                     new Pull
                     {
@@ -58,7 +58,7 @@ namespace Tests
             var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
                     new Pull
                     {
@@ -85,7 +85,7 @@ namespace Tests
             var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
                     new Pull
                     {

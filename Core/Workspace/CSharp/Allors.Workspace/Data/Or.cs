@@ -6,9 +6,7 @@
 namespace Allors.Workspace.Data
 {
     using System.Collections.Generic;
-    using System.Linq;
 
-    using Allors.Protocol.Data;
 
     public class Or : ICompositePredicate
     {
@@ -20,12 +18,6 @@ namespace Allors.Workspace.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operands = new List<IPredicate>(this.Operands) { predicate }.ToArray();
 
-        public Predicate ToJson() =>
-            new Predicate()
-            {
-                Kind = PredicateKind.Or,
-                Dependencies = this.Dependencies,
-                Operands = this.Operands.Select(v => v.ToJson()).ToArray(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitOr(this);
     }
 }

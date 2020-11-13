@@ -5,22 +5,21 @@
 
 namespace Allors.Protocol.Database.Push
 {
+    using System.Text.Json.Serialization;
+
     /// <summary>
     ///  New objects require NI and T.
     ///  Existing objects require I and V.
     /// </summary>
     public class PushRequestObject
     {
-        /// <summary>
-        /// Gets or sets the (database) id.
-        /// </summary>
-        public string I { get; set; }
+        [JsonPropertyName("i")]
+        public string DatabaseId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the version.
-        /// </summary>
-        public string V { get; set; }
+        [JsonPropertyName("v")]
+        public string Version { get; set; }
 
+        [JsonPropertyName("roles")]
         public PushRequestRole[] Roles { get; set; }
     }
 }

@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
-    using Allors.Protocol.Data;
+    
     using Allors.Workspace.Meta;
 
     public class Equals : IPropertyPredicate
@@ -23,16 +23,6 @@ namespace Allors.Workspace.Data
 
         public string Parameter { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Equals,
-                Dependencies = this.Dependencies,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Object = this.Object?.DatabaseId?.ToString(),
-                Value = UnitConvert.ToString(this.Value),
-                Parameter = this.Parameter,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitEquals(this);
     }
 }

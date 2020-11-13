@@ -40,10 +40,10 @@ namespace Tests
 
             var securityResponseAccessControl = securityResponse.AccessControls.First();
 
-            Assert.Equal($"{accessControl.Id}", securityResponseAccessControl.I);
-            Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.V);
+            Assert.Equal($"{accessControl.Id}", securityResponseAccessControl.Id);
+            Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.Version);
 
-            var permissions = securityResponseAccessControl.P.Split(",")
+            var permissions = securityResponseAccessControl.PermissionIds.Split(",")
                 .Select(v => this.Session.Instantiate(v))
                 .Cast<Permission>()
                 .Where(v => v != null)
@@ -85,10 +85,10 @@ namespace Tests
 
             var securityResponseAccessControl = securityResponse.AccessControls.First();
 
-            Assert.Equal($"{accessControl.Id}", securityResponseAccessControl.I);
-            Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.V);
+            Assert.Equal($"{accessControl.Id}", securityResponseAccessControl.Id);
+            Assert.Equal($"{accessControl.Strategy.ObjectVersion}", securityResponseAccessControl.Version);
 
-            var permissions = securityResponseAccessControl.P.Split(",")
+            var permissions = securityResponseAccessControl.PermissionIds.Split(",")
                 .Select(v => this.Session.Instantiate(v))
                 .Cast<Permission>()
                 .Where(v => v != null)

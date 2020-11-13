@@ -6,8 +6,6 @@
 namespace Allors.Workspace.Data
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using Allors.Protocol.Data;
     using Allors.Workspace.Meta;
 
     public class Between : IRolePredicate
@@ -22,14 +20,6 @@ namespace Allors.Workspace.Data
 
         public string Parameter { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Between,
-                Dependencies = this.Dependencies,
-                RoleType = this.RoleType?.RelationType.Id,
-                Values = this.Values.Select(UnitConvert.ToString).ToArray(),
-                Parameter = this.Parameter,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitBetween(this);
     }
 }

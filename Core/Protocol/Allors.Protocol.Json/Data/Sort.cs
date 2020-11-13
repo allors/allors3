@@ -3,14 +3,19 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Data
+namespace Allors.Protocol.Json
 {
     using System;
+    using System.Text.Json.Serialization;
 
-    public class Sort
+    public class Sort : IVisitable
     {
+        [JsonPropertyName("roleType")]
         public Guid? RoleType { get; set; }
 
+        [JsonPropertyName("descending")]
         public bool Descending { get; set; }
+
+        public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }
 }

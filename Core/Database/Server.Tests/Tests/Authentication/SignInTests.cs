@@ -8,6 +8,7 @@ namespace Allors.Server.Tests
     using System;
 
     using Allors.Domain;
+    using Protocol.Json;
     using Server;
 
     using Xunit;
@@ -82,9 +83,9 @@ namespace Allors.Server.Tests
 
             var uri = new Uri("Authentication/Token", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, args);
-            var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
+            var signInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
 
-            Assert.False(siginInResponse.Authenticated);
+            Assert.False(signInResponse.Authenticated);
         }
     }
 }

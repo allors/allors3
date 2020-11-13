@@ -20,6 +20,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database.Push;
     using Protocol.Database.Security;
     using Protocol.Database.Sync;
+    using Protocol.Json;
 
     public class Database
     {
@@ -263,9 +264,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var syncResponseAccessControl in securityResponse.AccessControls)
                 {
-                    var id = long.Parse(syncResponseAccessControl.I);
-                    var version = long.Parse(syncResponseAccessControl.V);
-                    var permissionsIds = syncResponseAccessControl.P
+                    var id = long.Parse(syncResponseAccessControl.Id);
+                    var version = long.Parse(syncResponseAccessControl.Version);
+                    var permissionsIds = syncResponseAccessControl.PermissionIds
                         ?.Split(',')
                         .Select(v =>
                         {
@@ -428,15 +429,6 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 this.databaseChangeSet = null;
             }
-        }
-
-        public class AuthenticationTokenResponse
-        {
-            public bool Authenticated { get; set; }
-
-            public string Token { get; set; }
-
-            public string UserId { get; set; }
         }
     }
 }

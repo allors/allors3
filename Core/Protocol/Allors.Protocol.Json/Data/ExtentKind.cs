@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Data
+namespace Allors.Protocol.Json
 {
     // TODO: Make enumeration lik PredicateKind
     public static class ExtentKind

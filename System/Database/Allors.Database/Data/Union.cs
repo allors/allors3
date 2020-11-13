@@ -9,7 +9,6 @@ namespace Allors.Data
     using System.Linq;
 
     using Allors.Meta;
-    using Allors.Protocol.Data;
 
     public class Union : IExtentOperator
     {
@@ -34,12 +33,6 @@ namespace Allors.Data
             return extent;
         }
 
-        public Protocol.Data.Extent Save() =>
-            new Protocol.Data.Extent
-            {
-                Kind = ExtentKind.Union,
-                Operands = this.Operands.Select(v => v.Save()).ToArray(),
-                Sorting = this.Sorting.Select(v => new Protocol.Data.Sort { Descending = v.Descending, RoleType = v.RoleType?.RelationType.Id }).ToArray(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitUnion(this);
     }
 }

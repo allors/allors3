@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database\Allors.Database.csproj" />
+    <ProjectReference Include="..\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
+  </ItemGroup>
+ 
+</Project>

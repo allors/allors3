@@ -11,7 +11,7 @@ namespace Allors.Data
 
     using Allors.Meta;
 
-    public class Pull
+    public class Pull : IVisitable
     {
         public Guid? ExtentRef { get; set; }
 
@@ -25,14 +25,6 @@ namespace Allors.Data
 
         public IDictionary<string, string> Parameters { get; set; }
 
-        public Protocol.Data.Pull Save() =>
-            new Protocol.Data.Pull
-            {
-                ExtentRef = this.ExtentRef,
-                Extent = this.Extent?.Save(),
-                ObjectType = this.ObjectType?.Id,
-                Object = this.Object?.Id.ToString(),
-                Results = this.Results?.Select(v => v.Save()).ToArray(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitPull(this);
     }
 }

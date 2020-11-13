@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
-    using Allors.Protocol.Data;
+    
     using Allors.Workspace.Meta;
 
     public class GreaterThan : IRolePredicate
@@ -20,14 +20,6 @@ namespace Allors.Workspace.Data
 
         public string Parameter { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate
-            {
-                Kind = PredicateKind.GreaterThan,
-                Dependencies = this.Dependencies,
-                RoleType = this.RoleType?.RelationType.Id,
-                Value = UnitConvert.ToString(this.Value),
-                Parameter = this.Parameter,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitGreaterThan(this);
     }
 }

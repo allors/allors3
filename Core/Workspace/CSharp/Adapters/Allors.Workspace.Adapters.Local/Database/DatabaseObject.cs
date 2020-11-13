@@ -9,8 +9,6 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using Allors.Workspace.Meta;
     using System.Linq;
-    using Protocol.Database;
-    using Protocol.Data;
     using Security;
 
     public class DatabaseObject

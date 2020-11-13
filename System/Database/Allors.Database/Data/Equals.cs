@@ -8,7 +8,7 @@ namespace Allors.Data
     using System.Collections.Generic;
 
     using Allors.Meta;
-    using Allors.Protocol.Data;
+    
 
     public class Equals : IPropertyPredicate
     {
@@ -24,17 +24,6 @@ namespace Allors.Data
         public object Value { get; set; }
 
         public string Parameter { get; set; }
-
-        public Predicate Save() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Equals,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Object = this.Object?.Id.ToString(),
-                Value = UnitConvert.ToString(this.Value),
-                Parameter = this.Parameter,
-            };
 
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
 
@@ -83,5 +72,7 @@ namespace Allors.Data
                 }
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitEquals(this);
     }
 }

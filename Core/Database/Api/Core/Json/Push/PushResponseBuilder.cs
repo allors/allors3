@@ -11,7 +11,7 @@ namespace Allors.Api.Json.Push
     using Allors.Domain;
     using Allors.Meta;
     using Protocol.Database.Push;
-    using Protocol.Data;
+    using Protocol.Json;
     using Server;
     using State;
 
@@ -48,10 +48,10 @@ namespace Allors.Api.Json.Push
             if (this.pushRequest.NewObjects != null && this.pushRequest.NewObjects.Length > 0)
             {
                 objectByNewId = this.pushRequest.NewObjects.ToDictionary(
-                    x => x.NI,
+                    x => x.NewWorkspaceId,
                     x =>
                         {
-                            var cls = (IClass)this.MetaPopulation.Find(Guid.Parse(x.T));
+                            var cls = (IClass)this.MetaPopulation.Find(Guid.Parse(x.ObjectType));
                             if (classes?.Contains(cls) == true)
                             {
                                 return (IObject)Allors.ObjectBuilder.Build(this.session, cls);
@@ -64,7 +64,7 @@ namespace Allors.Api.Json.Push
             if (this.pushRequest.Objects != null && this.pushRequest.Objects.Length > 0)
             {
                 // bulk load all objects
-                var objectIds = this.pushRequest.Objects.Select(v => v.I).ToArray();
+                var objectIds = this.pushRequest.Objects.Select(v => v.DatabaseId).ToArray();
                 var objects = this.session.Instantiate(objectIds);
 
                 if (objectIds.Length != objects.Length)
@@ -81,9 +81,9 @@ namespace Allors.Api.Json.Push
                 {
                     foreach (var pushRequestObject in this.pushRequest.Objects)
                     {
-                        var obj = this.session.Instantiate(pushRequestObject.I);
+                        var obj = this.session.Instantiate(pushRequestObject.DatabaseId);
 
-                        if (!pushRequestObject.V.Equals(obj.Strategy.ObjectVersion.ToString()))
+                        if (!pushRequestObject.Version.Equals(obj.Strategy.ObjectVersion.ToString()))
                         {
                             pushResponse.AddVersionError(obj);
                         }
@@ -109,9 +109,9 @@ namespace Allors.Api.Json.Push
                     previousCountOutstandingRoles = countOutstandingRoles;
                     countOutstandingRoles = 0;
 
-                    foreach (var pushRequestNewObject in this.pushRequest.NewObjects.OrderByDescending(v => int.Parse(v.NI)))
+                    foreach (var pushRequestNewObject in this.pushRequest.NewObjects.OrderByDescending(v => int.Parse(v.NewWorkspaceId)))
                     {
-                        var obj = objectByNewId[pushRequestNewObject.NI];
+                        var obj = objectByNewId[pushRequestNewObject.NewWorkspaceId];
                         var pushRequestRoles = pushRequestNewObject.Roles;
                         if (pushRequestRoles != null)
                         {
@@ -125,7 +125,7 @@ namespace Allors.Api.Json.Push
                 {
                     foreach (var pushRequestNewObject in this.pushRequest.NewObjects)
                     {
-                        var obj = objectByNewId[pushRequestNewObject.NI];
+                        var obj = objectByNewId[pushRequestNewObject.NewWorkspaceId];
                         var pushRequestRoles = pushRequestNewObject.Roles;
                         if (pushRequestRoles != null)
                         {
@@ -158,8 +158,8 @@ namespace Allors.Api.Json.Push
                 {
                     pushResponse.NewObjects = objectByNewId.Select(kvp => new PushResponseNewObject
                     {
-                        I = kvp.Value != null ? kvp.Value.Id.ToString() : kvp.Key,
-                        WI = kvp.Key,
+                        DatabaseId = kvp.Value != null ? kvp.Value.Id.ToString() : kvp.Key,
+                        WorkspaceId = kvp.Key,
                     }).ToArray();
                 }
 
@@ -189,7 +189,7 @@ namespace Allors.Api.Json.Push
                 var roleTypes = composite.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
                 var acl = this.AccessControlLists[obj];
 
-                var roleType = ((IRelationType)this.MetaPopulation.Find(Guid.Parse(pushRequestRole.T))).RoleType;
+                var roleType = ((IRelationType)this.MetaPopulation.Find(Guid.Parse(pushRequestRole.RelationType))).RoleType;
                 if (roleType != null)
                 {
                     if (acl.CanWrite(roleType))
@@ -197,14 +197,14 @@ namespace Allors.Api.Json.Push
                         if (roleType.ObjectType.IsUnit)
                         {
                             var unitType = (IUnit)roleType.ObjectType;
-                            var role = UnitConvert.Parse(unitType.Id, pushRequestRole.S);
+                            var role = UnitConvert.Parse(unitType.Id, pushRequestRole.SetRole);
                             obj.Strategy.SetUnitRole(roleType, role);
                         }
                         else
                         {
                             if (roleType.IsOne)
                             {
-                                var roleId = (string)pushRequestRole.S;
+                                var roleId = (string)pushRequestRole.SetRole;
                                 if (string.IsNullOrEmpty(roleId))
                                 {
                                     obj.Strategy.RemoveCompositeRole(roleType);
@@ -225,9 +225,9 @@ namespace Allors.Api.Json.Push
                             else
                             {
                                 // Add
-                                if (pushRequestRole.A != null)
+                                if (pushRequestRole.AddRole != null)
                                 {
-                                    var roleIds = pushRequestRole.A;
+                                    var roleIds = pushRequestRole.AddRole;
                                     if (roleIds.Length != 0)
                                     {
                                         var roles = this.GetRoles(roleIds, objectByNewId);
@@ -246,9 +246,9 @@ namespace Allors.Api.Json.Push
                                 }
 
                                 // Remove
-                                if (pushRequestRole.R != null)
+                                if (pushRequestRole.RemoveRole != null)
                                 {
-                                    var roleIds = pushRequestRole.R;
+                                    var roleIds = pushRequestRole.RemoveRole;
                                     if (roleIds.Length != 0)
                                     {
                                         var roles = this.GetRoles(roleIds, objectByNewId);

@@ -3,12 +3,18 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Data
+namespace Allors.Protocol.Json
 {
-    public class Fetch
+    using System.Text.Json.Serialization;
+
+    public class Fetch : IVisitable
     {
+        [JsonPropertyName("step")]
         public Step Step { get; set; }
 
+        [JsonPropertyName("include")]
         public Node[] Include { get; set; }
+        
+        public void Accept(IVisitor visitor) => visitor.VisitFetch(this);
     }
 }

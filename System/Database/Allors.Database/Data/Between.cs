@@ -9,7 +9,7 @@ namespace Allors.Data
     using System.Linq;
 
     using Allors.Meta;
-    using Allors.Protocol.Data;
+    
 
     public class Between : IRolePredicate
     {
@@ -23,15 +23,6 @@ namespace Allors.Data
 
         public string Parameter { get; set; }
 
-        public Predicate Save() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Between,
-                RoleType = this.RoleType?.RelationType.Id,
-                Values = this.Values.Select(UnitConvert.ToString).ToArray(),
-                Parameter = this.Parameter,
-            };
-
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
@@ -42,5 +33,7 @@ namespace Allors.Data
             var values = parameter != null ? parameter.ToArray() : this.Values.ToArray();
             compositePredicate.AddBetween(this.RoleType, values[0], values[1]);
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitBetween(this);
     }
 }

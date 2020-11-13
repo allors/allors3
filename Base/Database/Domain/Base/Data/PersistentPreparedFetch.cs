@@ -9,7 +9,9 @@ namespace Allors.Domain
     using System.Text;
     using System.Xml.Serialization;
 
-    using Allors.Protocol.Data;
+    using Protocol.Json;
+    using Protocol.Database.Load;
+    using Protocol.Database.Save;
 
     public partial class PersistentPreparedFetch
     {
@@ -17,21 +19,17 @@ namespace Allors.Domain
         {
             get
             {
-                using (TextReader reader = new StringReader(this.Content))
-                {
-                    var protocolFetch = (Fetch)XmlSerializer.Deserialize(reader);
-                    return protocolFetch.Load(this.Strategy.Session);
-                }
+                using TextReader reader = new StringReader(this.Content);
+                var protocolFetch = (Fetch)XmlSerializer.Deserialize(reader);
+                return protocolFetch.Load(this.Strategy.Session);
             }
 
             set
             {
                 var stringBuilder = new StringBuilder();
-                using (TextWriter writer = new StringWriter(stringBuilder))
-                {
-                    XmlSerializer.Serialize(writer, value.Save());
-                    this.Content = stringBuilder.ToString();
-                }
+                using TextWriter writer = new StringWriter(stringBuilder);
+                XmlSerializer.Serialize(writer, value.Save());
+                this.Content = stringBuilder.ToString();
             }
         }
 

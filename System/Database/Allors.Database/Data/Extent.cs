@@ -8,8 +8,7 @@ namespace Allors.Data
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Meta;
-    using Allors.Protocol.Data;
-
+    
     public class Extent : IExtent, IPredicateContainer
     {
         public Extent(IComposite objectType) => this.ObjectType = objectType;
@@ -44,13 +43,6 @@ namespace Allors.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Predicate = predicate;
 
-        public Protocol.Data.Extent Save() =>
-            new Protocol.Data.Extent
-            {
-                Kind = ExtentKind.Extent,
-                ObjectType = this.ObjectType?.Id,
-                Predicate = this.Predicate?.Save(),
-                Sorting = this.Sorting?.Select(v => new Protocol.Data.Sort { Descending = v.Descending, RoleType = v.RoleType?.RelationType.Id }).ToArray(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitExtent(this);
     }
 }

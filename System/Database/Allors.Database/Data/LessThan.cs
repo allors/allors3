@@ -8,7 +8,6 @@ namespace Allors.Data
     using System.Collections.Generic;
 
     using Allors.Meta;
-    using Allors.Protocol.Data;
 
     public class LessThan : IRolePredicate
     {
@@ -22,15 +21,6 @@ namespace Allors.Data
 
         public string Parameter { get; set; }
 
-        public Predicate Save() =>
-            new Predicate
-            {
-                Kind = PredicateKind.LessThan,
-                RoleType = this.RoleType?.RelationType.Id,
-                Value = UnitConvert.ToString(this.Value),
-                Parameter = this.Parameter,
-            };
-
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
@@ -41,5 +31,7 @@ namespace Allors.Data
 
             compositePredicate.AddLessThan(this.RoleType, value);
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitLessThan(this);
     }
 }

@@ -14,6 +14,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Logging;
 
     using Allors.Services;
+    using Protocol.Json;
     using Security;
 
     public class AuthenticationController : Controller

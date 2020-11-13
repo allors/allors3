@@ -5,10 +5,12 @@
 
 namespace Allors.Protocol.Database.Pull
 {
-    using Allors.Protocol.Data;
+    using System.Text.Json.Serialization;
+    using Json;
 
     public class PullRequest
     {
-        public Pull[] P { get; set; }
+        [JsonPropertyName("p")]
+        public Pull[] Pulls { get; set; }
     }
 }

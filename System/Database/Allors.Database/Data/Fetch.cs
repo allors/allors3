@@ -10,7 +10,7 @@ namespace Allors.Data
 
     using Allors.Meta;
 
-    public class Fetch
+    public class Fetch : IVisitable
     {
         public Fetch()
         {
@@ -39,14 +39,7 @@ namespace Allors.Data
             fetch = propertyType == null ? null : new Fetch(propertyType);
             return fetch != null;
         }
-
-        public Protocol.Data.Fetch Save() =>
-            new Protocol.Data.Fetch
-            {
-                Step = this.Step?.Save(),
-                Include = this.Include?.Save(),
-            };
-
+        
         private static IPropertyType Resolve(IComposite composite, string propertyName)
         {
             var lowerCasePropertyName = propertyName.ToLowerInvariant();
@@ -77,5 +70,7 @@ namespace Allors.Data
         }
 
         public override string ToString() => this.Step?.ToString() ?? base.ToString();
+
+        public void Accept(IVisitor visitor) => visitor.VisitFetch(this);
     }
 }

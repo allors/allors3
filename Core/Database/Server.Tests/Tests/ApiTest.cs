@@ -21,6 +21,7 @@ namespace Allors.Server.Tests
     using Allors.Services;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
+    using Protocol.Json;
     using ISession = Allors.ISession;
     using ObjectFactory = Allors.ObjectFactory;
 

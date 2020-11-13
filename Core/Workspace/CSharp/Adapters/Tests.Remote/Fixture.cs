@@ -17,81 +17,81 @@ namespace Tests.Workspace.Remote
                 {
                     new SyncResponseObject
                     {
-                        I = "1",
-                        V = "1001",
-                        T = m.Person.ObjectType.IdAsString,
-                        R = new[]
+                        Id = "1",
+                        Version = "1001",
+                        ObjectTypeOrKey = m.Person.ObjectType.IdAsString,
+                        Roles = new[]
                         {
-                            new SyncResponseRole {T = m.Person.FirstName.RelationType.IdAsString, V = "Koen"},
-                            new SyncResponseRole {T = m.Person.LastName.RelationType.IdAsString, V = "Van Exem"},
+                            new SyncResponseRole {RoleType = m.Person.FirstName.RelationType.IdAsString, Value = "Koen"},
+                            new SyncResponseRole {RoleType = m.Person.LastName.RelationType.IdAsString, Value = "Van Exem"},
                             new SyncResponseRole
                             {
-                                T = m.Person.BirthDate.RelationType.IdAsString, V = "1973-03-27T18:00:00Z"
+                                RoleType = m.Person.BirthDate.RelationType.IdAsString, Value = "1973-03-27T18:00:00Z"
                             },
-                            new SyncResponseRole {T = m.Person.IsStudent.RelationType.IdAsString, V = "1"},
+                            new SyncResponseRole {RoleType = m.Person.IsStudent.RelationType.IdAsString, Value = "1"},
                         },
-                        A = "101",
+                        AccessControls = "101",
                     },
                     new SyncResponseObject
                     {
-                        I = "2",
-                        V = "1002",
-                        T = m.Person.ObjectType.IdAsString,
-                        R = new[]
+                        Id = "2",
+                        Version = "1002",
+                        ObjectTypeOrKey = m.Person.ObjectType.IdAsString,
+                        Roles = new[]
                         {
-                            new SyncResponseRole {T = m.Person.FirstName.RelationType.IdAsString, V = "Patrick"},
-                            new SyncResponseRole {T = m.Person.LastName.RelationType.IdAsString, V = "De Boeck"},
-                            new SyncResponseRole {T = m.Person.IsStudent.RelationType.IdAsString, V = "0"},
+                            new SyncResponseRole {RoleType = m.Person.FirstName.RelationType.IdAsString, Value = "Patrick"},
+                            new SyncResponseRole {RoleType = m.Person.LastName.RelationType.IdAsString, Value = "De Boeck"},
+                            new SyncResponseRole {RoleType = m.Person.IsStudent.RelationType.IdAsString, Value = "0"},
                         },
-                        A = "102",
-                        D = "103",
+                        AccessControls = "102",
+                        DeniedPermissions = "103",
                     },
                     new SyncResponseObject
                     {
-                        I = "3",
-                        V = "1003",
-                        T = m.Person.ObjectType.IdAsString,
-                        R = new[]
+                        Id = "3",
+                        Version = "1003",
+                        ObjectTypeOrKey = m.Person.ObjectType.IdAsString,
+                        Roles = new[]
                         {
-                            new SyncResponseRole {T = m.Person.FirstName.RelationType.IdAsString, V = "Martien"},
-                            new SyncResponseRole {T = m.Person.MiddleName.RelationType.IdAsString, V = "van"},
-                            new SyncResponseRole {T = m.Person.LastName.RelationType.IdAsString, V = "Knippenberg"},
-                        },
-                    },
-                    new SyncResponseObject
-                    {
-                        I = "101",
-                        V = "1101",
-                        T = m.Organisation.ObjectType.IdAsString,
-                        R = new[]
-                        {
-                            new SyncResponseRole {T = m.Organisation.Name.RelationType.IdAsString, V = "Acme"},
-                            new SyncResponseRole {T = m.Organisation.Owner.RelationType.IdAsString, V = "1"},
-                            new SyncResponseRole {T = m.Organisation.Employees.RelationType.IdAsString, V = "1|2|3"},
-                            new SyncResponseRole {T = m.Organisation.Manager.RelationType.IdAsString},
+                            new SyncResponseRole {RoleType = m.Person.FirstName.RelationType.IdAsString, Value = "Martien"},
+                            new SyncResponseRole {RoleType = m.Person.MiddleName.RelationType.IdAsString, Value = "van"},
+                            new SyncResponseRole {RoleType = m.Person.LastName.RelationType.IdAsString, Value = "Knippenberg"},
                         },
                     },
                     new SyncResponseObject
                     {
-                        I = "102",
-                        V = "1102",
-                        T = m.Organisation.ObjectType.IdAsString,
-                        R = new[]
+                        Id = "101",
+                        Version = "1101",
+                        ObjectTypeOrKey = m.Organisation.ObjectType.IdAsString,
+                        Roles = new[]
                         {
-                            new SyncResponseRole {T = m.Organisation.Name.RelationType.IdAsString, V = "Ocme"},
-                            new SyncResponseRole {T = m.Organisation.Owner.RelationType.IdAsString, V = "2"},
-                            new SyncResponseRole {T = m.Organisation.Employees.RelationType.IdAsString, V = "1"},
+                            new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.IdAsString, Value = "Acme"},
+                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.IdAsString, Value = "1"},
+                            new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.IdAsString, Value = "1|2|3"},
+                            new SyncResponseRole {RoleType = m.Organisation.Manager.RelationType.IdAsString},
                         },
                     },
                     new SyncResponseObject
                     {
-                        I = "103",
-                        V = "1103",
-                        T = m.Organisation.ObjectType.IdAsString,
-                        R = new[]
+                        Id = "102",
+                        Version = "1102",
+                        ObjectTypeOrKey = m.Organisation.ObjectType.IdAsString,
+                        Roles = new[]
                         {
-                            new SyncResponseRole {T = m.Organisation.Name.RelationType.IdAsString, V = "icme"},
-                            new SyncResponseRole {T = m.Organisation.Owner.RelationType.IdAsString, V = "3"},
+                            new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.IdAsString, Value = "Ocme"},
+                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.IdAsString, Value = "2"},
+                            new SyncResponseRole {RoleType = m.Organisation.Employees.RelationType.IdAsString, Value = "1"},
+                        },
+                    },
+                    new SyncResponseObject
+                    {
+                        Id = "103",
+                        Version = "1103",
+                        ObjectTypeOrKey = m.Organisation.ObjectType.IdAsString,
+                        Roles = new[]
+                        {
+                            new SyncResponseRole {RoleType = m.Organisation.Name.RelationType.IdAsString, Value = "icme"},
+                            new SyncResponseRole {RoleType = m.Organisation.Owner.RelationType.IdAsString, Value = "3"},
                         },
                     },
                 },

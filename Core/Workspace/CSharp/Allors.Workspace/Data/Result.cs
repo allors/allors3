@@ -7,7 +7,7 @@ namespace Allors.Workspace.Data
 {
     using System;
 
-    public class Result
+    public class Result : IVisitable
     {
         public Guid? FetchRef { get; set; }
 
@@ -19,14 +19,6 @@ namespace Allors.Workspace.Data
 
         public int? Take { get; set; }
 
-        public Protocol.Data.Result ToJson() =>
-            new Protocol.Data.Result
-            {
-                FetchRef = this.FetchRef,
-                Fetch = this.Fetch?.ToJson(),
-                Name = this.Name,
-                Skip = this.Skip,
-                Take = this.Take,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitResult(this);
     }
 }

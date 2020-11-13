@@ -8,7 +8,7 @@ namespace Allors.Data
     using System.Text;
     using Allors.Meta;
 
-    public class Step
+    public class Step : IVisitable
     {
         public Step()
         {
@@ -52,15 +52,6 @@ namespace Allors.Data
 
         public Step End => this.ExistNext ? this.Next.End : this;
 
-        public Protocol.Data.Step Save() =>
-            new Protocol.Data.Step
-            {
-                Include = this.Include?.Save(),
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Next = this.Next.Save(),
-            };
-
         public IObjectType GetObjectType()
         {
             if (this.ExistNext)
@@ -92,5 +83,7 @@ namespace Allors.Data
                 this.Next.ToStringAppendToName(name);
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitStep(this);
     }
 }

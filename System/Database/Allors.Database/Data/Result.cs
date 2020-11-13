@@ -7,7 +7,7 @@ namespace Allors.Data
 {
     using System;
 
-    public class Result
+    public class Result : IVisitable
     {
         public Guid? FetchRef { get; set; }
 
@@ -18,16 +18,6 @@ namespace Allors.Data
         public int? Skip { get; set; }
 
         public int? Take { get; set; }
-
-        public Protocol.Data.Result Save() =>
-            new Protocol.Data.Result
-            {
-                FetchRef = this.FetchRef,
-                Fetch = this.Fetch?.Save(),
-                Name = this.Name,
-                Skip = this.Skip,
-                Take = this.Take,
-            };
 
         public override string ToString()
         {
@@ -43,5 +33,7 @@ namespace Allors.Data
 
             return $"Result: [Fetch: {this.Fetch}]";
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitResult(this);
     }
 }

@@ -1,25 +1,21 @@
-﻿// <copyright file="Invocation.cs" company="Allors bvba">
+// <copyright file="Invocation.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Protocol.Database.Invoke
 {
+    using System.Text.Json.Serialization;
+
     public class Invocation
     {
-        /// <summary>
-        /// The id.
-        /// </summary>
-        public string I { get; set; }
+        [JsonPropertyName("i")]
+        public string Id { get; set; }
 
-        /// <summary>
-        /// The version.
-        /// </summary>
-        public string V { get; set; }
+        [JsonPropertyName("v")]
+        public string Version { get; set; }
 
-        /// <summary>
-        /// The method.
-        /// </summary>
-        public string M { get; set; }
+        [JsonPropertyName("m")]
+        public string Method { get; set; }
     }
 }

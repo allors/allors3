@@ -8,8 +8,6 @@ namespace Allors.Data
     using System.Collections.Generic;
     using System.Linq;
 
-    using Allors.Protocol.Data;
-
     public class Or : ICompositePredicate
     {
         public string[] Dependencies { get; set; }
@@ -24,13 +22,6 @@ namespace Allors.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operands = this.Operands.Append(predicate).ToArray();
 
-        public Predicate Save() =>
-            new Predicate()
-            {
-                Kind = PredicateKind.Or,
-                Operands = this.Operands.Select(v => v.Save()).ToArray(),
-            };
-
         void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Allors.ICompositePredicate compositePredicate)
         {
             var or = compositePredicate.AddOr();
@@ -42,5 +33,7 @@ namespace Allors.Data
                 }
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitOr(this);
     }
 }

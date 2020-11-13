@@ -7,12 +7,14 @@ namespace Allors.Workspace.Data
 {
     using Allors.Workspace.Meta;
 
-    public class Sort
+    public class Sort : IVisitable
     {
         public Sort(IRoleType roleType = null) => this.RoleType = roleType;
 
         public IRoleType RoleType { get; set; }
 
         public bool Descending { get; set; }
+
+        public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }
 }

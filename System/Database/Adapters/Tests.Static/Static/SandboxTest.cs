@@ -10,7 +10,6 @@ namespace Allors.Database.Adapters
     using Allors;
     using Allors.Data;
     using Allors.Domain;
-    using Allors.Protocol.Data;
     using Xunit;
     using Extent = Data.Extent;
 
@@ -128,62 +127,64 @@ namespace Allors.Database.Adapters
             }
         }
 
-        [Fact]
-        public void LoadExtent()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Session.Database.State().M;
-                var population = new TestPopulation(this.Session);
+        // TODO: Move to Protocol
+        //[Fact]
+        //public void LoadExtent()
+        //{
+        //    foreach (var init in this.Inits)
+        //    {
+        //        init();
+        //        var m = this.Session.Database.State().M;
+        //        var population = new TestPopulation(this.Session);
 
-                var schemaExtent = new Protocol.Data.Extent
-                {
-                    Kind = Protocol.Data.ExtentKind.Extent,
-                    ObjectType = m.C1.ObjectType.Id,
-                    Predicate = new Predicate
-                    {
-                        Kind = Protocol.Data.PredicateKind.Equals,
-                        RoleType = m.C1.C1AllorsString.RelationType.Id,
-                        Value = "ᴀbra",
-                    },
-                };
+        //        var schemaExtent = new Protocol.Data.Extent
+        //        {
+        //            Kind = Protocol.Data.ExtentKind.Extent,
+        //            ObjectType = m.C1.ObjectType.Id,
+        //            Predicate = new Predicate
+        //            {
+        //                Kind = Protocol.Data.PredicateKind.Equals,
+        //                RoleType = m.C1.C1AllorsString.RelationType.Id,
+        //                Value = "ᴀbra",
+        //            },
+        //        };
 
-                var extent = schemaExtent.Load(this.Session);
+        //        var extent = schemaExtent.Load(this.Session);
 
-                var objects = this.Session.Resolve<C1>(extent);
+        //        var objects = this.Session.Resolve<C1>(extent);
 
-                Assert.Single(objects);
-            }
-        }
+        //        Assert.Single(objects);
+        //    }
+        //}
 
-        [Fact]
-        public void SaveExtent()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Session.Database.State().M;
-                var population = new TestPopulation(this.Session);
+        // TODO: Move to Protocol
+        //[Fact]
+        //public void SaveExtent()
+        //{
+        //    foreach (var init in this.Inits)
+        //    {
+        //        init();
+        //        var m = this.Session.Database.State().M;
+        //        var population = new TestPopulation(this.Session);
 
-                var extent = new Extent(m.C1.ObjectType)
-                {
-                    Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
-                };
+        //        var extent = new Extent(m.C1.ObjectType)
+        //        {
+        //            Predicate = new Equals(m.C1.C1AllorsString) { Parameter = "pString" },
+        //        };
 
-                var schemaExtent = extent.Save();
+        //        var schemaExtent = extent.Save();
 
-                Assert.NotNull(schemaExtent);
+        //        Assert.NotNull(schemaExtent);
 
-                Assert.Equal(ExtentKind.Extent, schemaExtent.Kind);
+        //        Assert.Equal(ExtentKind.Extent, schemaExtent.Kind);
 
-                var predicate = schemaExtent.Predicate;
+        //        var predicate = schemaExtent.Predicate;
 
-                Assert.NotNull(predicate);
-                Assert.Equal(PredicateKind.Equals, predicate.Kind);
-                Assert.Equal("pString", predicate.Parameter);
-            }
-        }
+        //        Assert.NotNull(predicate);
+        //        Assert.Equal(PredicateKind.Equals, predicate.Kind);
+        //        Assert.Equal("pString", predicate.Parameter);
+        //    }
+        //}
 
         [Fact]
         public void ScratchPad()

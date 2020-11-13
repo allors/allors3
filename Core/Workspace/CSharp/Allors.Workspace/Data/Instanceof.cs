@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
-    using Allors.Protocol.Data;
+    
     using Allors.Workspace.Meta;
 
     public class Instanceof : IPropertyPredicate
@@ -20,14 +20,6 @@ namespace Allors.Workspace.Data
 
         public IPropertyType PropertyType { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Instanceof,
-                Dependencies = this.Dependencies,
-                ObjectType = this.ObjectType?.Id,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitInstanceOf(this);
     }
 }

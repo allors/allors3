@@ -6,9 +6,6 @@
 namespace Allors.Workspace.Data
 {
     using System.Collections.Generic;
-    using System.Linq;
-
-    using Allors.Protocol.Data;
 
     public class And : ICompositePredicate
     {
@@ -18,14 +15,8 @@ namespace Allors.Workspace.Data
 
         public IPredicate[] Operands { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate()
-            {
-                Kind = PredicateKind.And,
-                Dependencies = this.Dependencies,
-                Operands = this.Operands.Select(v => v.ToJson()).ToArray(),
-            };
-
         public void AddPredicate(IPredicate predicate) => this.Operands = new List<IPredicate>(this.Operands) { predicate }.ToArray();
+
+        public void Accept(IVisitor visitor) => visitor.VisitAnd(this);
     }
 }

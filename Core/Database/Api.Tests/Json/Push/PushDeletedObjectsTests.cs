@@ -37,14 +37,14 @@ namespace Tests
                 {
                     new PushRequestObject
                     {
-                        I = organisationId,
-                        V = organisationVersion,
+                        DatabaseId = organisationId,
+                        Version = organisationVersion,
                         Roles = new[]
                         {
                             new PushRequestRole
                             {
-                              T = this.M.Organisation.Name.RelationType.IdAsString,
-                              S = "Acme"
+                              RelationType = this.M.Organisation.Name.RelationType.IdAsString,
+                              SetRole = "Acme"
                             },
                         },
                     },

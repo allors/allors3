@@ -11,6 +11,7 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Protocol.Json;
     using Security;
 
     public class TestAuthenticationController : Controller
@@ -33,16 +34,16 @@ namespace Allors.Server
         {
             if (this.ModelState.IsValid)
             {
-                var user = await this.UserManager.FindByNameAsync(request.UserName);
+                var user = await this.UserManager.FindByNameAsync(request.userName);
 
                 if (user != null)
                 {
                     var token = user.CreateToken(this.Configuration);
                     var response = new AuthenticationTokenResponse
                     {
-                        Authenticated = true,
-                        UserId = user.Id,
-                        Token = token,
+                        authenticated = true,
+                        userId = user.Id,
+                        token = token,
                     };
                     return this.Ok(response);
                 }

@@ -7,7 +7,7 @@ namespace Allors.Data
 {
     using Allors.Meta;
 
-    public class Sort
+    public class Sort : IVisitable
     {
         public Sort(IRoleType roleType = null) => this.RoleType = roleType;
 
@@ -16,5 +16,7 @@ namespace Allors.Data
         public bool Descending { get; set; }
 
         public void Build(Allors.Extent extent) => extent.AddSort(this.RoleType, this.Descending ? SortDirection.Descending : SortDirection.Ascending);
+
+        public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }
 }

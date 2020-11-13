@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Data
+namespace Allors.Protocol.Json
 {
     using System.Runtime.Serialization;
-    //using System.Text.Json.Serialization;
+    using System.Text.Json.Serialization;
 
     // TODO: Check JsonConverter
-    //[JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PropertyKind
     {
         [EnumMember(Value = "A")]

@@ -10,7 +10,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Workspace.Meta;
-    using Protocol.Data;
+    using Protocol.Json;
     using Protocol.Database.Push;
 
     public class DatabaseStrategy : Strategy, IDatabaseStrategy
@@ -232,15 +232,15 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PushRequestNewObject SaveNew() => new PushRequestNewObject
         {
-            NI = this.WorkspaceId.ToString(),
-            T = this.Class.IdAsString,
+            NewWorkspaceId = this.WorkspaceId.ToString(),
+            ObjectType = this.Class.IdAsString,
             Roles = this.SaveRoles(),
         };
 
         internal PushRequestObject SaveExisting() => new PushRequestObject
         {
-            I = this.DatabaseId?.ToString(),
-            V = this.Version.ToString(),
+            DatabaseId = this.DatabaseId?.ToString(),
+            Version = this.Version.ToString(),
             Roles = this.SaveRoles(),
         };
 
@@ -334,18 +334,18 @@ namespace Allors.Workspace.Adapters.Remote
                     var roleType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;
 
-                    var pushRequestRole = new PushRequestRole { T = roleType.RelationType.IdAsString };
+                    var pushRequestRole = new PushRequestRole { RelationType = roleType.RelationType.IdAsString };
 
                     if (roleType.ObjectType.IsUnit)
                     {
-                        pushRequestRole.S = UnitConvert.ToString(roleValue);
+                        pushRequestRole.SetRole = UnitConvert.ToString(roleValue);
                     }
                     else
                     {
                         if (roleType.IsOne)
                         {
                             var sessionRole = (IDatabaseObject)roleValue;
-                            pushRequestRole.S = sessionRole?.DatabaseId?.ToString() ??
+                            pushRequestRole.SetRole = sessionRole?.DatabaseId?.ToString() ??
                                                 sessionRole?.WorkspaceId.ToString();
                         }
                         else
@@ -355,22 +355,22 @@ namespace Allors.Workspace.Adapters.Remote
                                 .Select(item => item.DatabaseId?.ToString() ?? item.WorkspaceId.ToString()).ToArray();
                             if (!this.ExistDatabaseObject)
                             {
-                                pushRequestRole.A = roleIds;
+                                pushRequestRole.AddRole = roleIds;
                             }
                             else
                             {
                                 var databaseRole = this.DatabaseObject.GetRole(roleType);
                                 if (databaseRole == null)
                                 {
-                                    pushRequestRole.A = roleIds;
+                                    pushRequestRole.AddRole = roleIds;
                                 }
                                 else
                                 {
                                     var originalRoleIds = ((IEnumerable<long>)databaseRole)
                                         .Select(v => v.ToString())
                                         .ToArray();
-                                    pushRequestRole.A = roleIds.Except(originalRoleIds).ToArray();
-                                    pushRequestRole.R = originalRoleIds.Except(roleIds).ToArray();
+                                    pushRequestRole.AddRole = roleIds.Except(originalRoleIds).ToArray();
+                                    pushRequestRole.RemoveRole = originalRoleIds.Except(roleIds).ToArray();
                                 }
                             }
                         }

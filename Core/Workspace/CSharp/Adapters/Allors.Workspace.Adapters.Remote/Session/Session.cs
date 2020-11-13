@@ -15,6 +15,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Protocol.Database.Pull;
     using Protocol.Database.Push;
     using Protocol.Database.Sync;
+    using Protocol.Json.Workspace;
 
     public class Session : ISession
     {
@@ -59,16 +60,16 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var invokeRequest = new InvokeRequest
             {
-                I = methods.Select(v => new Invocation
+                Invocations = methods.Select(v => new Invocation
                 {
-                    I = v.Object.DatabaseId?.ToString(),
-                    V = v.Object.Strategy.Version.ToString(),
-                    M = v.MethodType.IdAsString,
+                    Id = v.Object.DatabaseId?.ToString(),
+                    Version = v.Object.Strategy.Version.ToString(),
+                    Method = v.MethodType.IdAsString,
                 }).ToArray(),
-                O = options != null ? new InvokeOptions
+                InvokeOptions = options != null ? new InvokeOptions
                 {
-                    C = options.ContinueOnError,
-                    I = options.Isolated
+                    ContinueOnError = options.ContinueOnError,
+                    Isolated = options.Isolated
                 } : null,
             };
 
@@ -131,7 +132,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public async Task<ILoadResult> Load(params Pull[] pulls)
         {
-            var pullRequest = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
+            var pullRequest = new PullRequest { Pulls = pulls.Select(v => v.ToJson()).ToArray() };
             var pullResponse = await this.Database.Pull(pullRequest);
             var syncRequest = this.Database.Diff(pullResponse);
             if (syncRequest.Objects.Length > 0)
@@ -146,12 +147,12 @@ namespace Allors.Workspace.Adapters.Remote
         {
             if (args is Pull pull)
             {
-                args = new PullRequest { P = new[] { pull.ToJson() } };
+                args = new PullRequest { Pulls = new[] { pull.ToJson() } };
             }
 
             if (args is IEnumerable<Pull> pulls)
             {
-                args = new PullRequest { P = pulls.Select(v => v.ToJson()).ToArray() };
+                args = new PullRequest { Pulls = pulls.Select(v => v.ToJson()).ToArray() };
             }
 
             var pullResponse = await this.Database.Pull(service, args);
@@ -205,10 +206,10 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 this.PushResponse(pushResponse);
 
-                var objects = saveRequest.Objects.Select(v => v.I).ToArray();
+                var objects = saveRequest.Objects.Select(v => v.DatabaseId).ToArray();
                 if (pushResponse.NewObjects != null)
                 {
-                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.I)).ToArray();
+                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.DatabaseId)).ToArray();
                 }
 
                 var syncRequests = new SyncRequest
@@ -289,8 +290,8 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 foreach (var pushResponseNewObject in pushResponse.NewObjects)
                 {
-                    var workspaceId = long.Parse(pushResponseNewObject.WI);
-                    var databaseId = long.Parse(pushResponseNewObject.I);
+                    var workspaceId = long.Parse(pushResponseNewObject.WorkspaceId);
+                    var databaseId = long.Parse(pushResponseNewObject.DatabaseId);
 
                     this.Database.WorkspaceIdByDatabaseId[databaseId] = workspaceId;
                     this.Database.DatabaseIdByWorkspaceId[workspaceId] = databaseId;

@@ -7,12 +7,11 @@ namespace Allors.Workspace.Data
 {
     using Allors.Workspace.Meta;
 
-    public interface IExtent
+    public interface IExtent : IVisitable
     {
         IComposite ObjectType { get; }
 
+        // TODO: move to Result
         Sort[] Sorting { get; set; }
-
-        Protocol.Data.Extent ToJson();
     }
 }

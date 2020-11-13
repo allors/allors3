@@ -24,9 +24,9 @@ namespace Allors.Api.Json.Invoke
         public InvokeResponseBuilder(ISession session, string workspaceName, InvokeRequest invokeRequest)
         {
             this.session = session;
-            this.invocations = invokeRequest.I;
-            this.isolated = invokeRequest.O?.I ?? false;
-            this.continueOnError = invokeRequest.O?.C ?? false;
+            this.invocations = invokeRequest.Invocations;
+            this.isolated = invokeRequest.InvokeOptions?.Isolated ?? false;
+            this.continueOnError = invokeRequest.InvokeOptions?.ContinueOnError ?? false;
 
             var sessionState = session.State();
             var databaseState = session.Database.State();
@@ -101,15 +101,15 @@ namespace Allors.Api.Json.Invoke
             var classes = this.WorkspaceMeta?.Classes;
 
             // TODO: M should be a methodTypeId instead of the methodName
-            if (invocation.M == null || invocation.I == null || invocation.V == null)
+            if (invocation.Method == null || invocation.Id == null || invocation.Version == null)
             {
                 throw new ArgumentException();
             }
 
-            var obj = this.session.Instantiate(invocation.I);
+            var obj = this.session.Instantiate(invocation.Id);
             if (obj == null)
             {
-                invokeResponse.AddMissingError(invocation.I);
+                invokeResponse.AddMissingError(invocation.Id);
                 return true;
             }
 
@@ -122,14 +122,14 @@ namespace Allors.Api.Json.Invoke
             var composite = (Composite)obj.Strategy.Class;
             // TODO: Cache
             var methodTypes = composite.MethodTypes.Where(v => v.WorkspaceNames.Length > 0);
-            var methodType = methodTypes.FirstOrDefault(x => x.Id.Equals(Guid.Parse(invocation.M)));
+            var methodType = methodTypes.FirstOrDefault(x => x.Id.Equals(Guid.Parse(invocation.Method)));
 
             if (methodType == null)
             {
-                throw new Exception("Method " + invocation.M + " not found.");
+                throw new Exception("Method " + invocation.Method + " not found.");
             }
 
-            if (!invocation.V.Equals(obj.Strategy.ObjectVersion.ToString()))
+            if (!invocation.Version.Equals(obj.Strategy.ObjectVersion.ToString()))
             {
                 invokeResponse.AddVersionError(obj);
                 return true;

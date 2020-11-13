@@ -5,41 +5,34 @@
 
 namespace Allors.Protocol.Database.Sync
 {
+    using System.Text.Json.Serialization;
+
     public class SyncResponseObject
     {
-        /// <summary>
-        /// Gets or sets the object id.
-        /// </summary>
-        public string I { get; set; }
+        [JsonPropertyName("i")]
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the object type.
         /// Format is a mapping ":{key}:{value}" or a key "{key}".
-        /// The key will be generated on first occurence of the ObjectType
+        /// The key will be generated on first occurrence of the ObjectType
         /// and is local to this Sync.
         /// </summary>
-        public string T { get; set; }
+        [JsonPropertyName("t")]
+        public string ObjectTypeOrKey { get; set; }
 
-        /// <summary>
-        /// Gets or sets the version.
-        /// </summary>
-        public string V { get; set; }
+        [JsonPropertyName("v")]
+        public string Version { get; set; }
 
-        /// <summary>
-        /// Gets or sets the access controls.
-        /// </summary>
-        public string A { get; set; }
+        [JsonPropertyName("a")]
+        public string AccessControls { get; set; }
 
-        /// <summary>
-        /// Gets or sets the denied permissions.
-        /// </summary>
-        public string D { get; set; }
+        [JsonPropertyName("d")]
+        public string DeniedPermissions { get; set; }
 
-        /// <summary>
-        /// Gets or sets the roles.
-        /// </summary>
-        public SyncResponseRole[] R { get; set; }
+        [JsonPropertyName("r")]
+        public SyncResponseRole[] Roles { get; set; }
 
-        public override string ToString() => $"{this.T} [{this.I}:{this.V}]";
+        public override string ToString() => $"{this.ObjectTypeOrKey} [{this.Id}:{this.Version}]";
     }
 }

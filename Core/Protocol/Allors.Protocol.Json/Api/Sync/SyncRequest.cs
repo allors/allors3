@@ -5,8 +5,11 @@
 
 namespace Allors.Protocol.Database.Sync
 {
+    using System.Text.Json.Serialization;
+
     public class SyncRequest
     {
+        [JsonPropertyName("objects")]
         public string[] Objects { get; set; }
     }
 }

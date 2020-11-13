@@ -12,6 +12,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Allors.Security;
+    using Protocol.Json;
 
     public class TestAuthenticationController : Controller
     {
@@ -44,6 +45,7 @@ namespace Allors.Server
                         UserId = user.Id,
                         Token = token,
                     };
+
                     return this.Ok(response);
                 }
             }

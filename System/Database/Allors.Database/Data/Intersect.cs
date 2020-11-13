@@ -9,7 +9,7 @@ namespace Allors.Data
     using System.Linq;
 
     using Allors.Meta;
-    using Allors.Protocol.Data;
+    
 
     public class Intersect : IExtentOperator
     {
@@ -20,14 +20,6 @@ namespace Allors.Data
         public IExtent[] Operands { get; set; }
 
         public Sort[] Sorting { get; set; }
-
-        public Protocol.Data.Extent Save() =>
-            new Protocol.Data.Extent
-            {
-                Kind = ExtentKind.Intersect,
-                Operands = this.Operands.Select(v => v.Save()).ToArray(),
-                Sorting = this.Sorting.Select(v => new Protocol.Data.Sort { Descending = v.Descending, RoleType = v.RoleType?.RelationType.Id }).ToArray(),
-            };
 
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.Any(v => v.HasMissingArguments(parameters));
 
@@ -41,5 +33,7 @@ namespace Allors.Data
 
             return extent;
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitIntersect(this);
     }
 }

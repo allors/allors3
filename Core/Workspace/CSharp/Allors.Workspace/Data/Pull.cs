@@ -10,7 +10,7 @@ namespace Allors.Workspace.Data
     using Allors.Workspace;
     using Allors.Workspace.Meta;
 
-    public class Pull
+    public class Pull : IVisitable
     {
         public Guid? ExtentRef { get; set; }
 
@@ -26,14 +26,6 @@ namespace Allors.Workspace.Data
 
         public Result[] Results { get; set; }
 
-        public Protocol.Data.Pull ToJson() =>
-            new Protocol.Data.Pull
-            {
-                ExtentRef = this.ExtentRef,
-                Extent = this.Extent?.ToJson(),
-                ObjectType = this.ObjectType?.Id,
-                Object = this.ObjectId ?? this.Object?.DatabaseId?.ToString(),
-                Results = this.Results?.Select(v => v.ToJson()).ToArray(),
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitPull(this);
     }
 }

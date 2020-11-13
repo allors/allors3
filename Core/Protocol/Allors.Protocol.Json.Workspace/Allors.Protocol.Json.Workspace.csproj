@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
+  </ItemGroup>
+ 
+</Project>

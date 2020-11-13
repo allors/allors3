@@ -6,18 +6,15 @@
 namespace Allors.Protocol.Database.Sync
 {
     using System.Diagnostics;
+    using System.Text.Json.Serialization;
 
-    [DebuggerDisplay("{V} [{T}]")]
+    [DebuggerDisplay("{Value} [{RoleType}]")]
     public class SyncResponseRole
     {
-        /// <summary>
-        /// Gets or sets the role type.
-        /// </summary>
-        public string T { get; set; }
+        [JsonPropertyName("t")]
+        public string RoleType { get; set; }
 
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        public string V { get; set; }
+        [JsonPropertyName("v")]
+        public string Value { get; set; }
     }
 }

@@ -6,6 +6,6 @@
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Allors.Protocol\Allors.Protocol.csproj" />
+    <ProjectReference Include="..\..\..\System\Allors\Allors.csproj" />
   </ItemGroup>
 </Project>

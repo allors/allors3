@@ -9,8 +9,9 @@ namespace Tests
     using System.Linq;
     using Allors.Api.Json;
     using Allors.Domain;
-    using Allors.Protocol.Data;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Database.Pull;
+    using Allors.Protocol.Json.Database;
     using Xunit;
 
     public class PullExtentTests : ApiTest, IClassFixture<Fixture>
@@ -27,15 +28,12 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var pull = new Allors.Data.Pull { ObjectType = m.WorkspaceXObject1.ObjectType };
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
-                    new Pull
-                    {
-                        Extent = extent.Save(),
-                    },
+                    pull.ToJson()
                 },
             };
 
@@ -60,16 +58,13 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var pull = new Allors.Data.Pull { ObjectType = m.WorkspaceXObject1.ObjectType };
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
-                    new Pull
-                    {
-                        Extent = extent.Save(),
-                    },
-                },
+                   pull.ToJson()
+                }
             };
 
             var api = new Api(this.Session, "Y");
@@ -89,15 +84,12 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var pull = new Allors.Data.Pull { ObjectType = m.WorkspaceXObject1.ObjectType };
             var pullRequest = new PullRequest
             {
-                P = new[]
+                Pulls = new[]
                 {
-                    new Pull
-                    {
-                        Extent = extent.Save(),
-                    },
+                    pull.ToJson()
                 },
             };
 

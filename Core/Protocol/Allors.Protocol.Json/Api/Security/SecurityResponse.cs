@@ -5,10 +5,14 @@
 
 namespace Allors.Protocol.Database.Security
 {
+    using System.Text.Json.Serialization;
+
     public class SecurityResponse
     {
+        [JsonPropertyName("accessControls")]
         public SecurityResponseAccessControl[] AccessControls { get; set; }
 
+        [JsonPropertyName("permissions")]
         public string[][] Permissions { get; set; }
     }
 }

@@ -6,8 +6,6 @@
 namespace Allors.Workspace.Data
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using Allors.Protocol.Data;
     using Allors.Workspace;
     using Allors.Workspace.Meta;
 
@@ -25,16 +23,6 @@ namespace Allors.Workspace.Data
 
         public string Parameter { get; set; }
 
-        public Predicate ToJson() =>
-            new Predicate
-            {
-                Kind = PredicateKind.ContainedIn,
-                Dependencies = this.Dependencies,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Extent = this.Extent?.ToJson(),
-                Values = this.Objects?.Select(v => v.DatabaseId?.ToString()).ToArray(),
-                Parameter = this.Parameter,
-            };
+        public void Accept(IVisitor visitor) => visitor.VisitContainedIn(this);
     }
 }

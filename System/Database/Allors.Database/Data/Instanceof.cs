@@ -8,7 +8,7 @@ namespace Allors.Data
     using System.Collections.Generic;
 
     using Allors.Meta;
-    using Allors.Protocol.Data;
+    
 
     public class Instanceof : IPropertyPredicate
     {
@@ -21,15 +21,6 @@ namespace Allors.Data
         public IComposite ObjectType { get; set; }
 
         public IPropertyType PropertyType { get; set; }
-
-        public Predicate Save() =>
-            new Predicate
-            {
-                Kind = PredicateKind.Instanceof,
-                ObjectType = this.ObjectType?.Id,
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-            };
 
         bool IPredicate.ShouldTreeShake(IDictionary<string, string> parameters) => this.HasMissingDependencies(parameters) || ((IPredicate)this).HasMissingArguments(parameters);
 
@@ -56,5 +47,7 @@ namespace Allors.Data
                 compositePredicate.AddInstanceof(composite);
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitInstanceOf(this);
     }
 }

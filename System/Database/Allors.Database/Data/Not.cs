@@ -7,8 +7,6 @@ namespace Allors.Data
 {
     using System.Collections.Generic;
 
-    using Allors.Protocol.Data;
-
     public class Not : ICompositePredicate
     {
         public string[] Dependencies { get; set; }
@@ -23,13 +21,6 @@ namespace Allors.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operand = predicate;
 
-        public Predicate Save() =>
-            new Predicate()
-            {
-                Kind = PredicateKind.Not,
-                Operand = this.Operand?.Save(),
-            };
-
         void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Allors.ICompositePredicate compositePredicate)
         {
             var not = compositePredicate.AddNot();
@@ -39,5 +30,7 @@ namespace Allors.Data
                 this.Operand?.Build(session, parameters, not);
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitNot(this);
     }
 }

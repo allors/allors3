@@ -41,13 +41,13 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                I = new Invocation[]
+                Invocations = new Invocation[]
                 {
                     new Invocation
                     {
-                        I = $"{this.x1.Id}",
-                        V = $"{this.x1.Strategy.ObjectVersion}",
-                        M = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
+                        Id = $"{this.x1.Id}",
+                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        Method = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
                     },
                 },
             };
@@ -65,13 +65,13 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                I = new Invocation[]
+                Invocations = new Invocation[]
                 {
                     new Invocation
                     {
-                        I = $"{this.x1.Id}",
-                        V = $"{this.x1.Strategy.ObjectVersion}",
-                        M = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
+                        Id = $"{this.x1.Id}",
+                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        Method = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
                     },
                 },
             };
@@ -95,13 +95,13 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                I = new Invocation[]
+                Invocations = new Invocation[]
                 {
                     new Invocation
                     {
-                        I = $"{this.x1.Id}",
-                        V = $"{this.x1.Strategy.ObjectVersion}",
-                        M = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
+                        Id = $"{this.x1.Id}",
+                        Version = $"{this.x1.Strategy.ObjectVersion}",
+                        Method = $"{this.M.WorkspaceXObject1.DoX.IdAsString}"
                     },
                 },
             };

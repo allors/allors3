@@ -10,7 +10,7 @@ namespace Allors.Data
     using System.Linq;
     using Allors.Meta;
 
-    public class Node
+    public class Node : IVisitable
     {
         public Node(IPropertyType propertyType, Node[] nodes = null)
         {
@@ -36,14 +36,6 @@ namespace Allors.Data
         public IComposite Composite { get; }
 
         public Node[] Nodes { get; private set; }
-
-        public Protocol.Data.Node Save() =>
-            new Protocol.Data.Node
-            {
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Nodes = this.Nodes.Select(v => v.Save()).ToArray(),
-            };
 
         public void BuildPrefetchPolicy(PrefetchPolicyBuilder prefetchPolicyBuilder)
         {
@@ -88,7 +80,7 @@ namespace Allors.Data
             return this;
         }
 
-        internal void Add(Node node)
+        public void Add(Node node)
         {
             this.AssertAssignable(node);
             this.Nodes = this.Nodes.Append(node).ToArray();
@@ -115,5 +107,7 @@ namespace Allors.Data
                 }
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitNode(this);
     }
 }

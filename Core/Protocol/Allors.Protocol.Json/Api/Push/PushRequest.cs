@@ -5,10 +5,14 @@
 
 namespace Allors.Protocol.Database.Push
 {
+    using System.Text.Json.Serialization;
+
     public class PushRequest
     {
+        [JsonPropertyName("newObjects")]
         public PushRequestNewObject[] NewObjects { get; set; }
 
+        [JsonPropertyName("objects")]
         public PushRequestObject[] Objects { get; set; }
     }
 }

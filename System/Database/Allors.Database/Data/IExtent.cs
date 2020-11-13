@@ -9,15 +9,13 @@ namespace Allors.Data
 
     using Allors.Meta;
 
-    public interface IExtent
+    public interface IExtent : IVisitable
     {
         IComposite ObjectType { get; }
 
         Sort[] Sorting { get; set; }
 
         Allors.Extent Build(ISession session, IDictionary<string, string> parameters = null);
-
-        Protocol.Data.Extent Save();
 
         bool HasMissingArguments(IDictionary<string, string> parameters);
     }

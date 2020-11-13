@@ -48,13 +48,13 @@ namespace Allors.Api.Json.Security
                     {
                         var response = new SecurityResponseAccessControl
                         {
-                            I = v.Strategy.ObjectId.ToString(),
-                            V = v.Strategy.ObjectVersion.ToString(),
+                            Id = v.Strategy.ObjectId.ToString(),
+                            Version = v.Strategy.ObjectVersion.ToString(),
                         };
 
                         if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
                         {
-                            response.P = string.Join(",", x);
+                            response.PermissionIds = string.Join(",", x);
                         }
 
                         return response;

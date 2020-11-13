@@ -6,14 +6,9 @@
 namespace Allors.Data
 {
     using System.Collections.Generic;
-
-    using Allors.Protocol.Data;
-
-    public interface IPredicate
+    public interface IPredicate : IVisitable
     {
         string[] Dependencies { get; }
-
-        Predicate Save();
 
         void Build(ISession session, IDictionary<string, string> parameters, Allors.ICompositePredicate compositePredicate);
 

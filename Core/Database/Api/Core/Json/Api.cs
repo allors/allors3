@@ -7,12 +7,12 @@
 namespace Allors.Api.Json
 {
     using Invoke;
-    using Protocol.Data;
     using Protocol.Database.Invoke;
     using Protocol.Database.Pull;
     using Protocol.Database.Push;
     using Protocol.Database.Security;
     using Protocol.Database.Sync;
+    using Protocol.Json.Database;
     using Pull;
     using Push;
     using Security;
@@ -37,11 +37,11 @@ namespace Allors.Api.Json
         {
             var response = new PullResponseBuilder(this.Session, this.WorkspaceName);
 
-            if (request.P != null)
+            if (request.Pulls != null)
             {
-                foreach (var p in request.P)
+                foreach (var p in request.Pulls)
                 {
-                    var pull = p.Load(this.Session);
+                    var pull = p.FromJson(this.Session);
 
                     if (pull.Object != null)
                     {
@@ -58,7 +58,7 @@ namespace Allors.Api.Json
 
             return response.Build();
         }
-
+        
         public PushResponse Push(PushRequest pushRequest)
         {
             var responseBuilder = new PushResponseBuilder(this.Session, this.WorkspaceName, pushRequest);

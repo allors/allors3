@@ -10,7 +10,7 @@ namespace Allors.Workspace.Data
     using System.Text;
     using Allors.Workspace.Meta;
 
-    public class Node
+    public class Node : IVisitable
     {
         public Node(IPropertyType propertyType = null, Node[] nodes = null)
         {
@@ -35,19 +35,7 @@ namespace Allors.Workspace.Data
             this.Nodes = this.Nodes.Append(node).ToArray();
             return this;
         }
-
-        public Protocol.Data.Node ToData()
-        {
-            var data = new Protocol.Data.Node
-            {
-                AssociationType = (this.PropertyType as IAssociationType)?.RelationType.Id,
-                RoleType = (this.PropertyType as IRoleType)?.RelationType.Id,
-                Nodes = this.Nodes.Select(v => v.ToData()).ToArray(),
-            };
-
-            return data;
-        }
-
+        
         public override string ToString()
         {
             var toString = new StringBuilder();
@@ -65,5 +53,7 @@ namespace Allors.Workspace.Data
                 this.ToString(toString, node.Nodes, level + 1);
             }
         }
+
+        public void Accept(IVisitor visitor) => visitor.VisitNode(this);
     }
 }

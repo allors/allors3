@@ -5,12 +5,8 @@
 
 namespace Allors.Workspace.Data
 {
-    using Allors.Protocol.Data;
-
-    public interface IPredicate
+    public interface IPredicate : IVisitable
     {
         string[] Dependencies { get; set; }
-
-        Predicate ToJson();
     }
 }
