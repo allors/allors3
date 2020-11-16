@@ -19,7 +19,7 @@ namespace Allors.Domain
         public GeneralLedgerAccountDerivation(M m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.ChartOfAccounts.GeneralLedgerAccounts),
+                new ChangedPattern(m.ChartOfAccounts.GeneralLedgerAccounts) { Steps =  new IPropertyType[] { m.ChartOfAccounts.GeneralLedgerAccounts } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

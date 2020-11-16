@@ -2856,6 +2856,71 @@ namespace Allors.Domain
     public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipToCustomerDeriveBillToCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.ShipToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.BillToCustomer, order.ShipToCustomer);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveShipToCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.ShipToCustomer, order.BillToCustomer);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveCustomers()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(order.BillToCustomer, order.Customers);
+        }
+
+        [Fact]
+        public void ChangedShipToCustomerDeriveCustomers()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.ShipToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(order.ShipToCustomer, order.Customers);
+        }
+
+        [Fact]
+        public void ChangedPlacingCustomerDeriveCustomers()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.PlacingCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(order.PlacingCustomer, order.Customers);
+        }
     }
 
     public class SalesOrderCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -3018,7 +3083,7 @@ namespace Allors.Domain
         [Fact]
         public void ChangedSalesOrderStateDeriveCanShipFalse()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
 
             this.Session.Derive(false);
 
@@ -3031,7 +3096,7 @@ namespace Allors.Domain
         [Fact]
         public void ChangedSalesOrderStateDeriveCanShipTrue()
         {
-            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = true;
             this.Session.Derive(false);
 
@@ -3052,6 +3117,210 @@ namespace Allors.Domain
             order.Accept();
             this.Session.Derive(false);
 
+            Assert.True(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedPartiallyShipDeriveCanShipFalse()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedPartiallyShipDeriveCanShipTrue()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemQuantityOrderedDeriveCanShipFalse()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+
+            item.QuantityOrdered += 1;
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemQuantityOrderedDeriveCanShipTrue()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+
+            item.QuantityOrdered -= 1;
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemQuantityRequestsShippingDeriveCanShipFalse()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(order.CanShip);
+            var before = item.QuantityRequestsShipping;
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Consumption)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(before - 1, item.QuantityRequestsShipping);
+            Assert.False(order.CanShip);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemQuantityRequestsShippingDeriveCanShipTrue()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.False(order.CanShip);
+            var before = item.QuantityRequestsShipping;
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(1)
+                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(before + 1, item.QuantityRequestsShipping);
             Assert.True(order.CanShip);
         }
     }

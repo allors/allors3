@@ -23,6 +23,7 @@ namespace Allors.Domain
             new ChangedPattern(this.M.SalesOrder.BillToEndCustomer),
             new ChangedPattern(this.M.SalesOrder.ShipToCustomer),
             new ChangedPattern(this.M.SalesOrder.ShipToEndCustomer),
+            new ChangedPattern(this.M.SalesOrder.PlacingCustomer),
             new ChangedPattern(this.M.SalesOrder.VatRegime),
             new ChangedPattern(this.M.SalesOrder.AssignedVatClause),
             new ChangedPattern(this.M.SalesOrder.OrderDate),

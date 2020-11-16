@@ -94,6 +94,7 @@ namespace Allors.Domain
                 .WithBillToContactPerson(@this.ContactPerson)
                 .WithInvoiceDate(@this.Strategy.Session.Now())
                 .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Strategy.Session).SalesInvoice)
+                .WithWorkEffort(@this)
                 .Build();
 
             CreateInvoiceItems(@this, salesInvoice);
