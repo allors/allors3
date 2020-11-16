@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="..\..\..\Base\Database\Domain\Base\DomainDerivations\AuditableDerivation.cs" />
     <Compile Remove="..\..\..\Base\Database\Domain\Base\Workflow\TaskDeriveParticipants.cs" />
   </ItemGroup>
 

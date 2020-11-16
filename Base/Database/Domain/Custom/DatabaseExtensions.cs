@@ -15,7 +15,6 @@ namespace Allors
             var derivations = new IDomainDerivation[]
             {
                 // Core
-                new AuditableDerivation(m),
                 new MediaDerivation(m),
 
                 // Custom

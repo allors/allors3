@@ -7,28 +7,26 @@ namespace Allors.Domain
 {
     public static class AuditableExtensions
     {
-        public static void CoreOnDerive(this Auditable @this, ObjectOnDerive method)
+        public static void CoreOnPostDerive(this Auditable @this, ObjectOnPostDerive method)
         {
-            // TODO: new derivation
+            var user = @this.Strategy.Session.State().User;
+            if (user != null)
+            {
+                var derivation = method.Derivation;
+                var changeSet = derivation.ChangeSet;
 
-            //var user = @this.Strategy.Session.State().User;
-            //if (user != null)
-            //{
-            //    var derivation = method.Derivation;
-            //    var changeSet = derivation.ChangeSet;
+                if (changeSet.Created.Contains(@this.Strategy))
+                {
+                    @this.CreationDate = @this.Strategy.Session.Now();
+                    @this.CreatedBy = user;
+                }
 
-            //    if (changeSet.Created.Contains(@this.Id))
-            //    {
-            //        @this.CreationDate = @this.Strategy.Session.Now();
-            //        @this.CreatedBy = user;
-            //    }
-
-            //    if (changeSet.Associations.Contains(@this.Id))
-            //    {
-            //        @this.LastModifiedDate = @this.Strategy.Session.Now();
-            //        @this.LastModifiedBy = user;
-            //    }
-            //}
+                if (changeSet.Associations.Contains(@this.Id))
+                {
+                    @this.LastModifiedDate = @this.Strategy.Session.Now();
+                    @this.LastModifiedBy = user;
+                }
+            }
         }
     }
 }

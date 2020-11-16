@@ -13,7 +13,6 @@ namespace Allors.Domain
             var derivations = new IDomainDerivation[]
             {
                 // Core
-                new AuditableDerivation(m),
                 new MediaDerivation(m),
                 new TransitionalDeniedPermissionDerivation(m),
 
