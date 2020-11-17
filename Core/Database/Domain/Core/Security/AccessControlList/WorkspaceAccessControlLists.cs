@@ -18,7 +18,7 @@ namespace Allors.Domain
             this.EffectivePermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
         }
 
-        public IReadOnlyDictionary<AccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
+        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
 
         public string WorkspaceName { get; }
 
@@ -40,9 +40,9 @@ namespace Allors.Domain
             }
         }
 
-        private Dictionary<AccessControl, ISet<long>> EffectivePermissionsByAccessControl()
+        private Dictionary<IAccessControl, ISet<long>> EffectivePermissionsByAccessControl()
         {
-            var effectivePermissionsByAccessControl = new Dictionary<AccessControl, ISet<long>>();
+            var effectivePermissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
 
             var session = this.User.Session();
             var database = session.Database;

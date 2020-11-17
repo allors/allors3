@@ -8,7 +8,7 @@ namespace Tests.Workspace.Remote
     using System.Linq;
     using Allors;
     using Allors.Protocol.Json;
-    using Allors.Protocol.Database.Push;
+    using Allors.Protocol.Json.Api.Push;
     using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Domain;
     using Xunit;

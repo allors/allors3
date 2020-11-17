@@ -6,7 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System.Linq;
-    using Protocol.Database;
+    using Allors.Protocol.Json.Api;
 
     public abstract class Result : IResult
     {

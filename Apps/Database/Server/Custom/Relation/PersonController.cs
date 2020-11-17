@@ -6,7 +6,7 @@
 namespace Allors.Server.Controllers
 {
     using Allors.Services;
-    using Api.Json.Pull;
+    using Database.Protocol.Json;
     using Microsoft.AspNetCore.Mvc;
 
     public class PersonController : Controller
@@ -25,7 +25,8 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull([FromBody] Model model)
         {
-            var response = new PullResponseBuilder(this.SessionService.Session, this.WorkspaceService.Name);
+            var api = new Api(this.SessionService.Session, this.WorkspaceService.Name);
+            var response = api.CreatePullResponseBuilder();
 
             var person = this.SessionService.Session.Instantiate(model.Id);
             response.AddObject("person", person);

@@ -10,8 +10,8 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Workspace.Meta;
-    using Protocol.Json;
-    using Protocol.Database.Push;
+    using Allors.Protocol.Json;
+    using Allors.Protocol.Json.Api.Push;
 
     public class DatabaseStrategy : Strategy, IDatabaseStrategy
     {

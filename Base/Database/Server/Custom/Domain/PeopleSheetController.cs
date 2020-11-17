@@ -9,10 +9,10 @@ namespace Allors.Server.Controllers
 
     using Allors.Domain;
     using Allors.Services;
-    using Api.Json.Pull;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Allors.State;
+    using Database.Protocol.Json;
 
     public class PeopleSheetController : Controller
     {
@@ -33,7 +33,8 @@ namespace Allors.Server.Controllers
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
+            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var response = api.CreatePullResponseBuilder();
             var people = new People(this.Session).Extent().ToArray();
             response.AddCollection("people", people);
             return this.Ok(response.Build());

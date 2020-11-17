@@ -14,6 +14,8 @@ namespace Allors.Meta
 
         IEnumerable<IRoleType> DatabaseRoleTypes { get; }
 
+        IEnumerable<IMethodType> MethodTypes { get; }
+
         bool ExistDatabaseClass { get; }
 
         IEnumerable<IClass> DatabaseClasses { get; }

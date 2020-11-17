@@ -10,11 +10,12 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    public partial class ExecutePermission
+    public partial class ExecutePermission : IExecutePermission
     {
-        public ObjectType ConcreteClass
+        IClass IPermission.ConcreteClass => this.ConcreteClass;
+        public Class ConcreteClass
         {
-            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
+            get => (Class)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {
@@ -37,6 +38,7 @@ namespace Allors.Domain
 
         public OperandType OperandType => this.MethodType;
 
+        IMethodType IExecutePermission.MethodType => this.MethodType;
         public MethodType MethodType
         {
             get => (MethodType)this.Strategy.Session.Database.MetaPopulation.Find(this.MethodTypePointer);

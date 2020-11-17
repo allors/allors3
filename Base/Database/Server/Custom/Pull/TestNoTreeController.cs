@@ -7,9 +7,9 @@ namespace Allors.Server.Controllers
 {
     using Allors.Domain;
     using Allors.Services;
-    using Api.Json.Pull;
     using Microsoft.AspNetCore.Mvc;
     using Allors.State;
+    using Database.Protocol.Json;
 
     public class TestNoTreeController : Controller
     {
@@ -29,8 +29,10 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
-            var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
-            response.AddObject("object", response.AccessControlLists.User);
+            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var response = api.CreatePullResponseBuilder();
+
+            response.AddObject("object", api.User);
             response.AddCollection("collection", new Organisations(this.Session).Extent());
             return this.Ok(response.Build());
         }

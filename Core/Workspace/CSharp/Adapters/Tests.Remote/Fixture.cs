@@ -5,7 +5,7 @@
 
 namespace Tests.Workspace.Remote
 {
-    using Allors.Protocol.Database.Sync;
+    using Allors.Protocol.Json.Api.Sync;
     using Allors.Workspace.Meta;
 
     public class Fixture

@@ -15,10 +15,10 @@ namespace Allors
         {
         }
 
-        public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, Class @class)
+        public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
         {
             // TODO: Cache
-            foreach (var roleType in @class.RoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
+            foreach (var roleType in @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
             {
                 @this.WithRule(roleType);
             }

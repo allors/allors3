@@ -30,7 +30,7 @@ namespace Tests
 
             Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
-            Assert.Equal(this.M.Role.Name, derivationError.Relations[0].RoleType);
+            Assert.Equal(this.M.Role.Name.RelationType, derivationError.Relations[0].RelationType);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Tests
             {
                 Assert.Single(derivationError.Relations);
                 Assert.Equal(typeof(DerivationErrorUnique), derivationError.GetType());
-                Assert.Equal(this.M.Role.Name, derivationError.Relations[0].RoleType);
+                Assert.Equal(this.M.Role.Name.RelationType, derivationError.Relations[0].RelationType);
             }
         }
 

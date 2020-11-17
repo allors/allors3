@@ -7,10 +7,10 @@ namespace Allors.Server.Controllers
 {
     using Allors.Domain;
     using Allors.Services;
-    using Api.Json.Pull;
     using Data;
     using Microsoft.AspNetCore.Mvc;
     using Allors.State;
+    using Database.Protocol.Json;
 
     public class TestEmployeesController : Controller
     {
@@ -30,8 +30,10 @@ namespace Allors.Server.Controllers
         [HttpPost]
         public IActionResult Pull()
         {
+            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var response = api.CreatePullResponseBuilder();
+
             var m = this.Session.Database.State().M;
-            var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
             var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.State().User);
 
             response.AddObject("root", organisation, new[]

@@ -11,11 +11,8 @@ namespace Allors.State
 
     public class WorkspaceMetaCacheEntry : IWorkspaceMetaCacheEntry
     {
-        public WorkspaceMetaCacheEntry(MetaPopulation metaPopulation, string workspaceName)
-        {
-            this.Classes =  new HashSet<Class>(metaPopulation.Classes.Where(v => v.WorkspaceNames.Contains(workspaceName)));
-        }
+        public WorkspaceMetaCacheEntry(MetaPopulation metaPopulation, string workspaceName) => this.Classes =  new HashSet<IClass>(metaPopulation.Classes.Where(v => v.WorkspaceNames.Contains(workspaceName)));
 
-        public ISet<Class> Classes { get; }
+        public ISet<IClass> Classes { get; }
     }
 }

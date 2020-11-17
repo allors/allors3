@@ -10,11 +10,12 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    public partial class CreatePermission
+    public partial class CreatePermission : ICreatePermission
     {
-        public ObjectType ConcreteClass
+        IClass IPermission.ConcreteClass => this.ConcreteClass;
+        public Class ConcreteClass
         {
-            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
+            get => (Class)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {

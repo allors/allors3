@@ -29,8 +29,7 @@ namespace Allors.Domain.Derivations.Default
 
         public AccumulatedChangeSet Execute()
         {
-            var createDerivations = this.Session.Database.CreateDerivations;
-            var changeDerivations = this.Session.Database.ChangeDerivations;
+            var derivations = this.Session.Database.Derivations;
 
             var maxDomainDerivationCycles = this.DerivationConfig.MaxDomainDerivationCycles;
             var domainCycles = 0;
@@ -63,7 +62,7 @@ namespace Allors.Domain.Derivations.Default
                 var domainCycle = new DomainDerivationCycle { ChangeSet = changeSet, Session = this.Session, Validation = domainValidation };
 
                 var matchesByDerivation = new Dictionary<IDomainDerivation, IEnumerable<IObject>>();
-                foreach (var domainDerivation in createDerivations.Union(changeDerivations))
+                foreach (var domainDerivation in derivations)
                 {
                     var matches = new HashSet<IObject>();
 
@@ -71,11 +70,6 @@ namespace Allors.Domain.Derivations.Default
                     {
                         var source = pattern switch
                         {
-                            // Create
-                            CreatedPattern createdPattern => changeSet.Created
-                                .Where(v => createdPattern.Composite.IsAssignableFrom(v.Class))
-                                .Select(v => v.GetObject()),
-
                             // RoleDefault
                             ChangedPattern changedRolePattern when changedRolePattern.RoleType is RoleDefault roleInterface => changeSet
                                     .AssociationsByRoleType

@@ -6,19 +6,18 @@
 namespace Allors.Domain.Derivations.Errors
 {
     using System.Collections.Generic;
-
-    using Allors.Meta;
+    using Meta;
 
     public abstract class DerivationError : IDerivationError
     {
         private readonly string message;
 
-        protected DerivationError(IValidation validation, DerivationRelation[] relations, string errorMessage)
+        protected DerivationError(IValidation validation, IDerivationRelation[] relations, string errorMessage)
             : this(validation, relations, errorMessage, new object[] { DerivationRelation.ToString(relations) })
         {
         }
 
-        protected DerivationError(IValidation validation, DerivationRelation[] relations, string errorMessage, object[] errorMessageParameters)
+        protected DerivationError(IValidation validation, IDerivationRelation[] relations, string errorMessage, object[] errorMessageParameters)
         {
             this.Validation = validation;
             this.Relations = relations;
@@ -42,16 +41,16 @@ namespace Allors.Domain.Derivations.Errors
 
         public IValidation Validation { get; }
 
-        public DerivationRelation[] Relations { get; }
+        public IDerivationRelation[] Relations { get; }
 
-        public RoleType[] RoleTypes
+        public IRoleType[] RoleTypes
         {
             get
             {
-                var roleTypes = new List<RoleType>();
-                foreach (var derivationRole in this.Relations)
+                var roleTypes = new List<IRoleType>();
+                foreach (var relation in this.Relations)
                 {
-                    var roleType = derivationRole.RoleType;
+                    var roleType = relation.RelationType.RoleType;
                     if (!roleTypes.Contains(roleType))
                     {
                         roleTypes.Add(roleType);

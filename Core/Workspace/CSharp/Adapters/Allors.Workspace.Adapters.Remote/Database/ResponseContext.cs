@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Protocol.Database;
+    using Allors.Protocol.Json.Api;
 
     public class ResponseContext
     {

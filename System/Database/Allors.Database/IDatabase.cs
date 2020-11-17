@@ -29,9 +29,7 @@ namespace Allors
         [Obsolete]
         event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        IDomainDerivation[] CreateDerivations { get; }
-
-        IDomainDerivation[] ChangeDerivations { get; }
+        IDomainDerivation[] Derivations { get; }
         
         /// <summary>
         /// Gets a value indicating whether this database is shared with other databases with the same name.

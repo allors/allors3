@@ -7,9 +7,9 @@ namespace Allors.Server.Controllers
 {
     using System;
     using Allors.Services;
-    using Api.Json.Pull;
     using Microsoft.AspNetCore.Mvc;
     using Allors.State;
+    using Database.Protocol.Json;
 
     public class TestPullController : Controller
     {
@@ -31,7 +31,8 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
+                var api = new Api(this.Session, this.WorkspaceService.Name);
+                var response = api.CreatePullResponseBuilder();
                 return this.Ok(response.Build());
             }
             catch (Exception e)

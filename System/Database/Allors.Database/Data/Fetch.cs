@@ -33,6 +33,12 @@ namespace Allors.Data
 
         public Step Step { get; set; }
 
+        public object Get(IObject allorsObject, IAccessControlLists acls) => this.Step == null ? allorsObject : this.Step.Get(allorsObject, acls);
+
+        public bool Set(IObject allorsObject, IAccessControlLists acls, object value) => this.Step != null && this.Step.Set(allorsObject, acls, value);
+
+        public void Ensure(IObject allorsObject, IAccessControlLists acls) => this.Step.Ensure(allorsObject, acls);
+
         public static bool TryParse(IComposite composite, string fetchString, out Fetch fetch)
         {
             var propertyType = Resolve(composite, fetchString);

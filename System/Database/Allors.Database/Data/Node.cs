@@ -37,6 +37,75 @@ namespace Allors.Data
 
         public Node[] Nodes { get; private set; }
 
+        public void Resolve(IObject @object, IAccessControlLists acls, ISet<IObject> objects)
+        {
+            if (@object != null)
+            {
+                var acl = acls[@object];
+                // TODO: Access check for AssociationType
+                if (this.PropertyType is IAssociationType || acl.CanRead((IRoleType)this.PropertyType))
+                {
+                    if (this.PropertyType is IRoleType roleType)
+                    {
+                        if (roleType.ObjectType.IsComposite)
+                        {
+                            if (roleType.IsOne)
+                            {
+                                var role = @object.Strategy.GetCompositeRole(roleType);
+                                if (role != null)
+                                {
+                                    objects.Add(role);
+                                    foreach (var node in this.Nodes)
+                                    {
+                                        node.Resolve(role, acls, objects);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var roles = @object.Strategy.GetCompositeRoles(roleType);
+                                foreach (IObject role in roles)
+                                {
+                                    objects.Add(role);
+                                    foreach (var node in this.Nodes)
+                                    {
+                                        node.Resolve(role, acls, objects);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (this.PropertyType is IAssociationType associationType)
+                    {
+                        if (associationType.IsOne)
+                        {
+                            var association = @object.Strategy.GetCompositeAssociation(associationType);
+                            if (association != null)
+                            {
+                                objects.Add(association);
+                                foreach (var node in this.Nodes)
+                                {
+                                    node.Resolve(association, acls, objects);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var associations = @object.Strategy.GetCompositeAssociations(associationType);
+                            foreach (IObject association in associations)
+                            {
+                                objects.Add(association);
+                                foreach (var node in this.Nodes)
+                                {
+                                    node.Resolve(association, acls, objects);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public void BuildPrefetchPolicy(PrefetchPolicyBuilder prefetchPolicyBuilder)
         {
             if (this.Nodes == null || this.Nodes.Length == 0)

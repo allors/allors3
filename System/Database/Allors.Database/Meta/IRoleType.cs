@@ -32,5 +32,7 @@ namespace Allors.Meta
         int? Precision { get; }
 
         int? Scale { get; }
+
+        void Set(IStrategy strategy, object value);
     }
 }

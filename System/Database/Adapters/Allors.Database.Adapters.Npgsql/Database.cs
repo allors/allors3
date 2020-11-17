@@ -90,8 +90,7 @@ namespace Allors.Database.Adapters.Npgsql
 
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
 
-            this.CreateDerivations = Array.Empty<IDomainDerivation>();
-            this.ChangeDerivations = Array.Empty<IDomainDerivation>();
+            this.Derivations = Array.Empty<IDomainDerivation>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -100,9 +99,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        public IDomainDerivation[] CreateDerivations { get; private set; }
-
-        public IDomainDerivation[] ChangeDerivations { get; private set; }
+        public IDomainDerivation[] Derivations { get; private set; }
 
         public IDatabaseStateLifecycle StateLifecycle { get; }
 
@@ -201,17 +198,7 @@ namespace Allors.Database.Adapters.Npgsql
             return new Session(this, connection, this.StateLifecycle.CreateSessionInstance());
         }
 
-        public void AddDerivation(IDomainDerivation derivation)
-        {
-            if (derivation.Patterns.OfType<CreatedPattern>().Any())
-            {
-                this.CreateDerivations = new List<IDomainDerivation>(this.CreateDerivations) { derivation }.ToArray();
-            }
-            else
-            {
-                this.ChangeDerivations = new List<IDomainDerivation>(this.ChangeDerivations) { derivation }.ToArray();
-            }
-        }
+        public void AddDerivation(IDomainDerivation derivation) => this.Derivations = new List<IDomainDerivation>(this.Derivations) { derivation }.ToArray();
 
         public void Init()
         {

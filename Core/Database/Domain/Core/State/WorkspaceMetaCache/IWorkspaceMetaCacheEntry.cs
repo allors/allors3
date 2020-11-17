@@ -10,6 +10,6 @@ namespace Allors.State
 
     public interface IWorkspaceMetaCacheEntry
     {
-        ISet<Class> Classes { get; }
+        ISet<IClass> Classes { get; }
     }
 }

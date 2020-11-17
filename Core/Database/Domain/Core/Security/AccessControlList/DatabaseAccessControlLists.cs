@@ -17,9 +17,9 @@ namespace Allors.Domain
             this.EffectivePermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
         }
 
-        public IEnumerable<AccessControl> AccessControls => this.AclByObject.SelectMany(v => v.Value.AccessControls).Distinct();
+        public IEnumerable<IAccessControl> AccessControls => this.AclByObject.SelectMany(v => v.Value.AccessControls).Distinct();
 
-        public IReadOnlyDictionary<AccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
+        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
 
         public User User { get; }
 
@@ -39,9 +39,9 @@ namespace Allors.Domain
             }
         }
 
-        private Dictionary<AccessControl, ISet<long>> EffectivePermissionsByAccessControl()
+        private Dictionary<IAccessControl, ISet<long>> EffectivePermissionsByAccessControl()
         {
-            var effectivePermissionsByAccessControl = new Dictionary<AccessControl, ISet<long>>();
+            var effectivePermissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
 
             var session = this.User.Session();
             var database = session.Database;

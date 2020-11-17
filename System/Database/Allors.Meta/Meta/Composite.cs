@@ -195,6 +195,7 @@ namespace Allors.Meta
 
         public IEnumerable<RoleType> SortedExclusiveRoleTypes => this.ExclusiveRoleTypes.OrderBy(v => v.Name);
 
+        IEnumerable<IMethodType> IComposite.MethodTypes => this.MethodTypes;
 
         /// <summary>
         /// Gets the method types.

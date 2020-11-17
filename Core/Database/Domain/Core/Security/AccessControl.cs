@@ -7,7 +7,7 @@ namespace Allors.Domain
 {
     using System.Linq;
 
-    public partial class AccessControl
+    public partial class AccessControl : IAccessControl
     {
         public void CoreOnDerive(ObjectOnDerive method)
         {
