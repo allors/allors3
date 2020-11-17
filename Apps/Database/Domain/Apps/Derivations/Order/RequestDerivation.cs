@@ -38,7 +38,7 @@ namespace Allors.Domain
                 if (@this.ExistRecipient && !@this.ExistRequestNumber)
                 {
                     @this.RequestNumber = @this.Recipient.NextRequestNumber(session.Now().Year);
-                    (@this).SortableRequestNumber = @this.Session().GetSingleton().SortableNumber(@this.Recipient.RequestNumberPrefix, @this.RequestNumber, @this.RequestDate.Year.ToString());
+                    (@this).SortableRequestNumber = NumberFormatter.SortableNumber(@this.Recipient.RequestNumberPrefix, @this.RequestNumber, @this.RequestDate.Year.ToString());
                 }
 
                 if (@this.ExistRequestState && @this.RequestState.Equals(new RequestStates(session).Anonymous) && @this.ExistOriginator)

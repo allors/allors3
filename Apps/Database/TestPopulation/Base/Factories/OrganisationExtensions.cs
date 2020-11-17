@@ -306,6 +306,18 @@ namespace Allors.Domain.TestPopulation
             return salesOrder;
         }
 
+        public static SalesOrder CreateB2BSalesOrderForSingleNonSerialisedItem(this Organisation @this, Faker faker)
+        {
+            var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationExternalDefaults(@this).Build();
+            @this.Session().Derive();
+
+            var partItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
+            salesOrder.AddSalesOrderItem(partItem);
+            @this.Session().Derive();
+
+            return salesOrder;
+        }
+
         public static SalesOrder CreateB2CSalesOrder(this Organisation @this, Faker faker)
         {
             var salesOrder = new SalesOrderBuilder(@this.Session()).WithPersonExternalDefaults(@this).Build();

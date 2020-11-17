@@ -18,7 +18,7 @@ namespace Allors.Domain
             var catalogue = new CatalogueBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(new CatScopes(this.Session).Public, catalogue.CatScope);
+            Assert.Equal(new Scopes(this.Session).Public, catalogue.CatScope);
         }
 
         [Fact]

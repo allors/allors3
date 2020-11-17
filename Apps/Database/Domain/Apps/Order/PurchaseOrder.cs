@@ -134,6 +134,12 @@ namespace Allors.Domain
             }
         }
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
+            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
+        }
+
         public void AppsOnInit(ObjectOnInit method)
         {
             this.OrderDate = this.Session().Now();

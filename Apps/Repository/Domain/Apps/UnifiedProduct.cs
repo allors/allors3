@@ -146,5 +146,14 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToMany)]
         Media[] Photos { get; set; }
+
+        #region Allors
+        [Id("9b68dfbe-1e06-461d-ab23-3a7303ee1b36")]
+        [Indexed]
+        #endregion
+        [Workspace]
+        [Required]
+        [Multiplicity(Multiplicity.ManyToOne)]
+        public Scope Scope { get; set; }
     }
 }

@@ -17,6 +17,8 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.Person.Salutation),
+                new ChangedPattern(this.M.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new ChangedPattern(this.M.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

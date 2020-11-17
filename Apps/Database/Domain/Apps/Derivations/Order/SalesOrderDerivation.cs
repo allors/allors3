@@ -23,6 +23,7 @@ namespace Allors.Domain
             new ChangedPattern(this.M.SalesOrder.BillToEndCustomer),
             new ChangedPattern(this.M.SalesOrder.ShipToCustomer),
             new ChangedPattern(this.M.SalesOrder.ShipToEndCustomer),
+            new ChangedPattern(this.M.SalesOrder.PlacingCustomer),
             new ChangedPattern(this.M.SalesOrder.VatRegime),
             new ChangedPattern(this.M.SalesOrder.AssignedVatClause),
             new ChangedPattern(this.M.SalesOrder.OrderDate),
@@ -46,7 +47,7 @@ namespace Allors.Domain
                 @this.BillToCustomer ??= @this.ShipToCustomer;
                 @this.ShipToCustomer ??= @this.BillToCustomer;
                 @this.Customers = new[] { @this.BillToCustomer, @this.ShipToCustomer, @this.PlacingCustomer };
-                @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.Strategy.Session.GetSingleton().DefaultLocale;
+                @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.DefaultLocale;
                 @this.VatRegime ??= @this.BillToCustomer?.VatRegime;
                 @this.IrpfRegime ??= @this.BillToCustomer?.IrpfRegime;
                 @this.Currency ??= @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
@@ -62,7 +63,7 @@ namespace Allors.Domain
                 if (!@this.ExistOrderNumber && @this.ExistStore)
                 {
                     @this.OrderNumber = @this.Store.NextSalesOrderNumber(@this.OrderDate.Year);
-                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(@this.Store.SalesOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
+                    @this.SortableOrderNumber = NumberFormatter.SortableNumber(@this.Store.SalesOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
                 }
 
                 if (@this.BillToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)

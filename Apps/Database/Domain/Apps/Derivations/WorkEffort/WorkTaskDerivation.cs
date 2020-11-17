@@ -45,7 +45,7 @@ namespace Allors.Domain
                 if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
                 {
                     @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber();
-                    @this.SortableWorkEffortNumber = @this.Session().GetSingleton().SortableNumber(@this.TakenBy.WorkEffortPrefix, @this.WorkEffortNumber, @this.CreationDate.Value.Year.ToString());
+                    @this.SortableWorkEffortNumber = NumberFormatter.SortableNumber(@this.TakenBy.WorkEffortPrefix, @this.WorkEffortNumber, @this.Strategy.Session.Now().Year.ToString());
                 }
 
                 if (!@this.ExistExecutedBy && @this.ExistTakenBy)

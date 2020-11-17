@@ -6,7 +6,9 @@
 
 namespace Allors.Domain
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Resources;
     using Xunit;
 
     public class ReceiptTests : DomainTest, IClassFixture<Fixture>
@@ -152,9 +154,10 @@ namespace Allors.Domain
 
             receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(1).Build());
 
-            var derivationLog = this.Session.Derive(false);
-            Assert.True(derivationLog.HasErrors);
-            Assert.Contains(this.M.Payment.Amount, derivationLog.Errors[0].RoleTypes);
+            var expectedMessage = $"{receipt} { this.M.Payment.Amount} { ErrorMessages.PaymentAmountIsToSmall}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }
 
         private void InstantiateObjects(ISession session)

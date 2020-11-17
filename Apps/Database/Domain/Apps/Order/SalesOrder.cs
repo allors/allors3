@@ -128,6 +128,9 @@ namespace Allors.Domain
             {
                 this.OriginFacility = this.ExistStore ? this.Store.DefaultFacility : this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
             }
+
+            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
+            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
         }
 
         public void AppsDelete(SalesOrderDelete method)

@@ -35,7 +35,7 @@ namespace Allors.Domain
                 if (!@this.ExistQuoteNumber && @this.ExistIssuer)
                 {
                     @this.QuoteNumber = @this.Issuer.NextQuoteNumber(cycle.Session.Now().Year);
-                    (@this).SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
+                    (@this).SortableQuoteNumber = NumberFormatter.SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
                 }
 
                 @this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;

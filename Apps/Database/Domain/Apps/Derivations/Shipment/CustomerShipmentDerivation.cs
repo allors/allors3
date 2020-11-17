@@ -16,8 +16,8 @@ namespace Allors.Domain
         public CustomerShipmentDerivation(M m) : base(m, new Guid("7FE90E97-A4B4-4991-9063-91BF5670B4A9")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(M.CustomerShipment.ShipmentState),
-                new ChangedPattern(M.CustomerShipment.ShipmentPackages),
+                new ChangedPattern(this.M.CustomerShipment.ShipmentState),
+                new ChangedPattern(this.M.CustomerShipment.ShipmentPackages),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Domain
                 if (!@this.ExistShipmentNumber && @this.ExistStore)
                 {
                     @this.ShipmentNumber = @this.Store.NextShipmentNumber();
-                    @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.CreationDate.Value.Year.ToString());
+                    @this.SortableShipmentNumber = NumberFormatter.SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.CreationDate.Value.Year.ToString());
                 }
 
                 var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();

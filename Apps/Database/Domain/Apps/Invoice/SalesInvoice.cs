@@ -91,6 +91,9 @@ namespace Allors.Domain
             {
                 this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice;
             }
+
+            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
+            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
         }
 
         public void AppsOnInit(ObjectOnInit method)
@@ -126,9 +129,6 @@ namespace Allors.Domain
             {
                 this.BilledFrom = internalOrganisations[0];
             }
-
-            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
-            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
         }
 
         public void AppsSend(SalesInvoiceSend method)
@@ -138,13 +138,13 @@ namespace Allors.Domain
             if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice))
             {
                 this.InvoiceNumber = this.Store.NextInvoiceNumber(this.InvoiceDate.Year);
-                this.SortableInvoiceNumber = singleton.SortableNumber(this.Store.SalesInvoiceNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
+                this.SortableInvoiceNumber = NumberFormatter.SortableNumber(this.Store.SalesInvoiceNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
             }
 
             if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).CreditNote))
             {
                 this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
-                this.SortableInvoiceNumber = singleton.SortableNumber(this.Store.CreditNoteNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
+                this.SortableInvoiceNumber = NumberFormatter.SortableNumber(this.Store.CreditNoteNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
             }
 
             this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).NotPaid;
