@@ -159,7 +159,7 @@ namespace Allors.Domain
                 @this.VatRegime ??= @this.TakenViaSupplier?.VatRegime;
                 @this.IrpfRegime ??= @this.TakenViaSupplier?.IrpfRegime;
 
-                @this.Locale = @this.Strategy.Session.GetSingleton().DefaultLocale;
+                @this.Locale = @this.DefaultLocale;
 
                 var validOrderItems = @this.PurchaseOrderItems.Where(v => v.IsValid).ToArray();
                 @this.ValidOrderItems = validOrderItems;
