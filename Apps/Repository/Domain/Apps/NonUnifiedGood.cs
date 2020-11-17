@@ -100,6 +100,8 @@ namespace Allors.Repository
         public Media[] PrivateElectronicDocuments { get; set; }
 
         public LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
+
+        public Scope Scope { get; set; }
         #endregion
 
         #region Allors
