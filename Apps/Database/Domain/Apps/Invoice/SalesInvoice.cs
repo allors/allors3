@@ -91,6 +91,9 @@ namespace Allors.Domain
             {
                 this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice;
             }
+
+            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
+            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
         }
 
         public void AppsOnInit(ObjectOnInit method)
@@ -126,9 +129,6 @@ namespace Allors.Domain
             {
                 this.BilledFrom = internalOrganisations[0];
             }
-
-            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
-            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
         }
 
         public void AppsSend(SalesInvoiceSend method)

@@ -77,6 +77,10 @@ namespace Allors.Repository
 
         public decimal TotalIrpf { get; set; }
 
+        public Locale DefaultLocale { get; set; }
+
+        public Currency DefaultCurrency { get; set; }
+
         public Permission[] DeniedPermissions { get; set; }
 
         public Permission[] TransitionalDeniedPermissions { get; set; }

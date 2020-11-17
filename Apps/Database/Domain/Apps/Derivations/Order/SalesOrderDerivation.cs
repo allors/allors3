@@ -47,7 +47,7 @@ namespace Allors.Domain
                 @this.BillToCustomer ??= @this.ShipToCustomer;
                 @this.ShipToCustomer ??= @this.BillToCustomer;
                 @this.Customers = new[] { @this.BillToCustomer, @this.ShipToCustomer, @this.PlacingCustomer };
-                @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.Strategy.Session.GetSingleton().DefaultLocale;
+                @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.DefaultLocale;
                 @this.VatRegime ??= @this.BillToCustomer?.VatRegime;
                 @this.IrpfRegime ??= @this.BillToCustomer?.IrpfRegime;
                 @this.Currency ??= @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
