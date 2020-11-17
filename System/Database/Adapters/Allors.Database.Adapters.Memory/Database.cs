@@ -37,8 +37,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
-            this.CreateDerivations = Array.Empty<IDomainDerivation>();
-            this.ChangeDerivations = Array.Empty<IDomainDerivation>();
+            this.Derivations = Array.Empty<IDomainDerivation>();
 
             this.StateLifecycle.OnInit(this);
         }
@@ -47,9 +46,7 @@ namespace Allors.Database.Adapters.Memory
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        public IDomainDerivation[] CreateDerivations { get; private set; }
-
-        public IDomainDerivation[] ChangeDerivations { get; private set; }
+        public IDomainDerivation[] Derivations { get; private set; }
 
         public string Id { get; }
 
@@ -64,24 +61,14 @@ namespace Allors.Database.Adapters.Memory
         internal bool IsLoading { get; private set; }
 
         protected virtual Session Session => this.session ??= new Session(this, this.StateLifecycle.CreateSessionInstance());
-        
+
         public ISession CreateSession() => this.CreateDatabaseSession();
 
         ISession IDatabase.CreateSession() => this.CreateDatabaseSession();
 
         public ISession CreateDatabaseSession() => this.Session;
 
-        public void AddDerivation(IDomainDerivation derivation)
-        {
-            if (derivation.Patterns.OfType<CreatedPattern>().Any())
-            {
-                this.CreateDerivations = new List<IDomainDerivation>(this.CreateDerivations) { derivation }.ToArray();
-            }
-            else
-            {
-                this.ChangeDerivations = new List<IDomainDerivation>(this.ChangeDerivations) { derivation }.ToArray();
-            }
-        }
+        public void AddDerivation(IDomainDerivation derivation) => this.Derivations = new List<IDomainDerivation>(this.Derivations) { derivation }.ToArray();
 
         public void Load(XmlReader reader)
         {
@@ -167,7 +154,7 @@ namespace Allors.Database.Adapters.Memory
 
             return roleStrategy;
         }
-        
+
         public virtual void Init()
         {
             this.Session.Init();

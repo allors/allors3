@@ -15,12 +15,12 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Threading.Tasks;
     using Allors.Workspace.Meta;
     using Polly;
-    using Protocol.Database.Invoke;
-    using Protocol.Database.Pull;
-    using Protocol.Database.Push;
-    using Protocol.Database.Security;
-    using Protocol.Database.Sync;
-    using Protocol.Json;
+    using Allors.Protocol.Json.Api.Invoke;
+    using Allors.Protocol.Json.Api.Pull;
+    using Allors.Protocol.Json.Api.Push;
+    using Allors.Protocol.Json.Api.Security;
+    using Allors.Protocol.Json.Api.Sync;
+    using Allors.Protocol.Json.Auth;
 
     public class Database
     {

@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Controllers
+namespace Allors.Database.Protocol.Json
 {
     using System;
-    using Protocol.Database.Pull;
+    using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
     using Allors.State;
-    using Api.Json;
+    using Data;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

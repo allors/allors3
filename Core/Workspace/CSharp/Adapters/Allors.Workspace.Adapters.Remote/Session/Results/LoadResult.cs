@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Adapters.Remote;
-    using Protocol.Database.Pull;
+    using Allors.Protocol.Json.Api.Pull;
 
     public class LoadResult : Result, ILoadResult
     {

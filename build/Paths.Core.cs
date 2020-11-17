@@ -12,8 +12,8 @@ public partial class Paths
     public AbsolutePath CoreDatabaseServer => this.CoreDatabase / "Server";
     public AbsolutePath CoreDatabaseCommands => this.CoreDatabase / "Commands";
     public AbsolutePath CoreDatabaseDomainTests => this.CoreDatabase / "Domain.Tests/Domain.Tests.csproj";
-    public AbsolutePath CoreDatabaseApiTests => this.CoreDatabase / "Api.Tests/Api.Tests.csproj";
-    public AbsolutePath CoreDatabaseServerTests => this.CoreDatabase / "Server.Tests/Server.Tests.csproj";
+    public AbsolutePath CoreDatabaseServerLocalTests => this.CoreDatabase / "Server.Local.Tests/Server.Local.Tests.csproj";
+    public AbsolutePath CoreDatabaseServerRemoteTests => this.CoreDatabase / "Server.Remote.Tests/Server.Remote.Tests.csproj";
     public AbsolutePath CoreDatabaseResources => this.CoreDatabase / "Resources";
     public AbsolutePath CoreDatabaseResourcesCore => this.CoreDatabaseResources / "Core";
     public AbsolutePath CoreDatabaseResourcesCustom => this.CoreDatabaseResources / "Custom";

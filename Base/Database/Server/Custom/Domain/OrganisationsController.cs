@@ -9,10 +9,10 @@ namespace Allors.Server.Controllers
 
     using Allors.Domain;
     using Allors.Services;
-    using Api.Json.Pull;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Allors.State;
+    using Database.Protocol.Json;
 
     public class OrganisationsController : Controller
     {
@@ -33,9 +33,10 @@ namespace Allors.Server.Controllers
         [Authorize]
         public async Task<IActionResult> Pull()
         {
-            var response = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
-            var people = new Organisations(this.Session).Extent().ToArray();
-            response.AddCollection("organisations", people, true);
+            var api = new Api(this.Session, this.WorkspaceService.Name);
+            var response = api.CreatePullResponseBuilder();
+            var organisations = new Organisations(this.Session).Extent().ToArray();
+            response.AddCollection("organisations", organisations);
             return this.Ok(response.Build());
         }
     }

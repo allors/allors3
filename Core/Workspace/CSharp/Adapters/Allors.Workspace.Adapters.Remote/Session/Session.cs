@@ -11,11 +11,11 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Threading.Tasks;
     using Data;
     using Meta;
-    using Protocol.Database.Invoke;
-    using Protocol.Database.Pull;
-    using Protocol.Database.Push;
-    using Protocol.Database.Sync;
-    using Protocol.Json.Workspace;
+    using Allors.Protocol.Json.Api.Invoke;
+    using Allors.Protocol.Json.Api.Pull;
+    using Allors.Protocol.Json.Api.Push;
+    using Allors.Protocol.Json.Api.Sync;
+    using Allors.Workspace.Protocol.Json;
 
     public class Session : ISession
     {

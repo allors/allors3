@@ -7,14 +7,10 @@ namespace Allors.Domain.Derivations
 {
     using Allors.Meta;
 
-    public interface IValidation
+    public interface IValidation : IDerivationResult
     {
         IDerivation Derivation { get; }
-
-        bool HasErrors { get; }
-
-        IDerivationError[] Errors { get; }
-
+        
         void AddError(IDerivationError derivationError);
 
         void AddError(IObject association, RoleType roleType, string errorMessage, params object[] messageParam);

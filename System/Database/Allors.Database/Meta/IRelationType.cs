@@ -27,5 +27,7 @@ namespace Allors.Meta
         bool IsDerived { get; }
 
         bool IsSynced { get; }
+
+        string[] WorkspaceNames { get; }
     }
 }

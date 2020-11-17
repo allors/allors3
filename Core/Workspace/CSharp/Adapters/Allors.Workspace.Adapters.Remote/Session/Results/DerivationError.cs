@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using Protocol.Database;
+    using Allors.Protocol.Json.Api;
 
     public class DerivationError : IDerivationError
     {

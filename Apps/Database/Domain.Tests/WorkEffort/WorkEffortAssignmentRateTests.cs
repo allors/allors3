@@ -53,7 +53,7 @@ namespace Allors.Domain
             var derivation = this.Session.Derive(false);
 
             Assert.True(derivation.HasErrors);
-            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RoleType.Equals(this.M.WorkEffortAssignmentRate.RateType));
+            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RelationType.Equals(this.M.WorkEffortAssignmentRate.RateType.RelationType));
         }
     }
 }

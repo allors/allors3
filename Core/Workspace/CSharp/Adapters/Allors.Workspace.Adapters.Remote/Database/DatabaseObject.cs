@@ -7,11 +7,11 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Collections.Generic;
-    using Protocol.Database.Sync;
     using Allors.Workspace.Meta;
     using System.Linq;
-    using Protocol.Database;
-    using Protocol.Json;
+    using Allors.Protocol.Json;
+    using Allors.Protocol.Json.Api;
+    using Allors.Protocol.Json.Api.Sync;
 
     public class DatabaseObject
     {

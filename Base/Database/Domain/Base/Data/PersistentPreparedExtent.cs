@@ -8,10 +8,8 @@ namespace Allors.Domain
     using System.IO;
     using System.Text;
     using System.Xml.Serialization;
-
     using Allors.Data;
-    using Protocol.Json.Database;
-    using Extent = Protocol.Json.Extent;
+    using Allors.Database.Protocol.Json;
 
     public partial class PersistentPreparedExtent
     {
@@ -20,7 +18,7 @@ namespace Allors.Domain
             get
             {
                 using TextReader reader = new StringReader(this.Content);
-                var protocolExtent = (Extent)XmlSerializer.Deserialize(reader);
+                var protocolExtent = (Protocol.Json.Data.Extent)XmlSerializer.Deserialize(reader);
                 return protocolExtent.FromJson(this.Strategy.Session);
             }
 

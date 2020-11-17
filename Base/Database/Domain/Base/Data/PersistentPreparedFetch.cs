@@ -8,9 +8,9 @@ namespace Allors.Domain
     using System.IO;
     using System.Text;
     using System.Xml.Serialization;
+    using Database.Protocol.Json;
+    using Protocol.Json.Data;
 
-    using Protocol.Json;
-    using Protocol.Json.Database;
 
     public partial class PersistentPreparedFetch
     {

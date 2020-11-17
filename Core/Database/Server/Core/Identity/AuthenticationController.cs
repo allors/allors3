@@ -15,6 +15,7 @@ namespace Allors.Server
 
     using Allors.Services;
     using Protocol.Json;
+    using Protocol.Json.Auth;
     using Security;
 
     public class AuthenticationController : Controller

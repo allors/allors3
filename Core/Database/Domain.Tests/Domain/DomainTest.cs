@@ -15,7 +15,7 @@ namespace Tests
     using Allors.Meta;
     using Allors.State;
     using Moq;
-
+  
     public class DomainTest : IDisposable
     {
         public DomainTest(Fixture fixture, bool populate = true)

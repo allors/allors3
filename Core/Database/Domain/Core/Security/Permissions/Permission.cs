@@ -7,10 +7,8 @@ namespace Allors.Domain
 {
     using Allors.Meta;
 
-    public partial interface Permission
+    public partial interface Permission : IPermission
     {
-        ObjectType ConcreteClass { get; set; }
-
         bool ExistConcreteClass { get; }
 
         bool ExistOperandType { get; }

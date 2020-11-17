@@ -5,6 +5,7 @@
 
 namespace Allors
 {
+    using Data;
     using Meta;
     using State;
 

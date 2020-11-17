@@ -10,11 +10,12 @@ namespace Allors.Domain
 
     using Allors.Meta;
 
-    public partial class WritePermission
+    public partial class WritePermission : IWritePermission
     {
-        public ObjectType ConcreteClass
+        IClass IPermission.ConcreteClass => this.ConcreteClass;
+        public Class ConcreteClass
         {
-            get => (ObjectType)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
+            get => (Class)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
             set
             {
@@ -37,6 +38,7 @@ namespace Allors.Domain
 
         public OperandType OperandType => this.RelationType.RoleType;
 
+        IRelationType IWritePermission.RelationType => this.RelationType;
         public RelationType RelationType
         {
             get => (RelationType)this.Strategy.Session.Database.MetaPopulation.Find(this.RelationTypePointer);

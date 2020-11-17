@@ -11,7 +11,6 @@ namespace Allors.Workspace.Adapters.Local
     using System.Threading.Tasks;
     using Data;
     using Meta;
-    using Protocol.Database.Invoke;
 
     public class Session : ISession
     {

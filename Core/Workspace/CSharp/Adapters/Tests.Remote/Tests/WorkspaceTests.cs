@@ -5,7 +5,7 @@
 
 namespace Tests.Workspace.Remote
 {
-    using Allors.Protocol.Database.Pull;
+    using Allors.Protocol.Json.Api.Pull;
     using Xunit;
 
     public class WorkspaceTests : Test

@@ -47,12 +47,12 @@ partial class Build
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
 
-    Target CoreDatabaseTestApi => _ => _
+    Target CoreDatabaseTestServerLocal => _ => _
         .DependsOn(this.CoreGenerate)
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreDatabaseApiTests)
+                .SetProjectFile(this.Paths.CoreDatabaseServerLocalTests)
                 .SetLogger("trx;LogFileName=CoreDatabaseApi.trx")
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
@@ -77,7 +77,7 @@ partial class Build
             DotNetPublish(dotNetPublishSettings);
         });
 
-    Target CoreDatabaseTestServer => _ => _
+    Target CoreDatabaseTestServerRemote => _ => _
         .DependsOn(this.CoreGenerate)
         .DependsOn(this.CorePublishServer)
         .DependsOn(this.CorePublishCommands)
@@ -88,7 +88,7 @@ partial class Build
             using var server = new Server(this.Paths.ArtifactsCoreServer);
             await server.Ready();
             DotNetTest(s => s
-                .SetProjectFile(this.Paths.CoreDatabaseServerTests)
+                .SetProjectFile(this.Paths.CoreDatabaseServerRemoteTests)
                 .SetLogger("trx;LogFileName=CoreDatabaseServer.trx")
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
         });
@@ -167,8 +167,8 @@ partial class Build
 
     Target CoreDatabaseTest => _ => _
         .DependsOn(this.CoreDatabaseTestDomain)
-        .DependsOn(this.CoreDatabaseTestApi)
-        .DependsOn(this.CoreDatabaseTestServer);
+        .DependsOn(this.CoreDatabaseTestServerLocal)
+        .DependsOn(this.CoreDatabaseTestServerRemote);
 
     Target CoreWorkspaceTypescriptTest => _ => _
         .DependsOn(this.CoreWorkspaceTypescriptMeta)

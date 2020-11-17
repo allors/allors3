@@ -13,6 +13,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Logging;
     using Allors.Security;
     using Protocol.Json;
+    using Protocol.Json.Auth;
 
     public class TestAuthenticationController : Controller
     {

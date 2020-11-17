@@ -8,6 +8,10 @@ namespace Allors.Meta
 {
     public interface IMethodType : IMetaIdentity, IOperandType
     {
+        string Name { get; }
+
+        string[] WorkspaceNames { get; }
+
         IComposite ObjectType { get; }
     }
 }

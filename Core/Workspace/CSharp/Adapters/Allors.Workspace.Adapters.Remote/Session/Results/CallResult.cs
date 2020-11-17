@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using Protocol.Database.Invoke;
+    using Allors.Protocol.Json.Api.Invoke;
 
     public class CallResult : Result, ICallResult
     {

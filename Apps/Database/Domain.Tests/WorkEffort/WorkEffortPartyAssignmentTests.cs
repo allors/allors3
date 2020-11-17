@@ -89,7 +89,7 @@ namespace Allors.Domain
 
             // Assert
             Assert.True(derivation.HasErrors);
-            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.AssociationType.Equals(this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment));
+            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RelationType.Equals(this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment.RelationType));
 
             // Re-Arrange
             employee.TimeSheetWhereWorker.RemoveTimeEntries();
@@ -138,7 +138,7 @@ namespace Allors.Domain
             var derivation = this.Session.Derive(false);
 
             Assert.True(derivation.HasErrors);
-            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RoleType.Equals(this.M.WorkEffortPartyAssignment.AssignmentRates));
+            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RelationType.Equals(this.M.WorkEffortPartyAssignment.AssignmentRates.RelationType));
         }
     }
 }

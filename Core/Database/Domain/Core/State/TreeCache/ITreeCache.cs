@@ -8,6 +8,7 @@ namespace Allors.State
     using Allors.Data;
     using Allors.Meta;
 
+    // TODO: Remove
     public partial interface ITreeCache
     {
         Node[] Get(IComposite composite);

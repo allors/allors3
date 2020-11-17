@@ -8,9 +8,9 @@ namespace Allors.Server.Controllers
     using System;
     using System.Threading.Tasks;
     using Allors.Services;
-    using Api.Json.Pull;
     using Microsoft.AspNetCore.Mvc;
     using Allors.State;
+    using Database.Protocol.Json;
 
     public class TestUnitSamplesController : Controller
     {
@@ -32,11 +32,12 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var unitSample = this.Session.UnitSample(@params.Step);
+                var api = new Api(this.Session, this.WorkspaceService.Name);
+                var response = api.CreatePullResponseBuilder();
 
-                var responseBuilder = new PullResponseBuilder(this.Session, this.WorkspaceService.Name);
-                responseBuilder.AddObject("unitSample", unitSample);
-                var pullResponse = responseBuilder.Build();
+                var unitSample = this.Session.UnitSample(@params.Step);
+                response.AddObject("unitSample", unitSample);
+                var pullResponse = response.Build();
 
                 return this.Ok(pullResponse);
             }

@@ -37,7 +37,8 @@ namespace Allors.Domain
             this.lazyLoaded = false;
         }
 
-        public AccessControl[] AccessControls
+        IEnumerable<IAccessControl> IAccessControlList.AccessControls => this.AccessControls;
+        public IEnumerable<AccessControl> AccessControls
         {
             get
             {
@@ -46,6 +47,7 @@ namespace Allors.Domain
             }
         }
 
+        ISet<long> IAccessControlList.DeniedPermissionIds => this.DeniedPermissionIds;
         public HashSet<long> DeniedPermissionIds
         {
             get

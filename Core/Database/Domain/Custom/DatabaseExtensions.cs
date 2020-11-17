@@ -15,12 +15,9 @@ namespace Allors
             var derivations = new IDomainDerivation[]
             {
                 // Custom
-                new ClassCreationDerivation(m),
-                new InterfaceCreationDerivation(m),
                 new PersonFullNameDerivation(m),
                 new PersonGreetingDerivation(m),
                 // Validation
-                new CreationDerivation(m),
                 new RoleOne2OneDerivation(m),
                 new RoleOne2ManyDerivation(m),
                 new RoleMany2OneDerivation(m),
