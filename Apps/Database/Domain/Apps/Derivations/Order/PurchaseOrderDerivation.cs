@@ -119,7 +119,7 @@ namespace Allors.Domain
                 if (!@this.ExistOrderNumber)
                 {
                     @this.OrderNumber = @this.OrderedBy?.NextPurchaseOrderNumber(@this.OrderDate.Year);
-                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(@this.OrderedBy?.PurchaseOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
+                    @this.SortableOrderNumber = NumberFormatter.SortableNumber(@this.OrderedBy?.PurchaseOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
                 }
 
                 if (@this.TakenViaSupplier is Organisation supplier)

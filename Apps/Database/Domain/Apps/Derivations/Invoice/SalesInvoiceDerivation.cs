@@ -56,7 +56,7 @@ namespace Allors.Domain
                 if (!@this.ExistInvoiceNumber && @this.ExistStore)
                 {
                     @this.InvoiceNumber = @this.Store.NextTemporaryInvoiceNumber();
-                    @this.SortableInvoiceNumber = @this.Session().GetSingleton().SortableNumber(null, @this.InvoiceNumber, @this.InvoiceDate.Year.ToString());
+                    @this.SortableInvoiceNumber = NumberFormatter.SortableNumber(null, @this.InvoiceNumber, @this.InvoiceDate.Year.ToString());
                 }
 
                 if (!@this.ExistBilledFromContactMechanism && @this.ExistBilledFrom)

@@ -43,7 +43,7 @@ namespace Allors.Domain
                 if (!@this.ExistShipmentNumber && shipToParty != null)
                 {
                     @this.ShipmentNumber = shipToParty.NextShipmentNumber(@this.Strategy.Session.Now().Year);
-                    @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(((InternalOrganisation)@this.ShipToParty).IncomingShipmentNumberPrefix, @this.ShipmentNumber, @this.CreationDate.Value.Year.ToString());
+                    @this.SortableShipmentNumber = NumberFormatter.SortableNumber(((InternalOrganisation)@this.ShipToParty).IncomingShipmentNumberPrefix, @this.ShipmentNumber, @this.CreationDate.Value.Year.ToString());
                 }
 
                 if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
