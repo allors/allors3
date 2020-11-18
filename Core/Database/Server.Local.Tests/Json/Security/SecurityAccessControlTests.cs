@@ -20,7 +20,7 @@ namespace Tests
         {
             var workspaceName = "X";
 
-            var workspaceMeta = this.Session.Database.State().WorkspaceMetaCache;
+            var workspaceMeta = this.Session.Database.Context().WorkspaceMetaCache;
             var workspaceX = workspaceMeta.Get(workspaceName);
 
             var accessControl = new AccessControls(this.Session).Administrator;
@@ -65,7 +65,7 @@ namespace Tests
         {
             var workspaceName = "None";
 
-            var workspaceMeta = this.Session.Database.State().WorkspaceMetaCache;
+            var workspaceMeta = this.Session.Database.Context().WorkspaceMetaCache;
             var workspace = workspaceMeta.Get(workspaceName);
 
             var accessControl = new AccessControls(this.Session).Administrator;

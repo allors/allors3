@@ -23,7 +23,7 @@ namespace Allors.Database
         /// <summary>
         /// The scope for this session.
         /// </summary>
-        ISessionStateLifecycle StateLifecycle { get; }
+        ISessionLifecycle StateLifecycle { get; }
         
         /// <summary>
         /// Creates a change set of all changes up to this checkpoint,

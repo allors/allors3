@@ -15,4 +15,9 @@
   <ItemGroup>
     <Compile Include="..\..\..\..\Core\Workspace\CSharp\Domain\Core*\**\*.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\Core\State\ISessionStateState.cs" />
+    <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\Core\State\IWorkspaceState.cs" />
+  </ItemGroup>
 </Project>

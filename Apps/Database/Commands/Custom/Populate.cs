@@ -35,7 +35,7 @@ namespace Commands
                 session.Commit();
 
                 var scheduler = new AutomatedAgents(session).System;
-                session.State().User = scheduler;
+                session.Context().User = scheduler;
 
                 new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
 

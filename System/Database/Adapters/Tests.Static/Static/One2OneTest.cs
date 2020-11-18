@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -563,7 +563,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -656,7 +656,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -749,7 +749,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -842,7 +842,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -937,7 +937,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -2068,7 +2068,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -2174,7 +2174,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -2267,7 +2267,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -2712,7 +2712,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {
@@ -2805,7 +2805,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 foreach (var mark in this.Markers)
                 {

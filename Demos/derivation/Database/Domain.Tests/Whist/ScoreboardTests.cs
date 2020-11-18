@@ -113,7 +113,7 @@ namespace Allors.Database.Domain.Tests.Whist
 
             game.AddWinner(this.player1);
 
-            var derive = new Derivation(this.Session);
+            var derive = new DefaultDerivation(this.Session);
             var validation = derive.Derive();
 
             //Assert

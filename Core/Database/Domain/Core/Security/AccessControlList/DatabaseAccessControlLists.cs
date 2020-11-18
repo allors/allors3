@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
             var session = this.User.Session();
             var database = session.Database;
-            var effectivePermissionCache = database.State().EffectivePermissionCache;
+            var effectivePermissionCache = database.Context().EffectivePermissionCache;
             
             List<AccessControl> misses = null;
             foreach (AccessControl accessControl in this.User.AccessControlsWhereEffectiveUser)
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain
                 if (misses.Count > 1)
                 {
                     // TODO: Cache
-                    var m = database.State().M;
+                    var m = database.Context().M;
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.AccessControl.EffectivePermissions)
                         .Build();

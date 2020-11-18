@@ -12,7 +12,7 @@ namespace Allors.Workspace
     {
         public static void RegisterDerivations(this @IWorkspace @this)
         {
-            var m = @this.State().M;
+            var m = @this.Context().M;
             var derivations = new IDomainDerivation[]
             {
                 // Custom

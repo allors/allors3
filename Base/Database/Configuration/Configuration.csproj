@@ -18,4 +18,12 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\..\Core\Database\Configuration\Core*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Base\Session\" />
+  </ItemGroup>
+
 </Project>

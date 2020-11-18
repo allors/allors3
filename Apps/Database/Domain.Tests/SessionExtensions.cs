@@ -10,8 +10,8 @@ namespace Allors.Database.Domain.Tests
 
     public static class SessionExtensions
     {
-        public static User GetUser(this ISession @this) => @this.State().User;
+        public static User GetUser(this ISession @this) => @this.Context().User;
 
-        public static void SetUser(this ISession @this, User user) => @this.State().User = user;
+        public static void SetUser(this ISession @this, User user) => @this.Context().User = user;
     }
 }

@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static NonUnifiedGoodBuilder WithNonSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
 
             var dutchLocale = new Locales(@this.Session).DutchNetherlands;
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedGoodBuilder WithSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
 
             var dutchLocale = new Locales(@this.Session).DutchNetherlands;

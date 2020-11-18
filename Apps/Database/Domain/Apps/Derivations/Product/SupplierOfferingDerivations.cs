@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var m = cycle.Session.Database.State().M;
+            var m = cycle.Session.Database.Context().M;
             foreach (var @this in matches.Cast<SupplierOffering>())
             {
                 if (!@this.ExistCurrency)

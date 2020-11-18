@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Created;
             }
 
-            if (!@this.ExistOwner && @this.Strategy.Session.State().User is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Session.Context().User is Person owner)
             {
                 @this.Owner = owner;
             }

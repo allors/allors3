@@ -4,6 +4,7 @@ namespace Allors.Database.Server.Controllers
     using System.IO;
     using Allors.Server;
     using Allors.Services;
+    using Configuration;
     using Database;
     using Domain;
     using Microsoft.AspNetCore.Hosting;

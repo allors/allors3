@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
             Product product,
             DateTime date)
         {
-            var m = salesOrder.Strategy.Session.Database.State().M;
+            var m = salesOrder.Strategy.Session.Database.Context().M;
 
             var productBasePrice = 0M;
             var productDiscount = 0M;

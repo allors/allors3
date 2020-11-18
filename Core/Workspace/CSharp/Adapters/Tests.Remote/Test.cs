@@ -21,13 +21,13 @@ namespace Tests.Workspace.Remote
 
         public Database Database => this.Workspace.Database;
 
-        public M M => this.Workspace.State().M;
+        public M M => this.Workspace.Context().M;
 
         public Test() =>
             this.Workspace = new Workspace(
                 new MetaBuilder().Build(),
                 typeof(User),
-                new WorkspaceState(),
+                new WorkspaceContext(),
                 new HttpClient());
     }
 }

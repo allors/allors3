@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         private void Derive(Extent extent)
         {
-            var derivation = new Domain.Derivations.Default.Derivation(this.session);
+            var derivation = new Domain.Derivations.Default.DefaultDerivation(this.session);
             derivation.Mark(extent.Cast<Domain.Object>().ToArray());
             var validation = derivation.Derive();
             if (validation.HasErrors)

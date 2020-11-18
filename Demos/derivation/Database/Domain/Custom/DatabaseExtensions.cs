@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         public static void RegisterDerivations(this @IDatabase @this)
         {
-            var m = @this.State().M;
+            var m = @this.Context().M;
             var derivations = new IDomainDerivation[]
             {
             };
@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public static void RegisterCoarseDerivations(this @IDatabase @this)
         {
-            var m = @this.State().M;
+            var m = @this.Context().M;
             var derivations = new IDomainDerivation[]
             {
                 new CoarseDerivation(m),
@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
 
         public static void RegisterFineDerivations(this @IDatabase @this)
         {
-            var m = @this.State().M;
+            var m = @this.Context().M;
             var derivations = new IDomainDerivation[]
             {
                 new ScoreboardDerivation(m),

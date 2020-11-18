@@ -14,7 +14,7 @@ namespace Tests.Workspace
     {
         public IWorkspace Workspace => this.Profile.Workspace;
 
-        public M M => this.Workspace.State().M;
+        public M M => this.Workspace.Context().M;
 
         protected abstract IProfile Profile { get; }
         

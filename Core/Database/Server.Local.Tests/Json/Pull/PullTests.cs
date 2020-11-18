@@ -9,6 +9,7 @@ namespace Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Database.Protocol.Json;

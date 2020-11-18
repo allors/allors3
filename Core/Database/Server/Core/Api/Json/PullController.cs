@@ -24,7 +24,7 @@ namespace Allors.Database.Protocol.Json
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
 
-            var scope = this.DatabaseService.Database.State();
+            var scope = this.DatabaseService.Database.Context();
 
             this.ExtentService = scope.PreparedExtents;
             this.PreparedFetches = scope.PreparedFetches;

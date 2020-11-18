@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static OrganisationBuilder WithDefaults(this OrganisationBuilder @this)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
 
             var euCountry = new Countries(@this.Session).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static OrganisationBuilder WithInternalOrganisationDefaults(this OrganisationBuilder @this)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
 
             var company = faker.Company;

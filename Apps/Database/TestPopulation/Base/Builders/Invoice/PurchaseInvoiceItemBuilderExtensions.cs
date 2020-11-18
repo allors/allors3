@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static PurchaseInvoiceItemBuilder WithProductItemDefaults(this PurchaseInvoiceItemBuilder @this)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static PurchaseInvoiceItemBuilder WithPartItemDefaults(this PurchaseInvoiceItemBuilder @this)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
             var invoiceItemType = @this.Session.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
 

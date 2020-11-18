@@ -20,7 +20,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Core\Database\Domain.Default\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Core\Database\Configuration\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Configuration\Base*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Apps\Database\" />
+    <Folder Include="Apps\Session\" />
   </ItemGroup>
 
 </Project>

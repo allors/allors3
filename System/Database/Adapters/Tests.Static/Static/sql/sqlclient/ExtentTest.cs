@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.SqlClient
                 {
                     init();
                     this.Populate();
-                    var m = this.Session.Database.State().M;
+                    var m = this.Session.Database.Context().M;
 
                     this.Session.Commit();
 
@@ -131,7 +131,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 this.Populate();
 
@@ -197,7 +197,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var c1A = C1.Create(this.Session);
                 var c1B = C1.Create(this.Session);

@@ -459,7 +459,7 @@ namespace Allors.Database.Domain
                 if (this.ExistOrderNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.Database.State().BarcodeGenerator;
+                    var barcodeService = session.Database.Context().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images.Add("Barcode", barcode);
                 }

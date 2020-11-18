@@ -18,7 +18,7 @@ namespace Allors.Workspace.Adapters.Local
 
     public class Workspace : IWorkspace
     {
-        public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceStateLifecycle state, IDatabase database)
+        public Workspace(IMetaPopulation metaPopulation, Type instance, IWorkspaceLifecycle state, IDatabase database)
         {
             this.MetaPopulation = metaPopulation;
             this.StateLifecycle = state;
@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IWorkspaceStateLifecycle StateLifecycle { get; }
+        public IWorkspaceLifecycle StateLifecycle { get; }
 
         internal ISet<Session> Sessions { get; }
         IEnumerable<ISession> IWorkspace.Sessions => this.Sessions;
@@ -54,7 +54,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
-        public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionState());
+        public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionContext());
 
         public IChangeSet[] Checkpoint()
         {

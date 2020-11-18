@@ -4,18 +4,18 @@ namespace Allors.Database
 {
     public static partial class ObjectExtensions
     {
-        public static ISessionState SessionState(this IObject @this) => @this.Strategy.Session.State();
+        public static ISessionContext SessionContext(this IObject @this) => @this.Strategy.Session.Context();
 
-        public static IDatabaseState DatabaseState(this IObject @this) => @this.Strategy.Session.Database.State();
+        public static IDatabaseContext DatabaseContext(this IObject @this) => @this.Strategy.Session.Database.Context();
     }
 
     public static partial class SessionExtensions
     {
-        public static ISessionState State(this ISession @this) => ((ISessionState)@this.StateLifecycle);
+        public static ISessionContext Context(this ISession @this) => ((ISessionContext)@this.StateLifecycle);
     }
 
     public static partial class DatabaseExtensions
     {
-        public static IDatabaseState State(this IDatabase @this) => ((IDatabaseState)@this.StateLifecycle);
+        public static IDatabaseContext Context(this IDatabase @this) => ((IDatabaseContext)@this.StateLifecycle);
     }
 }

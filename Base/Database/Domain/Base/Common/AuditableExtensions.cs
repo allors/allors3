@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void CoreOnPostDerive(this Auditable @this, ObjectOnPostDerive method)
         {
-            var user = @this.Strategy.Session.State().User;
+            var user = @this.Strategy.Session.Context().User;
             if (user != null)
             {
                 var derivation = method.Derivation;

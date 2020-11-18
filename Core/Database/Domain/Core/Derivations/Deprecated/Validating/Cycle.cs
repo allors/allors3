@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Derivations.Validating
     {
         private Properties properties;
 
-        internal Cycle(Derivation derivation)
+        internal Cycle(ValidatingDerivation derivation)
         {
             this.Derivation = derivation;
             this.ChangeSet = new AccumulatedChangeSet();
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Derivations.Validating
 
         internal Iteration Iteration { get; set; }
 
-        internal Derivation Derivation { get; }
+        internal ValidatingDerivation Derivation { get; }
 
         public object this[string name]
         {

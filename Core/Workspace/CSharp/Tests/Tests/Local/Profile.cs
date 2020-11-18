@@ -6,6 +6,7 @@
 namespace Tests.Workspace.Local
 {
     using Allors.Database;
+    using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Workspace;
 
@@ -17,7 +18,7 @@ namespace Tests.Workspace.Local
 
         public Allors.Workspace.Adapters.Local.WorkspaceDatabase WorkspaceDatabase => this.Workspace.WorkspaceDatabase;
 
-        public Allors.Workspace.Meta.M M => this.Workspace.State().M;
+        public Allors.Workspace.Meta.M M => this.Workspace.Context().M;
 
         public Allors.Database.Adapters.Memory.Database Database { get; }
 
@@ -25,7 +26,7 @@ namespace Tests.Workspace.Local
         {
             var metaPopulation = new Allors.Database.Meta.MetaBuilder().Build();
             this.Database = new Allors.Database.Adapters.Memory.Database(
-                new ValidatingDatabaseState(),
+                new ValidatingDatabaseContext(),
                 new Allors.Database.Adapters.Memory.Configuration
                 {
                     ObjectFactory = new ObjectFactory(metaPopulation, typeof(Allors.Database.Domain.C1)),
@@ -34,7 +35,7 @@ namespace Tests.Workspace.Local
             this.Workspace = new Allors.Workspace.Adapters.Local.Workspace(
                 new Allors.Workspace.Meta.MetaBuilder().Build(),
                 typeof(Allors.Workspace.Domain.User),
-                new WorkspaceState(),
+                new WorkspaceContext(),
                 this.Database);
         }
 
@@ -51,7 +52,7 @@ namespace Tests.Workspace.Local
 
             var administrator = new Allors.Database.Domain.PersonBuilder(session).WithUserName("administrator").Build();
             new Allors.Database.Domain.UserGroups(session).Administrators.AddMember(administrator);
-            session.State().User = administrator;
+            session.Context().User = administrator;
 
             new TestPopulation(session, "full").Apply();
             session.Derive();
@@ -62,10 +63,10 @@ namespace Tests.Workspace.Local
 
         public async System.Threading.Tasks.Task Login(string user)
         {
-            var m = this.Database.State().M;
+            var m = this.Database.Context().M;
 
             using var session = this.Database.CreateSession();
-            session.State().User = new Allors.Database.Domain.Users(session).FindBy(m.User.UserName, user);
+            session.Context().User = new Allors.Database.Domain.Users(session).FindBy(m.User.UserName, user);
         }
     }
 }

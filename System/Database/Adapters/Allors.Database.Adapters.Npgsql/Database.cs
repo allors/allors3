@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         private ICacheFactory cacheFactory;
 
-        public Database(IDatabaseStateLifecycle state, Configuration configuration)
+        public Database(IDatabaseLifecycle state, Configuration configuration)
         {
             this.StateLifecycle = state;
             if (this.StateLifecycle == null)
@@ -101,7 +101,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public IDomainDerivation[] Derivations { get; private set; }
 
-        public IDatabaseStateLifecycle StateLifecycle { get; }
+        public IDatabaseLifecycle StateLifecycle { get; }
 
         public IConnectionFactory ConnectionFactory
         {

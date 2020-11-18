@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.TestPopulation
     {
         public static NonUnifiedPartBuilder WithNonSerialisedDefaults(this NonUnifiedPartBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
 
             var dutchLocale = new Locales(@this.Session).DutchNetherlands;
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedPartBuilder WithSerialisedDefaults(this NonUnifiedPartBuilder @this, Organisation internalOrganisation, Faker faker)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var dutchLocale = new Locales(@this.Session).DutchNetherlands;
             var brand = new BrandBuilder(@this.Session).WithDefaults().Build();
 

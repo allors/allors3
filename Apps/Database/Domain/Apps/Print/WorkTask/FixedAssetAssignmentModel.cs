@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
         public FixedAssetAssignmentModel(WorkEffortFixedAssetAssignment assignment)
         {
             var session = assignment.Strategy.Session;
-            var m = session.Database.State().M;
+            var m = session.Database.Context().M;
 
             this.Name = assignment.FixedAsset?.Name;
             this.Comment = assignment.FixedAsset?.Comment?.Split('\n');

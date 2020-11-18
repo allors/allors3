@@ -25,8 +25,8 @@ namespace Allors.Database.Protocol.Json
         {
             this.Session = session;
 
-            var sessionState = session.State();
-            var databaseState = session.Database.State();
+            var sessionState = session.Context();
+            var databaseState = session.Database.Context();
             var workspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
 
             this.User = sessionState.User;

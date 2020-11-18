@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
     {
         public Permission Get(Class @class, RoleType roleType, Operations operation)
         {
-            var permissionCacheEntry = this.Session.Database.State().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Session.Database.Context().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 long id = 0;
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public Permission Get(Class @class, MethodType methodType)
         {
-            var permissionCacheEntry = this.Session.Database.State().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Session.Database.Context().PermissionsCache.Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 var id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[methodType.Id];
@@ -52,18 +52,20 @@ namespace Allors.Database.Domain
         public void Sync()
         {
             var permissions = new Permissions(this.Session).Extent();
-            this.Session.Prefetch(this.DatabaseState().PrefetchPolicyCache.PermissionsWithClass, permissions);
+            this.Session.Prefetch(this.DatabaseContext().PrefetchPolicyCache.PermissionsWithClass, permissions);
+
+            var permissionsCache = this.Session.Database.Context().PermissionsCache;
 
             var permissionCacheEntryByClassId = permissions
                 .GroupBy(v => v.ClassPointer)
                 .ToDictionary(
                     v => v.Key,
-                    w => new PermissionsCacheEntry(w));
+                    w => permissionsCache.Create(w));
 
             var permissionIds = new HashSet<long>();
 
             // Create new permissions
-            foreach (var @class in this.DatabaseState().MetaPopulation.Classes)
+            foreach (var @class in this.DatabaseContext().MetaPopulation.Classes)
             {
                 if (permissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
                 {

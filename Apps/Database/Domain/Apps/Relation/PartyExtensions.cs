@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Session.Database.State().M;
+            var m = @this.Strategy.Session.Database.Context().M;
 
             var customerRelationships = @this.CustomerRelationshipsWhereCustomer;
             customerRelationships.Filter.AddEquals(m.CustomerRelationship.InternalOrganisation, internalOrganisation);
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public static CustomerShipment AppsGetPendingCustomerShipmentForStore(this Party @this, PostalAddress address, Store store, ShipmentMethod shipmentMethod)
         {
-            var m = @this.Strategy.Session.Database.State().M;
+            var m = @this.Strategy.Session.Database.Context().M;
 
             var shipments = @this.ShipmentsWhereShipToParty;
             if (address != null)

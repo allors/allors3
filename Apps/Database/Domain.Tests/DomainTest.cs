@@ -12,6 +12,7 @@ namespace Allors.Database.Domain.Tests
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Configuration;
     using Database;
     using Database.Domain.TestPopulation;
 
@@ -20,13 +21,13 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Allors.Database.Adapters.Memory.Database(
-                new FakerDatabaseState(),
+                new FakerDatabaseContext(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.State().M;
+            this.M = database.Context().M;
 
             this.Setup(database, populate);
         }
@@ -37,7 +38,7 @@ namespace Allors.Database.Domain.Tests
 
         public ISession Session { get; private set; }
 
-        public ITime Time => this.Session.Database.State().Time;
+        public ITime Time => this.Session.Database.Context().Time;
 
         public TimeSpan? TimeShift
         {
@@ -93,7 +94,7 @@ namespace Allors.Database.Domain.Tests
 
             new UserGroups(this.Session).Administrators.AddMember(administrator);
 
-            this.Session.State().User = administrator;
+            this.Session.Context().User = administrator;
 
             this.Session.Derive();
             this.Session.Commit();

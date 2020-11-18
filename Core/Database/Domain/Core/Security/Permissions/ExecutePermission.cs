@@ -73,7 +73,7 @@ namespace Allors.Database.Domain
                     iteration.Mark(role);
                 }
 
-                this.DatabaseState().PermissionsCache.Clear();
+                this.DatabaseContext().PermissionsCache.Clear();
             }
         }
 

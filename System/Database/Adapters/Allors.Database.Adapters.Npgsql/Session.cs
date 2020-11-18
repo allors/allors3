@@ -19,7 +19,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         private Dictionary<string, object> properties;
 
-        internal Session(Database database, Connection connection, ISessionStateLifecycle scope)
+        internal Session(Database database, Connection connection, ISessionLifecycle scope)
         {
             this.Database = database;
             this.Connection = connection;
@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         IDatabase ISession.Database => this.Database;
 
-        public ISessionStateLifecycle StateLifecycle { get; }
+        public ISessionLifecycle StateLifecycle { get; }
         
         public Database Database { get; }
 

@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
 
         public static void AssignPerformer(this Task @this)
         {
-            var currentUser = @this.Strategy.Session.State().User as Person;
+            var currentUser = @this.Strategy.Session.Context().User as Person;
             @this.Performer = currentUser;
         }
 

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         public void AppsDelete(DeletableDelete method)
         {
             var session = this.strategy.Session;
-            var derivation = new Derivations.Default.Derivation(session);
+            var derivation = new Derivations.Default.DefaultDerivation(session);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(session).Consumption, true);
         }
 

@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         public static T SetPassword<T>(this T @this, string clearTextPassword)
             where T : User
         {
-            var passwordService = @this.Session().Database.State().PasswordHasher;
+            var passwordService = @this.Session().Database.Context().PasswordHasher;
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
             return @this;
         }
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var passwordService = @this.Session().Database.State().PasswordHasher;
+            var passwordService = @this.Session().Database.Context().PasswordHasher;
             return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain
 
             if (@this.ExistInUserPassword)
             {
-                var passwordService = @this.Session().Database.State().PasswordHasher;
+                var passwordService = @this.Session().Database.Context().PasswordHasher;
                 @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, @this.InUserPassword);
                 @this.RemoveInUserPassword();
             }

@@ -2,6 +2,7 @@ namespace Allors.Server
 {
     using System;
     using System.IO;
+    using Database.Configuration;
     using Database.Domain;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;

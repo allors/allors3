@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
                 if (this.ExistWorkEffortNumber)
                 {
                     var session = this.Strategy.Session;
-                    var barcodeService = session.Database.State().BarcodeGenerator;
+                    var barcodeService = session.Database.Context().BarcodeGenerator;
                     var barcode = barcodeService.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                     images["Barcode"] = barcode;
                 }

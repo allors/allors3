@@ -59,7 +59,7 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/media/{idString}/{*name}")]
         public virtual IActionResult RedirectOrNotFound(string idString, string name)
         {
-            var m = ((IDatabaseState) this.Session.Database.State()).M;
+            var m = ((IDatabaseContext) this.Session.Database.Context()).M;
 
             if (Guid.TryParse(idString, out var id))
             {
@@ -79,7 +79,7 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/media/{idString}/{revisionString}/{*name}")]
         public virtual IActionResult Get(string idString, string revisionString, string name)
         {
-            var m = ((IDatabaseState) this.Session.Database.State()).M;
+            var m = ((IDatabaseContext) this.Session.Database.Context()).M;
 
             if (Guid.TryParse(idString, out var id))
             {

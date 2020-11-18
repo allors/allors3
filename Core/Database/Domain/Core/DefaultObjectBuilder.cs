@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
     {
         public static object Build(ISession session, IClass @class)
         {
-            var metaService = session.Database.State().MetaCache;
+            var metaService = session.Database.Context().MetaCache;
             var builderType = metaService.GetBuilderType(@class);
             object[] parameters = { session };
             var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);
