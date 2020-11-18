@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters
     using System;
 
     using Allors;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     using Xunit;
 

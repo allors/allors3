@@ -9,7 +9,7 @@ namespace Allors.Development.Repository.Tasks
     using System.IO;
 
     using Allors.Development.Repository.Generation;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public static class Generate
     {

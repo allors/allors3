@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.SqlClient
     using Caching;
     using Domain;
     using Meta;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ObjectFactory = Allors.Database.ObjectFactory;
 
     public class Profile : Adapters.Profile
     {

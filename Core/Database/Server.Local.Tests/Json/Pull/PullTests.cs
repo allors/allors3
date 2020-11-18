@@ -9,15 +9,13 @@ namespace Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors;
-    
-    using Allors.Domain;
-    using Allors.Protocol.Json;
+    using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
-    using Allors.Protocol.Json.Data;
     using Allors.Database.Protocol.Json;
-    using Allors.State;
     using Xunit;
+    using Extent = Allors.Database.Data.Extent;
+    using Pull = Allors.Database.Data.Pull;
+    using Result = Allors.Database.Data.Result;
 
     public class PullTests : ApiTest, IClassFixture<Fixture>
     {
@@ -36,7 +34,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull { Extent = new Allors.Data.Extent(m.Data.ObjectType) };
+            var pull = new Pull { Extent = new Extent(m.Data.ObjectType) };
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -82,7 +80,7 @@ namespace Tests
             {
                 Pulls = new[]
                   {
-                      new Pull
+                      new Allors.Protocol.Json.Data.Pull
                           {
                               ExtentRef = PreparedExtents.OrganisationByName,
                               Parameters = new Dictionary<string, string> { ["name"] = "Acme" },
@@ -107,7 +105,7 @@ namespace Tests
             {
                 Pulls = new[]
                   {
-                      new Pull
+                      new Allors.Protocol.Json.Data.Pull
                           {
                               ExtentRef = PreparedExtents.OrganisationByName,
                               Parameters = new Dictionary<string, string> { ["name"] = "Acme" },
@@ -135,7 +133,7 @@ namespace Tests
 
             var uri = new Uri(@"allors/pull", UriKind.Relative);
 
-            var pull = new Allors.Data.Pull { Extent = new Allors.Data.Extent(this.M.Data.ObjectType) };
+            var pull = new Pull { Extent = new Extent(this.M.Data.ObjectType) };
 
             var pullRequest = new PullRequest
             {
@@ -182,12 +180,12 @@ namespace Tests
             this.Session.Derive();
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull
+            var pull = new Pull
             {
-                Extent = new Allors.Data.Extent(this.M.Data.ObjectType),
+                Extent = new Extent(this.M.Data.ObjectType),
                 Results = new[]
                 {
-                    new  Allors.Data.Result { Name = "Datas" },
+                    new  Result { Name = "Datas" },
                 }
             };
 

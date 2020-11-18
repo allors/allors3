@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the RelationType type.</summary>
 
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     using System;
 

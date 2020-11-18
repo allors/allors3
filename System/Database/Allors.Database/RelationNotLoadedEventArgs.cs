@@ -3,18 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
-
-    /// <summary>
-    /// The loader raises an RoleNotLoaded event when either the object's
-    /// saved relation is not compatible with the current relation or the
-    /// relation's saved type doesn't exist in the current domain.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="args">The <see cref="RelationNotLoadedEventHandler"/>.</param>
-    public delegate void RelationNotLoadedEventHandler(object sender, RelationNotLoadedEventArgs args);
 
     /// <summary>
     /// The relation not loaded event arguments.
@@ -60,4 +51,18 @@ namespace Allors
         /// </returns>
         public override string ToString() => "RelationType: " + this.RelationTypeId + ", Association: " + this.AssociationId + ", Role: " + this.RoleContents;
     }
+}
+
+namespace Allors
+{
+    using Database;
+
+    /// <summary>
+    /// The loader raises an RoleNotLoaded event when either the object's
+    /// saved relation is not compatible with the current relation or the
+    /// relation's saved type doesn't exist in the current domain.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="RelationNotLoadedEventHandler"/>.</param>
+    public delegate void RelationNotLoadedEventHandler(object sender, RelationNotLoadedEventArgs args);
 }

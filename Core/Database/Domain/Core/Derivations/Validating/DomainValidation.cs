@@ -3,9 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Validating
+namespace Allors.Database.Domain.Derivations.Validating
 {
-    using Allors.Domain.Derivations.Errors;
+    using Allors.Database.Domain.Derivations.Errors;
+    using Database.Derivations;
 
     public class DomainValidation : IDomainValidation
     {

@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
+    using Allors.Database.Meta;
     
     public class Extent : IExtent, IPredicateContainer
     {
@@ -21,7 +21,7 @@ namespace Allors.Data
 
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Predicate != null && this.Predicate.HasMissingArguments(parameters);
 
-        public Allors.Extent Build(ISession session, IDictionary<string, string> parameters = null)
+        public Database.Extent Build(ISession session, IDictionary<string, string> parameters = null)
         {
             var extent = session.Extent(this.ObjectType);
 

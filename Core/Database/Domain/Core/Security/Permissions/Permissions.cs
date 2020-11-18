@@ -4,13 +4,13 @@
 // </copyright>
 // <summary>Defines the role type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
-    using Allors.Meta;
-    using Allors.State;
+    using Allors.Database.Meta;
+   
 
     public partial class Permissions
     {

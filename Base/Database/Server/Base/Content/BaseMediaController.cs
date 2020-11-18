@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Database.Server.Controllers
 {
     using System;
     using System.Linq;
     using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Allors.Services;
-
+    using Database;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Primitives;
@@ -47,7 +47,7 @@ namespace Allors.Server
                 }
 
 
-                return this.RedirectToAction(nameof(Get), new { idString = media.UniqueId.ToString("N"), revisionString = media.Revision?.ToString("N"), name });
+                return this.RedirectToAction(nameof(this.Get), new { idString = media.UniqueId.ToString("N"), revisionString = media.Revision?.ToString("N"), name });
             }
 
             return this.NotFound("Printable with id " + idString + " not found.");
@@ -66,7 +66,7 @@ namespace Allors.Server
                 var media = new Medias(this.Session).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
-                    return this.RedirectToAction(nameof(Get), new { idString = media.UniqueId.ToString("N"), revisionString = media.Revision?.ToString("N") });
+                    return this.RedirectToAction(nameof(this.Get), new { idString = media.UniqueId.ToString("N"), revisionString = media.Revision?.ToString("N") });
                 }
             }
 
@@ -95,12 +95,12 @@ namespace Allors.Server
                     {
                         if (media.Revision != revision)
                         {
-                            return this.RedirectToAction(nameof(RedirectOrNotFound), new { idString, name });
+                            return this.RedirectToAction(nameof(this.RedirectOrNotFound), new { idString, name });
                         }
                     }
                     else
                     {
-                        return this.RedirectToAction(nameof(RedirectOrNotFound), new { idString, name });
+                        return this.RedirectToAction(nameof(this.RedirectOrNotFound), new { idString, name });
                     }
 
                     // Use Etags

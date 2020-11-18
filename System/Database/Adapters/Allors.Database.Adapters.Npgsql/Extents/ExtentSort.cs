@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class ExtentSort
     {

@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Text;
     using Allors;
     using Adapters;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Caching;
     using Debug;
     using Xunit;

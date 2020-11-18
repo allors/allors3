@@ -4,11 +4,10 @@
 // </copyright>
 
 // ReSharper disable StyleCop.SA1121
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
-    using Allors;
     using Derivations;
 
     public interface IDerivation

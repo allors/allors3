@@ -7,9 +7,9 @@ namespace Allors.Database.Adapters
 {
     using System;
     using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
-    using IDatabase = Allors.IDatabase;
+    using IDatabase = Database.IDatabase;
 
     public abstract class CacheTest : IDisposable
     {

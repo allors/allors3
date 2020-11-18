@@ -7,9 +7,8 @@
 namespace Tests
 {
     using System.Linq;
-    using Allors.Data;
-    using Allors.Domain;
-    using Allors.Protocol.Json;
+    using Allors.Database.Data;
+    using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Database.Protocol.Json;
     using Xunit;
@@ -28,7 +27,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull { Extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType) };
+            var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1.ObjectType) };
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -58,9 +57,9 @@ namespace Tests
 
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull
+            var pull = new Pull
             {
-                Extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType)
+                Extent = new Extent(m.WorkspaceXObject1.ObjectType)
             };
 
             var pullRequest = new PullRequest
@@ -88,9 +87,9 @@ namespace Tests
 
             this.Session.Commit();
 
-            var pull = new Allors.Data.Pull
+            var pull = new Pull
             {
-                Extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType)
+                Extent = new Extent(m.WorkspaceXObject1.ObjectType)
             };
             var pullRequest = new PullRequest
             {

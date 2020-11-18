@@ -21,7 +21,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Allors;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class ExtentTest : Adapters.ExtentTest
     {

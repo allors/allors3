@@ -7,7 +7,7 @@
 namespace Tests
 {
     using System;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class Fixture : IDisposable
     {

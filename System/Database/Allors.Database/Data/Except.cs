@@ -3,12 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Allors.Meta;
+    using Allors.Database.Meta;
     
 
     public class Except : IExtentOperator
@@ -23,7 +22,7 @@ namespace Allors.Data
         
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.Any(v => v.HasMissingArguments(parameters));
 
-        Allors.Extent IExtent.Build(ISession session, IDictionary<string, string> parameters)
+        Database.Extent IExtent.Build(ISession session, IDictionary<string, string> parameters)
         {
             var extent = session.Except(this.Operands[0].Build(session, parameters), this.Operands[1].Build(session, parameters));
             foreach (var sort in this.Sorting)

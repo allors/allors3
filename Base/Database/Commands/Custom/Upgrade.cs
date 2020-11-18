@@ -10,7 +10,7 @@ namespace Commands
     using System.IO;
     using System.Linq;
     using System.Xml;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -97,7 +97,7 @@ namespace Commands
 
             using (var session = this.Parent.Database.CreateSession())
             {
-                new Allors.Upgrade(session, this.Parent.DataPath).Execute();
+                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
                 session.Commit();
 
                 new Permissions(session).Sync();

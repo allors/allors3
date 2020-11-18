@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 

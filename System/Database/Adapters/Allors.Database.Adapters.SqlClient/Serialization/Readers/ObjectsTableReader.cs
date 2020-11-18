@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections.Generic;
     using System.Data.Common;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class ObjectsTableReader : DbDataReader
     {

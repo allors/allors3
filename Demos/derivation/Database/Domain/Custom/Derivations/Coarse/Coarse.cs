@@ -3,19 +3,20 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
+    using Allors.Database.Meta;
+    using Database.Derivations;
 
     public class CoarseDerivation : DomainDerivation
     {
         public CoarseDerivation(M m) : base(m, new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.Game.Class),
+                new ChangedPattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
                 new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
                 new ChangedPattern(m.Scoreboard.Players),
                 new ChangedPattern(m.Game.Declarers),

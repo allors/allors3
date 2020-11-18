@@ -4,9 +4,9 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-using Allors.Domain.TestPopulation;
+using Allors.Database.Domain.TestPopulation;
 
-namespace Allors.Domain
+namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Linq;

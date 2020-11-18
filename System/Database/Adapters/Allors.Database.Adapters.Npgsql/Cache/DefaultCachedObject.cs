@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.Npgsql.Caching
 {
     using System.Collections.Concurrent;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class DefaultCachedObject : ICachedObject
     {

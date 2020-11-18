@@ -3,11 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System.Collections.Generic;
-
-    using Allors.Meta;
+    using Allors.Database.Meta;
     
 
     public class Contains : IPropertyPredicate
@@ -26,7 +25,7 @@ namespace Allors.Data
 
         bool IPredicate.HasMissingArguments(IDictionary<string, string> parameters) => this.Parameter != null && (parameters == null || !parameters.ContainsKey(this.Parameter));
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Allors.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             var containedObject = this.Parameter != null ? session.GetObject(parameters[this.Parameter]) : this.Object;
 

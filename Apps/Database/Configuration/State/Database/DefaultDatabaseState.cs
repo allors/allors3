@@ -4,10 +4,10 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using Microsoft.AspNetCore.Http;
-    using State;
+    
 
     public class DefaultDatabaseState : DatabaseState
     {

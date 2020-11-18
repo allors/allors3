@@ -3,16 +3,17 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using System;
     using System.Linq;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Database;
 
     public static partial class ObjectExtensions
     {
-        public static void CoreOnPostBuild(this Allors.Domain.Object @this, ObjectOnPostBuild method)
+        public static void CoreOnPostBuild(this Allors.Database.Domain.Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
             foreach (var roleType in ((Class)@this.Strategy.Class).RoleTypes)
@@ -59,7 +60,7 @@ namespace Allors
             var session = strategy.Session;
             var @class = strategy.Class;
 
-            var clone = (T)Allors.ObjectBuilder.Build(session, @class);
+            var clone = (T)DefaultObjectBuilder.Build(session, @class);
 
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => !(v.RelationType.IsDerived || v.RelationType.IsSynced) && !deepClone.Contains(v) && (v.ObjectType.IsUnit || v.AssociationType.IsMany)))
             {

@@ -5,7 +5,8 @@
 
 namespace Tests.Workspace.Local
 {
-    using Allors;
+    using Allors.Database;
+    using Allors.Database.Domain;
     using Allors.Workspace;
 
     public class Profile : IProfile
@@ -22,12 +23,12 @@ namespace Tests.Workspace.Local
 
         public Profile()
         {
-            var metaPopulation = new Allors.Meta.MetaBuilder().Build();
+            var metaPopulation = new Allors.Database.Meta.MetaBuilder().Build();
             this.Database = new Allors.Database.Adapters.Memory.Database(
                 new ValidatingDatabaseState(),
                 new Allors.Database.Adapters.Memory.Configuration
                 {
-                    ObjectFactory = new Allors.ObjectFactory(metaPopulation, typeof(Allors.Domain.C1)),
+                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(Allors.Database.Domain.C1)),
                 });
 
             this.Workspace = new Allors.Workspace.Adapters.Local.Workspace(
@@ -48,8 +49,8 @@ namespace Tests.Workspace.Local
             session.Derive();
             session.Commit();
 
-            var administrator = new Allors.Domain.PersonBuilder(session).WithUserName("administrator").Build();
-            new Allors.Domain.UserGroups(session).Administrators.AddMember(administrator);
+            var administrator = new Allors.Database.Domain.PersonBuilder(session).WithUserName("administrator").Build();
+            new Allors.Database.Domain.UserGroups(session).Administrators.AddMember(administrator);
             session.State().User = administrator;
 
             new TestPopulation(session, "full").Apply();
@@ -64,7 +65,7 @@ namespace Tests.Workspace.Local
             var m = this.Database.State().M;
 
             using var session = this.Database.CreateSession();
-            session.State().User = new Allors.Domain.Users(session).FindBy(m.User.UserName, user);
+            session.State().User = new Allors.Database.Domain.Users(session).FindBy(m.User.UserName, user);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Data;
     using System.Text;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class ExtentStatementRoot : ExtentStatement
     {

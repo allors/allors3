@@ -7,7 +7,7 @@
 namespace Tests
 {
     
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Database.Protocol.Json;
     using Xunit;

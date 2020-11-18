@@ -3,11 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
 
     public class ScoreboardDerivation : DomainDerivation
@@ -16,6 +17,8 @@ namespace Allors.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.Scoreboard.Players),
+                new ChangedPattern(m.Scoreboard.Games),
+                new ChangedPattern(m.Game.Scores) { Steps = new IPropertyType[]{m.Game.ScoreboardWhereGame} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

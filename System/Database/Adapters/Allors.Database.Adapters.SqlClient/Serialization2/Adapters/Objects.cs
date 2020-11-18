@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections.Generic;
     using System.Xml;
     using Adapters;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class Objects : IEnumerable<object[]>
     {

@@ -6,7 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Adapters;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal sealed class AssociationContains : Predicate
     {

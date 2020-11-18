@@ -4,16 +4,16 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.IO;
     using System.Reflection;
-    using Allors;
+    using Allors.Database;
     using Allors.Database.Adapters.Memory;
-    using Allors.Domain;
-    using Allors.Meta;
-    using Allors.State;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Allors.Database.Security;
     using Moq;
   
     public class DomainTest : IDisposable

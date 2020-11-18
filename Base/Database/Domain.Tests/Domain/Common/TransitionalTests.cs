@@ -6,10 +6,9 @@
 //   Defines the ApplicationTests type.
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class TransitionalTests : DomainTest, IClassFixture<Fixture>

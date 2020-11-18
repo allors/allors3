@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    internal abstract class Extent : Allors.Extent
+    internal abstract class Extent : Allors.Database.Extent
     {
         internal abstract SqlExtent ContainedInExtent { get; }
     }

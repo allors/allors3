@@ -3,8 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Validating
+namespace Allors.Database.Domain.Derivations.Validating
 {
+    using Database.Derivations;
+
     public class DomainDerivationCycle : IDomainDerivationCycle
     {
         public ISession Session { get; internal set; }

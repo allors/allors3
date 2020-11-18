@@ -4,7 +4,7 @@
 // </copyright>
 // <summary></summary>
 
-namespace Allors.Domain.TestPopulation
+namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
 

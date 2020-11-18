@@ -6,8 +6,6 @@
 namespace Tests.Workspace
 {
     using System;
-    using System.Linq;
-    using Allors.Workspace.Adapters.Remote;
     using Xunit;
 
     public abstract class SaveTests : Test
@@ -21,7 +19,7 @@ namespace Tests.Workspace
 
             var saved = await session.Save();
 
-            foreach (var roleType in this.M.C1.ObjectType.RoleTypes.Except(new[] { this.M.C1.C1CreationDerivation }))
+            foreach (var roleType in this.M.C1.ObjectType.RoleTypes)
             {
                 var role = newObject.Strategy.Get(roleType);
                 Assert.True(role == null || (role is Array array && (array.Length == 0)));

@@ -3,9 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
-    using Allors.Domain;
+    using Database;
 
     public abstract partial class ObjectsBase<T> where T : IObject
     {
@@ -23,7 +23,7 @@ namespace Allors
             this.Session.Derive();
         }
 
-        public void Secure(Security security)
+        public void Secure(Domain.Security security)
         {
             this.CoreSecure(security);
             this.CustomSecure(security);

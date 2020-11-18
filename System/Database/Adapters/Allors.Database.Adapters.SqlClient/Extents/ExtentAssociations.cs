@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections.Generic;
 
     using Allors;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class ExtentAssociations : Extent
     {
@@ -139,7 +139,7 @@ namespace Allors.Database.Adapters.SqlClient
             return objects;
         }
 
-        public override Allors.Extent AddSort(IRoleType sort)
+        public override Allors.Database.Extent AddSort(IRoleType sort)
         {
             this.LazyUpgrade();
 
@@ -148,7 +148,7 @@ namespace Allors.Database.Adapters.SqlClient
             return this;
         }
 
-        public override Allors.Extent AddSort(IRoleType sort, SortDirection direction)
+        public override Allors.Database.Extent AddSort(IRoleType sort, SortDirection direction)
         {
             this.LazyUpgrade();
 

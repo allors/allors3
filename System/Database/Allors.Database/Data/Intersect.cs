@@ -3,13 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Meta;
 
-    using Allors.Meta;
-    
 
     public class Intersect : IExtentOperator
     {
@@ -23,7 +22,7 @@ namespace Allors.Data
 
         bool IExtent.HasMissingArguments(IDictionary<string, string> parameters) => this.Operands.Any(v => v.HasMissingArguments(parameters));
 
-        Allors.Extent IExtent.Build(ISession session, IDictionary<string, string> parameters)
+        Database.Extent IExtent.Build(ISession session, IDictionary<string, string> parameters)
         {
             var extent = session.Intersect(this.Operands[0].Build(session, parameters), this.Operands[1].Build(session, parameters));
             foreach (var sort in this.Sorting)

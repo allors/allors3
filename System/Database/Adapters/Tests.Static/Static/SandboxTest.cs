@@ -8,8 +8,8 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections.Generic;
     using Allors;
-    using Allors.Data;
-    using Allors.Domain;
+    using Allors.Database.Domain;
+    using Data;
     using Xunit;
     using Extent = Data.Extent;
 

@@ -3,9 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.State
+namespace Allors.Database.Domain
 {
-    using Domain;
     using MailKit.Net.Smtp;
     using MimeKit;
     using MailboxAddress = MimeKit.MailboxAddress;
@@ -27,23 +26,23 @@ namespace Allors.State
             var sender = emailMesssage.Sender?.UserEmail ?? this.DefaultSender;
             var senderName = emailMesssage.Sender?.UserName ?? this.DefaultSenderName;
 
-            message.From.Add(new MailboxAddress(senderName, sender));
+            message.From.Add(new MimeKit.MailboxAddress(senderName, sender));
 
             if (emailMesssage.ExistRecipientEmailAddress)
             {
-                message.To.Add(new MailboxAddress(emailMesssage.RecipientEmailAddress));
+                var address = new MimeKit.MailboxAddress(emailMesssage.RecipientEmailAddress);
+                message.To.Add(address);
             }
 
             foreach (User recipient in emailMesssage.Recipients)
             {
-                message.To.Add(new MailboxAddress(recipient.UserEmail));
+                var address = new MimeKit.MailboxAddress(recipient.UserEmail);
+                message.To.Add(address);
             }
 
-            using (var client = new SmtpClient())
-            {
-                client.Connect("smtp");
-                client.Send(message);
-            }
+            using var client = new SmtpClient();
+            client.Connect("smtp");
+            client.Send(message);
         }
 
         public void Dispose()

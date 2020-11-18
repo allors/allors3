@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Xml;
     using Allors;
     using Adapters;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class Strategy : IStrategy
     {
@@ -237,7 +237,7 @@ namespace Allors.Database.Adapters.Memory
             return this.compositeRoleByRoleType.ContainsKey(roleType);
         }
 
-        public Allors.Extent GetCompositeRoles(IRoleType roleType)
+        public Allors.Database.Extent GetCompositeRoles(IRoleType roleType)
         {
             this.AssertNotDeleted();
             this.Session.OnAccessCompositesRole?.Invoke(this, roleType);
@@ -345,7 +345,7 @@ namespace Allors.Database.Adapters.Memory
 
         public bool ExistCompositeAssociation(IAssociationType relationType) => this.GetCompositeAssociation(relationType) != null;
 
-        public Allors.Extent GetCompositeAssociations(IAssociationType associationType)
+        public Allors.Database.Extent GetCompositeAssociations(IAssociationType associationType)
         {
             this.AssertNotDeleted();
             this.Session.OnAccessCompositesAssociation?.Invoke(this, associationType);

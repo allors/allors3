@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the HomeAddress type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     /// <summary>
     /// A HomeAddress is a fysical address with a street/number and a place.

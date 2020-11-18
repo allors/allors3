@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the RoleType type.</summary>
 
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     /// <summary>
     /// A <see cref="IPropertyType"/> can be a <see cref="IAssociationType"/> or a <see cref="IRoleType"/>.

@@ -6,39 +6,14 @@
 //
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
-    using System.Linq;
-    using Allors;
-    using Allors.Data;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class DomainDerivationTest : DomainTest, IClassFixture<Fixture>
     {
         public DomainDerivationTest(Fixture fixture) : base(fixture) { }
-
-        [Fact]
-        public void ClassCreation()
-        {
-            var c1 = new C1Builder(this.Session).Build();
-
-            this.Session.Derive();
-
-            Assert.True(c1.C1CreationDerivation);
-        }
-
-        [Fact]
-        public void InterfaceCreation()
-        {
-            var c1 = new C1Builder(this.Session).Build();
-            var c2 = new C2Builder(this.Session).Build();
-
-            this.Session.Derive();
-
-            Assert.True(c1.I12CreationDerivation);
-            Assert.True(c2.I12CreationDerivation);
-        }
 
         [Fact]
         public void UnitRoles()

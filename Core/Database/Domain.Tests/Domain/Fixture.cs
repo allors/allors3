@@ -4,10 +4,10 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class Fixture : IDisposable
     {

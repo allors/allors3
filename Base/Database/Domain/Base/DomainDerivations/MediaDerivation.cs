@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Database.Derivations;
     using DataUtils;
     using HeyRed.Mime;
     using Meta;

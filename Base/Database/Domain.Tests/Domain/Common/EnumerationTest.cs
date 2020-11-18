@@ -6,7 +6,7 @@
 //   Defines the ApplicationTests type.
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 

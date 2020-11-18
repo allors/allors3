@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters
     using System.Globalization;
     using System.Linq;
     using Allors;
-    using Allors.Meta;
+    using Allors.Database.Meta;
     using Xunit;
 
     public abstract class LifeCycleTest : Test

@@ -3,9 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class Sort : IVisitable
     {
@@ -15,7 +15,7 @@ namespace Allors.Data
 
         public bool Descending { get; set; }
 
-        public void Build(Allors.Extent extent) => extent.AddSort(this.RoleType, this.Descending ? SortDirection.Descending : SortDirection.Ascending);
+        public void Build(Database.Extent extent) => extent.AddSort(this.RoleType, this.Descending ? SortDirection.Descending : SortDirection.Ascending);
 
         public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }

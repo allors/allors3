@@ -3,10 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
-    using Allors.Domain;
-
     public abstract partial class ObjectsBase<T> where T : IObject
     {
         public void Prepare(Setup setup)
@@ -23,7 +21,7 @@ namespace Allors
             this.CustomSetup(setup);
         }
 
-        public void Secure(Security security)
+        public void Secure(Domain.Security security)
         {
             this.CoreSecure(security);
             this.AppsSecure(security);

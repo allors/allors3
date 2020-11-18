@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the ContentTests type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.Text;
     using Xunit;

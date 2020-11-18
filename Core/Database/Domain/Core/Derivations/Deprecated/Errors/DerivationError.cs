@@ -3,9 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Errors
+namespace Allors.Database.Domain.Derivations.Errors
 {
     using System.Collections.Generic;
+    using Database.Derivations;
     using Meta;
 
     public abstract class DerivationError : IDerivationError

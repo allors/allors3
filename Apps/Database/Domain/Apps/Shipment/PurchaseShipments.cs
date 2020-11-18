@@ -5,9 +5,9 @@
 
 using System.Collections.Generic;
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public partial class PurchaseShipments
     {

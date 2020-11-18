@@ -10,12 +10,12 @@ namespace Tests
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Allors;
+    using Allors.Database;
     using Allors.Database.Adapters.Memory;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Allors.Database.Security;
     using Allors.Protocol.Json.Api;
-    using Allors.State;
 
     public class ApiTest : IDisposable
     {

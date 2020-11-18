@@ -4,14 +4,14 @@
 // </copyright>
 // <summary>Defines the ObjectBase type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// A base implementation for a static <see cref="IObjectFactory"/>.

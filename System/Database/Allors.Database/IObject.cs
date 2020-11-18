@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the IObject type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     /// <summary>
     /// <para>

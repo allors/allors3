@@ -4,18 +4,9 @@
 // </copyright>
 // <summary>Defines the ObjectNotLoadedEventArgs type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
-
-    /// <summary>
-    /// The loader raises an ObjectNotLoaded event when either the object's
-    /// saved type is not compatible with the current type or the
-    /// object's saved type doesn't exist in the current domain.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="args">The <see cref="ObjectNotLoadedEventArgs"/>.</param>
-    public delegate void ObjectNotLoadedEventHandler(object sender, ObjectNotLoadedEventArgs args);
 
     /// <summary>
     /// The object not loaded event arguments.
@@ -53,4 +44,18 @@ namespace Allors
         /// </returns>
         public override string ToString() => this.ObjectTypeId + ":" + this.ObjectId;
     }
+}
+
+namespace Allors
+{
+    using Database;
+
+    /// <summary>
+    /// The loader raises an ObjectNotLoaded event when either the object's
+    /// saved type is not compatible with the current type or the
+    /// object's saved type doesn't exist in the current domain.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="ObjectNotLoadedEventArgs"/>.</param>
+    public delegate void ObjectNotLoadedEventHandler(object sender, ObjectNotLoadedEventArgs args);
 }

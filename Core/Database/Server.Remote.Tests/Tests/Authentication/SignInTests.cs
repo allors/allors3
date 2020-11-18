@@ -7,11 +7,8 @@ namespace Allors.Server.Tests
 {
     using System;
 
-    using Allors.Domain;
-    using Protocol.Json;
+    using Allors.Database.Domain;
     using Protocol.Json.Auth;
-    using Server;
-
     using Xunit;
 
     [Collection("Api")]

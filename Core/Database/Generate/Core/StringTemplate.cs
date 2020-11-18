@@ -12,7 +12,7 @@ namespace Allors.Development.Repository.Generation
     using System.IO;
     using System.Xml;
     using Allors.Development.Repository.Storage;
-    using Allors.Meta;
+    using Allors.Database.Meta;
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
 

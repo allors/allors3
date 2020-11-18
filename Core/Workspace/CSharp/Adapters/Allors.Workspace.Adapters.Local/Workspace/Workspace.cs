@@ -9,8 +9,12 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using Database;
     using Derivations;
     using Meta;
+    using IChangeSet = Allors.Workspace.IChangeSet;
+    using IObjectFactory = Allors.Workspace.IObjectFactory;
+    using ISession = Allors.Workspace.ISession;
 
     public class Workspace : IWorkspace
     {

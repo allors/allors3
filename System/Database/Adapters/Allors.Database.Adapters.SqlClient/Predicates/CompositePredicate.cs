@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections.Generic;
     using System.Linq;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal abstract class CompositePredicate : Predicate, ICompositePredicate
     {
@@ -95,7 +95,7 @@ namespace Allors.Database.Adapters.SqlClient
             return this;
         }
 
-        public ICompositePredicate AddContainedIn(IRoleType role, Allors.Extent containingExtent)
+        public ICompositePredicate AddContainedIn(IRoleType role, Allors.Database.Extent containingExtent)
         {
             this.Extent.FlushCache();
             this.Filters.Add(new RoleContainedInExtent(this.Extent, role, containingExtent));
@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.SqlClient
             return this;
         }
 
-        public ICompositePredicate AddContainedIn(IAssociationType association, Allors.Extent containingExtent)
+        public ICompositePredicate AddContainedIn(IAssociationType association, Allors.Database.Extent containingExtent)
         {
             this.Extent.FlushCache();
             this.Filters.Add(new AssociationContainedInExtent(this.Extent, association, containingExtent));

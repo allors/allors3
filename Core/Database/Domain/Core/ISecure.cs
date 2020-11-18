@@ -3,12 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
-    using Allors.Domain;
-
     public interface ISecure
     {
-        void Secure(Security security);
+        void Secure(Domain.Security security);
     }
 }

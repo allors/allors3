@@ -3,9 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System;
-
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     public partial class CommunicationTask
     {

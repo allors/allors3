@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Collections.Generic;
     using System.Xml;
 
-    using Allors.Meta;
-    using Serialization;
+    using Allors.Database.Meta;
+    using Database.Derivations;
 
     /// <summary>
     /// A database is an online <see cref="IDatabase"/>.
@@ -77,19 +77,13 @@ namespace Allors
         /// Loads the population from the <see cref="XmlReader"/>.
         /// </summary>
         /// <param name="reader">The reader.</param>
-        [Obsolete]
         void Load(XmlReader reader);
 
         /// <summary>
         /// Saves the population to the <see cref="XmlWriter"/>.
         /// </summary>
         /// <param name="writer">The writer.</param>
-        [Obsolete]
         void Save(XmlWriter writer);
-
-        void Load(IPopulationData data);
-
-        IPopulationData Save();
 
         void AddDerivation(IDomainDerivation derivation);
     }

@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public interface IRoleCache
     {

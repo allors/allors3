@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Controllers
+namespace Allors.Database.Server.Controllers
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;

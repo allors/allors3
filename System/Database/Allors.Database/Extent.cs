@@ -4,14 +4,14 @@
 // </copyright>
 // <summary>Defines the Extent type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// The Extent of a <see cref="IObjectType"/> is the set of all objects that either

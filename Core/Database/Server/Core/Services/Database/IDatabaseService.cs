@@ -5,6 +5,8 @@
 
 namespace Allors.Services
 {
+    using Database;
+
     public interface IDatabaseService
     {
         IDatabase Database { get; set; }

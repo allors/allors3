@@ -4,15 +4,15 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Linq;
-    using Allors.Domain.TestPopulation;
+    using Allors.Database.Domain.TestPopulation;
     using Resources;
     using Xunit;
-    using Allors.Meta;
     using System.Collections.Generic;
+    using Database.Derivations;
 
     public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {

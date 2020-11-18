@@ -3,9 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
-    public static class DatabaseExtensions
+    using Database.Derivations;
+
+    public static partial class DatabaseExtensions
     {
         public static void RegisterDerivations(this @IDatabase @this)
         {

@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the ValidationError type.</summary>
 
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     /// <summary>
     /// An error that occurred during validation.

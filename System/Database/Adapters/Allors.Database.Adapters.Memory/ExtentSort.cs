@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class ExtentSort : IComparer<Strategy>
     {
@@ -81,7 +81,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        internal void CopyToConnected(Allors.Extent connectedExtent)
+        internal void CopyToConnected(Allors.Database.Extent connectedExtent)
         {
             connectedExtent.AddSort(this.roleType, this.direction);
             if (this.subSorter != null)

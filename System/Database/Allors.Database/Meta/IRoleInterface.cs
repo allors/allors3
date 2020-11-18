@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the RoleType type.</summary>
 
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     public interface IRoleInterface : IRoleType
     {

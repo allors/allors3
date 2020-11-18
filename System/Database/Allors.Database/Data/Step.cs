@@ -3,13 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Text;
-    using Allors.Meta;
+    using Allors.Database.Meta;
+    using Security;
 
     public class Step : IVisitable
     {
@@ -92,7 +93,7 @@ namespace Allors.Data
                     }
                     else
                     {
-                        foreach (IObject child in (Allors.Extent)this.PropertyType.Get(@object.Strategy))
+                        foreach (IObject child in (Database.Extent)this.PropertyType.Get(@object.Strategy))
                         {
                             yield return child;
                         }

@@ -12,9 +12,9 @@ namespace Allors.Database.Adapters.Memory
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
-    public abstract class Extent : Allors.Extent
+    public abstract class Extent : Allors.Database.Extent
     {
         private IObject[] defaultObjectArray;
         private Extent parent;
@@ -60,9 +60,9 @@ namespace Allors.Database.Adapters.Memory
 
         protected List<Strategy> Strategies { get; set; }
 
-        public override Allors.Extent AddSort(IRoleType roleType) => this.AddSort(roleType, SortDirection.Ascending);
+        public override Allors.Database.Extent AddSort(IRoleType roleType) => this.AddSort(roleType, SortDirection.Ascending);
 
-        public override Allors.Extent AddSort(IRoleType roleType, SortDirection direction)
+        public override Allors.Database.Extent AddSort(IRoleType roleType, SortDirection direction)
         {
             if (this.Sorter == null)
             {

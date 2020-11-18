@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
-    using Allors.Meta;
+    using Allors.Database.Meta;
     using Xunit;
 
     public abstract class ExtentTest : Test

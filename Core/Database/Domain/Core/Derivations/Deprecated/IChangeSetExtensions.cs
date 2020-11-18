@@ -4,11 +4,11 @@
 // </copyright>
 // <summary>Defines the ISessionExtension type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
     using System.Linq;
-    using Allors.Domain.Derivations;
+    using Allors.Database.Domain.Derivations;
 
     public static partial class IChangeSetExtensions
     {

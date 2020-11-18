@@ -4,10 +4,10 @@
 // </copyright>
 // <summary>Defines the ICompositePredicate type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System.Collections.Generic;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// <para> A Predicate is an expression that either returns true, false or unknown (Three Value Logic).

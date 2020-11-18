@@ -4,13 +4,13 @@
 // </copyright>
 // <summary>Defines the ExtentT type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// The Extent of a <see cref="ObjectType"/> is the set of all objects that either

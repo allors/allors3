@@ -9,16 +9,15 @@ namespace Commands
     using System.Data;
     using System.IO;
     using Allors;
+    using Allors.Database;
     using Allors.Database.Adapters;
-    using Allors.Domain;
-    using Allors.Meta;
-    using Allors.Services;
-
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using McMaster.Extensions.CommandLineUtils;
 
     using Microsoft.Extensions.Configuration;
     using NLog;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ObjectFactory = Allors.Database.ObjectFactory;
 
     [Command(Description = "Allors Core Commands")]
     [Subcommand(

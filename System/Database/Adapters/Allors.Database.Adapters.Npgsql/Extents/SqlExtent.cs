@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Collections;
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal abstract class SqlExtent : Extent
     {
@@ -31,9 +31,9 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal new IObject this[int index] => this.GetItem(index);
 
-        public override Allors.Extent AddSort(IRoleType roleType) => this.AddSort(roleType, SortDirection.Ascending);
+        public override Allors.Database.Extent AddSort(IRoleType roleType) => this.AddSort(roleType, SortDirection.Ascending);
 
-        public override Allors.Extent AddSort(IRoleType roleType, SortDirection direction)
+        public override Allors.Database.Extent AddSort(IRoleType roleType, SortDirection direction)
         {
             this.LazyLoadFilter();
             this.FlushCache();

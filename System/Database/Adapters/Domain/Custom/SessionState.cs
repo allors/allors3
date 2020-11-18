@@ -5,7 +5,7 @@
 // <summary>Defines the Default type.</summary>
 //------------------------------------------------------------------------------------------------
 
-namespace Allors
+namespace Allors.Database
 {
     public class SessionState : ISessionState
     {

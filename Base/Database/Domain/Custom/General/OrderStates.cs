@@ -4,9 +4,10 @@
 // </copyright>
 // <summary>Defines the HomeAddress type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
+   
 
     public partial class OrderStates
     {

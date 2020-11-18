@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.TestPopulation
+namespace Allors.Database.Domain.TestPopulation
 {
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Bogus;
-    using Person = Allors.Domain.Person;
+    using Person = Allors.Database.Domain.Person;
 
     public static class OrganisationExtensions
     {

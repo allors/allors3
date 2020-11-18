@@ -11,6 +11,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Net.Http;
     using Allors.Workspace.Meta;
     using Data;
+    using Database;
     using Polly;
     using Security;
 

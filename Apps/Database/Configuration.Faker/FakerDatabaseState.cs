@@ -4,9 +4,10 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using Bogus;
+    using Database;
     using Microsoft.AspNetCore.Http;
 
     public class FakerDatabaseState : DefaultDatabaseState

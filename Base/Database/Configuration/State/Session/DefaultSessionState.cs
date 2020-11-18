@@ -4,11 +4,10 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using System.Linq;
     using System.Security.Claims;
-    using Domain;
     using Microsoft.AspNetCore.Http;
 
     public class DefaultSessionState : ISessionState
@@ -19,7 +18,7 @@ namespace Allors
 
         public User User { get; set; }
 
-        public virtual void OnInit(ISession session)
+        public virtual void OnInit(Database.ISession session)
         {
             var nameIdentifier = this.httpContextAccessor?.HttpContext.User.Claims
                 .FirstOrDefault(v => v.Type == ClaimTypes.NameIdentifier)

@@ -3,22 +3,22 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Database.Server.Controllers
 {
     using System;
     using System.Collections.Concurrent;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Allors.Services;
-
+    using Database;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using SkiaSharp;
-    using ISession = Allors.ISession;
+    using ISession = Database.ISession;
 
     public abstract partial class BaseImageController : Controller
     {

@@ -4,13 +4,12 @@
 // </copyright>
 // <summary>Defines the PermissionTests type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Linq;
-    using Allors;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using Xunit;
 
     public class PermissionTests : DomainTest, IClassFixture<Fixture>

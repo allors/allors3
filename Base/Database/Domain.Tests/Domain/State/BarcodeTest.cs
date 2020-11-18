@@ -3,11 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.IO;
-    using Allors;
-    using Allors.State;
     using Xunit;
 
     public class BarcodeTest : DomainTest, IClassFixture<Fixture>

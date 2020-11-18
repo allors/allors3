@@ -9,15 +9,16 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Data;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
+    using Data;
+    using Derivations;
     using Domain;
     using Meta;
-
+    
     public class Api
     {
         public Api(ISession session, string workspaceName)
@@ -35,7 +36,7 @@ namespace Allors.Database.Protocol.Json
             this.MetaPopulation = databaseState.MetaPopulation;
             this.PreparedFetches = databaseState.PreparedFetches;
             this.PreparedExtents = databaseState.PreparedExtents;
-            this.Build = @class => (IObject)Allors.ObjectBuilder.Build(session, @class);
+            this.Build = @class => (IObject)DefaultObjectBuilder.Build(session, @class);
             this.Derive = () => this.Session.Derive(false);
         }
 

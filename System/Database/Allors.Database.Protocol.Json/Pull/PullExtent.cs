@@ -9,8 +9,9 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Data;
-    using Extent = Allors.Extent;
+    using Data;
+    using Security;
+    using Extent = Database.Extent;
 
     public class PullExtent
     {

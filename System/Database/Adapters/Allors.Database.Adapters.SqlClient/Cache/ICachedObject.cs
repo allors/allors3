@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.SqlClient.Caching
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public interface ICachedObject
     {

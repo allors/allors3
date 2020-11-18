@@ -6,9 +6,6 @@
 namespace Tests.Workspace
 {
     using System;
-    using System.Threading.Tasks;
-    using Allors.Workspace;
-    using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;

@@ -131,8 +131,6 @@ namespace Allors.Repository
 
         public DateTime I12AllorsDateTime { get; set; }
 
-        public bool I12CreationDerivation { get; set; }
-
         public Permission[] DeniedPermissions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
@@ -360,13 +358,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public I2 C1I2One2One { get; set; }
-
-        #region Allors
-        [Id("AB63E425-E1E1-44A8-9DC2-177271CBA092")]
-        #endregion
-        [Workspace(Default)]
-        [Derived]
-        public bool C1CreationDerivation { get; set; }
 
         #region Allors
         [Id("09A6A387-A1B5-4038-B074-3A01C81CBDA2")]

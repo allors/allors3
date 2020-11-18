@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.Memory
 {
-    public abstract class StrategyExtent : Allors.Extent
+    public abstract class StrategyExtent : Allors.Database.Extent
     {
         internal abstract Session Session { get; }
 

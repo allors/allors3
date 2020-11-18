@@ -3,16 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Database.Server.Controllers
 {
     using System.Threading.Tasks;
-
+    using Allors.Protocol.Json.Auth;
+    using Allors.Security;
+    using Allors.Server;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using Protocol.Json.Auth;
-    using Security;
 
     public class TestAuthenticationController : Controller
     {

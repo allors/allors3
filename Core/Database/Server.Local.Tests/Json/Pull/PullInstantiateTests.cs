@@ -7,12 +7,12 @@
 namespace Tests
 {
     
-    using Allors.Domain;
-    using Allors.Protocol.Json;
+    using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Data;
     using Allors.Database.Protocol.Json;
     using Xunit;
+    using Extent = Allors.Database.Data.Extent;
 
     public class PullInstantiateTests : ApiTest, IClassFixture<Fixture>
     {
@@ -28,7 +28,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var extent = new Extent(m.WorkspaceXObject1.ObjectType);
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -57,7 +57,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var extent = new Extent(m.WorkspaceXObject1.ObjectType);
             var pullRequest = new PullRequest
             {
                 Pulls = new[]
@@ -84,7 +84,7 @@ namespace Tests
 
             this.Session.Commit();
 
-            var extent = new Allors.Data.Extent(m.WorkspaceXObject1.ObjectType);
+            var extent = new Extent(m.WorkspaceXObject1.ObjectType);
             var pullRequest = new PullRequest
             {
                 Pulls = new[]

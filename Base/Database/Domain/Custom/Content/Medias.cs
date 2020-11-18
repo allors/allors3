@@ -1,9 +1,10 @@
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.IO;
     using System.Linq;
     using System.Reflection;
+   
 
     public partial class Medias
     {

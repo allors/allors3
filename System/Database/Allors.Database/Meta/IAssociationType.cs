@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the AssociationType type.</summary>
 
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     /// <summary>
     /// An association type defines the association side of a relation.

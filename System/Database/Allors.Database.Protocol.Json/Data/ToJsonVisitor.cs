@@ -7,20 +7,19 @@ namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Data;
-    using Allors.Meta;
+    using Allors.Database.Meta;
     using Allors.Protocol.Json.Data;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
     using Fetch = Allors.Protocol.Json.Data.Fetch;
-    using IVisitor = Allors.Data.IVisitor;
+    using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;
     using Sort = Allors.Protocol.Json.Data.Sort;
     using Step = Allors.Protocol.Json.Data.Step;
 
-    public class ToJsonVisitor : IVisitor
+    public class ToJsonVisitor : Data.IVisitor
     {
         private readonly Stack<Extent> extents;
         private readonly Stack<Predicate> predicates;
@@ -184,7 +183,7 @@ namespace Allors.Database.Protocol.Json
             this.predicates.Push(predicate);
         }
 
-        public void VisitExtent(Allors.Data.Extent visited)
+        public void VisitExtent(Data.Extent visited)
         {
             var extent = new Extent
             {
@@ -202,7 +201,7 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void VisitFetch(Allors.Data.Fetch visited)
+        public void VisitFetch(Data.Fetch visited)
         {
             var fetch = new Fetch();
 
@@ -317,7 +316,7 @@ namespace Allors.Database.Protocol.Json
             this.predicates.Push(predicate);
         }
 
-        public void VisitNode(Allors.Data.Node visited)
+        public void VisitNode(Data.Node visited)
         {
             var node = new Node
             {
@@ -379,7 +378,7 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void VisitPull(Allors.Data.Pull visited)
+        public void VisitPull(Data.Pull visited)
         {
             var pull = new Pull
             {
@@ -410,7 +409,7 @@ namespace Allors.Database.Protocol.Json
             this.Pull = pull;
         }
 
-        public void VisitResult(Allors.Data.Result visited)
+        public void VisitResult(Data.Result visited)
         {
             var result = new Result
             {
@@ -429,7 +428,7 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void VisitSort(Allors.Data.Sort visited)
+        public void VisitSort(Data.Sort visited)
         {
             var sort = new Sort
             {
@@ -440,7 +439,7 @@ namespace Allors.Database.Protocol.Json
             this.sorts.Push(sort);
         }
 
-        public void VisitStep(Allors.Data.Step visited)
+        public void VisitStep(Data.Step visited)
         {
             var step = new Step
             {

@@ -3,13 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Database.Server.Controllers
 {
     using System.Text;
     using Allors.Database.Adapters;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Allors.Security;
+    using Allors.Server;
     using Allors.Services;
+    using Database;
     using JSNLog;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
@@ -20,8 +23,7 @@ namespace Allors.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
-    using Security;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ObjectFactory = Database.ObjectFactory;
 
     public class Startup
     {

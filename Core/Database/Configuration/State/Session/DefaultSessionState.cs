@@ -4,12 +4,14 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using System.Linq;
     using System.Security.Claims;
+    using Database;
     using Domain;
     using Microsoft.AspNetCore.Http;
+    using ISession = Database.ISession;
 
     public class DefaultSessionState : ISessionState
     {

@@ -6,10 +6,7 @@
 namespace Tests
 {
     using System.Linq;
-    using Allors;
-    
-    using Allors.Domain;
-    using Allors.Protocol.Json.Api.Push;
+    using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Database.Protocol.Json;
     using Xunit;

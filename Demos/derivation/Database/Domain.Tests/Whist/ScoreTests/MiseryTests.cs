@@ -19,11 +19,9 @@
 // <summary>Defines the MediaTests type.</summary>
 //-------------------------------------------------------------------------------------------------
 
-namespace Tests.Whist.Score
+namespace Allors.Database.Domain.Tests.Whist.Score
 {
     using System.Linq;
-    using Allors;
-    using Allors.Domain;
     using Xunit;
 
     public class MiseryTests : DomainTest, IClassFixture<Fixture>

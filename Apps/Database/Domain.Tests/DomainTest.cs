@@ -4,23 +4,22 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Globalization;
     using System.Linq;
     using Allors.Database.Adapters.Memory;
-    using Allors.Domain;
-    using Allors.Meta;
-    using Allors.State;
-    using Domain.TestPopulation;
-    using Person = Domain.Person;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
+    using Database;
+    using Database.Domain.TestPopulation;
 
     public class DomainTest : IDisposable
     {
         public DomainTest(Fixture fixture, bool populate = true)
         {
-            var database = new Database.Adapters.Memory.Database(
+            var database = new Allors.Database.Adapters.Memory.Database(
                 new FakerDatabaseState(),
                 new Configuration
                 {
@@ -49,11 +48,11 @@ namespace Allors
 
         protected Organisation InternalOrganisation => this.Session.Extent<Organisation>().First(v => v.IsInternalOrganisation);
 
-        protected Person Administrator => this.GetPersonByUserName("administrator");
+        protected Allors.Database.Domain.Person Administrator => this.GetPersonByUserName("administrator");
 
-        protected Person OrderProcessor => this.GetPersonByUserName("orderProcessor");
+        protected Allors.Database.Domain.Person OrderProcessor => this.GetPersonByUserName("orderProcessor");
 
-        protected Person Purchaser => this.GetPersonByUserName("purchaser");
+        protected Allors.Database.Domain.Person Purchaser => this.GetPersonByUserName("purchaser");
 
         public void Dispose()
         {
@@ -252,6 +251,6 @@ namespace Allors
             this.Session.Commit();
         }
 
-        private Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(this.M.User.UserName, userName);
+        private Allors.Database.Domain.Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(this.M.User.UserName, userName);
     }
 }

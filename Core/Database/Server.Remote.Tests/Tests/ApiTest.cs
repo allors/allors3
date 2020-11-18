@@ -13,18 +13,14 @@ namespace Allors.Server.Tests
     using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
-    using Allors;
     using Database.Adapters.SqlClient;
-    using Allors.Domain;
-    using Allors.Meta;
-    using Server;
-    using Allors.Services;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Protocol.Json;
     using Protocol.Json.Auth;
-    using ISession = Allors.ISession;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ISession = Database.ISession;
+    using ObjectFactory = Database.ObjectFactory;
 
     public abstract class ApiTest : IDisposable
     {

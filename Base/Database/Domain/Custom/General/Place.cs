@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Place type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     /// <summary>
     /// A Place is a fysical location somewhere on earth, defined as a postalcode/city and a country.
