@@ -19,7 +19,7 @@ namespace Allors.Database.Adapters.Memory
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
         private Session session;
 
-        public Database(IDatabaseStateLifecycle state, Configuration configuration)
+        public Database(IDatabaseLifecycle state, Configuration configuration)
         {
             this.StateLifecycle = state;
             if (this.StateLifecycle == null)
@@ -56,7 +56,7 @@ namespace Allors.Database.Adapters.Memory
 
         public IMetaPopulation MetaPopulation => this.ObjectFactory.MetaPopulation;
 
-        public IDatabaseStateLifecycle StateLifecycle { get; }
+        public IDatabaseLifecycle StateLifecycle { get; }
 
         internal bool IsLoading { get; private set; }
 

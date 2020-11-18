@@ -17,7 +17,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.State().TreeCache;
+            this.TreeCache = this.Session.Database.Context().TreeCache;
         }
 
         private ISession Session { get; }
@@ -31,7 +31,7 @@ namespace Allors.Server.Controllers
         [Authorize]
         public IActionResult UserName()
         {
-            var user = this.Session.State().User;
+            var user = this.Session.Context().User;
             var result = user?.UserName;
             return this.Content(result);
         }

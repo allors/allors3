@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<CommunicationEvent>())
             {
-                if (!@this.ExistOwner && @this.Strategy.Session.State().User is Person owner)
+                if (!@this.ExistOwner && @this.Strategy.Session.Context().User is Person owner)
                 {
                     @this.Owner = owner;
                 }

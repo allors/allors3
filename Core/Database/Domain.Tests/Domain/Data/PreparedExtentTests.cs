@@ -8,6 +8,7 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using Allors.Database;
     using Allors.Database.Domain;
+    using Configuration;
     using Xunit;
 
     public class PreparedExtentTests : DomainTest, IClassFixture<Fixture>
@@ -19,7 +20,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.Database.State().PreparedExtents;
+            var extentService = this.Session.Database.Context().PreparedExtents;
             var organizationByName = extentService.Get(PreparedExtents.OrganisationByName);
 
             var arguments = new Dictionary<string, string>

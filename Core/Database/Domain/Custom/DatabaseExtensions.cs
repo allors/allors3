@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     {
         public static void RegisterDerivations(this @IDatabase @this)
         {
-            var m = @this.State().M;
+            var m = @this.Context().M;
             var derivations = new IDomainDerivation[]
             {
                 // Custom

@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
 
             var session = this.User.Session();
             var database = session.Database;
-            var effectivePermissionCache = database.State().WorkspaceEffectivePermissionCache;
+            var effectivePermissionCache = database.Context().WorkspaceEffectivePermissionCache;
 
             List<AccessControl> misses = null;
             foreach (AccessControl accessControl in this.User.AccessControlsWhereEffectiveUser)
@@ -70,7 +70,7 @@ namespace Allors.Database.Domain
                 if (misses.Count > 1)
                 {
                     // TODO: Cache
-                    var m = this.User.DatabaseState().M;
+                    var m = this.User.DatabaseContext().M;
 
                     var permissionPrefetch = new PrefetchPolicyBuilder()
                         .WithRule(m.ReadPermission.RelationTypePointer)

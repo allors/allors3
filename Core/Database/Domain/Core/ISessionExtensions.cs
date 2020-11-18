@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     {
         public static IValidation Derive(this ISession session, bool throwExceptionOnError = true)
         {
-            var derivationService = session.Database.State().DerivationFactory;
+            var derivationService = session.Database.Context().DerivationFactory;
             var derivation = derivationService.CreateDerivation(session);
             var validation = derivation.Derive();
             if (throwExceptionOnError && validation.HasErrors)
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
         {
             var now = DateTime.UtcNow;
 
-            var timeService = session.Database.State().Time;
+            var timeService = session.Database.Context().Time;
             var timeShift = timeService.Shift;
             if (timeShift != null)
             {

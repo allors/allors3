@@ -12,13 +12,13 @@ namespace Allors.Database.Domain.Derivations.Validating
 
     internal class Graph
     {
-        internal Graph(Derivation derivation)
+        internal Graph(ValidatingDerivation derivation)
         {
             this.Derivation = derivation;
             this.NodeByObject = new Dictionary<Object, Node>();
         }
 
-        internal Derivation Derivation { get; }
+        internal ValidatingDerivation Derivation { get; }
 
         internal Dictionary<Object, Node> NodeByObject { get; }
 

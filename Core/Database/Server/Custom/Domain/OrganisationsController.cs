@@ -20,7 +20,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.State().TreeCache;
+            this.TreeCache = this.Session.Database.Context().TreeCache;
         }
 
         public ITreeCache TreeCache { get; }

@@ -164,7 +164,7 @@ namespace Allors.Database.Domain
 		public $class.name$(Allors.Database.IStrategy strategy)
 		{
 			this.strategy = strategy;
-			this.m = this.DatabaseState().M;
+			this.m = this.DatabaseContext().M;
 		}
 
 		public Allors.Database.Meta.M M => m;
@@ -205,15 +205,15 @@ $class.DatabaseAssociationTypes:{associationType|$classAssociationType_Class()$}
 $class.MethodTypes:{methodType|$classMethodType_Method()$}$
 
         #region Test Helpers
-        public static $class.name$ Create(ISession session) => ($class.name$)session.Create(session.Database.State().M.$class.name$.ObjectType);
+        public static $class.name$ Create(ISession session) => ($class.name$)session.Create(session.Database.Context().M.$class.name$.ObjectType);
 
-        public static $class.name$[] Create(ISession session, int count) => ($class.name$[])session.Create(session.Database.State().M.$class.name$.ObjectType, count);
+        public static $class.name$[] Create(ISession session, int count) => ($class.name$[])session.Create(session.Database.Context().M.$class.name$.ObjectType, count);
 
         public static $class.name$ Instantiate(ISession session, long id) => ($class.name$)session.Instantiate(id);
 
         public static $class.name$[] Instantiate(ISession session, string[] ids) => ($class.name$[])session.Instantiate(ids);
 
-        public static $class.name$[] Extent(ISession session) => ($class.name$[])session.Extent(session.Database.State().M.$class.name$.ObjectType).ToArray();
+        public static $class.name$[] Extent(ISession session) => ($class.name$[])session.Extent(session.Database.Context().M.$class.name$.ObjectType).ToArray();
         #endregion
 	}
 }
@@ -371,7 +371,7 @@ $if(methodType.Composite.IsClass)$
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.State().M;
+			    var m = this.Object.Strategy.Session.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$methodType.Composite.SingularName$.$methodType.Name$);
 			}
 		}
@@ -400,7 +400,7 @@ methodTypeLeafClass() ::= <<
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.State().M;
+			    var m = this.Object.Strategy.Session.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$.$methodType.Name$);
 			}
 		}

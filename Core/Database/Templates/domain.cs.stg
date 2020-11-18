@@ -166,7 +166,7 @@ namespace Allors.Database.Domain
 		public $class.name$(Allors.Database.IStrategy strategy)
 		{
 			this.strategy = strategy;
-            this.m = strategy.Session.Database.State().M;
+            this.m = strategy.Session.Database.Context().M;
 		}
 
 		public Allors.Database.Meta.M M => m;
@@ -506,7 +506,7 @@ $if(methodType.Composite.IsClass)$
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.State().M;
+			    var m = this.Object.Strategy.Session.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$methodType.Composite.SingularName$.$methodType.Name$);
 			}
 		}
@@ -535,7 +535,7 @@ methodTypeLeafClass() ::= <<
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Session.Database.State().M;
+			    var m = this.Object.Strategy.Session.Database.Context().M;
 				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$.$methodType.Name$);
 			}
 		}

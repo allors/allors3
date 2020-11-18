@@ -12,13 +12,13 @@ namespace Allors.Database.Domain.Derivations.Default
 
     internal class Graph
     {
-        internal Graph(Derivation derivation)
+        internal Graph(DefaultDerivation derivation)
         {
             this.Derivation = derivation;
             this.NodeByObject = new Dictionary<Object, Node>();
         }
 
-        internal Derivation Derivation { get; }
+        internal DefaultDerivation Derivation { get; }
 
         internal Dictionary<Object, Node> NodeByObject { get; }
 

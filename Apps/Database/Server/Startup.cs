@@ -12,6 +12,7 @@ namespace Allors.Database.Server.Controllers
     using Allors.Security;
     using Allors.Server;
     using Allors.Services;
+    using Configuration;
     using Database;
     using JSNLog;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -78,7 +79,7 @@ namespace Allors.Database.Server.Controllers
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             // Allors
-            var databaseState = new DefaultDatabaseState(httpContextAccessor);
+            var databaseState = new DefaultDatabaseContext(httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseState, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             var database = databaseBuilder.Build();
             database.RegisterDerivations();

@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     {
         public static decimal SetUnitSurcharge(this Priceable @this, PriceComponent priceComponent, decimal revenueBreakSurcharge)
         {
-            var m = @this.DatabaseState().M;
+            var m = @this.DatabaseContext().M;
             if (priceComponent.Strategy.Class.Equals(m.SurchargeComponent.ObjectType))
             {
                 var surchargeComponent = (SurchargeComponent)priceComponent;
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
         internal static decimal SetUnitDiscount(this Priceable @this, PriceComponent priceComponent, decimal revenueBreakDiscount)
         {
-            var m = @this.DatabaseState().M;
+            var m = @this.DatabaseContext().M;
             if (priceComponent.Strategy.Class.Equals(m.DiscountComponent.ObjectType))
             {
                 var discountComponent = (DiscountComponent)priceComponent;

@@ -16,7 +16,7 @@ namespace Allors.Workspace
 
         IObjectFactory ObjectFactory { get; }
 
-        IWorkspaceStateLifecycle StateLifecycle { get; }
+        IWorkspaceLifecycle StateLifecycle { get; }
 
         IEnumerable<ISession> Sessions { get; }
 

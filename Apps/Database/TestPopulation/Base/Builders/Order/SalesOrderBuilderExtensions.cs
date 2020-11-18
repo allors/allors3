@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithOrganisationInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
-            var m = @this.Session.Database.State().M;
+            var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();
 
             var internalOrganisations = @this.Session.Extent<Organisation>();

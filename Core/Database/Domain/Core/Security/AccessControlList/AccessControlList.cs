@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
             this.classId = this.Object.Strategy.Class.Id;
 
             var session = @object.Strategy.Session;
-            var permissionsCache = session.Database.State().PermissionsCache;
+            var permissionsCache = session.Database.Context().PermissionsCache;
             this.permissionsCacheEntry = permissionsCache.Get(this.classId);
 
             this.lazyLoaded = false;

@@ -6,9 +6,12 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public interface IPermissionsCache
     {
+        IPermissionsCacheEntry Create(IGrouping<Guid, Permission> permissions);
+
         IPermissionsCacheEntry Get(Guid classId);
 
         void Clear();

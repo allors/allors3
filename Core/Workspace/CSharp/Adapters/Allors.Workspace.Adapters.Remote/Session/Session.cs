@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote
         private ISet<DatabaseStrategy> newDatabaseStrategies;
         private SessionChangeSet sessionChangeSet;
 
-        public Session(Workspace workspace, ISessionStateLifecycle stateLifecycle)
+        public Session(Workspace workspace, ISessionLifecycle stateLifecycle)
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         ~Session() => this.Workspace.UnregisterSession(this);
 
-        public ISessionStateLifecycle StateLifecycle { get; }
+        public ISessionLifecycle StateLifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
 

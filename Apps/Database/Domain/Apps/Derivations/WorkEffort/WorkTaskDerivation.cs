@@ -206,7 +206,7 @@ namespace Allors.Database.Domain
 
                 static void VerifyWorkEffortPartyAssignments(WorkEffort @this, IDomainValidation validation)
                 {
-                    var m = @this.Strategy.Session.Database.State().M;
+                    var m = @this.Strategy.Session.Database.Context().M;
 
                     var existingAssignmentRequired = @this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true;
                     var existingAssignments = @this.WorkEffortPartyAssignmentsWhereAssignment.ToArray();

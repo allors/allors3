@@ -11,6 +11,7 @@ namespace Commands
     using Allors;
     using Allors.Database;
     using Allors.Database.Adapters;
+    using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
     using McMaster.Extensions.CommandLineUtils;
@@ -75,7 +76,7 @@ namespace Commands
             {
                 if (this.database == null)
                 {
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseState(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
+                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseContext(), this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)), this.IsolationLevel, this.CommandTimeout);
                     this.database = databaseBuilder.Build();
                     this.database.RegisterDerivations();
                 }
@@ -84,7 +85,7 @@ namespace Commands
             }
         }
 
-        public M M => this.Database.State().M;
+        public M M => this.Database.Context().M;
 
         public static int Main(string[] args)
         {

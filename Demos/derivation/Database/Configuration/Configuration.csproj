@@ -18,4 +18,9 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Core\Database\Configuration\Core*\**\*.cs" />
+    <Compile Include="..\..\..\..\Base\Database\Configuration\Base*\**\*.cs" />
+  </ItemGroup>
+
 </Project>

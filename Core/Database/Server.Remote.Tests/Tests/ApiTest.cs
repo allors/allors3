@@ -16,6 +16,7 @@ namespace Allors.Server.Tests
     using Database.Adapters.SqlClient;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Database.Configuration;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Protocol.Json.Auth;
@@ -41,7 +42,7 @@ namespace Allors.Server.Tests
 
             var metaPopulation = new MetaBuilder().Build();
             var database = new Database(
-                new DefaultDatabaseState(),
+                new DefaultDatabaseContext(),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
@@ -61,7 +62,7 @@ namespace Allors.Server.Tests
             this.Session = database.CreateSession();
         }
 
-        public M M => this.Session.Database.State().M;
+        public M M => this.Session.Database.Context().M;
 
         public IConfigurationRoot Configuration { get; set; }
 

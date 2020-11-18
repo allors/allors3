@@ -12,6 +12,7 @@ namespace Tests
     using System.Reflection;
     using Allors.Database;
     using Allors.Database.Adapters.Memory;
+    using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
     using Allors.Database.Security;
@@ -22,13 +23,13 @@ namespace Tests
         public ApiTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseState(),
+                new DefaultDatabaseContext(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = database.State().M;
+            this.M = database.Context().M;
 
             this.Setup(database, populate);
         }
@@ -39,9 +40,9 @@ namespace Tests
 
         public ISession Session { get; private set; }
 
-        public ITime Time => this.Session.Database.State().Time;
+        public ITime Time => this.Session.Database.Context().Time;
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.State().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Session.Database.Context().DerivationFactory;
 
         public TimeSpan? TimeShift
         {
@@ -71,7 +72,7 @@ namespace Tests
             }
         }
 
-        protected User SetUser(string userName) => this.Session.State().User = new Users(this.Session).FindBy(this.M.User.UserName, userName);
+        protected User SetUser(string userName) => this.Session.Context().User = new Users(this.Session).FindBy(this.M.User.UserName, userName);
 
         protected Func<IAccessControlList, string> PrintAccessControls =>
             acl =>

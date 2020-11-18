@@ -22,8 +22,8 @@ namespace Allors.Database.Domain
             this.EffectivePermissions = permissions;
 
             // Invalidate cache
-            this.DatabaseState().EffectivePermissionCache.Clear(this.Id);
-            this.DatabaseState().WorkspaceEffectivePermissionCache.Clear(this.Id);
+            this.DatabaseContext().EffectivePermissionCache.Clear(this.Id);
+            this.DatabaseContext().WorkspaceEffectivePermissionCache.Clear(this.Id);
         }
     }
 }

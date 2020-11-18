@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
         protected ObjectsBase(ISession session)
         {
             this.Session = session;
-            this.M = this.Session.Database.State().M;
+            this.M = this.Session.Database.Context().M;
         }
 
         public M M { get; }

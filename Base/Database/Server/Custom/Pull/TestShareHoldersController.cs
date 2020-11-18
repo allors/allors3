@@ -21,7 +21,7 @@ namespace Allors.Database.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Session = sessionService.Session;
-            this.TreeCache = this.Session.Database.State().TreeCache;
+            this.TreeCache = this.Session.Database.Context().TreeCache;
         }
 
         private ISession Session { get; }
@@ -38,8 +38,8 @@ namespace Allors.Database.Server.Controllers
                 var api = new Api(this.Session, this.WorkspaceService.Name);
                 var response = api.CreatePullResponseBuilder();
 
-                var m = this.Session.Database.State().M;
-                var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.State().User);
+                var m = this.Session.Database.Context().M;
+                var organisation = new Organisations(this.Session).FindBy(m.Organisation.Owner, this.Session.Context().User);
                 response.AddObject("root", organisation,
                     new[] {
                                 new Node(m.Organisation.Shareholders)

@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Memory
 
         private long currentId;
 
-        internal Session(Database database, ISessionStateLifecycle scope)
+        internal Session(Database database, ISessionLifecycle scope)
         {
             this.Database = database;
             this.StateLifecycle = scope;
@@ -46,7 +46,7 @@ namespace Allors.Database.Adapters.Memory
 
         IDatabase ISession.Database => this.Database;
 
-        public ISessionStateLifecycle StateLifecycle { get; }
+        public ISessionLifecycle StateLifecycle { get; }
 
         public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
 

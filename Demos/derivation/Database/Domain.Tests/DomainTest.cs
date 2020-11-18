@@ -11,19 +11,20 @@ namespace Allors.Database.Domain.Tests
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Configuration;
 
     public abstract class DomainTest : IDisposable
     {
         protected DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseState(),
+                new DefaultDatabaseContext(),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.State().M;
+            this.M = database.Context().M;
 
             this.Setup(database, populate);
         }
@@ -40,9 +41,9 @@ namespace Allors.Database.Domain.Tests
 
         public ISession Session { get; private set; }
 
-        public ITime Time => this.Session.Database.State().Time;
+        public ITime Time => this.Session.Database.Context().Time;
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.State().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Session.Database.Context().DerivationFactory;
 
         public TimeSpan? TimeShift
         {

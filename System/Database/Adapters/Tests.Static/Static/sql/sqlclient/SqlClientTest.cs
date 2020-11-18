@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var count = Settings.LargeArraySize;
 
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.SqlClient
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var c2PrefetchPolicy = new PrefetchPolicyBuilder()
                     .WithRule(m.C2.C3Many2Manies)

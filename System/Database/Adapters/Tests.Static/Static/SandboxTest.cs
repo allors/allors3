@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var user = User.Create(this.Session);
                 user.From = "Nowhere";
@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 if (this.Population is IDatabase database)
                 {
@@ -70,7 +70,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var c1A = C1.Create(this.Session);
                 var c1B = C1.Create(this.Session);
@@ -91,7 +91,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var population = new TestPopulation(this.Session);
 
@@ -112,7 +112,7 @@ namespace Allors.Database.Adapters
             foreach (var init in this.Inits)
             {
                 init();
-                var m = this.Session.Database.State().M;
+                var m = this.Session.Database.Context().M;
 
                 var population = new TestPopulation(this.Session);
 

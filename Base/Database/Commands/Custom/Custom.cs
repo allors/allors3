@@ -24,7 +24,7 @@ namespace Commands
             this.Logger.Info("Begin");
 
             var scheduler = new AutomatedAgents(session).System;
-            session.State().User = scheduler;
+            session.Context().User = scheduler;
 
             // Custom code
             session.Derive();
