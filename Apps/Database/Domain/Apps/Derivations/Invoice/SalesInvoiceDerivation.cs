@@ -42,6 +42,13 @@ namespace Allors.Domain
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistBilledFrom
+                    && @this.BilledFrom != @this.CurrentVersion.BilledFrom)
+                {
+                    validation.AddError($"{@this} {this.M.SalesInvoice.BilledFrom} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 if (@this.ExistBillToCustomer)
                 {
                     @this.PreviousBillToCustomer = @this.BillToCustomer;

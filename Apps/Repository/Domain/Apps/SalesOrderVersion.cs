@@ -86,6 +86,14 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
+        [Id("b39d9e8c-cbf9-4d37-90f3-4f2ac5b00e5d")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public InternalOrganisation TakenBy { get; set; }
+
+        #region Allors
         [Id("DDF41C7B-BF5F-4F60-B39C-5618AB328C42")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

@@ -24,7 +24,6 @@ namespace Allors.Domain
 
             foreach (var @this in matches.Cast<Request>())
             {
-
                 if (!@this.ExistRecipient)
                 {
                     var internalOrganisations = new Organisations(session).InternalOrganisations();

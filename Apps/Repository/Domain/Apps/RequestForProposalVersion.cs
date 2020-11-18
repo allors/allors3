@@ -53,6 +53,8 @@ namespace Allors.Repository
 
         public User LastModifiedBy { get; set; }
 
+        public InternalOrganisation Recipient { get; set; }
+
         #endregion
 
         #region inherited methods

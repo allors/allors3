@@ -101,20 +101,24 @@ namespace Allors.Domain
                 return false;
             }
 
-            bool IsDeletable(PurchaseOrder purchaseOrder)
-            {
-                return (purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Created)
+            bool IsDeletable(PurchaseOrder purchaseOrder) => (purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Created)
                  || purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Cancelled)
                  || purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Rejected))
-             && !purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder
-             && !purchaseOrder.ExistSerialisedItemsWherePurchaseOrder
-             && !purchaseOrder.ExistWorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder
-             && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
-            }
+                && !purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder
+                && !purchaseOrder.ExistSerialisedItemsWherePurchaseOrder
+                && !purchaseOrder.ExistWorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder
+                && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
+
+            var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<PurchaseOrder>().Where(v => v.OrderedBy?.ActiveSuppliers.Any() == true))
             {
-                var validation = cycle.Validation;
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistOrderedBy
+                    && @this.OrderedBy != @this.CurrentVersion.OrderedBy)
+                {
+                    validation.AddError($"{@this} {this.M.PurchaseOrder.OrderedBy} {ErrorMessages.InternalOrganisationChanged}");
+                }
 
                 if (!@this.ExistOrderNumber)
                 {

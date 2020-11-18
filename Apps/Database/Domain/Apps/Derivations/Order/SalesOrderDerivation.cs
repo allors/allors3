@@ -43,6 +43,13 @@ namespace Allors.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistTakenBy
+                    && @this.TakenBy != @this.CurrentVersion.TakenBy)
+                {
+                    validation.AddError($"{@this} {this.M.SalesOrder.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 // SalesOrder Derivations and Validations
                 @this.BillToCustomer ??= @this.ShipToCustomer;
                 @this.ShipToCustomer ??= @this.BillToCustomer;

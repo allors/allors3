@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("5B8C17C9-17BF-4B80-9246-AF7125EAE976")]
@@ -83,6 +84,14 @@ namespace Allors.Repository
 
         public decimal TotalIrpf { get; set; }
         #endregion
+
+        #region Allors
+        [Id("f56f49a3-c122-4bd9-9f66-6e6775700a65")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public InternalOrganisation OrderedBy { get; set; }
 
         #region Allors
         [Id("A6D9BF95-9717-4336-A261-4773FBD93CA8")]

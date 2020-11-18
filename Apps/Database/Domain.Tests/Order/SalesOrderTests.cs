@@ -8,6 +8,7 @@ namespace Allors.Domain
 {
     using System.Linq;
     using Allors.Domain.TestPopulation;
+    using Resources;
     using Xunit;
 
     public class SalesOrderTests : DomainTest, IClassFixture<Fixture>
@@ -2851,11 +2852,41 @@ namespace Allors.Domain
 
             Assert.Equal(order.OriginFacility, this.InternalOrganisation.StoresWhereInternalOrganisation.First.DefaultFacility);
         }
+
+        [Fact]
+        public void DeriveDefaultLocale()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DefaultLocale, this.Session.GetSingleton().DefaultLocale);
+        }
+
+        [Fact]
+        public void DeriveDefaultCurrency()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DefaultCurrency, this.Session.GetSingleton().DefaultLocale.Country.Currency);
+        }
     }
 
     public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedTakenByFromValidationError()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.TakenBy = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedError = $"{order} {this.M.SalesOrder.TakenBy} {ErrorMessages.InternalOrganisationChanged}";
+            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+        }
 
         [Fact]
         public void ChangedShipToCustomerDeriveBillToCustomer()
@@ -2920,6 +2951,143 @@ namespace Allors.Domain
             this.Session.Derive(false);
 
             Assert.Contains(order.PlacingCustomer, order.Customers);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveLocaleFromBillToCustomerLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.Locale = swedishLocale;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.Locale, swedishLocale);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveLocaleFromDefaultLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            this.Session.GetSingleton().DefaultLocale = swedishLocale;
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.False(customer.ExistLocale);
+            Assert.Equal(order.Locale, order.DefaultLocale);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveVatRegime()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+
+            Assert.True(customer.ExistVatRegime);
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.VatRegime, customer.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveIrpfRegime()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.IrpfRegime, customer.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedTakenByDeriveCurrencyFromInternalOrganisationPreferredCurrency()
+        {
+            Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
+
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.Currency, this.InternalOrganisation.PreferredCurrency);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveCurrencyFromDefaultLocale()
+        {
+            var se = new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE");
+            var newLocale = new LocaleBuilder(this.Session)
+                .WithCountry(se)
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemovePreferredCurrency();
+            customer.Locale = newLocale;
+
+            order.BillToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.Currency, se.Currency);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerPreferredCurrency()
+        {
+            var newLocale = new LocaleBuilder(this.Session)
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+            customer.PreferredCurrency = newLocale.Country.Currency;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.Currency, customer.PreferredCurrency);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerLocale()
+        {
+            var newLocale = new LocaleBuilder(this.Session)
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.Locale = newLocale;
+            customer.RemovePreferredCurrency();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.Currency, newLocale.Country.Currency);
         }
     }
 

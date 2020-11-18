@@ -16,6 +16,14 @@ namespace Allors.Repository
     public partial interface RequestVersion : Version
     {
         #region Allors
+        [Id("eacf2758-d19a-4ea0-808e-b647a758f493")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        InternalOrganisation Recipient { get; set; }
+
+        #region Allors
         [Id("649F4856-6B08-4AC1-B4CB-87A1CCAFAAF8")]
         [Indexed]
         #endregion

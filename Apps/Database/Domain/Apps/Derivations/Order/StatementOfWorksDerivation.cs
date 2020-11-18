@@ -9,6 +9,7 @@ namespace Allors.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Meta;
+    using Resources;
 
     public class StatementOfWorkDerivation : DomainDerivation
     {
@@ -20,8 +21,18 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
+
             foreach (var @this in matches.Cast<StatementOfWork>())
             {
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistIssuer
+                    && @this.Issuer != @this.CurrentVersion.Issuer)
+                {
+                    validation.AddError($"{@this} {this.M.StatementOfWork.Issuer} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 Sync(@this);
             }
 

@@ -9,6 +9,7 @@ namespace Allors.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Resources;
 
     public class RequestForProposalDerivation : DomainDerivation
     {
@@ -20,13 +21,21 @@ namespace Allors.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<RequestForProposal>())
             {
+                if (@this.ExistCurrentVersion
+                   && @this.CurrentVersion.ExistRecipient
+                   && @this.Recipient != @this.CurrentVersion.Recipient)
+                {
+                    validation.AddError($"{@this} {this.M.RequestForProposal.Recipient} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 foreach (RequestItem requestItem in @this.RequestItems)
                 {
                     requestItem.Sync(@this);
                 }
-
             }
         }
     }

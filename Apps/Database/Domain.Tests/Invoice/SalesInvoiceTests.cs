@@ -1150,10 +1150,21 @@ namespace Allors.Domain
         public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedBilledFromValidationError()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.BilledFrom = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedError = $"{invoice} {this.M.SalesInvoice.BilledFrom} {ErrorMessages.InternalOrganisationChanged}";
+            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+        }
+
+        [Fact]
         public void ChangedBilledFromDeriveStore()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
             this.Session.Derive(false);
 
             Assert.Equal(invoice.Store, new Stores(this.Session).Extent().First);

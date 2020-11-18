@@ -1,3 +1,4 @@
+
 // <copyright file="Domain.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
@@ -28,6 +29,13 @@ namespace Allors.Domain
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistTakenBy
+                    && @this.TakenBy != @this.CurrentVersion.TakenBy)
+                {
+                    validation.AddError($"{@this} {this.M.WorkTask.TakenBy} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 @this.ResetPrintDocument();
 
                 if (!@this.ExistDerivationTrigger)

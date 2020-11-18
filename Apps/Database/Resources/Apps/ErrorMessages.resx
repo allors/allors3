@@ -264,4 +264,7 @@
   <data name="InvalidQuantity" xml:space="preserve">
     <value>Quantity is not valid</value>
   </data>
+  <data name="InternalOrganisationChanged" xml:space="preserve">
+    <value>Changing Internal Organisation is not allowed. </value>
+  </data>
 </root>

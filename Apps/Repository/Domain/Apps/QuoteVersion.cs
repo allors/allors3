@@ -16,6 +16,14 @@ namespace Allors.Repository
     public partial interface QuoteVersion : Version
     {
         #region Allors
+        [Id("84c2fda0-76c0-4366-a198-49379431fb0f")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        InternalOrganisation Issuer { get; set; }
+
+        #region Allors
         [Id("EC36228F-7688-4C5F-9BF1-A05EE82E1B64")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
