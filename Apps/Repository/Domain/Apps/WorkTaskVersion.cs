@@ -65,6 +65,8 @@ namespace Allors.Repository
 
         public User LastModifiedBy { get; set; }
 
+        public Organisation TakenBy { get; set; }
+
         #endregion
 
         #region Allors

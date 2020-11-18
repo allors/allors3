@@ -23,8 +23,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PurchaseInvoice>())
             {
+                if (@this.ExistCurrentVersion
+                   && @this.CurrentVersion.ExistBilledTo
+                   && @this.BilledTo != @this.CurrentVersion.BilledTo)
+                {
+                    validation.AddError($"{@this} {this.M.PurchaseInvoice.BilledTo} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
                 if (!@this.ExistBilledTo && internalOrganisations.Count() == 1)

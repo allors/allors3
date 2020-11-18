@@ -258,4 +258,7 @@
   <data name="InvalidQuantity" xml:space="preserve">
     <value>Aantal is niet toegestaan</value>
   </data>
+  <data name="InternalOrganisationChanged" xml:space="preserve">
+    <value>Wijzigen interne organisatie is niet toegestaan</value>
+  </data>
 </root>

@@ -250,6 +250,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing Internal Organisation is not allowed. .
+        /// </summary>
+        public static string InternalOrganisationChanged {
+            get {
+                return ResourceManager.GetString("InternalOrganisationChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quantity is not valid.
         /// </summary>
         public static string InvalidQuantity {

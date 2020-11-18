@@ -97,31 +97,6 @@ namespace Allors.Database.Domain
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            if (!this.ExistSalesInvoiceState)
-            {
-                this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).ReadyForPosting;
-            }
-
-            if (!this.ExistEntryDate)
-            {
-                this.EntryDate = this.Session().Now();
-            }
-
-            if (!this.ExistInvoiceDate)
-            {
-                this.InvoiceDate = this.Session().Now();
-            }
-
-            if (this.ExistBillToCustomer)
-            {
-                this.PreviousBillToCustomer = this.BillToCustomer;
-            }
-
-            if (!this.ExistSalesInvoiceType)
-            {
-                this.SalesInvoiceType = new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice;
-            }
-
             var internalOrganisations = new Organisations(this.Session()).InternalOrganisations();
 
             if (!this.ExistBilledFrom && internalOrganisations.Length == 1)

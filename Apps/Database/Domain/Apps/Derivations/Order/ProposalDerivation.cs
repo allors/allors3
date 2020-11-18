@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Database.Derivations;
     using Meta;
+    using Resources;
 
     public class ProposalDerivation : DomainDerivation
     {
@@ -21,8 +22,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Proposal>())
             {
+                if (@this.ExistCurrentVersion
+                     && @this.CurrentVersion.ExistIssuer
+                     && @this.Issuer != @this.CurrentVersion.Issuer)
+                {
+                    validation.AddError($"{@this} {this.M.Proposal.Issuer} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 foreach (QuoteItem quoteItem in @this.QuoteItems)
                 {
                     quoteItem.Sync(@this);

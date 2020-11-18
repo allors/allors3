@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Allors.Database.Meta;
     using Database.Derivations;
+    using Resources;
 
     public class ProductQuoteDerivation : DomainDerivation
     {
@@ -21,8 +22,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<ProductQuote>())
             {
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ExistIssuer
+                    && @this.Issuer != @this.CurrentVersion.Issuer)
+                {
+                    validation.AddError($"{@this} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}");
+                }
+
                 @this.ValidQuoteItems = @this.QuoteItems.Where(v => v.IsValid).ToArray();
 
                 var currentPriceComponents = @this.Issuer?.PriceComponentsWherePricedBy
