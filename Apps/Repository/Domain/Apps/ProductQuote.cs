@@ -47,13 +47,15 @@ namespace Allors.Repository
 
         public ContactMechanism FullfillContactMechanism { get; set; }
 
-        public VatRegime VatRegime { get; set; }
+        public VatRegime AssignedVatRegime { get; set; }
 
         public VatClause AssignedVatClause { get; set; }
 
+        public VatRegime DerivedVatRegime { get; set; }
+
         public VatClause DerivedVatClause { get; set; }
 
-        public IrpfRegime IrpfRegime { get; set; }
+        public IrpfRegime DerivedIrpfRegime { get; set; }
 
         public IrpfRegime AssignedIrpfRegime { get; set; }
 

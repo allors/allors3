@@ -23,7 +23,11 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SalesOrderItem.QuantityOrdered),
                 new ChangedPattern(m.SalesOrderItem.ReservedFromNonSerialisedInventoryItem),
                 new ChangedPattern(m.SalesOrderItem.ReservedFromSerialisedInventoryItem),
+                new ChangedPattern(m.SalesOrderItem.AssignedVatRegime),
+                new ChangedPattern(m.SalesOrderItem.AssignedIrpfRegime),
                 new ChangedPattern(m.SalesOrder.SalesOrderState) {Steps = new IPropertyType[]{ m.SalesOrder.SalesOrderItems} },
+                new ChangedPattern(m.SalesOrder.DerivedVatRegime) { Steps = new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
+                new ChangedPattern(m.SalesOrder.DerivedIrpfRegime) { Steps = new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
                 new ChangedPattern(m.OrderShipment.Quantity) {Steps = new IPropertyType[]{ m.OrderShipment.OrderItem}, OfType = m.SalesOrderItem.Class },
                 new ChangedPattern(m.NonSerialisedInventoryItem.QuantityOnHand) {Steps = new IPropertyType[]{ m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem} },
             };

@@ -298,30 +298,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenOrderItemWithVatRegime_WhenDeriving_ThenDerivedVatRegimeIsFromOrderItem()
-        {
-            this.InstantiateObjects(this.Session);
-
-            var salesOrder = new SalesOrderBuilder(this.Session)
-                .WithShipToCustomer(this.shipToCustomer)
-                .WithBillToCustomer(this.billToCustomer)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
-                .Build();
-
-            this.Session.Derive();
-
-            var orderItem = new SalesOrderItemBuilder(this.Session)
-                .WithProduct(this.good)
-                .WithQuantityOrdered(1)
-                .Build();
-            salesOrder.AddSalesOrderItem(orderItem);
-
-            this.Session.Derive();
-
-            Assert.Equal(orderItem.VatRegime, orderItem.VatRegime);
-        }
-
-        [Fact]
         public void GivenOrderItemWithoutVatRegime_WhenDeriving_ThenDerivedVatRegimeIsFromOrder()
         {
             this.InstantiateObjects(this.Session);
@@ -330,7 +306,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithShipToAddress(this.shipToContactMechanismMechelen)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             this.Session.Derive();
@@ -340,7 +316,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(salesOrder.VatRegime, orderItem.VatRegime);
+            Assert.Equal(salesOrder.AssignedVatRegime, orderItem.DerivedVatRegime);
         }
 
         [Fact]
@@ -353,7 +329,7 @@ namespace Allors.Database.Domain.Tests
             var salesOrder = new SalesOrderBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithShipToAddress(this.shipToContactMechanismMechelen)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             this.Session.Derive();
@@ -363,7 +339,6 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(salesOrder.VatRegime, orderItem.VatRegime);
             Assert.Equal(expected, orderItem.VatRate);
         }
 
@@ -376,7 +351,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(this.billToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithShipToAddress(this.shipToContactMechanismMechelen)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             this.Session.Derive();
@@ -403,7 +378,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(this.billToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithShipToAddress(this.shipToContactMechanismMechelen)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .WithDeliveryDate(this.Session.Now().AddMonths(1))
                 .Build();
 

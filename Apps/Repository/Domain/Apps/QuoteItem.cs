@@ -37,7 +37,7 @@ namespace Allors.Repository
 
         public VatRegime AssignedVatRegime { get; set; }
 
-        public VatRegime VatRegime { get; set; }
+        public VatRegime DerivedVatRegime { get; set; }
 
         public VatRate VatRate { get; set; }
 
@@ -286,7 +286,7 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         [Workspace(Default)]
-        public IrpfRegime IrpfRegime { get; set; }
+        public IrpfRegime DerivedIrpfRegime { get; set; }
 
         #region Allors
         [Id("ecd72f14-a7f3-43d9-bc95-46f0339ab920")]

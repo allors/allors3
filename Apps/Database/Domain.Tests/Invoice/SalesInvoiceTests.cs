@@ -612,8 +612,8 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(customer)
                 .WithBillToContactMechanism(contactMechanism)
-                .WithVatRegime(new VatRegimes(this.Session).Assessable21)
-                .WithIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
                 .Build();
 
             var item1 = new SalesInvoiceItemBuilder(this.Session)
@@ -676,7 +676,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -714,7 +714,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -752,7 +752,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -790,7 +790,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
-                .WithVatRegime(new VatRegimes(this.Session).Assessable21)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -1326,7 +1326,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.VatRegime, customer.VatRegime);
+            Assert.Equal(invoice.DerivedVatRegime, customer.VatRegime);
         }
 
         [Fact]
@@ -1339,7 +1339,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.IrpfRegime, customer.IrpfRegime);
+            Assert.Equal(invoice.DerivedIrpfRegime, customer.IrpfRegime);
         }
 
         [Fact]
@@ -1408,7 +1408,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVatRegimeDeriveDerivedVatClause()
         {
             var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithVatRegime(intraCommunautair).Build();
+            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(intraCommunautair).Build();
 
             this.Session.Derive(false);
 
@@ -1742,10 +1742,10 @@ namespace Allors.Database.Domain.Tests
             var assessable9 = new VatRegimes(this.Session).Assessable9;
 
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
-            invoice.VatRegime = assessable9;
+            invoice.AssignedVatRegime = assessable9;
             this.Session.Derive(false);
 
-            invoice.VatRegime = intraCommunautair;
+            invoice.AssignedVatRegime = intraCommunautair;
             this.Session.Derive(false);
 
             Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);

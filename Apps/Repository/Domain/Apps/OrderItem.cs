@@ -123,7 +123,7 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         [Workspace(Default)]
-        IrpfRegime IrpfRegime { get; set; }
+        IrpfRegime DerivedIrpfRegime { get; set; }
 
         #region Allors
         [Id("9a273bd4-5718-4b8f-a97e-7810f4104a45")]

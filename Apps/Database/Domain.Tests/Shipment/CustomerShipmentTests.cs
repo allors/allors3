@@ -965,7 +965,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .Build();
 
             var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
@@ -1129,7 +1129,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .Build();
 
             var item = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
@@ -1208,7 +1208,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .Build();
 
             var item = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(5).WithAssignedUnitPrice(15).Build();
@@ -1444,7 +1444,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
                 .WithBillToContactMechanism(mechelenAddress)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .Build();
 
             var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();

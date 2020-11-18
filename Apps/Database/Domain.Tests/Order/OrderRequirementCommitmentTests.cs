@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Tests
             var salesOrder = new SalesOrderBuilder(this.Session)
                 .WithShipToCustomer(shipToCustomer)
                 .WithBillToCustomer(billToCustomer)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             var goodOrderItem = new SalesOrderItemBuilder(this.Session)

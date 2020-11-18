@@ -247,7 +247,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
@@ -255,7 +255,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(salesInvoice.VatRegime, invoiceItem.VatRegime);
+            Assert.Equal(salesInvoice.AssignedVatRegime, invoiceItem.DerivedVatRegime);
         }
 
         [Fact]
@@ -268,7 +268,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(1).Build();
@@ -276,7 +276,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(salesInvoice.VatRegime, invoiceItem.VatRegime);
+            Assert.Equal(salesInvoice.DerivedVatRegime, invoiceItem.DerivedVatRegime);
             Assert.Equal(vatRate0, invoiceItem.VatRate);
         }
 
@@ -290,7 +290,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
                 .Build();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithQuantity(1).WithInvoiceItemType(productItem).Build();
@@ -298,7 +298,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(salesInvoice.IrpfRegime, invoiceItem.IrpfRegime);
+            Assert.Equal(salesInvoice.DerivedIrpfRegime, invoiceItem.DerivedIrpfRegime);
         }
 
         [Fact]
@@ -311,7 +311,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(this.billToCustomer)
                 .WithBillToContactMechanism(this.billToContactMechanismMechelen)
-                .WithIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
                 .Build();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(this.good).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithQuantity(1).Build();
@@ -319,7 +319,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(salesInvoice.IrpfRegime, invoiceItem.IrpfRegime);
+            Assert.Equal(salesInvoice.DerivedIrpfRegime, invoiceItem.DerivedIrpfRegime);
             Assert.Equal(irpfRate19, invoiceItem.IrpfRate);
         }
 
@@ -2178,7 +2178,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRoleAssignedVatRegimeDeriveVatRegime()
         {
             var assignedVatRegime = new VatRegimes(this.Session).Assessable10;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithVatRegime(new VatRegimes(this.Session).Exempt).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
             this.Session.Derive(false);
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
@@ -2188,7 +2188,7 @@ namespace Allors.Database.Domain.Tests
             invoiceItem.AssignedVatRegime = assignedVatRegime;
             this.Session.Derive(false);
 
-            Assert.Equal(assignedVatRegime, invoiceItem.VatRegime);
+            Assert.Equal(assignedVatRegime, invoiceItem.DerivedVatRegime);
         }
 
         [Fact]
@@ -2202,10 +2202,10 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
             this.Session.Derive(false);
 
-            salesInvoice.VatRegime = vatRegime;
+            salesInvoice.AssignedVatRegime = vatRegime;
             this.Session.Derive(false);
 
-            Assert.Equal(vatRegime, invoiceItem.VatRegime);
+            Assert.Equal(vatRegime, invoiceItem.DerivedVatRegime);
         }
 
         [Fact]
@@ -2219,7 +2219,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
             this.Session.Derive(false);
 
-            salesInvoice.VatRegime = vatRegime;
+            salesInvoice.AssignedVatRegime = vatRegime;
             this.Session.Derive(false);
 
             Assert.Equal(vatRegime.VatRate, invoiceItem.VatRate);
@@ -2229,7 +2229,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRoleAssignedIrpfRegimeDeriveIrpfRegime()
         {
             var assignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithIrpfRegime(new IrpfRegimes(this.Session).Exempt).Build();
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Exempt).Build();
             this.Session.Derive(false);
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
@@ -2239,7 +2239,7 @@ namespace Allors.Database.Domain.Tests
             invoiceItem.AssignedIrpfRegime = assignedIrpfRegime;
             this.Session.Derive(false);
 
-            Assert.Equal(assignedIrpfRegime, invoiceItem.IrpfRegime);
+            Assert.Equal(assignedIrpfRegime, invoiceItem.DerivedIrpfRegime);
         }
 
         [Fact]
@@ -2253,10 +2253,10 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
             this.Session.Derive(false);
 
-            salesInvoice.IrpfRegime = irpfRegime;
+            salesInvoice.AssignedIrpfRegime = irpfRegime;
             this.Session.Derive(false);
 
-            Assert.Equal(irpfRegime, invoiceItem.IrpfRegime);
+            Assert.Equal(irpfRegime, invoiceItem.DerivedIrpfRegime);
         }
 
         [Fact]
@@ -2270,7 +2270,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
             this.Session.Derive(false);
 
-            salesInvoice.IrpfRegime = irpfRegime;
+            salesInvoice.AssignedIrpfRegime = irpfRegime;
             this.Session.Derive(false);
 
             Assert.Equal(irpfRegime.IrpfRate, invoiceItem.IrpfRate);

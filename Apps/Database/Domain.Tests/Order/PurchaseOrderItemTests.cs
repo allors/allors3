@@ -73,8 +73,8 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenViaSupplier(this.supplier)
                 .WithBillToContactMechanism(takenViaContactMechanism)
                 .WithDeliveryDate(this.Session.Now())
-                .WithVatRegime(new VatRegimes(this.Session).Exempt)
-                .WithIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
+                .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
                 .Build();
 
             this.Session.Derive();
@@ -480,7 +480,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenViaSupplier(this.supplier)
                 .WithBillToContactMechanism(takenViaContactMechanism)
                 .WithDeliveryDate(this.Session.Now())
-                .WithVatRegime(new VatRegimes(this.Session).Exempt)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
                 .Build();
 
             this.Session.Derive();

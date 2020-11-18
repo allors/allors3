@@ -70,8 +70,6 @@ namespace Allors.Database.Domain
                 var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Session)
                     .WithBilledFrom(this.Supplier)
                     .WithBilledTo(this.InternalOrganisation)
-                    .WithVatRegime(this.Supplier.VatRegime)
-                    .WithIrpfRegime(this.Supplier.IrpfRegime)
                     .WithInvoiceDate(this.Session().Now())
                     .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Session()).PurchaseInvoice)
                     .Build();

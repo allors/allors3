@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
             new ChangedPattern(this.M.SalesOrder.ShipToCustomer),
             new ChangedPattern(this.M.SalesOrder.ShipToEndCustomer),
             new ChangedPattern(this.M.SalesOrder.PlacingCustomer),
-            new ChangedPattern(this.M.SalesOrder.VatRegime),
+            new ChangedPattern(this.M.SalesOrder.AssignedVatRegime),
             new ChangedPattern(this.M.SalesOrder.AssignedVatClause),
             new ChangedPattern(this.M.SalesOrder.OrderDate),
             new ChangedPattern(this.M.SalesOrder.SalesOrderItems),
@@ -56,8 +56,8 @@ namespace Allors.Database.Domain
                 @this.ShipToCustomer ??= @this.BillToCustomer;
                 @this.Customers = new[] { @this.BillToCustomer, @this.ShipToCustomer, @this.PlacingCustomer };
                 @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.DefaultLocale;
-                @this.VatRegime ??= @this.BillToCustomer?.VatRegime;
-                @this.IrpfRegime ??= @this.BillToCustomer?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
                 @this.Currency ??= @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
                 @this.TakenByContactMechanism ??= @this.TakenBy?.OrderAddress ?? @this.TakenBy?.BillingAddress ?? @this.TakenBy?.GeneralCorrespondence;
                 @this.BillToContactMechanism ??= @this.BillToCustomer?.BillingAddress ?? @this.BillToCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
@@ -99,10 +99,10 @@ namespace Allors.Database.Domain
                     salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? @this.ShipToAddress;
                     salesOrderItemDerivedRoles.ShipToParty = salesOrderItem.AssignedShipToParty ?? @this.ShipToCustomer;
                     salesOrderItemDerivedRoles.DeliveryDate = salesOrderItem.AssignedDeliveryDate ?? @this.DeliveryDate;
-                    salesOrderItemDerivedRoles.VatRegime = salesOrderItem.AssignedVatRegime ?? @this.VatRegime;
-                    salesOrderItemDerivedRoles.VatRate = salesOrderItem.VatRegime?.VatRate;
-                    salesOrderItemDerivedRoles.IrpfRegime = salesOrderItem.AssignedIrpfRegime ?? @this.IrpfRegime;
-                    salesOrderItemDerivedRoles.IrpfRate = salesOrderItem.IrpfRegime?.IrpfRate;
+                    salesOrderItemDerivedRoles.DerivedVatRegime = salesOrderItem.AssignedVatRegime ?? @this.DerivedVatRegime;
+                    salesOrderItemDerivedRoles.VatRate = salesOrderItem.DerivedVatRegime?.VatRate;
+                    salesOrderItemDerivedRoles.DerivedIrpfRegime = salesOrderItem.AssignedIrpfRegime ?? @this.DerivedIrpfRegime;
+                    salesOrderItemDerivedRoles.IrpfRate = salesOrderItem.DerivedIrpfRegime?.IrpfRate;
 
                     // TODO: Use versioning
                     if (salesOrderItem.ExistPreviousProduct && !salesOrderItem.PreviousProduct.Equals(salesOrderItem.Product))
@@ -154,9 +154,9 @@ namespace Allors.Database.Domain
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
                 @this.ValidOrderItems = validOrderItems;
 
-                if (@this.ExistVatRegime && @this.VatRegime.ExistVatClause)
+                if (@this.ExistDerivedVatRegime && @this.DerivedVatRegime.ExistVatClause)
                 {
-                    @this.DerivedVatClause = @this.VatRegime.VatClause;
+                    @this.DerivedVatClause = @this.DerivedVatRegime.VatClause;
                 }
                 else
                 {
@@ -173,11 +173,11 @@ namespace Allors.Database.Domain
                     var sellerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
                     var buyerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));
 
-                    if (Equals(@this.VatRegime, new VatRegimes(session).ServiceB2B))
+                    if (Equals(@this.DerivedVatRegime, new VatRegimes(session).ServiceB2B))
                     {
                         @this.DerivedVatClause = new VatClauses(session).ServiceB2B;
                     }
-                    else if (Equals(@this.VatRegime, new VatRegimes(session).IntraCommunautair))
+                    else if (Equals(@this.DerivedVatRegime, new VatRegimes(session).IntraCommunautair))
                     {
                         @this.DerivedVatClause = new VatClauses(session).Intracommunautair;
                     }

@@ -234,7 +234,7 @@ namespace Allors.Database.Domain.Tests
 
             var order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(supplier)
-                .WithVatRegime(new VatRegimes(this.Session).Exempt)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
                 .Build();
 
             var item1 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
@@ -278,7 +278,7 @@ namespace Allors.Database.Domain.Tests
 
             var order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(supplier)
-                .WithVatRegime(new VatRegimes(this.Session).Exempt)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
                 .Build();
 
             var item1 = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();

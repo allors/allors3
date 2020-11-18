@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Defaullt);
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Product);
             @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Part);
-            @this.WithVatRegime(faker.Random.ListItem(@this.Session.Extent<VatRegime>()));
+            @this.WithAssignedVatRegime(faker.Random.ListItem(@this.Session.Extent<VatRegime>()));
 
             return @this;
         }

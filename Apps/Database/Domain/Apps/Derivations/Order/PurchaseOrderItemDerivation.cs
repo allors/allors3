@@ -18,9 +18,12 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemDerivation(M m) : base(m, new Guid("A59A2EFC-AF5C-4F95-9212-4FD4B0306957")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState),
-                new ChangedPattern(this.M.PurchaseOrderItem.IsReceivable),
-                // new ChangedPattern(M.PurchaseOrder.StoredInFacility) { Steps = new IPropertyType[] {M.PurchaseOrder.PurchaseOrderItems} },
+                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState),
+                new ChangedPattern(m.PurchaseOrderItem.IsReceivable),
+                new ChangedPattern(m.PurchaseOrderItem.AssignedVatRegime),
+                new ChangedPattern(m.PurchaseOrderItem.AssignedIrpfRegime),
+                new ChangedPattern(m.PurchaseOrder.DerivedVatRegime) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
+                new ChangedPattern(m.PurchaseOrder.DerivedIrpfRegime ) { Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -120,11 +123,11 @@ namespace Allors.Database.Domain
                         @this.UnitBasePrice = new SupplierOfferings(@this.Strategy.Session).PurchasePrice(order.TakenViaSupplier, order.OrderDate, @this.Part);
                     }
 
-                    @this.VatRegime = @this.AssignedVatRegime ?? @this.PurchaseOrderWherePurchaseOrderItem.VatRegime;
-                    @this.VatRate = @this.VatRegime?.VatRate;
+                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.PurchaseOrderWherePurchaseOrderItem.DerivedVatRegime;
+                    @this.VatRate = @this.DerivedVatRegime?.VatRate;
 
-                    @this.IrpfRegime = @this.AssignedIrpfRegime ?? @this.PurchaseOrderWherePurchaseOrderItem.IrpfRegime;
-                    @this.IrpfRate = @this.IrpfRegime?.IrpfRate;
+                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.PurchaseOrderWherePurchaseOrderItem.DerivedIrpfRegime;
+                    @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRate;
 
                     @this.TotalBasePrice = @this.UnitBasePrice * @this.QuantityOrdered;
                     @this.TotalDiscount = @this.UnitDiscount * @this.QuantityOrdered;

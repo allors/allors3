@@ -334,8 +334,8 @@ namespace Allors.Database.Domain
                     .WithBilledToContactPerson(this.BillToContactPerson)
                     .WithDescription(this.Description)
                     .WithInvoiceDate(this.Session().Now())
-                    .WithVatRegime(this.VatRegime)
-                    .WithIrpfRegime(this.IrpfRegime)
+                    .WithAssignedVatRegime(this.AssignedVatRegime)
+                    .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
                     .WithCustomerReference(this.CustomerReference)
                     .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Session()).PurchaseInvoice)
                     .Build();

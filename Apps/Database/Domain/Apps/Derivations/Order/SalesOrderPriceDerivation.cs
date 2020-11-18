@@ -101,14 +101,14 @@ namespace Allors.Database.Domain
 
                         salesOrder.TotalDiscount += discount;
 
-                        if (salesOrder.ExistVatRegime)
+                        if (salesOrder.ExistDerivedVatRegime)
                         {
-                            discountVat = Math.Round(discount * salesOrder.VatRegime.VatRate.Rate / 100, 2);
+                            discountVat = Math.Round(discount * salesOrder.DerivedVatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesOrder.ExistIrpfRegime)
+                        if (salesOrder.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = Math.Round(discount * salesOrder.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            discountIrpf = Math.Round(discount * salesOrder.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -120,14 +120,14 @@ namespace Allors.Database.Domain
 
                         salesOrder.TotalSurcharge += surcharge;
 
-                        if (salesOrder.ExistVatRegime)
+                        if (salesOrder.ExistDerivedVatRegime)
                         {
-                            surchargeVat = Math.Round(surcharge * salesOrder.VatRegime.VatRate.Rate / 100, 2);
+                            surchargeVat = Math.Round(surcharge * salesOrder.DerivedVatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesOrder.ExistIrpfRegime)
+                        if (salesOrder.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = Math.Round(surcharge * salesOrder.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            surchargeIrpf = Math.Round(surcharge * salesOrder.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -139,14 +139,14 @@ namespace Allors.Database.Domain
 
                         salesOrder.TotalFee += fee;
 
-                        if (salesOrder.ExistVatRegime)
+                        if (salesOrder.ExistDerivedVatRegime)
                         {
-                            feeVat = Math.Round(fee * salesOrder.VatRegime.VatRate.Rate / 100, 2);
+                            feeVat = Math.Round(fee * salesOrder.DerivedVatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesOrder.ExistIrpfRegime)
+                        if (salesOrder.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = Math.Round(fee * salesOrder.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            feeIrpf = Math.Round(fee * salesOrder.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -158,14 +158,14 @@ namespace Allors.Database.Domain
 
                         salesOrder.TotalShippingAndHandling += shipping;
 
-                        if (salesOrder.ExistVatRegime)
+                        if (salesOrder.ExistDerivedVatRegime)
                         {
-                            shippingVat = Math.Round(shipping * salesOrder.VatRegime.VatRate.Rate / 100, 2);
+                            shippingVat = Math.Round(shipping * salesOrder.DerivedVatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesOrder.ExistIrpfRegime)
+                        if (salesOrder.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = Math.Round(shipping * salesOrder.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            shippingIrpf = Math.Round(shipping * salesOrder.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
 
@@ -177,14 +177,14 @@ namespace Allors.Database.Domain
 
                         salesOrder.TotalExtraCharge += miscellaneous;
 
-                        if (salesOrder.ExistVatRegime)
+                        if (salesOrder.ExistDerivedVatRegime)
                         {
-                            miscellaneousVat = Math.Round(miscellaneous * salesOrder.VatRegime.VatRate.Rate / 100, 2);
+                            miscellaneousVat = Math.Round(miscellaneous * salesOrder.DerivedVatRegime.VatRate.Rate / 100, 2);
                         }
 
-                        if (salesOrder.ExistIrpfRegime)
+                        if (salesOrder.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = Math.Round(miscellaneous * salesOrder.IrpfRegime.IrpfRate.Rate / 100, 2);
+                            miscellaneousIrpf = Math.Round(miscellaneous * salesOrder.DerivedIrpfRegime.IrpfRate.Rate / 100, 2);
                         }
                     }
                 }

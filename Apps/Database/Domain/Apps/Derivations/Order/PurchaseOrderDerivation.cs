@@ -161,8 +161,8 @@ namespace Allors.Database.Domain
                     @this.TakenViaContactMechanism = @this.TakenViaSupplier.OrderAddress;
                 }
 
-                @this.VatRegime ??= @this.TakenViaSupplier?.VatRegime;
-                @this.IrpfRegime ??= @this.TakenViaSupplier?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.TakenViaSupplier?.VatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.TakenViaSupplier?.IrpfRegime;
 
                 @this.Locale = @this.DefaultLocale;
 

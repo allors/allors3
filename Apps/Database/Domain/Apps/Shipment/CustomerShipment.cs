@@ -262,8 +262,8 @@ namespace Allors.Database.Domain
                                 .WithInvoiceDate(this.Session().Now())
                                 .WithSalesChannel(salesOrder.SalesChannel)
                                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice)
-                                .WithVatRegime(salesOrder.VatRegime)
-                                .WithIrpfRegime(salesOrder.IrpfRegime)
+                                .WithAssignedVatRegime(salesOrder.DerivedVatRegime)
+                                .WithAssignedIrpfRegime(salesOrder.DerivedIrpfRegime)
                                 .WithCustomerReference(salesOrder.CustomerReference)
                                 .WithPaymentMethod(this.PaymentMethod)
                                 .Build();

@@ -42,7 +42,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(this.Session.Now().Date, order.EntryDate.Date);
             Assert.Equal(order.PreviousBillToCustomer, order.BillToCustomer);
             Assert.Equal(order.PreviousShipToCustomer, order.ShipToCustomer);
-            Assert.Equal(order.VatRegime, order.BillToCustomer.VatRegime);
+            Assert.Equal(order.DerivedVatRegime, order.BillToCustomer.VatRegime);
             Assert.Equal(new Stores(this.Session).FindBy(this.M.Store.Name, "store"), order.Store);
             Assert.Equal(order.Store.DefaultCollectionMethod, order.PaymentMethod);
             Assert.Equal(order.Store.DefaultShipmentMethod, order.ShipmentMethod);
@@ -239,7 +239,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
@@ -450,7 +450,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
                 .WithShipToAddress(mechelenAddress)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .Build();
 
             this.Session.Derive();
@@ -492,7 +492,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
                 .WithShipToAddress(mechelenAddress)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .Build();
 
             this.Session.Derive();
@@ -552,7 +552,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
@@ -624,7 +624,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
@@ -710,7 +710,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithPartiallyShip(false)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
@@ -835,7 +835,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
@@ -935,7 +935,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
@@ -1010,7 +1010,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
 
@@ -1068,7 +1068,7 @@ namespace Allors.Database.Domain.Tests
                 .WithTakenBy(this.InternalOrganisation)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithVatRegime(assessable)
+                .WithAssignedVatRegime(assessable)
                 .WithOrderKind(manual)
                 .WithShipToAddress(new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build())
                 .Build();
@@ -2240,7 +2240,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToCustomer(person1)
                 .WithShipToCustomer(person1)
                 .WithShipToAddress(mechelenAddress)
-                .WithVatRegime(new VatRegimes(this.Session).Export)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).Export)
                 .Build();
 
             this.Session.Derive();
@@ -2409,7 +2409,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
                 .WithShipToAddress(shipToAddress)
-                .WithVatRegime(new VatRegimes(this.Session).ServiceB2B)
+                .WithAssignedVatRegime(new VatRegimes(this.Session).ServiceB2B)
                 .Build();
 
             this.Session.Derive();
@@ -3003,7 +3003,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(order.VatRegime, customer.VatRegime);
+            Assert.Equal(order.DerivedVatRegime, customer.VatRegime);
         }
 
         [Fact]
@@ -3016,7 +3016,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(order.IrpfRegime, customer.IrpfRegime);
+            Assert.Equal(order.DerivedIrpfRegime, customer.IrpfRegime);
         }
 
         [Fact]

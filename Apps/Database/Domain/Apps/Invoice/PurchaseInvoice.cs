@@ -250,8 +250,6 @@ namespace Allors.Database.Domain
                 .WithDescription(this.Description)
                 .WithInvoiceDate(this.Session().Now())
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice)
-                .WithVatRegime(this.BilledTo.VatRegime)
-                .WithIrpfRegime(this.BilledTo.IrpfRegime)
                 .WithCustomerReference(this.CustomerReference)
                 .WithPaymentMethod(this.BillToCustomerPaymentMethod)
                 .WithComment(this.Comment)

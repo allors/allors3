@@ -23,7 +23,8 @@ namespace Allors.Database.Domain
             new ChangedPattern(this.M.SalesInvoice.BillToEndCustomer),
             new ChangedPattern(this.M.SalesInvoice.ShipToCustomer),
             new ChangedPattern(this.M.SalesInvoice.ShipToEndCustomer),
-            new ChangedPattern(this.M.SalesInvoice.VatRegime),
+            new ChangedPattern(this.M.SalesInvoice.AssignedVatRegime),
+            new ChangedPattern(this.M.SalesInvoice.AssignedIrpfRegime),
             new ChangedPattern(this.M.SalesInvoice.AssignedVatClause),
             new ChangedPattern(this.M.SalesInvoice.InvoiceDate),
             new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
@@ -116,8 +117,8 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                @this.VatRegime ??= @this.BillToCustomer?.VatRegime;
-                @this.IrpfRegime ??= @this.BillToCustomer?.IrpfRegime;
+                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
                 @this.IsRepeatingInvoice = @this.ExistRepeatingSalesInvoiceWhereSource
                         && (!@this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate
                             || @this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= @this.Strategy.Session.Now().Date);
@@ -156,11 +157,11 @@ namespace Allors.Database.Domain
                     @this.DueDate = @this.InvoiceDate.AddDays(@this.PaymentNetDays);
                 }
 
-                if (@this.ExistVatRegime)
+                if (@this.ExistDerivedVatRegime)
                 {
-                    if (@this.VatRegime.ExistVatClause)
+                    if (@this.DerivedVatRegime.ExistVatClause)
                     {
-                        @this.DerivedVatClause = @this.VatRegime.VatClause;
+                        @this.DerivedVatClause = @this.DerivedVatRegime.VatClause;
                     }
                     else
                     {
