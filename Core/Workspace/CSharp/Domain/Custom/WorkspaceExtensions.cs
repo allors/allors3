@@ -16,7 +16,6 @@ namespace Allors.Workspace
             var derivations = new IDomainDerivation[]
             {
                 // Custom
-                new ClassCreationDerivation(m),
             };
 
             foreach (var derivation in derivations)

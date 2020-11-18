@@ -1,4 +1,4 @@
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     public partial class MetaBuilder
     {

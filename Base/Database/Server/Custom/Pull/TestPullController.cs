@@ -3,13 +3,15 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Controllers
+namespace Allors.Database.Server.Controllers
 {
     using System;
     using Allors.Services;
     using Microsoft.AspNetCore.Mvc;
-    using Allors.State;
+    using Database;
     using Database.Protocol.Json;
+    using Domain;
+
 
     public class TestPullController : Controller
     {

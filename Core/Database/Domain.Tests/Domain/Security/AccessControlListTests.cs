@@ -3,11 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using Allors;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using Xunit;
 
     public class AccessControlListTests : DomainTest, IClassFixture<Fixture>
@@ -27,7 +28,7 @@ namespace Tests
             {
                 session.Commit();
 
-                var guest = new Users(this.Session).FindBy(M.User.UserName, "guest@example.com");
+                var guest = new Users(this.Session).FindBy(this.M.User.UserName, "guest@example.com");
                 var acls = new DatabaseAccessControlLists(guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation.ObjectType))
                 {

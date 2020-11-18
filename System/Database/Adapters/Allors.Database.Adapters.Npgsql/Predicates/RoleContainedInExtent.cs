@@ -7,14 +7,14 @@ namespace Allors.Database.Adapters.Npgsql
 {
     using Adapters;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal sealed class RoleContainedInExtent : In
     {
         private readonly SqlExtent inExtent;
         private readonly IRoleType role;
 
-        internal RoleContainedInExtent(ExtentFiltered extent, IRoleType role, Allors.Extent inExtent)
+        internal RoleContainedInExtent(ExtentFiltered extent, IRoleType role, Allors.Database.Extent inExtent)
         {
             extent.CheckRole(role);
             PredicateAssertions.ValidateRoleContainedIn(role, inExtent);

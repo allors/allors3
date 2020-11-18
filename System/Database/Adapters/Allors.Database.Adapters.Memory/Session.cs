@@ -10,9 +10,8 @@ namespace Allors.Database.Adapters.Memory
     using System.Linq;
     using System.Xml;
 
-    using Allors.Meta;
-    using Allors.Serialization;
-    using IO;
+    using Allors.Database.Meta;
+    using Tracing;
 
     public class Session : ISession, IOnAccess
     {
@@ -243,9 +242,9 @@ namespace Allors.Database.Adapters.Memory
             return this.Extent(compositeType);
         }
 
-        public virtual Allors.Extent Extent(IComposite objectType) => new ExtentFiltered(this, objectType);
+        public virtual Allors.Database.Extent Extent(IComposite objectType) => new ExtentFiltered(this, objectType);
 
-        public virtual Allors.Extent Union(Allors.Extent firstOperand, Allors.Extent secondOperand)
+        public virtual Allors.Database.Extent Union(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand)
         {
             var firstExtent = firstOperand as Extent ?? ((ExtentSwitch)firstOperand).Extent;
             var secondExtent = secondOperand as Extent ?? ((ExtentSwitch)secondOperand).Extent;
@@ -253,7 +252,7 @@ namespace Allors.Database.Adapters.Memory
             return new ExtentOperation(this, firstExtent, secondExtent, ExtentOperationType.Union);
         }
 
-        public virtual Allors.Extent Intersect(Allors.Extent firstOperand, Allors.Extent secondOperand)
+        public virtual Allors.Database.Extent Intersect(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand)
         {
             var firstExtent = firstOperand as Extent ?? ((ExtentSwitch)firstOperand).Extent;
             var secondExtent = secondOperand as Extent ?? ((ExtentSwitch)secondOperand).Extent;
@@ -261,7 +260,7 @@ namespace Allors.Database.Adapters.Memory
             return new ExtentOperation(this, firstExtent, secondExtent, ExtentOperationType.Intersect);
         }
 
-        public virtual Allors.Extent Except(Allors.Extent firstOperand, Allors.Extent secondOperand)
+        public virtual Allors.Database.Extent Except(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand)
         {
             var firstExtent = firstOperand as Extent ?? ((ExtentSwitch)firstOperand).Extent;
             var secondExtent = secondOperand as Extent ?? ((ExtentSwitch)secondOperand).Extent;
@@ -425,37 +424,7 @@ namespace Allors.Database.Adapters.Memory
             var save = new Save(this, writer, sortedNonDeletedStrategiesByObjectType);
             save.Execute();
         }
-
-
-        internal IPopulationData Save()
-        {
-            var sortedNonDeletedStrategiesByObjectType = new Dictionary<IObjectType, List<Strategy>>();
-            foreach (var dictionaryEntry in this.strategyByObjectId)
-            {
-                var strategy = dictionaryEntry.Value;
-                if (!strategy.IsDeleted)
-                {
-                    var objectType = strategy.UncheckedObjectType;
-
-                    if (!sortedNonDeletedStrategiesByObjectType.TryGetValue(objectType, out var sortedNonDeletedStrategies))
-                    {
-                        sortedNonDeletedStrategies = new List<Strategy>();
-                        sortedNonDeletedStrategiesByObjectType[objectType] = sortedNonDeletedStrategies;
-                    }
-
-                    sortedNonDeletedStrategies.Add(strategy);
-                }
-            }
-
-            foreach (var dictionaryEntry in sortedNonDeletedStrategiesByObjectType)
-            {
-                var sortedNonDeletedStrategies = dictionaryEntry.Value;
-                sortedNonDeletedStrategies.Sort(new Strategy.ObjectIdComparer());
-            }
-
-            return new PopulationData(this, sortedNonDeletedStrategiesByObjectType);
-        }
-
+        
         private void Reset()
         {
             // Strategies

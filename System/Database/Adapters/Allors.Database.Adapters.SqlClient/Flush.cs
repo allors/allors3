@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class Flush
     {

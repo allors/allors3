@@ -3,11 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     public static partial class EnumerationExtensions
     {

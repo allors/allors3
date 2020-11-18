@@ -9,7 +9,7 @@ namespace Allors
     using System.IO;
 
     using Allors.Development.Repository.Tasks;
-    using Meta;
+    using Database.Meta;
 
     class Program
     {

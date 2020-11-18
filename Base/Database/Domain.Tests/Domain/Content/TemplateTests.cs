@@ -6,12 +6,11 @@
 //   Defines the PersonTests type.
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
     using System.IO;
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class TemplateTests : DomainTest, IClassFixture<Fixture>

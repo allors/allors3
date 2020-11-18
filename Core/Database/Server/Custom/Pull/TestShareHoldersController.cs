@@ -7,11 +7,11 @@ namespace Allors.Server.Controllers
 {
     using System;
 
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Allors.Services;
-    using Data;
     using Microsoft.AspNetCore.Mvc;
-    using Allors.State;
+    using Database;
+    using Database.Data;
     using Database.Protocol.Json;
 
     public class TestShareHoldersController : Controller

@@ -7,9 +7,9 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
-    public class ExtentSwitch : Allors.Extent
+    public class ExtentSwitch : Allors.Database.Extent
     {
         private readonly StrategyExtent strategyExtent;
         private Extent extent;
@@ -64,13 +64,13 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public override Allors.Extent AddSort(IRoleType roleType)
+        public override Allors.Database.Extent AddSort(IRoleType roleType)
         {
             this.Upgrade();
             return this.extent.AddSort(roleType);
         }
 
-        public override Allors.Extent AddSort(IRoleType roleType, SortDirection direction)
+        public override Allors.Database.Extent AddSort(IRoleType roleType, SortDirection direction)
         {
             this.Upgrade();
             return this.extent.AddSort(roleType, direction);

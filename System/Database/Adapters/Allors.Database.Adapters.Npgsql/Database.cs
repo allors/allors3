@@ -11,9 +11,9 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Linq;
     using System.Xml;
     using Allors;
-    using Allors.Meta;
-    using Allors.Serialization;
+    using Allors.Database.Meta;
     using Caching;
+    using Derivations;
     using global::Npgsql;
     using NpgsqlTypes;
 
@@ -263,10 +263,6 @@ namespace Allors.Database.Adapters.Npgsql
                 }
             }
         }
-
-        public void Load(IPopulationData data) => throw new NotImplementedException();
-
-        public IPopulationData Save() => throw new NotImplementedException();
 
         public override string ToString() => "Population[driver=Sql, type=Connected, id=" + this.GetHashCode() + "]";
 

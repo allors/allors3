@@ -6,9 +6,11 @@
 namespace Commands
 {
     using Allors;
-    using Allors.Domain;
+    using Allors.Database;
+    using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
+    using Setup = Allors.Database.Domain.Setup;
 
     [Command(Description = "Add file contents to the index")]
     public class Populate
@@ -36,7 +38,7 @@ namespace Commands
                 var scheduler = new AutomatedAgents(session).System;
                 session.State().User = scheduler;
 
-                new Allors.Upgrade(session, this.Parent.DataPath).Execute();
+                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
 
                 session.Derive();
                 session.Commit();

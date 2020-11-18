@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Inheritance type.</summary>
 
-namespace Allors.Meta
+namespace Allors.Database.Meta
 {
     using System;
     using System.Linq;

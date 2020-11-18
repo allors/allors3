@@ -10,8 +10,8 @@ namespace Allors.Database.Adapters.Memory
     using System.Linq;
     using System.Xml;
 
-    using Allors.Meta;
-    using Allors.Serialization;
+    using Allors.Database.Meta;
+    using Derivations;
 
     public class Database : IDatabase
     {
@@ -90,10 +90,6 @@ namespace Allors.Database.Adapters.Memory
         }
 
         public void Save(XmlWriter writer) => this.Session.Save(writer);
-
-        public void Load(IPopulationData data) => throw new NotImplementedException();
-
-        public IPopulationData Save() => this.Session.Save();
 
         public bool ContainsConcreteClass(IComposite objectType, IObjectType concreteClass)
         {

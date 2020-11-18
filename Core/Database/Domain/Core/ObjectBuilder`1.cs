@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using System;
 
-    public abstract class ObjectBuilder<T> : ObjectBuilder where T : Domain.Object
+    public abstract class ObjectBuilder<T> : IObjectBuilder where T : Domain.Object
     {
         private bool built;
         private Exception exception;
@@ -24,11 +24,11 @@ namespace Allors
 
         public ISession Session { get; }
 
-        public override void Dispose() => this.Build();
+        public void Dispose() => this.Build();
 
         public override string ToString() => "Builder for " + typeof(T).Name;
 
-        public override IObject DefaultBuild() => this.Build();
+        public IObject DefaultBuild() => this.Build();
 
         public virtual T Build()
         {

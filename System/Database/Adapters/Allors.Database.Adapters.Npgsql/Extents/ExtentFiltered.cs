@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class ExtentFiltered : SqlExtent
     {

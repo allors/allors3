@@ -18,7 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     public partial class Security
     {

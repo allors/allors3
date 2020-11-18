@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the ObjectIdInteger type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Collections;
@@ -12,7 +12,7 @@ namespace Allors
     using System.Linq;
     using System.Text;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class PrefetchPolicy : IEnumerable<PrefetchRule>
     {

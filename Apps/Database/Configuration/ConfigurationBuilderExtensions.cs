@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-namespace Allors.Services
+namespace Allors.Database.Domain
 {
     using System.IO;
     using System.Runtime.InteropServices;

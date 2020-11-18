@@ -4,12 +4,12 @@
 // </copyright>
 // <summary>Defines the ISessionExtension type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System.Collections.Generic;
 
     using Database.Adapters;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public static partial class IChangeSetExtensions
     {

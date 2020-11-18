@@ -4,10 +4,10 @@
 // </copyright>
 // <summary>Defines the role type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
-    using Allors;
+
 
     public partial class UserGroups
     {

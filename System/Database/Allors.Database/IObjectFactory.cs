@@ -4,12 +4,12 @@
 // </copyright>
 // <summary>Defines the IObject type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Reflection;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// A factory for creating new IObject instances.

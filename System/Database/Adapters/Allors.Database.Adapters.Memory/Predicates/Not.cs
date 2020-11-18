@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Memory
     using System;
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal sealed class Not : Predicate, ICompositePredicate
     {
@@ -35,7 +35,7 @@ namespace Allors.Database.Adapters.Memory
             return this;
         }
 
-        public ICompositePredicate AddContainedIn(IRoleType role, Allors.Extent containingExtent)
+        public ICompositePredicate AddContainedIn(IRoleType role, Allors.Database.Extent containingExtent)
         {
             this.CheckUnarity();
             if (role.IsMany)
@@ -67,7 +67,7 @@ namespace Allors.Database.Adapters.Memory
             return this;
         }
 
-        public ICompositePredicate AddContainedIn(IAssociationType association, Allors.Extent containingExtent)
+        public ICompositePredicate AddContainedIn(IAssociationType association, Allors.Database.Extent containingExtent)
         {
             this.CheckUnarity();
             this.predicate = new AssociationContainedInExtent(this.extent, association, containingExtent);

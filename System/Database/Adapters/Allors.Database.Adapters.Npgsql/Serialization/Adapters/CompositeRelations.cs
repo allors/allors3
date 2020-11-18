@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Collections.Generic;
     using System.Xml;
     using Adapters;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class CompositeRelations : IEnumerable<CompositeRelation>
     {

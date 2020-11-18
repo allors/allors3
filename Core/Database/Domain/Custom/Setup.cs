@@ -3,9 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
-    using Allors.Domain;
+    using Allors.Database.Domain;
 
     public partial class Setup
     {

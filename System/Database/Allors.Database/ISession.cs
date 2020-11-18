@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database
 {
     using System;
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// Extends the <see cref="ISession"/> with database capabilities.

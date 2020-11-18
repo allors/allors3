@@ -6,11 +6,10 @@
 //
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class RequiredTest : DomainTest, IClassFixture<Fixture>

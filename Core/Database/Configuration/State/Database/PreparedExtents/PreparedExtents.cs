@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.State
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Concurrent;
-    using Data;
+    using Database.Data;
     using Meta;
 
     public class PreparedExtents : IPreparedExtents

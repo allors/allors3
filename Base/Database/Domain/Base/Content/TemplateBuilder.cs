@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the PermissionBuilder type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
 

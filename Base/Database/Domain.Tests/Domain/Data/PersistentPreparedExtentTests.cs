@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class PersistentPreparedExtentTests : DomainTest, IClassFixture<Fixture>

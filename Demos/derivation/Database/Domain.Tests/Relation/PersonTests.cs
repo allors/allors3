@@ -3,10 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Relation
+namespace Allors.Database.Domain.Tests.Relation
 {
-    using Allors;
-    using Allors.Domain;
     using Xunit;
 
     public class PersonTests : DomainTest, IClassFixture<Fixture>

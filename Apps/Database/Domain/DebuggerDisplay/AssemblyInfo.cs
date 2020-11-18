@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using Allors.Domain;
+using Allors.Database.Domain;
 using static DebuggerDisplayConstants;
 
 // General

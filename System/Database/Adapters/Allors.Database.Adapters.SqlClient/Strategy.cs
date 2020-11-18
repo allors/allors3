@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.SqlClient
 
     using Adapters;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class Strategy : IStrategy
     {
@@ -228,7 +228,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public virtual bool ExistCompositeRoles(IRoleType roleType) => this.GetCompositeRoles(roleType).Count != 0;
 
-        public virtual Allors.Extent GetCompositeRoles(IRoleType roleType)
+        public virtual Allors.Database.Extent GetCompositeRoles(IRoleType roleType)
         {
             this.AssertExist();
             return new ExtentRoles(this, roleType);
@@ -331,7 +331,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         public virtual bool ExistCompositeAssociations(IAssociationType associationType) => this.GetCompositeAssociations(associationType).Count != 0;
 
-        public virtual Allors.Extent GetCompositeAssociations(IAssociationType associationType)
+        public virtual Allors.Database.Extent GetCompositeAssociations(IAssociationType associationType)
         {
             this.AssertExist();
             return new ExtentAssociations(this, associationType);

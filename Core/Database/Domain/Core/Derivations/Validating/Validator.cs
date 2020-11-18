@@ -3,11 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Validating
+namespace Allors.Database.Domain.Derivations.Validating
 {
     using System;
     using System.Collections.Generic;
+    using Database.Derivations;
     using Meta;
+    using Tracing;
 
     public class Validator : IDisposable
     {

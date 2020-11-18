@@ -3,10 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.TestPopulation
+namespace Allors.Database.Domain.TestPopulation
 {
     using System;
-    using Allors.Domain;
+    using Allors.Database.Domain;
 
     public static class WorkEffortExtensions
     {

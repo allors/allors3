@@ -3,11 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
 
     public class QuoteDerivation : DomainDerivation

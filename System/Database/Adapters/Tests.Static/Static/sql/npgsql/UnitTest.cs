@@ -7,7 +7,7 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    using Allors.Domain;
+    using Allors.Database.Domain;
 
     using Xunit;
 

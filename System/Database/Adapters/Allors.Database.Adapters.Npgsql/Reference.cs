@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System;
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public class Reference
     {

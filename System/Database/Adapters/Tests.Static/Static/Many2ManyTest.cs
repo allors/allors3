@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters
 
     using Allors;
 
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public abstract class Many2ManyTest : IDisposable

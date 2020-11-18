@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     public static partial class SingletonExtensions
     {

@@ -4,11 +4,10 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.IO;
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class MediaTest : ContentTests, IClassFixture<Fixture>

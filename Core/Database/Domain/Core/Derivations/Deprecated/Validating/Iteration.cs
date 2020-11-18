@@ -4,14 +4,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Validating
+namespace Allors.Database.Domain.Derivations.Validating
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using Allors.Data;
-    using Allors.Meta;
     using Object = Domain.Object;
 
     public class Iteration : IIteration

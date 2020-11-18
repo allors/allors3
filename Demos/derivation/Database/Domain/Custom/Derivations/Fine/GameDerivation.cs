@@ -3,11 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
 
     public class GameDerivation : DomainDerivation
@@ -15,7 +16,8 @@ namespace Allors.Domain
         public GameDerivation(M m) : base(m, new Guid("6C84C0DD-2855-403A-934B-D2990063A669")) =>
             this.Patterns = new Pattern[]
             {
-                new CreatedPattern(m.Game.Class),
+                // TODO: move to OnInit
+                //new CreatedPattern(m.Game.Class),
                 new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
             };
 

@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.Npgsql.Caching
 {
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// Factory for default cache.

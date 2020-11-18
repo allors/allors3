@@ -5,7 +5,7 @@
 
 namespace Allors.Security
 {
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Microsoft.AspNetCore.Identity;
 
     public static class UserExtensions

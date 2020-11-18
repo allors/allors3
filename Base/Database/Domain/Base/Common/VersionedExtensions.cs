@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System;
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public static partial class VersionedExtensions
     {
@@ -65,7 +65,7 @@ namespace Allors.Domain
             if (isNewVersion)
             {
                 var session = @this.Strategy.Session;
-                var newVersion = (Version)Allors.ObjectBuilder.Build(session, versionClass);
+                var newVersion = (Version)DefaultObjectBuilder.Build(session, versionClass);
                 newVersion.DerivationId = derivation.Id;
                 newVersion.DerivationTimeStamp = derivation.TimeStamp;
 

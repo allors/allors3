@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Person type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     /// <summary>
     /// A living human being.

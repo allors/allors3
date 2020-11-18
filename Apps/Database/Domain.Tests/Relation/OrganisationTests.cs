@@ -6,12 +6,11 @@
 //   Defines the PersonTests type.
 // </summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Allors.Domain.TestPopulation;
+    using Allors.Database.Domain.TestPopulation;
     using Xunit;
-    using ZXing.OneD;
 
     public class OrganisationTests : DomainTest, IClassFixture<Fixture>
     {

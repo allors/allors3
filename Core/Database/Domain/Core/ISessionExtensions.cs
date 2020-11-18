@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the ISessionExtension type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain
 {
     using System;
     using Domain.Derivations;

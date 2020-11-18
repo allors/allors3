@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Allors
+namespace Allors.Database
 {
     /// <summary>
     /// The Session state's lifecycle.

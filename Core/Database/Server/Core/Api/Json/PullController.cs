@@ -6,13 +6,13 @@
 namespace Allors.Database.Protocol.Json
 {
     using System;
-    using Allors.Protocol.Json.Api.Pull;
-    using Allors.Services;
-    using Allors.State;
-    using Data;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Allors.Protocol.Json.Api.Pull;
+    using Services;
+    using Data;
+    using Domain;
 
     [ApiController]
     [Route("allors/pull")]

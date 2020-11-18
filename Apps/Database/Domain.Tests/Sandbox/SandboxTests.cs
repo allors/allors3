@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the SandboxTests type.</summary>
 
-namespace Allors
+namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 

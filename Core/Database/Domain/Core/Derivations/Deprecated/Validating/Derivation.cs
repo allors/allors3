@@ -3,14 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Validating
+namespace Allors.Database.Domain.Derivations.Validating
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Allors;
-    using Object = Allors.Domain.Object;
+    using Object = Allors.Database.Domain.Object;
 
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1121:UseBuiltInTypeAlias", Justification = "Allors Object")]
     public class Derivation : IDerivation

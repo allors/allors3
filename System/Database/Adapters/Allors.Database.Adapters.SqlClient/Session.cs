@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections.Generic;
     using System.Linq;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class Session : ISession
     {
@@ -251,13 +251,13 @@ namespace Allors.Database.Adapters.SqlClient
 
         public Extent<T> Extent<T>() where T : IObject => this.Extent((IComposite)this.Database.ObjectFactory.GetObjectTypeForType(typeof(T)));
 
-        public Allors.Extent Extent(IComposite type) => new ExtentFiltered(this, type);
+        public Allors.Database.Extent Extent(IComposite type) => new ExtentFiltered(this, type);
 
-        public Allors.Extent Union(Allors.Extent firstOperand, Allors.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Union);
+        public Allors.Database.Extent Union(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Union);
 
-        public Allors.Extent Intersect(Allors.Extent firstOperand, Allors.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Intersect);
+        public Allors.Database.Extent Intersect(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Intersect);
 
-        public Allors.Extent Except(Allors.Extent firstOperand, Allors.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Except);
+        public Allors.Database.Extent Except(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Except);
 
         public void Commit()
         {

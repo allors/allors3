@@ -3,8 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server
+namespace Allors.Database.Server.Controllers
 {
+    using Allors.Server;
     using Allors.Services;
 
     public class MediaController : BaseMediaController

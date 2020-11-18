@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the MailboxAddress type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     /// <summary>
     /// A MailboxAddress is a address in a mailbox in the postoffice.

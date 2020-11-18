@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class StrategyExtentAssociation : StrategyExtent
     {
@@ -37,9 +37,9 @@ namespace Allors.Database.Adapters.Memory
 
         internal override Session Session => this.roleStrategy.Session;
 
-        public override Allors.Extent AddSort(IRoleType roleType) => throw new NotSupportedException();
+        public override Allors.Database.Extent AddSort(IRoleType roleType) => throw new NotSupportedException();
 
-        public override Allors.Extent AddSort(IRoleType roleType, SortDirection direction) => throw new NotSupportedException();
+        public override Allors.Database.Extent AddSort(IRoleType roleType, SortDirection direction) => throw new NotSupportedException();
 
         public override bool Contains(object value)
         {

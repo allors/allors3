@@ -3,9 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Sandbox
+namespace Allors.Database.Domain.Tests.Sandbox
 {
-    using Allors.Domain;
     using Xunit;
 
     public class SandboxTests : DomainTest, IClassFixture<Fixture>

@@ -1,4 +1,4 @@
-namespace Allors
+namespace Allors.Database.Domain
 {
     using System.IO;
 

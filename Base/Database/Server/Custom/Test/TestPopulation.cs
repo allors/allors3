@@ -3,10 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Controllers
+namespace Allors.Database.Server.Controllers
 {
     using System;
-    using Allors.Domain;
+    using Allors.Database.Domain;
+    using Database;
 
     public class TestPopulation
     {

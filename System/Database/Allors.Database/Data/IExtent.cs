@@ -3,11 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System.Collections.Generic;
-
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public interface IExtent : IVisitable
     {
@@ -15,7 +14,7 @@ namespace Allors.Data
 
         Sort[] Sorting { get; set; }
 
-        Allors.Extent Build(ISession session, IDictionary<string, string> parameters = null);
+        Database.Extent Build(ISession session, IDictionary<string, string> parameters = null);
 
         bool HasMissingArguments(IDictionary<string, string> parameters);
     }

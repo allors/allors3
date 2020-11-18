@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System.Linq;
     using System.Text;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
+    using Database.Security;
 
     public partial class ReadPermission : IReadPermission
     {

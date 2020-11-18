@@ -6,6 +6,8 @@
 namespace Allors
 {
     using Bogus;
+    using Database;
+    using Database.Domain;
 
     public static class SessionExtensions
     {

@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Allors.Domain.Print.SalesOrderModel
+namespace Allors.Database.Domain.Print.SalesOrderModel
 {
     using System.Globalization;
 

@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-namespace Allors.Domain.TestPopulation
+namespace Allors.Database.Domain.TestPopulation
 {
     public static partial class IncoTermBuilderExtensions
     {

@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// Utility class for <see cref="ICompositePredicate"/>s containing several assertions.

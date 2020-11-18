@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Print.WorkTaskModel
+namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Globalization;
     using System.Linq;

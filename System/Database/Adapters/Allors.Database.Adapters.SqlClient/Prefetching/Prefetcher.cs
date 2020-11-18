@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Data.Common;
     using System.Linq;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal class Prefetcher
     {

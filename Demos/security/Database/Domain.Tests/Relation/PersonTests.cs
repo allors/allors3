@@ -21,10 +21,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Tests.Domain
+namespace Allors.Database.Domain.Tests
 {
     using Allors;
-    using Allors.Domain;
     using Xunit;
 
     public class PersonTests : DomainTest, IClassFixture<Fixture>

@@ -7,7 +7,8 @@ namespace Commands
 {
     using System;
     using Allors;
-    using Allors.Domain;
+    using Allors.Database;
+    using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 

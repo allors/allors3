@@ -15,8 +15,8 @@ namespace Allors.Database.Adapters.SqlClient
     using Allors;
     using Allors.Database.Adapters.Schema;
     using Allors.Database.Adapters.SqlClient.Caching;
-    using Allors.Meta;
-    using Allors.Serialization;
+    using Allors.Database.Meta;
+    using Derivations;
     using Microsoft.Data.SqlClient.Server;
 
     public class Database : IDatabase
@@ -279,10 +279,6 @@ namespace Allors.Database.Adapters.SqlClient
                 }
             }
         }
-
-        public void Load(IPopulationData data) => throw new NotImplementedException();
-
-        public IPopulationData Save() => throw new NotImplementedException();
 
         public override string ToString() => "Population[driver=Sql, type=Connected, id=" + this.GetHashCode() + "]";
 

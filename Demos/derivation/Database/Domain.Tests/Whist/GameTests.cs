@@ -3,10 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Whist
+namespace Allors.Database.Domain.Tests.Whist
 {
-    using Allors;
-    using Allors.Domain;
     using Xunit;
 
     public class GameTests : DomainTest, IClassFixture<Fixture>

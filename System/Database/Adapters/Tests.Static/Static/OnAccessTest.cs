@@ -8,8 +8,9 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections.Generic;
     using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Meta;
+    using Tracing;
     using Xunit;
 
     public abstract class OnAccessTest : IDisposable

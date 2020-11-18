@@ -5,7 +5,6 @@
 
 namespace Tests.Workspace
 {
-    using Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
     using Xunit;

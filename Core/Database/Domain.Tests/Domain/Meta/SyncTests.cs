@@ -6,7 +6,7 @@
 //   Defines the PersonTests type.
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 

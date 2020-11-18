@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors
+namespace Allors.Database.Tracing
 {
     using System;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// Notifications for access to objects (Get and Exist on Strategy and Extent).

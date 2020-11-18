@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System.IO;
     using System.Text;
     using System.Xml.Serialization;
-    using Allors.Data;
+    using Allors.Database.Data;
     using Allors.Database.Protocol.Json;
 
     public partial class PersistentPreparedExtent
@@ -18,7 +18,7 @@ namespace Allors.Domain
             get
             {
                 using TextReader reader = new StringReader(this.Content);
-                var protocolExtent = (Protocol.Json.Data.Extent)XmlSerializer.Deserialize(reader);
+                var protocolExtent = (Allors.Protocol.Json.Data.Extent)XmlSerializer.Deserialize(reader);
                 return protocolExtent.FromJson(this.Strategy.Session);
             }
 
@@ -31,6 +31,6 @@ namespace Allors.Domain
             }
         }
 
-        private static XmlSerializer XmlSerializer => new XmlSerializer(typeof(Extent));
+        private static XmlSerializer XmlSerializer => new XmlSerializer(typeof(Allors.Protocol.Json.Data.Extent));
     }
 }

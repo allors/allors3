@@ -10,6 +10,7 @@ namespace Allors.Database.Protocol.Json
     using System.Linq;
     using Allors.Protocol.Json.Data;
     using Meta;
+    using Extent = Data.Extent;
     using Fetch = Data.Fetch;
     using IVisitor = Allors.Protocol.Json.Data.IVisitor;
     using Node = Data.Node;
@@ -64,7 +65,7 @@ namespace Allors.Database.Protocol.Json
                     }
 
                     var objectType = (IComposite)this.metaPopulation.Find(visited.ObjectType.Value);
-                    var extent = new Allors.Data.Extent(objectType);
+                    var extent = new Extent(objectType);
 
                     this.extents.Push(extent);
 
@@ -398,7 +399,7 @@ namespace Allors.Database.Protocol.Json
 
         public void VisitResult(Allors.Protocol.Json.Data.Result visited)
         {
-            var result = new Allors.Data.Result
+            var result = new Result
             {
                 FetchRef = visited.FetchRef,
                 Name = visited.Name,
@@ -430,7 +431,7 @@ namespace Allors.Database.Protocol.Json
         {
             var propertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.AssociationType) ?? this.metaPopulation.FindRoleType(visited.RoleType);
 
-            var step = new Allors.Data.Step
+            var step = new Step
             {
                 PropertyType = propertyType,
             };

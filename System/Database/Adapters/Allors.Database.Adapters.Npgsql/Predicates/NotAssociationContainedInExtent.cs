@@ -7,14 +7,14 @@ namespace Allors.Database.Adapters.Npgsql
 {
     using Adapters;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal sealed class NotAssociationContainedInExtent : In
     {
         private readonly IAssociationType association;
         private readonly SqlExtent inExtent;
 
-        internal NotAssociationContainedInExtent(ExtentFiltered extent, IAssociationType association, Allors.Extent inExtent)
+        internal NotAssociationContainedInExtent(ExtentFiltered extent, IAssociationType association, Allors.Database.Extent inExtent)
         {
             extent.CheckAssociation(association);
             PredicateAssertions.AssertAssociationContainedIn(association, inExtent);

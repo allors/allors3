@@ -4,10 +4,9 @@
 // </copyright>
 // <summary>Defines the CurrencyTests type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class CurrencyTests : DomainTest, IClassFixture<Fixture>

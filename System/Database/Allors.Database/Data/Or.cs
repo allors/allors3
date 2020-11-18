@@ -3,10 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Data
+namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Data;
 
     public class Or : ICompositePredicate
     {
@@ -22,7 +23,7 @@ namespace Allors.Data
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operands = this.Operands.Append(predicate).ToArray();
 
-        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Allors.ICompositePredicate compositePredicate)
+        void IPredicate.Build(ISession session, IDictionary<string, string> parameters, Database.ICompositePredicate compositePredicate)
         {
             var or = compositePredicate.AddOr();
             foreach (var predicate in this.Operands)

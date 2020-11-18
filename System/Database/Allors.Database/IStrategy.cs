@@ -4,11 +4,11 @@
 // </copyright>
 // <summary>Defines the IStrategy type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System.Collections;
     using System.Collections.Generic;
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// A strategy based object delegates all framework related work

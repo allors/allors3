@@ -6,7 +6,7 @@
 namespace Allors.Services
 {
     using System;
-    using Allors;
+    using Database;
 
     public partial class SessionService : ISessionService, IDisposable
     {

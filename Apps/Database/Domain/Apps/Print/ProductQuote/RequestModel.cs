@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Allors.Domain.Print.ProductQuoteModel
+namespace Allors.Database.Domain.Print.ProductQuoteModel
 {
     using System.Collections.Generic;
 

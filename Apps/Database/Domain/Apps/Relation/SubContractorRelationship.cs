@@ -5,7 +5,7 @@
 
 using System.Linq;
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     public partial class SubContractorRelationship
     {

@@ -3,18 +3,18 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     using System.IO;
     using System.Text;
     using System.Xml.Serialization;
-    using Database.Protocol.Json;
-    using Protocol.Json.Data;
+    using Allors.Protocol.Json.Data;
+    using Protocol.Json;
 
 
     public partial class PersistentPreparedFetch
     {
-        public Allors.Data.Fetch Fetch
+        public Allors.Database.Data.Fetch Fetch
         {
             get
             {

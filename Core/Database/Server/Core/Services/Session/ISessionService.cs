@@ -5,6 +5,8 @@
 
 namespace Allors.Services
 {
+    using Database;
+
     public interface ISessionService
     {
         ISession Session { get; }

@@ -18,9 +18,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
-    using Allors.Meta;
+    using Meta;
 
     public partial class Security
     {
@@ -28,7 +28,7 @@ namespace Allors.Domain
         {
             // Default access policy
             var security = new Security(this.session);
-            foreach (ObjectType @class in session.Database.MetaPopulation.DatabaseClasses)
+            foreach (Class @class in session.Database.MetaPopulation.DatabaseClasses)
             {
                 security.GrantAdministrator(@class, Operations.Read, Operations.Write, Operations.Execute);
                 security.GrantCreator(@class, Operations.Read, Operations.Write, Operations.Execute);

@@ -6,11 +6,10 @@
 //   Defines the ApplicationTests type.
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Allors.Data;
-    using Allors.Domain;
+    using Allors.Database.Data;
     using Xunit;
 
     public class ParametrizedTests : DomainTest, IClassFixture<Fixture>

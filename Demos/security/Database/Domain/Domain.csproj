@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Protocol\Allors.Protocol.Json.Database\Allors.Protocol.Json.Database.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>

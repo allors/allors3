@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Collections.Generic;
     using System.Linq;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     public sealed class State
     {

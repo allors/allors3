@@ -4,10 +4,11 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-namespace Allors.Domain.Print
+namespace Allors.Database.Domain.Tests.Print
 {
     using System;
     using System.Linq;
+    using Domain.Print.WorkTaskModel;
     using Xunit;
 
     public class WorkTaskTests : DomainTest
@@ -88,7 +89,7 @@ namespace Allors.Domain.Print
             this.Session.Derive(true);
 
             // Act
-            var model = new WorkTaskModel.Model(workOrder);
+            var model = new Model(workOrder);
 
             // Assert
             Assert.Equal(3, model.TimeEntries.Length);

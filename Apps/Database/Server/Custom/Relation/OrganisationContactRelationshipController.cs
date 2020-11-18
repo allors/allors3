@@ -3,9 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Server.Controllers
+namespace Allors.Database.Server.Controllers
 {
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Allors.Services;
     using Database.Protocol.Json;
     using Microsoft.AspNetCore.Mvc;

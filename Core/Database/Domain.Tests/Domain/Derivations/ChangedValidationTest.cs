@@ -6,10 +6,9 @@
 //
 // </summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
-    using Allors;
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class ChangedValidationDomainDerivationTest : DomainTest, IClassFixture<Fixture>

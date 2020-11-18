@@ -7,8 +7,8 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Text;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using Allors.Services;
     using Security;
     using JSNLog;
@@ -21,8 +21,9 @@ namespace Allors.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ObjectFactory = Database.ObjectFactory;
     using Allors.Database.Adapters;
+    using Database;
 
     public class Startup
     {

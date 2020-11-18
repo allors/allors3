@@ -4,12 +4,11 @@
 // </copyright>
 // <summary>Defines the AccessControlTests type.</summary>
 
-namespace Tests
+namespace Allors.Database.Domain.Tests
 {
     using System.Collections;
-    using Allors;
-    using Allors.Domain;
-    using Allors.Domain.Derivations.Errors;
+    using Allors.Database.Domain;
+    using Allors.Database.Domain.Derivations.Errors;
     using Xunit;
 
     public class AccessControlTests : DomainTest, IClassFixture<Fixture>

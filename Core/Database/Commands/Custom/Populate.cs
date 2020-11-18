@@ -6,7 +6,8 @@
 namespace Commands
 {
     using Allors;
-    using Allors.Domain;
+    using Allors.Database;
+    using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -33,7 +34,7 @@ namespace Commands
                 session.Derive();
                 session.Commit();
 
-                new Allors.Upgrade(session, this.Parent.DataPath).Execute();
+                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
 
                 session.Derive();
                 session.Commit();

@@ -4,11 +4,11 @@
 // </copyright>
 // <summary>Defines the IChangeSet type.</summary>
 
-namespace Allors
+namespace Allors.Database
 {
     using System.Collections.Generic;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     /// <summary>
     /// A change set is created during a checkpoint

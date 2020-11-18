@@ -10,6 +10,7 @@ namespace Allors.Database.Protocol.Json
     using System.Linq;
     using Allors.Protocol.Json.Api.Security;
     using Meta;
+    using Security;
 
     public class SecurityResponseBuilder
     {

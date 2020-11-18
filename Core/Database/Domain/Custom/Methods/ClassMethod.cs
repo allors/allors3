@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Person type.</summary>
 
-namespace Allors.Domain
+namespace Allors.Database.Domain
 {
     public partial class C1ClassMethod
     {

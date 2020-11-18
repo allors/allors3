@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters
     using Domain;
     using Memory;
     using Meta;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ObjectFactory = Database.ObjectFactory;
 
     public abstract class Profile : IProfile
     {

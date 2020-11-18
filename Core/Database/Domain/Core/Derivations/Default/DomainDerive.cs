@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Domain.Derivations.Default
+namespace Allors.Database.Domain.Derivations.Default
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Data;
+    using Database.Data;
+    using Database.Derivations;
     using Meta;
     using Object = Domain.Object;
 

@@ -6,7 +6,7 @@
 
 using System.Linq;
 
-namespace Allors.Domain.TestPopulation
+namespace Allors.Database.Domain.TestPopulation
 {
     public static partial class InvoiceTermBuilderExtensions
     {

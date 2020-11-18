@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Npgsql
     using Domain;
     using global::Npgsql;
     using Meta;
-    using ObjectFactory = Allors.ObjectFactory;
+    using ObjectFactory = Allors.Database.ObjectFactory;
 
     public class Profile : Adapters.Profile
     {

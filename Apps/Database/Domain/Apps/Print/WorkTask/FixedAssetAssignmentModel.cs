@@ -5,7 +5,7 @@
 
 using System.Linq;
 
-namespace Allors.Domain.Print.WorkTaskModel
+namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     public class FixedAssetAssignmentModel
     {

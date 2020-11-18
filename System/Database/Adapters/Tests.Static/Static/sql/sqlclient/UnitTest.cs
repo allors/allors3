@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.SqlClient
 {
-    using Allors.Domain;
+    using Allors.Database.Domain;
     using Xunit;
 
     public class UnitTest : Adapters.UnitTest, IClassFixture<Fixture<UnitTest>>

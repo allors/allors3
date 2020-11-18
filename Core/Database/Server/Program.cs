@@ -2,7 +2,7 @@ namespace Allors.Server
 {
     using System;
     using System.IO;
-    using Allors.Services;
+    using Database.Domain;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using NLog.Web;

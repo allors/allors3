@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Linq;
     using Adapters;
 
-    using Allors.Meta;
+    using Allors.Database.Meta;
 
     internal sealed class ChangeSet : IChangeSet
     {
