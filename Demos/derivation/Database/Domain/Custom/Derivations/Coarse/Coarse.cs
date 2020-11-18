@@ -16,8 +16,7 @@ namespace Allors.Database.Domain
         public CoarseDerivation(M m) : base(m, new Guid("2D54CAE9-D3A0-4D66-BBF5-BF988B7983D6")) =>
             this.Patterns = new Pattern[]
             {
-                // TODO: move to OnInit
-                //new CreatedPattern(m.Game.Class),
+                new ChangedPattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
                 new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
                 new ChangedPattern(m.Scoreboard.Players),
                 new ChangedPattern(m.Game.Declarers),

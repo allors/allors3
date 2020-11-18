@@ -16,8 +16,9 @@ namespace Allors.Database.Domain
         public GameDerivation(M m) : base(m, new Guid("6C84C0DD-2855-403A-934B-D2990063A669")) =>
             this.Patterns = new Pattern[]
             {
-                // TODO: move to OnInit
-                //new CreatedPattern(m.Game.Class),
+                new ChangedPattern(m.Game.GameMode),
+                new ChangedPattern(m.Game.StartDate),
+                new ChangedPattern(m.Scoreboard.Games) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
                 new ChangedPattern(m.Scoreboard.Players) { Steps = new IPropertyType[]{m.Scoreboard.Games} },
             };
 
