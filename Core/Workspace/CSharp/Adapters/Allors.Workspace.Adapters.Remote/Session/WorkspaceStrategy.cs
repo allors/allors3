@@ -6,7 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class WorkspaceStrategy : Strategy
     {

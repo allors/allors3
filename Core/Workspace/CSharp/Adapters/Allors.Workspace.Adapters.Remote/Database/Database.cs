@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using Allors.Workspace.Meta;
+    using Meta;
     using Polly;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;

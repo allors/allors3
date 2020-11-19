@@ -10,8 +10,8 @@ namespace Allors.Security
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Allors.Database.Domain;
-    using Allors.Services;
+    using Database.Domain;
+    using Services;
     using Database;
     using Microsoft.AspNetCore.Identity;
     using Task = System.Threading.Tasks.Task;

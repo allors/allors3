@@ -9,7 +9,7 @@ namespace Allors
     using System.IO;
     using System.Linq;
 
-    using Allors.R1.Development.Resources;
+    using R1.Development.Resources;
 
     class Program
     {

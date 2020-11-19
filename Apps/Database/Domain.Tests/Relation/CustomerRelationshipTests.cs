@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.False(internalOrganisation.CurrentCustomers.Contains(customer));
+            Assert.DoesNotContain(customer, internalOrganisation.CurrentCustomers);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.False(internalOrganisation.CurrentCustomers.Contains(customer));
+            Assert.DoesNotContain(customer, internalOrganisation.CurrentCustomers);
         }
 
         [Fact]

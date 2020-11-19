@@ -7,7 +7,7 @@ namespace Allors.Workspace.Data
 {
     using System.Linq;
     using System.Text;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class Step : IVisitable
     {

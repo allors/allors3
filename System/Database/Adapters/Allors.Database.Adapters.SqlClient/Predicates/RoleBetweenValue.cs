@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.SqlClient
 {
     using Adapters;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     internal sealed class RoleBetweenValue : Predicate
     {

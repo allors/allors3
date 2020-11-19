@@ -7,7 +7,7 @@ namespace Allors.Database.Domain.Derivations
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
 
     public class AccumulatedChangeSet : IAccumulatedChangeSet
     {

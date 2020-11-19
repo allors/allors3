@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
             this.Session.Derive();
         }
 
-        public void Secure(Domain.Security security)
+        public void Secure(Security security)
         {
             this.CoreSecure(security);
             this.CustomSecure(security);

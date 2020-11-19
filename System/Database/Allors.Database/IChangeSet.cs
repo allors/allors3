@@ -8,7 +8,7 @@ namespace Allors.Database
 {
     using System.Collections.Generic;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// A change set is created during a checkpoint

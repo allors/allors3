@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Data;
     using Microsoft.Data.SqlClient;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public abstract class Command : IDisposable
     {

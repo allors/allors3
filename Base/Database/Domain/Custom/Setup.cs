@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Domain
 {
-    using Allors.Database.Domain;
+    using Domain;
 
     public partial class Setup
     {

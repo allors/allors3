@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters
 
     using Allors;
 
-    using Allors.Database.Meta;
+    using Meta;
     using Xunit;
 
     /// <summary>

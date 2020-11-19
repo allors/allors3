@@ -8,7 +8,7 @@ namespace Allors.Database
     using System;
     using System.Collections.Generic;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// Extends the <see cref="ISession"/> with database capabilities.

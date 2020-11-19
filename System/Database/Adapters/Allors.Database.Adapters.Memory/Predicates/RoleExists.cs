@@ -6,7 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Adapters;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal sealed class RoleExists : Predicate
     {

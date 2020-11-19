@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using global::Npgsql;
     using NpgsqlTypes;
 

@@ -6,7 +6,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors.Database.Domain;
+    using Domain;
     using Xunit;
 
     public class DelegateAccessTests : DomainTest, IClassFixture<Fixture>

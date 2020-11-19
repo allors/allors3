@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Linq;
     using System.Xml;
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
     using Caching;
     using Derivations;
     using global::Npgsql;

@@ -9,7 +9,7 @@
 namespace Allors.Database.Adapters.Npgsql
 {
     using Adapters;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal sealed class RoleContains : Predicate
     {

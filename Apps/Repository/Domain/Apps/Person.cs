@@ -6,7 +6,7 @@
 namespace Allors.Repository
 {
     using System;
-    using Allors.Repository.Attributes;
+    using Attributes;
     using static Workspaces;
 
     public partial class Person : Party, Deletable, Versioned

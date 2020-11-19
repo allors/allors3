@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
 
     public sealed class StrategyExtentRole : StrategyExtent
     {

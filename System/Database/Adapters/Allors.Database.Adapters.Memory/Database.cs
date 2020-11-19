@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Linq;
     using System.Xml;
 
-    using Allors.Database.Meta;
+    using Meta;
     using Derivations;
 
     public class Database : IDatabase

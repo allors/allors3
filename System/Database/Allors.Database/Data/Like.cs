@@ -7,8 +7,8 @@ namespace Allors.Database.Data
 {
     using System.Collections.Generic;
 
-    using Allors.Database.Meta;
-    using Database.Data;
+    using Meta;
+    using Data;
 
 
     public class Like : IRolePredicate

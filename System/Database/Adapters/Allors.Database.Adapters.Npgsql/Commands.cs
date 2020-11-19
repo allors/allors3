@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Data.Common;
     using System.Text;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public sealed class Commands
     {

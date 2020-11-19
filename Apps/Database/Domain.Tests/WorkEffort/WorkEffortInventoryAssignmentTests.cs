@@ -231,7 +231,7 @@ namespace Allors.Database.Domain.Tests
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
 
-            Assert.Equal(1, transactions.Count);
+            Assert.Single(transactions);
 
             var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption));
 

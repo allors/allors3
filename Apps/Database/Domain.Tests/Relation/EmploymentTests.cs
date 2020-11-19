@@ -56,7 +56,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.False(employer.ActiveEmployees.Contains(employee));
+            Assert.DoesNotContain(employee, employer.ActiveEmployees);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.False(employer.ActiveEmployees.Contains(employee));
+            Assert.DoesNotContain(employee, employer.ActiveEmployees);
         }
 
         private void InstantiateObjects(ISession session)

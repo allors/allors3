@@ -6,7 +6,7 @@
 
 namespace Allors.Database.Configuration
 {
-    using Database.Data;
+    using Data;
     using Domain;
     using Meta;
     using Microsoft.AspNetCore.Http;

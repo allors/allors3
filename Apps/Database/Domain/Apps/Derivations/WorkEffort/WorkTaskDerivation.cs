@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
     using Resources;
 

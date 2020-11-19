@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
     using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
     using Derivations;
     using Resources;

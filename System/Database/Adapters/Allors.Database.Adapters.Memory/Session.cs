@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Linq;
     using System.Xml;
 
-    using Allors.Database.Meta;
+    using Meta;
     using Tracing;
 
     public class Session : ISession, IOnAccess
@@ -270,7 +270,7 @@ namespace Allors.Database.Adapters.Memory
 
         public virtual IObject Create(IClass objectType)
         {
-            var strategy = new Strategy(this, objectType, ++this.currentId, Memory.Database.IntialVersion);
+            var strategy = new Strategy(this, objectType, ++this.currentId, Database.IntialVersion);
             this.AddStrategy(strategy);
 
             this.MemoryChangeSet.OnCreated(strategy);

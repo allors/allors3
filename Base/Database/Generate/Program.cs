@@ -7,7 +7,7 @@ namespace Allors.Database
 {
     using System;
     using System.IO;
-    using Allors.Development.Repository.Tasks;
+    using Development.Repository.Tasks;
     using Meta;
 
     internal class Program

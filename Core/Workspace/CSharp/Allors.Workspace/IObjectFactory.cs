@@ -7,7 +7,7 @@
 namespace Allors.Workspace
 {
     using System;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public interface IObjectFactory
     {

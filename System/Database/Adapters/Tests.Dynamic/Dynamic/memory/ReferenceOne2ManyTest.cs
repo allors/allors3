@@ -22,7 +22,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
 
     public class ReferenceOne2ManyTest : Adapters.ReferenceOne2ManyTest
     {

@@ -6,7 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Allors.Database.Domain;
+    using Domain;
 
     public static class TestSessionExtensions
     {

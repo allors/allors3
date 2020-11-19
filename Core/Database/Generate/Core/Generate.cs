@@ -8,8 +8,8 @@ namespace Allors.Development.Repository.Tasks
 {
     using System.IO;
 
-    using Allors.Development.Repository.Generation;
-    using Allors.Database.Meta;
+    using Generation;
+    using Database.Meta;
 
     public static class Generate
     {

@@ -11,8 +11,8 @@ namespace Allors.Development.Repository.Generation
     using System;
     using System.IO;
     using System.Xml;
-    using Allors.Development.Repository.Storage;
-    using Allors.Database.Meta;
+    using Storage;
+    using Database.Meta;
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
 

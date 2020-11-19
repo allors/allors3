@@ -8,7 +8,7 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Resources;
     using System.Collections.Generic;
 

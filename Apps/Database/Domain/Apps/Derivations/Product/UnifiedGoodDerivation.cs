@@ -9,8 +9,8 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Allors.Database.Domain.Derivations;
-    using Allors.Database.Meta;
+    using Derivations;
+    using Meta;
     using Database.Derivations;
 
     public class UnifiedGoodDerivation : DomainDerivation

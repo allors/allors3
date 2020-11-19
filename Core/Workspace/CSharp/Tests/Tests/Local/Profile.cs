@@ -29,7 +29,7 @@ namespace Tests.Workspace.Local
                 new ValidatingDatabaseContext(),
                 new Allors.Database.Adapters.Memory.Configuration
                 {
-                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(Allors.Database.Domain.C1)),
+                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 });
 
             this.Workspace = new Allors.Workspace.Adapters.Local.Workspace(
@@ -50,8 +50,8 @@ namespace Tests.Workspace.Local
             session.Derive();
             session.Commit();
 
-            var administrator = new Allors.Database.Domain.PersonBuilder(session).WithUserName("administrator").Build();
-            new Allors.Database.Domain.UserGroups(session).Administrators.AddMember(administrator);
+            var administrator = new PersonBuilder(session).WithUserName("administrator").Build();
+            new UserGroups(session).Administrators.AddMember(administrator);
             session.Context().User = administrator;
 
             new TestPopulation(session, "full").Apply();
@@ -66,7 +66,7 @@ namespace Tests.Workspace.Local
             var m = this.Database.Context().M;
 
             using var session = this.Database.CreateSession();
-            session.Context().User = new Allors.Database.Domain.Users(session).FindBy(m.User.UserName, user);
+            session.Context().User = new Users(session).FindBy(m.User.UserName, user);
         }
     }
 }

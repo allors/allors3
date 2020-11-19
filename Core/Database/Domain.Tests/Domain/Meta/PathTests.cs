@@ -7,7 +7,7 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
     using Allors.Database.Data;
-    using Allors.Database.Domain;
+    using Domain;
     using Xunit;
 
     public class PathTests : DomainTest, IClassFixture<Fixture>

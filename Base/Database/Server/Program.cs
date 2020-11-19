@@ -2,7 +2,7 @@ namespace Allors.Server
 {
     using System;
     using System.IO;
-    using Allors.Services;
+    using Services;
     using Database;
     using Database.Configuration;
     using Database.Domain;

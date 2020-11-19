@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
 
     public class OrganisationSubContractorChangedDerivation : DomainDerivation
@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public OrganisationSubContractorChangedDerivation(M m) : base(m, new Guid("C7C44D1F-11F1-4A48-8385-491089090F44")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(M.SubContractorRelationship.FromDate),
+                new ChangedPattern(this.M.SubContractorRelationship.FromDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

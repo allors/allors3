@@ -60,7 +60,7 @@ namespace Allors.Database.Domain.Tests
             this.InstantiateObjects(this.Session);
 
             var usergroup = this.organisationContactRelationship.Organisation.ContactsUserGroup;
-            Assert.True(usergroup.Members.Contains(this.organisationContactRelationship.Contact));
+            Assert.Contains(this.organisationContactRelationship.Contact, usergroup.Members);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace Allors.Database.Domain.Tests
 
             var usergroup = this.organisationContactRelationship.Organisation.ContactsUserGroup;
             Assert.Single(usergroup.Members);
-            Assert.True(usergroup.Members.Contains(this.organisationContactRelationship.Contact));
+            Assert.Contains(this.organisationContactRelationship.Contact, usergroup.Members);
 
             var secondRelationship = new OrganisationContactRelationshipBuilder(this.Session)
                 .WithContact(new PersonBuilder(this.Session).WithLastName("contact 2").Build())
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(2, usergroup.Members.Count);
-            Assert.True(usergroup.Members.Contains(secondRelationship.Contact));
+            Assert.Contains(secondRelationship.Contact, usergroup.Members);
         }
 
         [Fact]
@@ -92,14 +92,14 @@ namespace Allors.Database.Domain.Tests
             var usergroup = this.organisationContactRelationship.Organisation.ContactsUserGroup;
 
             Assert.Single(usergroup.Members);
-            Assert.True(usergroup.Members.Contains(this.contact));
+            Assert.Contains(this.contact, usergroup.Members);
 
             this.organisationContactRelationship.FromDate = this.Session.Now().AddDays(+1);
             this.organisationContactRelationship.RemoveThroughDate();
 
             this.Session.Derive();
 
-            Assert.Equal(0, usergroup.Members.Count);
+            Assert.Empty(usergroup.Members);
 
             this.organisationContactRelationship.FromDate = this.Session.Now();
             this.organisationContactRelationship.RemoveThroughDate();
@@ -107,14 +107,14 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Single(usergroup.Members);
-            Assert.True(usergroup.Members.Contains(this.contact));
+            Assert.Contains(this.contact, usergroup.Members);
 
             this.organisationContactRelationship.FromDate = this.Session.Now().AddDays(-2);
             this.organisationContactRelationship.ThroughDate = this.Session.Now().AddDays(-1);
 
             this.Session.Derive();
 
-            Assert.Equal(0, usergroup.Members.Count);
+            Assert.Empty(usergroup.Members);
         }
 
         private void InstantiateObjects(ISession session)

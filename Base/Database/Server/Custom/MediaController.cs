@@ -6,7 +6,7 @@
 namespace Allors.Database.Server.Controllers
 {
     using Allors.Server;
-    using Allors.Services;
+    using Services;
 
     public class MediaController : BaseMediaController
     {

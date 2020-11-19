@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using NpgsqlTypes;
 
     public class Mapping

@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Data
 {
-    using Allors.Database.Meta;
+    using Meta;
 
     public interface IRolePredicate : IPredicate
     {

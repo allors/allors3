@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Derivations
 {
-    using Allors.Database.Meta;
+    using Meta;
 
     public interface IDerivationError
     {

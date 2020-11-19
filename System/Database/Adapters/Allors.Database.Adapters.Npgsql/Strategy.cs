@@ -15,7 +15,7 @@ namespace Allors.Database.Adapters.Npgsql
 
     using Adapters;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public class Strategy : IStrategy
     {

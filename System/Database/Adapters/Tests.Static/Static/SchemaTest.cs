@@ -8,11 +8,11 @@ namespace Allors.Database.Adapters
     using System;
 
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
 
     using Xunit;
 
-    using IDatabase = Database.IDatabase;
+    using IDatabase = IDatabase;
 
     public enum ColumnTypes
     {

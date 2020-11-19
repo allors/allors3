@@ -9,8 +9,8 @@ namespace Allors.Database
     using System.Collections.Generic;
     using System.Xml;
 
-    using Allors.Database.Meta;
-    using Database.Derivations;
+    using Meta;
+    using Derivations;
 
     /// <summary>
     /// A database is an online <see cref="IDatabase"/>.

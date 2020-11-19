@@ -8,12 +8,12 @@ namespace Allors.Workspace.Protocol.Json
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Data;
-    using Allors.Workspace.Data;
-    using Allors.Workspace.Meta;
+    using Data;
+    using Meta;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
     using Fetch = Allors.Protocol.Json.Data.Fetch;
-    using IVisitor = Allors.Workspace.Data.IVisitor;
+    using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;

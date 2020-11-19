@@ -12,7 +12,7 @@ namespace Allors.Repository.Roslyn
     using System.IO;
     using System.Linq;
 
-    using Allors.Repository.Domain;
+    using Domain;
 
     using Microsoft.CodeAnalysis;
 

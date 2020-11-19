@@ -7,7 +7,7 @@ namespace Allors.Workspace.Data
 {
     using System;
     using System.Linq;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public abstract class NodeBuilder
    {

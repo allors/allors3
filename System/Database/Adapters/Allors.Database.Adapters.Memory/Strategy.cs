@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Memory
     using System.Xml;
     using Allors;
     using Adapters;
-    using Allors.Database.Meta;
+    using Meta;
 
     public sealed class Strategy : IStrategy
     {

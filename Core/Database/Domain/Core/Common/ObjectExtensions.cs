@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Domain
 {
-    using Allors.Database.Meta;
+    using Meta;
     using Domain;
 
     public static partial class ObjectExtensions

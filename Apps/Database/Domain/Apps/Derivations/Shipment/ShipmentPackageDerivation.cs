@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
 
     public class ShipmentPackageDerivation : DomainDerivation

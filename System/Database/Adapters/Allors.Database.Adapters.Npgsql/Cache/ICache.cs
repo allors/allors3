@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.Npgsql.Caching
 {
     using System.Collections.Generic;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// The Cache holds a CachedObject and/or IObjectType by ObjectId.

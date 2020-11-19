@@ -5,9 +5,9 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
-    using Allors.Database.Domain;
+    using Domain;
     using Bogus;
-    using Person = Allors.Database.Domain.Person;
+    using Person = Person;
 
     public static class OrganisationExtensions
     {

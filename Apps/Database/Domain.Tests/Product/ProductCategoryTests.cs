@@ -391,7 +391,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(productCategory11, productCategory1.Children);
             Assert.Contains(productCategory12, productCategory1.Children);
 
-            Assert.Equal(1, productCategory2.Children.Count);
+            Assert.Single(productCategory2.Children);
             Assert.Contains(productCategory12, productCategory2.Children);
 
             Assert.Single(productCategory11.Children);

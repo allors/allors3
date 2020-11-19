@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Linq;
     using Adapters;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     internal sealed class ChangeSet : IChangeSet
     {

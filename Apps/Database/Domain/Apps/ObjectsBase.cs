@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        protected virtual void AppsSecure(Domain.Security config)
+        protected virtual void AppsSecure(Security config)
         {
         }
     }

@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Database.Derivations;
     using Resources;
     using Xunit;
@@ -2020,7 +2020,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.True(errors.Any(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne"));
         }
 
         [Fact]
@@ -2035,7 +2035,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.True(errors.Any(e => e.Message.StartsWith("AssertExistsAtMostOne")));
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne"));
         }
 
         [Fact]

@@ -8,8 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Domain.Derivations;
-    using Allors.Database.Meta;
+    using Derivations;
+    using Meta;
     using Database.Derivations;
     using Resources;
 
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain
                 @this.ShipFromAddress ??= @this.TakenBy?.ShippingAddress;
                 @this.ShipToAddress ??= @this.ShipToCustomer?.ShippingAddress;
                 @this.ShipmentMethod ??= @this.ShipToCustomer?.DefaultShipmentMethod ?? @this.Store.DefaultShipmentMethod;
-                @this.PaymentMethod ??= @this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, @this.TakenBy))?.DefaultPaymentMethod ?? @this.Store.DefaultCollectionMethod;
+                @this.PaymentMethod ??= @this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => Equals(v.InternalOrganisation, @this.TakenBy))?.DefaultPaymentMethod ?? @this.Store.DefaultCollectionMethod;
 
                 if (!@this.ExistOrderNumber && @this.ExistStore)
                 {

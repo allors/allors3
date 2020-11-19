@@ -8,7 +8,7 @@ namespace Allors.Database.Data
     using System;
     using System.Linq;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     internal static class SessionExtensions
     {

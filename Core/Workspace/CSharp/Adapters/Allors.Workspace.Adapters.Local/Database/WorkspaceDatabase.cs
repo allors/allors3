@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
-    using Allors.Workspace.Meta;
+    using Meta;
     using Data;
     using Database;
     using Polly;

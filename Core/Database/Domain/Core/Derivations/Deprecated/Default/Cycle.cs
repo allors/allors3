@@ -7,7 +7,7 @@ namespace Allors.Database.Domain.Derivations.Default
 {
     using System;
     using System.Collections.Generic;
-    using Object = Domain.Object;
+    using Object = Object;
 
     public class Cycle : ICycle
     {

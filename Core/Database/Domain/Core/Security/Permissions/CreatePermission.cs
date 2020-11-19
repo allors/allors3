@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using System.Text;
     using System.Linq;
 
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Security;
 
     public partial class CreatePermission : ICreatePermission

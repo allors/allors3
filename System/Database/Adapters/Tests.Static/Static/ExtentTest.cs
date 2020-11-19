@@ -9,8 +9,8 @@ namespace Allors.Database.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Domain;
+    using Meta;
     using Xunit;
 
     public enum Zero2Four

@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Linq;
     using Adapters.Schema;
     using Adapters;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal class Load
     {

@@ -7,12 +7,12 @@ namespace Allors.Database.Server.Controllers
 {
     using System.Threading.Tasks;
 
-    using Allors.Database.Domain;
-    using Allors.Services;
+    using Domain;
+    using Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Database;
-    using Database.Protocol.Json;
+    using Protocol.Json;
     
 
     public class PeopleSheetController : Controller

@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
 
     public class SalesOrderCanInvoiceDerivation : DomainDerivation
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSalesOrderState
                     && @this.SalesOrderState.IsInProcess
-                    && object.Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
+                    && Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForOrderItems))
                 {
                     @this.CanInvoice = false;
 

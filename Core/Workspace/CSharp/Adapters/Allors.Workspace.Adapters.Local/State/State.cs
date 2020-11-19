@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     internal class State
     {

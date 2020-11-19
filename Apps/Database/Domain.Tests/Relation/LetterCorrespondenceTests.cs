@@ -77,7 +77,7 @@ namespace Allors.Database.Domain.Tests
             originator.Delete();
             this.Session.Derive();
 
-            Assert.Equal(0, this.Session.Extent<LetterCorrespondence>().Count);
+            Assert.Empty(this.Session.Extent<LetterCorrespondence>());
         }
     }
 }

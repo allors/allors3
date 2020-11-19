@@ -9,7 +9,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Xunit;
 
     public class OrganisationTests : DomainTest, IClassFixture<Fixture>
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(contact.CurrentOrganisationContactRelationships[0].Organisation, organisation);
-            Assert.Equal(0, contact.InactiveOrganisationContactRelationships.Count);
+            Assert.Empty(contact.InactiveOrganisationContactRelationships);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(contact.InactiveOrganisationContactRelationships[0].Organisation, organisation);
-            Assert.Equal(0, contact.CurrentOrganisationContactRelationships.Count);
+            Assert.Empty(contact.CurrentOrganisationContactRelationships);
         }
     }
 

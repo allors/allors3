@@ -14,8 +14,8 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Xml.Serialization;
     using Allors;
     using Allors.Database.Adapters.Schema;
-    using Allors.Database.Adapters.SqlClient.Caching;
-    using Allors.Database.Meta;
+    using Caching;
+    using Meta;
     using Derivations;
     using Microsoft.Data.SqlClient.Server;
 

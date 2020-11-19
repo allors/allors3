@@ -9,18 +9,18 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Globalization;
     using System.Linq;
-    using Allors.Database.Adapters.Memory;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Adapters.Memory;
+    using Domain;
+    using Meta;
     using Configuration;
     using Database;
-    using Database.Domain.TestPopulation;
+    using TestPopulation;
 
     public class DomainTest : IDisposable
     {
         public DomainTest(Fixture fixture, bool populate = true)
         {
-            var database = new Allors.Database.Adapters.Memory.Database(
+            var database = new Database(
                 new FakerDatabaseContext(),
                 new Configuration
                 {
@@ -49,11 +49,11 @@ namespace Allors.Database.Domain.Tests
 
         protected Organisation InternalOrganisation => this.Session.Extent<Organisation>().First(v => v.IsInternalOrganisation);
 
-        protected Allors.Database.Domain.Person Administrator => this.GetPersonByUserName("administrator");
+        protected Person Administrator => this.GetPersonByUserName("administrator");
 
-        protected Allors.Database.Domain.Person OrderProcessor => this.GetPersonByUserName("orderProcessor");
+        protected Person OrderProcessor => this.GetPersonByUserName("orderProcessor");
 
-        protected Allors.Database.Domain.Person Purchaser => this.GetPersonByUserName("purchaser");
+        protected Person Purchaser => this.GetPersonByUserName("purchaser");
 
         public void Dispose()
         {
@@ -252,6 +252,6 @@ namespace Allors.Database.Domain.Tests
             this.Session.Commit();
         }
 
-        private Allors.Database.Domain.Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(this.M.User.UserName, userName);
+        private Person GetPersonByUserName(string userName) => new People(this.Session).FindBy(this.M.User.UserName, userName);
     }
 }

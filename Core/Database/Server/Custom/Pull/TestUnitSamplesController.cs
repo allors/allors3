@@ -7,7 +7,7 @@ namespace Allors.Server.Controllers
 {
     using System;
     using System.Threading.Tasks;
-    using Allors.Services;
+    using Services;
     using Microsoft.AspNetCore.Mvc;
     using Database;
     using Database.Domain;

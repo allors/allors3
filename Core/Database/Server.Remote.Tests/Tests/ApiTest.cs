@@ -14,8 +14,8 @@ namespace Allors.Server.Tests
     using System.Text;
     using System.Threading.Tasks;
     using Database.Adapters.SqlClient;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Database.Domain;
+    using Database.Meta;
     using Database.Configuration;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -72,7 +72,7 @@ namespace Allors.Server.Tests
 
         protected HttpClientHandler HttpClientHandler { get; set; }
 
-        protected User Administrator => new Users(this.Session).FindBy(M.User.UserName, "jane@example.com");
+        protected User Administrator => new Users(this.Session).FindBy(this.M.User.UserName, "jane@example.com");
 
         public void Dispose()
         {
@@ -83,7 +83,7 @@ namespace Allors.Server.Tests
             this.HttpClient = null;
         }
 
-        protected async System.Threading.Tasks.Task SignIn(User user)
+        protected async Task SignIn(User user)
         {
             var args = new AuthenticationTokenRequest
             {

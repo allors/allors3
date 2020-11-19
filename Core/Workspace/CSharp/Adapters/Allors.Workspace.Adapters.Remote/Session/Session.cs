@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Sync;
-    using Allors.Workspace.Protocol.Json;
+    using Protocol.Json;
 
     public class Session : ISession
     {

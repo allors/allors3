@@ -9,7 +9,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Allors.Database.Domain;
+    using Domain;
     using Xunit;
 
     public class RequiredTest : DomainTest, IClassFixture<Fixture>
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
             Assert.True(units.ExistRequiredInteger);
             Assert.True(units.ExistRequiredUnique);
 
-            Assert.Equal(false, units.RequiredBoolean);
+            Assert.False(units.RequiredBoolean);
             Assert.True(units.RequiredDateTime > before && units.RequiredDateTime < after);
             Assert.Equal(0m, units.RequiredDecimal);
             Assert.Equal(0d, units.RequiredDouble);

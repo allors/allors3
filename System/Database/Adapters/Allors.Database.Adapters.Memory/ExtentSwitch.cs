@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections;
-    using Allors.Database.Meta;
+    using Meta;
 
     public class ExtentSwitch : Allors.Database.Extent
     {

@@ -7,7 +7,7 @@ namespace Allors.Database.Tracing
 {
     using System;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// Notifications for access to objects (Get and Exist on Strategy and Extent).

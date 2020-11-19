@@ -6,8 +6,8 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Allors.Database;
-    using Allors.Database.Domain;
+    using Database;
+    using Domain;
     using Xunit;
 
     public class PersistentPreparedExtentTests : DomainTest, IClassFixture<Fixture>

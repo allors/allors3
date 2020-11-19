@@ -89,7 +89,7 @@ namespace Allors.Database.Domain.Tests
             originator.Delete();
             this.Session.Derive();
 
-            Assert.Equal(0, this.Session.Extent<WebSiteCommunication>().Count);
+            Assert.Empty(this.Session.Extent<WebSiteCommunication>());
         }
     }
 }

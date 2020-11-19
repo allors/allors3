@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Derivations.Validating
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Object = Allors.Database.Domain.Object;
+    using Object = Object;
 
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1121:UseBuiltInTypeAlias", Justification = "Allors Object")]
     public class ValidatingDerivation : IDerivation

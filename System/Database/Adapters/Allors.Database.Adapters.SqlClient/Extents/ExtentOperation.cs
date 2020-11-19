@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System;
     using System.Collections.Generic;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     internal class ExtentOperation : SqlExtent
     {

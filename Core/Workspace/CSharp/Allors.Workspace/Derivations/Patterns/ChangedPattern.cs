@@ -6,7 +6,7 @@
 
 namespace Allors.Workspace
 {
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class ChangedPattern : Pattern
     {

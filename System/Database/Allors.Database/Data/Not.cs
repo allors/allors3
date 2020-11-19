@@ -6,7 +6,7 @@
 namespace Allors.Database.Data
 {
     using System.Collections.Generic;
-    using Database.Data;
+    using Data;
 
     public class Not : ICompositePredicate
     {

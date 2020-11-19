@@ -11,7 +11,7 @@ namespace Allors.Database
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// A base implementation for a static <see cref="IObjectFactory"/>.

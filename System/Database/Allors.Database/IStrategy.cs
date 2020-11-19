@@ -8,7 +8,7 @@ namespace Allors.Database
 {
     using System.Collections;
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// A strategy based object delegates all framework related work
