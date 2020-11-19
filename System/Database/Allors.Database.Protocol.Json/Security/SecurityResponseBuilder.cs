@@ -58,7 +58,7 @@ namespace Allors.Database.Protocol.Json
                 var permissionIds = securityRequest.Permissions;
                 var permissions = this.session.Instantiate(permissionIds)
                     .Cast<IPermission>()
-                    .Where(v => this.allowedClasses?.Contains(v.ConcreteClass) == true);
+                    .Where(v => this.allowedClasses?.Contains(v.Class) == true);
 
                 securityResponse.Permissions = permissions.Select(v =>
                     v switch
@@ -66,21 +66,21 @@ namespace Allors.Database.Protocol.Json
                         IReadPermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClass.Id.ToString("D"),
+                            permission.Class.Id.ToString("D"),
                             permission.RelationType.Id.ToString("D"),
                             ((int)Operations.Read).ToString(),
                         },
                         IWritePermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClass.Id.ToString("D"),
+                            permission.Class.Id.ToString("D"),
                             permission.RelationType.Id.ToString("D"),
                             ((int)Operations.Write).ToString(),
                         },
                         IExecutePermission permission => new[]
                         {
                             permission.Strategy.ObjectId.ToString(),
-                            permission.ConcreteClass.Id.ToString("D"),
+                            permission.Class.Id.ToString("D"),
                             permission.MethodType.Id.ToString("D"),
                             ((int)Operations.Execute).ToString(),
                         },

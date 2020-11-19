@@ -277,7 +277,7 @@ namespace Allors.Database.Adapters
         // }
 
         // [Fact]
-        // public void ValidateNewConcreteClass()
+        // public void ValidateNewClass()
         // {
         //    this.DropTable("C1");
         //    this.DropTable("C2");

@@ -414,7 +414,7 @@ namespace Allors.Database.Adapters.Memory
                                 var roleIdStringArray = roleIdsString.Split(Serialization.ObjectsSplitterCharArray);
 
                                 if (association == null ||
-                                    !this.session.Database.ContainsConcreteClass(
+                                    !this.session.Database.ContainsClass(
                                         relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
@@ -429,7 +429,7 @@ namespace Allors.Database.Adapters.Memory
                                     {
                                         var roleIdString = long.Parse(roleIdStringArray[0]);
                                         var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
-                                        if (roleStrategy == null || !this.session.Database.ContainsConcreteClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
+                                        if (roleStrategy == null || !this.session.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
                                         {
                                             this.session.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                         }
@@ -453,7 +453,7 @@ namespace Allors.Database.Adapters.Memory
                                             var roleId = long.Parse(roleIdString);
                                             var role = this.LoadInstantiateStrategy(roleId);
                                             if (role == null ||
-                                                !this.session.Database.ContainsConcreteClass(
+                                                !this.session.Database.ContainsClass(
                                                     (IComposite)relationType.RoleType.ObjectType,
                                                     role.UncheckedObjectType))
                                             {

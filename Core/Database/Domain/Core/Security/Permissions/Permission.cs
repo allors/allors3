@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
 
     public partial interface Permission : IPermission
     {
-        bool ExistConcreteClass { get; }
+        bool ExistClass { get; }
 
         bool ExistOperandType { get; }
 

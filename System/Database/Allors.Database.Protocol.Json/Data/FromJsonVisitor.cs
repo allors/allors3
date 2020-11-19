@@ -55,6 +55,7 @@ namespace Allors.Database.Protocol.Json
         public void VisitExtent(Allors.Protocol.Json.Data.Extent visited)
         {
             Data.IExtentOperator extentOperator = null;
+            Data.IExtent sortable = null;
 
             switch (visited.Kind)
             {
@@ -66,6 +67,7 @@ namespace Allors.Database.Protocol.Json
 
                     var objectType = (IComposite)this.metaPopulation.Find(visited.ObjectType.Value);
                     var extent = new Extent(objectType);
+                    sortable = extent;
 
                     this.extents.Push(extent);
 
@@ -91,6 +93,21 @@ namespace Allors.Database.Protocol.Json
 
                 default:
                     throw new Exception("Unknown extent kind " + visited.Kind);
+            }
+
+            sortable ??= extentOperator;
+
+            if (visited.Sorting?.Length > 0)
+            {
+                var length = visited.Sorting.Length;
+
+                sortable.Sorting = new Data.Sort[length];
+                for (var i = 0; i < length; i++)
+                {
+                    var sorting = visited.Sorting[i];
+                    sorting.Accept(this);
+                    sortable.Sorting[i] = this.sorts.Pop();
+                }
             }
 
             if (extentOperator != null)

@@ -13,8 +13,8 @@ namespace Allors.Database.Domain
 
     public partial class ReadPermission : IReadPermission
     {
-        IClass IPermission.ConcreteClass => this.ConcreteClass;
-        public Class ConcreteClass
+        IClass IPermission.Class => this.Class;
+        public Class Class
         {
             get => (Class)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public bool ExistConcreteClass => this.ConcreteClass != null;
+        public bool ExistClass => this.Class != null;
 
         public bool ExistOperandType => this.ExistRelationTypePointer;
 
@@ -59,7 +59,7 @@ namespace Allors.Database.Domain
 
         public Operations Operation => Operations.Read;
 
-        public bool InWorkspace(string workspaceName) => this.ConcreteClass.WorkspaceNames.Contains(workspaceName) && this.RelationType.WorkspaceNames.Contains(workspaceName);
+        public bool InWorkspace(string workspaceName) => this.Class.WorkspaceNames.Contains(workspaceName) && this.RelationType.WorkspaceNames.Contains(workspaceName);
 
         public void CoreOnPreDerive(ObjectOnPreDerive method)
         {

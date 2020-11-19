@@ -91,7 +91,7 @@ namespace Allors.Database.Adapters.Memory
 
         public void Save(XmlWriter writer) => this.Session.Save(writer);
 
-        public bool ContainsConcreteClass(IComposite objectType, IObjectType concreteClass)
+        public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
         {
             if (!this.concreteClassesByObjectType.TryGetValue(objectType, out var concreteClassOrClasses))
             {
@@ -118,7 +118,7 @@ namespace Allors.Database.Adapters.Memory
 
         public void UnitRoleChecks(IStrategy strategy, IRoleType roleType)
         {
-            if (!this.ContainsConcreteClass(roleType.AssociationType.ObjectType, strategy.Class))
+            if (!this.ContainsClass(roleType.AssociationType.ObjectType, strategy.Class))
             {
                 throw new ArgumentException(strategy.Class + " is not a valid association object type for " + roleType + ".");
             }
@@ -188,7 +188,7 @@ namespace Allors.Database.Adapters.Memory
 
         private void CompositeSharedChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
         {
-            if (!this.ContainsConcreteClass(roleType.AssociationType.ObjectType, strategy.Class))
+            if (!this.ContainsClass(roleType.AssociationType.ObjectType, strategy.Class))
             {
                 throw new ArgumentException(strategy.Class + " has no roleType with role " + roleType + ".");
             }

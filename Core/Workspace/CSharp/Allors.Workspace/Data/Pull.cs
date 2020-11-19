@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Workspace;
     using Meta;
@@ -22,7 +23,7 @@ namespace Allors.Workspace.Data
 
         public string ObjectId { get; set; }
 
-        public Arguments Arguments { get; set; }
+        public IDictionary<string, string> Parameters { get; set; }
 
         public Result[] Results { get; set; }
 

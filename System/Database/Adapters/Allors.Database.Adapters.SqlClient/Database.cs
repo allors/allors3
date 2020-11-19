@@ -291,7 +291,7 @@ namespace Allors.Database.Adapters.SqlClient
 
         ISession IDatabase.CreateSession() => this.CreateSession();
 
-        internal bool ContainsConcreteClass(IObjectType container, IObjectType containee)
+        internal bool ContainsClass(IObjectType container, IObjectType containee)
         {
             if (container.IsClass)
             {

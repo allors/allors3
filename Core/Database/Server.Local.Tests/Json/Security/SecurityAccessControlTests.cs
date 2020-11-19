@@ -51,7 +51,7 @@ namespace Tests
             foreach (var permission in permissions)
             {
                 Assert.Contains(permission, accessControl.EffectivePermissions);
-                Assert.Contains(permission.ConcreteClass, workspaceX.Classes);
+                Assert.Contains(permission.Class, workspaceX.Classes);
             }
 
             foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
@@ -96,7 +96,7 @@ namespace Tests
             foreach (var permission in permissions)
             {
                 Assert.Contains(permission, accessControl.EffectivePermissions);
-                Assert.Contains(permission.ConcreteClass, workspace.Classes);
+                Assert.Contains(permission.Class, workspace.Classes);
             }
 
             foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))

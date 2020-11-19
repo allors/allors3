@@ -2916,7 +2916,7 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
-        public void NoConcreteClass()
+        public void NoClass()
         {
             foreach (var init in this.Inits)
             {
@@ -2924,7 +2924,7 @@ namespace Allors.Database.Adapters
                 this.Populate();
                 var m = this.Session.Database.Context().M;
 
-                var extent = this.Session.Extent(m.InterfaceWithoutConcreteClass.ObjectType);
+                var extent = this.Session.Extent(m.InterfaceWithoutClass.ObjectType);
 
                 Assert.Empty(extent);
             }
