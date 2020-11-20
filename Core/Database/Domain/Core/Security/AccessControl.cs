@@ -25,5 +25,7 @@ namespace Allors.Database.Domain
             this.DatabaseContext().EffectivePermissionCache.Clear(this.Id);
             this.DatabaseContext().WorkspaceEffectivePermissionCache.Clear(this.Id);
         }
+
+        IPermission[] IAccessControl.Permissions => this.EffectivePermissions;
     }
 }

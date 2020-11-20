@@ -5,6 +5,8 @@
 
 namespace Tests.Workspace.Remote
 {
+    using System.Linq;
+    using Allors.Database.Domain;
     using Allors.Protocol.Direct.Api;
     using Allors.Protocol.Direct.Api.Pull;
     using Allors.Workspace;
@@ -31,7 +33,7 @@ namespace Tests.Workspace.Remote
                 }
             };
 
-            var api = new Api(this.Database);
+            var api = new Api(this.Session, "Default");
 
             var response = api.Pull(request);
         }

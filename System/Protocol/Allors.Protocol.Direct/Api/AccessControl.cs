@@ -9,6 +9,12 @@ namespace Allors.Protocol.Direct.Api
 
     public class AccessControl
     {
+        public AccessControl(long id, long version)
+        {
+            this.Id = id;
+            this.Version = version;
+        }
+
         public AccessControl(long id, long version, ISet<long> permissionIds)
         {
             this.Id = id;

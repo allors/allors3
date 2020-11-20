@@ -7,11 +7,13 @@
 namespace Tests.Workspace.Remote
 {
     using System;
+    using Allors.Database;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Adapters.Memory;
     using Allors.Workspace;
     using Allors.Workspace.Adapters.Local;
+    using ISession = Allors.Database.ISession;
 
     public class Test : IDisposable
     {
@@ -30,17 +32,24 @@ namespace Tests.Workspace.Remote
 
             if (populate)
             {
-                using var session = this.Database.CreateSession();
+                this.Session = this.Database.CreateSession();
 
-                new Setup(session, new Config()).Apply();
-                session.Commit();
+                new Setup(this.Session, new Config()).Apply();
 
-                var administrator = new PersonBuilder(session).WithUserName("administrator").Build();
-                new UserGroups(session).Administrators.AddMember(administrator);
-                session.Context().User = administrator;
+                this.Administrator = new PersonBuilder(this.Session).WithUserName("administrator").Build();
+                var administrators = new UserGroups(this.Session).Administrators;
+                administrators.AddMember(this.Administrator);
+                this.Session.Context().User = this.Administrator;
 
-                new TestPopulation(session, "full").Apply();
-                session.Commit();
+                var defaultSecurityToken = new SecurityTokens(this.Session).DefaultSecurityToken;
+                var administratorRole = new Roles(this.Session).Administrator;
+                var acl = new AccessControlBuilder(this.Session).WithRole(administratorRole).WithSubjectGroup(administrators).WithSecurityToken(defaultSecurityToken).Build();
+
+                this.Session.Derive();
+
+                new TestPopulation(this.Session, "full").Apply();
+
+                this.Session.Commit();
             }
 
             this.Workspace = new Workspace(
@@ -50,12 +59,18 @@ namespace Tests.Workspace.Remote
                 this.Database);
         }
 
-        public Database Database { get; }
+        public Person Administrator { get; set; }
+
+        public IDatabase Database { get; }
+
+        public ISession Session { get; private set; }
 
         public Workspace Workspace { get; }
 
         public void Dispose()
         {
+            this.Session.Dispose();
+            this.Session = null;
         }
-   }
+    }
 }

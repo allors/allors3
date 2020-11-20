@@ -7,11 +7,20 @@ namespace Allors.Protocol.Direct.Api
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
+    using Database;
 
     public class Object
     {
-        internal Object(Guid @class, long id, long version, IReadOnlyDictionary<Guid, object> roleByRelationTypeId, AccessControl[] accessControls, Permission[] deniedPermissions)
+        internal Object(IStrategy strategy, long[] accessControls, long[] deniedPermissions)
+        {
+            this.Class = strategy.Class.Id;
+            this.Id = strategy.ObjectId;
+            this.Version = strategy.ObjectVersion;
+            this.AccessControls = accessControls;
+            this.DeniedPermissions = deniedPermissions;
+        }
+
+        internal Object(Guid @class, long id, long version, IReadOnlyDictionary<Guid, object> roleByRelationTypeId, long[] accessControls, long[] deniedPermissions)
         {
             this.Class = @class;
             this.Id = id;
@@ -29,13 +38,8 @@ namespace Allors.Protocol.Direct.Api
 
         public IReadOnlyDictionary<Guid, object> RoleByRelationTypeId { get; }
 
-        public AccessControl[] AccessControls { get; }
+        public long[] AccessControls { get; }
 
-        public Permission[] DeniedPermissions { get; }
-
-        public bool IsPermitted(Permission permission) =>
-            permission != null &&
-            !this.DeniedPermissions.Contains(permission) &&
-            this.AccessControls.Any(v => v.PermissionIds.Any(w => w == permission.Id));
+        public long[] DeniedPermissions { get; }
     }
 }

@@ -11,9 +11,9 @@ namespace Allors.Protocol.Direct.Api.Pull
     {
         public AccessControl[] AccessControls { get; set; }
 
-        public Dictionary<string, Object[]> NamedCollections { get; set; }
+        public Dictionary<string, long[]> NamedCollections { get; set; }
 
-        public Dictionary<string, Object> NamedObjects { get; set; }
+        public Dictionary<string, long> NamedObjects { get; set; }
 
         public Dictionary<string, string> NamedValues { get; set; }
 

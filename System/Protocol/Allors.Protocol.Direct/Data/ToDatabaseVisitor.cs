@@ -183,7 +183,7 @@ namespace Allors.Protocol.Direct.Data
 
         public void VisitExtent(Workspace.Data.Extent visited)
         {
-            if (visited.ObjectType != null)
+            if (visited.ObjectType == null)
             {
                 throw new Exception("Extent requires an ObjectType");
             }
@@ -506,13 +506,14 @@ namespace Allors.Protocol.Direct.Data
                 _ => null
             };
 
-        private IObject FindObject(IDatabaseObject @object) => @object.DatabaseId.HasValue ? this.session.Instantiate(@object.DatabaseId.Value) : null;
+        private IObject FindObject(IDatabaseObject @object) => @object?.DatabaseId.HasValue == true ? this.session.Instantiate(@object.DatabaseId.Value) : null;
 
-        private IObject FindObject(IDatabaseStrategy strategy) => strategy.DatabaseId.HasValue ? this.session.Instantiate(strategy.DatabaseId.Value) : null;
+        private IObject FindObject(IDatabaseStrategy strategy) => strategy?.DatabaseId.HasValue == true ? this.session.Instantiate(strategy.DatabaseId.Value) : null;
 
         private IEnumerable<IObject> FindObjects(IEnumerable<IDatabaseStrategy> strategies) =>
             strategies
-                .Where(v => v.DatabaseId.HasValue)
-                .Select(v => this.session.Instantiate(v.DatabaseId.Value));
+                ?.Where(v => v.DatabaseId.HasValue)
+                .Select(v => this.session.Instantiate(v.DatabaseId.Value))
+                ?? Array.Empty<IObject>();
     }
 }

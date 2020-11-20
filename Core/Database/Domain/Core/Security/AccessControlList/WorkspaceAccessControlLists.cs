@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             this.EffectivePermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
         }
 
-        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
+        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; }
 
         public string WorkspaceName { get; }
 

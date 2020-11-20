@@ -6,11 +6,10 @@
 namespace Allors.Database.Security
 {
     using System.Collections.Generic;
-    using Meta;
 
     public interface IAccessControlLists
     {
-        IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
+        IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; }
 
         IAccessControlList this[IObject @object]
         {

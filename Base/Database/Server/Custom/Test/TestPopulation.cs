@@ -26,6 +26,8 @@ namespace Allors.Database.Server.Controllers
             {
                 this.Full();
             }
+
+            this.session.Derive();
         }
 
         private void Full()
