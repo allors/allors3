@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
-   
 
     public class WorkspaceAccessControlLists : IAccessControlLists
     {
@@ -44,16 +43,16 @@ namespace Allors.Database.Domain
 
         private Dictionary<IAccessControl, ISet<long>> EffectivePermissionsByAccessControl()
         {
-            var effectivePermissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
+            var permissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
 
             var session = this.User.Session();
             var database = session.Database;
-            var effectivePermissionCache = database.Context().WorkspaceEffectivePermissionCache;
+            var accessControlCache = database.Context().AccessControlCache;
 
             List<AccessControl> misses = null;
             foreach (AccessControl accessControl in this.User.AccessControlsWhereEffectiveUser)
             {
-                var effectivePermissions = effectivePermissionCache.Get(this.WorkspaceName, accessControl.Id);
+                var effectivePermissions = accessControlCache.GetPermissions(this.WorkspaceName, accessControl.Id);
                 if (effectivePermissions == null)
                 {
                     misses ??= new List<AccessControl>();
@@ -61,7 +60,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    effectivePermissionsByAccessControl.Add(accessControl, effectivePermissions);
+                    permissionsByAccessControl.Add(accessControl, effectivePermissions);
                 }
             }
 
@@ -89,12 +88,12 @@ namespace Allors.Database.Domain
                 {
                     var workspaceEffectivePermissions = accessControl.EffectivePermissions.Where(v => v.InWorkspace(this.WorkspaceName));
                     var effectivePermissionIds = new HashSet<long>(workspaceEffectivePermissions.Select(v => v.Id));
-                    effectivePermissionCache.Set(this.WorkspaceName, accessControl.Id, effectivePermissionIds);
-                    effectivePermissionsByAccessControl.Add(accessControl, effectivePermissionIds);
+                    accessControlCache.SetPermissions(this.WorkspaceName, accessControl.Id, effectivePermissionIds);
+                    permissionsByAccessControl.Add(accessControl, effectivePermissionIds);
                 }
             }
 
-            return effectivePermissionsByAccessControl;
+            return permissionsByAccessControl;
         }
     }
 }

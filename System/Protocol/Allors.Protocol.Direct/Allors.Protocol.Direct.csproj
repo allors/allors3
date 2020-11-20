@@ -8,4 +8,7 @@
     <ProjectReference Include="..\..\Allors\Allors.csproj" />
     <ProjectReference Include="..\..\Database\Allors.Database\Allors.Database.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
 </Project>

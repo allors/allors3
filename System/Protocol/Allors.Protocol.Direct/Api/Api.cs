@@ -22,17 +22,17 @@ namespace Allors.Protocol.Direct.Api
         {
             this.Session = session;
 
-            var sessionState = session.Context();
-            var databaseState = session.Database.Context();
-            var workspaceMeta = databaseState.WorkspaceMetaCache.Get(workspaceName);
+            var sessionContext = session.Context();
+            var databaseContext = session.Database.Context();
+            var metaCache = databaseContext.MetaCache;
 
-            this.User = sessionState.User;
+            this.User = sessionContext.User;
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
-            this.AllowedClasses = workspaceMeta?.Classes;
-            this.M = databaseState.M;
-            this.MetaPopulation = databaseState.MetaPopulation;
-            this.PreparedFetches = databaseState.PreparedFetches;
-            this.PreparedExtents = databaseState.PreparedExtents;
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
+            this.M = databaseContext.M;
+            this.MetaPopulation = databaseContext.MetaPopulation;
+            this.PreparedFetches = databaseContext.PreparedFetches;
+            this.PreparedExtents = databaseContext.PreparedExtents;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(session, @class);
             this.Derive = () => this.Session.Derive(false);
         }

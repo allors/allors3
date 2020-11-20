@@ -193,7 +193,7 @@ namespace Allors.Protocol.Direct.Api.Pull
                         kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
                 NamedValues = this.valueByName,
                 AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
-                    .Select(v => new AccessControl(v.Strategy.ObjectId, v.Strategy.ObjectVersion, new HashSet<long>(v.Permissions.Select(w => w.Id))))
+                    .Select(v => new AccessControl(v.Strategy.ObjectId, v.Strategy.ObjectVersion, v.Permissions.Select(w => w.Id).ToArray()))
                     .ToArray(),
             };
     }

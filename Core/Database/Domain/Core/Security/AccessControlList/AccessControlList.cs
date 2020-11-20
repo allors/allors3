@@ -5,19 +5,16 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
     using Database.Security;
-   
 
     /// <summary>
     /// List of permissions for an object/user combination.
     /// </summary>
     public class AccessControlList : IAccessControlList
     {
-        private readonly Guid classId;
         private readonly IPermissionsCacheEntry permissionsCacheEntry;
 
         private AccessControl[] accessControls;
@@ -28,11 +25,9 @@ namespace Allors.Database.Domain
         {
             this.AccessControlLists = accessControlLists;
             this.Object = (Object)@object;
-            this.classId = this.Object.Strategy.Class.Id;
 
-            var session = @object.Strategy.Session;
-            var permissionsCache = session.Database.Context().PermissionsCache;
-            this.permissionsCacheEntry = permissionsCache.Get(this.classId);
+            var permissionsCache = @object.DatabaseContext().PermissionsCache;
+            this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
 
             this.lazyLoaded = false;
         }

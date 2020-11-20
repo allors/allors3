@@ -16,13 +16,14 @@ namespace Allors.Database.Configuration
         private readonly IReadOnlyDictionary<IClass, RoleType[]> requiredRoleTypesByClass;
         private readonly IReadOnlyDictionary<IClass, RoleType[]> uniqueRoleTypesByClass;
         private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
+        private readonly IReadOnlyDictionary<string, HashSet<IClass>> workspaceClassesByWorkspaceName;
 
         public MetaCache(IDatabaseContext databaseContext)
         {
             this.DatabaseContext = databaseContext;
 
             var database = this.DatabaseContext.Database;
-            var metaPopulation = database.MetaPopulation;
+            var metaPopulation = (MetaPopulation)database.MetaPopulation;
             var assembly = database.ObjectFactory.Assembly;
 
             this.requiredRoleTypesByClass = metaPopulation.DatabaseClasses
@@ -45,6 +46,8 @@ namespace Allors.Database.Configuration
                     v => v,
                     v => assembly.GetType($"Allors.Database.Domain.{v.Name}Builder", false));
 
+            this.workspaceClassesByWorkspaceName = metaPopulation.WorkspaceNames
+                .ToDictionary(v => v, v => new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(v))));
         }
 
         public IDatabaseContext DatabaseContext { get; }
@@ -54,5 +57,7 @@ namespace Allors.Database.Configuration
         public RoleType[] GetUniqueRoleTypes(IClass @class) => this.uniqueRoleTypesByClass[@class];
 
         public Type GetBuilderType(IClass @class) => this.builderTypeByClass[@class];
+
+        public ISet<IClass> GetWorkspaceClasses(string workspaceName) => this.workspaceClassesByWorkspaceName[workspaceName];
     }
 }

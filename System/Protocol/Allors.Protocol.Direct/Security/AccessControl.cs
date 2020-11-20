@@ -5,8 +5,6 @@
 
 namespace Allors.Protocol.Direct.Api
 {
-    using System.Collections.Generic;
-
     public class AccessControl
     {
         public AccessControl(long id, long version)
@@ -15,17 +13,17 @@ namespace Allors.Protocol.Direct.Api
             this.Version = version;
         }
 
-        public AccessControl(long id, long version, ISet<long> permissionIds)
+        public AccessControl(long id, long version, long[] permissions)
         {
             this.Id = id;
             this.Version = version;
-            this.PermissionIds = permissionIds;
+            this.Permissions = permissions;
         }
 
         public long Id { get; }
 
         public long Version { get; }
 
-        public ISet<long> PermissionIds { get; }
+        public long[] Permissions { get; }
     }
 }
