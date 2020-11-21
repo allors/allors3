@@ -58,6 +58,10 @@ namespace Allors.Database.Configuration
 
         public Type GetBuilderType(IClass @class) => this.builderTypeByClass[@class];
 
-        public ISet<IClass> GetWorkspaceClasses(string workspaceName) => this.workspaceClassesByWorkspaceName[workspaceName];
+        public ISet<IClass> GetWorkspaceClasses(string workspaceName)
+        {
+            this.workspaceClassesByWorkspaceName.TryGetValue(workspaceName, out var classes);
+            return classes;
+        }
     }
 }
