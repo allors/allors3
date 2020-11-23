@@ -42,8 +42,7 @@ namespace Allors.Database.Adapters.Npgsql
                 var paramInvocationName = string.Format(Mapping.ParamInvocationFormat, name);
                 this.paramInvocationNameByParamValue[obj] = paramInvocationName;
 
-                var paramName = string.Format(Mapping.ParamFormat, name);
-                this.paramNameByParamInvocationName[paramInvocationName] = paramName;
+                this.paramNameByParamInvocationName[paramInvocationName] = string.Format(Mapping.ParamFormat, name);
 
                 return paramInvocationName;
             }

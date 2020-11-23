@@ -12,23 +12,28 @@ namespace Allors
     public enum Operations
     {
         /// <summary>
+        /// None.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
         /// Create.
         /// </summary>
-        Create = 0,
+        Create = 1,
 
         /// <summary>
         /// Read a relation (get).
         /// </summary>
-        Read = 1,
+        Read = 2,
 
         /// <summary>
         /// Write a relation (set, add and remove).
         /// </summary>
-        Write = 2,
+        Write = 4,
 
         /// <summary>
         /// Execute a method.
         /// </summary>
-        Execute = 4,
+        Execute = 8,
     }
 }

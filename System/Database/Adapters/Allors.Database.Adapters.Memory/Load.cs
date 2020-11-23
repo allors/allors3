@@ -12,6 +12,7 @@ namespace Allors.Database.Adapters.Memory
     using Adapters;
 
     using Meta;
+    using Version = Allors.Version;
 
     public class Load
     {
@@ -164,7 +165,7 @@ namespace Allors.Database.Adapters.Memory
                                     var objectId = long.Parse(objectArray[0]);
                                     var objectVersion = objectArray.Length > 1
                                         ? long.Parse(objectArray[1])
-                                        : Database.IntialVersion;
+                                        : (long) Version.Initial;
 
                                     if (objectType is IClass)
                                     {

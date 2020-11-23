@@ -6,17 +6,18 @@
 namespace Allors.Protocol.Direct.Api.Pull
 {
     using System.Collections.Generic;
+    using Database;
 
     public class PullResponse
     {
-        public AccessControl[] AccessControls { get; set; }
+        public Dictionary<string, IStrategy[]> NamedCollections { get; set; }
 
-        public Dictionary<string, long[]> NamedCollections { get; set; }
-
-        public Dictionary<string, long> NamedObjects { get; set; }
+        public Dictionary<string, IStrategy> NamedObjects { get; set; }
 
         public Dictionary<string, string> NamedValues { get; set; }
 
-        public Object[] Objects { get; set; }
+        public ISet<IStrategy> Objects { get; set; }
+
+        public IDictionary<IStrategy, AccessControl> AccessControlByStrategy { get; set; }
     }
 }

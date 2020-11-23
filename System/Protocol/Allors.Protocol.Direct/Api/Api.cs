@@ -31,6 +31,8 @@ namespace Allors.Protocol.Direct.Api
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
             this.M = databaseContext.M;
             this.MetaPopulation = databaseContext.MetaPopulation;
+            this.ClassIdById = databaseContext.ClassById;
+            this.VersionedIdByStrategy = databaseContext.VersionedIdByStrategy;
             this.PreparedFetches = databaseContext.PreparedFetches;
             this.PreparedExtents = databaseContext.PreparedExtents;
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(session, @class);
@@ -49,6 +51,10 @@ namespace Allors.Protocol.Direct.Api
 
         public MetaPopulation MetaPopulation { get; }
 
+        public IClassById ClassIdById { get; }
+
+        public IVersionedIdByStrategy VersionedIdByStrategy { get; }
+        
         public IPreparedFetches PreparedFetches { get; }
 
         public IPreparedExtents PreparedExtents { get; }
@@ -57,7 +63,7 @@ namespace Allors.Protocol.Direct.Api
 
         public Func<IDerivationResult> Derive { get; }
 
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Session, this.AccessControlLists, this.AllowedClasses, this.PreparedFetches, this.PreparedExtents);
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this);
 
         public PullResponse Pull(PullRequest request)
         {

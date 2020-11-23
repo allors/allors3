@@ -133,8 +133,7 @@ namespace Allors.Database.Adapters.Npgsql
                         object unit = null;
                         if (!reader.IsDBNull(i))
                         {
-                            var unitTypeTag = ((IUnit)roleType.ObjectType).UnitTag;
-                            switch (unitTypeTag)
+                            switch (((IUnit)roleType.ObjectType).UnitTag)
                             {
                                 case UnitTags.String:
                                     unit = reader.GetString(i);
@@ -174,8 +173,7 @@ namespace Allors.Database.Adapters.Npgsql
                                     break;
 
                                 case UnitTags.Binary:
-                                    var byteArray = (byte[])reader.GetValue(i);
-                                    unit = byteArray;
+                                    unit = (byte[])reader.GetValue(i);
                                     break;
 
                                 default:
@@ -639,9 +637,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                     var objectId = long.Parse(objectIdString);
                     var type = (IClass)this.Database.ObjectFactory.GetObjectTypeForType(classId);
-                    var reference = this.session.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.session);
-
-                    yield return reference;
+                    yield return this.session.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.session);
                 }
             }
         }

@@ -127,8 +127,7 @@ namespace Allors.Database.Adapters.Npgsql
                         object unit = null;
                         if (!reader.IsDBNull(index))
                         {
-                            var unitTypeTag = ((IUnit)roleType.ObjectType).UnitTag;
-                            switch (unitTypeTag)
+                            switch (((IUnit)roleType.ObjectType).UnitTag)
                             {
                                 case UnitTags.String:
                                     unit = reader.GetString(index);
@@ -168,8 +167,7 @@ namespace Allors.Database.Adapters.Npgsql
                                     break;
 
                                 case UnitTags.Binary:
-                                    var byteArray = (byte[])reader.GetValue(index);
-                                    unit = byteArray;
+                                    unit = (byte[])reader.GetValue(index);
                                     break;
 
                                 default:

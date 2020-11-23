@@ -21,10 +21,12 @@ namespace Allors.Database.Configuration
         public virtual void OnInit(IDatabase database)
         {
             this.Database = database;
-            
+
             this.MetaPopulation = (MetaPopulation)database.ObjectFactory.MetaPopulation;
             this.M = new M(this.MetaPopulation);
             this.MetaCache = new MetaCache(this);
+            this.ClassById = new ClassById();
+            this.VersionedIdByStrategy = new VersionedIdByStrategy();
 
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
             this.PreparedFetches = new PreparedFetches(this.M);
@@ -46,6 +48,10 @@ namespace Allors.Database.Configuration
         public M M { get; private set; }
 
         public IMetaCache MetaCache { get; private set; }
+
+        public IClassById ClassById { get; private set; }
+
+        public IVersionedIdByStrategy VersionedIdByStrategy { get; private set; }
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 

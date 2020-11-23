@@ -11,106 +11,94 @@ namespace Allors.Protocol.Direct.Api.Pull
     using System.Linq;
     using Database;
     using Database.Data;
-    using Database.Security;
     using Extent = Database.Extent;
 
     public class PullExtent
     {
-        private readonly ISession session;
         private readonly Pull pull;
-        private readonly IAccessControlLists acls;
-        private readonly IPreparedExtents preparedExtents;
-        private readonly IPreparedFetches preparedFetches;
 
-        public PullExtent(ISession session, Pull pull, IAccessControlLists acls, IPreparedFetches preparedFetches, IPreparedExtents preparedExtents)
-        {
-            this.session = session;
-            this.pull = pull;
-            this.acls = acls;
-            this.preparedExtents = preparedExtents;
-            this.preparedFetches = preparedFetches;
-        }
-
+        public PullExtent(Pull pull) => this.pull = pull;
 
         public void Execute(PullResponseBuilder response)
         {
-            if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
-            {
-                throw new Exception("Either an Extent or an ExtentRef is required.");
-            }
+            // TODO:
+            //if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
+            //{
+            //    throw new Exception("Either an Extent or an ExtentRef is required.");
+            //}
 
-            var extent = this.pull.Extent ?? this.preparedExtents.Get(this.pull.ExtentRef.Value);
-            var objects = extent.Build(this.session, this.pull.Parameters).ToArray();
+            //var extent = this.pull.Extent ?? response.Api.PreparedExtents.Get(this.pull.ExtentRef.Value);
+            //var objects = extent.Build(response.Api.Session, this.pull.Parameters).ToArray();
 
-            if (this.pull.Results != null)
-            {
-                foreach (var result in this.pull.Results)
-                {
-                    try
-                    {
-                        var name = result.Name;
+            //if (this.pull.Results != null)
+            //{
+            //    foreach (var result in this.pull.Results)
+            //    {
+            //        try
+            //        {
+            //            var name = result.Name;
 
-                        var fetch = result.Fetch;
-                        if (fetch == null && result.FetchRef.HasValue)
-                        {
-                            fetch = this.preparedFetches.Get(result.FetchRef.Value);
-                        }
+            //            var fetch = result.Fetch;
+            //            if (fetch == null && result.FetchRef.HasValue)
+            //            {
+            //                fetch = response.Api.PreparedFetches.Get(result.FetchRef.Value);
+            //            }
 
-                        if (fetch != null)
-                        {
-                            var include = fetch.Include ?? fetch.Step?.End.Include;
+            //            if (fetch != null)
+            //            {
+            //                var include = fetch.Include ?? fetch.Step?.End.Include;
 
-                            if (fetch.Step != null)
-                            {
-                                objects = fetch.Step.IsOne ?
-                                              objects.Select(v => fetch.Step.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
-                                              objects.SelectMany(v =>
-                                              {
-                                                  var stepResult = fetch.Step.Get(v, this.acls);
-                                                  return stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
-                                              }).Distinct().ToArray();
+            //                if (fetch.Step != null)
+            //                {
+            //                    objects = fetch.Step.IsOne ?
+            //                                  objects.Select(v => fetch.Step.Get(v, response.Api.AccessControlLists)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
+            //                                  objects.SelectMany(v =>
+            //                                  {
+            //                                      var stepResult = fetch.Step.Get(v, response.Api.AccessControlLists);
+            //                                      return stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
+            //                                  }).Distinct().ToArray();
 
-                                var propertyType = fetch.Step.End.PropertyType;
-                                name ??= propertyType.PluralName;
-                            }
+            //                    var propertyType = fetch.Step.End.PropertyType;
+            //                    name ??= propertyType.PluralName;
+            //                }
 
-                            name ??= extent.ObjectType.PluralName;
+            //                name ??= extent.ObjectType.PluralName;
 
-                            if (result.Skip.HasValue || result.Take.HasValue)
-                            {
-                                var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
-                                if (result.Take.HasValue)
-                                {
-                                    paged = paged.Take(result.Take.Value);
-                                }
+            //                if (result.Skip.HasValue || result.Take.HasValue)
+            //                {
+            //                    var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
+            //                    if (result.Take.HasValue)
+            //                    {
+            //                        paged = paged.Take(result.Take.Value);
+            //                    }
 
-                                paged = paged.ToArray();
+            //                    paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.session, this.pull.Parameters).Count.ToString());
-                                response.AddCollection(name, paged, include);
-                            }
-                            else
-                            {
-                                response.AddCollection(name, objects, include);
-                            }
-                        }
-                        else
-                        {
-                            name ??= extent.ObjectType.PluralName;
-                            response.AddCollection(name, objects);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception($"Extent: {extent.ObjectType}, {result}", e);
-                    }
-                }
-            }
-            else
-            {
-                var name = extent.ObjectType.PluralName;
-                response.AddCollection(name, objects);
-            }
+            //                    response.AddValue(name + "_total", extent.Build(response.Api.Session, this.pull.Parameters).Count.ToString());
+            //                    response.AddCollection(name, paged, include);
+            //                }
+            //                else
+            //                {
+            //                    response.AddCollection(name, objects, include);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                name ??= extent.ObjectType.PluralName;
+            //                response.AddCollection(name, objects);
+            //            }
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            throw new Exception($"Extent: {extent.ObjectType}, {result}", e);
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    var name = extent.ObjectType.PluralName;
+            //    response.AddCollection(name, objects);
+            //}
         }
     }
 }

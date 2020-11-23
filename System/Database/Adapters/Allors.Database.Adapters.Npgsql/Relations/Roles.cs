@@ -456,8 +456,7 @@ namespace Allors.Database.Adapters.Npgsql
 
                 this.Reference.Session.Commands.GetCompositesRole(this, roleType);
                 this.cachedObject.TryGetValue(roleType, out roleOut);
-                var role = (long[])roleOut;
-                return role;
+                return (long[])roleOut;
             }
 
             return Array.Empty<long>();

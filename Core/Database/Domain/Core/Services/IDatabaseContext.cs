@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         IPermissionsCache PermissionsCache { get; }
 
         IAccessControlCache AccessControlCache { get; }
-       
+
         IDerivationFactory DerivationFactory { get; }
 
         IPreparedExtents PreparedExtents { get; }
@@ -37,5 +37,9 @@ namespace Allors.Database.Domain
         ITime Time { get; }
 
         ITreeCache TreeCache { get; }
+
+        IClassById ClassById { get; }
+
+        IVersionedIdByStrategy VersionedIdByStrategy { get; }
     }
 }

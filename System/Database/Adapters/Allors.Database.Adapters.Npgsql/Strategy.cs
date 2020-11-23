@@ -308,9 +308,7 @@ namespace Allors.Database.Adapters.Npgsql
             this.AssertExist();
             roleType.CompositeRoleChecks(this);
 
-            var previousRoles = this.Roles.GetCompositesRole(roleType);
-
-            foreach (var previousRole in previousRoles)
+            foreach (var previousRole in this.Roles.GetCompositesRole(roleType))
             {
                 this.Roles.RemoveCompositeRole(roleType, this.Session.State.GetOrCreateReferenceForExistingObject(previousRole, this.Session).Strategy);
             }

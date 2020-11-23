@@ -457,7 +457,7 @@ DECLARE {ParamNameForObject} {SqlTypeForObject};
 BEGIN
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({ParamNameForClass}, {Reference.InitialVersion})
+    VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial})
     RETURNING {ColumnNameForObject} INTO {ParamNameForObject};
 
     INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
@@ -488,7 +488,7 @@ BEGIN
     WHILE COUNTER < {ParamNameForCount} LOOP
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({ParamNameForClass}, {Reference.InitialVersion} )
+        VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial} )
         RETURNING {ColumnNameForObject} INTO ID;
 
         INSERT INTO {this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass]} ({ColumnNameForObject},{ColumnNameForClass})

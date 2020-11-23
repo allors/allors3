@@ -572,7 +572,7 @@ BEGIN
     DECLARE  {ParamNameForObject} AS {SqlTypeForObject}
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({ParamNameForClass}, {Reference.InitialVersion});
+    VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial});
 
     SELECT {ParamNameForObject} = SCOPE_IDENTITY();
 
@@ -606,7 +606,7 @@ BEGIN
         BEGIN
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({ParamNameForClass}, {Reference.InitialVersion} );
+        VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial} );
 
         INSERT INTO @IDS(id)
         VALUES (SCOPE_IDENTITY());

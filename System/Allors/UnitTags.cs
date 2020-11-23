@@ -14,41 +14,41 @@ namespace Allors
         /// <summary>
         /// The tag for the binary <see cref="IObjectType"/>.
         /// </summary>
-        Binary,
+        Binary = 0,
 
         /// <summary>
         /// The tag for the boolean <see cref="IObjectType"/>.
         /// </summary>
-        Boolean,
+        Boolean = 1,
 
         /// <summary>
         /// The tag for the date time <see cref="IObjectType"/>.
         /// </summary>
-        DateTime,
+        DateTime = 2,
 
         /// <summary>
         /// The tag for the decimal <see cref="IObjectType"/>.
         /// </summary>
-        Decimal,
+        Decimal = 3,
 
         /// <summary>
         /// The tag for the float <see cref="IObjectType"/>.
         /// </summary>
-        Float,
+        Float = 4,
 
         /// <summary>
         /// The tag for the integer <see cref="IObjectType"/>.
         /// </summary>
-        Integer,
+        Integer = 5,
 
         /// <summary>
         /// The tag for the string <see cref="IObjectType"/>.
         /// </summary>
-        String,
+        String = 6,
 
         /// <summary>
         /// The tag for the unique <see cref="IObjectType"/>.
         /// </summary>
-        Unique,
+        Unique = 7,
     }
 }

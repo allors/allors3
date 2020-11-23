@@ -9,44 +9,31 @@ namespace Allors.Protocol.Direct.Api.Pull
     using System.Linq;
     using Database;
     using Database.Data;
-    using Database.Meta;
-    using Database.Security;
 
     public class PullResponseBuilder
     {
-        private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
-        private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
+        private readonly Dictionary<string, ISet<IStrategy>> collectionsByName = new Dictionary<string, ISet<IStrategy>>();
+        private readonly Dictionary<string, IStrategy> objectByName = new Dictionary<string, IStrategy>();
         private readonly Dictionary<string, string> valueByName = new Dictionary<string, string>();
 
-        private readonly HashSet<IObject> objects;
+        private readonly HashSet<IStrategy> objects;
+        private Dictionary<IStrategy, AccessControl> accessControlByStrategy;
 
-        public PullResponseBuilder(ISession session, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedFetches preparedFetches, IPreparedExtents preparedExtents)
+        public PullResponseBuilder(Api api)
         {
-            this.Session = session;
+            this.Api = api;
 
-            this.AccessControlLists = accessControlLists;
-            this.AllowedClasses = allowedClasses;
-            this.PreparedFetches = preparedFetches;
-            this.PreparedExtents = preparedExtents;
-
-            this.objects = new HashSet<IObject>();
+            this.objects = new HashSet<IStrategy>();
+            this.accessControlByStrategy = new Dictionary<IStrategy, AccessControl>();
         }
 
-        public ISession Session { get; }
+        public Api Api { get; }
 
-        public IAccessControlLists AccessControlLists { get; }
-
-        public ISet<IClass> AllowedClasses { get; }
-
-        public IPreparedFetches PreparedFetches { get; }
-
-        public IPreparedExtents PreparedExtents { get; }
-
-        public void AddCollection(string name, in IEnumerable<IObject> collection)
+        public void AddCollection(string name, in IEnumerable<IStrategy> collection)
         {
             switch (collection)
             {
-                case ICollection<IObject> asCollection:
+                case ICollection<IStrategy> asCollection:
                     this.AddCollectionInternal(name, asCollection, null);
                     break;
                 default:
@@ -55,13 +42,13 @@ namespace Allors.Protocol.Direct.Api.Pull
             }
         }
 
-        public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
+        public void AddCollection(string name, in ICollection<IStrategy> collection) => this.AddCollectionInternal(name, collection, null);
 
-        public void AddCollection(string name, IEnumerable<IObject> collection, Node[] tree)
+        public void AddCollection(string name, IEnumerable<IStrategy> collection, Node[] tree)
         {
             switch (collection)
             {
-                case ICollection<IObject> list:
+                case ICollection<IStrategy> list:
                     this.AddCollectionInternal(name, list, tree);
                     break;
                 default:
@@ -72,7 +59,7 @@ namespace Allors.Protocol.Direct.Api.Pull
             }
         }
 
-        public void AddObject(string name, IObject @object)
+        public void AddObject(string name, IStrategy @object)
         {
             if (@object != null)
             {
@@ -80,25 +67,26 @@ namespace Allors.Protocol.Direct.Api.Pull
             }
         }
 
-        public void AddObject(string name, IObject @object, Node[] tree)
+        public void AddObject(string name, IStrategy @object, Node[] tree)
         {
-            if (@object != null)
-            {
-                if (this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
-                {
-                    if (tree != null)
-                    {
-                        // Prefetch
-                        var session = @object.Strategy.Session;
-                        var prefetcher = tree.BuildPrefetchPolicy();
-                        session.Prefetch(prefetcher, @object);
-                    }
+            // TODO:
+            //if (@object != null)
+            //{
+            //    if (this.Api.AllowedClasses?.Contains(@object.Class) == true)
+            //    {
+            //        if (tree != null)
+            //        {
+            //            // Prefetch
+            //            var session = @object.Session;
+            //            var prefetcher = tree.BuildPrefetchPolicy();
+            //            session.Prefetch(prefetcher, @object);
+            //        }
 
-                    this.objects.Add(@object);
-                    this.objectByName[name] = @object;
-                    tree?.Resolve(@object, this.AccessControlLists, this.objects);
-                }
-            }
+            //        this.objects.Add(@object);
+            //        this.objectByName[name] = @object;
+            //        tree?.Resolve(@object, this.Api.AccessControlLists, this.objects);
+            //    }
+            //}
         }
 
         public void AddValue(string name, string value)
@@ -109,92 +97,94 @@ namespace Allors.Protocol.Direct.Api.Pull
             }
         }
 
-        private void AddCollectionInternal(string name, in ICollection<IObject> collection, Node[] tree)
+        private void AddCollectionInternal(string name, in ICollection<IStrategy> collection, Node[] tree)
         {
-            if (collection?.Count > 0)
-            {
-                this.collectionsByName.TryGetValue(name, out var existingCollection);
+            // TODO:
+            //if (collection?.Count > 0)
+            //{
+            //    this.collectionsByName.TryGetValue(name, out var existingCollection);
 
-                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
+            //    var filteredCollection = collection.Where(v => this.Api.AllowedClasses != null && this.Api.AllowedClasses.Contains(v.Class));
 
-                if (tree != null)
-                {
-                    var prefetchPolicy = tree.BuildPrefetchPolicy();
+            //    if (tree != null)
+            //    {
+            //        var prefetchPolicy = tree.BuildPrefetchPolicy();
 
-                    ICollection<IObject> newCollection;
+            //        ICollection<IStrategy> newCollection;
 
-                    if (existingCollection != null)
-                    {
-                        newCollection = filteredCollection.ToArray();
-                        this.Session.Prefetch(prefetchPolicy, newCollection);
-                        existingCollection.UnionWith(newCollection);
-                    }
-                    else
-                    {
-                        var newSet = new HashSet<IObject>(filteredCollection);
-                        newCollection = newSet;
-                        this.Session.Prefetch(prefetchPolicy, newCollection);
-                        this.collectionsByName.Add(name, newSet);
-                    }
+            //        if (existingCollection != null)
+            //        {
+            //            newCollection = filteredCollection.ToArray();
+            //            this.Api.Session.Prefetch(prefetchPolicy, newCollection);
+            //            existingCollection.UnionWith(newCollection);
+            //        }
+            //        else
+            //        {
+            //            var newSet = new HashSet<IStrategy>(filteredCollection);
+            //            newCollection = newSet;
+            //            this.Api.Session.Prefetch(prefetchPolicy, newCollection);
+            //            this.collectionsByName.Add(name, newSet);
+            //        }
 
-                    this.objects.UnionWith(newCollection);
+            //        this.objects.UnionWith(newCollection);
 
-                    foreach (var newObject in newCollection)
-                    {
-                        tree.Resolve(newObject, this.AccessControlLists, this.objects);
-                    }
-                }
-                else
-                {
-                    if (existingCollection != null)
-                    {
-                        existingCollection.UnionWith(filteredCollection);
-                    }
-                    else
-                    {
-                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
-                        this.collectionsByName.Add(name, newWorkspaceCollection);
-                        this.objects.UnionWith(newWorkspaceCollection);
-                    }
-                }
-            }
+            //        foreach (var newObject in newCollection)
+            //        {
+            //            tree.Resolve(newObject, this.Api.AccessControlLists, this.objects);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (existingCollection != null)
+            //        {
+            //            existingCollection.UnionWith(filteredCollection);
+            //        }
+            //        else
+            //        {
+            //            var newWorkspaceCollection = new HashSet<IStrategy>(filteredCollection);
+            //            this.collectionsByName.Add(name, newWorkspaceCollection);
+            //            this.objects.UnionWith(newWorkspaceCollection);
+            //        }
+            //    }
+            //}
         }
 
         public PullResponseBuilder With(Pull pull)
         {
             if (pull.Object != null)
             {
-                var pullInstantiate = new PullInstantiate(this.Session, pull, this.AccessControlLists, this.PreparedFetches);
+                var pullInstantiate = new PullInstantiate(pull);
                 pullInstantiate.Execute(this);
             }
             else
             {
-                var pullExtent = new PullExtent(this.Session, pull, this.AccessControlLists, this.PreparedFetches, this.PreparedExtents);
+                var pullExtent = new PullExtent(pull);
                 pullExtent.Execute(this);
             }
 
             return this;
         }
 
-        public PullResponse Build() =>
-            new PullResponse
-            {
-                Objects = this.objects.Select(v =>
-                {
-                    var strategy = v.Strategy;
-                    var accessControlLists = this.AccessControlLists[strategy.GetObject()];
-                    var accessControls = accessControlLists.AccessControls?.Select(w => w.Strategy.ObjectId);
-                    var deniedPermissions = accessControlLists.DeniedPermissionIds;
-                    return new Object(strategy, accessControls?.ToArray(), deniedPermissions?.ToArray());
-                }).ToArray(),
-                NamedObjects = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
-                NamedCollections =
-                    this.collectionsByName.ToDictionary(kvp => kvp.Key,
-                        kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
-                NamedValues = this.valueByName,
-                AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
-                    .Select(v => new AccessControl(v.Strategy.ObjectId, v.Strategy.ObjectVersion, v.Permissions.Select(w => w.Id).ToArray()))
-                    .ToArray(),
-            };
+        public PullResponse Build()
+        {
+            var versionedIdByStrategy = this.Api.VersionedIdByStrategy;
+
+            return null;
+
+            // TODO:
+            //return new PullResponse
+            //{
+            //    Objects = this.objects.Select(v => versionedIdByStrategy.Get(v.Strategy)).ToArray(),
+            //    NamedObjects = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
+            //    NamedCollections =
+            //        this.collectionsByName.ToDictionary(kvp => kvp.Key,
+            //            kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
+            //    NamedValues = this.valueByName,
+            //    AccessControls = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
+            //        .Select(v => new AccessControl(v.Strategy.ObjectId, v.Strategy.ObjectVersion,
+            //            v.Permissions.Select(w => w.Id).ToArray()))
+            //        .ToArray(),
+            //};
+        }
     }
 }

@@ -38,8 +38,7 @@ namespace Allors.Database.Adapters.Npgsql
                 foreach (var firstDictionaryEntry in this.setUnitRoleRelationsByRoleTypeByExclusiveClass)
                 {
                     var exclusiveRootClass = firstDictionaryEntry.Key;
-                    var setUnitRoleRelationsByRoleType = firstDictionaryEntry.Value;
-                    foreach (var secondDictionaryEntry in setUnitRoleRelationsByRoleType)
+                    foreach (var secondDictionaryEntry in firstDictionaryEntry.Value)
                     {
                         var roleType = secondDictionaryEntry.Key;
                         var relations = secondDictionaryEntry.Value;

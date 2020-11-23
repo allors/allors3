@@ -17,8 +17,6 @@ namespace Allors.Database.Adapters.Npgsql
 
     public class Load
     {
-        public const long InitialVersion = 0;
-
         private static readonly byte[] EmptyByteArray = new byte[0];
 
         private readonly Database database;
@@ -415,8 +413,7 @@ where c = '{@class.Id}'";
                         else
                         {
                             var value = reader.ReadElementContentAsString();
-                            var rs = value.Split(Serialization.ObjectsSplitterCharArray);
-                            foreach (var r in rs)
+                            foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
                             {
                                 this.OnRelationNotLoaded(relationTypeId, associationId, r);
                             }

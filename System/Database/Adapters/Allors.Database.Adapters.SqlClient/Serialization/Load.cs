@@ -116,7 +116,7 @@ namespace Allors.Database.Adapters.SqlClient
 
                         if (canLoad)
                         {
-                            var version = objectArray.Length > 1 ? long.Parse(objectArray[1]) : Reference.InitialVersion;
+                            var version = objectArray.Length > 1 ? long.Parse(objectArray[1]) : (long) Allors.Version.Initial;
 
                             this.objectTypeByObjectId.Add(objectId, objectType);
                             this.objectVersionByObjectId.Add(objectId, version);

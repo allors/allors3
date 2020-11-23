@@ -25,14 +25,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public Session Session { get; }
 
-        public IObject Object
-        {
-            get
-            {
-                this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
-                return this.@object;
-            }
-        }
+        public IObject Object => this.@object ??= this.Session.Workspace.ObjectFactory.Create(this);
 
         public IClass Class { get; }
 

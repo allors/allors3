@@ -6,11 +6,9 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml;
-    using Allors;
     using Adapters;
     using Meta;
 

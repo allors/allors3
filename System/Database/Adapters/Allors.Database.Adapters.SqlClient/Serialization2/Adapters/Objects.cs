@@ -11,6 +11,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Xml;
     using Adapters;
     using Meta;
+    using Version = Allors.Version;
 
     public class Objects : IEnumerable<object[]>
     {
@@ -65,7 +66,7 @@ namespace Allors.Database.Adapters.SqlClient
                                     var objectId = long.Parse(objectArray[0]);
                                     var objectVersion = objectArray.Length > 1
                                         ? long.Parse(objectArray[1])
-                                        : Load2.InitialVersion;
+                                        : (long) Version.Initial;
 
                                     if (objectType is IClass @class)
                                     {

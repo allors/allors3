@@ -12,9 +12,6 @@ namespace Allors.Database.Adapters.Npgsql
 
     public class Reference
     {
-        internal const long InitialVersion = 0;
-        private const long UnknownVersion = -1;
-
         private long version;
 
         private Flags flags;
@@ -77,7 +74,7 @@ namespace Allors.Database.Adapters.Npgsql
         {
             get
             {
-                if (!this.IsNew && this.version == UnknownVersion)
+                if (!this.IsNew && this.version == (long)Allors.Version.None)
                 {
                     this.Session.AddReferenceWithoutVersionOrExistsKnown(this);
                     this.Session.GetVersionAndExists();
@@ -86,22 +83,12 @@ namespace Allors.Database.Adapters.Npgsql
                 return this.version;
             }
 
-            set
-            {
-                this.version = value;
-            }
+            set => this.version = value;
         }
 
         internal bool IsNew => this.FlagIsNew;
 
-        internal bool IsUnknownVersion
-        {
-            get
-            {
-                var isUnknown = this.version == UnknownVersion;
-                return isUnknown;
-            }
-        }
+        internal bool IsUnknownVersion => this.version == (long)Allors.Version.None;
 
         internal bool Exists
         {
@@ -124,34 +111,27 @@ namespace Allors.Database.Adapters.Npgsql
             }
         }
 
-        internal bool ExistsKnown
-        {
-            get
-            {
-                var existsKnown = this.FlagExistsKnown;
-                return existsKnown;
-            }
-        }
+        internal bool ExistsKnown => this.FlagExistsKnown;
 
         private bool FlagIsNew
         {
-            get { return this.flags.HasFlag(Flags.MaskIsNew); }
+            get => this.flags.HasFlag(Flags.MaskIsNew);
 
-            set { this.flags = value ? this.flags | Flags.MaskIsNew : this.flags & ~Flags.MaskIsNew; }
+            set => this.flags = value ? this.flags | Flags.MaskIsNew : this.flags & ~Flags.MaskIsNew;
         }
 
         private bool FlagExists
         {
-            get { return this.flags.HasFlag(Flags.MaskExists); }
+            get => this.flags.HasFlag(Flags.MaskExists);
 
-            set { this.flags = value ? this.flags | Flags.MaskExists : this.flags & ~Flags.MaskExists; }
+            set => this.flags = value ? this.flags | Flags.MaskExists : this.flags & ~Flags.MaskExists;
         }
 
         private bool FlagExistsKnown
         {
-            get { return this.flags.HasFlag(Flags.MaskExistsKnown); }
+            get => this.flags.HasFlag(Flags.MaskExistsKnown);
 
-            set { this.flags = value ? this.flags | Flags.MaskExistsKnown : this.flags & ~Flags.MaskExistsKnown; }
+            set => this.flags = value ? this.flags | Flags.MaskExistsKnown : this.flags & ~Flags.MaskExistsKnown;
         }
 
         private Strategy Target
@@ -180,7 +160,7 @@ namespace Allors.Database.Adapters.Npgsql
         {
             this.FlagExistsKnown = false;
             this.FlagIsNew = false;
-            this.version = UnknownVersion;
+            this.version = Allors.Version.None;
 
             var strategy = this.Target;
             if (strategy != null)
@@ -202,7 +182,7 @@ namespace Allors.Database.Adapters.Npgsql
                 this.FlagExistsKnown = false;
             }
 
-            this.version = UnknownVersion;
+            this.version = Allors.Version.None;
 
             var strategy = this.Target;
             if (strategy != null)

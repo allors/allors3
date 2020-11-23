@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Xml;
 
     using Meta;
@@ -15,7 +14,6 @@ namespace Allors.Database.Adapters.Memory
 
     public class Database : IDatabase
     {
-        public const long IntialVersion = 0;
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
         private Session session;
 

@@ -56,16 +56,14 @@ namespace Allors.Database.Adapters.Npgsql
                                 var objectType = this.database.ObjectFactory.GetObjectTypeForType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
-                                var objectIdStringArray = objectIdsString.Split(Serialization.ObjectsSplitterCharArray);
-
-                                foreach (var objectIdString in objectIdStringArray)
+                                foreach (var objectIdString in objectIdsString.Split(Serialization.ObjectsSplitterCharArray))
                                 {
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 
                                     var objectId = long.Parse(objectArray[0]);
                                     var objectVersion = objectArray.Length > 1
                                         ? long.Parse(objectArray[1])
-                                        : Load.InitialVersion;
+                                        : (long) Allors.Version.Initial;
 
                                     if (objectType is IClass @class)
                                     {

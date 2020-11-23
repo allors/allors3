@@ -127,16 +127,14 @@ namespace Allors.Database.Adapters.Npgsql
 
         public override bool Read()
         {
-            var result = this.enumerator.MoveNext();
-            return result;
+            return this.enumerator.MoveNext();
         }
 
         public override object GetValue(int i)
         {
             var current = this.enumerator.Current;
             var getFunction = this.getValueFuncs[i];
-            var value = getFunction(current);
-            return value;
+            return getFunction(current);
         }
 
         #region Not Supported

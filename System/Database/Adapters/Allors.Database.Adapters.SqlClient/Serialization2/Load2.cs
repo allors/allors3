@@ -17,8 +17,6 @@ namespace Allors.Database.Adapters.SqlClient
 
     public class Load2
     {
-        public const long InitialVersion = 0;
-
         private static readonly byte[] EmptyByteArray = new byte[0];
 
         private readonly Database database;

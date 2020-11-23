@@ -45,8 +45,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         public override bool Read()
         {
-            var result = this.enumerator.MoveNext();
-            return result;
+            return this.enumerator.MoveNext();
         }
 
         public override object GetValue(int i)
