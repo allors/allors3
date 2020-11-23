@@ -2936,7 +2936,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveLocaleFromBillToCustomerLocale()
+        public void ChangedBillToCustomerDeriveDerivedLocaleFromBillToCustomerLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -2946,15 +2946,17 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.Locale = swedishLocale;
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
+            order.BillToCustomer= customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedLocale, swedishLocale);
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveLocaleFromTakenByLocale()
+        public void ChangedBillToCustomerDeriveDerivedLocaleFromTakenByLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -2966,8 +2968,10 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.RemoveLocale();
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
+            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.False(customer.ExistLocale);
@@ -2975,30 +2979,90 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveVatRegime()
+        public void ChangedLocaleDeriveDerivedLocaleFromLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            this.Session.GetSingleton().DefaultLocale = swedishLocale;
+
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.Locale = swedishLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedLocale, swedishLocale);
+        }
+
+        [Fact]
+        public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, new VatRegimes(this.Session).ServiceB2B);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveDerivedVatRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
             Assert.True(customer.ExistVatRegime);
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
+            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedVatRegime, customer.VatRegime);
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveIrpfRegime()
+        public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedIrpfRegime, new IrpfRegimes(this.Session).Assessable15);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveDerivedIrpfRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
 
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
 
+            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, customer.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedCurrencyDeriveDerivedCurrency()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            order.AssignedCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedCurrency, swedishKrona);
         }
 
         [Fact]
@@ -3046,8 +3110,10 @@ namespace Allors.Database.Domain.Tests
             customer.RemoveLocale();
             customer.PreferredCurrency = newLocale.Country.Currency;
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
+            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedCurrency, customer.PreferredCurrency);
@@ -3065,11 +3131,335 @@ namespace Allors.Database.Domain.Tests
             customer.Locale = newLocale;
             customer.RemovePreferredCurrency();
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
+            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedCurrency, newLocale.Country.Currency);
+        }
+
+        [Fact]
+        public void ChangedAssignedTakenByContactMechanismDeriveDerivedTakenByContactMechanism()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedTakenByContactMechanism = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedTakenByOrderAddressDeriveDerivedTakenByContactMechanism()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            internalOrganisation.OrderAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedTakenByBillingAddressDeriveDerivedTakenByContactMechanism()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            internalOrganisation.BillingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedTakenByGeneralCorrespondenceDeriveDerivedTakenByContactMechanism()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            internalOrganisation.GeneralCorrespondence = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedBillToContactMechanismDeriveDerivedBillToContactMechanism()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedBillToContactMechanism = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerBillingAddressDeriveDerivedBillToContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.BillingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerShippingAddressDeriveDerivedBillToContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.ShippingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerGeneralCorrespondenceDeriveDerivedBillToContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.GeneralCorrespondence = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedBillToEndCustomerContactMechanismDeriveDerivedBillToEndCustomerContactMechanism()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedBillToEndCustomerContactMechanism = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToEndCustomerBillingAddressDeriveDerivedBillToEndCustomerContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.BillingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToEndCustomerShippingAddressDeriveDerivedBillToEndCustomerContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.ShippingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToEndCustomerGeneralCorrespondenceDeriveDerivedBillToEndCustomerContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.GeneralCorrespondence = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipToEndCustomerAddressDeriveDerivedShipToEndCustomerAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedShipToEndCustomerAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToEndCustomerCustomerShippingAddressDeriveDerivedShipToEndCustomerAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithShipToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.ShippingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToEndCustomerCustomerGeneralCorrespondenceDeriveDerivedShipToEndCustomerAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithShipToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.GeneralCorrespondence = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipFromAddressDeriveDerivedShipFromAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedShipFromAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipFromAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedTakenByShippingAddressDeriveDerivedShipFromAddress()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            internalOrganisation.ShippingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipFromAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipToAddressDeriveDerivedShipToAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedShipToAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToCustomerShippingAddressDeriveDerivedShipToAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveBillingAddress();
+            customer.RemoveShippingAddress();
+            customer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Session).WithShipToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            customer.ShippingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipmentMethodDeriveDerivedShipmentMethod()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentMethod = new ShipmentMethods(this.Session).Boat;
+            order.AssignedShipmentMethod = shipmentMethod;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipmentMethod, shipmentMethod);
+        }
+
+        [Fact]
+        public void ChangedAssignedPaymentMethodDeriveDerivedPaymentMethod()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var cash = new CashBuilder(this.Session).Build();
+            order.AssignedPaymentMethod = cash;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedPaymentMethod, cash);
         }
     }
 
