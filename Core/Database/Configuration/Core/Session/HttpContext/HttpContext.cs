@@ -10,7 +10,7 @@ namespace Allors.Database.Configuration
     using System.Security.Claims;
     using Domain;
     using Microsoft.AspNetCore.Http;
-    using ISession = Database.ISession;
+    using ISession = ISession;
 
     public class HttpContext
     {

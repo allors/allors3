@@ -6,7 +6,7 @@
 namespace Allors.Workspace.Data
 {
     using System.Collections.Generic;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class Between : IRolePredicate
     {

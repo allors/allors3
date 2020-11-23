@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public static partial class SessionExtension
     {

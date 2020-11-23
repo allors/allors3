@@ -7,13 +7,13 @@ namespace Allors.Database.Domain
 {
     using System;
     using System.Linq;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Domain;
+    using Meta;
     using Database;
 
     public static partial class ObjectExtensions
     {
-        public static void CoreOnPostBuild(this Allors.Database.Domain.Object @this, ObjectOnPostBuild method)
+        public static void CoreOnPostBuild(this Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
             foreach (var roleType in ((Class)@this.Strategy.Class).RoleTypes)

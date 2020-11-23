@@ -19,7 +19,7 @@ namespace Allors.Database.Adapters
     using System;
     using System.Linq;
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
     using Xunit;
 
     public abstract class ReferenceOne2OneTest : Test

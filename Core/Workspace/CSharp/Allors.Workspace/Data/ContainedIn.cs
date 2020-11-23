@@ -6,8 +6,8 @@
 namespace Allors.Workspace.Data
 {
     using System.Collections.Generic;
-    using Allors.Workspace;
-    using Allors.Workspace.Meta;
+    using Workspace;
+    using Meta;
 
     public class ContainedIn : IPropertyPredicate
     {

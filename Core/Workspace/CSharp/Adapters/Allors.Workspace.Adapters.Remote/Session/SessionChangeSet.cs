@@ -10,7 +10,7 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     internal sealed class SessionChangeSet : IChangeSet
     {

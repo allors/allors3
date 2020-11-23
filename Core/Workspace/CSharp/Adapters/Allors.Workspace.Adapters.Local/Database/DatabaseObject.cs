@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System;
     using System.Collections.Generic;
-    using Allors.Workspace.Meta;
+    using Meta;
     using System.Linq;
     using Security;
 

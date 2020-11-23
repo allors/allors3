@@ -13,7 +13,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    using Allors.Services;
+    using Services;
     using Protocol.Json.Auth;
     using Security;
 

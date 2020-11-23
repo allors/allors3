@@ -8,8 +8,8 @@ namespace Allors
 {
     using System.IO;
     using System.Linq;
-    using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
+    using Database.Domain;
+    using Database.Domain.TestPopulation;
     using Bogus;
 
     public static class SingletonExtensions

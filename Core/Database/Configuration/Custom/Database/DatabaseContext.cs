@@ -7,7 +7,7 @@
 namespace Allors.Database.Configuration
 {
     using Database;
-    using Database.Data;
+    using Data;
     using Domain;
     using Meta;
     using Microsoft.AspNetCore.Http;
@@ -25,7 +25,6 @@ namespace Allors.Database.Configuration
             this.MetaPopulation = (MetaPopulation)database.ObjectFactory.MetaPopulation;
             this.M = new M(this.MetaPopulation);
             this.MetaCache = new MetaCache(this);
-            this.WorkspaceMetaCache = new WorkspaceMetaCache(this);
 
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
             this.PreparedFetches = new PreparedFetches(this.M);
@@ -33,8 +32,7 @@ namespace Allors.Database.Configuration
             this.TreeCache = new TreeCache();
 
             this.PermissionsCache = new PermissionsCache(this);
-            this.EffectivePermissionCache = new EffectivePermissionCache();
-            this.WorkspaceEffectivePermissionCache = new WorkspaceEffectivePermissionCache();
+            this.AccessControlCache = new AccessControlCache();
 
             this.Time = new Time();
             this.Caches = new Caches();
@@ -49,8 +47,6 @@ namespace Allors.Database.Configuration
 
         public IMetaCache MetaCache { get; private set; }
 
-        public IWorkspaceMetaCache WorkspaceMetaCache { get; set; }
-
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
         public IPreparedFetches PreparedFetches { get; private set; }
@@ -61,9 +57,7 @@ namespace Allors.Database.Configuration
 
         public IPermissionsCache PermissionsCache { get; set; }
 
-        public IEffectivePermissionCache EffectivePermissionCache { get; private set; }
-
-        public IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; private set; }
+        public IAccessControlCache AccessControlCache { get; private set; }
 
         public ITime Time { get; private set; }
 

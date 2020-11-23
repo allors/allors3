@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Derivations.Validating
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Object = Domain.Object;
+    using Object = Object;
 
     public class Iteration : IIteration
     {

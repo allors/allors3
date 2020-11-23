@@ -6,7 +6,7 @@
 namespace Allors.Database.Data
 {
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
     
 
     public class Equals : IPropertyPredicate

@@ -7,7 +7,7 @@ namespace Allors.Database.Configuration
 {
     using System;
     using System.Collections.Concurrent;
-    using Database.Data;
+    using Data;
     using Meta;
 
     public class PreparedExtents : IPreparedExtents

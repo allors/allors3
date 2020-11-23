@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace.Protocol.Json
 {
-    using Allors.Workspace.Data;
+    using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
     using Fetch = Allors.Protocol.Json.Data.Fetch;
     using Pull = Allors.Protocol.Json.Data.Pull;

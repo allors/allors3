@@ -106,13 +106,13 @@ namespace Allors.Database.Domain
         {
             var singleton = this.Session().GetSingleton();
 
-            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice))
+            if (Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice))
             {
                 this.InvoiceNumber = this.Store.NextInvoiceNumber(this.InvoiceDate.Year);
                 this.SortableInvoiceNumber = NumberFormatter.SortableNumber(this.Store.SalesInvoiceNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
             }
 
-            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).CreditNote))
+            if (Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).CreditNote))
             {
                 this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
                 this.SortableInvoiceNumber = NumberFormatter.SortableNumber(this.Store.CreditNoteNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());

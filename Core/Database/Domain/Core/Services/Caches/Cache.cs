@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
     using Domain;
 
     public class Cache<TKey, TObject>

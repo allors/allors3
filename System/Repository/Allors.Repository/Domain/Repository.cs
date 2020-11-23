@@ -12,7 +12,7 @@ namespace Allors.Repository.Domain
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Allors.Repository.Roslyn;
+    using Roslyn;
 
     using Inflector;
 

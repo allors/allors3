@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Workspace.Meta;
+    using Meta;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Push;
 
@@ -153,7 +153,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var current = this.Get(roleType);
                 if (roleType.ObjectType.IsUnit || roleType.IsOne)
                 {
-                    if (object.Equals(current, value))
+                    if (Equals(current, value))
                     {
                         return;
                     }

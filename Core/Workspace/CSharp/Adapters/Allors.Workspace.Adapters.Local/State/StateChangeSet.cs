@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class StateChangeSet
     {

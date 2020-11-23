@@ -7,7 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.IO;
-    using Allors.Database.Domain;
+    using Domain;
     using Xunit;
 
     public class MediaTest : ContentTests, IClassFixture<Fixture>

@@ -5,8 +5,8 @@
 
 namespace Allors.Database.Server.Controllers
 {
-    using Allors.Services;
-    using Database.Protocol.Json;
+    using Services;
+    using Protocol.Json;
     using Microsoft.AspNetCore.Mvc;
 
     public class PersonController : Controller

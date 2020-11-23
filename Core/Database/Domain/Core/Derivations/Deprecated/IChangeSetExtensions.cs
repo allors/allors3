@@ -6,9 +6,9 @@
 
 namespace Allors.Database.Domain
 {
-    using Allors.Database.Meta;
+    using Meta;
     using System.Linq;
-    using Allors.Database.Domain.Derivations;
+    using Derivations;
 
     public static partial class IChangeSetExtensions
     {

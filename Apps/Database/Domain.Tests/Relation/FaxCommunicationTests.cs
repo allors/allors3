@@ -77,7 +77,7 @@ namespace Allors.Database.Domain.Tests
             originator.Delete();
             this.Session.Derive();
 
-            Assert.Equal(0, this.Session.Extent<FaxCommunication>().Count);
+            Assert.Empty(this.Session.Extent<FaxCommunication>());
         }
     }
 }

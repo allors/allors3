@@ -6,7 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal abstract class CompositePredicate : Predicate, ICompositePredicate
     {

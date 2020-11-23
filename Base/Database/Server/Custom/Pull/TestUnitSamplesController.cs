@@ -8,11 +8,11 @@ namespace Allors.Database.Server.Controllers
     using System;
     using System.Threading.Tasks;
 
-    using Allors.Database.Domain;
-    using Allors.Services;
+    using Domain;
+    using Services;
     using Microsoft.AspNetCore.Mvc;
     using Database;
-    using Database.Protocol.Json;
+    using Protocol.Json;
     
 
     public class TestUnitSamplesController : Controller

@@ -6,7 +6,7 @@
 namespace Allors.Workspace.Data
 {
     
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class LessThan : IRolePredicate
     {

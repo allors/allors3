@@ -5,12 +5,12 @@
 
 namespace Allors.Database.Domain
 {
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Security;
 
     public partial interface Permission : IPermission
     {
-        bool ExistConcreteClass { get; }
+        bool ExistClass { get; }
 
         bool ExistOperandType { get; }
 

@@ -18,7 +18,7 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
 
     using Xunit;
 

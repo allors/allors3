@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters
 {
-    using Allors.Database.Meta;
+    using Meta;
 
     public interface IClassCache
     {

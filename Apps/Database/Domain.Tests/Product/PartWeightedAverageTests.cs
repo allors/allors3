@@ -7,7 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Xunit;
 
     public class PartWeightedAverageTests : DomainTest, IClassFixture<Fixture>

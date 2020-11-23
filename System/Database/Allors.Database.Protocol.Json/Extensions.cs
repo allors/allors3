@@ -39,7 +39,7 @@ namespace Allors.Database.Protocol.Json
             return fromJsonVisitor.Fetch;
         }
         
-        public static Allors.Protocol.Json.Data.Pull ToJson(this Data.Pull pull)
+        public static Pull ToJson(this Data.Pull pull)
         {
             var toJsonVisitor = new ToJsonVisitor();
             pull.Accept(toJsonVisitor);
@@ -53,7 +53,7 @@ namespace Allors.Database.Protocol.Json
             return toJsonVisitor.Extent;
         }
 
-        public static Allors.Protocol.Json.Data.Fetch ToJson(this Data.Fetch extent)
+        public static Allors.Protocol.Json.Data.Fetch ToJson(this Fetch extent)
         {
             var toJsonVisitor = new ToJsonVisitor();
             extent.Accept(toJsonVisitor);

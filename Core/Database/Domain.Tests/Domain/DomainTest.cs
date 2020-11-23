@@ -9,10 +9,10 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.IO;
     using System.Reflection;
-    using Allors.Database;
-    using Allors.Database.Adapters.Memory;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Database;
+    using Adapters.Memory;
+    using Domain;
+    using Meta;
     using Allors.Database.Security;
     using Configuration;
     using Moq;

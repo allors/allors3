@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Data.Common;
     using System.Linq;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     internal class Prefetcher
     {

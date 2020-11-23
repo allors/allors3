@@ -8,7 +8,7 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Xunit;
 
     public class SalesOrderTransferTests : DomainTest, IClassFixture<Fixture>
@@ -2112,7 +2112,7 @@ namespace Allors.Database.Domain.Tests
 
             var shipment = customer.ShipmentsWhereShipToParty.First;
 
-            Assert.Equal(1, shipment.ShipmentItems.Count);
+            Assert.Single(shipment.ShipmentItems);
             Assert.Equal(1, item1.OrderShipmentsWhereOrderItem[0].Quantity);
         }
 

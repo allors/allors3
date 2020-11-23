@@ -7,7 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Database.Derivations;
     using Resources;
     using Xunit;
@@ -250,7 +250,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(0, this.order.ValidOrderItems.Count);
+            Assert.Empty(this.order.ValidOrderItems);
         }
 
         [Fact]

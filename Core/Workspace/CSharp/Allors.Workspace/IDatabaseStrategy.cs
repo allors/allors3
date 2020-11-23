@@ -6,7 +6,7 @@
 namespace Allors.Workspace
 {
     using System.Collections.Generic;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public interface IDatabaseStrategy : IStrategy
     {

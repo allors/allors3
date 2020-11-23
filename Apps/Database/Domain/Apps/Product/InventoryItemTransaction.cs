@@ -151,8 +151,8 @@ namespace Allors.Database.Domain
             if (this.Part.InventoryItemKind.IsSerialised)
             {
                 var inventoryItems = this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem;
-                inventoryItems.Filter.AddEquals(M.InventoryItem.Part, this.Part);
-                inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, facility);
+                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Part, this.Part);
+                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, facility);
                 var inventoryItem = inventoryItems.First;
 
                 if (inventoryItem == null)
@@ -175,7 +175,7 @@ namespace Allors.Database.Domain
             else if (this.Part.InventoryItemKind.IsNonSerialised)
             {
                 var inventoryItems = this.Part.InventoryItemsWherePart;
-                inventoryItems.Filter.AddEquals(M.InventoryItem.Facility, facility);
+                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, facility);
                 var inventoryItem = inventoryItems.First;
 
                 if (inventoryItem == null)

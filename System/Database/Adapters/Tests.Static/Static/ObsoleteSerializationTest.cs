@@ -14,8 +14,8 @@ namespace Allors.Database.Adapters
     using System.Xml;
 
     using Allors;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Domain;
+    using Meta;
 
     using Xunit;
 

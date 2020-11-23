@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System.Text.RegularExpressions;
     using Adapters;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal sealed class RoleLike : Predicate
     {

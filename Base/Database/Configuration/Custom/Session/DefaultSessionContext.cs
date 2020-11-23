@@ -11,7 +11,7 @@ namespace Allors.Database.Configuration
     using Database;
     using Domain;
     using Microsoft.AspNetCore.Http;
-    using ISession = Database.ISession;
+    using ISession = ISession;
 
     public class DefaultSessionContext : ISessionContext
     {

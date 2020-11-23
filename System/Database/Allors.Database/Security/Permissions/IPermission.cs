@@ -9,6 +9,6 @@ namespace Allors.Database.Security
 
     public interface IPermission : IObject
     {
-        IClass ConcreteClass { get; }
+        IClass Class { get; }
     }
 }

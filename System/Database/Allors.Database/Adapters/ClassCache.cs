@@ -6,7 +6,7 @@
 namespace Allors.Database.Adapters
 {
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
 
     public class ClassCache : IClassCache
     {

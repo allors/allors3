@@ -19,10 +19,7 @@ namespace Tests
         public void SameWorkspace()
         {
             var workspaceName = "X";
-
-            var workspaceMeta = this.Session.Database.Context().WorkspaceMetaCache;
-            var workspaceX = workspaceMeta.Get(workspaceName);
-
+            var meta = this.Session.Database.Context().MetaCache;
             var accessControl = new AccessControls(this.Session).Administrator;
 
             this.SetUser("jane@example.com");
@@ -51,7 +48,7 @@ namespace Tests
             foreach (var permission in permissions)
             {
                 Assert.Contains(permission, accessControl.EffectivePermissions);
-                Assert.Contains(permission.ConcreteClass, workspaceX.Classes);
+                Assert.Contains(permission.Class, meta.GetWorkspaceClasses(workspaceName));
             }
 
             foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
@@ -64,10 +61,7 @@ namespace Tests
         public void NoneWorkspace()
         {
             var workspaceName = "None";
-
-            var workspaceMeta = this.Session.Database.Context().WorkspaceMetaCache;
-            var workspace = workspaceMeta.Get(workspaceName);
-
+            var metaCache = this.Session.Database.Context().MetaCache;
             var accessControl = new AccessControls(this.Session).Administrator;
 
             this.SetUser("jane@example.com");
@@ -96,7 +90,7 @@ namespace Tests
             foreach (var permission in permissions)
             {
                 Assert.Contains(permission, accessControl.EffectivePermissions);
-                Assert.Contains(permission.ConcreteClass, workspace.Classes);
+                Assert.Contains(permission.Class, metaCache.GetWorkspaceClasses(workspaceName));
             }
 
             foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))

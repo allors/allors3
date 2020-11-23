@@ -6,7 +6,7 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class WorkspaceStrategy : Strategy
     {

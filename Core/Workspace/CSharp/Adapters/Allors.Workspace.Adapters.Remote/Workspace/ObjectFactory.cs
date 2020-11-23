@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class ObjectFactory : IObjectFactory
     {

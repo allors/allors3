@@ -5,11 +5,11 @@
 
 namespace Allors.Database.Server.Controllers
 {
-    using Allors.Database.Domain;
-    using Allors.Services;
+    using Domain;
+    using Services;
     using Microsoft.AspNetCore.Mvc;
     using Database;
-    using Database.Protocol.Json;
+    using Protocol.Json;
     
 
     public class TestNoTreeController : Controller

@@ -10,15 +10,15 @@ namespace Allors.Database.Server.Controllers
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
-    using Allors.Database.Domain;
-    using Allors.Services;
+    using Domain;
+    using Services;
     using Database;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using SkiaSharp;
-    using ISession = Database.ISession;
+    using ISession = ISession;
 
     public abstract partial class BaseImageController : Controller
     {

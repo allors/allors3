@@ -8,7 +8,7 @@ namespace Allors.Workspace
 {
     using System.Collections.Generic;
 
-    using Allors.Workspace.Meta;
+    using Meta;
 
     /// <summary>
     /// A change set is created during a checkpoint

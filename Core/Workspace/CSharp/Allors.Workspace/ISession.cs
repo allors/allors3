@@ -6,8 +6,8 @@
 namespace Allors.Workspace
 {
     using System.Threading.Tasks;
-    using Allors.Workspace.Data;
-    using Allors.Workspace.Meta;
+    using Data;
+    using Meta;
     using System.Collections.Generic;
 
     public interface ISession

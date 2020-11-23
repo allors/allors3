@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.Npgsql
 
     using Adapters;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// Writes all relations from a <see cref="IRelationType"/> with a <see cref="IRoleType"/> with multiplicity of many

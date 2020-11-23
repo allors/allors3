@@ -109,7 +109,10 @@ namespace Allors.Workspace.Adapters.Local
             return loadResult;
         }
 
-        public async Task<ILoadResult> Load(string service, object args) => throw new NotImplementedException();
+        public async Task<ILoadResult> Load(string service, object args)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Reset()
         {

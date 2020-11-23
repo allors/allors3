@@ -6,7 +6,8 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Allors.Database.Meta;
+    using System.Collections.Generic;
+    using Meta;
 
     public partial interface IMetaCache
     {
@@ -15,5 +16,7 @@ namespace Allors.Database.Domain
         RoleType[] GetUniqueRoleTypes(IClass @class);
 
         Type GetBuilderType(IClass @class);
+
+        ISet<IClass> GetWorkspaceClasses(string workspaceName);
     }
 }

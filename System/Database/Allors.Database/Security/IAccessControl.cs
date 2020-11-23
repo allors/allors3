@@ -11,5 +11,7 @@ namespace Allors.Database.Security
     public interface IAccessControl
     {
         IStrategy Strategy { get; }
+
+        IPermission[] Permissions { get; }
     }
 }

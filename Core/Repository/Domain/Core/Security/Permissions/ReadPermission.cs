@@ -8,7 +8,7 @@ namespace Allors.Repository
 {
     using System;
 
-    using Allors.Repository.Attributes;
+    using Attributes;
 
     #region Allors
     [Id("0716C285-841C-419B-A8C4-A67BFA585CDA")]

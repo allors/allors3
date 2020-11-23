@@ -6,7 +6,7 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
-    using Allors.Database.Domain;
+    using Domain;
 
     public static partial class SerialisedItemExtensions
     {

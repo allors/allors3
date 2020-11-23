@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public abstract class ObjectBuilder<T> : IObjectBuilder where T : Domain.Object
+    public abstract class ObjectBuilder<T> : IObjectBuilder where T : Object
     {
         private bool built;
         private Exception exception;

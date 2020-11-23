@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Apps\Database\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\Core\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\..\Allors\Allors.csproj" />
+    <ProjectReference Include="..\..\Database\Allors.Database\Allors.Database.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+</Project>

@@ -11,7 +11,7 @@ namespace Allors.Database
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// The Extent of a <see cref="IObjectType"/> is the set of all objects that either

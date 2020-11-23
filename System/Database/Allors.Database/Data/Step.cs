@@ -9,7 +9,7 @@ namespace Allors.Database.Data
     using System.Collections;
     using System.Collections.Generic;
     using System.Text;
-    using Allors.Database.Meta;
+    using Meta;
     using Security;
 
     public class Step : IVisitable

@@ -3,7 +3,7 @@ namespace Allors.Database.Server.Controllers
     using System;
     using System.IO;
     using Allors.Server;
-    using Allors.Services;
+    using Services;
     using Configuration;
     using Database;
     using Domain;

@@ -5,9 +5,9 @@
 
 namespace Allors.Database.Server.Controllers
 {
-    using Allors.Database.Domain;
-    using Allors.Services;
-    using Database.Protocol.Json;
+    using Domain;
+    using Services;
+    using Protocol.Json;
     using Microsoft.AspNetCore.Mvc;
 
     public class OrganisationContactRelationshipController : Controller

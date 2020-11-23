@@ -11,7 +11,7 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using Allors.Security;
+    using Security;
     using Protocol.Json.Auth;
 
     public class TestAuthenticationController : Controller

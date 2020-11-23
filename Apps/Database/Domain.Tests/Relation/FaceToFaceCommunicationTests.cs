@@ -78,7 +78,7 @@ namespace Allors.Database.Domain.Tests
             participant2.Delete();
             this.Session.Derive();
 
-            Assert.Equal(0, this.Session.Extent<FaceToFaceCommunication>().Count);
+            Assert.Empty(this.Session.Extent<FaceToFaceCommunication>());
         }
     }
 

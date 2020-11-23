@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Collections.Generic;
-    using Allors.Workspace.Meta;
+    using Meta;
     using System.Linq;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api;

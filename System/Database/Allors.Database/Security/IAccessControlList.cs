@@ -6,7 +6,7 @@
 namespace Allors.Database.Security
 {
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// List of permissions for an object/user combination.

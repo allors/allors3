@@ -7,7 +7,7 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Domain.Derivations;
+    using Derivations;
 
     public static partial class ISessionExtensions
     {

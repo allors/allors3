@@ -22,7 +22,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
 
 
     public class SerializationTest : Adapters.SerializationTest

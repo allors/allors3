@@ -7,7 +7,7 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Allors.Database.Meta;
+    using Meta;
 
     public static class IObjectTypeExtensions
     {

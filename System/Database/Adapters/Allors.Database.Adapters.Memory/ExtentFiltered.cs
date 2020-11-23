@@ -7,7 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal sealed class ExtentFiltered : Extent
     {

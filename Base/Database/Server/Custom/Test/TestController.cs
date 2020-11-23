@@ -6,8 +6,8 @@
 namespace Allors.Database.Server.Controllers
 {
     using System;
-    using Allors.Database.Domain;
-    using Allors.Services;
+    using Domain;
+    using Services;
     using Database;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

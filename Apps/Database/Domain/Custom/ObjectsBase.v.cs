@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             this.CustomSetup(setup);
         }
 
-        public void Secure(Domain.Security security)
+        public void Secure(Security security)
         {
             this.CoreSecure(security);
             this.AppsSecure(security);

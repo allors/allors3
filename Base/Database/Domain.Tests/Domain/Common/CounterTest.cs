@@ -9,7 +9,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Allors.Database.Domain;
+    using Domain;
     using Xunit;
 
     public class CounterTest : DomainTest, IClassFixture<Fixture>

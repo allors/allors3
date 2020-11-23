@@ -9,8 +9,8 @@ namespace Allors.Workspace.Derivations.Default
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using Allors.Workspace.Data;
-    using Allors.Workspace.Meta;
+    using Data;
+    using Meta;
     using Domain;
 
     public class DomainDerive

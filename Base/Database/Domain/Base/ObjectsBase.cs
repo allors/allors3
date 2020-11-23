@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        protected virtual void BaseSecure(Domain.Security security)
+        protected virtual void BaseSecure(Security security)
         {
         }
     }

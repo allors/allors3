@@ -7,7 +7,7 @@ namespace Allors.Database.Data
 {
     using System;
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
     
     public class Exists : IPropertyPredicate
     {

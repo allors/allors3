@@ -7,7 +7,7 @@ namespace Allors.Database.Data
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Database.Data;
+    using Data;
 
     public class Or : ICompositePredicate
     {

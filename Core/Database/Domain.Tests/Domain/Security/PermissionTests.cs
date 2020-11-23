@@ -8,8 +8,8 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Linq;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Domain;
+    using Meta;
     using Xunit;
 
     public class PermissionTests : DomainTest, IClassFixture<Fixture>

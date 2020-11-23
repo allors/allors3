@@ -3,7 +3,7 @@
   <Class Name="Allors.Workspace.Data.Pull">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>UIAAAAAAAAAAAAAgAAAAAAAACAAAAAAAIIAACAAAAAA=</HashCode>
+      <HashCode>UIAAAAAAAAAAAAAgAAAAAAAACAAAAAAAAIAACAAAAAA=</HashCode>
       <FileName>Data\Pull.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -41,6 +41,7 @@
       <HashCode>AIAAAAAAAAAAAAAAAAAAAAAQAAACAAAAAIAAAAAAAAA=</HashCode>
       <FileName>Data\Except.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Data.Extent" Collapsed="true">
     <Position X="8" Y="3.75" Width="1.5" />

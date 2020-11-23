@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.Tests
             this.InstantiateObjects(this.Session);
 
             Assert.Single(this.supplierRelationship.Supplier.ContactsUserGroup.Members);
-            Assert.True(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(this.contact));
+            Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
         }
 
         [Fact]
@@ -155,14 +155,14 @@ namespace Allors.Database.Domain.Tests
             this.InstantiateObjects(this.Session);
 
             Assert.Single(this.supplierRelationship.Supplier.ContactsUserGroup.Members);
-            Assert.True(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(this.contact));
+            Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
 
             this.organisationContactRelationship.FromDate = this.Session.Now().AddDays(+1);
             this.organisationContactRelationship.RemoveThroughDate();
 
             this.Session.Derive();
 
-            Assert.Equal(0, this.supplierRelationship.Supplier.ContactsUserGroup.Members.Count);
+            Assert.Empty(this.supplierRelationship.Supplier.ContactsUserGroup.Members);
 
             this.organisationContactRelationship.FromDate = this.Session.Now().AddSeconds(-1);
             this.organisationContactRelationship.RemoveThroughDate();
@@ -170,14 +170,14 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Single(this.supplierRelationship.Supplier.ContactsUserGroup.Members);
-            Assert.True(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(this.contact));
+            Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
 
             this.organisationContactRelationship.FromDate = this.Session.Now().AddDays(-2);
             this.organisationContactRelationship.ThroughDate = this.Session.Now().AddDays(-1);
 
             this.Session.Derive();
 
-            Assert.Equal(0, this.supplierRelationship.Supplier.ContactsUserGroup.Members.Count);
+            Assert.Empty(this.supplierRelationship.Supplier.ContactsUserGroup.Members);
         }
 
         [Fact]
@@ -195,16 +195,16 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(2, this.supplierRelationship.Supplier.ContactsUserGroup.Members.Count);
-            Assert.True(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(this.contact));
-            Assert.True(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contact2));
+            Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
+            Assert.Contains(contact2, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
 
             contactRelationship2.ThroughDate = this.Session.Now().AddDays(-1);
 
             this.Session.Derive();
 
             Assert.Single(this.supplierRelationship.Supplier.ContactsUserGroup.Members);
-            Assert.True(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(this.contact));
-            Assert.False(this.supplierRelationship.Supplier.ContactsUserGroup.Members.Contains(contact2));
+            Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
+            Assert.DoesNotContain(contact2, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
         }
 
         [Fact]
@@ -216,7 +216,7 @@ namespace Allors.Database.Domain.Tests
             this.supplierRelationship.FromDate = this.Session.Now().AddDays(1);
             this.Session.Derive();
 
-            Assert.False(this.InternalOrganisation.ActiveSuppliers.Contains(this.supplier));
+            Assert.DoesNotContain(this.supplier, this.InternalOrganisation.ActiveSuppliers);
         }
 
         [Fact]
@@ -227,7 +227,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.False(this.InternalOrganisation.ActiveSuppliers.Contains(this.supplier));
+            Assert.DoesNotContain(this.supplier, this.InternalOrganisation.ActiveSuppliers);
         }
 
         private void InstantiateObjects(ISession session)

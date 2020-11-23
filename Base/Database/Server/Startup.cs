@@ -7,9 +7,9 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Text;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
-    using Allors.Services;
+    using Database.Domain;
+    using Database.Meta;
+    using Services;
     using Security;
     using JSNLog;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,7 +22,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
     using ObjectFactory = Database.ObjectFactory;
-    using Allors.Database.Adapters;
+    using Database.Adapters;
     using Database;
     using Database.Configuration;
 

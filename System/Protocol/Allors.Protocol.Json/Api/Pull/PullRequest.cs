@@ -7,7 +7,7 @@ namespace Allors.Protocol.Json.Api.Pull
 {
     using System.Text.Json.Serialization;
     using Json;
-    using Json.Data;
+    using Data;
 
     public class PullRequest
     {

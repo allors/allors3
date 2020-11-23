@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public static partial class VersionedExtensions
     {
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
                     {
                         var versionedRole = @this.Strategy.GetRole(versionedRoleType);
                         var versionRole = currentVersion.Strategy.GetRole(versionRoleType);
-                        if (!object.Equals(versionedRole, versionRole))
+                        if (!Equals(versionedRole, versionRole))
                         {
                             isNewVersion = true;
                             break;

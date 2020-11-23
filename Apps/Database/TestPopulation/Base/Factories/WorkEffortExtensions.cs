@@ -6,7 +6,7 @@
 namespace Allors.Database.Domain.TestPopulation
 {
     using System;
-    using Allors.Database.Domain;
+    using Domain;
 
     public static class WorkEffortExtensions
     {

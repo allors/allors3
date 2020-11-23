@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters
 
     using Allors;
 
-    using Allors.Database.Meta;
+    using Meta;
     using Xunit;
 
     /// <summary>
@@ -71,7 +71,7 @@ namespace Allors.Database.Adapters
                         objectsByMetaType[concreteClass] = new ArrayList();
                     }
 
-                    for (var i = 0; i < this.ObjectsPerConcreteClass; i++)
+                    for (var i = 0; i < this.ObjectsPerClass; i++)
                     {
                         foreach (var concreteClass in concreteClasses)
                         {
@@ -81,7 +81,7 @@ namespace Allors.Database.Adapters
 
                     foreach (var t in concreteClasses)
                     {
-                        for (var j = 0; j < this.ObjectsPerConcreteClass; j++)
+                        for (var j = 0; j < this.ObjectsPerClass; j++)
                         {
                             var concreteClass = t;
                             ((ArrayList)objectsByMetaType[concreteClass]).Add(saveSession.Create(concreteClass));
@@ -232,7 +232,7 @@ namespace Allors.Database.Adapters
                         // Interleave AssociationTypes
                         var interleavedAssociations = new ArrayList();
                         var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
-                        for (var i = 0; i < this.ObjectsPerConcreteClass; i++)
+                        for (var i = 0; i < this.ObjectsPerClass; i++)
                         {
                             foreach (var associationType in associationTypes)
                             {
@@ -303,7 +303,7 @@ namespace Allors.Database.Adapters
                         // Interleave AssociationTypes
                         var interleavedAssociations = new ArrayList();
                         var associationTypes = relationType.AssociationType.ObjectType.Classes.ToArray();
-                        for (var i = 0; i < this.ObjectsPerConcreteClass; i++)
+                        for (var i = 0; i < this.ObjectsPerClass; i++)
                         {
                             foreach (var associationType in associationTypes)
                             {

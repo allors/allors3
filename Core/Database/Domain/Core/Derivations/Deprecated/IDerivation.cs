@@ -26,12 +26,12 @@ namespace Allors.Database.Domain
 
         ICycle Cycle { get; }
 
-        ISet<Domain.Object> DerivedObjects { get; }
+        ISet<Object> DerivedObjects { get; }
 
         IValidation Derive();
 
-        void Mark(Domain.Object @object);
+        void Mark(Object @object);
 
-        void Mark(params Domain.Object[] objects);
+        void Mark(params Object[] objects);
     }
 }

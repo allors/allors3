@@ -6,10 +6,10 @@
 namespace Allors.Database.Server.Controllers
 {
     using System;
-    using Allors.Services;
+    using Services;
     using Microsoft.AspNetCore.Mvc;
     using Database;
-    using Database.Protocol.Json;
+    using Protocol.Json;
     using Domain;
 
 

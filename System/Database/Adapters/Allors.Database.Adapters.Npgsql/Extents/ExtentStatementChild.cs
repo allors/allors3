@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Adapters.Npgsql
 {
-    using Allors.Database.Meta;
+    using Meta;
 
     internal class ExtentStatementChild : ExtentStatement
     {

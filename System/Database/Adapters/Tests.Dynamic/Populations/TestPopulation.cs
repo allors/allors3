@@ -20,7 +20,7 @@ namespace Allors.Database.Adapters
 
     using Allors;
 
-    using Allors.Database.Domain;
+    using Domain;
 
     // TODO: One2One (c1->c3 & i12->c3)
     internal sealed class TestPopulation

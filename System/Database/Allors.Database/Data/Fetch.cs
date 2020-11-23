@@ -7,7 +7,7 @@ namespace Allors.Database.Data
 {
     using System;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Security;
 
     public class Fetch : IVisitable

@@ -12,9 +12,9 @@ namespace Allors.Workspace.Adapters.Local
     using Database;
     using Derivations;
     using Meta;
-    using IChangeSet = Allors.Workspace.IChangeSet;
-    using IObjectFactory = Allors.Workspace.IObjectFactory;
-    using ISession = Allors.Workspace.ISession;
+    using IChangeSet = IChangeSet;
+    using IObjectFactory = IObjectFactory;
+    using ISession = ISession;
 
     public class Workspace : IWorkspace
     {

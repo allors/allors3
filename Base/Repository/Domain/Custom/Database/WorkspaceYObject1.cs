@@ -5,13 +5,13 @@
 
 namespace Allors.Repository
 {
-    using Allors.Repository.Attributes;
+    using Attributes;
     using static Workspaces;
     
     #region Allors
     [Id("A2B4CABF-66F4-4A65-8C36-D50E6DA30435")]
     #endregion
-    [Workspace(Workspaces.Y)]
+    [Workspace(Y)]
     public partial class WorkspaceYObject1 : Object
     {
         #region inherited properties

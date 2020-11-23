@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.SqlClient
     using System.Linq;
     using System.Text;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public class Mapping
     {

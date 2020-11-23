@@ -16,16 +16,12 @@ namespace Allors.Database.Domain
 
         M M { get; }
 
-        IWorkspaceMetaCache WorkspaceMetaCache { get; set; }
-
         IPrefetchPolicyCache PrefetchPolicyCache { get; }
 
         IPermissionsCache PermissionsCache { get; }
 
-        IEffectivePermissionCache EffectivePermissionCache { get; }
-
-        IWorkspaceEffectivePermissionCache WorkspaceEffectivePermissionCache { get; }
-        
+        IAccessControlCache AccessControlCache { get; }
+       
         IDerivationFactory DerivationFactory { get; }
 
         IPreparedExtents PreparedExtents { get; }

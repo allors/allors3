@@ -9,7 +9,7 @@ namespace Allors.Security
     using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
     using System.Text;
-    using Allors.Database.Domain;
+    using Database.Domain;
     using Database;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;

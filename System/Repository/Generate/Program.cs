@@ -8,7 +8,7 @@ namespace Allors.Tools.Cmd
     using System;
     using System.IO;
 
-    using Allors.Repository;
+    using Repository;
     using Allors.Repository.Roslyn;
 
     using NLog;

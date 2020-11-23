@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
 
     public class PartDerivation : DomainDerivation

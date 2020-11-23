@@ -7,7 +7,7 @@
 namespace Allors.Database
 {
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
 
     /// <summary>
     /// <para> A Predicate is an expression that either returns true, false or unknown (Three Value Logic).

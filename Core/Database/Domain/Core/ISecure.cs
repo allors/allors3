@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public interface ISecure
     {
-        void Secure(Domain.Security security);
+        void Secure(Security security);
     }
 }

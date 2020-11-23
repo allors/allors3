@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters
     using System.Linq;
 
     using Allors;
-    using Allors.Database.Domain;
+    using Domain;
     using Xunit;
 
     public abstract class ChangesTest : IDisposable
@@ -1064,7 +1064,7 @@ namespace Allors.Database.Adapters
                 associations = changes.Associations.ToArray();
                 roles = changes.Roles.ToArray();
 
-                Assert.Equal(1, associations.Length);
+                Assert.Single(associations);
                 Assert.Single(roles);
                 Assert.Empty(changes.GetRoleTypes(c1a.Id));
                 Assert.Single(changes.GetRoleTypes(c1b.Id));

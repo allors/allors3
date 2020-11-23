@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Allors.Database.Domain
 {
-    using Allors.Database.Meta;
+    using Meta;
 
     public partial class CustomerShipments
     {

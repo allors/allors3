@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public IEnumerable<IAccessControl> AccessControls => this.AclByObject.SelectMany(v => v.Value.AccessControls).Distinct();
 
-        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; set; }
+        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get;  }
 
         public User User { get; }
 
@@ -43,16 +43,16 @@ namespace Allors.Database.Domain
 
         private Dictionary<IAccessControl, ISet<long>> EffectivePermissionsByAccessControl()
         {
-            var effectivePermissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
+            var permissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
 
             var session = this.User.Session();
             var database = session.Database;
-            var effectivePermissionCache = database.Context().EffectivePermissionCache;
+            var accessControlCache = database.Context().AccessControlCache;
             
             List<AccessControl> misses = null;
             foreach (AccessControl accessControl in this.User.AccessControlsWhereEffectiveUser)
             {
-                var effectivePermissions = effectivePermissionCache.Get(accessControl.Id);
+                var effectivePermissions = accessControlCache.GetPermissions(accessControl.Id);
                 if (effectivePermissions == null)
                 {
                     misses ??= new List<AccessControl>();
@@ -60,7 +60,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    effectivePermissionsByAccessControl.Add(accessControl, effectivePermissions);
+                    permissionsByAccessControl.Add(accessControl, effectivePermissions);
                 }
             }
 
@@ -80,12 +80,12 @@ namespace Allors.Database.Domain
                 foreach (var accessControl in misses)
                 {
                     var effectivePermissionIds = new HashSet<long>(accessControl.EffectivePermissions.Select(v => v.Id));
-                    effectivePermissionCache.Set(accessControl.Id, effectivePermissionIds);
-                    effectivePermissionsByAccessControl.Add(accessControl, effectivePermissionIds);
+                    accessControlCache.SetPermissions(accessControl.Id, effectivePermissionIds);
+                    permissionsByAccessControl.Add(accessControl, effectivePermissionIds);
                 }
             }
 
-            return effectivePermissionsByAccessControl;
+            return permissionsByAccessControl;
         }
     }
 }

@@ -7,9 +7,9 @@
 namespace Allors.Database.Domain.Derivations
 {
     using System.Collections.Generic;
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Derivations;
-    using Derivations.Errors;
+    using Errors;
 
     public partial class Validation : IValidation
     {

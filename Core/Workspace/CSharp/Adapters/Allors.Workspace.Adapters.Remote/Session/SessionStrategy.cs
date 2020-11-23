@@ -8,7 +8,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Workspace.Meta;
+    using Meta;
 
     public class SessionStrategy : Strategy
     {

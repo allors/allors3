@@ -9,10 +9,10 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Data;
     using Security;
-    using Extent = Database.Extent;
+    using Extent = Extent;
 
     public class PullInstantiate
     {

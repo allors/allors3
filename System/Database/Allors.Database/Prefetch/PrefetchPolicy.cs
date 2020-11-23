@@ -12,7 +12,7 @@ namespace Allors.Database
     using System.Linq;
     using System.Text;
 
-    using Allors.Database.Meta;
+    using Meta;
 
     public sealed class PrefetchPolicy : IEnumerable<PrefetchRule>
     {

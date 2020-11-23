@@ -7,7 +7,7 @@ namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
+    using Meta;
     using Allors.Protocol.Json.Data;
     using Data;
     using Extent = Allors.Protocol.Json.Data.Extent;
@@ -19,7 +19,7 @@ namespace Allors.Database.Protocol.Json
     using Sort = Allors.Protocol.Json.Data.Sort;
     using Step = Allors.Protocol.Json.Data.Step;
 
-    public class ToJsonVisitor : Data.IVisitor
+    public class ToJsonVisitor : IVisitor
     {
         private readonly Stack<Extent> extents;
         private readonly Stack<Predicate> predicates;

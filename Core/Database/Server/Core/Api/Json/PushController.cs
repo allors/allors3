@@ -7,7 +7,7 @@ namespace Allors.Database.Protocol.Json
 {
     using System;
     using Allors.Protocol.Json.Api.Push;
-    using Allors.Services;
+    using Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

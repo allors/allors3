@@ -6,12 +6,12 @@
 namespace Allors.Database.Server.Controllers
 {
     using System.Text;
-    using Allors.Database.Adapters;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
+    using Adapters;
+    using Domain;
+    using Meta;
     using Allors.Security;
     using Allors.Server;
-    using Allors.Services;
+    using Services;
     using Configuration;
     using Database;
     using JSNLog;
@@ -24,7 +24,7 @@ namespace Allors.Database.Server.Controllers
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
-    using ObjectFactory = Database.ObjectFactory;
+    using ObjectFactory = ObjectFactory;
 
     public class Startup
     {
@@ -79,8 +79,8 @@ namespace Allors.Database.Server.Controllers
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             // Allors
-            var databaseState = new DefaultDatabaseContext(httpContextAccessor);
-            var databaseBuilder = new DatabaseBuilder(databaseState, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
+            var defaultDatabaseContext = new DefaultDatabaseContext(httpContextAccessor);
+            var databaseBuilder = new DatabaseBuilder(defaultDatabaseContext, this.Configuration, new ObjectFactory(new MetaBuilder().Build(), typeof(User)));
             var database = databaseBuilder.Build();
             database.RegisterDerivations();
 

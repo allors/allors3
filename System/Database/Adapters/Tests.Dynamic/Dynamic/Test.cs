@@ -24,11 +24,11 @@ namespace Allors.Database.Adapters
     using System.Xml;
 
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
 
     public abstract class Test : IDisposable
     {
-        protected readonly int ObjectsPerConcreteClass = 5;
+        protected readonly int ObjectsPerClass = 5;
         protected readonly TestValueGenerator ValueGenerator = new TestValueGenerator();
         private readonly bool[] boolFlags = { false, true };
 
@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters
         // int[] repeats = { 1, 2 };
         // int[] testRepeats = { 1, 2 };
         // int[] assertRepeats = { 1, 2 };
-        // private int objectsPerConcreteClass = 100;
+        // private int objectsPerClass = 100;
 
         // Quick
         private readonly int[] repeats = { 1 };

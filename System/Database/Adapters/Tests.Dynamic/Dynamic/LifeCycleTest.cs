@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters
     using System.Globalization;
     using System.Linq;
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
     using Xunit;
 
     public abstract class LifeCycleTest : Test
@@ -530,7 +530,7 @@ namespace Allors.Database.Adapters
                                                                     Assert.Equal(roles[1], associations[2].Strategy.GetRole(relationType.RoleType));
 
                                                                     Assert.Empty(((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType)));
-                                                                    Assert.Equal(1, ((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
+                                                                    Assert.Single(((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                                     Assert.Equal(associations[2], ((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType))[0]);
 
                                                                     if (useRollbackFlag)
@@ -575,7 +575,7 @@ namespace Allors.Database.Adapters
 
                                                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                                                 {
-                                                                    Assert.Equal(null, associations[0].Strategy.GetRole(relationType.RoleType));
+                                                                    Assert.Null(associations[0].Strategy.GetRole(relationType.RoleType));
                                                                     var exceptionThrown = false;
                                                                     try
                                                                     {
@@ -925,9 +925,9 @@ namespace Allors.Database.Adapters
                                                                     Assert.Contains(roles[2], association1Roles);
 
                                                                     Assert.Empty(((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType)));
-                                                                    Assert.Equal(1, ((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
+                                                                    Assert.Single(((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                                     Assert.Equal(associations[1], ((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType))[0]);
-                                                                    Assert.Equal(1, ((IObject[])roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
+                                                                    Assert.Single(((IObject[])roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                                     Assert.Equal(associations[1], ((IObject[])roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType))[0]);
 
                                                                     if (useRollbackFlag)
@@ -985,7 +985,7 @@ namespace Allors.Database.Adapters
                                                                     Assert.True(exceptionThrown);
 
                                                                     IObject[] association0Roles = associations[0].Strategy.GetCompositeRoles(relationType.RoleType);
-                                                                    Assert.Equal(1, association0Roles.Count());
+                                                                    Assert.Single(association0Roles);
                                                                     Assert.Contains(roles[1], association0Roles);
 
                                                                     IObject[] association1Roles = associations[1].Strategy.GetCompositeRoles(relationType.RoleType);
@@ -997,7 +997,7 @@ namespace Allors.Database.Adapters
                                                                     Assert.Contains(associations[0], (IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType));
                                                                     Assert.Contains(associations[1], (IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType));
 
-                                                                    Assert.Equal(1, ((IObject[])roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
+                                                                    Assert.Single(((IObject[])roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                                     Assert.Equal(associations[1], ((IObject[])roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType))[0]);
 
                                                                     if (useRollbackFlag)
@@ -1454,7 +1454,7 @@ namespace Allors.Database.Adapters
                                                                 Assert.Equal(roles[1], associations[1].Strategy.GetRole(relationType.RoleType));
                                                                 Assert.Equal(roles[1], associations[2].Strategy.GetRole(relationType.RoleType));
 
-                                                                Assert.Equal(1, ((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
+                                                                Assert.Single(((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                                 Assert.Equal(associations[0], ((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType))[0]);
                                                                 Assert.Equal(2, ((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
                                                                 Assert.Contains(associations[1], (IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType));
@@ -1506,7 +1506,7 @@ namespace Allors.Database.Adapters
                                                                 Assert.Equal(roles[1], associations[1].Strategy.GetRole(relationType.RoleType));
                                                                 Assert.Equal(roles[1], associations[2].Strategy.GetRole(relationType.RoleType));
 
-                                                                Assert.Equal(1, ((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
+                                                                Assert.Single(((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType)));
                                                                 Assert.Equal(associations[0], ((IObject[])roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType))[0]);
                                                                 Assert.Equal(2, ((IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType)).Count());
                                                                 Assert.Contains(associations[1], (IObject[])roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType));
@@ -1601,7 +1601,7 @@ namespace Allors.Database.Adapters
                                                                 Assert.Contains(roles[1], association0Roles);
 
                                                                 IObject[] association1Roles = associations[1].Strategy.GetCompositeRoles(relationType.RoleType);
-                                                                Assert.Equal(1, association1Roles.Count());
+                                                                Assert.Single(association1Roles);
                                                                 Assert.Contains(roles[2], association1Roles);
 
                                                                 Assert.Equal(associations[0], roles[0].Strategy.GetCompositeAssociation(relationType.AssociationType));
@@ -1657,7 +1657,7 @@ namespace Allors.Database.Adapters
                                                                 Assert.Contains(roles[1], association0Roles);
 
                                                                 IObject[] association1Roles = associations[1].Strategy.GetCompositeRoles(relationType.RoleType);
-                                                                Assert.Equal(1, association1Roles.Count());
+                                                                Assert.Single(association1Roles);
                                                                 Assert.Contains(roles[2], association1Roles);
 
                                                                 Assert.Equal(associations[0], roles[0].Strategy.GetCompositeAssociation(relationType.AssociationType));
@@ -1750,14 +1750,14 @@ namespace Allors.Database.Adapters
                                                                 Assert.Contains(roles[2], association1Roles);
 
                                                                 IObject[] role0Associations = roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType);
-                                                                Assert.Equal(1, role0Associations.Count());
+                                                                Assert.Single(role0Associations);
                                                                 Assert.Equal(associations[0], role0Associations[0]);
                                                                 IObject[] role1Associations = roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType);
                                                                 Assert.Equal(2, role1Associations.Count());
                                                                 Assert.Contains(associations[0], role1Associations);
                                                                 Assert.Contains(associations[1], role1Associations);
                                                                 IObject[] role2Associations = roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType);
-                                                                Assert.Equal(1, role2Associations.Count());
+                                                                Assert.Single(role2Associations);
                                                                 Assert.Equal(associations[1], role2Associations[0]);
 
                                                                 if (useRollbackFlag)
@@ -1813,14 +1813,14 @@ namespace Allors.Database.Adapters
                                                                 Assert.Contains(roles[2], association1Roles);
 
                                                                 IObject[] role0Associations = roles[0].Strategy.GetCompositeAssociations(relationType.AssociationType);
-                                                                Assert.Equal(1, role0Associations.Count());
+                                                                Assert.Single(role0Associations);
                                                                 Assert.Equal(associations[0], role0Associations[0]);
                                                                 IObject[] role1Associations = roles[1].Strategy.GetCompositeAssociations(relationType.AssociationType);
                                                                 Assert.Equal(2, role1Associations.Count());
                                                                 Assert.Contains(associations[0], role1Associations);
                                                                 Assert.Contains(associations[1], role1Associations);
                                                                 IObject[] role2Associations = roles[2].Strategy.GetCompositeAssociations(relationType.AssociationType);
-                                                                Assert.Equal(1, role2Associations.Count());
+                                                                Assert.Single(role2Associations);
                                                                 Assert.Equal(associations[1], role2Associations[0]);
                                                             }
 

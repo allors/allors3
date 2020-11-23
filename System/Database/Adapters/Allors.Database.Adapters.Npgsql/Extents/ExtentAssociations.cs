@@ -10,7 +10,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Collections.Generic;
 
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
 
     internal class ExtentAssociations : Extent
     {

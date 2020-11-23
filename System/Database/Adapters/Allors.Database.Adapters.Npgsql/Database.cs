@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.Npgsql
     using System.Linq;
     using System.Xml;
     using Allors;
-    using Allors.Database.Meta;
+    using Meta;
     using Caching;
     using Derivations;
     using global::Npgsql;
@@ -275,7 +275,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         ISession IDatabase.CreateSession() => this.CreateSession();
 
-        internal bool ContainsConcreteClass(IObjectType container, IObjectType containee)
+        internal bool ContainsClass(IObjectType container, IObjectType containee)
         {
             if (container.IsClass)
             {

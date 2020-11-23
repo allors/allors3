@@ -30,7 +30,7 @@ namespace Tests
 
             var data = new DataBuilder(this.Session).WithString("First").Build();
             var permissions = new Permissions(this.Session).Extent();
-            var permission = permissions.First(v => Equals(v.ConcreteClass, this.M.Data.Class));
+            var permission = permissions.First(v => Equals(v.Class, this.M.Data.Class));
             data.AddDeniedPermission(permission);
 
             this.Session.Commit();

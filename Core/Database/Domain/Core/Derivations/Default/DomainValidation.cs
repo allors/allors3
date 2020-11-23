@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Domain.Derivations.Default
 {
-    using Allors.Database.Domain.Derivations.Errors;
+    using Errors;
     using Database.Derivations;
 
     public class DomainValidation : IDomainValidation

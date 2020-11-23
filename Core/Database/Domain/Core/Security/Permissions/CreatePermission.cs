@@ -8,13 +8,13 @@ namespace Allors.Database.Domain
     using System.Text;
     using System.Linq;
 
-    using Allors.Database.Meta;
+    using Meta;
     using Database.Security;
 
     public partial class CreatePermission : ICreatePermission
     {
-        IClass IPermission.ConcreteClass => this.ConcreteClass;
-        public Class ConcreteClass
+        IClass IPermission.Class => this.Class;
+        public Class Class
         {
             get => (Class)this.Strategy.Session.Database.MetaPopulation.Find(this.ClassPointer);
 
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public bool ExistConcreteClass => this.ConcreteClass != null;
+        public bool ExistClass => this.Class != null;
 
         public bool ExistOperandType => true;
 
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public bool InWorkspace(string workspaceName) => this.ConcreteClass.WorkspaceNames.Contains(workspaceName);
+        public bool InWorkspace(string workspaceName) => this.Class.WorkspaceNames.Contains(workspaceName);
         
         public override string ToString()
         {
