@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("066bf242-2710-4a68-8ff6-ce4d7d88a04a")]
     #endregion
-    public partial interface Quote : Transitional, WorkItem, Printable, Auditable, Commentable, Deletable
+    public partial interface Quote : Transitional, WorkItem, Printable, Auditable, Commentable, Localised, Deletable
     {
         #region ObjectStates
         #region QuoteState
@@ -118,7 +118,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
         [Workspace(Default)]
-        ContactMechanism FullfillContactMechanism { get; set; }
+        ContactMechanism AssignedFullfillContactMechanism { get; set; }
+
+        #region Allors
+        [Id("70f658f4-a3ba-4157-b47f-3edda4c86948")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        ContactMechanism DerivedFullfillContactMechanism { get; set; }
 
         #region Allors
         [Id("37D046B8-3804-4912-9B53-C98D66A67BC0")]
@@ -166,6 +174,14 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         IrpfRegime AssignedIrpfRegime { get; set; }
+
+        #region Allors
+        [Id("37726ca4-936c-4dcc-b07a-a20c483f5890")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public Locale DerivedLocale { get; set; }
 
         #region Allors
         [Id("7f8b987f-85fd-44f9-8218-1f4d136e4d1d")]
@@ -301,7 +317,15 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        Currency Currency { get; set; }
+        Currency AssignedCurrency { get; set; }
+
+        #region Allors
+        [Id("0e251edc-35aa-499e-89f3-acc28ab82e6e")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        Currency DerivedCurrency { get; set; }
 
         #region Allors
         [Id("d7dc81e8-76e7-4c68-9843-a2aaf8293510")]

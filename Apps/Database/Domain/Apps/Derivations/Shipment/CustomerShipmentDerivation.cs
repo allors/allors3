@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
                 if (!@this.ExistShipmentNumber && @this.ExistStore)
                 {
                     @this.ShipmentNumber = @this.Store.NextShipmentNumber();
-                    @this.SortableShipmentNumber = NumberFormatter.SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.CreationDate.Value.Year.ToString());
+                    @this.SortableShipmentNumber = NumberFormatter.SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.Strategy.Session.Now().Year.ToString());
                 }
 
                 var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();

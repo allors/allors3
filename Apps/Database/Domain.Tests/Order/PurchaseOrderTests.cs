@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
-            builder.WithTakenViaContactMechanism(takenViaContactMechanism);
+            builder.WithAssignedTakenViaContactMechanism(takenViaContactMechanism);
             builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -108,7 +108,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(this.Session.GetSingleton().DefaultLocale, order.Locale);
+            Assert.Equal(order.OrderedBy.Locale, order.DerivedLocale);
         }
 
         [Fact]

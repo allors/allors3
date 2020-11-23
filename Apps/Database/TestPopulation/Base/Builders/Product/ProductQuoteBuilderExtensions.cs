@@ -18,7 +18,6 @@ namespace Allors.Database.Domain.TestPopulation
             var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
 
             @this.WithContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithFullfillContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
             @this.WithDescription(faker.Lorem.Sentence());
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());

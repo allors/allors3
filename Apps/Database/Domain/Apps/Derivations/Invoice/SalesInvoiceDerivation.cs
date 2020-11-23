@@ -28,6 +28,12 @@ namespace Allors.Database.Domain
             new ChangedPattern(this.M.SalesInvoice.AssignedVatClause),
             new ChangedPattern(this.M.SalesInvoice.InvoiceDate),
             new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
+            new ChangedPattern(this.M.SalesInvoice.AssignedCurrency),
+            new ChangedPattern(this.M.SalesInvoice.Locale),
+            new ChangedPattern(this.M.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
+            new ChangedPattern(this.M.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
+            new ChangedPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
+            new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
             new ChangedPattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
             new ChangedPattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
             new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
@@ -62,63 +68,25 @@ namespace Allors.Database.Domain
                     @this.Store = stores.FirstOrDefault();
                 }
 
+                if (@this.SalesInvoiceState.IsReadyForPosting)
+                {
+                    @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.BilledFrom?.Locale;
+                    @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.BilledFrom?.PreferredCurrency;
+                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
+                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
+                    @this.DerivedBilledFromContactMechanism = @this.AssignedBilledFromContactMechanism ?? @this.BilledFrom?.BillingAddress ?? @this.BilledFrom?.GeneralCorrespondence;
+                    @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.BillToCustomer?.BillingAddress;
+                    @this.DerivedBillToEndCustomerContactMechanism = @this.AssignedBillToEndCustomerContactMechanism ?? @this.BillToEndCustomer?.BillingAddress;
+                    @this.DerivedShipToEndCustomerAddress = @this.AssignedShipToEndCustomerAddress ?? @this.ShipToEndCustomer?.ShippingAddress;
+                    @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
+                }
+
                 if (!@this.ExistInvoiceNumber && @this.ExistStore)
                 {
                     @this.InvoiceNumber = @this.Store.NextTemporaryInvoiceNumber();
                     @this.SortableInvoiceNumber = NumberFormatter.SortableNumber(null, @this.InvoiceNumber, @this.InvoiceDate.Year.ToString());
                 }
 
-                if (!@this.ExistBilledFromContactMechanism && @this.ExistBilledFrom)
-                {
-                    @this.BilledFromContactMechanism = @this.BilledFrom.ExistBillingAddress ? @this.BilledFrom.BillingAddress : @this.BilledFrom.GeneralCorrespondence;
-                }
-
-                if (!@this.ExistBillToContactMechanism && @this.ExistBillToCustomer)
-                {
-                    @this.BillToContactMechanism = @this.BillToCustomer.BillingAddress;
-                }
-
-                if (!@this.ExistBillToEndCustomerContactMechanism && @this.ExistBillToEndCustomer)
-                {
-                    @this.BillToEndCustomerContactMechanism = @this.BillToEndCustomer.BillingAddress;
-                }
-
-                if (!@this.ExistShipToEndCustomerAddress && @this.ExistShipToEndCustomer)
-                {
-                    @this.ShipToEndCustomerAddress = @this.ShipToEndCustomer.ShippingAddress;
-                }
-
-                if (!@this.ExistShipToAddress && @this.ExistShipToCustomer)
-                {
-                    @this.ShipToAddress = @this.ShipToCustomer.ShippingAddress;
-                }
-
-                if (@this.ExistBillToCustomer && @this.BillToCustomer.ExistLocale)
-                {
-                    @this.Locale = @this.BillToCustomer.Locale;
-                }
-                else
-                {
-                    @this.Locale = @this.DefaultLocale;
-                }
-
-                if (!@this.ExistCurrency
-                    && (@this.ExistBilledFrom || @this.ExistBillToCustomer))
-                {
-                    if (@this.ExistBillToCustomer && (@this.BillToCustomer.ExistPreferredCurrency || @this.BillToCustomer.ExistLocale))
-                    {
-                        @this.Currency = @this.BillToCustomer.ExistPreferredCurrency ? @this.BillToCustomer.PreferredCurrency : @this.BillToCustomer.Locale.Country.Currency;
-                    }
-                    else
-                    {
-                        @this.Currency = @this.BilledFrom.ExistPreferredCurrency ?
-                            @this.BilledFrom.PreferredCurrency :
-                            @this.DefaultCurrency;
-                    }
-                }
-
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
                 @this.IsRepeatingInvoice = @this.ExistRepeatingSalesInvoiceWhereSource
                         && (!@this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate
                             || @this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= @this.Strategy.Session.Now().Date);

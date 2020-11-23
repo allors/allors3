@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.Request.Recipient),
+                new ChangedPattern(this.M.Request.AssignedCurrency),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -40,6 +41,8 @@ namespace Allors.Database.Domain
                     @this.RequestNumber = @this.Recipient.NextRequestNumber(session.Now().Year);
                     (@this).SortableRequestNumber = NumberFormatter.SortableNumber(@this.Recipient.RequestNumberPrefix, @this.RequestNumber, @this.RequestDate.Year.ToString());
                 }
+
+                @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Originator?.PreferredCurrency ?? @this.Recipient?.PreferredCurrency;
 
                 if (@this.ExistRequestState && @this.RequestState.Equals(new RequestStates(session).Anonymous) && @this.ExistOriginator)
                 {

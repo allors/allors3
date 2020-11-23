@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 
             this.Contact = invoice.BilledToContactPerson?.PartyName;
 
-            var shipToAddress = invoice.ShipToCustomerAddress ??
+            var shipToAddress = invoice.DerivedShipToCustomerAddress ??
                                 invoice.BilledTo?.ShippingAddress ??
                                 invoice.BilledTo?.GeneralCorrespondence;
 

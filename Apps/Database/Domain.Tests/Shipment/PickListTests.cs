@@ -541,7 +541,7 @@ namespace Allors.Database.Domain.Tests
             var order1 = new SalesOrderBuilder(this.Session)
                 .WithStore(store1)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(mechelenAddress)
+                .WithAssignedBillToContactMechanism(mechelenAddress)
                 .WithShipToCustomer(customer)
                 .Build();
 

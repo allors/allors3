@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
             this.TotalIrpf = order.TotalIrpf.ToString("N2", new CultureInfo("nl-BE"));
             this.TotalIncVat = order.TotalIncVat.ToString("N2", new CultureInfo("nl-BE"));
 
-            var currencyIsoCode = order.Currency.IsoCode;
+            var currencyIsoCode = order.DerivedCurrency.IsoCode;
             this.GrandTotal = currencyIsoCode + " " + order.GrandTotal.ToString("N2", new CultureInfo("nl-BE"));
         }
 

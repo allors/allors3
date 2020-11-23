@@ -133,12 +133,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsOnBuild(ObjectOnBuild method)
-        {
-            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
-            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
-        }
-
         public void AppsOnInit(ObjectOnInit method)
         {
             this.OrderDate = this.Session().Now();
@@ -161,9 +155,9 @@ namespace Allors.Database.Domain
                 }
             }
 
-            if (!this.ExistCurrency)
+            if (!this.ExistDerivedCurrency)
             {
-                this.Currency = this.OrderedBy?.PreferredCurrency;
+                this.DerivedCurrency = this.OrderedBy?.PreferredCurrency;
             }
 
             if (!this.ExistStoredInFacility && this.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
@@ -254,7 +248,7 @@ namespace Allors.Database.Domain
                 var shipment = new PurchaseShipmentBuilder(session)
                     .WithShipmentMethod(new ShipmentMethods(session).Ground)
                     .WithShipToParty(this.OrderedBy)
-                    .WithShipToAddress(this.ShipToAddress)
+                    .WithShipToAddress(this.DerivedShipToAddress)
                     .WithShipFromParty(this.TakenViaSupplier)
                     .WithShipToFacility(this.StoredInFacility)
                     .Build();
@@ -328,7 +322,7 @@ namespace Allors.Database.Domain
             {
                 var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Session)
                     .WithBilledFrom(this.TakenViaSupplier)
-                    .WithBilledFromContactMechanism(this.TakenViaContactMechanism)
+                    .WithAssignedBilledFromContactMechanism(this.DerivedTakenViaContactMechanism)
                     .WithBilledFromContactPerson(this.TakenViaContactPerson)
                     .WithBilledTo(this.OrderedBy)
                     .WithBilledToContactPerson(this.BillToContactPerson)

@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -56,7 +56,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Rollback();
 
-            builder.WithBillToContactMechanism(billToContactMechanism);
+            builder.WithAssignedBillToContactMechanism(billToContactMechanism);
             var invoice = builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -140,7 +140,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(billToContactMechanism)
+                .WithAssignedBillToContactMechanism(billToContactMechanism)
                 .Build();
 
             Assert.True(this.Session.Derive(false).HasErrors);
@@ -166,7 +166,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -193,7 +193,7 @@ namespace Allors.Database.Domain.Tests
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(billtoCcustomer)
                 .WithShipToCustomer(shipToCustomer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -224,7 +224,7 @@ namespace Allors.Database.Domain.Tests
             var invoice1 = new SalesInvoiceBuilder(this.Session)
                 .WithStore(store)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -235,7 +235,7 @@ namespace Allors.Database.Domain.Tests
             var invoice2 = new SalesInvoiceBuilder(this.Session)
                 .WithStore(store)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -311,7 +311,7 @@ namespace Allors.Database.Domain.Tests
             var invoice1 = new SalesInvoiceBuilder(this.Session)
                 .WithStore(store)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -326,7 +326,7 @@ namespace Allors.Database.Domain.Tests
             var invoice2 = new SalesInvoiceBuilder(this.Session)
                 .WithStore(store)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -359,7 +359,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithStore(store)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -392,7 +392,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithStore(store)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -430,7 +430,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -438,7 +438,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(this.InternalOrganisation.BillingAddress, invoice.BilledFromContactMechanism);
+            Assert.Equal(this.InternalOrganisation.BillingAddress, invoice.DerivedBilledFromContactMechanism);
         }
 
         [Fact]
@@ -463,7 +463,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(billingAddress.ContactMechanism, invoice.BillToContactMechanism);
+            Assert.Equal(billingAddress.ContactMechanism, invoice.DerivedBillToContactMechanism);
         }
 
         [Fact]
@@ -482,12 +482,12 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(billToContactMechanismMechelen)
+                .WithAssignedBillToContactMechanism(billToContactMechanismMechelen)
                 .Build();
 
             this.Session.Derive();
 
-            Assert.Equal(euro, invoice.Currency);
+            Assert.Equal(euro, invoice.DerivedCurrency);
         }
 
         [Fact]
@@ -510,14 +510,14 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(customer)
                 .WithShipToCustomer(customer)
-                .WithBillToContactMechanism(shipToContactMechanism)
+                .WithAssignedBillToContactMechanism(shipToContactMechanism)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
 
             this.Session.Derive();
 
-            Assert.Equal(shippingAddress.ContactMechanism, invoice.ShipToAddress);
+            Assert.Equal(shippingAddress.ContactMechanism, invoice.DerivedShipToAddress);
         }
 
         [Fact]
@@ -541,13 +541,13 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
             this.Session.Derive();
 
-            Assert.Equal(euro, invoice.Currency);
+            Assert.Equal(euro, invoice.DerivedCurrency);
         }
 
         [Fact]
@@ -560,23 +560,23 @@ namespace Allors.Database.Domain.Tests
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            var invoice1 = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).WithBillToContactMechanism(contactMechanism).Build();
+            var invoice1 = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).WithAssignedBillToContactMechanism(contactMechanism).Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
 
             this.Session.Derive();
 
-            Assert.Equal(this.Session.GetSingleton().DefaultLocale, invoice1.Locale);
+            Assert.Equal(invoice1.BilledFrom.Locale, invoice1.DerivedLocale);
 
             var dutchLocale = new Locales(this.Session).DutchNetherlands;
 
             customer.Locale = dutchLocale;
 
-            var invoice2 = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).WithBillToContactMechanism(contactMechanism).Build();
+            var invoice2 = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).WithAssignedBillToContactMechanism(contactMechanism).Build();
 
             this.Session.Derive();
 
-            Assert.Equal(dutchLocale, invoice2.Locale);
+            Assert.Equal(dutchLocale, invoice2.DerivedLocale);
         }
 
         [Fact]
@@ -611,7 +611,7 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
                 .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
                 .Build();
@@ -673,7 +673,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(new OrganisationBuilder(this.Session).WithName("customer").Build())
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
@@ -711,7 +711,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(new OrganisationBuilder(this.Session).WithName("customer").Build())
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
@@ -749,7 +749,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(new OrganisationBuilder(this.Session).WithName("customer").Build())
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
@@ -787,7 +787,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(new OrganisationBuilder(this.Session).WithName("customer").Build())
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithOrderAdjustment(adjustment)
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Assessable21)
@@ -823,7 +823,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithShipToCustomer(customer)
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
@@ -848,7 +848,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithShipToCustomer(shipToCustomer)
                 .WithBillToCustomer(billToCustomer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -878,7 +878,7 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(billToCustomer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(2).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
@@ -918,7 +918,7 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(billToCustomer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .Build();
 
             new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(invoice.BillToCustomer).Build();
@@ -957,7 +957,7 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(billToCustomer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
@@ -993,7 +993,7 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithBillToCustomer(billToCustomer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
@@ -1123,26 +1123,6 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(invoice.BilledFrom, this.InternalOrganisation);
         }
-
-        [Fact]
-        public void DeriveDefaultLocale()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DefaultLocale, this.Session.GetSingleton().DefaultLocale);
-        }
-
-        [Fact]
-        public void DeriveDefaultCurrency()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DefaultCurrency, this.Session.GetSingleton().DefaultLocale.Country.Currency);
-        }
     }
 
     public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -1199,7 +1179,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.BilledFromContactMechanism, this.InternalOrganisation.BillingAddress);
+            Assert.Equal(invoice.DerivedBilledFromContactMechanism, this.InternalOrganisation.BillingAddress);
         }
 
         [Fact]
@@ -1210,7 +1190,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.BillToContactMechanism, customer.BillingAddress);
+            Assert.Equal(invoice.DerivedBillToContactMechanism, customer.BillingAddress);
         }
 
         [Fact]
@@ -1221,7 +1201,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.BillToEndCustomerContactMechanism, customer.BillingAddress);
+            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, customer.BillingAddress);
         }
 
         [Fact]
@@ -1232,7 +1212,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.ShipToAddress, customer.ShippingAddress);
+            Assert.Equal(invoice.DerivedShipToAddress, customer.ShippingAddress);
         }
 
         [Fact]
@@ -1243,7 +1223,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.ShipToEndCustomerAddress, customer.ShippingAddress);
+            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, customer.ShippingAddress);
         }
 
         [Fact]
@@ -1255,26 +1235,22 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.Currency, this.InternalOrganisation.PreferredCurrency);
+            Assert.Equal(invoice.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
         }
 
         [Fact]
-        public void ChangedBilledFromDeriveCurrencyFromDefaultLocale()
+        public void ChangedBilledFromDeriveCurrencyFromBilledFromPreferredCurrency()
         {
-            this.InternalOrganisation.RemovePreferredCurrency();
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
-            this.Session.GetSingleton().DefaultLocale = new LocaleBuilder(this.Session)
+            invoice.BilledFrom.Locale = new LocaleBuilder(this.Session)
                 .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
                 .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
-
-            this.Session.Derive();
-
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.Currency, this.Session.GetSingleton().DefaultLocale.Country.Currency);
+            Assert.Equal(invoice.BilledFrom.PreferredCurrency, invoice.DerivedCurrency);
         }
 
         [Fact]
@@ -1293,7 +1269,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.Currency, customer.PreferredCurrency);
+            Assert.Equal(invoice.DerivedCurrency, customer.PreferredCurrency);
         }
 
         [Fact]
@@ -1312,7 +1288,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.Currency, newLocale.Country.Currency);
+            Assert.Equal(invoice.DerivedCurrency, newLocale.Country.Currency);
         }
 
         [Fact]
@@ -1357,11 +1333,11 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.Locale, swedishLocale);
+            Assert.Equal(invoice.DerivedLocale, swedishLocale);
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveLocaleFromDefaultLocale()
+        public void ChangedBillToCustomerDeriveLocaleFromBilledFromLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Session)
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
@@ -1378,7 +1354,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.False(customer.ExistLocale);
-            Assert.Equal(invoice.Locale, invoice.DefaultLocale);
+            Assert.Equal(invoice.Locale, invoice.BilledFrom.Locale);
         }
 
         [Fact]
@@ -1516,7 +1492,7 @@ namespace Allors.Database.Domain.Tests
             invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.BillToContactMechanism, invoice.BillToCustomer.BillingAddress);
+            Assert.Equal(invoice.DerivedBillToContactMechanism, invoice.BillToCustomer.BillingAddress);
         }
 
         [Fact]
@@ -1529,7 +1505,7 @@ namespace Allors.Database.Domain.Tests
             invoice.BillToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.BillToEndCustomerContactMechanism, invoice.BillToEndCustomer.BillingAddress);
+            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, invoice.BillToEndCustomer.BillingAddress);
         }
 
         [Fact]
@@ -1542,7 +1518,7 @@ namespace Allors.Database.Domain.Tests
             invoice.ShipToCustomer = invoice.BilledFrom.ActiveCustomers.First;
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.ShipToAddress, invoice.ShipToCustomer.ShippingAddress);
+            Assert.Equal(invoice.DerivedShipToAddress, invoice.ShipToCustomer.ShippingAddress);
         }
 
         [Fact]
@@ -1555,7 +1531,7 @@ namespace Allors.Database.Domain.Tests
             invoice.ShipToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.ShipToEndCustomerAddress, invoice.ShipToEndCustomer.ShippingAddress);
+            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, invoice.ShipToEndCustomer.ShippingAddress);
         }
 
         [Fact]
@@ -3005,7 +2981,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -3043,7 +3019,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(1000M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
@@ -3114,7 +3090,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
@@ -3168,7 +3144,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(100M).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).Build())
                 .Build();
@@ -3213,7 +3189,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
@@ -3238,6 +3214,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenSalesInvoice_WhenObjectStateIsCancelled_ThenCheckTransitions()
         {
             var customer = new OrganisationBuilder(this.Session).WithName("customer").Build();
+            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
             var contactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("Mechelen")
@@ -3253,11 +3230,11 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithBillToCustomer(customer)
-                .WithBillToContactMechanism(contactMechanism)
+                .WithAssignedBillToContactMechanism(contactMechanism)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Session).SalesInvoice)
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).Build();
+            this.Session.Derive();
 
             invoice.CancelInvoice();
 

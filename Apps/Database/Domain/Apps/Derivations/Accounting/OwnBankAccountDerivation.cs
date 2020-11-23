@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public OwnBankAccountDerivation(M m) : base(m, new Guid("0e20e10e-fadf-4bf2-97be-98e0e7b09d0d")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.InternalOrganisation.ActiveCollectionMethods),
+                new ChangedPattern(m.InternalOrganisation.ActiveCollectionMethods) { Steps =  new IPropertyType[] {this.M.InternalOrganisation.ActiveCollectionMethods }, OfType = m.OwnBankAccount.Class  },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

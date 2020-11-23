@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(this.supplier)
-                .WithBillToContactMechanism(takenViaContactMechanism)
+                .WithAssignedBillToContactMechanism(takenViaContactMechanism)
                 .WithDeliveryDate(this.Session.Now())
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
                 .WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable19)
@@ -478,7 +478,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(this.supplier)
-                .WithBillToContactMechanism(takenViaContactMechanism)
+                .WithAssignedBillToContactMechanism(takenViaContactMechanism)
                 .WithDeliveryDate(this.Session.Now())
                 .WithAssignedVatRegime(new VatRegimes(this.Session).Exempt)
                 .Build();

@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            var salesOrder1 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithShipToAddress(postalAddress).WithComment("salesorder1").Build();
+            var salesOrder1 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder1").Build();
             var orderItem1 = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(good)
                 .WithQuantityOrdered(10)
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            var salesOrder2 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithShipToAddress(postalAddress).WithComment("salesorder2").Build();
+            var salesOrder2 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder2").Build();
             var orderItem2 = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(good)
                 .WithQuantityOrdered(10)
@@ -59,7 +59,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            var salesOrder3 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithShipToAddress(postalAddress).WithComment("salesorder3").Build();
+            var salesOrder3 = new SalesOrderBuilder(this.Session).WithBillToCustomer(organisation).WithAssignedShipToAddress(postalAddress).WithComment("salesorder3").Build();
             var orderItem3 = new SalesOrderItemBuilder(this.Session)
                 .WithProduct(good)
                 .WithQuantityOrdered(10)

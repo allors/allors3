@@ -28,7 +28,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Indexed]
-        Currency Currency { get; set; }
+        Currency AssignedCurrency { get; set; }
+
+        #region Allors
+        [Id("e4102661-d3dd-4b88-adb4-8d0358fc19c4")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Indexed]
+        Currency DerivedCurrency { get; set; }
 
         #region Allors
         [Id("2d82521d-30bd-4185-84c7-4dfe08b5ddef")]
@@ -274,24 +282,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public Media[] ElectronicDocuments { get; set; }
-
-        #region Allors
-        [Id("4cf83d30-1fe5-44a8-b849-e2ccf81f1935")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Derived]
-        [Workspace(Default)]
-        public Locale DefaultLocale { get; set; }
-
-        #region Allors
-        [Id("333a1bd0-5365-42c7-bd97-9b7f1ede3d4f")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Derived]
-        [Workspace(Default)]
-        public Currency DefaultCurrency { get; set; }
 
         #region Allors
         [Id("893734a4-13e6-4740-8c3b-29e28c0137b0")]

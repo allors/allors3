@@ -29,8 +29,8 @@ namespace Allors.Database.Domain
                 .WithDescription(this.Description)
                 .WithReceiver(this.Originator)
                 .WithRequiredResponseDate(this.RequiredResponseDate)
-                .WithCurrency(this.Currency)
-                .WithFullfillContactMechanism(this.FullfillContactMechanism)
+                .WithAssignedCurrency(this.DerivedCurrency)
+                .WithAssignedFullfillContactMechanism(this.FullfillContactMechanism)
                 .Build();
 
             var sourceItems = this.RequestItems.Where(i => i.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Submitted)).ToArray();

@@ -20,6 +20,9 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderState),
                 new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderItems),
+                new ChangedPattern(this.M.PurchaseOrder.Locale),
+                new ChangedPattern(this.M.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.PurchaseOrdersWhereOrderedBy }},
+                new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new ChangedPattern(this.M.PurchaseOrderItem.IsReceivable) { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
                 new ChangedPattern(this.M.PurchaseOrderItem.PurchaseOrderItemState)  { Steps = new IPropertyType[] { this.M.PurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem}},
                 new ChangedPattern(this.M.InternalOrganisation.ActiveSuppliers) { Steps = new IPropertyType[] { this.M.InternalOrganisation.ActiveSuppliers, this.M.Organisation.PurchaseOrdersWhereOrderedBy}},
@@ -127,6 +130,17 @@ namespace Allors.Database.Domain
                     @this.SortableOrderNumber = NumberFormatter.SortableNumber(@this.OrderedBy?.PurchaseOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
                 }
 
+                if (@this.PurchaseOrderState.IsCreated)
+                {
+                    @this.DerivedLocale = @this.Locale ?? @this.OrderedBy?.Locale;
+                    @this.DerivedCurrency = @this.AssignedCurrency ?? @this.OrderedBy?.PreferredCurrency;
+                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.TakenViaSupplier?.VatRegime;
+                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.TakenViaSupplier?.IrpfRegime;
+                    @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.OrderedBy?.ShippingAddress;
+                    @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.OrderedBy?.BillingAddress ?? @this.OrderedBy?.GeneralCorrespondence;
+                    @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier.OrderAddress;
+                }
+
                 if (@this.TakenViaSupplier is Organisation supplier)
                 {
                     if (!@this.OrderedBy.ActiveSuppliers.Contains(supplier))
@@ -145,26 +159,6 @@ namespace Allors.Database.Domain
 
                 validation.AssertExistsAtMostOne(@this, @this.Meta.TakenViaSupplier, @this.Meta.TakenViaSubcontractor);
                 validation.AssertAtLeastOne(@this, @this.Meta.TakenViaSupplier, @this.Meta.TakenViaSubcontractor);
-
-                if (!@this.ExistShipToAddress)
-                {
-                    @this.ShipToAddress = @this.OrderedBy.ShippingAddress;
-                }
-
-                if (!@this.ExistBillToContactMechanism)
-                {
-                    @this.BillToContactMechanism = @this.OrderedBy.ExistBillingAddress ? @this.OrderedBy.BillingAddress : @this.OrderedBy.GeneralCorrespondence;
-                }
-
-                if (!@this.ExistTakenViaContactMechanism && @this.ExistTakenViaSupplier)
-                {
-                    @this.TakenViaContactMechanism = @this.TakenViaSupplier.OrderAddress;
-                }
-
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.TakenViaSupplier?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.TakenViaSupplier?.IrpfRegime;
-
-                @this.Locale = @this.DefaultLocale;
 
                 var validOrderItems = @this.PurchaseOrderItems.Where(v => v.IsValid).ToArray();
                 @this.ValidOrderItems = validOrderItems;
