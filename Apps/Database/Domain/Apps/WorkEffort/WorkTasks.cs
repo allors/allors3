@@ -46,7 +46,6 @@ namespace Allors.Database.Domain
                             salesInvoice = new SalesInvoiceBuilder(session)
                                 .WithBilledFrom(group.Key)
                                 .WithBillToCustomer(customer)
-                                .WithBillToContactMechanism(customer.ExistBillingAddress ? customer.BillingAddress : customer.GeneralCorrespondence)
                                 .WithInvoiceDate(session.Now())
                                 .WithSalesInvoiceType(new SalesInvoiceTypes(session).SalesInvoice)
                                 .Build();

@@ -31,7 +31,7 @@ namespace Allors.Repository
 
         public string InternalComment { get; set; }
 
-        public Currency Currency { get; set; }
+        public Currency AssignedCurrency { get; set; }
 
         public string Description { get; set; }
 
@@ -101,7 +101,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public ContactMechanism BilledFromContactMechanism { get; set; }
+        public ContactMechanism AssignedBilledFromContactMechanism { get; set; }
+
+        #region Allors
+        [Id("b365caa0-82af-43c1-b9c2-4cab0e02c70e")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public ContactMechanism DerivedBilledFromContactMechanism { get; set; }
 
         #region Allors
         [Id("F1B241E8-26F6-4203-B1BF-E7F03942D76F")]
@@ -133,7 +141,16 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public ContactMechanism BillToContactMechanism { get; set; }
+        public ContactMechanism AssignedBillToContactMechanism { get; set; }
+
+        #region Allors
+        [Id("696b52bf-0b72-4796-ab7e-1bb59c26a4f1")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Required]
+        [Workspace(Default)]
+        public ContactMechanism DerivedBillToContactMechanism { get; set; }
 
         #region Allors
         [Id("666B66B6-3271-47B4-A92E-DB26DE179F61")]
@@ -164,7 +181,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public PostalAddress ShipToAddress { get; set; }
+        public PostalAddress AssignedShipToAddress { get; set; }
+
+        #region Allors
+        [Id("c5e72ba5-ba0e-4558-88b1-3b3689f6af69")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public PostalAddress DerivedShipToAddress { get; set; }
 
         #region Allors
         [Id("D4DD296B-E609-4345-B51C-6FC3D15E8CD9")]
@@ -188,7 +213,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public ContactMechanism BillToEndCustomerContactMechanism { get; set; }
+        public ContactMechanism AssignedBillToEndCustomerContactMechanism { get; set; }
+
+        #region Allors
+        [Id("864d5150-10ae-48cb-966c-7c3ae4dc37bc")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public ContactMechanism DerivedBillToEndCustomerContactMechanism { get; set; }
 
         #region Allors
         [Id("17B0CD8A-8F59-4C7A-B464-7ED1403788C9")]
@@ -212,7 +245,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public PostalAddress ShipToEndCustomerAddress { get; set; }
+        public PostalAddress AssignedShipToEndCustomerAddress { get; set; }
+
+        #region Allors
+        [Id("85090aa2-13d3-4836-a647-e8e07fa5f30c")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public PostalAddress DerivedShipToEndCustomerAddress { get; set; }
 
         #region Allors
         [Id("1F2605FB-7D41-4691-8BE5-DAD06265702D")]
@@ -252,7 +293,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod AssignedPaymentMethod { get; set; }
+
+        #region Allors
+        [Id("8f0b6875-e860-419d-bb9c-3a226a171528")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public PaymentMethod DerivedPaymentMethod { get; set; }
 
         #region Allors
         [Id("3E595F3B-D845-4141-A4F8-E055B01AFDBE")]

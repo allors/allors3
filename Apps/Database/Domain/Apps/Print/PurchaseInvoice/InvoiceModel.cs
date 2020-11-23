@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 
             this.TotalIncVat = invoice.TotalIncVat.ToString("N2", new CultureInfo("nl-BE"));
 
-            var currencyIsoCode = invoice.Currency.IsoCode;
+            var currencyIsoCode = invoice.DerivedCurrency.IsoCode;
             this.GrandTotal = currencyIsoCode + " " + invoice.GrandTotal.ToString("N2", new CultureInfo("nl-BE"));
         }
 

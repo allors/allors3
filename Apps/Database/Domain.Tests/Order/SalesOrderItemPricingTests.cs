@@ -284,7 +284,7 @@ namespace Allors.Database.Domain.Tests
             this.order = new SalesOrderBuilder(this.Session)
                 .WithShipToCustomer(this.shipToCustomer)
                 .WithBillToCustomer(this.billToCustomer)
-                .WithBillToContactMechanism(this.shipToContactMechanismMechelen)
+                .WithAssignedBillToContactMechanism(this.shipToContactMechanismMechelen)
                 .Build();
 
             this.Session.Derive();
@@ -480,7 +480,7 @@ namespace Allors.Database.Domain.Tests
         {
             this.InstantiateObjects(this.Session);
 
-            this.order.ShipToAddress = this.shipToContactMechanismMechelen;
+            this.order.DerivedShipToAddress = this.shipToContactMechanismMechelen;
 
             this.Session.Derive();
 
@@ -1978,7 +1978,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InstantiateObjects(this.Session);
 
-            Assert.Equal(euro, this.order.Currency);
+            Assert.Equal(euro, this.order.DerivedCurrency);
 
             this.billToCustomer.PreferredCurrency = poundSterling;
 
@@ -1993,7 +1993,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(poundSterling, newOrder.Currency);
+            Assert.Equal(poundSterling, newOrder.DerivedCurrency);
 
             Assert.Equal(0, item1.TotalDiscount);
             Assert.Equal(0, item1.TotalSurcharge);

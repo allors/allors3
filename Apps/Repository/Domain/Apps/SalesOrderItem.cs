@@ -308,7 +308,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public PostalAddress ShipFromAddress { get; set; }
+        public PostalAddress AssignedShipFromAddress { get; set; }
+
+        #region Allors
+        [Id("c7eab44d-eef8-4f8f-9a93-50be1f5a3e3b")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public PostalAddress DerivedShipFromAddress { get; set; }
 
         #region Allors
         [Id("5cc50f26-361b-46d7-a8e6-a9f53f7d2722")]

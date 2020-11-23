@@ -32,7 +32,7 @@ namespace Allors.Repository
 
         public string InternalComment { get; set; }
 
-        public Currency Currency { get; set; }
+        public Currency AssignedCurrency { get; set; }
 
         public string CustomerReference { get; set; }
 
@@ -139,7 +139,15 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public ContactMechanism TakenViaContactMechanism { get; set; }
+        public ContactMechanism AssignedTakenViaContactMechanism { get; set; }
+
+        #region Allors
+        [Id("b0b71810-c486-4c8d-9f6a-568ff181e0ab")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public ContactMechanism DerivedTakenViaContactMechanism { get; set; }
 
         #region Allors
         [Id("C7B99EF4-7DE8-4214-A598-E6E46608E166")]
@@ -151,7 +159,15 @@ namespace Allors.Repository
         [Id("A368FB1C-8467-40E9-BC33-47BA5AEA9A0B")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        public ContactMechanism BillToContactMechanism { get; set; }
+        public ContactMechanism AssignedBillToContactMechanism { get; set; }
+
+        #region Allors
+        [Id("0115fdfc-3192-4b34-aeae-7c5fb392d57a")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public ContactMechanism DerivedBillToContactMechanism { get; set; }
 
         #region Allors
         [Id("555F06E3-2C07-4A62-A4D5-E52E64A92362")]
@@ -169,7 +185,15 @@ namespace Allors.Repository
         [Id("57C5DCE6-ACA0-4D03-89B2-4D7CC3AE6E45")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        public PostalAddress ShipToAddress { get; set; }
+        public PostalAddress AssignedShipToAddress { get; set; }
+
+        #region Allors
+        [Id("ab0c504f-7706-48fb-a77c-c777f6cef1b3")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public PostalAddress DerivedShipToAddress { get; set; }
 
         #region Allors
         [Id("88691341-493F-4F23-8329-32AC6FC7682E")]

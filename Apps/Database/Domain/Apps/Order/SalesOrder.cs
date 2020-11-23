@@ -127,9 +127,6 @@ namespace Allors.Database.Domain
             {
                 this.OriginFacility = this.ExistStore ? this.Store.DefaultFacility : this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
             }
-
-            this.DefaultLocale = this.Session().GetSingleton().DefaultLocale;
-            this.DefaultCurrency = this.Session().GetSingleton().DefaultLocale.Country.Currency;
         }
 
         public void AppsDelete(SalesOrderDelete method)
@@ -201,18 +198,18 @@ namespace Allors.Database.Domain
                 {
                     foreach (var address in addresses)
                     {
-                        var pendingShipment = address.Value.AppsGetPendingCustomerShipmentForStore(address.Key, this.Store, this.ShipmentMethod);
+                        var pendingShipment = address.Value.AppsGetPendingCustomerShipmentForStore(address.Key, this.Store, this.DerivedShipmentMethod);
 
                         if (pendingShipment == null)
                         {
                             pendingShipment = new CustomerShipmentBuilder(this.Strategy.Session)
                                 .WithShipFromParty(this.TakenBy)
-                                .WithShipFromAddress(this.ShipFromAddress)
+                                .WithShipFromAddress(this.DerivedShipFromAddress)
                                 .WithShipToAddress(address.Key)
                                 .WithShipToParty(address.Value)
                                 .WithStore(this.Store)
-                                .WithShipmentMethod(this.ShipmentMethod)
-                                .WithPaymentMethod(this.PaymentMethod)
+                                .WithShipmentMethod(this.DerivedShipmentMethod)
+                                .WithPaymentMethod(this.DerivedPaymentMethod)
                                 .Build();
 
                             if (this.Store.AutoGenerateShipmentPackage)
@@ -312,19 +309,19 @@ namespace Allors.Database.Domain
             {
                 var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Session)
                     .WithBilledFrom(this.TakenBy)
-                    .WithBilledFromContactMechanism(this.TakenByContactMechanism)
+                    .WithAssignedBilledFromContactMechanism(this.DerivedTakenByContactMechanism)
                     .WithBilledFromContactPerson(this.TakenByContactPerson)
                     .WithBillToCustomer(this.BillToCustomer)
-                    .WithBillToContactMechanism(this.BillToContactMechanism)
+                    .WithAssignedBillToContactMechanism(this.DerivedBillToContactMechanism)
                     .WithBillToContactPerson(this.BillToContactPerson)
                     .WithBillToEndCustomer(this.BillToEndCustomer)
-                    .WithBillToEndCustomerContactMechanism(this.BillToEndCustomerContactMechanism)
+                    .WithAssignedBillToEndCustomerContactMechanism(this.DerivedBillToEndCustomerContactMechanism)
                     .WithBillToEndCustomerContactPerson(this.BillToEndCustomerContactPerson)
                     .WithShipToCustomer(this.ShipToCustomer)
-                    .WithShipToAddress(this.ShipToAddress)
+                    .WithAssignedShipToAddress(this.DerivedShipToAddress)
                     .WithShipToContactPerson(this.ShipToContactPerson)
                     .WithShipToEndCustomer(this.ShipToEndCustomer)
-                    .WithShipToEndCustomerAddress(this.ShipToEndCustomerAddress)
+                    .WithAssignedShipToEndCustomerAddress(this.DerivedShipToEndCustomerAddress)
                     .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
                     .WithDescription(this.Description)
                     .WithStore(this.Store)
@@ -335,8 +332,9 @@ namespace Allors.Database.Domain
                     .WithAssignedIrpfRegime(this.DerivedIrpfRegime)
                     .WithAssignedVatClause(this.DerivedVatClause)
                     .WithCustomerReference(this.CustomerReference)
-                    .WithPaymentMethod(this.PaymentMethod)
-                    .WithCurrency(this.Currency)
+                    .WithAssignedPaymentMethod(this.DerivedPaymentMethod)
+                    .WithAssignedCurrency(this.DerivedCurrency)
+                    .WithLocale(this.DerivedLocale)
                     .Build();
 
                 foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)

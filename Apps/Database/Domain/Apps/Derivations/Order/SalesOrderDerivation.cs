@@ -18,23 +18,29 @@ namespace Allors.Database.Domain
         public SalesOrderDerivation(M m) : base(m, new Guid("CC43279A-22B4-499E-9ADA-33364E30FBD4")) =>
             this.Patterns = new Pattern[]
             {
-            new ChangedPattern(this.M.SalesOrder.TakenBy),
-            new ChangedPattern(this.M.SalesOrder.Store),
-            new ChangedPattern(this.M.SalesOrder.BillToCustomer),
-            new ChangedPattern(this.M.SalesOrder.BillToEndCustomer),
-            new ChangedPattern(this.M.SalesOrder.ShipToCustomer),
-            new ChangedPattern(this.M.SalesOrder.ShipToEndCustomer),
-            new ChangedPattern(this.M.SalesOrder.PlacingCustomer),
-            new ChangedPattern(this.M.SalesOrder.AssignedVatRegime),
-            new ChangedPattern(this.M.SalesOrder.AssignedVatClause),
-            new ChangedPattern(this.M.SalesOrder.OrderDate),
-            new ChangedPattern(this.M.SalesOrder.SalesOrderItems),
-            new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderWhereSalesTerm} },
-            new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderItemWhereSalesTerm, m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
-            new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereBillToCustomer} },
-            new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereBillToCustomer } },
-            new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereShipToCustomer } },
-            new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereShipToCustomer } },
+                new ChangedPattern(this.M.SalesOrder.TakenBy),
+                new ChangedPattern(this.M.SalesOrder.Store),
+                new ChangedPattern(this.M.SalesOrder.BillToCustomer),
+                new ChangedPattern(this.M.SalesOrder.BillToEndCustomer),
+                new ChangedPattern(this.M.SalesOrder.ShipToCustomer),
+                new ChangedPattern(this.M.SalesOrder.ShipToEndCustomer),
+                new ChangedPattern(this.M.SalesOrder.PlacingCustomer),
+                new ChangedPattern(this.M.SalesOrder.AssignedVatRegime),
+                new ChangedPattern(this.M.SalesOrder.AssignedVatClause),
+                new ChangedPattern(this.M.SalesOrder.OrderDate),
+                new ChangedPattern(this.M.SalesOrder.SalesOrderItems),
+                new ChangedPattern(this.M.SalesOrder.AssignedCurrency),
+                new ChangedPattern(this.M.SalesOrder.Locale),
+                new ChangedPattern(this.M.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
+                new ChangedPattern(this.M.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                new ChangedPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.SalesOrdersWhereBillToCustomer }},
+                new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrdersWhereTakenBy }},
+                new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderWhereSalesTerm} },
+                new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderItemWhereSalesTerm, m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereBillToCustomer} },
+                new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereBillToCustomer } },
+                new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereShipToCustomer } },
+                new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereShipToCustomer } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -55,18 +61,22 @@ namespace Allors.Database.Domain
                 @this.BillToCustomer ??= @this.ShipToCustomer;
                 @this.ShipToCustomer ??= @this.BillToCustomer;
                 @this.Customers = new[] { @this.BillToCustomer, @this.ShipToCustomer, @this.PlacingCustomer };
-                @this.Locale ??= @this.BillToCustomer?.Locale ?? @this.DefaultLocale;
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
-                @this.Currency ??= @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
-                @this.TakenByContactMechanism ??= @this.TakenBy?.OrderAddress ?? @this.TakenBy?.BillingAddress ?? @this.TakenBy?.GeneralCorrespondence;
-                @this.BillToContactMechanism ??= @this.BillToCustomer?.BillingAddress ?? @this.BillToCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
-                @this.BillToEndCustomerContactMechanism ??= @this.BillToEndCustomer?.BillingAddress ?? @this.BillToEndCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
-                @this.ShipToEndCustomerAddress ??= @this.ShipToEndCustomer?.ShippingAddress ?? @this.ShipToCustomer?.GeneralCorrespondence as PostalAddress;
-                @this.ShipFromAddress ??= @this.TakenBy?.ShippingAddress;
-                @this.ShipToAddress ??= @this.ShipToCustomer?.ShippingAddress;
-                @this.ShipmentMethod ??= @this.ShipToCustomer?.DefaultShipmentMethod ?? @this.Store.DefaultShipmentMethod;
-                @this.PaymentMethod ??= @this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => Equals(v.InternalOrganisation, @this.TakenBy))?.DefaultPaymentMethod ?? @this.Store.DefaultCollectionMethod;
+
+                if (@this.SalesOrderState.IsProvisional)
+                {
+                    @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.TakenBy?.Locale;
+                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
+                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
+                    @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.TakenBy?.PreferredCurrency;
+                    @this.DerivedTakenByContactMechanism = @this.AssignedTakenByContactMechanism ?? @this.TakenBy?.OrderAddress ?? @this.TakenBy?.BillingAddress ?? @this.TakenBy?.GeneralCorrespondence;
+                    @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.BillToCustomer?.BillingAddress ?? @this.BillToCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
+                    @this.DerivedBillToEndCustomerContactMechanism = @this.AssignedBillToEndCustomerContactMechanism ?? @this.BillToEndCustomer?.BillingAddress ?? @this.BillToEndCustomer?.ShippingAddress ?? @this.BillToCustomer?.GeneralCorrespondence;
+                    @this.DerivedShipToEndCustomerAddress = @this.AssignedShipToEndCustomerAddress ?? @this.ShipToEndCustomer?.ShippingAddress ?? @this.ShipToCustomer?.GeneralCorrespondence as PostalAddress;
+                    @this.DerivedShipFromAddress = @this.AssignedShipFromAddress ?? @this.TakenBy?.ShippingAddress;
+                    @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
+                    @this.DerivedShipmentMethod =  @this.AssignedShipmentMethod ?? @this.ShipToCustomer?.DefaultShipmentMethod ?? @this.Store.DefaultShipmentMethod;
+                    @this.DerivedPaymentMethod = @this.AssignedPaymentMethod ?? @this.ShipToCustomer?.PartyFinancialRelationshipsWhereFinancialParty?.FirstOrDefault(v => object.Equals(v.InternalOrganisation, @this.TakenBy))?.DefaultPaymentMethod ?? @this.Store.DefaultCollectionMethod;
+                }
 
                 if (!@this.ExistOrderNumber && @this.ExistStore)
                 {
@@ -86,8 +96,8 @@ namespace Allors.Database.Domain
 
                 if (@this.SalesOrderState.IsInProcess)
                 {
-                    validation.AssertExists(@this, @this.Meta.ShipToAddress);
-                    validation.AssertExists(@this, @this.Meta.BillToContactMechanism);
+                    validation.AssertExists(@this, @this.Meta.DerivedShipToAddress);
+                    validation.AssertExists(@this, @this.Meta.DerivedBillToContactMechanism);
                 }
 
                 // SalesOrderItem Derivations and Validations
@@ -95,8 +105,8 @@ namespace Allors.Database.Domain
                 {
                     var salesOrderItemDerivedRoles = salesOrderItem;
 
-                    salesOrderItem.ShipFromAddress ??= @this.ShipFromAddress;
-                    salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? @this.ShipToAddress;
+                    salesOrderItem.DerivedShipFromAddress = salesOrderItem.AssignedShipFromAddress ?? @this.DerivedShipFromAddress;
+                    salesOrderItemDerivedRoles.ShipToAddress = salesOrderItem.AssignedShipToAddress ?? salesOrderItem.AssignedShipToParty?.ShippingAddress ?? @this.DerivedShipToAddress;
                     salesOrderItemDerivedRoles.ShipToParty = salesOrderItem.AssignedShipToParty ?? @this.ShipToCustomer;
                     salesOrderItemDerivedRoles.DeliveryDate = salesOrderItem.AssignedDeliveryDate ?? @this.DeliveryDate;
                     salesOrderItemDerivedRoles.DerivedVatRegime = salesOrderItem.AssignedVatRegime ?? @this.DerivedVatRegime;
@@ -168,7 +178,7 @@ namespace Allors.Database.Domain
                     }
 
                     var OutsideEUCustomer = @this.BillToCustomer?.VatRegime?.Equals(new VatRegimes(session).Export);
-                    var shipFromBelgium = @this.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.ShipFromAddress?.Country?.IsoCode));
+                    var shipFromBelgium = @this.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.DerivedShipFromAddress?.Country?.IsoCode));
                     var shipToEU = @this.ValidOrderItems?.Cast<SalesOrderItem>().Any(v => Equals(true, v.ShipToAddress?.Country?.EuMemberState));
                     var sellerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
                     var buyerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));

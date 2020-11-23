@@ -28,7 +28,23 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Indexed]
-        Currency Currency { get; set; }
+        Currency AssignedCurrency { get; set; }
+
+        #region Allors
+        [Id("9262e86c-177f-46ac-92f1-5937a5f67c2c")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Indexed]
+        Currency DerivedCurrency { get; set; }
+
+        #region Allors
+        [Id("817e6ddd-ad38-4294-a482-4797fd8eb5cb")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public Locale DerivedLocale { get; set; }
 
         #region Allors
         [Id("45b3b293-b746-4d6d-9da7-e2378694f734")]
@@ -271,24 +287,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public Media[] ElectronicDocuments { get; set; }
-
-        #region Allors
-        [Id("593bd702-0420-498c-be36-8831e657e2aa")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Derived]
-        [Workspace(Default)]
-        public Locale DefaultLocale { get; set; }
-
-        #region Allors
-        [Id("a18c4cd5-e799-45df-a83f-591d3513aaae")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Derived]
-        [Workspace(Default)]
-        public Currency DefaultCurrency { get; set; }
 
         #region Allors
         [Id("4374d771-a0ed-4d4f-8acc-18daaa0ee6cb")]

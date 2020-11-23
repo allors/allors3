@@ -45,7 +45,9 @@ namespace Allors.Repository
 
         public Party Receiver { get; set; }
 
-        public ContactMechanism FullfillContactMechanism { get; set; }
+        public ContactMechanism AssignedFullfillContactMechanism { get; set; }
+
+        public ContactMechanism DerivedFullfillContactMechanism { get; set; }
 
         public VatRegime AssignedVatRegime { get; set; }
 
@@ -58,6 +60,10 @@ namespace Allors.Repository
         public IrpfRegime DerivedIrpfRegime { get; set; }
 
         public IrpfRegime AssignedIrpfRegime { get; set; }
+
+        public Locale Locale { get; set; }
+
+        public Locale DerivedLocale { get; set; }
 
         public decimal TotalIrpf { get; set; }
 
@@ -85,7 +91,9 @@ namespace Allors.Repository
 
         public OrderAdjustment[] OrderAdjustments { get; set; }
 
-        public Currency Currency { get; set; }
+        public Currency AssignedCurrency { get; set; }
+
+        public Currency DerivedCurrency { get; set; }
 
         public DateTime IssueDate { get; set; }
 

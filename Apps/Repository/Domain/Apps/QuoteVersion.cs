@@ -87,7 +87,15 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        ContactMechanism FullfillContactMechanism { get; set; }
+        ContactMechanism AssignedFullfillContactMechanism { get; set; }
+
+        #region Allors
+        [Id("eb7bb3d0-67e8-4d49-888e-d3053daa3858")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        ContactMechanism DerivedFullfillContactMechanism { get; set; }
 
         #region Allors
         [Id("1927FAF4-B595-4F53-8BD4-97DD1865187A")]
@@ -258,7 +266,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        Currency Currency { get; set; }
+        Currency AssignedCurrency { get; set; }
 
         #region Allors
         [Id("798B7FF6-2E3A-4ACD-8FF3-98E110FBC1DC")]

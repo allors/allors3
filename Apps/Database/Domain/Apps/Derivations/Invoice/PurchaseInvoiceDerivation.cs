@@ -57,8 +57,11 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BilledFrom?.VatRegime;
-                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? (@this.BilledFrom as Organisation)?.IrpfRegime;
+                if (@this.PurchaseInvoiceState.IsCreated)
+                {
+                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BilledFrom?.VatRegime;
+                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? (@this.BilledFrom as Organisation)?.IrpfRegime;
+                }
 
                 @this.PurchaseOrders = @this.InvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(v => v.OrderItem.OrderWhereValidOrderItem).ToArray();
 

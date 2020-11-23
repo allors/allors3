@@ -88,7 +88,8 @@ namespace Allors.Database.Domain
                 .WithBillToContactPerson(this.ContactPerson)
                 .WithQuote(this)
                 .WithDescription(this.Description)
-                .WithCurrency(this.Currency)
+                .WithAssignedCurrency(this.DerivedCurrency)
+                .WithLocale(this.DerivedLocale)
                 .Build();
 
             var quoteItems = this.ValidQuoteItems

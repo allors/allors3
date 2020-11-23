@@ -48,7 +48,9 @@ namespace Allors.Repository
 
         public Party Originator { get; set; }
 
-        public Currency Currency { get; set; }
+        public Currency AssignedCurrency { get; set; }
+
+        public Currency DerivedCurrency { get; set; }
 
         public ContactMechanism FullfillContactMechanism { get; set; }
 

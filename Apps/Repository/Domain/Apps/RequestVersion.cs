@@ -95,7 +95,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        Currency Currency { get; set; }
+        Currency AssignedCurrency { get; set; }
 
         #region Allors
         [Id("6ED70134-E2A9-4F73-A300-78DFC79F0004")]

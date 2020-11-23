@@ -66,9 +66,9 @@ namespace Allors.Database.Domain
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            if (!this.ExistCurrency)
+            if (!this.ExistDerivedCurrency)
             {
-                this.Currency = this.BilledTo?.PreferredCurrency;
+                this.DerivedCurrency = this.BilledTo?.PreferredCurrency;
             }
         }
 
@@ -242,16 +242,16 @@ namespace Allors.Database.Domain
                 .WithBilledFrom(this.BilledTo)
                 .WithBilledFromContactPerson(this.BilledToContactPerson)
                 .WithBillToCustomer(this.BillToEndCustomer)
-                .WithBillToContactMechanism(this.BillToEndCustomerContactMechanism)
+                .WithAssignedBillToContactMechanism(this.DerivedBillToEndCustomerContactMechanism)
                 .WithBillToContactPerson(this.BillToEndCustomerContactPerson)
                 .WithShipToCustomer(this.ShipToEndCustomer)
-                .WithShipToAddress(this.ShipToEndCustomerAddress)
+                .WithAssignedShipToAddress(this.DerivedShipToEndCustomerAddress)
                 .WithShipToContactPerson(this.ShipToEndCustomerContactPerson)
                 .WithDescription(this.Description)
                 .WithInvoiceDate(this.Session().Now())
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice)
                 .WithCustomerReference(this.CustomerReference)
-                .WithPaymentMethod(this.BillToCustomerPaymentMethod)
+                .WithAssignedPaymentMethod(this.DerivedBillToCustomerPaymentMethod)
                 .WithComment(this.Comment)
                 .WithInternalComment(this.InternalComment)
                 .Build();

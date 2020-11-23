@@ -21,11 +21,11 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithComment(faker.Lorem.Sentence());
             @this.WithInternalComment(faker.Lorem.Sentence());
             @this.WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithShipToAddress(internalOrganisation.ShippingAddress);
+            @this.WithAssignedShipToAddress(internalOrganisation.ShippingAddress);
             @this.WithBillToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithBillToContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
+            @this.WithAssignedBillToContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
             @this.WithTakenViaContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithTakenViaContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
+            @this.WithAssignedTakenViaContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
             @this.WithTakenViaSupplier(supplier);
             @this.WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner));
             @this.WithOrderedBy(internalOrganisation);

@@ -17,6 +17,11 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.Quote.Issuer),
+                new ChangedPattern(this.M.Quote.AssignedCurrency),
+                new ChangedPattern(this.M.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.QuotesWhereReceiver }},
+                new ChangedPattern(this.M.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.QuotesWhereIssuer }},
+                new ChangedPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.QuotesWhereReceiver }},
+                new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.QuotesWhereReceiver }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -39,17 +44,21 @@ namespace Allors.Database.Domain
                     (@this).SortableQuoteNumber = NumberFormatter.SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
                 }
 
-                @this.Currency ??= @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
-
-                foreach (QuoteItem quoteItem in @this.QuoteItems)
+                if (@this.QuoteState.IsCreated)
                 {
-                    var quoteItemDerivedRoles = quoteItem;
+                    @this.DerivedLocale = @this.Locale ?? @this.Receiver?.Locale ?? @this.Issuer?.Locale;
+                    @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
 
-                    quoteItemDerivedRoles.DerivedVatRegime = quoteItem.AssignedVatRegime ?? @this.DerivedVatRegime;
-                    quoteItemDerivedRoles.VatRate = quoteItem.DerivedVatRegime?.VatRate;
+                    foreach (QuoteItem quoteItem in @this.QuoteItems)
+                    {
+                        var quoteItemDerivedRoles = quoteItem;
 
-                    quoteItemDerivedRoles.DerivedIrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.DerivedIrpfRegime;
-                    quoteItemDerivedRoles.IrpfRate = quoteItem.DerivedIrpfRegime?.IrpfRate;
+                        quoteItemDerivedRoles.DerivedVatRegime = quoteItem.AssignedVatRegime ?? @this.DerivedVatRegime;
+                        quoteItemDerivedRoles.VatRate = quoteItem.DerivedVatRegime?.VatRate;
+
+                        quoteItemDerivedRoles.DerivedIrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.DerivedIrpfRegime;
+                        quoteItemDerivedRoles.IrpfRate = quoteItem.DerivedIrpfRegime?.IrpfRate;
+                    }
                 }
 
                 @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);

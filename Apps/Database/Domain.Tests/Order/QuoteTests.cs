@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Rollback();
 
-            builder.WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build());
+            builder.WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build());
             builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -61,7 +61,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Rollback();
 
-            builder.WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build());
+            builder.WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build());
             builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Rollback();
 
-            builder.WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build());
+            builder.WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build());
             builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);
@@ -103,7 +103,7 @@ namespace Allors.Database.Domain.Tests
 
             var quote = new ProductQuoteBuilder(this.Session)
                 .WithReceiver(party)
-                .WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
+                .WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
                 .Build();
 
             var item1 = new QuoteItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(1000).Build();
@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.Tests
 
             var quote = new ProductQuoteBuilder(this.Session)
                 .WithReceiver(party)
-                .WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
+                .WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
                 .Build();
 
             this.Session.Derive();
@@ -145,7 +145,7 @@ namespace Allors.Database.Domain.Tests
 
             var quote = new ProductQuoteBuilder(this.Session)
                 .WithReceiver(party)
-                .WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
+                .WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
                 .Build();
 
             this.Session.Derive();
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain.Tests
 
             var quote = new ProductQuoteBuilder(this.Session)
                 .WithReceiver(party)
-                .WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
+                .WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
                 .WithIssueDate(this.Session.Now().Date)
                 .Build();
 
@@ -276,7 +276,7 @@ namespace Allors.Database.Domain.Tests
              
             var quote = new ProductQuoteBuilder(this.Session)
                 .WithReceiver(party)
-                .WithFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
+                .WithAssignedFullfillContactMechanism(new WebAddressBuilder(this.Session).WithElectronicAddressString("test").Build())
                 .Build();
 
             var item1 = new QuoteItemBuilder(this.Session).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(1000).Build();
