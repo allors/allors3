@@ -2854,86 +2854,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderProvisionalDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
-
-        [Fact]
-        public void ChangedTakenByFromValidationError()
-        {
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            order.TakenBy = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-
-            var expectedError = $"{order} {this.M.SalesOrder.TakenBy} {ErrorMessages.InternalOrganisationChanged}";
-            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
-        }
-
-        [Fact]
-        public void ChangedShipToCustomerDeriveBillToCustomer()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            order.ShipToCustomer = customer;
-            this.Session.Derive(false);
-
-            Assert.Equal(order.BillToCustomer, order.ShipToCustomer);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveShipToCustomer()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            order.BillToCustomer = customer;
-            this.Session.Derive(false);
-
-            Assert.Equal(order.ShipToCustomer, order.BillToCustomer);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveCustomers()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            order.BillToCustomer = customer;
-            this.Session.Derive(false);
-
-            Assert.Contains(order.BillToCustomer, order.Customers);
-        }
-
-        [Fact]
-        public void ChangedShipToCustomerDeriveCustomers()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            order.ShipToCustomer = customer;
-            this.Session.Derive(false);
-
-            Assert.Contains(order.ShipToCustomer, order.Customers);
-        }
-
-        [Fact]
-        public void ChangedPlacingCustomerDeriveCustomers()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var order = new SalesOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            order.PlacingCustomer = customer;
-            this.Session.Derive(false);
-
-            Assert.Contains(order.PlacingCustomer, order.Customers);
-        }
+        public SalesOrderProvisionalDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedBillToCustomerDeriveDerivedLocaleFromBillToCustomerLocale()
@@ -2949,7 +2872,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            order.BillToCustomer= customer;
+            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedLocale, swedishLocale);
@@ -3450,6 +3373,38 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedShipToCustomerDefaultShipmentMethodDeriveDerivedShipmentMethod()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveDefaultShipmentMethod();
+
+            var order = new SalesOrderBuilder(this.Session).WithShipToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            var shipmentMethod = new ShipmentMethods(this.Session).Boat;
+            customer.DefaultShipmentMethod = shipmentMethod;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipmentMethod, shipmentMethod);
+        }
+
+        [Fact]
+        public void ChangedStoreDefaultShipmentMethodDeriveDerivedShipmentMethod()
+        {
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            store.RemoveDefaultShipmentMethod();
+
+            var order = new SalesOrderBuilder(this.Session).WithStore(store).Build();
+            this.Session.Derive(false);
+
+            var shipmentMethod = new ShipmentMethods(this.Session).Boat;
+            store.DefaultShipmentMethod = shipmentMethod;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipmentMethod, shipmentMethod);
+        }
+
+        [Fact]
         public void ChangedAssignedPaymentMethodDeriveDerivedPaymentMethod()
         {
             var order = new SalesOrderBuilder(this.Session).Build();
@@ -3460,6 +3415,119 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedPaymentMethod, cash);
+        }
+
+        [Fact]
+        public void ChangedTakenByDefaultPaymentMethodDeriveDerivedPaymentMethod()
+        {
+            this.InternalOrganisation.RemoveDefaultPaymentMethod();
+
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var cash = new CashBuilder(this.Session).Build();
+            this.InternalOrganisation.DefaultPaymentMethod = cash;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedPaymentMethod, cash);
+        }
+
+        [Fact]
+        public void ChangedStoreDefaultPaymentMethodDeriveDerivedPaymentMethod()
+        {
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            store.RemoveDefaultCollectionMethod();
+
+            var order = new SalesOrderBuilder(this.Session).WithStore(store).Build();
+            this.Session.Derive(false);
+
+            var cash = new CashBuilder(this.Session).Build();
+            store.DefaultCollectionMethod = cash;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedPaymentMethod, cash);
+        }
+    }
+
+    public class SalesOrderDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedTakenByFromValidationError()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.TakenBy = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedError = $"{order} {this.M.SalesOrder.TakenBy} {ErrorMessages.InternalOrganisationChanged}";
+            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+        }
+
+        [Fact]
+        public void ChangedShipToCustomerDeriveBillToCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.ShipToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.BillToCustomer, order.ShipToCustomer);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveShipToCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.ShipToCustomer, order.BillToCustomer);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveCustomers()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(order.BillToCustomer, order.Customers);
+        }
+
+        [Fact]
+        public void ChangedShipToCustomerDeriveCustomers()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.ShipToCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(order.ShipToCustomer, order.Customers);
+        }
+
+        [Fact]
+        public void ChangedPlacingCustomerDeriveCustomers()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.PlacingCustomer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(order.PlacingCustomer, order.Customers);
         }
     }
 
