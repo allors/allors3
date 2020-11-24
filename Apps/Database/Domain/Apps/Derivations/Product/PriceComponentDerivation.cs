@@ -22,9 +22,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.PriceComponent.Product),
                 new ChangedPattern(this.M.PriceComponent.Part),
                 new ChangedPattern(this.M.PriceComponent.ProductFeature),
-
                 new ChangedPattern(this.M.DiscountComponent.Percentage),
-                new ChangedPattern(this.M.SurchargeComponent.Percentage),
+                new ChangedPattern(this.M.SurchargeComponent.Percentage)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
