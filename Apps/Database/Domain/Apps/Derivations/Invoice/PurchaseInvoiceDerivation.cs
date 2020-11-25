@@ -17,8 +17,6 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceDerivation(M m) : base(m, new Guid("7F6A083E-1409-4158-B302-603F0973A98C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseInvoice.AssignedVatRegime),
-                new ChangedPattern(m.PurchaseInvoice.AssignedIrpfRegime),
                 new ChangedPattern(m.PurchaseInvoice.PurchaseInvoiceState),
                 new ChangedPattern(this.M.PurchaseInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
                 new ChangedPattern(this.M.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
@@ -56,12 +54,6 @@ namespace Allors.Database.Domain
                     {
                         cycle.Validation.AddError($"{@this} {@this.Meta.BilledFrom} {ErrorMessages.PartyIsNotASupplier}");
                     }
-                }
-
-                if (@this.PurchaseInvoiceState.IsCreated)
-                {
-                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BilledFrom?.VatRegime;
-                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? (@this.BilledFrom as Organisation)?.IrpfRegime;
                 }
 
                 @this.PurchaseOrders = @this.InvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(v => v.OrderItem.OrderWhereValidOrderItem).ToArray();

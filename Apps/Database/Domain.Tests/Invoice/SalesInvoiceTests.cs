@@ -1125,6 +1125,432 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class SalesInvoiceReadyForPostingDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceReadyForPostingDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedLocaleDeriveDerivedLocaleFromLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            this.Session.GetSingleton().DefaultLocale = swedishLocale;
+
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.Locale = swedishLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedLocale, invoice.Locale);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerLocaleDeriveDerivedLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.Locale = swedishLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedLocale, customer.Locale);
+        }
+
+        [Fact]
+        public void ChangedBilledFromLocaleDeriveDerivedLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            this.InternalOrganisation.RemoveLocale();
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBilledFrom(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.Locale = swedishLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedLocale, this.InternalOrganisation.Locale);
+        }
+
+        [Fact]
+        public void ChangedAssignedCurrencyDeriveDerivedCurrency()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            invoice.AssignedCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedCurrency, swedishKrona);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerPreferredCurrencyDeriveDerivedCurrency()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+            customer.RemovePreferredCurrency();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.PreferredCurrency = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedCurrency, customer.PreferredCurrency);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerLocaleDeriveDerivedCurrency()
+        {
+            var newLocale = new LocaleBuilder(this.Session)
+                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.RemoveLocale();
+            customer.RemovePreferredCurrency();
+
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.Locale = newLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedCurrency, newLocale.Country.Currency);
+        }
+
+        [Fact]
+        public void ChangedBilledFromPreferredCurrencyDeriveDerivedCurrency()
+        {
+            this.InternalOrganisation.RemovePreferredCurrency();
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.PreferredCurrency = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
+        }
+
+        [Fact]
+        public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatRegime, invoice.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerVatRegimeDeriveDerivedVatRegime()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.VatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatRegime, customer.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedIrpfRegime, invoice.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerDeriveIrpfRegime()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedIrpfRegime, customer.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedBilledFromContactMechanismDeriveDerivedBilledFromContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedBilledFromContactMechanism = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBilledFromContactMechanism, invoice.AssignedBilledFromContactMechanism);
+        }
+
+        [Fact]
+        public void ChangedBilledFromBillingAddressDeriveDerivedBilledFromContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.BillingAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBilledFromContactMechanism, this.InternalOrganisation.BillingAddress);
+        }
+
+        [Fact]
+        public void ChangedBilledFromGeneralCorrespondenceDeriveDerivedBilledFromContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.RemoveBillingAddress();
+            this.InternalOrganisation.GeneralCorrespondence = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBilledFromContactMechanism, this.InternalOrganisation.GeneralCorrespondence);
+        }
+
+        [Fact]
+        public void ChangedAssignedBillToContactMechanismDeriveDerivedDerivedBillToContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedBillToContactMechanism = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBillToContactMechanism, invoice.AssignedBillToContactMechanism);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToCustomerDeriveDerivedBillToContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBillToContactMechanism, invoice.BillToCustomer.BillingAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerBillingAddressDeriveDerivedBillToContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.BillingAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBillToContactMechanism, customer.BillingAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedBillToEndCustomerContactMechanismDeriveDerivedDerivedBillToEndCustomerContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedBillToEndCustomerContactMechanism = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, invoice.AssignedBillToEndCustomerContactMechanism);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.BillToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, invoice.BillToEndCustomer.BillingAddress);
+        }
+
+        [Fact]
+        public void ChangedBillToEndCustomerBillingAddressDeriveDerivedBillToEndCustomerContactMechanism()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.BillingAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, customer.BillingAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipToEndCustomerAddressDeriveDerivedDerivedShipToEndCustomerAddress()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedShipToEndCustomerAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, invoice.AssignedShipToEndCustomerAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToEndCustomerDeriveShipToEndCustomerAddress()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.ShipToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, invoice.ShipToEndCustomer.ShippingAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToEndCustomerShippingAddressDeriveDerivedShipToEndCustomerAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToEndCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, customer.ShippingAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipToAddressDeriveDerivedDerivedShipToAddress()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedShipToAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedShipToAddress, invoice.AssignedShipToAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToCustomerDeriveShipToAddress()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.ShipToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedShipToAddress, invoice.ShipToCustomer.ShippingAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToCustomerShippingAddressDeriveDerivedShipToAddress()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
+            this.Session.Derive(false);
+
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedShipToAddress, customer.ShippingAddress);
+        }
+
+        [Fact]
+        public void ChangedVatRegimeDeriveDerivedVatClause()
+        {
+            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(intraCommunautair).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
+        }
+
+        [Fact]
+        public void ChangedVatRegimeDeriveDerivedVatClauseIsNull()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Null(invoice.DerivedVatClause);
+        }
+
+        [Fact]
+        public void ChangedAssignedVatClauseDeriveDerivedVatClause()
+        {
+            var vatClause = new VatClauses(this.Session).BeArt14Par2;
+            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatClause(vatClause).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, vatClause);
+        }
+
+        [Fact]
+        public void OnChangedRoleVatRegimeDeriveDerivedVatClause()
+        {
+            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
+            var assessable9 = new VatRegimes(this.Session).Assessable9;
+
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+            invoice.AssignedVatRegime = assessable9;
+            this.Session.Derive(false);
+
+            invoice.AssignedVatRegime = intraCommunautair;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
+        }
+
+        [Fact]
+        public void OnChangedRoleAssignedVatClauseDeriveDerivedVatClause()
+        {
+            var vatClause = new VatClauses(this.Session).BeArt14Par2;
+            var invoice = new SalesInvoiceBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            invoice.AssignedVatClause = vatClause;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatClause, vatClause);
+        }
+    }
+
     public class SalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
@@ -1173,191 +1599,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBilledFromDeriveBilledFromContactMechanism()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedBilledFromContactMechanism, this.InternalOrganisation.BillingAddress);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveBillToContactMechanism()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedBillToContactMechanism, customer.BillingAddress);
-        }
-
-        [Fact]
-        public void ChangedBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToEndCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, customer.BillingAddress);
-        }
-
-        [Fact]
-        public void ChangedShipToCustomerDeriveShipToAddress()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedShipToAddress, customer.ShippingAddress);
-        }
-
-        [Fact]
-        public void ChangedShipToEndCustomerDeriveShipToEndCustomerAddress()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithShipToEndCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, customer.ShippingAddress);
-        }
-
-        [Fact]
-        public void ChangedBilledFromDeriveCurrencyFromInternalOrganisationPreferredCurrency()
-        {
-            Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
-
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
-        }
-
-        [Fact]
-        public void ChangedBilledFromDeriveCurrencyFromBilledFromPreferredCurrency()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            invoice.BilledFrom.Locale = new LocaleBuilder(this.Session)
-                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
-                .Build();
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.BilledFrom.PreferredCurrency, invoice.DerivedCurrency);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerPreferredCurrency()
-        {
-            var newLocale = new LocaleBuilder(this.Session)
-                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
-                .Build();
-
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.RemoveLocale();
-            customer.PreferredCurrency = newLocale.Country.Currency;
-
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedCurrency, customer.PreferredCurrency);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerLocale()
-        {
-            var newLocale = new LocaleBuilder(this.Session)
-                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
-                .Build();
-
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.Locale = newLocale;
-            customer.RemovePreferredCurrency();
-
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedCurrency, newLocale.Country.Currency);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveVatRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-
-            Assert.True(customer.ExistVatRegime);
-
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatRegime, customer.VatRegime);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveIrpfRegime()
-        {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
-
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedIrpfRegime, customer.IrpfRegime);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveLocaleFromBillToCustomerLocale()
-        {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
-               .Build();
-
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.Locale = swedishLocale;
-
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedLocale, swedishLocale);
-        }
-
-        [Fact]
-        public void ChangedBillToCustomerDeriveLocaleFromBilledFromLocale()
-        {
-            var swedishLocale = new LocaleBuilder(this.Session)
-               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
-               .Build();
-
-            this.Session.GetSingleton().DefaultLocale = swedishLocale;
-
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.RemoveLocale();
-
-            var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
-
-            this.Session.Derive(false);
-
-            Assert.False(customer.ExistLocale);
-            Assert.Equal(invoice.Locale, invoice.BilledFrom.Locale);
-        }
-
-        [Fact]
         public void ChangedInvoiceTermTermValueDerivePaymentDays()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
@@ -1378,38 +1619,6 @@ namespace Allors.Database.Domain.Tests
             var days = int.Parse(paymentDays.TermValue);
 
             Assert.Equal(invoice.DueDate, invoice.InvoiceDate.AddDays(days));
-        }
-
-        [Fact]
-        public void ChangedVatRegimeDeriveDerivedVatClause()
-        {
-            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(intraCommunautair).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
-        }
-
-        [Fact]
-        public void ChangedVatRegimeDeriveDerivedVatClauseIsNull()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Null(invoice.DerivedVatClause);
-        }
-
-        [Fact]
-        public void ChangedAssignedVatClauseDeriveDerivedVatClause()
-        {
-            var vatClause = new VatClauses(this.Session).BeArt14Par2;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatClause(vatClause).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatClause, vatClause);
         }
 
         [Fact]
@@ -1467,71 +1676,6 @@ namespace Allors.Database.Domain.Tests
             {
                 Assert.Equal(invoiceItem.SyncedInvoice, invoice);
             }
-        }
-
-        [Fact]
-        public void OnChangedRoleBillToCustomerDerivePreviousBillToCustomer()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.PreviousBillToCustomer, invoice.BillToCustomer);
-        }
-
-        [Fact]
-        public void OnChangedRoleBillToCustomerDeriveBillToContactMechanism()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedBillToContactMechanism, invoice.BillToCustomer.BillingAddress);
-        }
-
-        [Fact]
-        public void OnChangedRoleBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            invoice.BillToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, invoice.BillToEndCustomer.BillingAddress);
-        }
-
-        [Fact]
-        public void OnChangedRoleShipToCustomerDeriveShipToAddress()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            invoice.ShipToCustomer = invoice.BilledFrom.ActiveCustomers.First;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedShipToAddress, invoice.ShipToCustomer.ShippingAddress);
-        }
-
-        [Fact]
-        public void OnChangedRoleShipToEndCustomerDeriveShipToEndCustomerAddress()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            invoice.ShipToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedShipToEndCustomerAddress, invoice.ShipToEndCustomer.ShippingAddress);
         }
 
         [Fact]
@@ -1709,36 +1853,6 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Equal(invoice.DueDate, invoice.InvoiceDate.AddDays(newValue));
-        }
-
-        [Fact]
-        public void OnChangedRoleVatRegimeDeriveDerivedVatClause()
-        {
-            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
-            var assessable9 = new VatRegimes(this.Session).Assessable9;
-
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-            invoice.AssignedVatRegime = assessable9;
-            this.Session.Derive(false);
-
-            invoice.AssignedVatRegime = intraCommunautair;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
-        }
-
-        [Fact]
-        public void OnChangedRoleAssignedVatClauseDeriveDerivedVatClause()
-        {
-            var vatClause = new VatClauses(this.Session).BeArt14Par2;
-            var invoice = new SalesInvoiceBuilder(this.Session).Build();
-
-            this.Session.Derive(false);
-
-            invoice.AssignedVatClause = vatClause;
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatClause, vatClause);
         }
 
         [Fact]

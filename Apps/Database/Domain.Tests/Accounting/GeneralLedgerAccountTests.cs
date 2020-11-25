@@ -77,13 +77,13 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             Assert.True(generalLedgerAccount.ExistUniqueId);
-            Assert.Equal(generalLedgerAccount.CashAccount, false);
-            Assert.Equal(generalLedgerAccount.CostCenterAccount, false);
-            Assert.Equal(generalLedgerAccount.CostCenterRequired, false);
-            Assert.Equal(generalLedgerAccount.CostUnitAccount, false);
-            Assert.Equal(generalLedgerAccount.CostUnitRequired, false);
-            Assert.Equal(generalLedgerAccount.Protected, false);
-            Assert.Equal(generalLedgerAccount.ReconciliationAccount, false);
+            Assert.False(generalLedgerAccount.CashAccount);
+            Assert.False(generalLedgerAccount.CostCenterAccount);
+            Assert.False(generalLedgerAccount.CostCenterRequired);
+            Assert.False(generalLedgerAccount.CostUnitAccount);
+            Assert.False(generalLedgerAccount.CostUnitRequired);
+            Assert.False(generalLedgerAccount.Protected);
+            Assert.False(generalLedgerAccount.ReconciliationAccount);
         }
 
         [Fact]

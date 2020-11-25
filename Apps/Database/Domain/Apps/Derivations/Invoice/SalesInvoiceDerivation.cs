@@ -23,17 +23,8 @@ namespace Allors.Database.Domain
             new ChangedPattern(this.M.SalesInvoice.BillToEndCustomer),
             new ChangedPattern(this.M.SalesInvoice.ShipToCustomer),
             new ChangedPattern(this.M.SalesInvoice.ShipToEndCustomer),
-            new ChangedPattern(this.M.SalesInvoice.AssignedVatRegime),
-            new ChangedPattern(this.M.SalesInvoice.AssignedIrpfRegime),
-            new ChangedPattern(this.M.SalesInvoice.AssignedVatClause),
             new ChangedPattern(this.M.SalesInvoice.InvoiceDate),
             new ChangedPattern(this.M.SalesInvoice.SalesInvoiceItems),
-            new ChangedPattern(this.M.SalesInvoice.AssignedCurrency),
-            new ChangedPattern(this.M.SalesInvoice.Locale),
-            new ChangedPattern(this.M.Party.Locale) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new ChangedPattern(this.M.Organisation.Locale) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
-            new ChangedPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.SalesInvoicesWhereBillToCustomer }},
-            new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.SalesInvoicesWhereBilledFrom }},
             new ChangedPattern(this.M.RepeatingSalesInvoice.NextExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
             new ChangedPattern(this.M.RepeatingSalesInvoice.FinalExecutionDate) { Steps =  new IPropertyType[] {m.RepeatingSalesInvoice.Source} },
             new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.InvoiceWhereSalesTerm} },
@@ -66,19 +57,6 @@ namespace Allors.Database.Domain
                 {
                     var stores = @this.BilledFrom.StoresWhereInternalOrganisation;
                     @this.Store = stores.FirstOrDefault();
-                }
-
-                if (@this.SalesInvoiceState.IsReadyForPosting)
-                {
-                    @this.DerivedLocale = @this.Locale ?? @this.BillToCustomer?.Locale ?? @this.BilledFrom?.Locale;
-                    @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BillToCustomer?.PreferredCurrency ?? @this.BillToCustomer?.Locale?.Country?.Currency ?? @this.BilledFrom?.PreferredCurrency;
-                    @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BillToCustomer?.VatRegime;
-                    @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.BillToCustomer?.IrpfRegime;
-                    @this.DerivedBilledFromContactMechanism = @this.AssignedBilledFromContactMechanism ?? @this.BilledFrom?.BillingAddress ?? @this.BilledFrom?.GeneralCorrespondence;
-                    @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.BillToCustomer?.BillingAddress;
-                    @this.DerivedBillToEndCustomerContactMechanism = @this.AssignedBillToEndCustomerContactMechanism ?? @this.BillToEndCustomer?.BillingAddress;
-                    @this.DerivedShipToEndCustomerAddress = @this.AssignedShipToEndCustomerAddress ?? @this.ShipToEndCustomer?.ShippingAddress;
-                    @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.ShipToCustomer?.ShippingAddress;
                 }
 
                 if (!@this.ExistInvoiceNumber && @this.ExistStore)
@@ -124,24 +102,6 @@ namespace Allors.Database.Domain
                 {
                     @this.DueDate = @this.InvoiceDate.AddDays(@this.PaymentNetDays);
                 }
-
-                if (@this.ExistDerivedVatRegime)
-                {
-                    if (@this.DerivedVatRegime.ExistVatClause)
-                    {
-                        @this.DerivedVatClause = @this.DerivedVatRegime.VatClause;
-                    }
-                    else
-                    {
-                        @this.RemoveDerivedVatClause();
-                    }
-                }
-                else
-                {
-                    @this.RemoveDerivedVatClause();
-                }
-
-                @this.DerivedVatClause = @this.ExistAssignedVatClause ? @this.AssignedVatClause : @this.DerivedVatClause;
 
                 @this.RemoveCustomers();
                 if (@this.ExistBillToCustomer && !@this.Customers.Contains(@this.BillToCustomer))

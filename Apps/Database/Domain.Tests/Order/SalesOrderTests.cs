@@ -2875,7 +2875,7 @@ namespace Allors.Database.Domain.Tests
             order.BillToCustomer = customer;
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedLocale, swedishLocale);
+            Assert.Equal(order.DerivedLocale, customer.Locale);
         }
 
         [Fact]
@@ -2929,7 +2929,7 @@ namespace Allors.Database.Domain.Tests
             order.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedVatRegime, new VatRegimes(this.Session).ServiceB2B);
+            Assert.Equal(order.DerivedVatRegime, order.AssignedVatRegime);
         }
 
         [Fact]
@@ -2937,12 +2937,10 @@ namespace Allors.Database.Domain.Tests
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
-            Assert.True(customer.ExistVatRegime);
-
-            var order = new SalesOrderBuilder(this.Session).Build();
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            order.BillToCustomer = customer;
+            customer.VatRegime = new VatRegimes(this.Session).Assessable10;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedVatRegime, customer.VatRegime);
@@ -2957,19 +2955,18 @@ namespace Allors.Database.Domain.Tests
             order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedIrpfRegime, new IrpfRegimes(this.Session).Assessable15);
+            Assert.Equal(order.DerivedIrpfRegime, order.AssignedIrpfRegime);
         }
 
         [Fact]
         public void ChangedBillToCustomerDeriveDerivedIrpfRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
 
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            order.BillToCustomer = customer;
+            customer.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedIrpfRegime, customer.IrpfRegime);
@@ -2985,11 +2982,11 @@ namespace Allors.Database.Domain.Tests
             order.AssignedCurrency = swedishKrona;
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedCurrency, swedishKrona);
+            Assert.Equal(order.DerivedCurrency, order.AssignedCurrency);
         }
 
         [Fact]
-        public void ChangedTakenByDeriveCurrencyFromInternalOrganisationPreferredCurrency()
+        public void ChangedTakenByPreferredCurrencyDeriveDerivedCurrency()
         {
             Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
 
@@ -3000,7 +2997,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveCurrencyFromDefaultLocale()
+        public void ChangedBillToCustomerLocaleDeriveDerivedCurrency()
         {
             var se = new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE");
             var newLocale = new LocaleBuilder(this.Session)
@@ -3022,24 +3019,20 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedBillToCustomerDeriveCurrencyFromBillToCustomerPreferredCurrency()
+        public void ChangedBillToCustomerPreferredCurrencyDeriveDerivedCurrency()
         {
-            var newLocale = new LocaleBuilder(this.Session)
-                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
-                .Build();
-
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.RemoveLocale();
-            customer.PreferredCurrency = newLocale.Country.Currency;
+            customer.RemovePreferredCurrency();
 
-            var order = new SalesOrderBuilder(this.Session).Build();
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            order.BillToCustomer = customer;
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            customer.PreferredCurrency = swedishKrona;
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedCurrency, customer.PreferredCurrency);
+            Assert.Equal(order.DerivedCurrency, swedishKrona);
         }
 
         [Fact]
@@ -3069,11 +3062,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            order.AssignedTakenByContactMechanism = postalAddress;
+            order.AssignedTakenByContactMechanism = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedTakenByContactMechanism, order.AssignedTakenByContactMechanism);
         }
 
         [Fact]
@@ -3083,11 +3075,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            internalOrganisation.OrderAddress = postalAddress;
+            internalOrganisation.OrderAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedTakenByContactMechanism, internalOrganisation.OrderAddress);
         }
 
         [Fact]
@@ -3097,11 +3088,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            internalOrganisation.BillingAddress = postalAddress;
+            internalOrganisation.BillingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedTakenByContactMechanism, internalOrganisation.BillingAddress);
         }
 
         [Fact]
@@ -3111,11 +3101,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            internalOrganisation.GeneralCorrespondence = postalAddress;
+            internalOrganisation.GeneralCorrespondence = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedTakenByContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedTakenByContactMechanism, internalOrganisation.GeneralCorrespondence);
         }
 
         [Fact]
@@ -3124,11 +3113,23 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            order.AssignedBillToContactMechanism = postalAddress;
+            order.AssignedBillToContactMechanism = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToContactMechanism, order.AssignedBillToContactMechanism);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToCustomerDeriveDerivedBillToContactMechanism()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            order.BillToCustomer = order.TakenBy.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, order.BillToCustomer.BillingAddress);
         }
 
         [Fact]
@@ -3142,11 +3143,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.BillingAddress = postalAddress;
+            customer.BillingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToContactMechanism, customer.BillingAddress);
         }
 
         [Fact]
@@ -3160,11 +3160,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.ShippingAddress = postalAddress;
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToContactMechanism, customer.ShippingAddress);
         }
 
         [Fact]
@@ -3178,11 +3177,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.GeneralCorrespondence = postalAddress;
+            customer.GeneralCorrespondence = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToContactMechanism, customer.GeneralCorrespondence);
         }
 
         [Fact]
@@ -3191,11 +3189,23 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            order.AssignedBillToEndCustomerContactMechanism = postalAddress;
+            order.AssignedBillToEndCustomerContactMechanism = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, order.AssignedBillToEndCustomerContactMechanism);
+        }
+
+        [Fact]
+        public void OnChangedRoleBillToEndCustomerDeriveDerivedBillToEndCustomerContactMechanism()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            order.BillToEndCustomer = order.TakenBy.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, order.BillToEndCustomer.BillingAddress);
         }
 
         [Fact]
@@ -3209,11 +3219,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.BillingAddress = postalAddress;
+            customer.BillingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, customer.BillingAddress);
         }
 
         [Fact]
@@ -3227,11 +3236,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.ShippingAddress = postalAddress;
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, customer.ShippingAddress);
         }
 
         [Fact]
@@ -3245,11 +3253,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithBillToEndCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.GeneralCorrespondence = postalAddress;
+            customer.GeneralCorrespondence = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, postalAddress);
+            Assert.Equal(order.DerivedBillToEndCustomerContactMechanism, customer.GeneralCorrespondence);
         }
 
         [Fact]
@@ -3258,11 +3265,23 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            order.AssignedShipToEndCustomerAddress = postalAddress;
+            order.AssignedShipToEndCustomerAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipToEndCustomerAddress, postalAddress);
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, order.AssignedShipToEndCustomerAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToEndCustomerDeriveDerivedShipToEndCustomerAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            order.ShipToEndCustomer = order.TakenBy.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, order.ShipToEndCustomer.ShippingAddress);
         }
 
         [Fact]
@@ -3276,11 +3295,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithShipToEndCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.ShippingAddress = postalAddress;
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipToEndCustomerAddress, postalAddress);
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, customer.ShippingAddress);
         }
 
         [Fact]
@@ -3294,11 +3312,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithShipToEndCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.GeneralCorrespondence = postalAddress;
+            customer.GeneralCorrespondence = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipToEndCustomerAddress, postalAddress);
+            Assert.Equal(order.DerivedShipToEndCustomerAddress, customer.GeneralCorrespondence);
         }
 
         [Fact]
@@ -3307,11 +3324,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            order.AssignedShipFromAddress = postalAddress;
+            order.AssignedShipFromAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipFromAddress, postalAddress);
+            Assert.Equal(order.DerivedShipFromAddress, order.AssignedShipFromAddress);
         }
 
         [Fact]
@@ -3321,11 +3337,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithTakenBy(internalOrganisation).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            internalOrganisation.ShippingAddress = postalAddress;
+            internalOrganisation.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipFromAddress, postalAddress);
+            Assert.Equal(order.DerivedShipFromAddress, internalOrganisation.ShippingAddress);
         }
 
         [Fact]
@@ -3334,11 +3349,23 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            order.AssignedShipToAddress = postalAddress;
+            order.AssignedShipToAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipToAddress, postalAddress);
+            Assert.Equal(order.DerivedShipToAddress, order.AssignedShipToAddress);
+        }
+
+        [Fact]
+        public void OnChangedRoleShipToCustomerDeriveDerivedShipToAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            order.ShipToCustomer = order.TakenBy.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToAddress, order.ShipToCustomer.ShippingAddress);
         }
 
         [Fact]
@@ -3352,11 +3379,10 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).WithShipToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var postalAddress = new PostalAddressBuilder(this.Session).Build();
-            customer.ShippingAddress = postalAddress;
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(order.DerivedShipToAddress, postalAddress);
+            Assert.Equal(order.DerivedShipToAddress, customer.ShippingAddress);
         }
 
         [Fact]
