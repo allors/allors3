@@ -17,7 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.SalesOrder.SalesOrderState),
-                new ChangedPattern(this.M.SalesOrder.SalesOrderItems)
+                new ChangedPattern(this.M.SalesOrder.SalesOrderItems),
+                new ChangedPattern(this.M.SalesOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,6 +28,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
+                @this.ValidOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
                 var salesOrderShipmentStates = new SalesOrderShipmentStates(@this.Strategy.Session);

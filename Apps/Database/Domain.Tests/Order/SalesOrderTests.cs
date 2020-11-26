@@ -4067,6 +4067,29 @@ namespace Allors.Database.Domain.Tests
     public class SalesOrderStateDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveValidInvoiceItems()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive();
+
+            var orderItem1 = new SalesOrderItemBuilder(this.Session).WithDefaults().Build();
+            order.AddSalesOrderItem(orderItem1);
+            this.Session.Derive();
+
+            var orderItem2 = new SalesOrderItemBuilder(this.Session).WithDefaults().Build();
+            order.AddSalesOrderItem(orderItem2);
+            this.Session.Derive();
+
+            Assert.Equal(2, order.ValidOrderItems.Count);
+
+            orderItem2.Cancel();
+            this.Session.Derive();
+
+            Assert.Single(order.ValidOrderItems);
+        }
     }
 
     [Trait("Category", "Security")]
