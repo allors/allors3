@@ -23,16 +23,6 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Quote>())
             {
-                if (!@this.ExistIssuer)
-                {
-                    var internalOrganisations = new Organisations(cycle.Session).InternalOrganisations();
-
-                    if (internalOrganisations.Count() == 1)
-                    {
-                        @this.Issuer = internalOrganisations.First();
-                    }
-                }
-
                 if (!@this.ExistQuoteNumber && @this.ExistIssuer)
                 {
                     @this.QuoteNumber = @this.Issuer.NextQuoteNumber(cycle.Session.Now().Year);

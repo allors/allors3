@@ -389,7 +389,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(item.DeliveryDate, item.AssignedDeliveryDate);
+            Assert.Equal(item.DerivedDeliveryDate, item.AssignedDeliveryDate);
         }
 
         [Fact]
@@ -406,7 +406,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(item.DeliveryDate, this.order.DeliveryDate);
+            Assert.Equal(item.DerivedDeliveryDate, this.order.DeliveryDate);
         }
 
         private void InstantiateObjects(ISession session)

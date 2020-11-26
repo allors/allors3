@@ -366,7 +366,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(orderItem.DeliveryDate, orderItem.AssignedDeliveryDate);
+            Assert.Equal(orderItem.DerivedDeliveryDate, orderItem.AssignedDeliveryDate);
         }
 
         [Fact]
@@ -393,7 +393,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(orderItem.DeliveryDate, salesOrder.DeliveryDate);
+            Assert.Equal(orderItem.DerivedDeliveryDate, salesOrder.DeliveryDate);
         }
 
         [Fact]
@@ -493,7 +493,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Null(orderItem.ShipToAddress);
+            Assert.Null(orderItem.DerivedShipToAddress);
             Assert.False(this.Session.Derive(false).HasErrors);
         }
 
@@ -534,7 +534,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(this.shipToContactMechanismMechelen, orderItem.ShipToAddress);
+            Assert.Equal(this.shipToContactMechanismMechelen, orderItem.DerivedShipToAddress);
         }
 
         [Fact]
@@ -554,7 +554,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(this.shipToCustomer, orderItem.ShipToParty);
+            Assert.Equal(this.shipToCustomer, orderItem.DerivedShipToParty);
         }
 
         [Fact]
@@ -1241,6 +1241,205 @@ namespace Allors.Database.Domain.Tests
     public class SalesOrderItemCreateDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderItemProvisionalDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemProvisionalDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAssignedShipFromAddressDeriveDerivedShipFromAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipFromAddress(new PostalAddressBuilder(this.Session).Build()).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedShipFromAddress, orderItem.AssignedShipFromAddress);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedShipFromAddressDeriveDerivedShipFromAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.AssignedShipFromAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedShipFromAddress, order.DerivedShipFromAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipToAddressDeriveDerivedShipToAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipToAddress(new PostalAddressBuilder(this.Session).Build()).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedShipToAddress, orderItem.AssignedShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToPartyShippingAddressDeriveDerivedShipToAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedShipToParty(customer).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            customer.ShippingAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedShipToAddress, customer.ShippingAddress);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedShipToAddressDeriveDerivedShipToAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.AssignedShipToAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedShipToAddress, order.DerivedShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedDeliveryDateDeriveDerivedDeliveryDate()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedDeliveryDate(this.Session.Now().Date).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedDeliveryDate, orderItem.AssignedDeliveryDate);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedDeliveryDateDeriveDerivedDeliveryDate()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.DeliveryDate = this.Session.Now().Date;
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedDeliveryDate, order.DeliveryDate);
+        }
+
+        [Fact]
+        public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Assessable10).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedVatRegime, orderItem.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedVatRegimeDeriveDerivedVatRegime()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.AssignedVatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedVatRegime, order.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedDerivedVatRegimeDeriveVatRate()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.AssignedVatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRate);
+        }
+
+        [Fact]
+        public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable15).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedIrpfRegime, orderItem.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedIrpfRegime, order.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedDerivedIrpfRegimeDeriveIrpfRate()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRate);
+        }
     }
 
     public class SalesOrderItemDerivationTests : DomainTest, IClassFixture<Fixture>

@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Linq;
+
 namespace Allors.Database.Domain
 {
     public static partial class QuoteExtensions
@@ -12,6 +14,16 @@ namespace Allors.Database.Domain
             if (!@this.ExistQuoteState)
             {
                 @this.QuoteState = new QuoteStates(@this.Strategy.Session).Created;
+            }
+        }
+
+        public static void AppsOnInit(this Quote @this, ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!@this.ExistIssuer && internalOrganisations.Count() == 1)
+            {
+                @this.Issuer = internalOrganisations.First();
             }
         }
 

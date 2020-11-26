@@ -138,7 +138,7 @@ namespace Allors.Database.Domain
                     @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.TakenViaSupplier?.IrpfRegime;
                     @this.DerivedShipToAddress = @this.AssignedShipToAddress ?? @this.OrderedBy?.ShippingAddress;
                     @this.DerivedBillToContactMechanism = @this.AssignedBillToContactMechanism ?? @this.OrderedBy?.BillingAddress ?? @this.OrderedBy?.GeneralCorrespondence;
-                    @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier.OrderAddress;
+                    @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier?.OrderAddress;
                 }
 
                 if (@this.TakenViaSupplier is Organisation supplier)

@@ -10,6 +10,8 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Resources;
     using Xunit;
+    using System.Collections.Generic;
+    using Database.Derivations;
 
     public class SalesOrderTests : DomainTest, IClassFixture<Fixture>
     {
@@ -3554,6 +3556,104 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Contains(order.PlacingCustomer, order.Customers);
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveOrderNumber()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            var store = new Stores(this.Session).Extent().First;
+            store.RemoveSalesOrderNumberPrefix();
+            var number = store.SalesOrderCounter.Value;
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.OrderNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveSortableOrderNumber()
+        {
+            var order = new SalesOrderBuilder(this.Session).Build();
+            var number = new Stores(this.Session).Extent().First.SalesOrderCounter.Value;
+
+            this.Session.Derive(false);
+
+            Assert.Equal(order.SortableOrderNumber.Value, number + 1);
+        }
+
+        [Fact]
+        public void ValidateBillToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
+
+            this.Session.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
+
+            var expectedMessage = $"{order} {this.M.SalesOrder.BillToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void ValidateShipToCustomerIsActiveCustomer()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Session.Now().AddDays(-1);
+
+            this.Session.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Session).WithShipToCustomer(customer).Build();
+
+            var expectedMessage = $"{order} {this.M.SalesOrder.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+        }
+
+        [Fact]
+        public void ValidateExistDerivedShipToAddress()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.RemoveDerivedShipToAddress();
+
+            var expectedMessage = $"{order} {this.M.SalesOrder.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
+        }
+
+        [Fact]
+        public void ValidateExistDerivedBillToContactMechanism()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.RemoveDerivedBillToContactMechanism();
+
+            var expectedMessage = $"{order} {this.M.SalesOrder.ShipToCustomer} { ErrorMessages.PartyIsNotACustomer}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
         }
     }
 

@@ -91,7 +91,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Workspace(Default)]
-        DateTime DeliveryDate { get; set; }
+        DateTime DerivedDeliveryDate { get; set; }
 
         #region Allors
         [Id("b82c7b21-5ade-40b6-ba5d-62b6384eaaec")]

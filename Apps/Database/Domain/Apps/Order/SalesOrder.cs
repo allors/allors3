@@ -222,7 +222,7 @@ namespace Allors.Database.Domain
                         {
                             var orderItemDerivedRoles = orderItem;
 
-                            if (orderItem.ExistProduct && orderItem.ShipToAddress.Equals(address.Key) && orderItem.QuantityRequestsShipping > 0)
+                            if (orderItem.ExistProduct && orderItem.DerivedShipToAddress.Equals(address.Key) && orderItem.QuantityRequestsShipping > 0)
                             {
                                 var good = orderItem.Product as Good;
                                 var nonUnifiedGood = orderItem.Product as NonUnifiedGood;
@@ -476,9 +476,9 @@ namespace Allors.Database.Domain
             {
                 if (item.QuantityRequestsShipping > 0)
                 {
-                    if (!addresses.ContainsKey(item.ShipToAddress))
+                    if (!addresses.ContainsKey(item.DerivedShipToAddress))
                     {
-                        addresses.Add(item.ShipToAddress, item.ShipToParty);
+                        addresses.Add(item.DerivedShipToAddress, item.DerivedShipToParty);
                     }
                 }
             }

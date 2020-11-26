@@ -186,7 +186,7 @@ namespace Allors.Database.Domain
 
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Extent<SalesOrderItem>();
             salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
-            salesOrderItems.AddSort(this.M.OrderItem.DeliveryDate, SortDirection.Ascending);
+            salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Ascending);
             var nonUnifiedGoods = nonSerialisedInventoryItem.Part.NonUnifiedGoodsWherePart;
             var unifiedGood = nonSerialisedInventoryItem.Part as UnifiedGood;
 
@@ -241,8 +241,8 @@ namespace Allors.Database.Domain
         {
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Extent<SalesOrderItem>();
             salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Session).InProcess);
-            salesOrderItems.Filter.AddExists(this.M.OrderItem.DeliveryDate);
-            salesOrderItems.AddSort(this.M.OrderItem.DeliveryDate, SortDirection.Descending);
+            salesOrderItems.Filter.AddExists(this.M.OrderItem.DerivedDeliveryDate);
+            salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Descending);
 
             salesOrderItems = nonSerialisedInventoryItem.Strategy.Session.Instantiate(salesOrderItems);
 

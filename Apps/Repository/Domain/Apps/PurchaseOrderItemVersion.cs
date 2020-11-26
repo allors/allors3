@@ -38,7 +38,7 @@ namespace Allors.Repository
 
         public DateTime AssignedDeliveryDate { get; set; }
 
-        public DateTime DeliveryDate { get; set; }
+        public DateTime DerivedDeliveryDate { get; set; }
 
         public SalesTerm[] SalesTerms { get; set; }
 

@@ -37,7 +37,7 @@ namespace Allors.Repository
 
         public DateTime AssignedDeliveryDate { get; set; }
 
-        public DateTime DeliveryDate { get; set; }
+        public DateTime DerivedDeliveryDate { get; set; }
 
         public SalesTerm[] SalesTerms { get; set; }
 
@@ -217,19 +217,28 @@ namespace Allors.Repository
         public PostalAddress DerivedShipFromAddress { get; set; }
 
         #region Allors
+        [Id("0FF4C90C-EBD7-491D-B265-EF5083E4BB95")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public PostalAddress AssignedShipToAddress { get; set; }
+
+        #region Allors
         [Id("38F38BF8-B735-4578-A2B1-2FD997A1FE3C")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public PostalAddress ShipToAddress { get; set; }
+        public PostalAddress DerivedShipToAddress { get; set; }
 
         #region Allors
-        [Id("2BE18BDC-27ED-4E1B-8F7C-58CBF8E58ED3")]
+        [Id("1837DB18-F0D5-4A84-88B9-09EF35D98A24")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public Product PreviousProduct { get; set; }
+        [Workspace(Default)]
+        public Party AssignedShipToParty { get; set; }
 
         #region Allors
         [Id("5589BC3C-DD00-429A-92F5-7981228964DE")]
@@ -237,15 +246,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Party ShipToParty { get; set; }
+        public Party DerivedShipToParty { get; set; }
 
         #region Allors
-        [Id("0FF4C90C-EBD7-491D-B265-EF5083E4BB95")]
+        [Id("2BE18BDC-27ED-4E1B-8F7C-58CBF8E58ED3")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace(Default)]
-        public PostalAddress AssignedShipToAddress { get; set; }
+        public Product PreviousProduct { get; set; }
 
         #region Allors
         [Id("7A3ED514-0136-45BB-835B-05AA446052B7")]
@@ -262,14 +270,6 @@ namespace Allors.Repository
         [Scale(2)]
         [Workspace(Default)]
         public decimal QuantityReserved { get; set; }
-
-        #region Allors
-        [Id("1837DB18-F0D5-4A84-88B9-09EF35D98A24")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public Party AssignedShipToParty { get; set; }
 
         #region Allors
         [Id("72C8B608-F504-4A0B-BBFF-144DED827625")]

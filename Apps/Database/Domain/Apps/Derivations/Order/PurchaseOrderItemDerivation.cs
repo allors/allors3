@@ -101,11 +101,11 @@ namespace Allors.Database.Domain
                 {
                     if (@this.AssignedDeliveryDate.HasValue)
                     {
-                        @this.DeliveryDate = @this.AssignedDeliveryDate.Value;
+                        @this.DerivedDeliveryDate = @this.AssignedDeliveryDate.Value;
                     }
                     else if (@this.PurchaseOrderWherePurchaseOrderItem.DeliveryDate.HasValue)
                     {
-                        @this.DeliveryDate = @this.PurchaseOrderWherePurchaseOrderItem.DeliveryDate.Value;
+                        @this.DerivedDeliveryDate = @this.PurchaseOrderWherePurchaseOrderItem.DeliveryDate.Value;
                     }
 
                     @this.UnitBasePrice = 0;
