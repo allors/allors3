@@ -31,13 +31,6 @@ namespace Allors.Database.Domain
                     @this.SortableShipmentNumber = NumberFormatter.SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.Strategy.Session.Now().Year.ToString());
                 }
 
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                if (!@this.ExistShipFromParty && internalOrganisations.Count() == 1)
-                {
-                    @this.ShipFromParty = internalOrganisations.First();
-                }
-
                 cycle.Validation.AssertExists(@this, @this.Meta.ShipToParty);
 
                 if (!@this.ExistShipToAddress && @this.ExistShipToParty)

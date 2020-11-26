@@ -22,13 +22,13 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SalesOrderItem.AssignedDeliveryDate),
                 new ChangedPattern(m.SalesOrderItem.AssignedVatRegime),
                 new ChangedPattern(m.SalesOrderItem.AssignedIrpfRegime),
-                new ChangedPattern(this.M.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrderItemsWhereAssignedShipToParty  }},
                 new ChangedPattern(this.M.SalesOrder.DerivedShipFromAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.DerivedShipToAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.ShipToCustomer) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
+                new ChangedPattern(this.M.Organisation.ShippingAddress) { Steps = new IPropertyType[] { this.M.Organisation.SalesOrderItemsWhereAssignedShipToParty  }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

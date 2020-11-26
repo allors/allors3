@@ -26,13 +26,7 @@ namespace Allors.Database.Domain
             {
                 cycle.Validation.AssertExists(@this, @this.Meta.ShipFromParty);
 
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
                 var shipToParty = @this.ShipToParty as InternalOrganisation;
-                if (!@this.ExistShipToParty && internalOrganisations.Count() == 1)
-                {
-                    @this.ShipToParty = internalOrganisations.First();
-                    shipToParty = internalOrganisations.First();
-                }
 
                 @this.ShipToAddress = @this.ShipToAddress ?? @this.ShipToParty?.ShippingAddress ?? @this.ShipToParty?.GeneralCorrespondence as PostalAddress;
 

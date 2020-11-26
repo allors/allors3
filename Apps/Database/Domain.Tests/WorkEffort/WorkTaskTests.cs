@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Xunit;
 
-    public class WorkTaskTests : DomainTest
+    public class WorkTaskTests : DomainTest, IClassFixture<Fixture>
     {
         public WorkTaskTests(Fixture fixture) : base(fixture) { }
 

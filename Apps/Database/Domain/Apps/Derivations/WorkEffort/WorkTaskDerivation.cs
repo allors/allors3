@@ -43,13 +43,6 @@ namespace Allors.Database.Domain
                     @this.DerivationTrigger = Guid.NewGuid();
                 }
 
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                if (!@this.ExistTakenBy && internalOrganisations.Count() == 1)
-                {
-                    @this.TakenBy = internalOrganisations.First();
-                }
-
                 if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
                 {
                     @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber();

@@ -78,60 +78,7 @@ namespace Allors.Database.Domain
                     validation.AssertExists(@this, @this.Meta.DerivedBillToContactMechanism);
                 }
 
-                // SalesOrderItem Derivations and Validations
-                foreach (SalesOrderItem salesOrderItem in @this.SalesOrderItems)
-                {
-                    var salesOrderItemDerivedRoles = salesOrderItem;
-
-                    // TODO: Use versioning
-                    if (salesOrderItem.ExistPreviousProduct && !salesOrderItem.PreviousProduct.Equals(salesOrderItem.Product))
-                    {
-                        validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.Product} {ErrorMessages.SalesOrderItemProductChangeNotAllowed}");
-                    }
-                    else
-                    {
-                        salesOrderItemDerivedRoles.PreviousProduct = salesOrderItem.Product;
-                    }
-
-                    if (salesOrderItem.ExistSalesOrderItemWhereOrderedWithFeature)
-                    {
-                        validation.AssertExists(salesOrderItem, this.M.SalesOrderItem.ProductFeature);
-                        validation.AssertNotExists(salesOrderItem, this.M.SalesOrderItem.Product);
-                    }
-                    else
-                    {
-                        validation.AssertNotExists(salesOrderItem, this.M.SalesOrderItem.ProductFeature);
-                    }
-
-                    if (salesOrderItem.ExistProduct && salesOrderItem.ExistQuantityOrdered && salesOrderItem.QuantityOrdered < salesOrderItem.QuantityShipped)
-                    {
-                        validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemLessThanAlreadeyShipped}");
-                    }
-
-                    var isSubTotalItem = salesOrderItem.ExistInvoiceItemType && (salesOrderItem.InvoiceItemType.IsProductItem || salesOrderItem.InvoiceItemType.IsPartItem);
-                    if (isSubTotalItem)
-                    {
-                        if (salesOrderItem.QuantityOrdered == 0)
-                        {
-                            validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.QuantityOrdered} QuantityOrdered is Required");
-                        }
-                    }
-                    else
-                    {
-                        if (salesOrderItem.AssignedUnitPrice == 0)
-                        {
-                            validation.AddError($"{salesOrderItem} {this.M.SalesOrderItem.AssignedUnitPrice} Price is Required");
-                        }
-                    }
-
-                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.Product, this.M.SalesOrderItem.ProductFeature);
-                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.SerialisedItem, this.M.SalesOrderItem.ProductFeature);
-                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem, this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
-                    validation.AssertExistsAtMostOne(salesOrderItem, this.M.SalesOrderItem.AssignedUnitPrice, this.M.SalesOrderItem.DiscountAdjustments, this.M.SalesOrderItem.SurchargeAdjustments);
-                }
-
-                var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
-                @this.ValidOrderItems = validOrderItems;
+                @this.ValidOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
                 if (@this.ExistDerivedVatRegime && @this.DerivedVatRegime.ExistVatClause)
                 {

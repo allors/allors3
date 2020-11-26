@@ -26,16 +26,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Request>())
             {
-                if (!@this.ExistRecipient)
-                {
-                    var internalOrganisations = new Organisations(session).InternalOrganisations();
-
-                    if (internalOrganisations.Count() == 1)
-                    {
-                        @this.Recipient = internalOrganisations.Single();
-                    }
-                }
-
                 if (@this.ExistRecipient && !@this.ExistRequestNumber)
                 {
                     @this.RequestNumber = @this.Recipient.NextRequestNumber(session.Now().Year);

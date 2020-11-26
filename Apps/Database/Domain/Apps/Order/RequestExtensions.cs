@@ -22,6 +22,16 @@ namespace Allors.Database.Domain
             }
         }
 
+        public static void AppsOnInit(this Request @this, ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!@this.ExistRecipient && internalOrganisations.Count() == 1)
+            {
+                @this.Recipient = internalOrganisations.First();
+            }
+        }
+
         public static bool IsDeletable(this Request @this) =>
             // EmailAddress is used whith anonymous request form website
             !@this.ExistEmailAddress

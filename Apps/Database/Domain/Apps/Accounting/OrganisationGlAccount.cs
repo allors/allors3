@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Linq;
+
 namespace Allors.Database.Domain
 {
     public partial class OrganisationGlAccount
@@ -59,6 +61,16 @@ namespace Allors.Database.Domain
             }
 
             this.HasBankStatementTransactions = false;
+        }
+
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistInternalOrganisation && internalOrganisations.Count() == 1)
+            {
+                this.InternalOrganisation = internalOrganisations.First();
+            }
         }
     }
 }

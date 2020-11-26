@@ -36,6 +36,16 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistShipToParty && internalOrganisations.Count() == 1)
+            {
+                this.ShipToParty = internalOrganisations.First();
+            }
+        }
+
         public void AppsReceive(PurchaseShipmentReceive method)
         {
             this.ShipmentState = new ShipmentStates(this.Strategy.Session).Received;

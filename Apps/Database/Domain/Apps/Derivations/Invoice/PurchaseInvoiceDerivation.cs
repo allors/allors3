@@ -35,13 +35,6 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {this.M.PurchaseInvoice.BilledTo} {ErrorMessages.InternalOrganisationChanged}");
                 }
 
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                if (!@this.ExistBilledTo && internalOrganisations.Count() == 1)
-                {
-                    @this.BilledTo = internalOrganisations.First();
-                }
-
                 if (!@this.ExistInvoiceNumber)
                 {
                     @this.InvoiceNumber = @this.BilledTo.NextPurchaseInvoiceNumber(@this.InvoiceDate.Year);

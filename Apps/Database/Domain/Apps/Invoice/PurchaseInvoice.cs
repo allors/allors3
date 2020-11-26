@@ -70,6 +70,13 @@ namespace Allors.Database.Domain
             {
                 this.DerivedCurrency = this.BilledTo?.PreferredCurrency;
             }
+
+            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistBilledTo && internalOrganisations.Count() == 1)
+            {
+                this.BilledTo = internalOrganisations.First();
+            }
         }
 
         public void AppsPrint(PrintablePrint method)

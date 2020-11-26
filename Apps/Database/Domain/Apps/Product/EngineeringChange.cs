@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         // TODO: Cache 
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
-            new TransitionalConfiguration(this.M.EngineeringChange, this.M.EngineeringChange.CurrentObjectState),
+            new TransitionalConfiguration(this.M.EngineeringChange, this.M.EngineeringChange.EngineeringChangeState),
         };
     }
 }

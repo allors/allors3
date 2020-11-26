@@ -6,13 +6,15 @@
 namespace Allors.Repository
 {
     using Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("c6c4537a-21f8-4d62-b584-3c609fb2210f")]
     #endregion
-    public partial class EngineeringChange : Transitional, Object
+    public partial class EngineeringChange : Transitional
     {
         #region inherited properties
+
         public ObjectState[] PreviousObjectStates { get; set; }
 
         public ObjectState[] LastObjectStates { get; set; }
@@ -25,6 +27,34 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        #endregion
+
+        #region ObjectStates
+        #region EngineeringChangeState
+        #region Allors
+        [Id("f3e5f6b4-ae65-4ee7-b9bd-735ceb630d92")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
+        public EngineeringChangeState PreviousEngineeringChangeState { get; set; }
+
+        #region Allors
+        [Id("423bb0aa-c703-46c3-a9f1-ed40992feedb")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
+        public EngineeringChangeState LastEngineeringChangeState { get; set; }
+
+        #region Allors
+        [Id("41225806-6444-45ac-87b9-d8e44d105f4c")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public EngineeringChangeState EngineeringChangeState { get; set; }
+        #endregion
         #endregion
 
         #region Allors

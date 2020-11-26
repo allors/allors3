@@ -100,6 +100,16 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistShipFromParty && internalOrganisations.Count() == 1)
+            {
+                this.ShipFromParty = internalOrganisations.First();
+            }
+        }
+
         public void AppsCancel(CustomerShipmentCancel method) => this.ShipmentState = new ShipmentStates(this.Strategy.Session).Cancelled;
 
         public void AppsPick(CustomerShipmentPick method)

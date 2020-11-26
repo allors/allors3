@@ -30,13 +30,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<BasePrice>())
             {
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
-                {
-                    @this.PricedBy = internalOrganisations.First();
-                }
-
                 validation.AssertAtLeastOne(@this, this.M.BasePrice.Part, this.M.BasePrice.Product, this.M.BasePrice.ProductFeature);
 
                 if (@this.ExistOrderQuantityBreak)

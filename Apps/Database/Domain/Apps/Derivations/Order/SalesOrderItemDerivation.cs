@@ -72,6 +72,52 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}");
                 }
 
+                // TODO: Use versioning
+                if (@this.ExistPreviousProduct && !@this.PreviousProduct.Equals(@this.Product))
+                {
+                    validation.AddError($"{@this} {this.M.SalesOrderItem.Product} {ErrorMessages.SalesOrderItemProductChangeNotAllowed}");
+                }
+                else
+                {
+                    @this.PreviousProduct = @this.Product;
+                }
+
+                if (@this.ExistSalesOrderItemWhereOrderedWithFeature)
+                {
+                    validation.AssertExists(@this, this.M.SalesOrderItem.ProductFeature);
+                    validation.AssertNotExists(@this, this.M.SalesOrderItem.Product);
+                }
+                else
+                {
+                    validation.AssertNotExists(@this, this.M.SalesOrderItem.ProductFeature);
+                }
+
+                if (@this.ExistProduct && @this.ExistQuantityOrdered && @this.QuantityOrdered < @this.QuantityShipped)
+                {
+                    validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.SalesOrderItemLessThanAlreadeyShipped}");
+                }
+
+                var isSubTotalItem = @this.ExistInvoiceItemType && (@this.InvoiceItemType.IsProductItem || @this.InvoiceItemType.IsPartItem);
+                if (isSubTotalItem)
+                {
+                    if (@this.QuantityOrdered == 0)
+                    {
+                        validation.AddError($"{@this} {this.M.SalesOrderItem.QuantityOrdered} QuantityOrdered is Required");
+                    }
+                }
+                else
+                {
+                    if (@this.AssignedUnitPrice == 0)
+                    {
+                        validation.AddError($"{@this} {this.M.SalesOrderItem.AssignedUnitPrice} Price is Required");
+                    }
+                }
+
+                validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.Product, this.M.SalesOrderItem.ProductFeature);
+                validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.SerialisedItem, this.M.SalesOrderItem.ProductFeature);
+                validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem, this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem);
+                validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.AssignedUnitPrice, this.M.SalesOrderItem.DiscountAdjustments, this.M.SalesOrderItem.SurchargeAdjustments);
+
                 var salesOrderItemShipmentStates = new SalesOrderItemShipmentStates(session);
                 var salesOrderItemPaymentStates = new SalesOrderItemPaymentStates(session);
                 var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(session);

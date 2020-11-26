@@ -26,13 +26,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<DiscountComponent>())
             {
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                if (!@this.ExistPricedBy && internalOrganisations.Count() == 1)
-                {
-                    @this.PricedBy = internalOrganisations.First();
-                }
-
                 validation.AssertAtLeastOne(@this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
                 validation.AssertExistsAtMostOne(@this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
 
