@@ -79,6 +79,31 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.IsDeletable)
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+
+            var createSalesInvoicePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.CreateSalesInvoice);
+            if (!this.ExistSalesInvoiceWherePurchaseInvoice
+                && (this.BilledFrom as Organisation)?.IsInternalOrganisation == true
+                && (this.PurchaseInvoiceState.IsPaid || this.PurchaseInvoiceState.IsPartiallyPaid || this.PurchaseInvoiceState.IsNotPaid))
+            {
+                this.RemoveDeniedPermission(createSalesInvoicePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(createSalesInvoicePermission);
+            }
+        }
+
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)

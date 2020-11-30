@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Meta;
 
     public partial class SalesOrder
     {
@@ -126,6 +127,73 @@ namespace Allors.Database.Domain
             if (!this.ExistOriginFacility)
             {
                 this.OriginFacility = this.ExistStore ? this.Store.DefaultFacility : this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+            }
+        }
+
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            if (this.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Session).InProcess)
+                    && Equals(this.Store.BillingProcess, new BillingProcesses(this.Strategy.Session).BillingForShipmentItems))
+            {
+                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice));
+            }
+
+            if (this.CanShip)
+            {
+                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship));
+            }
+            else
+            {
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Ship));
+            }
+
+            if (this.CanInvoice)
+            {
+                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice));
+            }
+            else
+            {
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice));
+            }
+
+            if (!this.SalesOrderInvoiceState.NotInvoiced || !this.SalesOrderShipmentState.NotShipped)
+            {
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.SetReadyForPosting));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Post));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reopen));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Approve));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Hold));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Continue));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Accept));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Complete));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reject));
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Cancel));
+
+                var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
+
+                foreach (Permission permission in this.Session().Extent<Permission>())
+                {
+                    if (permission.ClassPointer == this.Strategy.Class.Id && permission.Operation == Operations.Write)
+                    {
+                        deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
+                    }
+                }
+
+                foreach (var keyValuePair in deniablePermissionByOperandTypeId)
+                {
+                    this.AddDeniedPermission(keyValuePair.Value);
+                }
+            }
+
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.IsDeletable)
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
             }
         }
 

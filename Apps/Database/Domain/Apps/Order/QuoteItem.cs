@@ -34,6 +34,19 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.QuoteWhereQuoteItem.IsDeletable())
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+        }
+
         public void AppsDeriveDetails(QuoteItemDeriveDetails method)
         {
             if (!method.Result.HasValue)

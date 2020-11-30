@@ -7,6 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Meta;
 
     public partial class WorkTask
     {
@@ -23,6 +24,32 @@ namespace Allors.Database.Domain
             if (!this.ExistTakenBy && internalOrganisations.Count() == 1)
             {
                 this.TakenBy = internalOrganisations.First();
+            }
+        }
+
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            if (!this.CanInvoice)
+            {
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get((Class)this.Strategy.Class, this.Meta.Invoice));
+            }
+            else
+            {
+                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get((Class)this.Strategy.Class, this.Meta.Invoice));
+            }
+
+            var completePermission = new Permissions(this.Strategy.Session).Get((Class)this.Strategy.Class, this.Meta.Complete);
+
+            if (this.ServiceEntriesWhereWorkEffort.Any(v => !v.ExistThroughDate))
+            {
+                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get((Class)this.Strategy.Class, this.Meta.Complete));
+            }
+            else
+            {
+                if (this.WorkEffortState.IsInProgress)
+                {
+                    this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get((Class)this.Strategy.Class, this.Meta.Complete));
+                }
             }
         }
 

@@ -79,6 +79,21 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            this.DeniedPermissions = this.TransitionalDeniedPermissions;
+
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.IsDeletable)
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+        }
+
         public void AppsWriteOff()
         {
             this.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Session).WrittenOff;

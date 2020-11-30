@@ -38,6 +38,27 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+
+            if (!this.ExistInventoryItemTransactionsWhereSerialisedItem
+                    && !this.ExistPurchaseInvoiceItemsWhereSerialisedItem
+                    && !this.ExistPurchaseOrderItemsWhereSerialisedItem
+                    && !this.ExistQuoteItemsWhereSerialisedItem
+                    && !this.ExistSalesInvoiceItemsWhereSerialisedItem
+                    && !this.ExistSalesOrderItemsWhereSerialisedItem
+                    && !this.ExistSerialisedInventoryItemsWhereSerialisedItem
+                    && !this.ExistShipmentItemsWhereSerialisedItem)
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+        }
+
         public void AppsDeriveDisplayProductCategories(SerialisedItemDeriveDisplayProductCategories method)
         {
             if (!method.Result.HasValue)

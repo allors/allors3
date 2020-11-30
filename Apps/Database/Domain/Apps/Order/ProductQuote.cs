@@ -10,8 +10,6 @@ namespace Allors.Database.Domain
 
     public partial class ProductQuote
     {
-        
-
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[]{
             new TransitionalConfiguration(this.M.ProductQuote, this.M.ProductQuote.QuoteState),
@@ -30,7 +28,34 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsOrder(ProductQuoteOrder method)
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            var SetReadyPermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.SetReadyForProcessing);
+
+            if (this.QuoteState.IsCreated)
+            {
+                if (this.ExistValidQuoteItems)
+                {
+                    this.RemoveDeniedPermission(SetReadyPermission);
+                }
+                else
+                {
+                    this.AddDeniedPermission(SetReadyPermission);
+                }
+            }
+
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.IsDeletable())
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+        }
+
+            public void AppsOrder(ProductQuoteOrder method)
         {
             this.QuoteState = new QuoteStates(this.Strategy.Session).Ordered;
 

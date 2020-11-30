@@ -55,5 +55,37 @@ namespace Allors.Database.Domain
                 }
             }
         }
+
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            bool IsDeletable(NonUnifiedGood nonUnifiedGood) =>
+                !nonUnifiedGood.ExistPart &&
+                !nonUnifiedGood.ExistDeploymentsWhereProductOffering &&
+                !nonUnifiedGood.ExistEngagementItemsWhereProduct &&
+                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
+                !nonUnifiedGood.ExistQuoteItemsWhereProduct &&
+                !nonUnifiedGood.ExistShipmentItemsWhereGood &&
+                !nonUnifiedGood.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
+                !nonUnifiedGood.ExistMarketingPackageWhereProductsUsedIn &&
+                !nonUnifiedGood.ExistMarketingPackagesWhereProduct &&
+                !nonUnifiedGood.ExistOrganisationGlAccountsWhereProduct &&
+                !nonUnifiedGood.ExistProductConfigurationsWhereProductsUsedIn &&
+                !nonUnifiedGood.ExistProductConfigurationsWhereProduct &&
+                !nonUnifiedGood.ExistRequestItemsWhereProduct &&
+                !nonUnifiedGood.ExistSalesInvoiceItemsWhereProduct &&
+                !nonUnifiedGood.ExistSalesOrderItemsWhereProduct &&
+                !nonUnifiedGood.ExistWorkEffortTypesWhereProductToProduce;
+
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (IsDeletable(this))
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+        }
     }
 }
