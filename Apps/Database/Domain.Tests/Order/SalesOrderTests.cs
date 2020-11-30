@@ -3655,6 +3655,33 @@ namespace Allors.Database.Domain.Tests
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.StartsWith("AssertExists: ")));
         }
+
+        [Fact]
+        public void ChangedCanshipCreateShipment()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(item.ExistOrderShipmentsWhereOrderItem);
+        }
     }
 
     public class SalesOrderCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>

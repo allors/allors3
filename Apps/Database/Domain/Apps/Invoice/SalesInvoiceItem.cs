@@ -81,8 +81,6 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method)
         {
-            this.DeniedPermissions = this.TransitionalDeniedPermissions;
-
             var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
             if (this.IsDeletable)
             {

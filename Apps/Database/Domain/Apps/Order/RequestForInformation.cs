@@ -14,14 +14,14 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method)
         {
-            var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-            if (@this.IsDeletable())
+            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.IsDeletable())
             {
-                @this.RemoveDeniedPermission(deletePermission);
+                this.RemoveDeniedPermission(deletePermission);
             }
             else
             {
-                @this.AddDeniedPermission(deletePermission);
+                this.AddDeniedPermission(deletePermission);
             }
         }
     }
