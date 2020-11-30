@@ -48,41 +48,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-
-            if (!this.ExistDeploymentsWhereProductOffering &&
-                            !this.ExistEngagementItemsWhereProduct &&
-                            !this.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
-                            !this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
-                            !this.ExistQuoteItemsWhereProduct &&
-                            !this.ExistShipmentItemsWhereGood &&
-                            !this.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
-                            !this.ExistMarketingPackageWhereProductsUsedIn &&
-                            !this.ExistMarketingPackagesWhereProduct &&
-                            !this.ExistOrganisationGlAccountsWhereProduct &&
-                            !this.ExistProductConfigurationsWhereProductsUsedIn &&
-                            !this.ExistProductConfigurationsWhereProduct &&
-                            !this.ExistRequestItemsWhereProduct &&
-                            !this.ExistSalesInvoiceItemsWhereProduct &&
-                            !this.ExistSalesOrderItemsWhereProduct &&
-                            !this.ExistWorkEffortTypesWhereProductToProduce &&
-                            !this.ExistWorkEffortInventoryProducedsWherePart &&
-                            !this.ExistWorkEffortPartStandardsWherePart &&
-                            !this.ExistPartBillOfMaterialsWherePart &&
-                            !this.ExistPartBillOfMaterialsWhereComponentPart &&
-                            !this.ExistInventoryItemTransactionsWherePart &&
-                            !this.ExistSerialisedItems)
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             if (this.IsDeletable)

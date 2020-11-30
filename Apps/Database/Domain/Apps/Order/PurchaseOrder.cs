@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Meta;
 
     public partial class PurchaseOrder
     {
@@ -167,109 +166,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            bool IsDeletable(PurchaseOrder purchaseOrder) => (purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Created)
-                 || purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Cancelled)
-                 || purchaseOrder.PurchaseOrderState.Equals(new PurchaseOrderStates(purchaseOrder.Strategy.Session).Rejected))
-             && !purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder
-             && !purchaseOrder.ExistSerialisedItemsWherePurchaseOrder
-             && !purchaseOrder.ExistWorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder
-             && purchaseOrder.PurchaseOrderItems.All(v => v.IsDeletable);
-
-            bool CanInvoice(PurchaseOrder purchaseOrder)
-            {
-                if (purchaseOrder.PurchaseOrderState.IsSent || purchaseOrder.PurchaseOrderState.IsCompleted)
-                {
-                    foreach (PurchaseOrderItem purchaseOrderItem in purchaseOrder.ValidOrderItems)
-                    {
-                        if (!purchaseOrderItem.ExistOrderItemBillingsWhereOrderItem)
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            bool CanRevise(PurchaseOrder purchaseOrder)
-            {
-                if ((purchaseOrder.PurchaseOrderState.IsInProcess || purchaseOrder.PurchaseOrderState.IsSent || purchaseOrder.PurchaseOrderState.IsCompleted)
-                    && (purchaseOrder.PurchaseOrderShipmentState.IsNotReceived || purchaseOrder.PurchaseOrderShipmentState.IsNa))
-                {
-                    if (!purchaseOrder.ExistPurchaseInvoicesWherePurchaseOrder)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            if (CanInvoice(this))
-            {
-                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice));
-            }
-            else
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Invoice));
-            }
-
-            if (CanRevise(this))
-            {
-                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise));
-            }
-            else
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise));
-            }
-
-            if (this.IsReceivable)
-            {
-                this.RemoveDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.QuickReceive));
-            }
-            else
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.QuickReceive));
-            }
-
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            if (IsDeletable(this))
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
-
-            if (!this.PurchaseOrderShipmentState.IsNotReceived && !this.PurchaseOrderShipmentState.IsNa)
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Reject));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Cancel));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.QuickReceive));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Revise));
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.SetReadyForProcessing));
-
-                var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
-
-                foreach (Permission permission in this.Session().Extent<Permission>())
-                {
-                    if (permission.ClassPointer == this.Strategy.Class.Id && permission.Operation == Operations.Write)
-                    {
-                        deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
-                    }
-                }
-
-                foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-                {
-                    this.AddDeniedPermission(keyValuePair.Value);
-                }
-            }
-        }
-
-            public void AppsPrint(PrintablePrint method)
+        public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)
             {

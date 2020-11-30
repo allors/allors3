@@ -54,23 +54,5 @@ namespace Allors.Database.Domain
 
             return productQuote;
         }
-
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            if (!this.ExistOriginator)
-            {
-                this.AddDeniedPermission(new Permissions(this.Strategy.Session).Get(this.Meta.Class, this.Meta.Submit));
-            }
-
-            var deletePermission = new Permissions(this.Strategy.Session).Get(this.Meta.ObjectType, this.Meta.Delete);
-            if (this.IsDeletable())
-            {
-                this.RemoveDeniedPermission(deletePermission);
-            }
-            else
-            {
-                this.AddDeniedPermission(deletePermission);
-            }
-        }
     }
 }
