@@ -18,7 +18,8 @@ namespace Allors.Database.Domain
         public RequestItemDerivation(M m) : base(m, new Guid("764C2996-50E5-4C53-A6DA-A527BCECF221")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(this.M.RequestItem.RequestItemState)
+                new ChangedPattern(this.M.RequestItem.RequestItemState),
+                new ChangedPattern(this.M.Request.RequestItems) { Steps = new IPropertyType[] {m.Request.RequestItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

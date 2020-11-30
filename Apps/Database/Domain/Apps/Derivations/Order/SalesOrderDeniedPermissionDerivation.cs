@@ -29,12 +29,6 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess)
-                    && Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForShipmentItems))
-                {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
-                }
-
                 if (@this.CanShip)
                 {
                     @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Ship));

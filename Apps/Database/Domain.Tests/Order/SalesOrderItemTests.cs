@@ -1248,6 +1248,19 @@ namespace Allors.Database.Domain.Tests
         public SalesOrderItemProvisionalDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedSalesOrderSalesOrderItemsDeriveDerivedShipFromAddress()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithAssignedShipFromAddress(new PostalAddressBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(orderItem.DerivedShipFromAddress, order.AssignedShipFromAddress);
+        }
+
+        [Fact]
         public void ChangedAssignedShipFromAddressDeriveDerivedShipFromAddress()
         {
             var order = new SalesOrderBuilder(this.Session).Build();

@@ -2009,6 +2009,19 @@ namespace Allors.Database.Domain.Tests
         public SalesInvoiceItemDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void OnChangedSalesInvoiceSalesInvoiceItemsDeriveVatRegime()
+        {
+            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Session).Build();
+            salesInvoice.AddSalesInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(invoiceItem.DerivedVatRegime, salesInvoice.DerivedVatRegime);
+        }
+
+        [Fact]
         public void ValidateAtmostOneProductAndPart()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();

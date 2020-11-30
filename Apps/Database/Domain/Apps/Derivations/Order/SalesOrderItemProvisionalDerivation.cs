@@ -22,6 +22,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SalesOrderItem.AssignedDeliveryDate),
                 new ChangedPattern(m.SalesOrderItem.AssignedVatRegime),
                 new ChangedPattern(m.SalesOrderItem.AssignedIrpfRegime),
+                new ChangedPattern(this.M.SalesOrder.SalesOrderItems) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.DerivedShipFromAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.DerivedShipToAddress) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },
                 new ChangedPattern(this.M.SalesOrder.ShipToCustomer) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems} },

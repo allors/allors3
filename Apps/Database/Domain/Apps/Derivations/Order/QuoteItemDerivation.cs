@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.QuoteItem.InvoiceItemType),
+                new ChangedPattern(this.M.Quote.QuoteItems) { Steps = new IPropertyType[] {m.Quote.QuoteItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

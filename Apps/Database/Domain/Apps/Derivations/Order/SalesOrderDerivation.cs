@@ -30,6 +30,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.SalesOrder.ValidOrderItems),
                 new ChangedPattern(this.M.SalesOrder.DerivedShipToAddress),
                 new ChangedPattern(this.M.SalesOrder.DerivedBillToContactMechanism),
+                new ChangedPattern(this.M.SalesOrder.CanShip),
                 new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderWhereSalesTerm} },
                 new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderItemWhereSalesTerm, m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
                 new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereBillToCustomer} },
@@ -88,12 +89,6 @@ namespace Allors.Database.Domain
                 @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
 
                 @this.ResetPrintDocument();
-
-                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Session).InProcess) &&
-                    Equals(@this.Store.BillingProcess, new BillingProcesses(@this.Strategy.Session).BillingForShipmentItems))
-                {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
-                }
 
                 if (@this.CanShip && @this.Store.AutoGenerateCustomerShipment)
                 {
