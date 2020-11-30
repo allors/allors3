@@ -102,6 +102,24 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            var deletePermission = new Permissions(this.Session()).Get(this.Meta.ObjectType, this.Meta.Delete);
+            if (this.ExistSalesInvoiceState &&
+                this.SalesInvoiceState.Equals(new SalesInvoiceStates(this.Session()).ReadyForPosting) &&
+                this.SalesInvoiceItems.All(v => v.IsDeletable) &&
+                !this.ExistSalesOrders &&
+                !this.ExistPurchaseInvoice &&
+                !this.ExistRepeatingSalesInvoiceWhereSource)
+            {
+                this.RemoveDeniedPermission(deletePermission);
+            }
+            else
+            {
+                this.AddDeniedPermission(deletePermission);
+            }
+        }
+
         public void AppsSend(SalesInvoiceSend method)
         {
             var singleton = this.Session().GetSingleton();

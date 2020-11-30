@@ -113,7 +113,7 @@ namespace Allors.Repository
 
         public Permission[] DeniedPermissions { get; set; }
 
-        public Permission[] TransitionalDeniedPermissions { get; set; }
+        
 
         public SecurityToken[] SecurityTokens { get; set; }
 

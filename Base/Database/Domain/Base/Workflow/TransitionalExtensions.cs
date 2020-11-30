@@ -38,6 +38,9 @@ namespace Allors.Database.Domain
                 @this.AddLastObjectState(lastObjectState);
                 @this.AddPreviousObjectState(previousObjectState);
             }
+
+            // Update security
+            @this.DeniedPermissions = @this.ObjectStates.SelectMany(v => v.DeniedPermissions).ToArray();
         }
 
         public static bool HasChangedStates(this Transitional @this) =>

@@ -16,7 +16,6 @@ namespace Allors.Database.Domain
             {
                 // Core
                 new MediaDerivation(m),
-                new TransitionalDeniedPermissionDerivation(m),
 
                 // Apps
                 new BasePriceDerivation(m),
@@ -171,7 +170,6 @@ namespace Allors.Database.Domain
                 new SalesInvoiceReadyForPostingDerivation(m),
                 new SalesInvoicePriceDerivation(m),
                 new SalesInvoiceStateDerivation(m),
-                new SalesInvoiceDeniedPermissionDerivation(m),
                 new SalesInvoiceItemDeniedPermissionDerivation(m),
                 new PartyFinancialRelationshipAmountDueDerivation(m),
                 new PartyFinancialRelationshipOpenOrderAmountDerivation(m),

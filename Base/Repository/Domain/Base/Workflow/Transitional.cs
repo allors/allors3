@@ -36,13 +36,5 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         ObjectState[] ObjectStates { get; set; }
-
-        #region Allors
-        [Id("02cd3896-ea9a-498c-8633-42a5df9c0b17")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Derived]
-        [Indexed]
-        Permission[] TransitionalDeniedPermissions { get; set; }
     }
 }
