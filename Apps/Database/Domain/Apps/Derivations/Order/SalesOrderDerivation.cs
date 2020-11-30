@@ -27,7 +27,6 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.SalesOrder.PlacingCustomer),
                 new ChangedPattern(this.M.SalesOrder.OrderDate),
                 new ChangedPattern(this.M.SalesOrder.SalesOrderItems),
-                new ChangedPattern(this.M.SalesOrder.ValidOrderItems),
                 new ChangedPattern(this.M.SalesOrder.DerivedShipToAddress),
                 new ChangedPattern(this.M.SalesOrder.DerivedBillToContactMechanism),
                 new ChangedPattern(this.M.InvoiceTerm.TermValue) { Steps =  new IPropertyType[] {m.InvoiceTerm.OrderWhereSalesTerm} },
@@ -78,6 +77,55 @@ namespace Allors.Database.Domain
                     validation.AssertExists(@this, @this.Meta.DerivedShipToAddress);
                     validation.AssertExists(@this, @this.Meta.DerivedBillToContactMechanism);
                 }
+
+                @this.ValidOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
+
+                if (@this.ExistDerivedVatRegime && @this.DerivedVatRegime.ExistVatClause)
+                {
+                    @this.DerivedVatClause = @this.DerivedVatRegime.VatClause;
+                }
+                else
+                {
+                    string TakenbyCountry = null;
+
+                    if (@this.TakenBy.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(session).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
+                    {
+                        TakenbyCountry = registeredOffice.Country.IsoCode;
+                    }
+
+                    var OutsideEUCustomer = @this.BillToCustomer?.VatRegime?.Equals(new VatRegimes(session).Export);
+                    var shipFromBelgium = @this.ValidOrderItems?.Cast<SalesOrderItem>().All(v => Equals("BE", v.DerivedShipFromAddress?.Country?.IsoCode));
+                    var shipToEU = @this.ValidOrderItems?.Cast<SalesOrderItem>().Any(v => Equals(true, v.DerivedShipToAddress?.Country?.EuMemberState));
+                    var sellerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Cif) || Equals(v.TermType, new IncoTermTypes(session).Cfr));
+                    var buyerResponsibleForTransport = @this.SalesTerms.Any(v => Equals(v.TermType, new IncoTermTypes(session).Exw));
+
+                    if (Equals(@this.DerivedVatRegime, new VatRegimes(session).ServiceB2B))
+                    {
+                        @this.DerivedVatClause = new VatClauses(session).ServiceB2B;
+                    }
+                    else if (Equals(@this.DerivedVatRegime, new VatRegimes(session).IntraCommunautair))
+                    {
+                        @this.DerivedVatClause = new VatClauses(session).Intracommunautair;
+                    }
+                    else if (TakenbyCountry == "BE"
+                             && OutsideEUCustomer.HasValue && OutsideEUCustomer.Value
+                             && shipFromBelgium.HasValue && shipFromBelgium.Value
+                             && shipToEU.HasValue && shipToEU.Value == false)
+                    {
+                        if (sellerResponsibleForTransport)
+                        {
+                            // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU and you transport the goods and importer is the customer
+                            @this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item1;
+                        }
+                        else if (buyerResponsibleForTransport)
+                        {
+                            // You sell goods to a customer out of the EU and the goods are being sold and transported from Belgium to another country out of the EU  and the customer does the transport of the goods and importer is the customer
+                            @this.DerivedVatClause = new VatClauses(session).BeArt39Par1Item2;
+                        }
+                    }
+                }
+
+                @this.DerivedVatClause = @this.ExistAssignedVatClause ? @this.AssignedVatClause : @this.DerivedVatClause;
 
                 // TODO: Move to versioning
                 @this.PreviousBillToCustomer = @this.BillToCustomer;

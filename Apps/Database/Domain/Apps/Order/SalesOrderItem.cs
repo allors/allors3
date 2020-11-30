@@ -108,17 +108,9 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsCancel(OrderItemCancel method)
-        {
-            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Cancelled;
-            this.DerivationTrigger = Guid.NewGuid();
-        }
+        public void AppsCancel(OrderItemCancel method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Cancelled;
 
-        public void AppsReject(OrderItemReject method)
-        {
-            this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Rejected;
-            this.DerivationTrigger = Guid.NewGuid();
-        }
+        public void AppsReject(OrderItemReject method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).Rejected;
 
         public void AppsApprove(OrderItemApprove method) => this.SalesOrderItemState = new SalesOrderItemStates(this.Strategy.Session).ReadyForPosting;
 
