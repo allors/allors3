@@ -98,6 +98,27 @@ namespace Allors.Database.Domain
                         @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Finished;
                     }
                 }
+
+                if (@this.SalesOrderState.IsInProcess
+                    && (!@this.ExistLastSalesOrderState || !@this.LastSalesOrderState.IsInProcess)
+                    && @this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).SalesOrderAccept))
+                {
+                    foreach (SalesOrderItem item in @this.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
+                    {
+                        if (item.ExistNextSerialisedItemAvailability)
+                        {
+                            item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
+
+                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Session()).Sold))
+                            {
+                                item.SerialisedItem.OwnedBy = @this.ShipToCustomer;
+                                item.SerialisedItem.Ownership = new Ownerships(@this.Session()).ThirdParty;
+                            }
+                        }
+
+                        item.SerialisedItem.AvailableForSale = false;
+                    }
+                }
             }
         }
     }
