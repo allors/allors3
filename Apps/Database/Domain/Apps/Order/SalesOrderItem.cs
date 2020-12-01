@@ -85,6 +85,8 @@ namespace Allors.Database.Domain
             {
                 this.SalesOrderItemPaymentState = new SalesOrderItemPaymentStates(this.Strategy.Session).NotPaid;
             }
+
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsOnInit(ObjectOnInit method)

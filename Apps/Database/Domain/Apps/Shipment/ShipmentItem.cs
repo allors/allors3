@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Allors.Database.Domain
 {
     public partial class ShipmentItem
@@ -18,6 +20,8 @@ namespace Allors.Database.Domain
             {
                 this.ShipmentItemState = new ShipmentItemStates(this.Strategy.Session).Created;
             }
+
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)

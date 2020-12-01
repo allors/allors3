@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Allors.Database.Domain
 {
     public partial class UnifiedGood
@@ -46,6 +48,8 @@ namespace Allors.Database.Domain
             {
                 this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
             }
+
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsDelete(DeletableDelete method)

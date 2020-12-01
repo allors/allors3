@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PersonDerivation(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Person.Salutation),
+                new ChangedPattern(this.M.Person.DerivationTrigger),
                 new ChangedPattern(this.M.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
                 new ChangedPattern(this.M.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };

@@ -251,6 +251,8 @@ namespace Allors.Repository
 
         public SerialisedItemSoldOn[] SerialisedItemSoldOns { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Versioning

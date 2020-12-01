@@ -27,11 +27,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ShipmentItem>())
             {
-                if (!@this.ExistDerivationTrigger)
-                {
-                    @this.DerivationTrigger = Guid.NewGuid();
-                }
-
                 if ((@this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(CustomerShipment).Name) || @this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(PurchaseReturn).Name))
                     && @this.ExistSerialisedItem
                     && !@this.ExistNextSerialisedItemAvailability)

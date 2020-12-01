@@ -16,8 +16,24 @@ namespace Allors.Database.Domain
         public SalesOrderPriceDerivation(M m) : base(m, new Guid("aa490071-772f-400d-a799-3f015e877c05")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.SalesOrder.SalesOrderState),
-                new ChangedPattern(this.M.SalesOrder.SalesOrderItems)
+            new ChangedPattern(this.M.SalesOrder.DerivationTrigger),
+            new ChangedPattern(this.M.SalesOrder.ValidOrderItems),
+            new ChangedPattern(this.M.SalesOrder.BillToCustomer),
+            new ChangedPattern(this.M.SalesOrder.OrderAdjustments),
+            new ChangedPattern(this.M.SalesOrderItem.Product) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem} },
+            new ChangedPattern(this.M.SalesOrderItem.ProductFeature) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new ChangedPattern(this.M.SalesOrderItem.QuantityOrdered) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new ChangedPattern(this.M.SalesOrderItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new ChangedPattern(this.M.SalesOrderItem.DiscountAdjustments) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.SalesOrderItem.SalesOrderWhereSalesOrderItem}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.SalesOrderItem.SalesOrderWhereSalesOrderItem}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.SalesOrderItem.SurchargeAdjustments) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+            new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.SalesOrderItem.SalesOrderWhereSalesOrderItem}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.SalesOrderItem.SalesOrderWhereSalesOrderItem}, OfType = m.SalesOrder.Class },
+            new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.OrderWhereOrderAdjustment}, OfType = m.SalesOrder.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

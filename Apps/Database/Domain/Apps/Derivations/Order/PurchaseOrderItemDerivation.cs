@@ -34,11 +34,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                if (!@this.ExistDerivationTrigger)
-                {
-                    @this.DerivationTrigger = Guid.NewGuid();
-                }
-
                 if (!@this.ExistStoredInFacility && @this.PurchaseOrderWherePurchaseOrderItem.ExistStoredInFacility)
                 {
                     @this.StoredInFacility = @this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;

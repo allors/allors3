@@ -5,6 +5,7 @@
 
 namespace Allors.Repository
 {
+    using System;
     using Attributes;
     using static Workspaces;
 
@@ -373,5 +374,12 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         bool CollectiveWorkEffortInvoice { get; set; }
+
+        #region Allors
+        [Id("8644b7e9-5cc1-487b-8e6a-0ee91ec2daa1")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        Guid DerivationTrigger { get; set; }
     }
 }

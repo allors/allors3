@@ -43,10 +43,7 @@ namespace Allors.Database.Domain
                 this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).PartItem;
             }
 
-            if (!this.ExistDerivationTrigger)
-            {
-                this.DerivationTrigger = Guid.NewGuid();
-            }
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void CancelFromInvoice() => this.PurchaseInvoiceItemState = new PurchaseInvoiceItemStates(this.Strategy.Session).CancelledByinvoice;

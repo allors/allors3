@@ -38,11 +38,6 @@ namespace Allors.Database.Domain
 
                 @this.ResetPrintDocument();
 
-                if (!@this.ExistDerivationTrigger)
-                {
-                    @this.DerivationTrigger = Guid.NewGuid();
-                }
-
                 if (!@this.ExistWorkEffortNumber && @this.ExistTakenBy)
                 {
                     @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber();

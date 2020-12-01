@@ -188,7 +188,6 @@ namespace Allors.Database.Domain
                 new ExpenseEntryDerivation(m),
                 new MaterialsUsageDerivation(m),
                 new TimeEntryDerivation(m),
-                new ServiceEntryExtensionsDerivation(m),
                 new WorkEffortAssignmentRateDerivation(m),
                 new WorkEffortInventoryAssignmentDerivation(m),
                 new WorkEffortPartyAssignmentDerivation(m),

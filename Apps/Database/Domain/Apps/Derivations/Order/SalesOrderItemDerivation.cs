@@ -47,11 +47,6 @@ namespace Allors.Database.Domain
                     @this.InvoiceItemType = new InvoiceItemTypes(@this.Session()).ProductItem;
                 }
 
-                if (!@this.ExistDerivationTrigger)
-                {
-                    @this.DerivationTrigger = Guid.NewGuid();
-                }
-
                 if (@this.ExistSerialisedItem && !@this.ExistNextSerialisedItemAvailability)
                 {
                     validation.AssertExists(@this, @this.Meta.NextSerialisedItemAvailability);

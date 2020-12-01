@@ -69,6 +69,8 @@ namespace Allors.Database.Domain
             {
                 this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).ProductItem;
             }
+
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsOnInit(ObjectOnInit method)

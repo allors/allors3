@@ -114,6 +114,8 @@ namespace Allors.Repository
 
         public bool CollectiveWorkEffortInvoice { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Versioning

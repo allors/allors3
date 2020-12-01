@@ -112,6 +112,8 @@ namespace Allors.Repository
 
         public UserProfile UserProfile { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Versioning

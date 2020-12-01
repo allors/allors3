@@ -32,10 +32,7 @@ namespace Allors.Database.Domain
                 this.ItemNumber = this.Strategy.Session.GetSingleton().Settings.NextSerialisedItemNumber();
             }
 
-            if (!this.ExistDerivationTrigger)
-            {
-                this.DerivationTrigger = Guid.NewGuid();
-            }
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsDeriveDisplayProductCategories(SerialisedItemDeriveDisplayProductCategories method)

@@ -28,11 +28,6 @@ namespace Allors.Database.Domain
                 var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
                 var settings = @this.Strategy.Session.GetSingleton().Settings;
 
-                if (!@this.ExistDerivationTrigger)
-                {
-                    @this.DerivationTrigger = Guid.NewGuid();
-                }
-
                 if (cycle.ChangeSet.HasChangedRoles(@this, new RoleType[] { @this.Meta.UnitOfMeasure, @this.Meta.DefaultFacility }))
                 {
                     // SyncDefaultInventoryItem

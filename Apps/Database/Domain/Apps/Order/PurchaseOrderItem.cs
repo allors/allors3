@@ -84,6 +84,8 @@ namespace Allors.Database.Domain
             {
                 this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Session).PartItem;
             }
+
+            this.DerivationTrigger = Guid.NewGuid();
         }
 
         public void AppsDelete(PurchaseOrderItemDelete method)

@@ -16,6 +16,7 @@ namespace Allors.Database.Domain
         public OrganisationDerivation(M m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.Organisation.DerivationTrigger),
                 new ChangedPattern(this.M.Employment.Employer){Steps = new IPropertyType[]{ this.M.Employment.Employer}},
                 new ChangedPattern(this.M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
             };

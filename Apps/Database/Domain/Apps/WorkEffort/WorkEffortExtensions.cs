@@ -31,6 +31,8 @@ namespace Allors.Database.Domain
             {
                 @this.Owner = owner;
             }
+
+            @this.DerivationTrigger = Guid.NewGuid();
         }
 
         public static void AppsOnInit(this WorkEffort @this, ObjectOnInit method)
