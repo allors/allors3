@@ -29,6 +29,7 @@ namespace Allors.Database.Adapters.Npgsql
             {
                 this.FlagExistsKnown = true;
                 this.FlagExists = true;
+                this.version = Allors.Version.Initial;
             }
         }
 

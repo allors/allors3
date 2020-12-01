@@ -77,7 +77,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void DeleteObject(Strategy strategy)
         {
-            this.deleteObjectByClass = this.deleteObjectByClass ?? new Dictionary<IClass, Command>();
+            this.deleteObjectByClass ??= new Dictionary<IClass, Command>();
             var @class = strategy.Class;
 
             if (!this.deleteObjectByClass.TryGetValue(@class, out var command))
@@ -101,7 +101,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void GetUnitRoles(Roles roles)
         {
-            this.getUnitRolesByClass = this.getUnitRolesByClass ?? new Dictionary<IClass, Command>();
+            this.getUnitRolesByClass ??= new Dictionary<IClass, Command>();
 
             var reference = roles.Reference;
             var @class = reference.Class;
@@ -189,7 +189,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void SetUnitRole(List<UnitRelation> relations, IClass exclusiveRootClass, IRoleType roleType)
         {
-            this.setUnitRoleByRoleTypeByClass = this.setUnitRoleByRoleTypeByClass ?? new Dictionary<IClass, Dictionary<IRoleType, Command>>();
+            this.setUnitRoleByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IRoleType, Command>>();
 
             var schema = this.Database.Mapping;
 
@@ -282,7 +282,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void GetCompositeRole(Roles roles, IRoleType roleType)
         {
-            this.getCompositeRoleByRoleType = this.getCompositeRoleByRoleType ?? new Dictionary<IRoleType, Command>();
+            this.getCompositeRoleByRoleType ??= new Dictionary<IRoleType, Command>();
 
             var reference = roles.Reference;
 
@@ -315,7 +315,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void SetCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
-            this.setCompositeRoleByRoleType = this.setCompositeRoleByRoleType ?? new Dictionary<IRoleType, Command>();
+            this.setCompositeRoleByRoleType ??= new Dictionary<IRoleType, Command>();
 
             if (!this.setCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
@@ -381,7 +381,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void AddCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
-            this.addCompositeRoleByRoleType = this.addCompositeRoleByRoleType ?? new Dictionary<IRoleType, Command>();
+            this.addCompositeRoleByRoleType ??= new Dictionary<IRoleType, Command>();
 
             if (!this.addCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
@@ -402,7 +402,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void RemoveCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
-            this.removeCompositeRoleByRoleType = this.removeCompositeRoleByRoleType ?? new Dictionary<IRoleType, Command>();
+            this.removeCompositeRoleByRoleType ??= new Dictionary<IRoleType, Command>();
 
             if (!this.removeCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
@@ -423,7 +423,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal void ClearCompositeAndCompositesRole(IList<long> associations, IRoleType roleType)
         {
-            this.clearCompositeAndCompositesRoleByRoleType = this.clearCompositeAndCompositesRoleByRoleType ?? new Dictionary<IRoleType, Command>();
+            this.clearCompositeAndCompositesRoleByRoleType ??= new Dictionary<IRoleType, Command>();
 
             var sql = this.Database.Mapping.ProcedureNameForClearRoleByRelationType[roleType.RelationType];
 
@@ -445,7 +445,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal Reference GetCompositeAssociation(Reference role, IAssociationType associationType)
         {
-            this.getCompositeAssociationByAssociationType = this.getCompositeAssociationByAssociationType ?? new Dictionary<IAssociationType, Command>();
+            this.getCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, Command>();
 
             Reference associationObject = null;
 
@@ -480,7 +480,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal long[] GetCompositesAssociation(Strategy role, IAssociationType associationType)
         {
-            this.getCompositesAssociationByAssociationType = this.getCompositesAssociationByAssociationType ?? new Dictionary<IAssociationType, Command>();
+            this.getCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, Command>();
 
             if (!this.getCompositesAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
@@ -512,7 +512,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal Reference CreateObject(IClass @class)
         {
-            this.createObjectByClass = this.createObjectByClass ?? new Dictionary<IClass, Command>();
+            this.createObjectByClass ??= new Dictionary<IClass, Command>();
 
             if (!this.createObjectByClass.TryGetValue(@class, out var command))
             {
@@ -535,7 +535,7 @@ namespace Allors.Database.Adapters.Npgsql
 
         internal IList<Reference> CreateObjects(IClass @class, int count)
         {
-            this.createObjectsByClass = this.createObjectsByClass ?? new Dictionary<IClass, Command>();
+            this.createObjectsByClass ??= new Dictionary<IClass, Command>();
 
             if (!this.createObjectsByClass.TryGetValue(@class, out var command))
             {
