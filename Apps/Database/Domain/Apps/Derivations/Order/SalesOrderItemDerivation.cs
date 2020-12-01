@@ -157,7 +157,7 @@ namespace Allors.Database.Domain
                 }
 
                 // SalesOrderItem States
-                if (@this.IsValid && salesOrder.ExistSalesOrderState)
+                if (@this.IsValid && salesOrder != null && salesOrder.ExistSalesOrderState)
                 {
                     if (salesOrder.SalesOrderState.IsProvisional)
                     {
@@ -305,7 +305,10 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                CalculatePrice(@this, salesOrder);
+                if (salesOrder != null)
+                {
+                    CalculatePrice(@this, salesOrder);
+                }
 
                 if (!@this.IsValid && @this.WasValid)
                 {

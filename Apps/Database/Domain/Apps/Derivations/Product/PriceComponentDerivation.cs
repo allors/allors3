@@ -30,10 +30,14 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<PriceComponent>())
             {
-                var salesInvoices = (@this.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting);
-                foreach (var salesInvoice in salesInvoices)
+                foreach (var salesInvoice in (@this.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting))
                 {
                     salesInvoice.DerivationTrigger = Guid.NewGuid();
+                }
+
+                foreach (var salesOrder in (@this.PricedBy as InternalOrganisation)?.SalesOrdersWhereTakenBy.Where(v => v.ExistSalesOrderState && v.SalesOrderState.IsProvisional))
+                {
+                    salesOrder.DerivationTrigger = Guid.NewGuid();
                 }
             }
         }

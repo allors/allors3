@@ -58,6 +58,7 @@ namespace Allors.Database.Domain
                 this.Meta.Print,
             };
 
+            config.DenyExcept(this.ObjectType, readyForPosting, except, Operations.Write);
             config.DenyExcept(this.ObjectType, awaitingAcceptance, except, Operations.Write);
             config.DenyExcept(this.ObjectType, inProcess, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
