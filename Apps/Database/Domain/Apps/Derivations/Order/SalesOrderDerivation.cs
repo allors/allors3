@@ -37,6 +37,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereBillToCustomer } },
                 new ChangedPattern(this.M.CustomerRelationship.FromDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereShipToCustomer } },
                 new ChangedPattern(this.M.CustomerRelationship.ThroughDate) { Steps =  new IPropertyType[] {m.CustomerRelationship.Customer, m.Party.SalesOrdersWhereShipToCustomer } },
+                new ChangedPattern(this.M.Store.AutoGenerateCustomerShipment) { Steps =  new IPropertyType[] {m.Store.InternalOrganisation, m.Organisation.SalesOrdersWhereTakenBy } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -84,8 +85,6 @@ namespace Allors.Database.Domain
                 @this.PreviousBillToCustomer = @this.BillToCustomer;
                 @this.PreviousShipToCustomer = @this.ShipToCustomer;
 
-                var singleton = session.GetSingleton();
-
                 @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
 
                 @this.ResetPrintDocument();
@@ -93,27 +92,6 @@ namespace Allors.Database.Domain
                 if (@this.CanShip && @this.Store.AutoGenerateCustomerShipment)
                 {
                     @this.Ship();
-                }
-
-                if (@this.SalesOrderState.IsInProcess
-                    && (!@this.ExistLastSalesOrderState || !@this.LastSalesOrderState.IsInProcess)
-                    && @this.TakenBy.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).SalesOrderAccept))
-                {
-                    foreach (SalesOrderItem item in @this.ValidOrderItems.Where(v => ((SalesOrderItem)v).ExistSerialisedItem))
-                    {
-                        if (item.ExistNextSerialisedItemAvailability)
-                        {
-                            item.SerialisedItem.SerialisedItemAvailability = item.NextSerialisedItemAvailability;
-
-                            if (item.NextSerialisedItemAvailability.Equals(new SerialisedItemAvailabilities(@this.Session()).Sold))
-                            {
-                                item.SerialisedItem.OwnedBy = @this.ShipToCustomer;
-                                item.SerialisedItem.Ownership = new Ownerships(@this.Session()).ThirdParty;
-                            }
-                        }
-
-                        item.SerialisedItem.AvailableForSale = false;
-                    }
                 }
             }
         }

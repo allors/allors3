@@ -311,8 +311,20 @@ namespace Allors.Database.Domain.TestPopulation
             var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationExternalDefaults(@this).Build();
             @this.Session().Derive();
 
-            var partItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
-            salesOrder.AddSalesOrderItem(partItem);
+            var salesOrderItem = new SalesOrderItemBuilder(@this.Session()).WithNonSerialisedPartItemDefaults().Build();
+            salesOrder.AddSalesOrderItem(salesOrderItem);
+            @this.Session().Derive();
+
+            return salesOrder;
+        }
+
+        public static SalesOrder CreateB2BSalesOrderForSingleSerialisedItem(this Organisation @this, Faker faker)
+        {
+            var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationExternalDefaults(@this).Build();
+            @this.Session().Derive();
+
+            var salesOrderItem = new SalesOrderItemBuilder(@this.Session()).WithSerialisedProductDefaults().Build();
+            salesOrder.AddSalesOrderItem(salesOrderItem);
             @this.Session().Derive();
 
             return salesOrder;

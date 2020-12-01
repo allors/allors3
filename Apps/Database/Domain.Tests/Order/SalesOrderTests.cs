@@ -3682,6 +3682,40 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(item.ExistOrderShipmentsWhereOrderItem);
         }
+
+        [Fact]
+        public void ChangedStoreAutoGenerateCustomerShipmentCreateShipment()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.False(item.ExistOrderShipmentsWhereOrderItem);
+
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = true;
+            this.Session.Derive(false);
+
+            Assert.True(item.ExistOrderShipmentsWhereOrderItem);
+        }
     }
 
     public class SalesOrderCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -3857,6 +3891,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderStateDeriveCanShipTrue()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = true;
             this.Session.Derive(false);
@@ -3884,6 +3920,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartiallyShipDeriveCanShipFalse()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = true;
             this.Session.Derive(false);
@@ -3916,6 +3954,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartiallyShipDeriveCanShipTrue()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = false;
             this.Session.Derive(false);
@@ -3948,6 +3988,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemQuantityOrderedDeriveCanShipFalse()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = false;
             this.Session.Derive(false);
@@ -3980,6 +4022,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemQuantityOrderedDeriveCanShipTrue()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = false;
             this.Session.Derive(false);
@@ -4012,6 +4056,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemQuantityRequestsShippingDeriveCanShipFalse()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = false;
             this.Session.Derive(false);
@@ -4050,6 +4096,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderItemQuantityRequestsShippingDeriveCanShipTrue()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
             order.PartiallyShip = false;
             this.Session.Derive(false);
@@ -4096,7 +4144,7 @@ namespace Allors.Database.Domain.Tests
         public SalesOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveValidInvoiceItems()
+        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveValidInvoiceItems()
         {
             var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
 
@@ -4116,6 +4164,124 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Single(order.ValidOrderItems);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveSerialisedItemSerialisedItemAvailability()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).SalesOrderAccept);
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var salesOrderItem = order.SalesOrderItems.First();
+            salesOrderItem.NextSerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).InRent;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.Equal(salesOrderItem.NextSerialisedItemAvailability, salesOrderItem.SerialisedItem.SerialisedItemAvailability);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateNotDeriveSerialisedItemSerialisedItemAvailability()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var salesOrderItem = order.SalesOrderItems.First();
+            salesOrderItem.NextSerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).InRent;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(salesOrderItem.NextSerialisedItemAvailability, salesOrderItem.SerialisedItem.SerialisedItemAvailability);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveSerialisedItemSerialisedItemOwnedBy()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).SalesOrderAccept);
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var salesOrderItem = order.SalesOrderItems.First();
+            salesOrderItem.NextSerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).Sold;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.ShipToCustomer, salesOrderItem.SerialisedItem.OwnedBy);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveSerialisedItemSerialisedItemOwnership()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).SalesOrderAccept);
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var salesOrderItem = order.SalesOrderItems.First();
+            salesOrderItem.NextSerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).Sold;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.True(salesOrderItem.SerialisedItem.Ownership.IsThirdParty);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderStateDeriveSerialisedItemSerialisedItemAvailableForSale()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).SalesOrderAccept);
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var salesOrderItem = order.SalesOrderItems.First();
+            salesOrderItem.NextSerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).InRent;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            Assert.False(salesOrderItem.SerialisedItem.AvailableForSale);
         }
     }
 
