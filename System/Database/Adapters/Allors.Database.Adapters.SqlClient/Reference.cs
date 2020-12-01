@@ -29,6 +29,7 @@ namespace Allors.Database.Adapters.SqlClient
             {
                 this.FlagExistsKnown = true;
                 this.FlagExists = true;
+                this.version = Allors.Version.Initial;
             }
         }
 

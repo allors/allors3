@@ -24,6 +24,8 @@ namespace Allors.Database.Configuration
             this.MetaPopulation = (MetaPopulation)database.ObjectFactory.MetaPopulation;
             this.M = new M(this.MetaPopulation);
             this.MetaCache = new MetaCache(this);
+            this.ClassById = new ClassById();
+            this.VersionedIdByStrategy = new VersionedIdByStrategy();
 
             this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
             this.PreparedFetches = new PreparedFetches(this);
@@ -58,6 +60,10 @@ namespace Allors.Database.Configuration
         public IPreparedExtents PreparedExtents { get; private set; }
 
         public ITreeCache TreeCache { get; private set; }
+
+        public IClassById ClassById { get; private set; }
+
+        public IVersionedIdByStrategy VersionedIdByStrategy { get; private set; }
 
         public IPermissionsCache PermissionsCache { get; private set; }
 
