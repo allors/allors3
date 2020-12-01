@@ -1,5 +1,11 @@
 ﻿export enum Operations {
-  Read = 1,
-  Write = 2,
-  Execute = 4,
+  None = 0,
+
+  Create = 1,
+
+  Read = 2,
+
+  Write = 4,
+
+  Execute = 8,
 }
