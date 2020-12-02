@@ -117,6 +117,14 @@ namespace Allors.Repository
         OrderItem[] Associations { get; set; }
 
         #region Allors
+        [Id("9a273bd4-5718-4b8f-a97e-7810f4104a45")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        IrpfRegime AssignedIrpfRegime { get; set; }
+
+        #region Allors
         [Id("e31314f8-c9f4-45d0-a1c7-81184091e41b")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -124,14 +132,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         IrpfRegime DerivedIrpfRegime { get; set; }
-
-        #region Allors
-        [Id("9a273bd4-5718-4b8f-a97e-7810f4104a45")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        IrpfRegime AssignedIrpfRegime { get; set; }
 
         #region Allors
         [Id("b09dcce5-f5df-49dd-b62e-9c17860feda2")]

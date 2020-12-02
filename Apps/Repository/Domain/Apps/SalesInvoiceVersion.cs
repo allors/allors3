@@ -131,7 +131,6 @@ namespace Allors.Repository
         [Id("C90E49CC-63DC-41A6-B5C9-24B38EFDD8E3")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         public Party PreviousBillToCustomer { get; set; }
 
@@ -148,7 +147,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Required]
         [Workspace(Default)]
         public ContactMechanism DerivedBillToContactMechanism { get; set; }
 
@@ -323,7 +321,6 @@ namespace Allors.Repository
         [Id("A407D8AC-1951-4DCC-9224-399139D6AFEB")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Derived]
         [Indexed]
         [Workspace(Default)]
         public Party[] Customers { get; set; }

@@ -262,6 +262,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
+        [Derived]
         [Workspace(Default)]
         [Indexed]
         public ContactMechanism DerivedTakenByContactMechanism { get; set; }
@@ -304,6 +305,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PostalAddress DerivedShipFromAddress { get; set; }
 
@@ -320,6 +322,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PostalAddress DerivedShipToAddress { get; set; }
 
@@ -361,6 +364,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
         [Workspace(Default)]
         public ContactMechanism DerivedBillToContactMechanism { get; set; }
 
@@ -393,6 +397,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public ContactMechanism DerivedBillToEndCustomerContactMechanism { get; set; }
 
@@ -425,6 +430,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PostalAddress DerivedShipToEndCustomerAddress { get; set; }
 
@@ -457,6 +463,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public ContactMechanism DerivedPlacingCustomerContactMechanism { get; set; }
 
@@ -490,6 +497,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public ShipmentMethod DerivedShipmentMethod { get; set; }
 
@@ -540,6 +548,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PaymentMethod DerivedPaymentMethod { get; set; }
 

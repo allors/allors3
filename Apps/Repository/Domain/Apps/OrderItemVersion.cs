@@ -32,8 +32,6 @@ namespace Allors.Repository
         #region Allors
         [Id("1B393511-B8B5-488C-B2AB-689C8316EC7D")]
         #endregion
-        [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal PreviousQuantity { get; set; }
@@ -42,7 +40,6 @@ namespace Allors.Repository
         [Id("EDD60449-DBC2-4102-BF83-48CE84C528A8")]
         #endregion
         [Workspace(Default)]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal QuantityOrdered { get; set; }
@@ -66,8 +63,6 @@ namespace Allors.Repository
         [Id("12184E43-0B6B-4DE9-A36F-CDEAA86A7AFF")]
         #endregion
         [Workspace(Default)]
-        [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalOrderAdjustment { get; set; }
@@ -89,7 +84,6 @@ namespace Allors.Repository
         #region Allors
         [Id("8303667C-ACD8-4064-9831-9C0129676AB3")]
         #endregion
-        [Derived]
         [Workspace(Default)]
         DateTime DerivedDeliveryDate { get; set; }
 
@@ -120,7 +114,6 @@ namespace Allors.Repository
         [Id("b16be678-3468-447c-b971-34f519820972")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         [Workspace(Default)]
         IrpfRegime DerivedIrpfRegime { get; set; }
@@ -137,7 +130,6 @@ namespace Allors.Repository
         [Id("e51e9a39-872a-469f-87c7-41e5efc206b3")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         [Workspace(Default)]
         IrpfRate IrpfRate { get; set; }
@@ -145,7 +137,6 @@ namespace Allors.Repository
         #region Allors
         [Id("d343ff1f-05b5-4d8a-bd62-c89feccb9784")]
         #endregion
-        [Required]
         [Precision(19)]
         [Scale(5)]
         [Workspace(Default)]
@@ -154,8 +145,6 @@ namespace Allors.Repository
         #region Allors
         [Id("cd93af05-5f00-415b-9e6a-d53e370b202e")]
         #endregion
-        [Required]
-        [Derived]
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]

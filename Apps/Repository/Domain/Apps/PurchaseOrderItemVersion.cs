@@ -111,7 +111,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         public PurchaseOrderItemState PurchaseOrderItemState { get; set; }
 
         #region Allors
@@ -133,8 +132,6 @@ namespace Allors.Repository
         #region Allors
         [Id("CD44EDAB-1CCE-4F2B-A92E-13BC74339EFE")]
         #endregion
-        [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         public decimal QuantityReceived { get; set; }

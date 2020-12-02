@@ -315,6 +315,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PostalAddress DerivedShipFromAddress { get; set; }
 

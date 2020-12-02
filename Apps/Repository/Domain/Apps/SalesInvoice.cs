@@ -178,6 +178,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public ContactMechanism DerivedBilledFromContactMechanism { get; set; }
 
@@ -220,6 +221,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
+        [Derived]
         [Workspace(Default)]
         public ContactMechanism DerivedBillToContactMechanism { get; set; }
 
@@ -252,6 +254,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public ContactMechanism DerivedBillToEndCustomerContactMechanism { get; set; }
 
@@ -284,6 +287,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PostalAddress DerivedShipToEndCustomerAddress { get; set; }
 
@@ -324,6 +328,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PostalAddress DerivedShipToAddress { get; set; }
 
@@ -365,6 +370,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public PaymentMethod DerivedPaymentMethod { get; set; }
 
@@ -481,6 +487,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public Locale DerivedLocale { get; set; }
 
