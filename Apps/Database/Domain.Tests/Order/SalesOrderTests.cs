@@ -3716,6 +3716,19 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(item.ExistOrderShipmentsWhereOrderItem);
         }
+
+        [Fact]
+        public void OnChangedValidOrderItemsSyncSalesOrderItemSyncedOrder()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(order, orderItem.SyncedOrder);
+        }
     }
 
     public class SalesOrderCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -4193,19 +4206,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedValidOrderItemsSyncSalesOrderItemSyncedOrder()
-        {
-            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
-
-            var orderItem = new SalesOrderItemBuilder(this.Session).Build();
-            order.AddSalesOrderItem(orderItem);
-            this.Session.Derive(false);
-
-            Assert.Equal(order, orderItem.SyncedOrder);
-        }
-
-        [Fact]
         public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
@@ -4297,7 +4297,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemQuantityCalculatePrice()
+        public void OnChangedSalesOrderItemQuantityOrderedCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -4825,7 +4825,7 @@ namespace Allors.Database.Domain.Tests
         public SalesOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveValidInvoiceItems()
+        public void ChangedSalesOrderItemSalesOrderItemStateDeriveValidOrderItems()
         {
             var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
 
@@ -4845,6 +4845,97 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Single(order.ValidOrderItems);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemSalesOrderItemShipmentStateDeriveSalesOrderShipmentStateIsNotShipped()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderShipmentState.IsNotShipped);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemSalesOrderItemShipmentStateDeriveSalesOrderShipmentStateIsInProgress()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderShipmentState.IsInProgress);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemSalesOrderItemShipmentStateDeriveSalesOrderShipmentStateIsPartiallyShipped()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderShipmentState.IsPartiallyShipped);
         }
 
         [Fact]
@@ -4874,10 +4965,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderStateNotDeriveSerialisedItemSerialisedItemAvailability()
         {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).CustomerShipmentShip);
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleSerialisedItem(this.Session.Faker());
             this.Session.Derive(false);
 
             var salesOrderItem = order.SalesOrderItems.First();
+            salesOrderItem.SerialisedItem.SerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).Available;
             salesOrderItem.NextSerialisedItemAvailability = new SerialisedItemAvailabilities(this.Session).InRent;
             this.Session.Derive(false);
 

@@ -155,10 +155,7 @@ namespace Allors.Database.Domain
                 }
             }
 
-            if (!this.ExistDerivedCurrency)
-            {
-                this.DerivedCurrency = this.OrderedBy?.PreferredCurrency;
-            }
+            this.DerivedCurrency = this.OrderedBy?.PreferredCurrency;
 
             if (!this.ExistStoredInFacility && this.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
             {
@@ -328,8 +325,8 @@ namespace Allors.Database.Domain
                     .WithBilledToContactPerson(this.BillToContactPerson)
                     .WithDescription(this.Description)
                     .WithInvoiceDate(this.Session().Now())
-                    .WithAssignedVatRegime(this.AssignedVatRegime)
-                    .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
+                    .WithAssignedVatRegime(this.DerivedVatRegime)
+                    .WithAssignedIrpfRegime(this.DerivedIrpfRegime)
                     .WithCustomerReference(this.CustomerReference)
                     .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Session()).PurchaseInvoice)
                     .Build();

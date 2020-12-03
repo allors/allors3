@@ -168,9 +168,12 @@ namespace Allors.Database.Domain
 
         public void AppsSetPicked(CustomerShipmentSetPicked method)
         {
-            this.ShipmentState = new ShipmentStates(this.Strategy.Session).Picked;
+            if (!this.ShipmentState.IsPicked)
+            {
+                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Picked;
+            }
 
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            foreach (var shipmentItem in this.ShipmentItems.Where(v => !v.ShipmentItemState.Equals(new ShipmentItemStates(this.Session()).Picked)))
             {
                 shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session()).Picked;
             }
@@ -178,9 +181,12 @@ namespace Allors.Database.Domain
 
         public void AppsSetPacked(CustomerShipmentSetPacked method)
         {
-            this.ShipmentState = new ShipmentStates(this.Strategy.Session).Packed;
+            if (!this.ShipmentState.IsPacked)
+            {
+                this.ShipmentState = new ShipmentStates(this.Strategy.Session).Packed;
+            }
 
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            foreach (var shipmentItem in this.ShipmentItems.Where(v => !v.ShipmentItemState.Equals(new ShipmentItemStates(this.Session()).Packed)))
             {
                 shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session()).Packed;
             }
@@ -399,91 +405,6 @@ namespace Allors.Database.Domain
             //}
 
             //this.ShipmentValue = shipmentValue;
-        }
-
-        public void AppsOnDeriveCurrentShipmentState(IDerivation derivation)
-        {
-            //if (this.ExistShipToParty && this.ExistShipmentItems)
-            //{
-            //    //cancel shipment if nothing left to ship
-            //    if (this.ExistShipmentItems && this.PendingPickList == null
-            //        && !this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Cancelled))
-            //    {
-            //        var canCancel = true;
-            //        foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-            //        {
-            //            if (shipmentItem.Quantity > 0)
-            //            {
-            //                canCancel = false;
-            //                break;
-            //            }
-            //        }
-
-            //        if (canCancel)
-            //        {
-            //            this.Cancel();
-            //        }
-            //    }
-
-            //    if ((this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Picking) ||
-            //         this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Picked) ||
-            //        this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Packed)) &&
-            //        this.ShipToParty.ExistPickListsWhereShipToParty)
-            //    {
-            //        var isPicked = true;
-            //        foreach (PickList pickList in this.ShipToParty.PickListsWhereShipToParty)
-            //        {
-            //            if (this.Store.Equals(pickList.Store) &&
-            //                !pickList.PickListState.Equals(new PickListStates(this.Strategy.Session).Picked))
-            //            {
-            //                isPicked = false;
-            //            }
-            //        }
-
-            //        if (isPicked)
-            //        {
-            //            this.SetPicked();
-            //        }
-            //    }
-
-            //    if (this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Picked)
-            //        || this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Packed))
-            //    {
-            //        var totalShippingQuantity = 0M;
-            //        var totalPackagedQuantity = 0M;
-            //        foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-            //        {
-            //            totalShippingQuantity += shipmentItem.Quantity;
-            //            foreach (PackagingContent packagingContent in shipmentItem.PackagingContentsWhereShipmentItem)
-            //            {
-            //                totalPackagedQuantity += packagingContent.Quantity;
-            //            }
-            //        }
-
-            //        if (this.Store.IsImmediatelyPacked && totalPackagedQuantity == totalShippingQuantity)
-            //        {
-            //            this.SetPacked();
-            //        }
-            //    }
-
-            //    if (this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Created)
-            //        || this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Picked)
-            //        || this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Picked)
-            //        || this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Packed))
-            //    {
-            //        if (this.ShipmentValue < this.Store.ShipmentThreshold && !this.ReleasedManually)
-            //        {
-            //            this.PutOnHold();
-            //        }
-            //    }
-
-            //    if (this.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).OnHold) &&
-            //        !this.HeldManually &&
-            //        ((this.ShipmentValue >= this.Store.ShipmentThreshold) || this.ReleasedManually))
-            //    {
-            //        this.Continue();
-            //    }
-            //}
         }
 
         public void AppsOnDeriveCurrentObjectState(IDerivation derivation)

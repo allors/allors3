@@ -45,11 +45,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
-                foreach (SalesOrderItem salesOrderItem in @this.SalesOrderItems)
-                {
-                    salesOrderItem.Sync(@this);
-                }
-
                 var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
 
                 foreach (var salesOrderItem in validOrderItems)
