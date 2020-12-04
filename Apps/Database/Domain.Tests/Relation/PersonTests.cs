@@ -454,18 +454,6 @@ namespace Allors.Database.Domain.Tests
         }
         
         [Fact]
-        public void OnChangedPersonWithPurchaseOrdersWhereTakenViaSupplierDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(person).Build();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.deletePermission, person.DeniedPermissions);
-        }
-        
-        [Fact]
         public void OnChangedPersonWithPurchaseOrdersWhereTakenViaSubcontractorDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Session).Build();

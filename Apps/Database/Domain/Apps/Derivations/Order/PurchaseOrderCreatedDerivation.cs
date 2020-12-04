@@ -33,8 +33,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.Organisation.BillingAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new ChangedPattern(m.Organisation.GeneralCorrespondence) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereOrderedBy }},
                 new ChangedPattern(m.Organisation.OrderAddress) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
-                new ChangedPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.PurchaseOrdersWhereTakenViaSupplier }},
-                new ChangedPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.PurchaseOrdersWhereTakenViaSupplier }},
+                new ChangedPattern(m.Organisation.VatRegime) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
+                new ChangedPattern(m.Organisation.IrpfRegime) { Steps = new IPropertyType[] { m.Organisation.PurchaseOrdersWhereTakenViaSupplier }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -36,7 +36,6 @@ namespace Allors.Database.Domain
             && !this.ExistPurchaseInvoicesWhereShipToCustomer
             && !this.ExistPurchaseInvoicesWhereBillToEndCustomer
             && !this.ExistPurchaseInvoicesWhereShipToEndCustomer
-            && !this.ExistPurchaseOrdersWhereTakenViaSupplier
             && !this.ExistPurchaseOrdersWhereTakenViaSubcontractor
             && !this.ExistRequestsWhereOriginator
             && !this.ExistRequirementsWhereAuthorizer

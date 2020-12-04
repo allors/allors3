@@ -378,7 +378,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Derived]
         [Indexed]
-        Party[] ActiveSuppliers { get; set; }
+        Organisation[] ActiveSuppliers { get; set; }
 
         #region Allors
         [Id("1caf947c-425e-43fa-bcdb-5961bedc0708")]

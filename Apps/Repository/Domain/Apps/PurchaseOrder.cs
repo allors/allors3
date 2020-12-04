@@ -236,7 +236,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        public Party PreviousTakenViaSupplier { get; set; }
+        public Organisation PreviousTakenViaSupplier { get; set; }
 
         #region Allors
         [Id("36607a9e-d411-4726-a63c-7622b928bfe8")]
@@ -244,7 +244,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Party TakenViaSupplier { get; set; }
+        public Organisation TakenViaSupplier { get; set; }
 
         #region Allors
         [Id("6ef15b20-da12-47ed-aa2a-fdf06b17fdac")]
