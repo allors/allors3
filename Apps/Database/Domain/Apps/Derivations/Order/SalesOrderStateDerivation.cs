@@ -20,6 +20,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.SalesOrder.SalesOrderItems),
                 new ChangedPattern(this.M.SalesOrderItem.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
                 new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemShipmentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemPaymentState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
+                new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemInvoiceState) { Steps =  new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -89,12 +91,12 @@ namespace Allors.Database.Domain
                     }
 
                     // SalesOrder OrderState
-                    if (@this.SalesOrderShipmentState.IsShipped && @this.SalesOrderInvoiceState.Invoiced)
+                    if (@this.SalesOrderShipmentState.IsShipped && @this.SalesOrderInvoiceState.IsInvoiced)
                     {
                         @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Completed;
                     }
 
-                    if (@this.SalesOrderState.IsCompleted && @this.SalesOrderPaymentState.Paid)
+                    if (@this.SalesOrderState.IsCompleted && @this.SalesOrderPaymentState.IsPaid)
                     {
                         @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Finished;
                     }

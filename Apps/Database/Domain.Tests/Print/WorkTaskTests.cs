@@ -11,7 +11,7 @@ namespace Allors.Database.Domain.Tests.Print
     using Domain.Print.WorkTaskModel;
     using Xunit;
 
-    public class WorkTaskTests : DomainTest
+    public class WorkTaskTests : DomainTest, IClassFixture<Fixture>
     {
         public WorkTaskTests(Fixture fixture) : base(fixture) { }
 
