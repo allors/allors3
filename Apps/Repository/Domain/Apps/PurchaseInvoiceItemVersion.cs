@@ -98,7 +98,6 @@ namespace Allors.Repository
         [Id("F9AA8529-25F3-4374-9394-7B1A4868490A")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         public PurchaseInvoiceItemState PurchaseInvoiceItemState { get; set; }
 
@@ -107,7 +106,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         public InvoiceItemType InvoiceItemType { get; set; }
 
         #region Allors
@@ -115,7 +113,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         public PurchaseOrderItem PurchaseOrderItem { get; set; }
 
         #region Allors

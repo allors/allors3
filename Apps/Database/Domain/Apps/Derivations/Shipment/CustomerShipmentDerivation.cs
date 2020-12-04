@@ -60,8 +60,6 @@ namespace Allors.Database.Domain
 
                 @this.ShipmentValue = shipmentValue;
 
-                //AppsOnDeriveCurrentShipmentState
-
                 if (@this.ExistShipToParty && @this.ExistShipmentItems)
                 {
                     ////cancel shipment if nothing left to ship

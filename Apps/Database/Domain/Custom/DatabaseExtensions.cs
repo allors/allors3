@@ -182,6 +182,7 @@ namespace Allors.Database.Domain
                 new PurchaseOrderCreatedDerivation(m),
                 new ShipmentItemDerivation(m),
                 new CustomerShipmentDerivation(m),
+                new CustomerShipmentStateDerivation(m),
                 new OrderShipmentDerivation(m),
                 new InvoiceItemTotalIncVatDerivation(m),
                 new DeliverableTurnoverDerivation(m),

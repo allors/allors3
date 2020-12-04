@@ -85,6 +85,11 @@ namespace Allors.Database.Domain
                 @this.PreviousBillToCustomer = @this.BillToCustomer;
                 @this.PreviousShipToCustomer = @this.ShipToCustomer;
 
+                foreach (SalesOrderItem salesOrderItem in @this.SalesOrderItems)
+                {
+                    salesOrderItem.Sync(@this);
+                }
+
                 @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
 
                 @this.ResetPrintDocument();

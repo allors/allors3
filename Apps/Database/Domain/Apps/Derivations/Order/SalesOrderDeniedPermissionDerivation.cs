@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Invoice));
                 }
 
-                if (!@this.SalesOrderInvoiceState.NotInvoiced || !@this.SalesOrderShipmentState.NotShipped)
+                if (!@this.SalesOrderInvoiceState.NotInvoiced || !@this.SalesOrderShipmentState.IsNotShipped)
                 {
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.SetReadyForPosting));
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Session).Get(@this.Meta.Class, @this.Meta.Post));

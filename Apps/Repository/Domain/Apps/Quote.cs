@@ -52,6 +52,23 @@ namespace Allors.Repository
         InternalOrganisation Issuer { get; set; }
 
         #region Allors
+        [Id("BA16DE57-19A1-40BC-AF3C-99690EB5ECAB")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        Currency AssignedCurrency { get; set; }
+
+        #region Allors
+        [Id("0e251edc-35aa-499e-89f3-acc28ab82e6e")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
+        [Workspace(Default)]
+        Currency DerivedCurrency { get; set; }
+
+        #region Allors
         [Id("3B913CC6-C627-4F16-ACF5-98EC97CE5FDA")]
         #endregion
         [Workspace(Default)]
@@ -125,6 +142,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
         [Workspace(Default)]
         ContactMechanism DerivedFullfillContactMechanism { get; set; }
 
@@ -141,6 +159,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
         [Indexed]
         VatRegime DerivedVatRegime { get; set; }
 
@@ -164,6 +183,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         IrpfRegime DerivedIrpfRegime { get; set; }
 
@@ -180,6 +200,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public Locale DerivedLocale { get; set; }
 
@@ -310,22 +331,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Indexed]
         OrderAdjustment[] OrderAdjustments { get; set; }
-
-        #region Allors
-        [Id("BA16DE57-19A1-40BC-AF3C-99690EB5ECAB")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        Currency AssignedCurrency { get; set; }
-
-        #region Allors
-        [Id("0e251edc-35aa-499e-89f3-acc28ab82e6e")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        Currency DerivedCurrency { get; set; }
 
         #region Allors
         [Id("d7dc81e8-76e7-4c68-9843-a2aaf8293510")]

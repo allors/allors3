@@ -34,6 +34,7 @@ namespace Allors.Repository
         [Id("e4102661-d3dd-4b88-adb4-8d0358fc19c4")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
+        [Derived]
         [Workspace(Default)]
         [Indexed]
         Currency DerivedCurrency { get; set; }
@@ -199,6 +200,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         VatRegime DerivedVatRegime { get; set; }
 
@@ -215,6 +217,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         IrpfRegime DerivedIrpfRegime { get; set; }
 

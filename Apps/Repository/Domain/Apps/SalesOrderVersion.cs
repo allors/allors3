@@ -181,7 +181,6 @@ namespace Allors.Repository
         [Id("6A3438D1-2259-4443-A7ED-7B5BE5B7D897")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         public Party PreviousShipToCustomer { get; set; }
 
@@ -221,7 +220,6 @@ namespace Allors.Repository
         [Id("E1AD653D-7C83-4F3D-879C-EF3053DF1288")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         public Party PreviousBillToCustomer { get; set; }
 
@@ -364,7 +362,6 @@ namespace Allors.Repository
         #region Allors
         [Id("896D1356-CEBA-4DB2-8960-92F4DD6DEE62")]
         #endregion
-        [Derived]
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]
@@ -379,7 +376,6 @@ namespace Allors.Repository
         [Id("F5BB7592-6BF9-4190-BAE2-C1C092F92EB5")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Derived]
         [Indexed]
         public Party[] Customers { get; set; }
 
@@ -402,7 +398,6 @@ namespace Allors.Repository
         [Id("9f2b8264-2411-448b-9d50-6525b52f3932")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Required]
         [Indexed]
         [Workspace(Default)]
         public PaymentMethod DerivedPaymentMethod { get; set; }
@@ -419,7 +414,6 @@ namespace Allors.Repository
         [Id("A4E43616-87BE-4FFE-89FA-B8F7AB2A0C74")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         [Indexed]
         public SalesInvoice ProformaInvoice { get; set; }
 
