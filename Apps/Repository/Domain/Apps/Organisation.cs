@@ -107,7 +107,7 @@ namespace Allors.Repository
 
         public Person[] ActiveEmployees { get; set; }
 
-        public Party[] ActiveSuppliers { get; set; }
+        public Organisation[] ActiveSuppliers { get; set; }
 
         public Party[] ActiveSubContractors { get; set; }
 
