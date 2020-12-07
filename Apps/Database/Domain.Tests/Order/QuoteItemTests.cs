@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSerialisedItem_WhenDerived_ThenSerialisedItemAvailabilityIsChanged()
         {
-            var quote = new ProductQuoteBuilder(this.Session).WithSerializedDefaults(this.InternalOrganisation).Build();
+            var quote = new ProductQuoteBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
 
             this.Session.Derive();
 

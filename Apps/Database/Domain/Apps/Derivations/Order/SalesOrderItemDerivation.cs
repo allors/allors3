@@ -256,13 +256,13 @@ namespace Allors.Database.Domain
                             {
                                 @this.SalesOrderItemPaymentState = salesOrderItemPaymentStates.Paid;
                             }
-                            else if (shipmentBilling.All(v => !v.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceState.IsPaid))
+                            else if (shipmentBilling.Any(v => v.SalesInvoiceWhereSalesInvoiceItem.SalesInvoiceState.IsPartiallyPaid))
                             {
-                                @this.SalesOrderItemPaymentState = salesOrderItemPaymentStates.NotPaid;
+                                @this.SalesOrderItemPaymentState = salesOrderItemPaymentStates.PartiallyPaid;
                             }
                             else
                             {
-                                @this.SalesOrderItemPaymentState = salesOrderItemPaymentStates.PartiallyPaid;
+                                @this.SalesOrderItemPaymentState = salesOrderItemPaymentStates.NotPaid;
                             }
                         }
                         else

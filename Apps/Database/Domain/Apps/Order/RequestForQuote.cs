@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
                 .WithReceiver(this.Originator)
                 .WithRequiredResponseDate(this.RequiredResponseDate)
                 .WithAssignedCurrency(this.DerivedCurrency)
-                .WithAssignedFullfillContactMechanism(this.FullfillContactMechanism)
+                .WithFullfillContactMechanism(this.FullfillContactMechanism)
                 .Build();
 
             var sourceItems = this.RequestItems.Where(i => i.RequestItemState.Equals(new RequestItemStates(this.Strategy.Session).Submitted)).ToArray();

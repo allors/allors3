@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.SalesOrder.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.SalesOrder.SalesOrderShipmentState),
+            new ChangedPattern(this.M.SalesOrder.SalesOrderInvoiceState),
             new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderWhereSalesOrderItem } },
         };
 

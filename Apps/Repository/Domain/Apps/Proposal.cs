@@ -50,9 +50,7 @@ namespace Allors.Repository
 
         public Party Receiver { get; set; }
 
-        public ContactMechanism AssignedFullfillContactMechanism { get; set; }
-
-        public ContactMechanism DerivedFullfillContactMechanism { get; set; }
+        public ContactMechanism FullfillContactMechanism { get; set; }
 
         public VatRegime AssignedVatRegime { get; set; }
 

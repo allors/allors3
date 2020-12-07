@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
     {
         public BillToModel(ProductQuote quote, Dictionary<string, byte[]> imageByImageName)
         {
-            var contactMechanism = quote.DerivedFullfillContactMechanism;
+            var contactMechanism = quote.FullfillContactMechanism;
 
             if (contactMechanism is PostalAddress postalAddress)
             {

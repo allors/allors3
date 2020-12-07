@@ -10,11 +10,10 @@ namespace Allors.Database.Domain.TestPopulation
 
     public static partial class ProductQuoteBuilderExtensions
     {
-        public static ProductQuoteBuilder WithSerializedDefaults(this ProductQuoteBuilder @this, Organisation internalOrganisation)
+        public static ProductQuoteBuilder WithDefaults(this ProductQuoteBuilder @this, Organisation internalOrganisation)
         {
             var faker = @this.Session.Faker();
 
-            var quoteItem = new QuoteItemBuilder(@this.Session).WithSerializedDefaults(internalOrganisation).Build();
             var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
 
             @this.WithContactPerson(customer.CurrentContacts.FirstOrDefault());
@@ -27,7 +26,7 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithValidThroughDate(@this.Session.Now().AddDays(2));
             @this.WithRequiredResponseDate(@this.Session.Now().AddDays(2));
             @this.WithReceiver(customer);
-            @this.WithQuoteItem(quoteItem);
+            @this.WithFullfillContactMechanism(customer.GeneralCorrespondence);
 
             return @this;
         }

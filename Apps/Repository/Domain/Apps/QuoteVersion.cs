@@ -87,15 +87,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        ContactMechanism AssignedFullfillContactMechanism { get; set; }
-
-        #region Allors
-        [Id("eb7bb3d0-67e8-4d49-888e-d3053daa3858")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        ContactMechanism DerivedFullfillContactMechanism { get; set; }
+        ContactMechanism FullfillContactMechanism { get; set; }
 
         #region Allors
         [Id("1927FAF4-B595-4F53-8BD4-97DD1865187A")]

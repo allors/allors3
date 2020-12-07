@@ -87,7 +87,6 @@ namespace Allors.Database.Domain
                 .WithShipToContactPerson(this.ContactPerson)
                 .WithBillToContactPerson(this.ContactPerson)
                 .WithQuote(this)
-                .WithDescription(this.Description)
                 .WithAssignedCurrency(this.DerivedCurrency)
                 .WithLocale(this.DerivedLocale)
                 .Build();

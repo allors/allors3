@@ -349,5 +349,17 @@ namespace Allors.Database.Domain.TestPopulation
 
             return salesOrder;
         }
+
+        public static ProductQuote CreateB2BProductQuoteWithSerialisedItem(this Organisation @this, Faker faker)
+        {
+            var quote = new ProductQuoteBuilder(@this.Session()).WithDefaults(@this).Build();
+            @this.Session().Derive();
+
+            var quoteItem = new QuoteItemBuilder(@this.Session()).WithSerializedDefaults(@this).Build();
+            quote.AddQuoteItem(quoteItem);
+            @this.Session().Derive();
+
+            return quote;
+        }
     }
 }

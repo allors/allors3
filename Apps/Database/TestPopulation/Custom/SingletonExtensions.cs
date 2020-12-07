@@ -301,7 +301,7 @@ namespace Allors
 
                 requestForQuote.AddRequestItem(requestItem);
 
-                var quote = new ProductQuoteBuilder(@this.Session()).WithSerializedDefaults(allors).Build();
+                var quote = new ProductQuoteBuilder(@this.Session()).WithDefaults(allors).Build();
 
                 var salesOrderItem1 = new SalesOrderItemBuilder(@this.Session())
                     .WithDescription("first item")
