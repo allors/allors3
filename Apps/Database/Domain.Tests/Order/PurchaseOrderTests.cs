@@ -733,5 +733,65 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(approval.Title, "Approval of " + purchaseOrder.WorkItemDescription);
         }
+
+        [Fact]
+        public void OnCreatedPurchaseOrderApprovalLevel2DeriveWorkItem()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(approval.WorkItem, purchaseOrder);
+        }
+
+        [Fact]
+        public void OnCreatedPurchaseOrderApprovalLevel2DeriveDateClosedExists()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(approval.ExistDateClosed);
+        }
+
+        [Fact]
+        public void OnCreatedPurchaseOrdeApprovalLevel2DeriveDateClosedNotExists()
+        {
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Session.Faker());
+
+            var supplierRelationship = purchaseOrder.TakenViaSupplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation == purchaseOrder.OrderedBy);
+            supplierRelationship.NeedsApproval = true;
+            supplierRelationship.ApprovalThresholdLevel2 = 2;
+
+            this.Session.Derive(false);
+
+            purchaseOrder.SetReadyForProcessing();
+
+            this.Session.Derive(false);
+
+            Assert.False(purchaseOrder.PurchaseOrderApprovalsLevel2WherePurchaseOrder.First().ExistDateClosed);
+        }
+
+        [Fact]
+        public void OnCreatedPurchaseOrderApprovalLevel2DeriveEmptyParticipants()
+        {
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+
+            this.Session.Derive(false);
+
+            var approval = new PurchaseOrderApprovalLevel2Builder(this.Session).WithPurchaseOrder(purchaseOrder).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Empty(approval.Participants);
+        }
     }
 }
