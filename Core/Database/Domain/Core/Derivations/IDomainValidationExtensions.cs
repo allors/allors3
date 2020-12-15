@@ -7,6 +7,7 @@ namespace Allors.Database.Domain.Derivations
 {
     using Meta;
     using Database.Derivations;
+    using System.Linq;
 
     public static class IDomainValidationExtensions
     {
@@ -14,7 +15,7 @@ namespace Allors.Database.Domain.Derivations
         {
             if (!association.Strategy.ExistRole(roleType))
             {
-                @this.AddError($"AssertExists: {DerivationRelation.Create(association, roleType)}");
+                @this.AddError($"AssertExists: {DerivationRelation.Create(association, roleType)[0]}");
             }
         }
 
@@ -22,7 +23,7 @@ namespace Allors.Database.Domain.Derivations
         {
             if (association.Strategy.ExistRole(roleType))
             {
-                @this.AddError($"AssertNotExists: {DerivationRelation.Create(association, roleType)}");
+                @this.AddError($"AssertNotExists: {DerivationRelation.Create(association, roleType)[0]}");
             }
         }
 
@@ -32,7 +33,7 @@ namespace Allors.Database.Domain.Derivations
             {
                 if (association.Strategy.GetUnitRole(roleType).Equals(string.Empty))
                 {
-                    @this.AddError($"AssertNonEmptyString: {DerivationRelation.Create(association, roleType)}");
+                    @this.AddError($"AssertNonEmptyString: {DerivationRelation.Create(association, roleType)[0]}");
                 }
             }
         }
@@ -59,7 +60,7 @@ namespace Allors.Database.Domain.Derivations
                         extent.Filter.AddEquals(roleType, role);
                         if (extent.Count != 1)
                         {
-                            @this.AddError($"AssertIsUnique: {DerivationRelation.Create(association, roleType)}");
+                            @this.AddError($"AssertIsUnique: {DerivationRelation.Create(association, roleType)[0]}");
                         }
                     }
                 }
@@ -76,7 +77,7 @@ namespace Allors.Database.Domain.Derivations
                 }
             }
 
-            @this.AddError($"AssertAtLeastOne: {DerivationRelation.Create(association, roleTypes)}");
+            @this.AddError($"AssertAtLeastOne: {string.Join("\n", DerivationRelation.Create(association, roleTypes).Select(v => v.ToString()))}");
         }
 
         public static void AssertExistsAtMostOne(this IDomainValidation @this, IObject association, params RoleType[] roleTypes)
@@ -92,7 +93,7 @@ namespace Allors.Database.Domain.Derivations
 
             if (count > 1)
             {
-                @this.AddError($"AssertExistsAtMostOne: {DerivationRelation.Create(association, roleTypes)}");
+                @this.AddError($"AssertExistsAtMostOne: {string.Join("\n", DerivationRelation.Create(association, roleTypes).Select(v => v.ToString()))}");
             }
         }
 
@@ -113,7 +114,7 @@ namespace Allors.Database.Domain.Derivations
 
             if (!equal)
             {
-                @this.AddError($"AssertAreEqual: {DerivationRelation.Create(association, roleType, otherRoleType)}");
+                @this.AddError($"AssertAreEqual: {string.Join("\n", DerivationRelation.Create(association, roleType, otherRoleType).Select(v => v.ToString()))}");
             }
         }
 
@@ -121,7 +122,7 @@ namespace Allors.Database.Domain.Derivations
         {
             if (!role.Strategy.ExistAssociation(associationType))
             {
-                @this.AddError($"AssertExists: {DerivationRelation.Create(role, associationType)}");
+                @this.AddError($"AssertExists: {DerivationRelation.Create(role, associationType)[0]}");
             }
         }
     }

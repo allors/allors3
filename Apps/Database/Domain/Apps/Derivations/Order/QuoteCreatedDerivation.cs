@@ -35,6 +35,8 @@ namespace Allors.Database.Domain
             {
                 @this.DerivedLocale = @this.Locale ?? @this.Receiver?.Locale ?? @this.Issuer?.Locale;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
+                @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.Receiver?.VatRegime;
+                @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.Receiver?.IrpfRegime;
 
                 foreach (QuoteItem quoteItem in @this.QuoteItems)
                 {

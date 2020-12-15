@@ -6,6 +6,11 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Allors.Database.Derivations;
+    using Allors.Database.Domain.TestPopulation;
+    using Resources;
     using Xunit;
 
     public class SalesOrderItemTests : DomainTest, IClassFixture<Fixture>
@@ -1238,9 +1243,61 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemCreateDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemBuildDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemCreateDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemBuildDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void DeriveSalesOrderItemState()
+        {
+            var order = new SalesOrderItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderItemState);
+        }
+
+        [Fact]
+        public void DeriveSalesOrderItemShipmentState()
+        {
+            var order = new SalesOrderItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderItemShipmentState);
+        }
+
+        [Fact]
+        public void DeriveSalesOrderIteminvoiceState()
+        {
+            var order = new SalesOrderItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderItemInvoiceState);
+        }
+
+        [Fact]
+        public void DeriveSalesOrderItemPaymentState()
+        {
+            var order = new SalesOrderItemBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSalesOrderItemPaymentState);
+        }
+
+        [Fact]
+        public void DeriveInvoiceItemType()
+        {
+            var order = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+                .Build();
+
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistInvoiceItemType);
+        }
     }
 
     public class SalesOrderItemProvisionalDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -1458,6 +1515,841 @@ namespace Allors.Database.Domain.Tests
     public class SalesOrderItemDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedProductDeriveInvoiceItemType()
+        {
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.Product = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(new InvoiceItemTypes(this.Session).ProductItem, item.InvoiceItemType);
+        }
+
+        [Fact]
+        public void ChangedInvoiceItemTypeDeriveInvoiceItemType()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(new UnifiedGoodBuilder(this.Session).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .Build();
+            this.Session.Derive(false);
+
+            item.RemoveInvoiceItemType();
+            this.Session.Derive(false);
+
+            Assert.Equal(new InvoiceItemTypes(this.Session).ProductItem, item.InvoiceItemType);
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemValidationError()
+        {
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.NextSerialisedItemAvailability")));
+        }
+
+        [Fact]
+        public void ChangedNextSerialisedItemAvailabilityValidationError()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
+                .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session).Available)
+                .Build();
+            this.Session.Derive(false);
+
+            item.RemoveNextSerialisedItemAvailability();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.NextSerialisedItemAvailability")));
+        }
+
+        [Fact]
+        public void ChangedProductWhenSerialisedValidationError()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithQuantityOrdered(2)
+                .Build();
+            this.Session.Derive(false);
+
+            item.Product = product;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedWhenSerialisedValidationError()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(product)
+                .Build();
+            this.Session.Derive(false);
+
+            item.QuantityOrdered = 2;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
+        }
+
+        [Fact]
+        public void ChangedProductWhenNonSerialisedValidationError()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithQuantityOrdered(0)
+                .Build();
+            this.Session.Derive(false);
+
+            item.Product = product;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedWhenNonSerialisedValidationError()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(product)
+                .Build();
+            this.Session.Derive(false);
+
+            item.QuantityOrdered = 2;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedValidationError()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).Service)
+                .Build();
+            this.Session.Derive(false);
+
+            item.QuantityOrdered = 2;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedValidationErrorRequired()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(product)
+                .Build();
+            this.Session.Derive(false);
+
+            item.QuantityOrdered = 0;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains("QuantityOrdered is Required"));
+        }
+
+        [Fact]
+        public void ChangedAssignedUnitPriceValidationErrorRequired()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).Service)
+                .Build();
+            this.Session.Derive(false);
+
+            item.AssignedUnitPrice = 0;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains("Price is Required"));
+        }
+
+        [Fact]
+        public void ChangedProductValidationError()
+        {
+            var product1 = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var product2 = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(product1)
+                .Build();
+            this.Session.Derive(false);
+
+            item.Product = product2;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemProductChangeNotAllowed));
+        }
+
+        [Fact]
+        public void SalesOrderItemWhereOrderedWithFeatureValidationErrorProductFeature()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Session).Build());
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertExists: SalesOrderItem.ProductFeature")));
+        }
+
+        [Fact]
+        public void SalesOrderItemWhereOrderedWithFeatureValidationErrorProduct()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Session).WithProduct(product).Build());
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertNotExists: SalesOrderItem.Product")));
+        }
+
+        [Fact]
+        public void ChangedProductFeatureValidationError()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .Build();
+            this.Session.Derive(false);
+
+            item.ProductFeature = new ColourBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals("AssertNotExists: SalesOrderItem.ProductFeature")));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedValidationErrorShipping()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            Assert.True(item.QuantityShipped > 0);
+
+            item.QuantityOrdered = item.QuantityShipped - 1;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemLessThanAlreadeyShipped));
+        }
+
+        [Fact]
+        public void ChangedProductFeatureValidationErrorAtMostOne()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(product)
+                .Build();
+            this.Session.Derive(false);
+
+            item.ProductFeature = new ColourBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.Product\nSalesOrderItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedProductValidationErrorAtMostOne()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProductFeature(new ColourBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            item.Product = product;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.Product\nSalesOrderItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemValidationErrorAtMostOne()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProductFeature(new ColourBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            item.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.SerialisedItem\nSalesOrderItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemValidationErrorAtMostOne_2()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            item.ProductFeature = new ColourBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.SerialisedItem\nSalesOrderItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedReservedFromNonSerialisedInventoryItemValidationErrorAtMostOne()
+        {
+            var serialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Session)
+                .WithPart(serialisedGood)
+                .Build();
+            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+                .WithPart(nonSerialisedGood)
+                .Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithReservedFromSerialisedInventoryItem(serialisedInventoryItem)
+                .Build();
+            this.Session.Derive(false);
+
+            item.ReservedFromNonSerialisedInventoryItem = nonSerialisedInventoryItem;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.ReservedFromSerialisedInventoryItem\nSalesOrderItem.ReservedFromNonSerialisedInventoryItem"));
+        }
+
+        [Fact]
+        public void ChangedReservedFromSerialisedInventoryItemValidationErrorAtMostOne()
+        {
+            var serialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Session)
+                .WithPart(serialisedGood)
+                .Build();
+            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+                .WithPart(nonSerialisedGood)
+                .Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithReservedFromNonSerialisedInventoryItem(nonSerialisedInventoryItem)
+                .Build();
+            this.Session.Derive(false);
+
+            item.ReservedFromSerialisedInventoryItem = serialisedInventoryItem;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.ReservedFromSerialisedInventoryItem\nSalesOrderItem.ReservedFromNonSerialisedInventoryItem"));
+        }
+
+        [Fact]
+        public void ChangedDiscountAdjustmentsValidationErrorAtMostOne()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithAssignedUnitPrice(1)
+                .Build();
+            this.Session.Derive(false);
+
+            item.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Session).Build());
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+        }
+
+        [Fact]
+        public void ChangedSurchargeAdjustmentsValidationErrorAtMostOne()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithAssignedUnitPrice(1)
+                .Build();
+            this.Session.Derive(false);
+
+            item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Session).Build());
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+        }
+
+        [Fact]
+        public void ChangedAssignedUnitPriceValidationErrorAtMostOne()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            item.AssignedUnitPrice = 1;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: SalesOrderItem.AssignedUnitPrice\nSalesOrderItem.DiscountAdjustments\nSalesOrderItem.SurchargeAdjustments"));
+        }
+
+        [Fact]
+        public void ChangedReservedFromSerialisedInventoryItemValidationError()
+        {
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var anotherNonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var nonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+                .WithPart(nonSerialisedGood)
+                .Build();
+            var anotherNonSerialisedInventoryItem = new NonSerialisedInventoryItemBuilder(this.Session)
+                .WithPart(anotherNonSerialisedGood)
+                .Build();
+            this.Session.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithReservedFromNonSerialisedInventoryItem(nonSerialisedInventoryItem)
+                .Build();
+            this.Session.Derive(false);
+
+            order.AddSalesOrderItem(item);
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            item.ReservedFromNonSerialisedInventoryItem = anotherNonSerialisedInventoryItem;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ReservedFromNonSerialisedInventoryItem));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedValidationErrorSerializedItemQuantity()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            item.QuantityOrdered = 2;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemValidationErrorSerializedItemQuantity()
+        {
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithQuantityOrdered(2)
+                .Build();
+            this.Session.Derive(false);
+
+            item.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemInventoryAssignmentsDeriveQuantityCommittedOut()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityCommittedOut);
+        }
+    }
+
+    public class SalesOrderItemShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemStateDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class SalesOrderItemPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemPriceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnChangedSalesOrderItemQuantityOrderedCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            orderItem.QuantityOrdered = 2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            orderItem.AssignedUnitPrice = 3;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemProductCalculatePrice()
+        {
+            var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product1)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product2)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product1).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            orderItem.Product = product2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemProductFeatureCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var productFeature = new ColourBuilder(this.Session)
+                .WithName("a colour")
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithProductFeature(productFeature)
+                .WithPrice(1.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            var orderFeatureItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantityOrdered(1).Build();
+            orderItem.AddOrderedWithFeature(orderFeatureItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesOrderItemDiscountAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            orderItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            orderItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, order.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemDiscountAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            orderItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, order.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedRoleSalesOrderItemSurchargeAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            orderItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            orderItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, order.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            orderItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, order.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, order.TotalIncVat);
+        }
+    }
+
+    public class SalesOrderItemInventoryAssignmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemInventoryAssignmentDerivationTests(Fixture fixture) : base(fixture) { }
     }
 
     [Trait("Category", "Security")]

@@ -53,6 +53,14 @@ namespace Allors.Database.Domain
                         @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
                     }
                 }
+
+                if (@this.WorkEffortState.IsFinished)
+                {
+                    if (@this.ExecutedBy.Equals(@this.Customer))
+                    {
+                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Session).Get((Class)@this.Strategy.Class, @this.Meta.Revise));
+                    }
+                }
             }
         }
     }

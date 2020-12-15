@@ -85,6 +85,11 @@ namespace Allors.Database.Domain
                     {
                         @this.CanInvoice = true;
 
+                        if (@this.ExecutedBy.Equals(@this.Customer))
+                        {
+                            @this.CanInvoice = false;
+                        }
+
                         if (@this.ExistWorkEffortBillingsWhereWorkEffort)
                         {
                             @this.CanInvoice = false;

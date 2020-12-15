@@ -27,6 +27,35 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+
+                if (!@this.SalesOrderItemInvoiceState.NotInvoiced || !@this.SalesOrderItemShipmentState.NotShipped)
+                {
+                    var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
+
+                    foreach (Permission permission in @this.Session().Extent<Permission>())
+                    {
+                        if (permission.ClassPointer == @this.Strategy.Class.Id
+                            && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
+                        {
+                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
+                        }
+                    }
+
+                    foreach (var keyValuePair in deniablePermissionByOperandTypeId)
+                    {
+                        @this.AddDeniedPermission(keyValuePair.Value);
+                    }
+                }
+
+                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
+                if (@this.IsDeletable)
+                {
+                    @this.RemoveDeniedPermission(deletePermission);
+                }
+                else
+                {
+                    @this.AddDeniedPermission(deletePermission);
+                }
             }
         }
     }

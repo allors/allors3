@@ -141,6 +141,15 @@ namespace Allors.Database.Domain
                     @this.DerivedTakenViaContactMechanism = @this.AssignedTakenViaContactMechanism ?? @this.TakenViaSupplier?.OrderAddress;
                 }
 
+                foreach (PurchaseOrderItem orderItem in @this.PurchaseOrderItems.Where(v => v.PurchaseOrderItemState.IsCreated))
+                {
+                    orderItem.DerivedDeliveryDate = orderItem.AssignedDeliveryDate ?? @this.DeliveryDate;
+                    orderItem.DerivedVatRegime = orderItem.AssignedVatRegime ?? @this.DerivedVatRegime;
+                    orderItem.VatRate = orderItem.DerivedVatRegime?.VatRate;
+                    orderItem.DerivedIrpfRegime = orderItem.AssignedIrpfRegime ?? @this.DerivedIrpfRegime;
+                    orderItem.IrpfRate = orderItem.DerivedIrpfRegime?.IrpfRate;
+                }
+
                 if (@this.TakenViaSupplier is Organisation supplier)
                 {
                     if (!@this.OrderedBy.ActiveSuppliers.Contains(supplier))
