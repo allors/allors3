@@ -718,6 +718,24 @@ namespace Allors.Database.Domain.Tests
             Assert.Empty(approval.Participants);
         }
 
+        [Fact]
+        public void OnCreatedPurchaseInvoiceApprovalLevel1DeriveParticipants()
+        {
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Session.Faker());
+
+            var supplierRelationship = purchaseOrder.TakenViaSupplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation == purchaseOrder.OrderedBy);
+            supplierRelationship.NeedsApproval = true;
+            supplierRelationship.ApprovalThresholdLevel1 = 1;
+
+            this.Session.Derive(false);
+
+            purchaseOrder.SetReadyForProcessing();
+
+            this.Session.Derive(false);
+
+            Assert.NotEmpty(purchaseOrder.PurchaseOrderApprovalsLevel1WherePurchaseOrder.First().Participants);
+        }
+
         /*Level2 Tests*/
 
         [Fact]
@@ -751,7 +769,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseOrderApprovalLevel2DeriveDateClosedExists()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
 
             this.Session.Derive(false);
 
@@ -792,6 +810,24 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Empty(approval.Participants);
+        }
+
+        [Fact]
+        public void OnCreatedPurchaseInvoiceApprovalLevel2DeriveParticipants()
+        {
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Session.Faker());
+
+            var supplierRelationship = purchaseOrder.TakenViaSupplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation == purchaseOrder.OrderedBy);
+            supplierRelationship.NeedsApproval = true;
+            supplierRelationship.ApprovalThresholdLevel2 = 1;
+
+            this.Session.Derive(false);
+
+            purchaseOrder.SetReadyForProcessing();
+
+            this.Session.Derive(false);
+
+            Assert.NotEmpty(purchaseOrder.PurchaseOrderApprovalsLevel2WherePurchaseOrder.First().Participants);
         }
     }
 }
