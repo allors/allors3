@@ -7,6 +7,14 @@ namespace Allors.Database.Domain
 {
     public static partial class CommunicationEventExtensions
     {
+        public static void AppsOnInit(this CommunicationEvent @this, ObjectOnInit method)
+        {
+            if (!@this.ExistOwner && @this.Strategy.Session.Context().User is Person owner)
+            {
+                @this.Owner = owner;
+            }
+        }
+
         public static void AppsDelete(this CommunicationEvent @this, DeletableDelete method)
         {
             foreach (Task task in @this.TasksWhereWorkItem)
