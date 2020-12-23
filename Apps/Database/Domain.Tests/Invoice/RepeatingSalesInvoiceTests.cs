@@ -7,7 +7,9 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class RepeatingSalesInvoiceTests : DomainTest, IClassFixture<Fixture>
@@ -117,11 +119,8 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(this.Session.Now().AddDays(1))
                 .Build();
 
-            var validation = this.Session.Derive(false);
-
-            Assert.True(validation.HasErrors);
-            Assert.Single(validation.Errors);
-            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: RepeatingSalesInvoice.DayOfWeek"));
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
@@ -183,11 +182,8 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(nextExecutionDate)
                 .Build();
 
-            var validation = this.Session.Derive(false);
-
-            Assert.True(validation.HasErrors);
-            Assert.Single(validation.Errors);
-            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertNotExists: RepeatingSalesInvoice.DayOfWeek"));
 
             repeatingInvoice.RemoveDayOfWeek();
 

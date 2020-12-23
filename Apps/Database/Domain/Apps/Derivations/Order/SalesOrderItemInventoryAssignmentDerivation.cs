@@ -16,8 +16,9 @@ namespace Allors.Database.Domain
         public SalesOrderItemInventoryAssignmentDerivation(M m) : base(m, new Guid("2B36132A-5557-4FBD-8611-F80302E8550C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.SalesOrderItemInventoryAssignment.InventoryItemTransactions),
-                new ChangedPattern(this.M.SalesOrderItemInventoryAssignment.Quantity),
+                new ChangedPattern(m.SalesOrderItemInventoryAssignment.InventoryItemTransactions),
+                new ChangedPattern(m.SalesOrderItemInventoryAssignment.Quantity),
+                new ChangedPattern(m.SalesOrderItem.SalesOrderItemState) { Steps = new IPropertyType[] {m.SalesOrderItem.SalesOrderItemInventoryAssignments} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -55,6 +56,18 @@ namespace Allors.Database.Domain
                         SyncInventoryTransactions(@this, previousInventoryItem, previousQuantity, cancelReason, true);
                     }
                 }
+
+                if (!salesOrderItem.IsValid
+                    && salesOrderItem.WasValid
+                    && salesOrderItem.ExistReservedFromNonSerialisedInventoryItem
+                    && salesOrderItem.ExistQuantityCommittedOut)
+                {
+                    var quantity = 0 - salesOrderItem.QuantityCommittedOut;
+                    if (quantity != @this.Quantity)
+                    {
+                        @this.Quantity = 0 - salesOrderItem.QuantityCommittedOut;
+                    }
+                }
             }
 
             void SyncInventoryTransactions(SalesOrderItemInventoryAssignment salesOrderItemInventoryAssignment, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
@@ -80,6 +93,7 @@ namespace Allors.Database.Domain
                 if (adjustmentQuantity != 0)
                 {
                     var newTransaction = new InventoryItemTransactionBuilder(salesOrderItemInventoryAssignment.Session())
+                        .WithInventoryItem(inventoryItem)
                         .WithPart(inventoryItem.Part)
                         .WithQuantity(adjustmentQuantity)
                         .WithReason(reason)
@@ -91,7 +105,6 @@ namespace Allors.Database.Domain
                         newTransaction.SerialisedItem = serialisedInventoryItem.SerialisedItem;
                     }
 
-                    newTransaction.InventoryItem = inventoryItem;
                     salesOrderItemInventoryAssignment.AddInventoryItemTransaction(newTransaction);
                 }
             }

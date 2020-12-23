@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.SalesOrderItem.TransitionalDeniedPermissions),
+            new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemInvoiceState),
+            new ChangedPattern(this.M.SalesOrderItem.SalesOrderItemShipmentState),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -28,7 +30,7 @@ namespace Allors.Database.Domain
             {
                 @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
 
-                if (!@this.SalesOrderItemInvoiceState.NotInvoiced || !@this.SalesOrderItemShipmentState.NotShipped)
+                if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced || !@this.SalesOrderItemShipmentState.IsNotShipped)
                 {
                     var deniablePermissionByOperandTypeId = new Dictionary<OperandType, Permission>();
 

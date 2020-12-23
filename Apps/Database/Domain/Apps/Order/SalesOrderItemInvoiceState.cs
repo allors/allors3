@@ -7,10 +7,10 @@ namespace Allors.Database.Domain
 {
     public partial class SalesOrderItemInvoiceState
     {
-        public bool NotInvoiced => Equals(this.UniqueId, SalesOrderItemInvoiceStates.NotInvoicedId);
+        public bool IsNotInvoiced => Equals(this.UniqueId, SalesOrderItemInvoiceStates.NotInvoicedId);
 
-        public bool PartiallyInvoiced => Equals(this.UniqueId, SalesOrderItemInvoiceStates.PartiallyInvoicedId);
+        public bool IsPartiallyInvoiced => Equals(this.UniqueId, SalesOrderItemInvoiceStates.PartiallyInvoicedId);
 
-        public bool Invoiced => Equals(this.UniqueId, SalesOrderItemInvoiceStates.InvoicedId);
+        public bool IsInvoiced => Equals(this.UniqueId, SalesOrderItemInvoiceStates.InvoicedId);
     }
 }

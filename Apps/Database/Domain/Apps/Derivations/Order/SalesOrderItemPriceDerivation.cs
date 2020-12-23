@@ -23,6 +23,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.SalesOrderItem.AssignedUnitPrice),
                 new ChangedPattern(this.M.SalesOrderItem.DiscountAdjustments),
                 new ChangedPattern(this.M.SalesOrderItem.SurchargeAdjustments),
+                new ChangedPattern(this.M.SalesOrderItem.VatRate),
+                new ChangedPattern(this.M.SalesOrderItem.IrpfRate),
                 new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem.Class },
                 new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem.Class },
                 new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem.Class },

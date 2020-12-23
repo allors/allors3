@@ -7,12 +7,12 @@ namespace Allors.Database.Domain
 {
     public partial class SalesOrderItemShipmentState
     {
-        public bool NotShipped => Equals(this.UniqueId, SalesOrderItemShipmentStates.NotShippedId);
+        public bool IsNotShipped => Equals(this.UniqueId, SalesOrderItemShipmentStates.NotShippedId);
 
-        public bool PartiallyShipped => Equals(this.UniqueId, SalesOrderItemShipmentStates.PartiallyShippedId);
+        public bool IsPartiallyShipped => Equals(this.UniqueId, SalesOrderItemShipmentStates.PartiallyShippedId);
 
-        public bool Shipped => Equals(this.UniqueId, SalesOrderItemShipmentStates.ShippedId);
+        public bool IsShipped => Equals(this.UniqueId, SalesOrderItemShipmentStates.ShippedId);
 
-        public bool InProgress => Equals(this.UniqueId, SalesOrderItemShipmentStates.InProgressId);
+        public bool IsInProgress => Equals(this.UniqueId, SalesOrderItemShipmentStates.InProgressId);
     }
 }

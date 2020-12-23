@@ -18,15 +18,18 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(this.M.NonUnifiedPart.ProductIdentifications),
                 new ChangedPattern(this.M.NonUnifiedPart.UniqueId),
-                new ChangedPattern(this.M.InventoryItemTransaction.Part) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part }, OfType = this.M.NonUnifiedPart.Class},
+                new ChangedPattern(this.M.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part }, OfType = this.M.NonUnifiedPart.Class},
                 new ChangedPattern(this.M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
+                new ChangedPattern(this.M.NonSerialisedInventoryItem.AvailableToPromise) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
+                new ChangedPattern(this.M.NonSerialisedInventoryItem.QuantityCommittedOut) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
+                new ChangedPattern(this.M.NonSerialisedInventoryItem.QuantityExpectedIn) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<NonUnifiedPart>())
             {
-                var setings = @this.Strategy.Session.GetSingleton().Settings;
+                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
                 if (cycle.ChangeSet.HasChangedRoles(@this, new RoleType[] { @this.Meta.UnitOfMeasure, @this.Meta.DefaultFacility }))
                 {
@@ -42,10 +45,10 @@ namespace Allors.Database.Domain
                 identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Part);
                 var partIdentification = identifications.FirstOrDefault();
 
-                if (partIdentification == null && setings.UsePartNumberCounter)
+                if (partIdentification == null && settings.UsePartNumberCounter)
                 {
                     partIdentification = new PartNumberBuilder(@this.Strategy.Session)
-                        .WithIdentification(setings.NextPartNumber())
+                        .WithIdentification(settings.NextPartNumber())
                         .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Part).Build();
 
                     @this.AddProductIdentification(partIdentification);

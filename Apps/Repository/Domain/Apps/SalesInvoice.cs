@@ -392,6 +392,15 @@ namespace Allors.Repository
         public SalesOrder[] SalesOrders { get; set; }
 
         #region Allors
+        [Id("fb9eee26-a5a0-4d0e-ad3c-af45db872f2c")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Derived]
+        [Workspace(Default)]
+        public Shipment[] Shipments { get; set; }
+
+        #region Allors
         [Id("91D368B2-D4BE-47F4-A5D7-DE122AB518C5")]
         [Indexed]
         #endregion

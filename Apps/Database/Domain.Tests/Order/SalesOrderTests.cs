@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(new SalesOrderStates(this.Session).Provisional, order.SalesOrderState);
-            Assert.False(order.PartiallyShip);
+            Assert.True(order.PartiallyShip);
             Assert.Equal(this.Session.Now().Date, order.OrderDate.Date);
             Assert.Equal(this.Session.Now().Date, order.EntryDate.Date);
             Assert.Equal(order.PreviousBillToCustomer, order.BillToCustomer);
@@ -1544,12 +1544,11 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(poundSterling, order.DerivedCurrency);
 
-            var euro = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
-            customer.PreferredCurrency = euro;
+            customer.PreferredCurrency = new Currencies(this.Session).FindBy(this.M.Currency.IsoCode, "EUR");
 
             this.Session.Derive();
 
-            Assert.Equal(englischLocale.Country.Currency, order.DerivedCurrency);
+            Assert.Equal(customer.PreferredCurrency, order.DerivedCurrency);
         }
 
         [Fact]
@@ -1698,7 +1697,7 @@ namespace Allors.Database.Domain.Tests
 
             var good = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
 
-            var supplierOffering = new SupplierOfferingBuilder(this.Session)
+            new SupplierOfferingBuilder(this.Session)
                 .WithPart(good.Part)
                 .WithSupplier(supplier)
                 .WithFromDate(this.Session.Now())
@@ -1934,10 +1933,9 @@ namespace Allors.Database.Domain.Tests
 
             item4.QuantityOrdered = 0;
 
-            var derivationLog = this.Session.Derive(false);
-
-            Assert.True(derivationLog.HasErrors);
-            Assert.Contains(this.M.SalesOrderItem.QuantityOrdered, derivationLog.Errors[0].RoleTypes);
+            var expectedMessage = $"{item4} {this.M.SalesOrderItem.QuantityOrdered} {ErrorMessages.InvalidQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
 
         [Fact]
@@ -1987,10 +1985,9 @@ namespace Allors.Database.Domain.Tests
 
             item4.RemoveAssignedUnitPrice();
 
-            var derivationLog = this.Session.Derive(false);
-
-            Assert.True(derivationLog.HasErrors);
-            Assert.Contains(this.M.Priceable.UnitBasePrice, derivationLog.Errors[0].RoleTypes);
+            var expectedMessage = $"{item4} {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
             Assert.Contains(item1, order.ValidOrderItems);
             Assert.Contains(item2, order.ValidOrderItems);
@@ -2135,7 +2132,7 @@ namespace Allors.Database.Domain.Tests
                     .Build())
                 .Build();
 
-            var serialisedItem1 = new SerialisedItemBuilder(this.Session).WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var serialisedItem1 = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
             good1.Part.AddSerialisedItem(serialisedItem1);
 
             new SerialisedInventoryItemBuilder(this.Session).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).WithPart(good1.Part).WithSerialisedItem(serialisedItem1).Build();
@@ -2336,369 +2333,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenSalesOrderTakenByBelgianInternalOrganisationForRentingGoodsToBusinessCustomer_WhenDerived_ThenVatClauseIsSet()
-        {
-            var takenByAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var takenByContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(takenByAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).RegisteredOffice)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var shipFromAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var shipFromContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipFromAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var belgianInternalOrganisation = new OrganisationBuilder(this.Session)
-                .WithIsInternalOrganisation(true)
-                .WithName("Belgian InternalOrganisation")
-                .WithPartyContactMechanism(takenByContactMechanism)
-                .WithPartyContactMechanism(shipFromContactMechanism)
-                .Build();
-
-            new StoreBuilder(this.Session)
-                .WithName("store")
-                .WithBillingProcess(new BillingProcesses(this.Session).BillingForShipmentItems)
-                .WithInternalOrganisation(belgianInternalOrganisation)
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
-                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
-                .WithDefaultCollectionMethod(new PaymentMethods(this.Session).Extent().First)
-                .WithIsImmediatelyPacked(true)
-                .Build();
-
-            var shipToAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["US"])
-                .Build();
-
-            var shipToContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipToAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var customer = new OrganisationBuilder(this.Session).WithName("customer").WithPartyContactMechanism(shipToContactMechanism).WithVatRegime(new VatRegimes(this.Session).Export).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(belgianInternalOrganisation).Build();
-
-            this.Session.Derive();
-
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
-
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good1.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good2.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-
-            this.Session.Derive();
-
-            // seller is belgian company, renting good to customer
-            var order = new SalesOrderBuilder(this.Session)
-                .WithTakenBy(belgianInternalOrganisation)
-                .WithBillToCustomer(customer)
-                .WithShipToCustomer(customer)
-                .WithAssignedShipToAddress(shipToAddress)
-                .WithAssignedVatRegime(new VatRegimes(this.Session).ServiceB2B)
-                .Build();
-
-            this.Session.Derive();
-
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
-            order.AddSalesOrderItem(item1);
-            order.AddSalesOrderItem(item2);
-
-            this.Session.Derive();
-
-            Assert.Equal(new VatClauses(this.Session).ServiceB2B, order.DerivedVatClause);
-        }
-
-        [Fact]
-        public void GivenSalesOrderTakenByBelgianInternalOrganisationForSellingToInsideEUBusinessCustomer_WhenDerived_ThenVatClauseIsSet()
-        {
-            var takenByAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var takenByContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(takenByAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).RegisteredOffice)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var shipFromAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var shipFromContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipFromAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var belgianInternalOrganisation = new OrganisationBuilder(this.Session)
-                .WithIsInternalOrganisation(true)
-                .WithName("Belgian InternalOrganisation")
-                .WithPartyContactMechanism(takenByContactMechanism)
-                .WithPartyContactMechanism(shipFromContactMechanism)
-                .Build();
-
-            new StoreBuilder(this.Session)
-                .WithName("store")
-                .WithBillingProcess(new BillingProcesses(this.Session).BillingForShipmentItems)
-                .WithInternalOrganisation(belgianInternalOrganisation)
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
-                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
-                .WithDefaultCollectionMethod(new PaymentMethods(this.Session).Extent().First)
-                .WithIsImmediatelyPacked(true)
-                .Build();
-
-            var shipToAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["NL"])
-                .Build();
-
-            var shipToContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipToAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var customer = new OrganisationBuilder(this.Session).WithName("customer").WithPartyContactMechanism(shipToContactMechanism).WithVatRegime(new VatRegimes(this.Session).IntraCommunautair).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(belgianInternalOrganisation).Build();
-
-            this.Session.Derive();
-
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
-
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good1.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good2.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-
-            this.Session.Derive();
-
-            // seller is belgian company, selling to EU customer, shipping From Belgium inside EU
-            var order = new SalesOrderBuilder(this.Session)
-                .WithTakenBy(belgianInternalOrganisation)
-                .WithBillToCustomer(customer)
-                .WithShipToCustomer(customer)
-                .WithAssignedShipToAddress(shipToAddress)
-                .Build();
-
-            this.Session.Derive();
-
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
-            order.AddSalesOrderItem(item1);
-            order.AddSalesOrderItem(item2);
-
-            this.Session.Derive();
-
-            Assert.Equal(new VatClauses(this.Session).Intracommunautair, order.DerivedVatClause);
-        }
-
-        [Fact]
-        public void GivenSalesOrderTakenByBelgianInternalOrganisationForSellingToOutsideEUBusinessCustomer_WhenDerived_ThenVatClauseIsSet()
-        {
-            var takenByAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var takenByContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(takenByAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).RegisteredOffice)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var shipFromAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var shipFromContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipFromAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var belgianInternalOrganisation = new OrganisationBuilder(this.Session)
-                .WithIsInternalOrganisation(true)
-                .WithName("Belgian InternalOrganisation")
-                .WithPartyContactMechanism(takenByContactMechanism)
-                .WithPartyContactMechanism(shipFromContactMechanism)
-                .Build();
-
-            new StoreBuilder(this.Session)
-                .WithName("store")
-                .WithBillingProcess(new BillingProcesses(this.Session).BillingForShipmentItems)
-                .WithInternalOrganisation(belgianInternalOrganisation)
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
-                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
-                .WithDefaultCollectionMethod(new PaymentMethods(this.Session).Extent().First)
-                .WithIsImmediatelyPacked(true)
-                .Build();
-
-            var shipToAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["US"])
-                .Build();
-
-            var shipToContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipToAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var customer = new OrganisationBuilder(this.Session).WithName("customer").WithPartyContactMechanism(shipToContactMechanism).WithVatRegime(new VatRegimes(this.Session).Export).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(belgianInternalOrganisation).Build();
-
-            this.Session.Derive();
-
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
-
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good1.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good2.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-
-            this.Session.Derive();
-
-            // seller is belgian company, selling to outside EU customer, shipping From Belgium outside EU, seller responsible for transport
-            var order = new SalesOrderBuilder(this.Session)
-                .WithTakenBy(belgianInternalOrganisation)
-                .WithBillToCustomer(customer)
-                .WithShipToCustomer(customer)
-                .WithAssignedShipToAddress(shipToAddress)
-                .WithSalesTerm(new IncoTermBuilder(this.Session).WithTermType(new IncoTermTypes(this.Session).Cif).Build())
-                .Build();
-
-            this.Session.Derive();
-
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
-            order.AddSalesOrderItem(item1);
-            order.AddSalesOrderItem(item2);
-
-            this.Session.Derive();
-
-            Assert.Equal(new VatClauses(this.Session).BeArt39Par1Item1, order.DerivedVatClause);
-        }
-
-        [Fact]
-        public void GivenSalesOrderTakenByBelgianInternalOrganisationForSellingToOutsideEUBusinessCustomerExw_WhenDerived_ThenVatClauseIsSet()
-        {
-            var takenByAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var takenByContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(takenByAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).RegisteredOffice)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var shipFromAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["BE"])
-                .Build();
-
-            var shipFromContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipFromAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var belgianInternalOrganisation = new OrganisationBuilder(this.Session)
-                .WithIsInternalOrganisation(true)
-                .WithName("Belgian InternalOrganisation")
-                .WithPartyContactMechanism(takenByContactMechanism)
-                .WithPartyContactMechanism(shipFromContactMechanism)
-                .Build();
-
-            new StoreBuilder(this.Session)
-                .WithName("store")
-                .WithBillingProcess(new BillingProcesses(this.Session).BillingForShipmentItems)
-                .WithInternalOrganisation(belgianInternalOrganisation)
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
-                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
-                .WithDefaultCollectionMethod(new PaymentMethods(this.Session).Extent().First)
-                .WithIsImmediatelyPacked(true)
-                .Build();
-
-            var shipToAddress = new PostalAddressBuilder(this.Session)
-                .WithAddress1("address")
-                .WithLocality("city")
-                .WithCountry(new Countries(this.Session).CountryByIsoCode["US"])
-                .Build();
-
-            var shipToContactMechanism = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(shipToAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).ShippingAddress)
-                .WithUseAsDefault(true)
-                .Build();
-
-            var customer = new OrganisationBuilder(this.Session).WithName("customer").WithPartyContactMechanism(shipToContactMechanism).WithVatRegime(new VatRegimes(this.Session).Export).Build();
-            new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(belgianInternalOrganisation).Build();
-
-            this.Session.Derive();
-
-            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good2");
-
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good1.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-            new InventoryItemTransactionBuilder(this.Session).WithQuantity(100).WithPart(good2.Part).WithReason(new InventoryTransactionReasons(this.Session).Unknown).Build();
-
-            this.Session.Derive();
-
-            // seller is belgian company, selling to outside EU customer, shipping From Belgium outside EU, customer responsible for transport
-            var order = new SalesOrderBuilder(this.Session)
-                .WithTakenBy(belgianInternalOrganisation)
-                .WithBillToCustomer(customer)
-                .WithShipToCustomer(customer)
-                .WithAssignedShipToAddress(shipToAddress)
-                .WithSalesTerm(new IncoTermBuilder(this.Session).WithTermType(new IncoTermTypes(this.Session).Exw).Build())
-                .Build();
-
-            this.Session.Derive();
-
-            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
-            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
-            order.AddSalesOrderItem(item1);
-            order.AddSalesOrderItem(item2);
-
-            this.Session.Derive();
-
-            Assert.Equal(new VatClauses(this.Session).BeArt39Par1Item2, order.DerivedVatClause);
-        }
-
-        [Fact]
         public void GivenSettingSerialisedItemSoldOnSalesOrderAccept_WhenAcceptingSalesOrder_ThenSerialisedItemStateIsChanged()
         {
             this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).SalesOrderAccept);
@@ -2721,7 +2355,7 @@ namespace Allors.Database.Domain.Tests
                     .Build())
                 .Build();
 
-            var serialisedItem = new SerialisedItemBuilder(this.Session).WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Session).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
             good.Part.AddSerialisedItem(serialisedItem);
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();

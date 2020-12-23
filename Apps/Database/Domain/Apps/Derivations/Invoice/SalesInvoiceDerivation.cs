@@ -69,33 +69,6 @@ namespace Allors.Database.Domain
                         && (!@this.RepeatingSalesInvoiceWhereSource.ExistFinalExecutionDate
                             || @this.RepeatingSalesInvoiceWhereSource.FinalExecutionDate.Value.Date >= @this.Strategy.Session.Now().Date);
 
-                foreach (SalesInvoiceItem salesInvoiceItem in @this.SalesInvoiceItems)
-                {
-                    foreach (OrderItemBilling orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
-                    {
-                        if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem && !@this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))
-                        {
-                            @this.AddSalesOrder(salesOrderItem.SalesOrderWhereSalesOrderItem);
-                        }
-                    }
-
-                    foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
-                    {
-                        if (!@this.WorkEfforts.Contains(workEffortBilling.WorkEffort))
-                        {
-                            @this.AddWorkEffort(workEffortBilling.WorkEffort);
-                        }
-                    }
-
-                    foreach (TimeEntryBilling timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
-                    {
-                        if (!@this.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
-                        {
-                            @this.AddWorkEffort(timeEntryBilling.TimeEntry.WorkEffort);
-                        }
-                    }
-                }
-
                 @this.PaymentDays = @this.PaymentNetDays;
 
                 if (@this.ExistInvoiceDate)

@@ -1183,16 +1183,15 @@ namespace Allors.Database.Domain.Tests
 
             shipment.AddShipmentItem(shipmentItem);
 
-            new OrderShipmentBuilder(this.Session)
+            var orderShipment = new OrderShipmentBuilder(this.Session)
                 .WithOrderItem(orderItem)
                 .WithShipmentItem(shipment.ShipmentItems.First)
                 .WithQuantity(5)
                 .Build();
 
-            var derivationLog = this.Session.Derive(false);
-
-            Assert.True(derivationLog.HasErrors);
-            Assert.Contains(this.M.OrderShipment.Quantity, derivationLog.Errors[0].RoleTypes);
+            var expectedMessage = $"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
             this.Session.Rollback();
 
@@ -1209,7 +1208,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(3)
                 .Build();
 
-            derivationLog = this.Session.Derive();
+            var derivationLog = this.Session.Derive();
 
             Assert.False(derivationLog.HasErrors);
             Assert.Equal(3, orderItem.QuantityPendingShipment);
@@ -2011,9 +2010,437 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedSalesOrderItemInventoryAssignmentsDeriveQuantityCommittedOut()
+        public void ChangedSerialisedInventoryItemQuantityDeriveReservedFromSerialisedInventoryItem()
+        {
+            var serialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            serialisedGood.AddSerialisedItem(serialisedItem);
+            this.Session.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(serialisedGood)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            this.Session.Derive(false);
+
+            order.AddSalesOrderItem(item);
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(1)
+                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithSerialisedItem(serialisedItem)
+                .WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(item.ReservedFromSerialisedInventoryItem, serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => v.Quantity == 1));
+        }
+
+        [Fact]
+        public void ChangedInventoryItemTransactionPartDeriveReservedFromNonSerialisedInventoryItem()
+        {
+            var nonSerialisedGood = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Session).WithTakenBy(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session)
+                .WithProduct(nonSerialisedGood)
+                .Build();
+            this.Session.Derive(false);
+
+            order.AddSalesOrderItem(item);
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(1)
+                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithPart(nonSerialisedGood)
+                .WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(item.ReservedFromNonSerialisedInventoryItem, nonSerialisedGood.InventoryItemsWherePart.First);
+        }
+    }
+
+    public class SalesOrderItemShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedOrderShipmentQuantityDeriveQuantityPendingShipment()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.Ship();
+            this.Session.Derive(false);
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityPendingShipment);
+        }
+
+        [Fact]
+        public void ChangedShipmentItemShipmentItemStateDeriveQuantityShipped()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.Ship();
+            this.Session.Derive(false);
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityShipped);
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedValidationErrorQuantityPendingShipment()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.Ship();
+            this.Session.Derive(false);
+
+            item.QuantityOrdered -= 1;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining));
+        }
+
+        [Fact]
+        public void ChangedQuantityOrderedValidationErrorQuantityShipped()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.Ship();
+            this.Session.Derive(false);
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            item.QuantityOrdered -= 1;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining));
+        }
+    }
+
+    public class SalesOrderItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemStateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateProvisional()
         {
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsReadyForPosting);
+
+            order.Revise();
+            this.Session.Derive();
+
+            Assert.True(item.SalesOrderItemState.IsProvisional);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateReadyForPosting()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsReadyForPosting);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateRequestsApproval()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.OrderThreshold = order.TotalExVat + 1;
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsRequestsApproval);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateAwaitingAcceptance()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsAwaitingAcceptance);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateInProcess()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsInProcess);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateOnHold()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Hold();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsOnHold);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateCancelled()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.Cancel();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsCancelled);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateRejected()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            order.Reject();
+            this.Session.Derive();
+
+            var item = order.SalesOrderItems.First;
+            Assert.True(item.SalesOrderItemState.IsRejected);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveSalesOrderItemStateFinished()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First;
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive(false);
+
+            order.Post();
+            this.Session.Derive(false);
+
+            order.Accept();
+            this.Session.Derive(false);
+
+            order.Ship();
+            this.Session.Derive(false);
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            order.Invoice();
+            this.Session.Derive(false);
+
+            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+            invoice.Send();
+            this.Session.Derive(false);
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+                .WithInvoice(invoice)
+                .WithAmountApplied(invoice.TotalIncVat)
+                .Build();
+
+            new ReceiptBuilder(this.Session)
+                .WithAmount(paymentApplication.AmountApplied)
+                .WithPaymentApplication(paymentApplication)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+            this.Session.Derive();
+
+            Assert.True(item.SalesOrderItemState.IsFinished);
+        }
+
+        [Fact]
+        public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemShipmentStateIsNotShipped()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(item);
+            this.Session.Derive(false);
+
+            Assert.True(item.SalesOrderItemShipmentState.IsNotShipped);
+        }
+
+        [Fact]
+        public void ChangedQuantityPendingShipmentDeriveSalesOrderItemShipmentStateIsInProgress()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
             this.Session.Derive(false);
 
             var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
@@ -2033,18 +2460,388 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Session.Derive();
 
-            Assert.Equal(item.QuantityOrdered, item.QuantityCommittedOut);
+            order.Ship();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemShipmentState.IsInProgress);
         }
-    }
 
-    public class SalesOrderItemShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
-    {
-        public SalesOrderItemShipmentDerivationTests(Fixture fixture) : base(fixture) { }
-    }
+        [Fact]
+        public void ChangedQuantityPendingShipmentDeriveSalesOrderItemShipmentStateIsPartiallyShipped()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
-    public class SalesOrderItemStateDerivationTests : DomainTest, IClassFixture<Fixture>
-    {
-        public SalesOrderItemStateDerivationTests(Fixture fixture) : base(fixture) { }
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemShipmentState.IsPartiallyShipped);
+        }
+
+        [Fact]
+        public void ChangedQuantityShippedDeriveSalesOrderItemShipmentStateIsShipped()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemShipmentState.IsShipped);
+        }
+
+        [Fact]
+        public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemPaymentStateIsNotPaid()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(item);
+            this.Session.Derive(false);
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsNotPaid);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemPaymentStateIsPartiallyPaid()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Invoice();
+            this.Session.Derive();
+
+            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+            var invoiceItem = invoice.InvoiceItems.First();
+
+            invoice.Send();
+            this.Session.Derive();
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+                .WithInvoiceItem(invoiceItem)
+                .WithAmountApplied(invoiceItem.TotalIncVat - 1)
+                .Build();
+            new ReceiptBuilder(this.Session)
+                .WithAmount(paymentApplication.AmountApplied)
+                .WithPaymentApplication(paymentApplication)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPartiallyPaid);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemPaymentStateIsPaid()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Invoice();
+            this.Session.Derive();
+
+            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+            var invoiceItem = invoice.InvoiceItems.First();
+
+            invoice.Send();
+            this.Session.Derive();
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+                .WithInvoiceItem(invoiceItem)
+                .WithAmountApplied(invoiceItem.TotalIncVat)
+                .Build();
+            new ReceiptBuilder(this.Session)
+                .WithAmount(paymentApplication.AmountApplied)
+                .WithPaymentApplication(paymentApplication)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPaid);
+        }
+
+        [Fact]
+        public void ChangedOrderShipmentDeriveSalesOrderItemPaymentStateIsPartiallyPaid()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered - 1)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            shipment.Invoice();
+            this.Session.Derive();
+
+            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+            var invoiceItem = invoice.InvoiceItems.First();
+
+            invoice.Send();
+            this.Session.Derive();
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+                .WithInvoiceItem(invoiceItem)
+                .WithAmountApplied(invoiceItem.TotalIncVat - 1)
+                .Build();
+            new ReceiptBuilder(this.Session)
+                .WithAmount(paymentApplication.AmountApplied)
+                .WithPaymentApplication(paymentApplication)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPartiallyPaid);
+        }
+
+        [Fact]
+        public void ChangedOrderShipmentDeriveSalesOrderItemPaymentStateIsPaid()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = true;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            shipment.Invoice();
+            this.Session.Derive();
+
+            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+            var invoiceItem = invoice.InvoiceItems.First();
+
+            invoice.Send();
+            this.Session.Derive();
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Session)
+                .WithInvoiceItem(invoiceItem)
+                .WithAmountApplied(invoiceItem.TotalIncVat)
+                .Build();
+            new ReceiptBuilder(this.Session)
+                .WithAmount(paymentApplication.AmountApplied)
+                .WithPaymentApplication(paymentApplication)
+                .WithEffectiveDate(this.Session.Now())
+                .Build();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemPaymentState.IsPaid);
+        }
+
+        [Fact]
+        public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemInvoiceStateIsNotInvoiced()
+        {
+            var order = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            order.AddSalesOrderItem(item);
+            this.Session.Derive(false);
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemInvoiceState.IsNotInvoiced);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemInvoiceStateIsPartiallyInvoiced()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Invoice();
+            this.Session.Derive();
+
+            item.AssignedUnitPrice += 1;
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemInvoiceState.IsPartiallyInvoiced);
+        }
+
+        [Fact]
+        public void ChangedOrderItemBillingOrderItemDeriveSalesOrderItemInvoiceStateIsInvoiced()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            order.PartiallyShip = false;
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Invoice();
+            this.Session.Derive();
+
+            Assert.True(order.SalesOrderItems.First.SalesOrderItemInvoiceState.IsInvoiced);
+        }
     }
 
     public class SalesOrderItemPriceDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -2347,6 +3144,157 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class SalesOrderItemQuantitiesDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesOrderItemQuantitiesDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSalesOrderItemInventoryAssignmentsDeriveQuantityCommittedOut()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityCommittedOut);
+        }
+
+        [Fact]
+        public void ChangedReservedFromNonSerialisedInventoryItemQuantityOnHandDeriveQuantityRequestsShipping()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityRequestsShipping);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemStateDeriveQuantityRequestsShipping()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Revise();
+            this.Session.Derive();
+
+            item.QuantityOrdered -= 1;
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept(); // set to processing with adjusted quantity ordered
+            this.Session.Derive();
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityRequestsShipping);
+        }
+
+        [Fact]
+        public void ChangedQuantityPendingShipmentDeriveQuantityRequestsShipping()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).PhysicalCount)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive(false);
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session)
+                .WithGood(item.Product as Good)
+                .WithQuantity(1)
+                .WithReservedFromInventoryItem(item.ReservedFromNonSerialisedInventoryItem)
+                .Build();
+
+            shipment.AddShipmentItem(shipmentItem);
+
+            new OrderShipmentBuilder(this.Session)
+                .WithOrderItem(item)
+                .WithShipmentItem(shipmentItem)
+                .WithQuantity(1)
+                .Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(item.QuantityOrdered - 1, item.QuantityRequestsShipping);
+        }
+    }
+
     public class SalesOrderItemInventoryAssignmentDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public SalesOrderItemInventoryAssignmentDerivationTests(Fixture fixture) : base(fixture) { }
@@ -2355,11 +3303,58 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class SalesOrderItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.SalesInvoice.ObjectType, this.M.SalesInvoice.Delete);
+        public SalesOrderItemDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) { }
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        [Fact]
+        public void OnChangedSalesOrderItemStateProvisionalDeriveDeletePermission()
+        {
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var deletePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            Assert.DoesNotContain(deletePermission, item.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemStateCancelledDeriveDeletePermission()
+        {
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.SalesOrderItemState = new SalesOrderItemStates(this.Session).RequestsApproval;
+            this.Session.Derive(false);
+
+            var deletePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Delete);
+            Assert.Contains(deletePermission, item.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemInvoiceStateInvoicedDeriveDeniablePermission()
+        {
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Session).Invoiced;
+            this.Session.Derive(false);
+
+            var deniablePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Cancel);
+            Assert.Contains(deniablePermission, item.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSalesOrderItemShipmentStateInvoicedDeriveDeniablePermission()
+        {
+            var item = new SalesOrderItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            item.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Session).Shipped;
+            this.Session.Derive(false);
+
+            var deniablePermission = new Permissions(this.Session).Get(this.M.SalesOrderItem.ObjectType, this.M.SalesOrderItem.Cancel);
+            Assert.Contains(deniablePermission, item.DeniedPermissions);
+        }
     }
 
     [Trait("Category", "Security")]

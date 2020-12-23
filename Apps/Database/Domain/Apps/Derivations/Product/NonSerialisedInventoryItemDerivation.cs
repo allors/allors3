@@ -16,20 +16,8 @@ namespace Allors.Database.Domain
         public NonSerialisedInventoryItemDerivation(M m) : base(m, new Guid("DDB383AD-3B4C-43BE-8F30-7E3A8D16F6BE")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.InventoryItemTransaction.InventoryItem)
-                {
-                    Steps = new IPropertyType[]
-                    {
-                        this.M.InventoryItemTransaction.InventoryItem,
-                    },
-                },
-                new ChangedPattern(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem)
-                {
-                    Steps = new IPropertyType[]
-                    {
-                        this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem
-                    }
-                },
+                new ChangedPattern(this.M.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {this.M.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new ChangedPattern(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem) { Steps = new IPropertyType[] {this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -95,24 +83,27 @@ namespace Allors.Database.Domain
                 }
             }
 
-            nonSerialisedInventoryItem.QuantityOnHand = quantityOnHand;
+            if (quantityOnHand != nonSerialisedInventoryItem.QuantityOnHand)
+            {
+                nonSerialisedInventoryItem.QuantityOnHand = quantityOnHand;
+            }
         }
 
         private void QuantityCommittedOut(NonSerialisedInventoryItem nonSerialisedInventoryItem)
         {
             var quantityCommittedOut = 0M;
 
-            foreach (InventoryItemTransaction inventoryTransaction in nonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem)
+            foreach (InventoryItemTransaction inventoryItemTransaction in nonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem)
             {
-                var reason = inventoryTransaction.Reason;
+                var reason = inventoryItemTransaction.Reason;
 
                 if (reason.IncreasesQuantityCommittedOut == true)
                 {
-                    quantityCommittedOut += inventoryTransaction.Quantity;
+                    quantityCommittedOut += inventoryItemTransaction.Quantity;
                 }
                 else if (reason.IncreasesQuantityCommittedOut == false)
                 {
-                    quantityCommittedOut -= inventoryTransaction.Quantity;
+                    quantityCommittedOut -= inventoryItemTransaction.Quantity;
                 }
             }
 
@@ -135,7 +126,10 @@ namespace Allors.Database.Domain
                 quantityCommittedOut = 0;
             }
 
-            nonSerialisedInventoryItem.QuantityCommittedOut = quantityCommittedOut;
+            if (quantityCommittedOut != nonSerialisedInventoryItem.QuantityCommittedOut)
+            {
+                nonSerialisedInventoryItem.QuantityCommittedOut = quantityCommittedOut;
+            }
         }
 
         private void QuantityExpectedIn(NonSerialisedInventoryItem nonSerialisedInventoryItem)
@@ -154,7 +148,10 @@ namespace Allors.Database.Domain
                 }
             }
 
-            nonSerialisedInventoryItem.QuantityExpectedIn = quantityExpectedIn;
+            if (quantityExpectedIn != nonSerialisedInventoryItem.QuantityExpectedIn)
+            {
+                nonSerialisedInventoryItem.QuantityExpectedIn = quantityExpectedIn;
+            }
 
             if (nonSerialisedInventoryItem.ExistPreviousQuantityOnHand && nonSerialisedInventoryItem.QuantityOnHand > nonSerialisedInventoryItem.PreviousQuantityOnHand)
             {
@@ -166,7 +163,10 @@ namespace Allors.Database.Domain
                 this.DepleteSalesOrders(nonSerialisedInventoryItem);
             }
 
-            nonSerialisedInventoryItem.PreviousQuantityOnHand = nonSerialisedInventoryItem.QuantityOnHand;
+            if (nonSerialisedInventoryItem.QuantityOnHand != nonSerialisedInventoryItem.PreviousQuantityOnHand)
+            {
+                nonSerialisedInventoryItem.PreviousQuantityOnHand = nonSerialisedInventoryItem.QuantityOnHand;
+            }
         }
 
         private void AvaibleToPromise(NonSerialisedInventoryItem nonSerialisedInventoryItem)
@@ -178,7 +178,10 @@ namespace Allors.Database.Domain
                 availableToPromise = 0;
             }
 
-            nonSerialisedInventoryItem.AvailableToPromise = availableToPromise;
+            if (availableToPromise != nonSerialisedInventoryItem.AvailableToPromise)
+            {
+                nonSerialisedInventoryItem.AvailableToPromise = availableToPromise;
+            }
         }
 
         private void ReplenishSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)

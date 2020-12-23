@@ -30,8 +30,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
-                var salesOrder = @this.SalesOrderWhereSalesOrderItem;
-
                 @this.QuantityPendingShipment = @this.OrderShipmentsWhereOrderItem
                     .Where(v => v.ExistShipmentItem && !((CustomerShipment)v.ShipmentItem.ShipmentWhereShipmentItem).ShipmentState.IsShipped)
                     .Sum(v => v.Quantity);

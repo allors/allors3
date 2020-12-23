@@ -45,15 +45,15 @@ namespace Allors.Database.Domain
                 // SalesOrder Shipment State
                 if (validOrderItems.Any())
                 {
-                    if (validOrderItems.All(v => v.SalesOrderItemShipmentState.Shipped))
+                    if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsShipped))
                     {
                         @this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
                     }
-                    else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.NotShipped))
+                    else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsNotShipped))
                     {
                         @this.SalesOrderShipmentState = salesOrderShipmentStates.NotShipped;
                     }
-                    else if (validOrderItems.Any(v => v.SalesOrderItemShipmentState.InProgress))
+                    else if (validOrderItems.Any(v => v.SalesOrderItemShipmentState.IsInProgress))
                     {
                         @this.SalesOrderShipmentState = salesOrderShipmentStates.InProgress;
                     }
@@ -63,11 +63,11 @@ namespace Allors.Database.Domain
                     }
 
                     // SalesOrder Payment State
-                    if (validOrderItems.All(v => v.SalesOrderItemPaymentState.Paid))
+                    if (validOrderItems.All(v => v.SalesOrderItemPaymentState.IsPaid))
                     {
                         @this.SalesOrderPaymentState = salesOrderPaymentStates.Paid;
                     }
-                    else if (validOrderItems.All(v => v.SalesOrderItemPaymentState.NotPaid))
+                    else if (validOrderItems.All(v => v.SalesOrderItemPaymentState.IsNotPaid))
                     {
                         @this.SalesOrderPaymentState = salesOrderPaymentStates.NotPaid;
                     }
@@ -77,11 +77,11 @@ namespace Allors.Database.Domain
                     }
 
                     // SalesOrder Invoice State
-                    if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.Invoiced))
+                    if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.IsInvoiced))
                     {
                         @this.SalesOrderInvoiceState = salesOrderInvoiceStates.Invoiced;
                     }
-                    else if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.NotInvoiced))
+                    else if (validOrderItems.All(v => v.SalesOrderItemInvoiceState.IsNotInvoiced))
                     {
                         @this.SalesOrderInvoiceState = salesOrderInvoiceStates.NotInvoiced;
                     }
@@ -91,7 +91,10 @@ namespace Allors.Database.Domain
                     }
 
                     // SalesOrder OrderState
-                    if (@this.SalesOrderShipmentState.IsShipped && @this.SalesOrderInvoiceState.IsInvoiced)
+                    if (@this.SalesOrderShipmentState.IsShipped
+                        && @this.SalesOrderInvoiceState.IsInvoiced
+                        && !@this.SalesOrderState.IsCompleted
+                        && !@this.SalesOrderState.IsFinished)
                     {
                         @this.SalesOrderState = new SalesOrderStates(@this.Strategy.Session).Completed;
                     }

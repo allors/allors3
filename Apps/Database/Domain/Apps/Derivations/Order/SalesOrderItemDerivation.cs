@@ -32,6 +32,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SalesOrderItem.DiscountAdjustments),
                 new ChangedPattern(m.SalesOrderItem.SurchargeAdjustments),
                 new ChangedPattern(m.SalesOrderItem.SalesOrderItemInventoryAssignments),
+                new ChangedPattern(m.SerialisedInventoryItem.Quantity) { Steps = new IPropertyType[] {m.SerialisedInventoryItem.SerialisedItem, m.SerialisedItem.SalesOrderItemsWhereSerialisedItem }},
+                new ChangedPattern(m.InventoryItemTransaction.Part) { Steps = new IPropertyType[] {m.InventoryItemTransaction.Part, m.UnifiedGood.SalesOrderItemsWhereProduct }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -126,61 +128,34 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {@this.Meta.QuantityOrdered} {ErrorMessages.SerializedItemQuantity}");
                 }
 
-                if (@this.SalesOrderItemInventoryAssignments.Any())
+                if (@this.IsValid && @this.Part != null && salesOrder?.TakenBy != null)
                 {
-                    @this.QuantityCommittedOut = @this.SalesOrderItemInventoryAssignments
-                        .SelectMany(v => v.InventoryItemTransactions)
-                        .Where(t => t.Reason.Equals(new InventoryTransactionReasons(@this.Session()).Reservation))
-                        .Sum(v => v.Quantity);
-                }
-                else
-                {
-                    @this.QuantityCommittedOut = 0;
-                }
-
-                if (@this.IsValid)
-                {
-                    if (@this.Part != null && salesOrder?.TakenBy != null)
+                    if (@this.Part.InventoryItemKind.IsSerialised)
                     {
-                        if (@this.Part.InventoryItemKind.IsSerialised)
+                        if (!@this.ExistReservedFromSerialisedInventoryItem)
                         {
-                            if (!@this.ExistReservedFromSerialisedInventoryItem)
+                            if (@this.ExistSerialisedItem)
                             {
-                                if (@this.ExistSerialisedItem)
+                                if (@this.SerialisedItem.ExistSerialisedInventoryItemsWhereSerialisedItem)
                                 {
-                                    if (@this.SerialisedItem.ExistSerialisedInventoryItemsWhereSerialisedItem)
-                                    {
-                                        @this.ReservedFromSerialisedInventoryItem = @this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => v.Quantity == 1);
-                                    }
-                                }
-                                else
-                                {
-                                    var inventoryItems = @this.Part.InventoryItemsWherePart;
-                                    inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
-                                    @this.ReservedFromSerialisedInventoryItem = inventoryItems.FirstOrDefault() as SerialisedInventoryItem;
+                                    @this.ReservedFromSerialisedInventoryItem = @this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => v.Quantity == 1);
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (!@this.ExistReservedFromNonSerialisedInventoryItem)
+                            else
                             {
                                 var inventoryItems = @this.Part.InventoryItemsWherePart;
                                 inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
-                                @this.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
+                                @this.ReservedFromSerialisedInventoryItem = inventoryItems.FirstOrDefault() as SerialisedInventoryItem;
                             }
                         }
                     }
-                }
-
-                if (!@this.IsValid && @this.WasValid)
-                {
-                    if (@this.ExistReservedFromNonSerialisedInventoryItem && @this.ExistQuantityCommittedOut)
+                    else
                     {
-                        var inventoryAssignment = @this.SalesOrderItemInventoryAssignments.FirstOrDefault();
-                        if (inventoryAssignment != null)
+                        if (!@this.ExistReservedFromNonSerialisedInventoryItem)
                         {
-                            inventoryAssignment.Quantity = 0 - @this.QuantityCommittedOut;
+                            var inventoryItems = @this.Part.InventoryItemsWherePart;
+                            inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
+                            @this.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
                         }
                     }
                 }

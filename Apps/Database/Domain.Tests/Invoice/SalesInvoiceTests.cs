@@ -1721,107 +1721,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleOrderItemBillingInvoiceItemDeriveSalesOrders()
-        {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
-
-            var salesOrder = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
-            this.Session.Derive();
-
-            salesOrder.SetReadyForPosting();
-            this.Session.Derive();
-
-            salesOrder.Post();
-            this.Session.Derive();
-
-            salesOrder.Accept();
-            this.Session.Derive();
-
-            salesOrder.Invoice();
-            this.Session.Derive();
-
-            var invoice = salesOrder.SalesInvoicesWhereSalesOrder.First;
-
-            Assert.Single(invoice.SalesOrders);
-        }
-
-        [Fact]
-        public void OnChangedRoleWorkEffortBillingInvoiceItemDeriveWorkEfforts()
-        {
-            var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
-            this.Session.Derive();
-
-            //// Work Effort Inventory Assignmets
-            var part = new NonUnifiedPartBuilder(this.Session)
-                .WithProductIdentification(new PartNumberBuilder(this.Session)
-                .WithIdentification("Part")
-                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
-                .Build();
-
-            this.Session.Derive(true);
-
-            new InventoryItemTransactionBuilder(this.Session)
-                .WithPart(part)
-                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
-                .WithQuantity(1)
-                .Build();
-
-            this.Session.Derive();
-
-            new WorkEffortInventoryAssignmentBuilder(this.Session)
-                .WithAssignment(workTask)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
-                .WithQuantity(1)
-                .Build();
-
-            workTask.Complete();
-            this.Session.Derive();
-
-            workTask.Invoice();
-            this.Session.Derive();
-
-            var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
-
-            Assert.Single(invoice.WorkEfforts);
-        }
-
-        [Fact]
-        public void OnChangedRoleTimeEntryBillingInvoiceItemDeriveWorkEfforts()
-        {
-            var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
-            new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(this.InternalOrganisation).Build();
-            this.Session.Derive();
-
-            var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
-            this.Session.Derive();
-
-            var yesterday = DateTimeFactory.CreateDateTime(this.Session.Now().AddDays(-1));
-            var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
-
-            var timeEntry = new TimeEntryBuilder(this.Session)
-                .WithRateType(new RateTypes(this.Session).StandardRate)
-                .WithFromDate(yesterday)
-                .WithThroughDate(laterYesterday)
-                .WithTimeFrequency(new TimeFrequencies(this.Session).Day)
-                .WithWorkEffort(workTask)
-                .Build();
-
-            employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
-
-            this.Session.Derive();
-
-            workTask.Complete();
-            this.Session.Derive();
-
-            workTask.Invoice();
-            this.Session.Derive();
-
-            var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
-
-            Assert.Single(invoice.WorkEfforts);
-        }
-
-        [Fact]
         public void OnChangedRoleInvoiceTermTermValueDerivePaymentDays()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
@@ -1983,6 +1882,203 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(newItem.SyncedInvoice, invoice);
         }
+    }
+
+    public class SalesInvoiceBillingDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceBillingDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnChangedRoleOrderItemBillingInvoiceItemDeriveSalesOrders()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
+
+            var salesOrder = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            this.Session.Derive();
+
+            salesOrder.SetReadyForPosting();
+            this.Session.Derive();
+
+            salesOrder.Post();
+            this.Session.Derive();
+
+            salesOrder.Accept();
+            this.Session.Derive();
+
+            salesOrder.Invoice();
+            this.Session.Derive();
+
+            var invoice = salesOrder.SalesInvoicesWhereSalesOrder.First;
+
+            Assert.Single(invoice.SalesOrders);
+        }
+
+        [Fact]
+        public void OnChangedShipmentItemBillingInvoiceItemDeriveSalesOrders()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive();
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            shipment.Invoice();
+            this.Session.Derive();
+
+            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+
+            Assert.Single(invoice.SalesOrders);
+        }
+
+        [Fact]
+        public void OnChangedShipmentItemBillingInvoiceItemDeriveShipments()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Session).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Session.Derive();
+
+            order.SetReadyForPosting();
+            this.Session.Derive();
+
+            order.Post();
+            this.Session.Derive();
+
+            order.Accept();
+            this.Session.Derive();
+
+            order.Ship();
+            this.Session.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+            ((CustomerShipment)shipment).Pick();
+            this.Session.Derive();
+
+            ((CustomerShipment)shipment).Ship();
+            this.Session.Derive();
+
+            shipment.Invoice();
+            this.Session.Derive();
+
+            var invoice = shipment.SalesInvoicesWhereShipment.First;
+
+            Assert.Single(invoice.Shipments);
+        }
+
+        [Fact]
+        public void OnChangedRoleWorkEffortBillingInvoiceItemDeriveWorkEfforts()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithProductIdentification(new PartNumberBuilder(this.Session)
+                .WithIdentification("Part")
+                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Part).Build())
+                .Build();
+
+            this.Session.Derive(true);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(1)
+                .Build();
+
+            this.Session.Derive();
+
+            new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workTask)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .Build();
+
+            workTask.Complete();
+            this.Session.Derive();
+
+            workTask.Invoice();
+            this.Session.Derive();
+
+            var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
+
+            Assert.Single(invoice.WorkEfforts);
+        }
+
+        // billing time entry is not implemented
+        //[Fact]
+        //public void OnChangedRoleTimeEntryBillingInvoiceItemDeriveWorkEfforts()
+        //{
+        //    var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
+        //    new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(this.InternalOrganisation).Build();
+        //    this.Session.Derive();
+
+        //    var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
+        //    this.Session.Derive();
+
+        //    var yesterday = DateTimeFactory.CreateDateTime(this.Session.Now().AddDays(-1));
+        //    var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
+
+        //    var timeEntry = new TimeEntryBuilder(this.Session)
+        //        .WithRateType(new RateTypes(this.Session).StandardRate)
+        //        .WithFromDate(yesterday)
+        //        .WithThroughDate(laterYesterday)
+        //        .WithTimeFrequency(new TimeFrequencies(this.Session).Day)
+        //        .Build();
+
+        //    employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+
+        //    this.Session.Derive();
+
+        //    workTask.Complete();
+        //    this.Session.Derive();
+
+        //    timeEntry.Invoice();
+        //    this.Session.Derive();
+
+        //    var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
+
+        //    Assert.Single(invoice.WorkEfforts);
+        //}
     }
 
     public class SalesInvoiceStateDerivationTests : DomainTest, IClassFixture<Fixture>
