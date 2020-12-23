@@ -6,6 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class CommunicationEventTests : DomainTest, IClassFixture<Fixture>
@@ -168,5 +171,64 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(participant1, communication.InvolvedParties);
             Assert.Contains(participant2, communication.InvolvedParties);
         }
+    }
+    public class CommunicationEventDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CommunicationEventDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnChangedOwnerDeriveOwner()
+        {
+            var employee = new Employments(this.Session).Extent().Select(v => v.Employee).First();
+            this.Session.SetUser(employee);
+
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(employee, phoneComEvent.Owner);
+        }
+
+        [Fact]
+        public void OnChangedOwnerDeriveSecurityToken()
+        {
+            var employee = new Employments(this.Session).Extent().Select(v => v.Employee).First();
+            this.Session.SetUser(employee);
+
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).Build();
+
+            this.Session.Derive(false);
+
+            Assert.Contains(employee.OwnerSecurityToken, phoneComEvent.SecurityTokens);
+        }
+
+        [Fact]
+        public void OnChangedScheduledEndThrowDerivationError()
+        {
+            var employee = new Employments(this.Session).Extent().Select(v => v.Employee).First();
+            this.Session.SetUser(employee);
+
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithScheduledStart(this.Session.Now()).Build();
+
+            this.Session.Derive(false);
+
+            phoneComEvent.ScheduledEnd = this.Session.Now().AddHours(-1);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.StartsWith("Scheduled end date before scheduled start date")));
+        }
+
+        [Fact]
+        public void OnChangedScheduledEndScheduledStartThrowDerivationError()
+        {
+            var employee = new Employments(this.Session).Extent().Select(v => v.Employee).First();
+            this.Session.SetUser(employee);
+
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithScheduledStart(this.Session.Now()).WithScheduledEnd(this.Session.Now().AddHours(-1)).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("Scheduled end date before scheduled start date"));
+        }
+
     }
 }

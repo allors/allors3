@@ -16,7 +16,8 @@ namespace Allors.Database.Domain
         public CommunicationEventDerivation(M m) : base(m, new Guid("6ABC8FDF-B4BC-40A2-9396-04292779E5F5")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.CommunicationEvent.Owner),
+                new ChangedPattern(m.CommunicationEvent.Owner),
+                new ChangedPattern(m.CommunicationEvent.ScheduledEnd),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -25,11 +26,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<CommunicationEvent>())
             {
-                if (!@this.ExistOwner && @this.Strategy.Session.Context().User is Person owner)
-                {
-                    @this.Owner = owner;
-                }
-
                 if (@this.ExistScheduledStart && @this.ExistScheduledEnd && @this.ScheduledEnd < @this.ScheduledStart)
                 {
                     validation.AddError($"Scheduled end date before scheduled start date: {@this}");
