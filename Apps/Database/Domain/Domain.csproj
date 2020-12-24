@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <None Remove="Templates\allors.png" />
+    <None Remove="Templates\No_image_available.svg" />
     <None Remove="Templates\ProductQuote.odt" />
     <None Remove="Templates\PurchaseInvoice.odt" />
     <None Remove="Templates\PurchaseOrder.odt" />
@@ -41,6 +42,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\allors.png" />
+    <EmbeddedResource Include="Templates\No_image_available.svg" />
     <EmbeddedResource Include="Templates\PurchaseInvoice.odt" />
     <EmbeddedResource Include="Templates\PurchaseOrder.odt" />
     <EmbeddedResource Include="Templates\WorkTask.odt" />

@@ -203,6 +203,7 @@ namespace Allors.Database.Domain
                 new PurchaseOrderApprovalLevel1ParticipantsDerivation(m),
                 new PurchaseOrderApprovalLevel2ParticipantsDerivation(m),
                 new CommunicationTaskParticipantsDerivation(m),
+                new ProductCategoryDerivation(m),
             };
 
             foreach (var derivation in derivations)

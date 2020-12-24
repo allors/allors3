@@ -7,6 +7,17 @@ namespace Allors.Database.Domain
 {
     public partial class Settings
     {
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistNoImageAvailableImage)
+            {
+                this.NoImageAvailableImage = new MediaBuilder(this.Strategy.Session)
+                    .WithInFileName("No_image_available.svg")
+                    .WithInData(this.Session().GetSingleton().GetResourceBytes("No_image_available.svg"))
+                    .Build();
+            }
+        }
+
         public string NextSkuNumber()
         {
             var skuNumber = this.SkuCounter.NextValue();

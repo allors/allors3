@@ -16,8 +16,18 @@ namespace Allors.Database.Domain
         public ProductCategoryDerivation(M m) : base(m, new Guid("59C88605-9799-4849-A0E9-F107DB4BFBD1")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.ProductCategory.Name),
                 new ChangedPattern(m.ProductCategory.PrimaryParent),
                 new ChangedPattern(m.ProductCategory.SecondaryParents),
+                new ChangedPattern(m.ProductCategory.CategoryImage),
+                new ChangedPattern(m.ProductCategory.Products),
+                new ChangedPattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedName } },
+                new ChangedPattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.ProductCategoryWhereLocalisedDescription } },
+                new ChangedPattern(m.ProductCategory.PrimaryParent) {Steps = new IPropertyType[] {m.ProductCategory.PrimaryParent} },
+                new ChangedPattern(m.ProductCategory.PrimaryParent) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
+                new ChangedPattern(m.ProductCategory.SecondaryParents) {Steps = new IPropertyType[] {m.ProductCategory.SecondaryParents} },
+                new ChangedPattern(m.ProductCategory.SecondaryParents) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
+                new ChangedPattern(m.ProductCategory.AllProducts) {Steps = new IPropertyType[] {m.ProductCategory.ProductCategoriesWhereDescendant} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -75,6 +85,7 @@ namespace Allors.Database.Domain
 
                 @this.Children = @this.ProductCategoriesWherePrimaryParent
                     .Union(@this.ProductCategoriesWhereSecondaryParent).ToArray();
+
                 {
                     var descendants = new List<ProductCategory>();
                     var children = @this.Children.ToArray();
