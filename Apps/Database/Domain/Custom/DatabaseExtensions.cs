@@ -67,6 +67,7 @@ namespace Allors.Database.Domain
                 new SalesOrderPriceDerivation(m),
                 new SalesOrderStateDerivation(m),
                 new SalesOrderItemDerivation(m),
+                new SalesOrderItemByProductDerivation(m),
                 new SalesOrderItemPriceDerivation(m),
                 new SalesOrderItemQuantatiesDerivation(m),
                 new SalesOrderItemShipmentDerivation(m),

@@ -160,6 +160,13 @@ namespace Allors.Database.Domain
                     }
                 }
 
+                if (salesOrder != null
+                    && @this.ExistProduct
+                    && !salesOrder.SalesOrderItemsByProduct.Any(v => v.Product.Equals(@this.Product)))
+                {
+                    salesOrder.AddSalesOrderItemsByProduct(new SalesOrderItemByProductBuilder(session).WithProduct(@this.Product).Build());
+                }
+
                 @this.PreviousReservedFromNonSerialisedInventoryItem = @this.ReservedFromNonSerialisedInventoryItem;
                 @this.PreviousQuantity = @this.QuantityOrdered;
                 @this.PreviousProduct = @this.Product;

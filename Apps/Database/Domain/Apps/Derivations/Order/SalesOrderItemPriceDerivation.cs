@@ -29,6 +29,12 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment}, OfType = m.SalesOrderItem.Class },
                 new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem.Class },
                 new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(this.M.SalesOrder.BillToCustomer) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
+                new ChangedPattern(this.M.SalesOrder.OrderDate) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
+                new ChangedPattern(this.M.SalesOrder.DerivationTrigger) { Steps =  new IPropertyType[] {m.SalesOrder.SalesOrderItems } },
+                new ChangedPattern(this.M.SalesOrderItemByProduct.Product) { Steps =  new IPropertyType[] {m.SalesOrderItemByProduct.SalesOrderWhereSalesOrderItemsByProduct, m.SalesOrder.SalesOrderItems } },
+                new ChangedPattern(this.M.SalesOrderItemByProduct.QuantityOrdered) { Steps =  new IPropertyType[] {m.SalesOrderItemByProduct.SalesOrderWhereSalesOrderItemsByProduct, m.SalesOrder.SalesOrderItems } },
+                new ChangedPattern(this.M.SalesOrderItemByProduct.ValueOrdered) { Steps =  new IPropertyType[] {m.SalesOrderItemByProduct.SalesOrderWhereSalesOrderItemsByProduct, m.SalesOrder.SalesOrderItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -38,18 +44,16 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
-                var salesOrder = @this.SalesOrderWhereSalesOrderItem;
+                var salesOrder = @this.SalesOrderWhereSalesOrderItem ?? @this.SalesOrderItemWhereOrderedWithFeature?.SalesOrderWhereSalesOrderItem;
 
                 if (salesOrder != null)
                 {
-                    var sameProductItems = salesOrder.SalesOrderItems
-                        .Where(v => v.IsValid && v.ExistProduct && v.Product.Equals(@this.Product))
-                        .ToArray();
+                    var itemByProduct = salesOrder.SalesOrderItemsByProduct.FirstOrDefault(v => @this.ExistProduct && v.Product.Equals(@this.Product));
 
-                    var quantityOrdered = sameProductItems.Sum(w => w.QuantityOrdered);
-                    var valueOrdered = sameProductItems.Sum(w => w.TotalBasePrice);
+                    var quantityOrdered = itemByProduct != null ? itemByProduct.QuantityOrdered : 0;
+                    var valueOrdered = itemByProduct != null ? itemByProduct.ValueOrdered : 0;
 
-                    var orderPriceComponents = salesOrder.TakenBy?.PriceComponentsWherePricedBy
+                    var orderPriceComponents = salesOrder?.TakenBy?.PriceComponentsWherePricedBy
                         .Where(v => v.FromDate <= salesOrder.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= salesOrder.OrderDate))
                         .ToArray();
 
@@ -68,7 +72,7 @@ namespace Allors.Database.Domain
                             new PriceComponents.IsApplicable
                             {
                                 PriceComponent = v,
-                                Customer = salesOrder.BillToCustomer,
+                                Customer = salesOrder?.BillToCustomer,
                                 Product = @this.Product,
                                 SalesOrder = salesOrder,
                                 QuantityOrdered = quantityOrdered,
@@ -89,7 +93,7 @@ namespace Allors.Database.Domain
                     {
                         if (!unitBasePrice.HasValue)
                         {
-                            validation.AddError($"{@this} {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
+                            validation.AddError($"{@this}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price");
                             return;
                         }
 
@@ -136,7 +140,12 @@ namespace Allors.Database.Domain
                     @this.UnitIrpf = @this.ExistIrpfRate ? @this.UnitPrice * @this.IrpfRate.Rate / 100 : 0;
 
                     // Calculate Totals
-                    @this.TotalBasePrice = @this.UnitBasePrice * @this.QuantityOrdered;
+                    var totalBasePrice = @this.UnitBasePrice * @this.QuantityOrdered;
+                    if (@this.TotalBasePrice != totalBasePrice)
+                    {
+                        @this.TotalBasePrice = totalBasePrice;
+                    }
+
                     @this.TotalDiscount = @this.UnitDiscount * @this.QuantityOrdered;
                     @this.TotalSurcharge = @this.UnitSurcharge * @this.QuantityOrdered;
                     @this.TotalOrderAdjustment = @this.TotalSurcharge - @this.TotalDiscount;

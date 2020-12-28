@@ -2067,6 +2067,21 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(item.ReservedFromNonSerialisedInventoryItem, nonSerialisedGood.InventoryItemsWherePart.First);
         }
+
+        [Fact]
+        public void ChangedProductDeriveSalesOrderSalesOrderItemsByProduct()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(product, order.SalesOrderItemsByProduct.First.Product);
+        }
     }
 
     public class SalesOrderItemShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -2849,7 +2864,7 @@ namespace Allors.Database.Domain.Tests
         public SalesOrderItemPriceDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnChangedSalesOrderItemQuantityOrderedCalculatePrice()
+        public void ChangedQuantityOrderedCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2869,7 +2884,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
+        public void ChangedAssignedUnitPriceCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2889,7 +2904,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemProductCalculatePrice()
+        public void ChangedProductCalculatePrice()
         {
             var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
             var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
@@ -2922,7 +2937,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemProductFeatureCalculatePrice()
+        public void ChangedProductFeatureCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2948,7 +2963,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithProductFeature(productFeature)
-                .WithPrice(1.1M)
+                .WithPrice(0.1M)
                 .WithFromDate(this.Session.Now().AddMinutes(-1))
                 .Build();
 
@@ -2956,13 +2971,14 @@ namespace Allors.Database.Domain.Tests
 
             var orderFeatureItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantityOrdered(1).Build();
             orderItem.AddOrderedWithFeature(orderFeatureItem);
+            order.AddSalesOrderItem(orderFeatureItem);
             this.Session.Derive(false);
 
             Assert.Equal(1.1M, order.TotalIncVat);
         }
 
         [Fact]
-        public void OnChangedRoleSalesOrderItemDiscountAdjustmentsCalculatePrice()
+        public void ChangedDiscountAdjustmentsCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2989,7 +3005,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemDiscountAdjustmentPercentageCalculatePrice()
+        public void ChangedDiscountAdjustmentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -3021,7 +3037,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemDiscountAdjustmentAmountCalculatePrice()
+        public void ChangedDiscountAdjustmentAmountCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -3053,7 +3069,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesOrderItemSurchargeAdjustmentsCalculatePrice()
+        public void ChangedSurchargeAdjustmentsCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -3080,7 +3096,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemSurchargeAdjustmentPercentageCalculatePrice()
+        public void ChangedSurchargeAdjustmentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -3112,7 +3128,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemSurchargeAdjustmentAmountCalculatePrice()
+        public void ChangedSurchargeAdjustmentAmountCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -3141,6 +3157,151 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Equal(1.4M, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderBillToCustomerCalculatePrice()
+        {
+            var theGood = new CustomOrganisationClassificationBuilder(this.Session).WithName("good customer").Build();
+            var theBad = new CustomOrganisationClassificationBuilder(this.Session).WithName("bad customer").Build();
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.AddPartyClassification(theGood);
+
+            var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
+            customer2.AddPartyClassification(theBad);
+
+            this.Session.Derive(false);
+
+            new BasePriceBuilder(this.Session)
+                .WithPartyClassification(theGood)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPartyClassification(theBad)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).WithOrderDate(this.Session.Now()).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            order.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderOrderDateCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var baseprice = new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-2))
+                .Build();
+            
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now().AddDays(-1)).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, order.TotalIncVat);
+
+            baseprice.ThroughDate = this.Session.Now().AddDays(-2);
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddSeconds(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            order.OrderDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Equal(2, order.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderDerivationTriggerCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(1))
+                .Build();
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(orderItem);
+
+            var expectedMessage = $"{orderItem}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+
+            Assert.Equal(0, order.TotalExVat);
+
+            basePrice.FromDate = this.Session.Now().AddMinutes(-1);
+            this.Session.Derive(false);
+
+            Assert.Equal(basePrice.Price, order.TotalExVat);
+        }
+
+        [Fact]
+        public void ChangedDerivationTriggerCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var break1 = new OrderQuantityBreakBuilder(this.Session).WithFromAmount(50).WithThroughAmount(99).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(10)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            new DiscountComponentBuilder(this.Session)
+                .WithDescription("discount good for quantity break 1")
+                .WithOrderQuantityBreak(break1)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            var order = new SalesOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var item1 = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(item1);
+            this.Session.Derive(false);
+
+            Assert.Equal(0, item1.UnitDiscount);
+
+            var item2 = new SalesOrderItemBuilder(this.Session).WithProduct(product).WithQuantityOrdered(49).Build();
+            order.AddSalesOrderItem(item2);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, item1.UnitDiscount);
         }
     }
 

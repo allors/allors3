@@ -616,6 +616,14 @@ namespace Allors.Repository
         public VatClause DerivedVatClause { get; set; }
 
         #region Allors
+        [Id("21d348f9-5b31-40a0-b0be-6f898e4fae26")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Derived]
+        [Indexed]
+        public SalesOrderItemByProduct[] SalesOrderItemsByProduct { get; set; }
+
+        #region Allors
 
         [Id("393446ab-59ea-4f23-b1bc-f8fd4e3dfb1b")]
 

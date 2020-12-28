@@ -65,6 +65,11 @@ namespace Allors.Database.Domain
                             }
                         }
 
+                        if (quantityCommittedOut < 0)
+                        {
+                            quantityCommittedOut = 0;
+                        }
+
                         @this.QuantityCommittedOut = quantityCommittedOut;
 
                         var wantToShip = @this.QuantityCommittedOut - @this.QuantityPendingShipment;

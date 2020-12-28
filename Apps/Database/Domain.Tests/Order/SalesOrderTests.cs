@@ -406,6 +406,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoiceitem =
                 (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
             var invoice3 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+            invoice3.Send();
 
             new ReceiptBuilder(this.Session)
                 .WithAmount(75)
@@ -1985,7 +1986,7 @@ namespace Allors.Database.Domain.Tests
 
             item4.RemoveAssignedUnitPrice();
 
-            var expectedMessage = $"{item4} {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
+            var expectedMessage = $"{item4}, {this.M.SalesOrderItem.UnitBasePrice} No BasePrice with a Price";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
@@ -3786,7 +3787,7 @@ namespace Allors.Database.Domain.Tests
         public SalesOrderPriceDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnChangedValidOrderItemsCalculatePrice()
+        public void ChangedValidOrderItemsCalculatePrice()
         {
             var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
             this.Session.Derive();
@@ -3801,7 +3802,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedSalesOrderItemsCalculatePriceForProductFeature()
+        public void ChangedSalesOrderItemsCalculatePriceForProductFeature()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
 
@@ -3836,11 +3837,11 @@ namespace Allors.Database.Domain.Tests
             orderItem.AddOrderedWithFeature(orderFeatureItem);
             this.Session.Derive(false);
 
-            Assert.Equal(1.2M, order.TotalIncVat);
+            Assert.Equal(1.2M, order.TotalExVat);
         }
 
         [Fact]
-        public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
+        public void ChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -3860,12 +3861,12 @@ namespace Allors.Database.Domain.Tests
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 
-            Assert.Equal(0, order.TotalIncVat);
+            Assert.Equal(0, order.TotalExVat);
 
             basePrice.FromDate = this.Session.Now().AddMinutes(-1);
             this.Session.Derive(false);
 
-            Assert.Equal(basePrice.Price, order.TotalIncVat);
+            Assert.Equal(basePrice.Price, order.TotalExVat);
         }
 
         [Fact]
@@ -4030,7 +4031,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPricedBy(this.InternalOrganisation)
                 .WithProduct(product)
                 .WithProductFeature(productFeature)
-                .WithPrice(1.1M)
+                .WithPrice(0.1M)
                 .WithFromDate(this.Session.Now().AddMinutes(-1))
                 .Build();
 
@@ -4040,7 +4041,7 @@ namespace Allors.Database.Domain.Tests
             orderItem.AddOrderedWithFeature(orderFeatureItem);
             this.Session.Derive(false);
 
-            Assert.Equal(1.1M, order.TotalIncVat);
+            Assert.Equal(1.1M, order.TotalExVat);
         }
 
         [Fact]
@@ -4074,7 +4075,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Session.Now().AddMinutes(-1))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).WithOrderDate(this.Session.Now()).Build();
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).WithOrderDate(this.Session.Now()).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
             this.Session.Derive(false);
 
             var orderItem = new SalesOrderItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantityOrdered(1).Build();

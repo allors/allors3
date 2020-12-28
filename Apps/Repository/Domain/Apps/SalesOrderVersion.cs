@@ -448,6 +448,13 @@ namespace Allors.Repository
         [Workspace(Default)]
         public VatClause DerivedVatClause { get; set; }
 
+        #region Allors
+        [Id("d74c9972-dfa2-4c04-92b7-0b3344157762")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        public SalesOrderItemByProduct[] SalesOrderItemsByProduct { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

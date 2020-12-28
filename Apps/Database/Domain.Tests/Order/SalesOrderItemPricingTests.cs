@@ -1431,7 +1431,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenOrderItemWithDiscountAmountForOrderValue_WhenDeriving_ThenUseDiscountComponentsForOrderValue()
         {
             const decimal quantityOrdered1 = 3;
-            const decimal quantityOrdered2 = 3;
+            const decimal quantityOrdered2 = 2;
             const decimal quantityOrdered3 = 10;
             const decimal amount1 = 1;
             const decimal amount2 = 3;
