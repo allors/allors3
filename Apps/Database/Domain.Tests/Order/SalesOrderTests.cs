@@ -2572,6 +2572,24 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToCustomerDeriveDerivedVatRegime()
         {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.VatRegime = new VatRegimes(this.Session).Assessable10;
+
+            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
+            customer2.VatRegime = new VatRegimes(this.Session).Assessable21;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, customer2.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerVatRegimeDeriveDerivedVatRegime()
+        {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -2597,6 +2615,24 @@ namespace Allors.Database.Domain.Tests
 
         [Fact]
         public void ChangedBillToCustomerDeriveDerivedIrpfRegime()
+        {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+
+            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
+            customer2.IrpfRegime = new IrpfRegimes(this.Session).Assessable19;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, customer2.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 

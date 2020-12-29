@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.PurchaseInvoice.AssignedVatRegime),
                 new ChangedPattern(m.PurchaseInvoice.AssignedIrpfRegime),
                 new ChangedPattern(m.PurchaseInvoice.AssignedCurrency),
+                new ChangedPattern(m.PurchaseInvoice.BilledFrom),
                 new ChangedPattern(this.M.Party.VatRegime) { Steps = new IPropertyType[] { this.M.Party.PurchaseInvoicesWhereBilledFrom}},
                 new ChangedPattern(this.M.Party.IrpfRegime) { Steps = new IPropertyType[] { this.M.Party.PurchaseInvoicesWhereBilledFrom }},
                 new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.PurchaseInvoicesWhereBilledTo }},

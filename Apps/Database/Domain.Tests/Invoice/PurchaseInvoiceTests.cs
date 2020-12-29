@@ -144,6 +144,156 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class PurchaseInvoiceBuildDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceBuildDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void DerivePurchaseInvoiceState()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistPurchaseInvoiceState);
+        }
+
+        [Fact]
+        public void DeriveInvoiceDate()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistInvoiceDate);
+        }
+
+        [Fact]
+        public void DeriveEntryDate()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistEntryDate);
+        }
+    }
+
+    public class PurchaseInvoiceCreatedDerivation : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceCreatedDerivation(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatRegime, invoice.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedBilledFromDeriveDerivedVatRegime()
+        {
+            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
+            supplier1.VatRegime = new VatRegimes(this.Session).Assessable10;
+
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
+            supplier2.VatRegime = new VatRegimes(this.Session).Assessable21;
+
+            var invoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(supplier1).Build();
+            this.Session.Derive(false);
+
+            invoice.BilledFrom = supplier2;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatRegime, supplier2.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedBilledFromVatRegimeDeriveDerivedVatRegime()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+
+            var invoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(supplier).Build();
+            this.Session.Derive(false);
+
+            supplier.VatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedVatRegime, supplier.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedIrpfRegime, invoice.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedBilledFromDeriveDerivedIrpfRegime()
+        {
+            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
+            supplier1.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
+            supplier2.IrpfRegime = new IrpfRegimes(this.Session).Assessable19;
+
+            var invoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(supplier1).Build();
+            this.Session.Derive(false);
+
+            invoice.BilledFrom = supplier2;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedIrpfRegime, supplier2.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedBilledFromIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+
+            var invoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(supplier).Build();
+            this.Session.Derive(false);
+
+            supplier.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedIrpfRegime, supplier.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedCurrencyDeriveDerivedCurrency()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            invoice.AssignedCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedCurrency, invoice.AssignedCurrency);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerPreferredCurrencyDerivedCurrency()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            invoice.BilledTo.PreferredCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice.DerivedCurrency, invoice.BilledTo.PreferredCurrency);
+        }
+    }
 
     [Trait("Category", "Security")]
     public class PurchaseInvoiceSecurityTests : DomainTest, IClassFixture<Fixture>
@@ -259,118 +409,5 @@ namespace Allors.Database.Domain.Tests
 
             Assert.DoesNotContain(this.createSalesInvoicePermission, purchaseInvoice.DeniedPermissions);
         }
-    }
-
-    [Trait("Category", "Approval")]
-    public class PurchaseInvoiceApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
-    {
-        public PurchaseInvoiceApprovalDerivationTests(Fixture fixture) : base(fixture)
-        {
-
-        }
-
-        [Fact]
-        public void OnCreatedPurchaseInvoiceApprovalDeriveTitle()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            var approval = new PurchaseInvoiceApprovalBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(approval.Title, "Approval of " + purchaseInvoice.WorkItemDescription);
-        }
-
-        [Fact]
-        public void OnCreatedPurchaseInvoiceApprovalDeriveWorkItem()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            var approval = new PurchaseInvoiceApprovalBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(approval.WorkItem, purchaseInvoice);
-        }
-
-        [Fact]
-        public void OnCreatedPurchaseInvoiceApprovalDeriveDateClosedExists()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            var approval = new PurchaseInvoiceApprovalBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
-
-            this.Session.Derive(false);
-
-            Assert.True(approval.ExistDateClosed);
-        }
-
-        [Fact]
-        public void OnCreatedPurchaseInvoiceApprovalDeriveDateClosedNotExists()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            purchaseInvoice.Confirm();
-
-            this.Session.Derive(false);
-
-            Assert.False(purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First().ExistDateClosed);
-        }
-
-        [Fact]
-        public void OnCreatedPurchaseInvoiceApprovalDeriveEmptyParticipants()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            var approval = new PurchaseInvoiceApprovalBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Empty(approval.Participants);
-        }
-
-        [Fact]
-        public void OnCreatedPurchaseInvoiceApprovalDeriveParticipants()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            purchaseInvoice.Confirm();
-
-            this.Session.Derive(false);
-
-            Assert.NotEmpty(purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First().Participants);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseInvoiceApprovalDeriveParticipants()
-        {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            purchaseInvoice.Confirm();
-
-            this.Session.Derive(false);
-
-            var approval = purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First();
-            approval.Approve();
-
-            this.Session.Derive(false);
-
-            Assert.Empty(purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First().Participants);
-        }
-
     }
 }
