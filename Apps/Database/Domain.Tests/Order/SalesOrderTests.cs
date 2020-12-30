@@ -1383,6 +1383,7 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
 
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             var store = new Stores(this.Session).Extent().First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
             store.SalesOrderNumberPrefix = "the format is ";
 
@@ -1416,6 +1417,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithoutOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.RemoveSalesOrderNumberPrefix();
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -1430,6 +1432,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesOrderNumberPrefix = "prefix-";
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -1444,6 +1447,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithParametrizedOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesOrderNumberPrefix = "prefix-{year}-";
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -3235,7 +3239,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             var store = new Stores(this.Session).Extent().First;
             store.RemoveSalesOrderNumberPrefix();
-            var number = store.SalesOrderCounter.Value;
+            var number = store.SalesOrderNumberCounter.Value;
 
             this.Session.Derive(false);
 
@@ -3246,7 +3250,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedStoreDeriveSortableOrderNumber()
         {
             var order = new SalesOrderBuilder(this.Session).Build();
-            var number = new Stores(this.Session).Extent().First.SalesOrderCounter.Value;
+            var number = new Stores(this.Session).Extent().First.SalesOrderNumberCounter.Value;
 
             this.Session.Derive(false);
 

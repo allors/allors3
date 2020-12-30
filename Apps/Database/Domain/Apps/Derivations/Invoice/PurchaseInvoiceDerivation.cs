@@ -38,8 +38,15 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistInvoiceNumber)
                 {
-                    @this.InvoiceNumber = @this.BilledTo.NextPurchaseInvoiceNumber(@this.InvoiceDate.Year);
-                    @this.SortableInvoiceNumber = NumberFormatter.SortableNumber(@this.BilledTo.PurchaseInvoiceNumberPrefix, @this.InvoiceNumber, @this.InvoiceDate.Year.ToString());
+                    var year = @this.InvoiceDate.Year;
+                    @this.InvoiceNumber = @this.BilledTo.NextPurchaseInvoiceNumber(year);
+
+                    var fiscalYearsInternalOrganisationSequenceNumbers = new FiscalYearsInternalOrganisationSequenceNumbers(@this.Session()).Extent();
+                    fiscalYearsInternalOrganisationSequenceNumbers.Filter.AddEquals(M.FiscalYearInternalOrganisationSequenceNumbers.FiscalYear, year);
+                    var fiscalYearInternalOrganisationSequenceNumbers = fiscalYearsInternalOrganisationSequenceNumbers.First;
+
+                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? @this.BilledTo.PurchaseInvoiceNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.PurchaseInvoiceNumberPrefix;
+                    @this.SortableInvoiceNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.InvoiceNumber, year.ToString());
                 }
 
                 if (@this.BilledFrom is Organisation supplier)

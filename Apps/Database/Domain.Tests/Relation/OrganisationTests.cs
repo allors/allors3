@@ -303,7 +303,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithQuoteIssuerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithQuoteCounter(new CounterBuilder(this.Session).Build()).Build();
+                .WithQuoteNumberCounter(new CounterBuilder(this.Session).Build()).Build();
             this.Session.Derive(false);
 
             var quote = new ProposalBuilder(this.Session).WithIssuer(organisation).Build();
@@ -316,7 +316,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithQuoteReceiverDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithQuoteCounter(new CounterBuilder(this.Session).Build()).Build();
+                .WithQuoteNumberCounter(new CounterBuilder(this.Session).Build()).Build();
             this.Session.Derive(false);
 
             var quote = new ProposalBuilder(this.Session).WithReceiver(organisation).Build();
@@ -329,7 +329,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithPurchaseInvoiceBilledToDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 
@@ -343,7 +343,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithPurchaseInvoiceBilledFromDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 
@@ -357,7 +357,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithPurchaseInvoiceShipToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 
@@ -371,7 +371,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithPurchaseInvoiceBillToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 
@@ -385,7 +385,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithPurchaseInvoiceShipToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithPurchaseInvoiceCounter(new CounterBuilder(this.Session).Build())
+                .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 
@@ -423,7 +423,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithRequestOriginatorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithRequestCounter(new CounterBuilder(this.Session).Build())
+                .WithRequestNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 
@@ -437,7 +437,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithRequestRecipientDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithRequestCounter(new CounterBuilder(this.Session).Build())
+                .WithRequestNumberCounter(new CounterBuilder(this.Session).Build())
                 .Build();
             this.Session.Derive(false);
 

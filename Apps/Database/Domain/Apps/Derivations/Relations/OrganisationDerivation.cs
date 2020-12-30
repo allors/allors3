@@ -32,61 +32,6 @@ namespace Allors.Database.Domain
 
                 session.Prefetch(@this.PrefetchPolicy);
 
-                if (@this.IsInternalOrganisation)
-                {
-                    if (!@this.ExistRequestCounter)
-                    {
-                        @this.RequestCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistQuoteCounter)
-                    {
-                        @this.QuoteCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistPurchaseInvoiceCounter)
-                    {
-                        @this.PurchaseInvoiceCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistPurchaseOrderCounter)
-                    {
-                        @this.PurchaseOrderCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistSubAccountCounter)
-                    {
-                        @this.SubAccountCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistIncomingShipmentCounter)
-                    {
-                        @this.IncomingShipmentCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistWorkEffortCounter)
-                    {
-                        @this.WorkEffortCounter = new CounterBuilder(session).Build();
-                    }
-
-                    if (!@this.ExistInvoiceSequence)
-                    {
-                        @this.InvoiceSequence = new InvoiceSequenceBuilder(session)
-                            .WithName(@this.Name)
-                            .Build();
-                    }
-
-                    if (@this.DoAccounting && !@this.ExistFiscalYearStartMonth)
-                    {
-                        @this.FiscalYearStartMonth = 1;
-                    }
-
-                    if (@this.DoAccounting && !@this.ExistFiscalYearStartDay)
-                    {
-                        @this.FiscalYearStartDay = 1;
-                    }
-                }
-
                 @this.PartyName = @this.Name;
 
                 @this.ActiveEmployees = @this.EmploymentsWhereEmployer

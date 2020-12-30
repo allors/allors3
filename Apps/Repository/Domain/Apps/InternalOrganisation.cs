@@ -25,6 +25,13 @@ namespace Allors.Repository
         public bool IsInternalOrganisation { get; set; }
 
         #region Allors
+        [Id("5eaab214-d2d4-46e3-806c-5193047067e2")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        public FiscalYearInternalOrganisationSequenceNumbers[] FiscalYearsInternalOrganisationSequenceNumbers { get; set; }
+
+        #region Allors
         [Id("E6BBEC1C-5855-4D22-97D2-BF62B853DC7E")]
         [Indexed]
         #endregion
@@ -46,7 +53,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter PurchaseInvoiceCounter { get; set; }
+        Counter PurchaseInvoiceNumberCounter { get; set; }
 
         #region Allors
         [Id("23aee857-9cea-481c-a4a3-72dd8b808d71")]
@@ -62,7 +69,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter PurchaseOrderCounter { get; set; }
+        Counter PurchaseOrderNumberCounter { get; set; }
 
         #region Allors
         [Id("7e210c5e-a68b-4ea0-b019-1dd452d8e407")]
@@ -84,7 +91,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter RequestCounter { get; set; }
+        Counter RequestNumberCounter { get; set; }
 
         #region Allors
         [Id("5b64cf9d-e990-491e-b009-3481d73db67e")]
@@ -98,7 +105,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter IncomingShipmentCounter { get; set; }
+        Counter IncomingShipmentNumberCounter { get; set; }
 
         #region Allors
         [Id("ba00c0d2-6067-4584-bdc4-e6c72be77232")]
@@ -106,7 +113,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter QuoteCounter { get; set; }
+        Counter QuoteNumberCounter { get; set; }
 
         #region Allors
         [Id("d5645df8-2b10-435d-8e47-57b5d268541a")]
@@ -447,7 +454,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter WorkEffortCounter { get; set; }
+        Counter WorkEffortNumberCounter { get; set; }
 
         /// <summary>
         /// Gets or sets the WorkEffortPrefix to be used before the WorkEfforNumber for WorkEffort objects.
@@ -457,7 +464,7 @@ namespace Allors.Repository
         #endregion
         [Size(256)]
         [Workspace(Default)]
-        string WorkEffortPrefix { get; set; }
+        string WorkEffortNumberPrefix { get; set; }
 
         /// <summary>
         /// Gets or sets a flag to indicate if this InternalOrganisation Requires Existing WorkEffortPartyAssignment

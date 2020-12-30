@@ -31,36 +31,6 @@ namespace Allors.Database.Domain
                         @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
                     }
 
-                    if (!@this.ExistPurchaseInvoiceCounter)
-                    {
-                        @this.PurchaseInvoiceCounter = new CounterBuilder(@this.Strategy.Session)
-                            .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-                    }
-
-                    if (!@this.ExistRequestCounter)
-                    {
-                        @this.RequestCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                            .WithValue(0).Build();
-                    }
-
-                    if (!@this.ExistQuoteCounter)
-                    {
-                        @this.QuoteCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                            .WithValue(0).Build();
-                    }
-
-                    if (!@this.ExistPurchaseOrderCounter)
-                    {
-                        @this.PurchaseOrderCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
-                            .WithValue(0).Build();
-                    }
-
-                    if (!@this.ExistIncomingShipmentCounter)
-                    {
-                        @this.IncomingShipmentCounter = new CounterBuilder(@this.Strategy.Session)
-                            .WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-                    }
-
                     if (!@this.ExistSubAccountCounter)
                     {
                         @this.SubAccountCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid())
@@ -80,6 +50,34 @@ namespace Allors.Database.Domain
                     if (!@this.ExistFiscalYearStartDay)
                     {
                         @this.FiscalYearStartDay = 1;
+                    }
+
+                    if (@this.InvoiceSequence != new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                    {
+                        if (!@this.ExistPurchaseInvoiceNumberCounter)
+                        {
+                            @this.PurchaseInvoiceNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
+
+                        if (!@this.ExistRequestNumberCounter)
+                        {
+                            @this.RequestNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
+
+                        if (!@this.ExistQuoteNumberCounter)
+                        {
+                            @this.QuoteNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
+
+                        if (!@this.ExistPurchaseOrderNumberCounter)
+                        {
+                            @this.PurchaseOrderNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
+
+                        if (!@this.ExistIncomingShipmentNumberCounter)
+                        {
+                            @this.IncomingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
                     }
                 }
             }

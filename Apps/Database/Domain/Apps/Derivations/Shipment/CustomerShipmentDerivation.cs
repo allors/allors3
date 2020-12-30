@@ -27,8 +27,15 @@ namespace Allors.Database.Domain
             {
                 if (!@this.ExistShipmentNumber && @this.ExistStore)
                 {
-                    @this.ShipmentNumber = @this.Store.NextShipmentNumber();
-                    @this.SortableShipmentNumber = NumberFormatter.SortableNumber(@this.Store.OutgoingShipmentNumberPrefix, @this.ShipmentNumber, @this.Strategy.Session.Now().Year.ToString());
+                    var year = @this.Session().Now().Year;
+                    @this.ShipmentNumber = @this.Store.NextOutgoingShipmentNumber(year);
+
+                    var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(@this.Session()).Extent();
+                    fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
+                    var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+
+                    var prefix = fiscalYearStoreSequenceNumbers == null ? @this.Store.OutgoingShipmentNumberPrefix : fiscalYearStoreSequenceNumbers.OutgoingShipmentNumberPrefix;
+                    @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
 
                 cycle.Validation.AssertExists(@this, @this.Meta.ShipToParty);

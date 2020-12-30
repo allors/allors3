@@ -105,17 +105,30 @@ namespace Allors.Database.Domain
         public void AppsSend(SalesInvoiceSend method)
         {
             var singleton = this.Session().GetSingleton();
+            var year = this.InvoiceDate.Year;
 
-            if (Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice))
+            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).SalesInvoice))
             {
-                this.InvoiceNumber = this.Store.NextInvoiceNumber(this.InvoiceDate.Year);
-                this.SortableInvoiceNumber = NumberFormatter.SortableNumber(this.Store.SalesInvoiceNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
+                this.InvoiceNumber = this.Store.NextSalesInvoiceNumber(this.InvoiceDate.Year);
+
+                var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(this.Session()).Extent();
+                fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
+                var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+                var prefix = fiscalYearStoreSequenceNumbers == null ? this.Store.SalesInvoiceNumberPrefix : fiscalYearStoreSequenceNumbers.SalesInvoiceNumberPrefix;
+
+                this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
             }
 
-            if (Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).CreditNote))
+            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Session).CreditNote))
             {
                 this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
-                this.SortableInvoiceNumber = NumberFormatter.SortableNumber(this.Store.CreditNoteNumberPrefix, this.InvoiceNumber, this.InvoiceDate.Year.ToString());
+
+                var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(this.Session()).Extent();
+                fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
+                var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+                var prefix = fiscalYearStoreSequenceNumbers == null ? this.Store.CreditNoteNumberPrefix : fiscalYearStoreSequenceNumbers.CreditNoteNumberPrefix;
+
+                this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
             }
 
             this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Session).NotPaid;

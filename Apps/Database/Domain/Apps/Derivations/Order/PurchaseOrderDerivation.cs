@@ -126,8 +126,15 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistOrderNumber)
                 {
-                    @this.OrderNumber = @this.OrderedBy?.NextPurchaseOrderNumber(@this.OrderDate.Year);
-                    @this.SortableOrderNumber = NumberFormatter.SortableNumber(@this.OrderedBy?.PurchaseOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
+                    var year = @this.OrderDate.Year;
+                    @this.OrderNumber = @this.OrderedBy?.NextPurchaseOrderNumber(year);
+
+                    var fiscalYearsInternalOrganisationSequenceNumbers = new FiscalYearsInternalOrganisationSequenceNumbers(@this.Session()).Extent();
+                    fiscalYearsInternalOrganisationSequenceNumbers.Filter.AddEquals(M.FiscalYearInternalOrganisationSequenceNumbers.FiscalYear, year);
+                    var fiscalYearInternalOrganisationSequenceNumbers = fiscalYearsInternalOrganisationSequenceNumbers.First;
+
+                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? @this.OrderedBy?.PurchaseOrderNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.PurchaseOrderNumberPrefix;
+                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.OrderNumber, year.ToString());
                 }
 
                 if (@this.PurchaseOrderState.IsCreated)
