@@ -50,7 +50,7 @@ namespace Allors.Repository
         #region Allors
         [Id("1a986cbf-b7db-4850-af06-d96e1339beb7")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter PurchaseInvoiceNumberCounter { get; set; }
@@ -66,7 +66,7 @@ namespace Allors.Repository
         #region Allors
         [Id("44f165ed-a6ca-4979-9046-a0f7391bef7d")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter PurchaseOrderNumberCounter { get; set; }
@@ -80,7 +80,7 @@ namespace Allors.Repository
         #region Allors
         [Id("ad7c8532-59d2-4668-bd9f-6c67ddc4e4bc")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter SubAccountCounter { get; set; }
@@ -88,7 +88,7 @@ namespace Allors.Repository
         #region Allors
         [Id("A49663B5-A432-41FA-BBCA-8368D1B9D53D")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter RequestNumberCounter { get; set; }
@@ -102,7 +102,7 @@ namespace Allors.Repository
         #region Allors
         [Id("86dd32e2-74e7-4ced-bfbd-4e1fdc723588")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter IncomingShipmentNumberCounter { get; set; }
@@ -110,7 +110,7 @@ namespace Allors.Repository
         #region Allors
         [Id("ba00c0d2-6067-4584-bdc4-e6c72be77232")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter QuoteNumberCounter { get; set; }
@@ -226,7 +226,7 @@ namespace Allors.Repository
         #region Allors
         [Id("859d95c2-7321-4408-bcd1-405dc0b31efc")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter AccountingTransactionCounter { get; set; }
@@ -451,7 +451,7 @@ namespace Allors.Repository
         #region Allors
         [Id("72BA7C7A-9EA5-4327-86AF-ED77041E19AE")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         Counter WorkEffortNumberCounter { get; set; }

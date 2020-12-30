@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class Store
     {
@@ -17,9 +18,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(this.Strategy.Session).Extent();
-                fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
-                var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
@@ -39,9 +38,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(this.Strategy.Session).Extent();
-                fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
-                var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
@@ -61,9 +58,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(this.Strategy.Session).Extent();
-                fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
-                var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {
@@ -83,9 +78,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                var fiscalYearsStoreSequenceNumbers = new FiscalYearsStoreSequenceNumbers(this.Strategy.Session).Extent();
-                fiscalYearsStoreSequenceNumbers.Filter.AddEquals(M.FiscalYearStoreSequenceNumbers.FiscalYear, year);
-                var fiscalYearStoreSequenceNumbers = fiscalYearsStoreSequenceNumbers.First;
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
 
                 if (fiscalYearStoreSequenceNumbers == null)
                 {

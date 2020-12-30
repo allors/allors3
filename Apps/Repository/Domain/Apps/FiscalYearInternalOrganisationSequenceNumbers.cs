@@ -33,7 +33,7 @@ namespace Allors.Repository
         #region Allors
         [Id("fdabc29e-ee35-44c0-a9bf-8d789d06ab46")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
         public Counter PurchaseInvoiceNumberCounter { get; set; }
@@ -48,7 +48,7 @@ namespace Allors.Repository
         #region Allors
         [Id("d241e5f1-7dd9-442f-90c1-67707b92bcb6")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
         public Counter PurchaseOrderNumberCounter { get; set; }
@@ -63,7 +63,7 @@ namespace Allors.Repository
         #region Allors
         [Id("7fd7a805-651a-48e0-93d8-ce595dcc4411")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
         public Counter RequestNumberCounter { get; set; }
@@ -78,7 +78,7 @@ namespace Allors.Repository
         #region Allors
         [Id("96201883-7ccb-4fea-9958-de7ef27fabd0")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
         public Counter IncomingShipmentNumberCounter { get; set; }
@@ -93,7 +93,7 @@ namespace Allors.Repository
         #region Allors
         [Id("5bbfbf49-59ab-49f2-b00f-799cb0568e35")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
         public Counter QuoteNumberCounter { get; set; }
@@ -108,7 +108,7 @@ namespace Allors.Repository
         #region Allors
         [Id("af0cfafd-6b54-40bd-bdf0-258bf868d202")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
         public Counter WorkEffortNumberCounter { get; set; }

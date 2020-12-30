@@ -40,7 +40,7 @@ namespace Allors.Repository
         #region Allors
         [Id("c21f533a-cf7a-4c15-8af4-40d87d4ad162")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
         public Counter SalesInvoiceNumberCounter { get; set; }
@@ -62,7 +62,7 @@ namespace Allors.Repository
         #region Allors
         [Id("a1f93578-bde7-427b-abf2-6eaffb9d9e99")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
         public Counter CreditNoteNumberCounter { get; set; }
@@ -77,7 +77,7 @@ namespace Allors.Repository
         #region Allors
         [Id("2fe9d593-f56f-4be0-87a3-72b0c02862dc")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
         public Counter OutgoingShipmentNumberCounter { get; set; }
@@ -92,7 +92,7 @@ namespace Allors.Repository
         #region Allors
         [Id("6c1c7ee3-a14c-46aa-9b92-6463485c53f5")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
         public Counter SalesOrderNumberCounter { get; set; }
