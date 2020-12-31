@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         {
             var package = new ShipmentPackageBuilder(this.Session).Build();
 
-            Assert.NotNull(package.CreationDate);
+            Assert.True(package.ExistCreationDate);
         }
     }
 }

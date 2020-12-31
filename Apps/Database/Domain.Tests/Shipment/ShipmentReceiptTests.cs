@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Tests
         {
             var receipt = new ShipmentReceiptBuilder(this.Session).Build();
 
-            Assert.NotNull(receipt.ReceivedDateTime);
+            Assert.True(receipt.ExistReceivedDateTime);
             Assert.Equal(0, receipt.QuantityAccepted);
             Assert.Equal(0, receipt.QuantityRejected);
         }
