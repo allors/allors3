@@ -61,8 +61,12 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistOrderNumber && @this.ExistStore)
                 {
-                    @this.OrderNumber = @this.Store.NextSalesOrderNumber(@this.OrderDate.Year);
-                    @this.SortableOrderNumber = NumberFormatter.SortableNumber(@this.Store.SalesOrderNumberPrefix, @this.OrderNumber, @this.OrderDate.Year.ToString());
+                    var year = @this.OrderDate.Year;
+                    @this.OrderNumber = @this.Store.NextSalesOrderNumber(year);
+
+                    var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = fiscalYearStoreSequenceNumbers == null ? @this.Store.SalesOrderNumberPrefix : fiscalYearStoreSequenceNumbers.SalesOrderNumberPrefix;
+                    @this.SortableOrderNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.OrderNumber, year.ToString());
                 }
 
                 if (@this.BillToCustomer?.AppsIsActiveCustomer(@this.TakenBy, @this.OrderDate) == false)

@@ -263,6 +263,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBilledFromWithInvoiceNumberPrefix_WhenDeriving_ThenSortableInvoiceNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesInvoiceNumberPrefix = "prefix-";
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -279,6 +280,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBilledFromWithParametrizedInvoiceNumberPrefix_WhenDeriving_ThenSortableInvoiceNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesInvoiceNumberPrefix = "prefix-{year}-";
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -295,8 +297,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSingletonWithInvoiceSequenceFiscalYear_WhenCreatingInvoice_ThenInvoiceNumberFromFiscalYearMustBeUsed()
         {
-            var store = new Stores(this.Session).Extent().First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
-            store.RemoveSalesInvoiceNumberPrefix();
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).RestartOnFiscalYear;
+            var store = new StoreBuilder(this.Session)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithName("new store")
+                .WithBillingProcess(new BillingProcesses(this.Session).BillingForShipmentItems)
+                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
+                .Build();
+            this.Session.Derive();
 
             var customer = new OrganisationBuilder(this.Session).WithName("customer").Build();
 
@@ -319,8 +328,8 @@ namespace Allors.Database.Domain.Tests
 
             invoice1.Send();
 
-            Assert.False(store.ExistSalesInvoiceCounter);
-            Assert.Equal(this.Session.Now().Year, store.FiscalYearInvoiceNumbers.First.FiscalYear);
+            Assert.False(store.ExistSalesInvoiceNumberCounter);
+            Assert.Equal(this.Session.Now().Year, store.FiscalYearsStoreSequenceNumbers.First.FiscalYear);
             Assert.Equal("1", invoice1.InvoiceNumber);
 
             var invoice2 = new SalesInvoiceBuilder(this.Session)
@@ -334,14 +343,15 @@ namespace Allors.Database.Domain.Tests
 
             invoice2.Send();
 
-            Assert.False(store.ExistSalesInvoiceCounter);
-            Assert.Equal(this.Session.Now().Year, store.FiscalYearInvoiceNumbers.First.FiscalYear);
+            Assert.False(store.ExistSalesInvoiceNumberCounter);
+            Assert.Equal(this.Session.Now().Year, store.FiscalYearsStoreSequenceNumbers.First.FiscalYear);
             Assert.Equal("2", invoice2.InvoiceNumber);
         }
 
         [Fact]
         public void GivenSalesInvoiceSend_WhenGettingInvoiceNumberWithFormat_ThenFormattedInvoiceNumberShouldBeReturned()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             var store = new Stores(this.Session).Extent().First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
             store.SalesInvoiceNumberPrefix = "the format is ";
             store.SalesInvoiceTemporaryCounter = new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(10).Build();

@@ -16,6 +16,21 @@ namespace Allors.Database.Domain
                     .WithInData(this.Session().GetSingleton().GetResourceBytes("No_image_available.svg"))
                     .Build();
             }
+
+            if (!this.ExistSkuCounter)
+            {
+                this.SkuCounter = new CounterBuilder(this.Strategy.Session).Build();
+            }
+
+            if (!this.ExistSerialisedItemCounter)
+            {
+                this.SerialisedItemCounter = new CounterBuilder(this.Strategy.Session).Build();
+            }
+
+            if (!this.ExistProductNumberCounter)
+            {
+                this.ProductNumberCounter = new CounterBuilder(this.Strategy.Session).Build();
+            }
         }
 
         public string NextSkuNumber()

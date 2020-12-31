@@ -28,8 +28,12 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistRecipient && !@this.ExistRequestNumber)
                 {
-                    @this.RequestNumber = @this.Recipient.NextRequestNumber(session.Now().Year);
-                    (@this).SortableRequestNumber = NumberFormatter.SortableNumber(@this.Recipient.RequestNumberPrefix, @this.RequestNumber, @this.RequestDate.Year.ToString());
+                    var year = @this.RequestDate.Year;
+                    @this.RequestNumber = @this.Recipient.NextRequestNumber(year);
+
+                    var fiscalYearInternalOrganisationSequenceNumbers = @this.Recipient.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? @this.Recipient.RequestNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.RequestNumberPrefix;
+                    @this.SortableRequestNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.RequestNumber, year.ToString());
                 }
 
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Originator?.PreferredCurrency ?? @this.Recipient?.PreferredCurrency;

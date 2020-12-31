@@ -25,8 +25,12 @@ namespace Allors.Database.Domain
             {
                 if (!@this.ExistQuoteNumber && @this.ExistIssuer)
                 {
-                    @this.QuoteNumber = @this.Issuer.NextQuoteNumber(cycle.Session.Now().Year);
-                    (@this).SortableQuoteNumber = NumberFormatter.SortableNumber(@this.Issuer.QuoteNumberPrefix, @this.QuoteNumber, @this.IssueDate.Year.ToString());
+                    var year = @this.IssueDate.Year;
+                    @this.QuoteNumber = @this.Issuer.NextQuoteNumber(year);
+
+                    var fiscalYearInternalOrganisationSequenceNumbers = @this.Issuer.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? @this.Issuer.QuoteNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.QuoteNumberPrefix;
+                    @this.SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.QuoteNumber, year.ToString());
                 }
 
                 @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);

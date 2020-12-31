@@ -1383,6 +1383,7 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
 
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             var store = new Stores(this.Session).Extent().First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
             store.SalesOrderNumberPrefix = "the format is ";
 
@@ -1416,6 +1417,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithoutOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.RemoveSalesOrderNumberPrefix();
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -1430,6 +1432,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesOrderNumberPrefix = "prefix-";
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -1444,6 +1447,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithParametrizedOrderNumberPrefix_WhenDeriving_ThenSortableOrderNumberIsSet()
         {
+            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesOrderNumberPrefix = "prefix-{year}-";
             new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -2572,6 +2576,24 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToCustomerDeriveDerivedVatRegime()
         {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.VatRegime = new VatRegimes(this.Session).Assessable10;
+
+            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
+            customer2.VatRegime = new VatRegimes(this.Session).Assessable21;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, customer2.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerVatRegimeDeriveDerivedVatRegime()
+        {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
             var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -2597,6 +2619,24 @@ namespace Allors.Database.Domain.Tests
 
         [Fact]
         public void ChangedBillToCustomerDeriveDerivedIrpfRegime()
+        {
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+
+            var customer2 = this.InternalOrganisation.CreateB2BCustomer(this.Session.Faker());
+            customer2.IrpfRegime = new IrpfRegimes(this.Session).Assessable19;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer1).Build();
+            this.Session.Derive(false);
+
+            order.BillToCustomer = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, customer2.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedBillToCustomerIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
@@ -3199,7 +3239,7 @@ namespace Allors.Database.Domain.Tests
             var order = new SalesOrderBuilder(this.Session).Build();
             var store = new Stores(this.Session).Extent().First;
             store.RemoveSalesOrderNumberPrefix();
-            var number = store.SalesOrderCounter.Value;
+            var number = store.SalesOrderNumberCounter.Value;
 
             this.Session.Derive(false);
 
@@ -3210,7 +3250,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedStoreDeriveSortableOrderNumber()
         {
             var order = new SalesOrderBuilder(this.Session).Build();
-            var number = new Stores(this.Session).Extent().First.SalesOrderCounter.Value;
+            var number = new Stores(this.Session).Extent().First.SalesOrderNumberCounter.Value;
 
             this.Session.Derive(false);
 

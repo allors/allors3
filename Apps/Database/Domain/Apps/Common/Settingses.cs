@@ -36,10 +36,10 @@ namespace Allors.Database.Domain
             settings.PartNumberPrefix ??= "Part-";
             settings.PreferredCurrency ??= preferredCurrency;
 
-            settings.SkuCounter ??= new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            settings.SerialisedItemCounter ??= new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            settings.ProductNumberCounter ??= new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            settings.PartNumberCounter ??= new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+            settings.SkuCounter ??= new CounterBuilder(this.Session).Build();
+            settings.SerialisedItemCounter ??= new CounterBuilder(this.Session).Build();
+            settings.ProductNumberCounter ??= new CounterBuilder(this.Session).Build();
+            settings.PartNumberCounter ??= new CounterBuilder(this.Session).Build();
         }
     }
 }

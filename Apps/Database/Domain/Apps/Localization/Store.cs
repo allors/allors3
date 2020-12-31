@@ -6,64 +6,91 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class Store
     {
-        public string NextInvoiceNumber(int year)
+        public string NextSalesInvoiceNumber(int year)
         {
-            int salesInvoiceNumber;
             if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
             {
-                salesInvoiceNumber = this.SalesInvoiceCounter.NextValue();
+                return string.Concat(this.SalesInvoiceNumberPrefix, this.SalesInvoiceNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
-                var fiscalYearInvoiceNumbers = new FiscalYearInvoiceNumbers(this.Strategy.Session).Extent();
-                fiscalYearInvoiceNumbers.Filter.AddEquals(this.M.FiscalYearInvoiceNumber.FiscalYear, year);
-                var fiscalYearInvoiceNumber = fiscalYearInvoiceNumbers.First;
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
 
-                if (fiscalYearInvoiceNumber == null)
+                if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearInvoiceNumber = new FiscalYearInvoiceNumberBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
-                    this.AddFiscalYearInvoiceNumber(fiscalYearInvoiceNumber);
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
-                salesInvoiceNumber = fiscalYearInvoiceNumber.DeriveNextSalesInvoiceNumber();
+                return fiscalYearStoreSequenceNumbers.NextSalesInvoiceNumber(year);
             }
-
-            return string.Concat(this.SalesInvoiceNumberPrefix, salesInvoiceNumber).Replace("{year}", year.ToString());
         }
 
         public string NextCreditNoteNumber(int year)
         {
-            int creditNoteNumber;
             if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
             {
-                creditNoteNumber = this.CreditNoteCounter.NextValue();
+                return string.Concat(this.CreditNoteNumberPrefix, this.CreditNoteNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
-                var fiscalYearInvoiceNumbers = new FiscalYearInvoiceNumbers(this.Strategy.Session).Extent();
-                fiscalYearInvoiceNumbers.Filter.AddEquals(this.M.FiscalYearInvoiceNumber.FiscalYear, year);
-                var fiscalYearInvoiceNumber = fiscalYearInvoiceNumbers.First;
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
 
-                if (fiscalYearInvoiceNumber == null)
+                if (fiscalYearStoreSequenceNumbers == null)
                 {
-                    fiscalYearInvoiceNumber = new FiscalYearInvoiceNumberBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
-                    this.AddFiscalYearInvoiceNumber(fiscalYearInvoiceNumber);
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
-                creditNoteNumber = fiscalYearInvoiceNumber.DeriveNextCreditNoteNumber();
+                return fiscalYearStoreSequenceNumbers.NextCreditNoteNumber(year);
             }
+        }
 
-            return string.Concat(this.CreditNoteNumberPrefix, creditNoteNumber).Replace("{year}", year.ToString());
+        public string NextOutgoingShipmentNumber(int year)
+        {
+            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
+            {
+                return string.Concat(this.OutgoingShipmentNumberPrefix, this.OutgoingShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearStoreSequenceNumbers == null)
+                {
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
+                }
+
+                return fiscalYearStoreSequenceNumbers.NextOutgoingShipmentNumber(year);
+            }
+        }
+
+        public string NextSalesOrderNumber(int year)
+        {
+            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))
+            {
+                return string.Concat(this.SalesOrderNumberPrefix, this.SalesOrderNumberCounter.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearStoreSequenceNumbers == null)
+                {
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
+                }
+
+                return fiscalYearStoreSequenceNumbers.NextSalesOrderNumber(year);
+            }
         }
 
         public string NextTemporaryInvoiceNumber() => this.SalesInvoiceTemporaryCounter.NextValue().ToString();
-
-        public string NextShipmentNumber() => string.Concat(this.OutgoingShipmentNumberPrefix, this.OutgoingShipmentCounter.NextValue());
-
-        public string NextSalesOrderNumber(int year) => string.Concat(this.SalesOrderNumberPrefix, this.SalesOrderCounter.NextValue()).Replace("{year}", year.ToString());
 
         public void AppsOnBuild(ObjectOnBuild method)
         {
@@ -77,16 +104,6 @@ namespace Allors.Database.Domain
                 this.AutoGenerateShipmentPackage = true;
             }
 
-            if (!this.ExistSalesOrderCounter)
-            {
-                this.SalesOrderCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            }
-
-            if (!this.ExistOutgoingShipmentCounter)
-            {
-                this.OutgoingShipmentCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            }
-
             if (!this.ExistBillingProcess)
             {
                 this.BillingProcess = new BillingProcesses(this.Strategy.Session).BillingForShipmentItems;
@@ -95,11 +112,6 @@ namespace Allors.Database.Domain
             if (!this.ExistSalesInvoiceTemporaryCounter)
             {
                 this.SalesInvoiceTemporaryCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
-            }
-
-            if (!this.ExistCreditNoteCounter)
-            {
-                this.CreditNoteCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
             }
         }
     }

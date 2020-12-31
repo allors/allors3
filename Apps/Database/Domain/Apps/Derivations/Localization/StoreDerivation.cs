@@ -58,7 +58,30 @@ namespace Allors.Database.Domain
                     @this.DefaultFacility = @this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
                 }
 
-                validation.AssertExistsAtMostOne(@this, @this.M.Store.FiscalYearInvoiceNumbers, @this.M.Store.SalesInvoiceCounter);
+                if (@this.InternalOrganisation.InvoiceSequence != new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                {
+                    if (!@this.ExistSalesInvoiceNumberCounter)
+                    {
+                        @this.SalesInvoiceNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+
+                    if (!@this.ExistSalesOrderNumberCounter)
+                    {
+                        @this.SalesOrderNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+
+                    if (!@this.ExistOutgoingShipmentNumberCounter)
+                    {
+                        @this.OutgoingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+
+                    if (!@this.ExistCreditNoteNumberCounter)
+                    {
+                        @this.CreditNoteNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+                }
+
+                validation.AssertExistsAtMostOne(@this, @this.M.Store.FiscalYearsStoreSequenceNumbers, @this.M.Store.SalesInvoiceNumberCounter);
             }
         }
     }

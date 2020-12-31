@@ -71,7 +71,8 @@ namespace Allors.Database.Domain
             decimal? purchaseOrderApprovalThresholdLevel1,
             decimal? purchaseOrderApprovalThresholdLevel2,
             SerialisedItemSoldOn[] serialisedItemSoldOns,
-            bool collectiveWorkEffortInvoice)
+            bool collectiveWorkEffortInvoice,
+            InvoiceSequence invoiceSequence)
         {
             var m = session.Database.Context().M;
 
@@ -103,15 +104,10 @@ namespace Allors.Database.Domain
                 .WithTaxNumber(taxNumber)
                 .WithName(name)
                 .WithPreferredCurrency(new Currencies(session).FindBy(m.Currency.IsoCode, "EUR"))
-                .WithInvoiceSequence(new InvoiceSequences(session).EnforcedSequence)
+                .WithInvoiceSequence(invoiceSequence)
                 .WithFiscalYearStartMonth(01)
                 .WithFiscalYearStartDay(01)
                 .WithDoAccounting(false)
-                .WithRequestNumberPrefix(requestNumberPrefix)
-                .WithQuoteNumberPrefix(quoteNumberPrefix)
-                .WithWorkEffortPrefix(workEffortPrefix)
-                .WithPurchaseOrderNumberPrefix(purchaseOrderNumberPrefix)
-                .WithPurchaseInvoiceNumberPrefix(purchaseInvoiceNumberPrefix)
                 .WithPurchaseOrderNeedsApproval(purchaseOrderNeedsApproval)
                 .WithPurchaseOrderApprovalThresholdLevel1(purchaseOrderApprovalThresholdLevel1)
                 .WithPurchaseOrderApprovalThresholdLevel2(purchaseOrderApprovalThresholdLevel2)
@@ -122,14 +118,66 @@ namespace Allors.Database.Domain
 
             internalOrganisation.SerialisedItemSoldOns = serialisedItemSoldOns;
 
-            if (purchaseOrderCounterValue != null)
-            {
-                internalOrganisation.PurchaseOrderCounter = new CounterBuilder(session).WithValue(purchaseOrderCounterValue).Build();
-            }
 
-            if (purchaseInvoiceCounterValue != null)
+            if (invoiceSequence == new InvoiceSequences(session).RestartOnFiscalYear)
             {
-                internalOrganisation.PurchaseInvoiceCounter = new CounterBuilder(session).WithValue(purchaseInvoiceCounterValue).Build();
+                var sequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(session).WithFiscalYear(session.Now().Year).Build();
+
+                sequenceNumbers.RequestNumberPrefix = requestNumberPrefix;
+                sequenceNumbers.QuoteNumberPrefix = quoteNumberPrefix;
+                sequenceNumbers.WorkEffortNumberPrefix = workEffortPrefix;
+                sequenceNumbers.PurchaseOrderNumberPrefix = purchaseOrderNumberPrefix;
+                sequenceNumbers.PurchaseInvoiceNumberPrefix = purchaseInvoiceNumberPrefix;
+
+                if (purchaseOrderCounterValue != null)
+                {
+                    sequenceNumbers.PurchaseOrderNumberCounter = new CounterBuilder(session).WithValue(purchaseOrderCounterValue).Build();
+                }
+
+                if (purchaseInvoiceCounterValue != null)
+                {
+                    sequenceNumbers.PurchaseInvoiceNumberCounter = new CounterBuilder(session).WithValue(purchaseInvoiceCounterValue).Build();
+                }
+
+                if (requestCounterValue != null)
+                {
+                    sequenceNumbers.RequestNumberCounter = new CounterBuilder(session).WithValue(requestCounterValue).Build();
+                }
+
+                if (quoteCounterValue != null)
+                {
+                    sequenceNumbers.QuoteNumberCounter = new CounterBuilder(session).WithValue(quoteCounterValue).Build();
+                }
+
+                internalOrganisation.AddFiscalYearsInternalOrganisationSequenceNumber(sequenceNumbers);
+            }
+            else
+            {
+                internalOrganisation.RequestNumberPrefix = requestNumberPrefix;
+                internalOrganisation.QuoteNumberPrefix = quoteNumberPrefix;
+                internalOrganisation.WorkEffortNumberPrefix = workEffortPrefix;
+                internalOrganisation.PurchaseOrderNumberPrefix = purchaseOrderNumberPrefix;
+                internalOrganisation.PurchaseInvoiceNumberPrefix = purchaseInvoiceNumberPrefix;
+
+                if (purchaseOrderCounterValue != null)
+                {
+                    internalOrganisation.PurchaseOrderNumberCounter = new CounterBuilder(session).WithValue(purchaseOrderCounterValue).Build();
+                }
+
+                if (purchaseInvoiceCounterValue != null)
+                {
+                    internalOrganisation.PurchaseInvoiceNumberCounter = new CounterBuilder(session).WithValue(purchaseInvoiceCounterValue).Build();
+                }
+
+                if (requestCounterValue != null)
+                {
+                    internalOrganisation.RequestNumberCounter = new CounterBuilder(session).WithValue(requestCounterValue).Build();
+                }
+
+                if (quoteCounterValue != null)
+                {
+                    internalOrganisation.QuoteNumberCounter = new CounterBuilder(session).WithValue(quoteCounterValue).Build();
+                }
             }
 
             OwnBankAccount defaultCollectionMethod = null;
@@ -138,16 +186,6 @@ namespace Allors.Database.Domain
                 internalOrganisation.AddBankAccount(bankAccount);
                 defaultCollectionMethod = new OwnBankAccountBuilder(session).WithBankAccount(bankAccount).WithDescription("Huisbank").Build();
                 internalOrganisation.DefaultCollectionMethod = defaultCollectionMethod;
-            }
-
-            if (requestCounterValue != null)
-            {
-                internalOrganisation.RequestCounter = new CounterBuilder(session).WithValue(requestCounterValue).Build();
-            }
-
-            if (quoteCounterValue != null)
-            {
-                internalOrganisation.QuoteCounter = new CounterBuilder(session).WithValue(quoteCounterValue).Build();
             }
 
             if (!string.IsNullOrEmpty(emailAddress))
@@ -233,15 +271,10 @@ namespace Allors.Database.Domain
 
             var store = new StoreBuilder(session)
                 .WithName(storeName)
-                .WithOutgoingShipmentNumberPrefix(outgoingShipmentNumberPrefix)
-                .WithSalesInvoiceNumberPrefix(salesInvoiceNumberPrefix)
-                .WithSalesOrderNumberPrefix(salesOrderNumberPrefix)
                 .WithDefaultCollectionMethod(defaultCollectionMethod)
-                .WithCreditNoteNumberPrefix(creditNoteNumberPrefix)
                 .WithDefaultShipmentMethod(new ShipmentMethods(session).Ground)
                 .WithDefaultCarrier(new Carriers(session).Fedex)
                 .WithBillingProcess(billingProcess)
-                .WithSalesInvoiceCounter(new CounterBuilder(session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .WithIsImmediatelyPicked(isImmediatelyPicked)
                 .WithAutoGenerateShipmentPackage(autoGenerateShipmentPackage)
                 .WithIsImmediatelyPacked(isImmediatelyPacked)
@@ -265,14 +298,43 @@ namespace Allors.Database.Domain
                 store.DefaultFacility = facility;
             }
 
-            if (orderCounterValue != null)
+            if (invoiceSequence == new InvoiceSequences(session).RestartOnFiscalYear)
             {
-                store.SalesOrderCounter = new CounterBuilder(session).WithValue(orderCounterValue).Build();
-            }
+                var sequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(session).WithFiscalYear(session.Now().Year).Build();
 
-            if (invoiceCounterValue != null)
+                sequenceNumbers.CreditNoteNumberPrefix = creditNoteNumberPrefix;
+                sequenceNumbers.OutgoingShipmentNumberPrefix = outgoingShipmentNumberPrefix;
+                sequenceNumbers.SalesInvoiceNumberPrefix = salesInvoiceNumberPrefix;
+                sequenceNumbers.SalesOrderNumberPrefix = salesOrderNumberPrefix;
+
+                if (orderCounterValue != null)
+                {
+                    sequenceNumbers.SalesOrderNumberCounter = new CounterBuilder(session).WithValue(orderCounterValue).Build();
+                }
+
+                if (invoiceCounterValue != null)
+                {
+                    sequenceNumbers.SalesInvoiceNumberCounter = new CounterBuilder(session).WithValue(invoiceCounterValue).Build();
+                }
+
+                store.AddFiscalYearsStoreSequenceNumber(sequenceNumbers);
+            }
+            else
             {
-                store.SalesInvoiceCounter = new CounterBuilder(session).WithValue(invoiceCounterValue).Build();
+                store.CreditNoteNumberPrefix = creditNoteNumberPrefix;
+                store.OutgoingShipmentNumberPrefix = outgoingShipmentNumberPrefix;
+                store.SalesInvoiceNumberPrefix = salesInvoiceNumberPrefix;
+                store.SalesOrderNumberPrefix = salesOrderNumberPrefix;
+
+                if (orderCounterValue != null)
+                {
+                    store.SalesOrderNumberCounter = new CounterBuilder(session).WithValue(orderCounterValue).Build();
+                }
+
+                if (invoiceCounterValue != null)
+                {
+                    store.SalesInvoiceNumberCounter = new CounterBuilder(session).WithValue(invoiceCounterValue).Build();
+                }
             }
 
             return internalOrganisation;
