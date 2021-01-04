@@ -129,8 +129,6 @@ namespace Allors.Database.Domain
 
         public static string NextPurchaseInvoiceNumber(this InternalOrganisation @this, int year)
         {
-            var m = @this.Session().Database.Context().M;
-
             if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Session()).EnforcedSequence))
             {
                 return string.Concat(@this.PurchaseInvoiceNumberPrefix, @this.PurchaseInvoiceNumberCounter.NextValue()).Replace("{year}", year.ToString());
@@ -151,9 +149,7 @@ namespace Allors.Database.Domain
 
         public static string NextQuoteNumber(this InternalOrganisation @this, int year)
         {
-            var m = @this.Session().Database.Context().M;
-
-            if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Session()).EnforcedSequence))
+            if (@this.QuoteSequence.Equals(new QuoteSequences(@this.Session()).EnforcedSequence))
             {
                 return string.Concat(@this.QuoteNumberPrefix, @this.QuoteNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -173,9 +169,7 @@ namespace Allors.Database.Domain
 
         public static string NextRequestNumber(this InternalOrganisation @this, int year)
         {
-            var m = @this.Session().Database.Context().M;
-
-            if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Session()).EnforcedSequence))
+            if (@this.RequestSequence.Equals(new RequestSequences(@this.Session()).EnforcedSequence))
             {
                 return string.Concat(@this.RequestNumberPrefix, @this.RequestNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -195,9 +189,7 @@ namespace Allors.Database.Domain
 
         public static string NextShipmentNumber(this InternalOrganisation @this, int year)
         {
-            var m = @this.Session().Database.Context().M;
-
-            if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Session()).EnforcedSequence))
+            if (@this.PurchaseShipmentSequence.Equals(new PurchaseShipmentSequences(@this.Session()).EnforcedSequence))
             {
                 return string.Concat(@this.IncomingShipmentNumberPrefix, @this.IncomingShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
@@ -217,8 +209,6 @@ namespace Allors.Database.Domain
 
         public static string NextPurchaseOrderNumber(this InternalOrganisation @this, int year)
         {
-            var m = @this.Session().Database.Context().M;
-
             if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Session()).EnforcedSequence))
             {
                 return string.Concat(@this.PurchaseOrderNumberPrefix, @this.PurchaseOrderNumberCounter.NextValue()).Replace("{year}", year.ToString());
@@ -239,9 +229,7 @@ namespace Allors.Database.Domain
 
         public static string NextWorkEffortNumber(this InternalOrganisation @this, int year)
         {
-            var m = @this.Session().Database.Context().M;
-
-            if (@this.InvoiceSequence.Equals(new InvoiceSequences(@this.Session()).EnforcedSequence))
+            if (@this.WorkEffortSequence.Equals(new WorkEffortSequences(@this.Session()).EnforcedSequence))
             {
                 return string.Concat(@this.WorkEffortNumberPrefix, @this.WorkEffortNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }

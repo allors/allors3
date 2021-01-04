@@ -42,6 +42,31 @@ namespace Allors.Database.Domain
                         @this.InvoiceSequence = new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear;
                     }
 
+                    if (!@this.ExistRequestSequence)
+                    {
+                        @this.RequestSequence = new RequestSequences(@this.Strategy.Session).EnforcedSequence;
+                    }
+
+                    if (!@this.ExistQuoteSequence)
+                    {
+                        @this.QuoteSequence = new QuoteSequences(@this.Strategy.Session).EnforcedSequence;
+                    }
+
+                    if (!@this.ExistCustomerShipmentSequence)
+                    {
+                        @this.CustomerShipmentSequence = new CustomerShipmentSequences(@this.Strategy.Session).EnforcedSequence;
+                    }
+
+                    if (!@this.ExistPurchaseShipmentSequence)
+                    {
+                        @this.PurchaseShipmentSequence = new PurchaseShipmentSequences(@this.Strategy.Session).EnforcedSequence;
+                    }
+
+                    if (!@this.ExistWorkEffortSequence)
+                    {
+                        @this.WorkEffortSequence = new WorkEffortSequences(@this.Strategy.Session).EnforcedSequence;
+                    }
+
                     if (!@this.ExistFiscalYearStartMonth)
                     {
                         @this.FiscalYearStartMonth = 1;
@@ -59,29 +84,41 @@ namespace Allors.Database.Domain
                             @this.PurchaseInvoiceNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                         }
 
-                        if (!@this.ExistRequestNumberCounter)
-                        {
-                            @this.RequestNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
-                        }
-
-                        if (!@this.ExistQuoteNumberCounter)
-                        {
-                            @this.QuoteNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
-                        }
-
                         if (!@this.ExistPurchaseOrderNumberCounter)
                         {
                             @this.PurchaseOrderNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                         }
+                    }
 
-                        if (!@this.ExistIncomingShipmentNumberCounter)
+                    if (@this.RequestSequence != new RequestSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                    {
+                        if (!@this.ExistRequestNumberCounter)
                         {
-                            @this.IncomingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                            @this.RequestNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                         }
+                    }
 
+                    if (@this.QuoteSequence != new QuoteSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                    {
+                        if (!@this.ExistQuoteNumberCounter)
+                        {
+                            @this.QuoteNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
+                    }
+
+                    if (@this.WorkEffortSequence != new WorkEffortSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                    {
                         if (!@this.ExistWorkEffortNumberCounter)
                         {
                             @this.WorkEffortNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        }
+                    }
+
+                    if (@this.PurchaseShipmentSequence != new PurchaseShipmentSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                    {
+                        if (!@this.ExistIncomingShipmentNumberCounter)
+                        {
+                            @this.IncomingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                         }
                     }
                 }

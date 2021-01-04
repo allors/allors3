@@ -43,11 +43,8 @@ namespace Allors.Database.Domain
                     var year = @this.Session().Now().Year;
                     @this.WorkEffortNumber = @this.TakenBy.NextWorkEffortNumber(year);
 
-                    var fiscalYearsInternalOrganisationSequenceNumbers = new FiscalYearsInternalOrganisationSequenceNumbers(@this.Session()).Extent();
-                    fiscalYearsInternalOrganisationSequenceNumbers.Filter.AddEquals(M.FiscalYearInternalOrganisationSequenceNumbers.FiscalYear, year);
-                    var fiscalYearInternalOrganisationSequenceNumbers = fiscalYearsInternalOrganisationSequenceNumbers.First;
-
-                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? @this.TakenBy.WorkEffortNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.WorkEffortNumberPrefix;
+                    var fiscalYearInternalOrganisationSequenceNumbers = @this.TakenBy.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = @this.TakenBy.WorkEffortSequence.IsEnforcedSequence ? @this.TakenBy.WorkEffortNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.WorkEffortNumberPrefix;
                     @this.SortableWorkEffortNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.WorkEffortNumber, year.ToString());
                 }
 

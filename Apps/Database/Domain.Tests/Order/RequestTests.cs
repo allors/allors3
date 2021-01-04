@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithRequestNumberPrefix_WhenDeriving_ThenSortableRequestNumberIsSet()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.RequestSequence = new RequestSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.RequestNumberPrefix = "prefix-";
             this.Session.Derive();
 
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithParametrizedRequestNumberPrefix_WhenDeriving_ThenSortableRequestNumberIsSet()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.RequestSequence = new RequestSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.RequestNumberPrefix = "prefix-{year}-";
             this.Session.Derive();
 

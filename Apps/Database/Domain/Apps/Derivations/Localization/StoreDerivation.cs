@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
                     @this.DefaultFacility = @this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
                 }
 
-                if (@this.InternalOrganisation.InvoiceSequence != new InvoiceSequences(@this.Strategy.Session).RestartOnFiscalYear)
+                if (@this.InternalOrganisation.InvoiceSequence != new InvoiceSequences(@this.Session()).RestartOnFiscalYear)
                 {
                     if (!@this.ExistSalesInvoiceNumberCounter)
                     {
@@ -70,14 +70,18 @@ namespace Allors.Database.Domain
                         @this.SalesOrderNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                     }
 
-                    if (!@this.ExistOutgoingShipmentNumberCounter)
-                    {
-                        @this.OutgoingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
-                    }
-
                     if (!@this.ExistCreditNoteNumberCounter)
                     {
                         @this.CreditNoteNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+                }
+
+                if (@this.InternalOrganisation.CustomerShipmentSequence != new CustomerShipmentSequences(@this.Session()).RestartOnFiscalYear)
+                {
+
+                    if (!@this.ExistOutgoingShipmentNumberCounter)
+                    {
+                        @this.OutgoingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                     }
                 }
 

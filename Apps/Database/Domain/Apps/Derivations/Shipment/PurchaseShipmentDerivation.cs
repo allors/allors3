@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
                 var shipToParty = @this.ShipToParty as InternalOrganisation;
 
-                @this.ShipToAddress = @this.ShipToAddress ?? @this.ShipToParty?.ShippingAddress ?? @this.ShipToParty?.GeneralCorrespondence as PostalAddress;
+                @this.ShipToAddress ??= @this.ShipToParty?.ShippingAddress ?? @this.ShipToParty?.GeneralCorrespondence as PostalAddress;
 
                 if (!@this.ExistShipToFacility && shipToParty != null && shipToParty.StoresWhereInternalOrganisation.Count == 1)
                 {
@@ -40,11 +40,8 @@ namespace Allors.Database.Domain
                     var year = @this.Strategy.Session.Now().Year;
                     @this.ShipmentNumber = shipToParty.NextShipmentNumber(year);
 
-                    var fiscalYearsInternalOrganisationSequenceNumbers = new FiscalYearsInternalOrganisationSequenceNumbers(@this.Session()).Extent();
-                    fiscalYearsInternalOrganisationSequenceNumbers.Filter.AddEquals(M.FiscalYearInternalOrganisationSequenceNumbers.FiscalYear, year);
-                    var fiscalYearInternalOrganisationSequenceNumbers = fiscalYearsInternalOrganisationSequenceNumbers.First;
-
-                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? ((InternalOrganisation)@this.ShipToParty).IncomingShipmentNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.IncomingShipmentNumberPrefix;
+                    var fiscalYearInternalOrganisationSequenceNumbers = shipToParty.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = ((InternalOrganisation)@this.ShipToParty).CustomerShipmentSequence.IsEnforcedSequence ? ((InternalOrganisation)@this.ShipToParty).IncomingShipmentNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.IncomingShipmentNumberPrefix;
                     @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
 

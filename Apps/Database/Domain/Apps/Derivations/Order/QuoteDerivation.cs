@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                     @this.QuoteNumber = @this.Issuer.NextQuoteNumber(year);
 
                     var fiscalYearInternalOrganisationSequenceNumbers = @this.Issuer.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = fiscalYearInternalOrganisationSequenceNumbers == null ? @this.Issuer.QuoteNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.QuoteNumberPrefix;
+                    var prefix = @this.Issuer.QuoteSequence.IsEnforcedSequence ? @this.Issuer.QuoteNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.QuoteNumberPrefix;
                     @this.SortableQuoteNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.QuoteNumber, year.ToString());
                 }
 

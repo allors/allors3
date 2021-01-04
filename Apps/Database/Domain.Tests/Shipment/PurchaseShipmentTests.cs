@@ -89,7 +89,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseShipment_WhenGettingShipmentNumberWithFormat_ThenFormattedShipmentNumberShouldBeReturned()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
@@ -136,7 +136,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipToWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
             this.InternalOrganisation.IncomingShipmentNumberPrefix = "prefix-";
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();

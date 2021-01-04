@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                     @this.ShipmentNumber = @this.Store.NextOutgoingShipmentNumber(year);
 
                     var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = fiscalYearStoreSequenceNumbers == null ? @this.Store.OutgoingShipmentNumberPrefix : fiscalYearStoreSequenceNumbers.OutgoingShipmentNumberPrefix;
+                    var prefix = ((InternalOrganisation)@this.ShipFromParty).CustomerShipmentSequence.IsEnforcedSequence ? @this.Store.OutgoingShipmentNumberPrefix : fiscalYearStoreSequenceNumbers.OutgoingShipmentNumberPrefix;
                     @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
 

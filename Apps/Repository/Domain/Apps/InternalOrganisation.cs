@@ -64,6 +64,46 @@ namespace Allors.Repository
         InvoiceSequence InvoiceSequence { get; set; }
 
         #region Allors
+        [Id("63e05248-fb49-46c9-b7f1-98769fbfcc91")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        RequestSequence RequestSequence { get; set; }
+
+        #region Allors
+        [Id("5d7ea4f2-9b8b-4715-ada4-7e0489d4dee7")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        QuoteSequence QuoteSequence { get; set; }
+
+        #region Allors
+        [Id("ccbc587c-f01c-4bd8-805c-1491f8e41f23")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        CustomerShipmentSequence CustomerShipmentSequence { get; set; }
+
+        #region Allors
+        [Id("b04166d7-cd76-40cc-984b-edfe25630f02")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        PurchaseShipmentSequence PurchaseShipmentSequence { get; set; }
+
+        #region Allors
+        [Id("23bc3a20-aea2-4e05-b792-fdcf92def95b")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        WorkEffortSequence WorkEffortSequence { get; set; }
+
+        #region Allors
         [Id("44f165ed-a6ca-4979-9046-a0f7391bef7d")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]

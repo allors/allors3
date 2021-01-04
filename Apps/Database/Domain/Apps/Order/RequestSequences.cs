@@ -1,4 +1,4 @@
-// <copyright file="InvoiceSequences.cs" company="Allors bvba">
+// <copyright file="RequestSequences.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,18 +7,18 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class InvoiceSequences
+    public partial class RequestSequences
     {
-        public static readonly Guid EnforcedSequenceId = new Guid("54FF2FC1-9A4F-4d46-8BEA-866F4FBB448C");
-        public static readonly Guid RestartOnFiscalYearId = new Guid("2A2027B5-30D2-42a1-BE8B-FEF343C742D1");
+        public static readonly Guid EnforcedSequenceId = new Guid("053a8ea8-c384-49de-96ae-f7b5d76da514");
+        public static readonly Guid RestartOnFiscalYearId = new Guid("53bb4bfd-7092-4790-9c50-3d95e7460d70");
 
-        private UniquelyIdentifiableCache<InvoiceSequence> cache;
+        private UniquelyIdentifiableCache<RequestSequence> cache;
 
-        public InvoiceSequence EnforcedSequence => this.Cache[EnforcedSequenceId];
+        public RequestSequence EnforcedSequence => this.Cache[EnforcedSequenceId];
 
-        public InvoiceSequence RestartOnFiscalYear => this.Cache[RestartOnFiscalYearId];
+        public RequestSequence RestartOnFiscalYear => this.Cache[RestartOnFiscalYearId];
 
-        private UniquelyIdentifiableCache<InvoiceSequence> Cache => this.cache ??= new UniquelyIdentifiableCache<InvoiceSequence>(this.Session);
+        private UniquelyIdentifiableCache<RequestSequence> Cache => this.cache ??= new UniquelyIdentifiableCache<RequestSequence>(this.Session);
 
         protected override void AppsSetup(Setup setup)
         {
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
 
             merge(RestartOnFiscalYearId, v =>
             {
-                v.Name = "Restart each fiscal year (no gaps, reset to '1' each year";
+                v.Name = "Restart each fiscal year";
                 localisedName.Set(v, dutchLocale, "Herstart elk fiscaal jaar");
                 v.IsActive = true;
             });
