@@ -17,7 +17,10 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.CommunicationEvent.Owner),
-                new ChangedPattern(m.CommunicationEvent.ScheduledEnd),
+                new ChangedPattern(m.CommunicationEvent.ActualStart),
+                new ChangedPattern(m.CommunicationEvent.ActualEnd),
+                new ChangedPattern(m.CommunicationEvent.ScheduledStart),
+                new ChangedPattern(m.CommunicationEvent.ScheduledEnd)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -35,26 +38,23 @@ namespace Allors.Database.Domain
                 {
                     validation.AddError($"Actual end date before actual start date: {@this}");
                 }
-
-                if (!@this.ExistCommunicationEventState)
+                //TODO: Begin Run Asynchronously in the Background
+                if (!@this.ExistActualStart || (@this.ActualStart > @this.Strategy.Session.Now()))
                 {
-                    if (!@this.ExistActualStart || (@this.ExistActualStart && @this.ActualStart > @this.Strategy.Session.Now()))
-                    {
-                        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
-                    }
-
-                    if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Session.Now() &&
-                        ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Session.Now()) || !@this.ExistActualEnd))
-                    {
-                        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).InProgress;
-                    }
-
-                    if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Session.Now())
-                    {
-                        @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
-                    }
+                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Scheduled;
                 }
 
+                if (@this.ExistActualStart && @this.ActualStart <= @this.Strategy.Session.Now() &&
+                    ((@this.ExistActualEnd && @this.ActualEnd > @this.Strategy.Session.Now()) || !@this.ExistActualEnd))
+                {
+                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).InProgress;
+                }
+
+                if (@this.ExistActualEnd && @this.ActualEnd <= @this.Strategy.Session.Now())
+                {
+                    @this.CommunicationEventState = new CommunicationEventStates(@this.Strategy.Session).Completed;
+                }
+                // End Run Asynchronously in the Background
                 if (!@this.ExistInitialScheduledStart && @this.ExistScheduledStart)
                 {
                     @this.InitialScheduledStart = @this.ScheduledStart;

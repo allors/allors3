@@ -219,16 +219,63 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedScheduledEndScheduledStartThrowDerivationError()
+        public void OnChangedActualEndActualStartThrowDerivationError()
         {
             var employee = new Employments(this.Session).Extent().Select(v => v.Employee).First();
             this.Session.SetUser(employee);
 
-            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithScheduledStart(this.Session.Now()).WithScheduledEnd(this.Session.Now().AddHours(-1)).Build();
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithActualStart(this.Session.Now()).WithActualEnd(this.Session.Now().AddHours(-1)).Build();
 
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
-            Assert.Contains(errors, e => e.Message.StartsWith("Scheduled end date before scheduled start date"));
+            Assert.Contains(errors, e => e.Message.StartsWith("Actual end date before actual start date"));
         }
 
+        [Fact]
+        public void OnChangedActualStartDeriveCommunicationEventStateActual()
+        {
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            phoneComEvent.ActualStart = this.Session.Now().AddHours(1);
+            this.Session.Derive(false);
+
+            Assert.Equal(new CommunicationEventStates(this.Session).Scheduled, phoneComEvent.CommunicationEventState);
+        }
+
+        [Fact]
+        public void OnChangedActualStartDeriveCommunicationEventStateInProgress()
+        {
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            phoneComEvent.ActualStart = this.Session.Now().AddHours(-1);
+            this.Session.Derive(false);
+
+            Assert.Equal(new CommunicationEventStates(this.Session).InProgress, phoneComEvent.CommunicationEventState);
+        }
+
+        [Fact]
+        public void OnChangedActualEndDeriveCommunicationEventStateCompleted()
+        {
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithActualStart(this.Session.Now().AddHours(-2)).Build();
+            this.Session.Derive(false);
+
+            phoneComEvent.ActualEnd = this.Session.Now().AddHours(-1);
+            this.Session.Derive(false);
+
+            Assert.Equal(new CommunicationEventStates(this.Session).Completed, phoneComEvent.CommunicationEventState);
+        }
+
+        [Fact]
+        public void OnChangedActualEndDeriveCommunicationEventStateInProgress()
+        {
+            var phoneComEvent = new PhoneCommunicationBuilder(this.Session).WithActualStart(this.Session.Now().AddHours(-2)).Build();
+            this.Session.Derive(false);
+
+            phoneComEvent.ActualEnd = this.Session.Now().AddHours(1);
+            this.Session.Derive(false);
+
+            Assert.Equal(new CommunicationEventStates(this.Session).InProgress, phoneComEvent.CommunicationEventState);
+        }
     }
 }
