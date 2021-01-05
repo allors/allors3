@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.InternalOrganisation.DefaultCollectionMethod),
+                new ChangedPattern(this.M.InternalOrganisation.IsInternalOrganisation),
+                new ChangedPattern(this.M.InternalOrganisation.DoAccounting),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

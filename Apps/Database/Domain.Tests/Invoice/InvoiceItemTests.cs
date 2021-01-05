@@ -79,7 +79,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveOnChangedRolePurchaseTotalIncVat()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
             var invoiceItem = purchaseInvoice.InvoiceItems.First();
 
             Assert.False(this.Session.Derive(false).HasErrors);

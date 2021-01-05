@@ -44,7 +44,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Workspace(Default)]
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         PaymentMethod DefaultCollectionMethod { get; set; }
 
         #region Allors

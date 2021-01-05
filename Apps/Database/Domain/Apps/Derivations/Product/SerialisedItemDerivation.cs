@@ -20,6 +20,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.SerialisedItem.AcquiredDate),
+                new ChangedPattern(this.M.SerialisedItem.AssignedSuppliedBy),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

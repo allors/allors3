@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.TestPopulation
 
     public static partial class PurchaseInvoiceBuilderExtensions
     {
-        public static PurchaseInvoiceBuilder WithPurchaseInternalInvoiceDefaults(this PurchaseInvoiceBuilder @this, Organisation internalOrganisation)
+        public static PurchaseInvoiceBuilder WithInternalInvoiceDefaults(this PurchaseInvoiceBuilder @this, Organisation internalOrganisation)
         {
             var faker = @this.Session.Faker();
 
@@ -20,9 +20,6 @@ namespace Allors.Database.Domain.TestPopulation
             var otherInternalOrganization = internalOrganisations.Except(new List<Organisation> { internalOrganisation }).FirstOrDefault();
             var endCustomer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
 
-            var purchaseInvoiceItem_Defaullt = new PurchaseInvoiceItemBuilder(@this.Session).WithDefaults().Build();
-            var purchaseInvoiceItem_Product = new PurchaseInvoiceItemBuilder(@this.Session).WithProductItemDefaults().Build();
-            var purchaseInvoiceItem_Part = new PurchaseInvoiceItemBuilder(@this.Session).WithPartItemDefaults().Build();
             var purchaseInvoiceType = faker.Random.ListItem(@this.Session.Extent<PurchaseInvoiceType>());
 
             var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
@@ -47,22 +44,16 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithShipToCustomerContactPerson(otherInternalOrganization.CurrentContacts.FirstOrDefault());
             @this.WithPurchaseInvoiceType(purchaseInvoiceType);
             @this.WithAssignedBillToCustomerPaymentMethod(paymentMethod);
-            @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Defaullt).Build();
-            @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Product).Build();
-            @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Part).Build();
 
             return @this;
         }
 
-        public static PurchaseInvoiceBuilder WithPurchaseExternalB2BInvoiceDefaults(this PurchaseInvoiceBuilder @this, Organisation internalOrganisation)
+        public static PurchaseInvoiceBuilder WithExternalB2BInvoiceDefaults(this PurchaseInvoiceBuilder @this, Organisation internalOrganisation)
         {
             var faker = @this.Session.Faker();
 
             var supplier = internalOrganisation.ActiveSuppliers.Where(v => v.GetType().Name == typeof(Organisation).Name).FirstOrDefault();
 
-            var purchaseInvoiceItem_Defaullt = new PurchaseInvoiceItemBuilder(@this.Session).WithDefaults().Build();
-            var purchaseInvoiceItem_Product = new PurchaseInvoiceItemBuilder(@this.Session).WithProductItemDefaults().Build();
-            var purchaseInvoiceItem_Part = new PurchaseInvoiceItemBuilder(@this.Session).WithPartItemDefaults().Build();
             var purchaseInvoiceType = faker.Random.ListItem(@this.Session.Extent<PurchaseInvoiceType>());
 
             var paymentMethod = faker.Random.ListItem(@this.Session.Extent<PaymentMethod>());
@@ -78,9 +69,6 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithBilledToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
             @this.WithPurchaseInvoiceType(purchaseInvoiceType);
             @this.WithAssignedBillToCustomerPaymentMethod(paymentMethod);
-            @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Defaullt);
-            @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Product);
-            @this.WithPurchaseInvoiceItem(purchaseInvoiceItem_Part);
             @this.WithAssignedVatRegime(faker.Random.ListItem(@this.Session.Extent<VatRegime>()));
 
             return @this;

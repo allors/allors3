@@ -10,6 +10,8 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Resources;
     using Xunit;
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
 
     public class PurchaseInvoiceTests : DomainTest, IClassFixture<Fixture>
     {
@@ -43,13 +45,15 @@ namespace Allors.Database.Domain.Tests
         {
             var supplier2 = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
 
-            new PurchaseInvoiceBuilder(this.Session)
+            var invoice = new PurchaseInvoiceBuilder(this.Session)
                 .WithInvoiceNumber("1")
                 .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Session).PurchaseInvoice)
                 .WithBilledFrom(supplier2)
                 .Build();
 
-            Assert.Equal(ErrorMessages.PartyIsNotASupplier, this.Session.Derive(false).Errors[0].Message);
+            var expectedMessage = $"{invoice} { this.M.PurchaseInvoice.BilledFrom} { ErrorMessages.PartyIsNotASupplier}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
 
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier2).Build();
 
@@ -179,9 +183,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class PurchaseInvoiceCreatedDerivation : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceCreatedDerivation(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoiceCreatedDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
@@ -296,6 +300,168 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(invoice.DerivedCurrency, invoice.BilledTo.PreferredCurrency);
         }
+
+        [Fact]
+        public void ChangedOrderItemBillingInvoiceItemDerivePurchaseOrders()
+        {
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Session.Faker());
+            this.Session.Derive(false);
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session).Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            new OrderItemBillingBuilder(this.Session).WithOrderItem(purchaseOrder.PurchaseOrderItems[0]).WithInvoiceItem(invoiceItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(purchaseOrder, purchaseInvoice.PurchaseOrders);
+        }
+    }
+
+    public class PurchaseInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBilledToDeriveValidationError()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.BilledTo = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedMessage = $"{invoice} { this.M.PurchaseInvoice.BilledTo} { ErrorMessages.InternalOrganisationChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedBilledToDeriveInvoiceNumber()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistInvoiceNumber);
+        }
+
+        [Fact]
+        public void ChangedBilledToDeriveSortableInvoiceNumber()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(invoice.ExistSortableInvoiceNumber);
+        }
+
+        [Fact]
+        public void ChangedBilledFromDeriveValidationError()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            invoice.BilledFrom = new OrganisationBuilder(this.Session).Build();
+
+            var expectedMessage = $"{invoice} { this.M.PurchaseInvoice.BilledFrom} { ErrorMessages.PartyIsNotASupplier}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceItemPurchaseInvoiceItemStateCreatedDeriveValidInvoiceItems()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session).Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(invoiceItem, purchaseInvoice.ValidInvoiceItems);
+        }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceItemPurchaseInvoiceItemStateCancelledDeriveValidInvoiceItems()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session).Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoiceItem.CancelFromInvoice();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(invoiceItem, purchaseInvoice.ValidInvoiceItems);
+        }
+
+        [Fact]
+        public void ChangedPaymentApplicationInvoiceDeriveAmountPaid()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new PaymentApplicationBuilder(this.Session).WithInvoice(purchaseInvoice).WithAmountApplied(10).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(10, purchaseInvoice.AmountPaid);
+        }
+
+        [Fact]
+        public void ChangedPaymentApplicationInvoiceItemDeriveAmountPaid()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session).Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            new PaymentApplicationBuilder(this.Session).WithInvoiceItem(invoiceItem).WithAmountApplied(10).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(10, purchaseInvoice.AmountPaid);
+        }
+    }
+
+    public class PurchaseInvoiceStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceStateDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class PurchaseInvoiceAwaitingApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceAwaitingApprovalDerivationTests(Fixture fixture) : base(fixture) { }
+    }
+
+    public class PurchaseInvoiceSerialisedItemDerivation : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoiceSerialisedItemDerivation(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceStateDeriveSerialisedItemBuyer()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).PurchaseInvoiceConfirm);
+
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
+            this.Session.Derive(false);
+
+            purchaseInvoice.Confirm();
+            this.Session.Derive(false);
+
+            purchaseInvoice.Approve();
+            this.Session.Derive(false);
+
+            Assert.Equal(purchaseInvoice.BilledTo, purchaseInvoice.PurchaseInvoiceItems[0].SerialisedItem.Buyer);
+        }
+    }
+
+    public class PurchaseInvoicePriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseInvoicePriceDerivationTests(Fixture fixture) : base(fixture) { }
     }
 
     [Trait("Category", "Security")]
@@ -351,7 +517,6 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission deletePermission;
         private readonly Permission createSalesInvoicePermission;
 
-
         [Fact]
         public void OnChangedPurchaseInvoiceStateCreatedDeriveDeletePermission()
         {
@@ -359,6 +524,33 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive(false);
 
+            Assert.True(purchaseInvoice.PurchaseInvoiceState.IsCreated);
+            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateCancelledDeriveDeletePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            purchaseInvoice.Cancel();
+            this.Session.Derive(false);
+
+            Assert.True(purchaseInvoice.PurchaseInvoiceState.IsCancelled);
+            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseInvoiceStateRejectedDeriveDeletePermission()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            purchaseInvoice.Reject();
+            this.Session.Derive(false);
+
+            Assert.True(purchaseInvoice.PurchaseInvoiceState.IsRejected);
             Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
         }
 
@@ -381,7 +573,7 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).Build();
 
-            var salesInvoice = new SalesInvoiceBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
+            new SalesInvoiceBuilder(this.Session).WithPurchaseInvoice(purchaseInvoice).Build();
 
             this.Session.Derive(false);
 

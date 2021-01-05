@@ -470,11 +470,10 @@ namespace Allors.Database.Domain.Tests
                 .WithProductFeature(Colour)
                 .Build();
 
-            var validation = this.Session.Derive(false);
+            this.Session.Derive(false);
 
             Assert.Equal(1, basePrice.Price);
             Assert.Equal(organisation.PreferredCurrency, basePrice.Currency);
-            Assert.False(validation.HasErrors);
         }
     }
 }

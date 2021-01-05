@@ -64,6 +64,36 @@ namespace Allors.Database.Domain
                         singleton.CreateOpenDocumentTemplate<Print.WorkTaskModel.Model>("WorkTaskWorker.odt",
                             singleton.GetResourceBytes("Templates.WorkTaskWorker.odt"));
                 }
+
+                if (!@this.ExistInvoiceSequence)
+                {
+                    @this.InvoiceSequence = new InvoiceSequences(@this.Strategy.Session).EnforcedSequence;
+                }
+
+                if (!@this.ExistRequestSequence)
+                {
+                    @this.RequestSequence = new RequestSequences(@this.Strategy.Session).EnforcedSequence;
+                }
+
+                if (!@this.ExistQuoteSequence)
+                {
+                    @this.QuoteSequence = new QuoteSequences(@this.Strategy.Session).EnforcedSequence;
+                }
+
+                if (!@this.ExistCustomerShipmentSequence)
+                {
+                    @this.CustomerShipmentSequence = new CustomerShipmentSequences(@this.Strategy.Session).EnforcedSequence;
+                }
+
+                if (!@this.ExistPurchaseShipmentSequence)
+                {
+                    @this.PurchaseShipmentSequence = new PurchaseShipmentSequences(@this.Strategy.Session).EnforcedSequence;
+                }
+
+                if (!@this.ExistWorkEffortSequence)
+                {
+                    @this.WorkEffortSequence = new WorkEffortSequences(@this.Strategy.Session).EnforcedSequence;
+                }
             }
         }
 

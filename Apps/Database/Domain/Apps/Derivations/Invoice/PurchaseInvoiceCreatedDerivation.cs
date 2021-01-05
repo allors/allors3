@@ -20,9 +20,10 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.PurchaseInvoice.AssignedIrpfRegime),
                 new ChangedPattern(m.PurchaseInvoice.AssignedCurrency),
                 new ChangedPattern(m.PurchaseInvoice.BilledFrom),
-                new ChangedPattern(this.M.Party.VatRegime) { Steps = new IPropertyType[] { this.M.Party.PurchaseInvoicesWhereBilledFrom}},
-                new ChangedPattern(this.M.Party.IrpfRegime) { Steps = new IPropertyType[] { this.M.Party.PurchaseInvoicesWhereBilledFrom }},
-                new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.PurchaseInvoicesWhereBilledTo }},
+                new ChangedPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom}},
+                new ChangedPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.PurchaseInvoicesWhereBilledFrom }},
+                new ChangedPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.PurchaseInvoicesWhereBilledTo }},
+                new ChangedPattern(m.OrderItemBilling.InvoiceItem) { Steps = new IPropertyType[] { m.OrderItemBilling.InvoiceItem, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem }},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,6 +35,7 @@ namespace Allors.Database.Domain
                 @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.BilledFrom?.VatRegime;
                 @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? (@this.BilledFrom as Organisation)?.IrpfRegime;
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.BilledTo?.PreferredCurrency;
+                @this.PurchaseOrders = @this.InvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(v => v.OrderItem.OrderWhereValidOrderItem).ToArray();
             }
         }
     }

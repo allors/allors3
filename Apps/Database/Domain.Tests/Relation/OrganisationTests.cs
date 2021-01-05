@@ -114,9 +114,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var externalAccountingTransaction = new SalesAccountingTransactionBuilder(this.Session)
-                .WithFromParty(organisation).Build();
-
+            new SalesAccountingTransactionBuilder(this.Session).WithFromParty(organisation).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
@@ -303,10 +301,12 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationWithQuoteIssuerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Session)
-                .WithQuoteNumberCounter(new CounterBuilder(this.Session).Build()).Build();
+                .WithQuoteNumberCounter(new CounterBuilder(this.Session).Build())
+                .WithIsInternalOrganisation(true)
+                .Build();
             this.Session.Derive(false);
 
-            var quote = new ProposalBuilder(this.Session).WithIssuer(organisation).Build();
+            new ProposalBuilder(this.Session).WithIssuer(organisation).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
@@ -330,6 +330,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisation = new OrganisationBuilder(this.Session)
                 .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
+                .WithIsInternalOrganisation(true)
                 .Build();
             this.Session.Derive(false);
 
@@ -344,6 +345,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisation = new OrganisationBuilder(this.Session)
                 .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
+                .WithIsInternalOrganisation(true)
                 .Build();
             this.Session.Derive(false);
 
@@ -358,6 +360,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisation = new OrganisationBuilder(this.Session)
                 .WithPurchaseInvoiceNumberCounter(new CounterBuilder(this.Session).Build())
+                .WithIsInternalOrganisation(true)
                 .Build();
             this.Session.Derive(false);
 
@@ -438,10 +441,11 @@ namespace Allors.Database.Domain.Tests
         {
             var organisation = new OrganisationBuilder(this.Session)
                 .WithRequestNumberCounter(new CounterBuilder(this.Session).Build())
+                .WithIsInternalOrganisation(true)
                 .Build();
             this.Session.Derive(false);
 
-            var request = new RequestForQuoteBuilder(this.Session).WithRecipient(organisation).Build();
+            new RequestForQuoteBuilder(this.Session).WithRecipient(organisation).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);

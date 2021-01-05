@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveTitle()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveWorkItem()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveDateClosedExists()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 
@@ -60,7 +60,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveDateClosedNotExists()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveEmptyParticipants()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedPurchaseInvoiceApprovalDeriveParticipants()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 
@@ -102,7 +102,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseInvoiceApprovalDeriveParticipants()
         {
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithPurchaseExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
             this.Session.Derive(false);
 

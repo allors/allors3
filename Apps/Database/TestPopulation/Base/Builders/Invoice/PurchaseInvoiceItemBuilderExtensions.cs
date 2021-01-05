@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.TestPopulation
             return @this;
         }
 
-        public static PurchaseInvoiceItemBuilder WithProductItemDefaults(this PurchaseInvoiceItemBuilder @this)
+        public static PurchaseInvoiceItemBuilder WithSerialisedProductItemDefaults(this PurchaseInvoiceItemBuilder @this)
         {
             var m = @this.Session.Database.Context().M;
             var faker = @this.Session.Faker();

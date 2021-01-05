@@ -13,6 +13,11 @@ namespace Allors.Database.Domain
             {
                 this.CatScope = new Scopes(this.Strategy.Session).Public;
             }
+
+            if (!this.ExistCatalogueImage)
+            {
+                this.CatalogueImage = this.strategy.Session.GetSingleton().Settings.NoImageAvailableImage;
+            }
         }
     }
 }

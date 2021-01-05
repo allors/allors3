@@ -266,6 +266,19 @@ namespace Allors.Database.Domain.TestPopulation
             return purchaseOrder;
         }
 
+        /*
+         * Create Purchase Invoice with Serialized Purchase Invoice Item
+         */
+        public static PurchaseInvoice CreatePurchaseInvoiceWithSerializedItem(this Organisation @this)
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(@this.Session()).WithExternalB2BInvoiceDefaults(@this).Build();
+
+            var item = new PurchaseInvoiceItemBuilder(@this.Session()).WithSerialisedProductItemDefaults().Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(item);
+
+            return purchaseInvoice;
+        }
+
         public static SalesOrder CreateInternalSalesOrder(this Organisation @this, Faker faker)
         {
             var salesOrder = new SalesOrderBuilder(@this.Session()).WithOrganisationInternalDefaults(@this).Build();

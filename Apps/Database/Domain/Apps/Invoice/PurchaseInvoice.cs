@@ -66,8 +66,6 @@ namespace Allors.Database.Domain
 
         public void AppsOnInit(ObjectOnInit method)
         {
-            this.DerivedCurrency = this.BilledTo?.PreferredCurrency;
-
             var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
 
             if (!this.ExistBilledTo && internalOrganisations.Count() == 1)

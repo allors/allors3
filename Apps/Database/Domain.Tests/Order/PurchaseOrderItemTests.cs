@@ -965,7 +965,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedPurchaseOrderItemStateCreatedWithOrderItemBillingDeriveDeletePermission()
         {
-            //TODO Is order nodig?
             var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation).Build();
             this.Session.Derive(false);
 
@@ -974,7 +973,7 @@ namespace Allors.Database.Domain.Tests
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Session.Derive(false);
 
-            var orderItemBilling = new OrderItemBillingBuilder(this.Session).WithOrderItem(purchaseOrderItem).Build();
+            new OrderItemBillingBuilder(this.Session).WithOrderItem(purchaseOrderItem).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, purchaseOrderItem.DeniedPermissions);
