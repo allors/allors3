@@ -16,7 +16,10 @@ namespace Allors.Database.Domain
         public SupplierOfferingDerivation(M m) : base(m, new Guid("0927C224-0233-4211-BB4F-5F62506D9635")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.SupplierOffering.Currency),
+                new ChangedPattern(m.SupplierOffering.FromDate),
+                new ChangedPattern(m.SupplierOffering.ThroughDate),
+                new ChangedPattern(m.SupplierOffering.Price),
+                new ChangedPattern(m.SupplierOffering.Part),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -24,6 +27,16 @@ namespace Allors.Database.Domain
             var m = cycle.Session.Database.Context().M;
             foreach (var @this in matches.Cast<SupplierOffering>())
             {
+                foreach (var purchaseInvoice in @this.Supplier?.PurchaseInvoicesWhereBilledFrom.Where(v => v.ExistPurchaseInvoiceState && (v.PurchaseInvoiceState.IsCreated || v.PurchaseInvoiceState.IsRevising)))
+                {
+                    purchaseInvoice.DerivationTrigger = Guid.NewGuid();
+                }
+
+                foreach (var purchaseOrder in ((Organisation)@this.Supplier)?.PurchaseOrdersWhereTakenViaSupplier.Where(v => v.ExistPurchaseOrderState && v.PurchaseOrderState.IsCreated))
+                {
+                    purchaseOrder.DerivationTrigger = Guid.NewGuid();
+                }
+
                 if (!@this.ExistCurrency)
                 {
                     @this.Currency = @this.Session().GetSingleton().Settings.PreferredCurrency;

@@ -17,30 +17,33 @@ namespace Allors.Database.Domain
         public PurchaseInvoicePriceDerivation(M m) : base(m, new Guid("cde03f3a-9151-4bb7-a3a5-5bc238f3cc54")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.PurchaseInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
-                new ChangedPattern(this.M.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
+                new ChangedPattern(this.M.PurchaseInvoice.DerivationTrigger),
+                new ChangedPattern(this.M.PurchaseInvoice.ValidInvoiceItems),
+                new ChangedPattern(this.M.PurchaseInvoice.BilledFrom),
+                new ChangedPattern(this.M.PurchaseInvoice.OrderAdjustments),
+                new ChangedPattern(this.M.PurchaseInvoiceItem.Part) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
+                new ChangedPattern(this.M.PurchaseInvoiceItem.Quantity) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
+                new ChangedPattern(this.M.PurchaseInvoiceItem.AssignedUnitPrice) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
+                new ChangedPattern(this.M.PurchaseInvoiceItem.DiscountAdjustments) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
+                new ChangedPattern(this.M.PurchaseInvoiceItem.SurchargeAdjustments) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem } },
+                new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.DiscountAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.DiscountAdjustment.PriceableWhereDiscountAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.DiscountAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.SurchargeAdjustment.Percentage) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.SurchargeAdjustment.PriceableWhereSurchargeAdjustment, m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem}, OfType = m.PurchaseInvoice.Class },
+                new ChangedPattern(this.M.SurchargeAdjustment.Amount) { Steps =  new IPropertyType[] {m.OrderAdjustment.InvoiceWhereOrderAdjustment}, OfType = m.PurchaseInvoice.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<PurchaseInvoice>())
+            foreach (var @this in matches.Cast<PurchaseInvoice>().Where(v => v.ExistPurchaseInvoiceState && (v.PurchaseInvoiceState.IsCreated || v.PurchaseInvoiceState.IsRevising)))
             {
                 foreach (PurchaseInvoiceItem purchaseInvoiceItem in @this.ValidInvoiceItems)
                 {
-                    if (purchaseInvoiceItem.PurchaseInvoiceItemState.IsNotPaid
-                        && purchaseInvoiceItem.ExistSerialisedItem
-                        && purchaseInvoiceItem.InvoiceItemType.IsProductItem)
-                    {
-                        var serialisedItem = purchaseInvoiceItem.SerialisedItem;
-                        var deriveRoles = purchaseInvoiceItem.SerialisedItem;
-
-                        serialisedItem.RemoveAssignedPurchasePrice();
-                        deriveRoles.PurchasePrice = purchaseInvoiceItem.TotalExVat;
-                    }
-
-                    //purchaseInvoiceItem.AppsOnDerivePrices();
                     purchaseInvoiceItem.UnitBasePrice = 0;
                     purchaseInvoiceItem.UnitDiscount = 0;
                     purchaseInvoiceItem.UnitSurcharge = 0;
@@ -66,6 +69,20 @@ namespace Allors.Database.Domain
 
                         purchaseInvoiceItem.DerivedIrpfRegime = purchaseInvoiceItem.AssignedIrpfRegime ?? purchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem.DerivedIrpfRegime;
                         purchaseInvoiceItem.IrpfRate = purchaseInvoiceItem.DerivedIrpfRegime?.IrpfRate;
+
+                        foreach (OrderAdjustment orderAdjustment in purchaseInvoiceItem.DiscountAdjustments)
+                        {
+                            purchaseInvoiceItem.UnitDiscount += orderAdjustment.Percentage.HasValue ?
+                                Math.Round(purchaseInvoiceItem.UnitBasePrice * orderAdjustment.Percentage.Value / 100, 2) :
+                                orderAdjustment.Amount ?? 0;
+                        }
+
+                        foreach (OrderAdjustment orderAdjustment in purchaseInvoiceItem.SurchargeAdjustments)
+                        {
+                            purchaseInvoiceItem.UnitSurcharge += orderAdjustment.Percentage.HasValue ?
+                                Math.Round(purchaseInvoiceItem.UnitBasePrice * orderAdjustment.Percentage.Value / 100, 2) :
+                                orderAdjustment.Amount ?? 0;
+                        }
 
                         purchaseInvoiceItem.TotalBasePrice = purchaseInvoiceItem.UnitBasePrice * purchaseInvoiceItem.Quantity;
                         purchaseInvoiceItem.TotalDiscount = purchaseInvoiceItem.UnitDiscount * purchaseInvoiceItem.Quantity;
@@ -93,7 +110,7 @@ namespace Allors.Database.Domain
                 @this.TotalExtraCharge = 0;
                 @this.GrandTotal = 0;
 
-                foreach (PurchaseInvoiceItem item in @this.PurchaseInvoiceItems)
+                foreach (PurchaseInvoiceItem item in @this.ValidInvoiceItems)
                 {
                     @this.TotalBasePrice += item.TotalBasePrice;
                     @this.TotalSurcharge += item.TotalSurcharge;

@@ -25,12 +25,16 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoice>())
             {
-                if (@this.PurchaseInvoiceState.IsNotPaid
-                    || @this.PurchaseInvoiceState.IsPartiallyPaid
-                    || @this.PurchaseInvoiceState.IsPaid)
+                if (@this.PurchaseInvoiceState.IsNotPaid)
                 {
                     foreach (PurchaseInvoiceItem invoiceItem in @this.ValidInvoiceItems)
                     {
+                        if (invoiceItem.ExistSerialisedItem)
+                        {
+                            invoiceItem.SerialisedItem.RemoveAssignedPurchasePrice();
+                            invoiceItem.SerialisedItem.PurchasePrice = invoiceItem.TotalExVat;
+                        }
+
                         if (invoiceItem.ExistSerialisedItem
                             && @this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Session()).PurchaseInvoiceConfirm))
                         {

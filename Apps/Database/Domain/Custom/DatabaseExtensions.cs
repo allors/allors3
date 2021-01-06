@@ -47,6 +47,7 @@ namespace Allors.Database.Domain
                 new StoreDerivation(m),
                 new PurchaseInvoiceDeniedPermissionDerivation(m),
                 new PurchaseInvoiceItemDerivation(m),
+                new PurchaseInvoiceItemStateDerivation(m),
                 new PurchaseInvoiceItemDeniedPermissionDerivation(m),
                 new PurchaseOrderDeniedPermissionDerivation(m),
                 new PurchaseOrderItemDeniedPermissionDerivation(m),

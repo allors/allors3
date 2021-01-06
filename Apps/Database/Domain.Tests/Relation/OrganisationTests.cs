@@ -349,7 +349,10 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Session.Derive(false);
 
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithBilledFrom(organisation).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithBilledTo(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            purchaseInvoice.BilledFrom = organisation;
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);

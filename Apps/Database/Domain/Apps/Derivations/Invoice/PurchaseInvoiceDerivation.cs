@@ -19,7 +19,6 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(m.PurchaseInvoice.BilledTo),
                 new ChangedPattern(m.PurchaseInvoice.BilledFrom),
-                new ChangedPattern(m.PurchaseInvoice.BilledFrom),
                 new ChangedPattern(m.PurchaseInvoice.PurchaseInvoiceItems),
                 new ChangedPattern(this.M.PurchaseInvoiceItem.PurchaseInvoiceItemState) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
                 new ChangedPattern(this.M.PurchaseInvoiceItem.AmountPaid) { Steps =  new IPropertyType[] {m.PurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem} },
@@ -57,21 +56,18 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var validInvoiceItems = @this.PurchaseInvoiceItems.Where(v => v.IsValid).ToArray();
-                @this.ValidInvoiceItems = validInvoiceItems;
+                @this.ValidInvoiceItems = @this.PurchaseInvoiceItems.Where(v => v.IsValid).ToArray();
 
                 @this.AmountPaid = @this.PaymentApplicationsWhereInvoice.Sum(v => v.AmountApplied);
 
                 //// Perhaps payments are recorded at the item level.
                 if (@this.AmountPaid == 0)
                 {
-                    @this.AmountPaid = @this.InvoiceItems.Sum(v => v.AmountPaid);
+                    @this.AmountPaid = @this.ValidInvoiceItems.Sum(v => v.AmountPaid);
                 }
 
                 //DeriveWorkflow
                 @this.WorkItemDescription = $"PurchaseInvoice: {@this.InvoiceNumber} [{@this.BilledFrom?.PartyName}]";
-
-                var singleton = @this.Session().GetSingleton();
 
                 @this.AddSecurityToken(new SecurityTokens(@this.Session()).DefaultSecurityToken);
 

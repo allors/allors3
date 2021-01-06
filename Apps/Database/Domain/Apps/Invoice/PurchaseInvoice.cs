@@ -201,10 +201,6 @@ namespace Allors.Database.Domain
         public void AppsRevise(PurchaseInvoiceRevise method)
         {
             this.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Strategy.Session).Revising;
-            foreach (PurchaseInvoiceItem purchaseInvoiceItem in this.ValidInvoiceItems)
-            {
-                purchaseInvoiceItem.Revise();
-            }
         }
 
         public void AppsFinishRevising(PurchaseInvoiceFinishRevising method)
