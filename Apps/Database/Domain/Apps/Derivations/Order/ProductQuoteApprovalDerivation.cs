@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
                 @this.WorkItem = @this.ProductQuote;
 
                 // Lifecycle
-                if (!@this.ExistDateClosed && !@this.ProductQuote.QuoteState.IsCreated)
+                if (!@this.ExistDateClosed && !@this.ProductQuote.QuoteState.IsAwaitingApproval)
                 {
                     @this.DateClosed = @this.Session().Now();
                 }

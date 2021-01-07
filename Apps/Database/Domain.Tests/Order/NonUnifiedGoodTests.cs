@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Tests
     using Xunit;
 
     [Trait("Category", "Security")]
-    public class NonUnifiedGoodSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class NonUnifiedGoodDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedGoodSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.NonUnifiedGood.ObjectType, this.M.NonUnifiedGood.Delete);
+        public NonUnifiedGoodDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.NonUnifiedGood.ObjectType, this.M.NonUnifiedGood.Delete);
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var deployment = new DeploymentBuilder(this.Session).WithProductOffering(nonUnifiedGood).Build();
+            new DeploymentBuilder(this.Session).WithProductOffering(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -56,7 +56,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var GoodOrderItem = new GoodOrderItemBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
+            new GoodOrderItemBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
             this.Session.Derive(false);
             
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Session).WithDefaultCostUnit(nonUnifiedGood).Build();
+            new GeneralLedgerAccountBuilder(this.Session).WithDefaultCostUnit(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -99,7 +99,7 @@ namespace Allors.Database.Domain.Tests
                 .WithUnitBasePrice(1)
                 .WithAssignedUnitPrice(1)
                 .Build();
-            var quotes = new ProductQuoteBuilder(this.Session).WithQuoteItem(quoteItem).Build();
+            new ProductQuoteBuilder(this.Session).WithQuoteItem(quoteItem).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -112,7 +112,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             var shipmentItem = new ShipmentItemBuilder(this.Session).WithGood(nonUnifiedGood).Build();
-            var shipment = new PurchaseShipmentBuilder(this.Session).WithShipmentItem(shipmentItem).Build();
+            new PurchaseShipmentBuilder(this.Session).WithShipmentItem(shipmentItem).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -124,7 +124,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var workEffortGoodStandard = new WorkEffortGoodStandardBuilder(this.Session).WithUnifiedProduct(nonUnifiedGood).Build();
+            new WorkEffortGoodStandardBuilder(this.Session).WithUnifiedProduct(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -136,7 +136,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var marketingPackage = new MarketingPackageBuilder(this.Session).WithProductsUsedIn(nonUnifiedGood).Build();
+            new MarketingPackageBuilder(this.Session).WithProductsUsedIn(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -148,7 +148,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var marketingPackage = new MarketingPackageBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
+            new MarketingPackageBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -160,7 +160,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
+            new OrganisationGlAccountBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -172,7 +172,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var productConfiguration = new ProductConfigurationBuilder(this.Session).WithProductsUsedIn(nonUnifiedGood).Build();
+            new ProductConfigurationBuilder(this.Session).WithProductsUsedIn(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -184,7 +184,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var productConfiguration = new ProductConfigurationBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
+            new ProductConfigurationBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -210,7 +210,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
+            new SalesInvoiceItemBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
@@ -219,12 +219,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedNonUnifiedGoodWithSalesOrderItemsWhereProductDeriveDeletePermission()
         {
-            var salesOrder = new SalesOrderBuilder(this.Session).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var product = salesOrder.SalesOrderItems.Where(v => v.Product.GetType().Name == typeof(NonUnifiedGood).Name).Select(v => v.Product).First();
+            new SalesOrderItemBuilder(this.Session).WithProduct(nonUnifiedGood).Build();
+            this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, product.DeniedPermissions);
+            Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
 
         [Fact]
@@ -233,7 +234,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var workEffortType = new WorkEffortTypeBuilder(this.Session).WithProductToProduce(nonUnifiedGood).Build();
+            new WorkEffortTypeBuilder(this.Session).WithProductToProduce(nonUnifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);

@@ -16,6 +16,7 @@ namespace Allors.Database.Domain
         public NonUnifiedGoodDeniedPermissionDerivation(M m) : base(m, new Guid("af1b5c08-9903-4d80-ad7c-d8588e324e3d")) =>
             this.Patterns = new Pattern[]
         {
+            new ChangedPattern(this.M.NonUnifiedGood.Part),
             new ChangedPattern(this.M.Deployment.ProductOffering) { Steps = new IPropertyType[] {m.Deployment.ProductOffering }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.GoodOrderItem.Product) { Steps = new IPropertyType[] {m.GoodOrderItem.Product }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.GeneralLedgerAccount.CostUnitsAllowed) { Steps = new IPropertyType[] {m.GeneralLedgerAccount.CostUnitsAllowed }, OfType = m.NonUnifiedGood.Class },

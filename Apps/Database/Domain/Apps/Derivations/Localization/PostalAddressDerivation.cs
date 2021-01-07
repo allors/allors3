@@ -18,6 +18,10 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.PostalAddress.Locality),
+                new ChangedPattern(m.PostalAddress.Region),
+                new ChangedPattern(m.PostalAddress.PostalCode),
+                new ChangedPattern(m.PostalAddress.Country),
+                new ChangedPattern(m.PostalAddress.PostalAddressBoundaries),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

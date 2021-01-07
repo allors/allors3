@@ -34,4 +34,45 @@ namespace Allors.Database.Domain.Tests
             Assert.False(this.Session.Derive(false).HasErrors);
         }
     }
+
+    public class CountryDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CountryDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedIsoCodeDeriveEuMemberState()
+        {
+            var country = new CountryBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            country.IsoCode = "NL";
+            this.Session.Derive(false);
+
+            Assert.True(country.EuMemberState);
+        }
+
+        [Fact]
+        public void ChangedIsoCodeDeriveIbanLength()
+        {
+            var country = new CountryBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            country.IsoCode = "NL";
+            this.Session.Derive(false);
+
+            Assert.Equal(18, country.IbanLength);
+        }
+
+        [Fact]
+        public void ChangedIsoCodeDeriveIbanRegex()
+        {
+            var country = new CountryBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            country.IsoCode = "NL";
+            this.Session.Derive(false);
+
+            Assert.Equal(@"[A-Z]{4}\d{10}", country.IbanRegex);
+        }
+    }
 }

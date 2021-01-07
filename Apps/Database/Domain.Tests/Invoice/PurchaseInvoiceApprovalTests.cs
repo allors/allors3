@@ -10,7 +10,6 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    [Trait("Category", "Approval")]
     public class PurchaseInvoiceApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
     {
         public PurchaseInvoiceApprovalDerivationTests(Fixture fixture) : base(fixture) {}

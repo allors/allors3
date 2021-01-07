@@ -48,4 +48,55 @@ namespace Allors.Database.Domain.Tests
             Assert.False(this.Session.Derive(false).HasErrors);
         }
     }
+
+    public class EngagementDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public EngagementDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBillToPartyDeriveBillToContactMechanism()
+        {
+            var billToParty = this.InternalOrganisation.ActiveCustomers[0];
+
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new PostalAddressBuilder(this.Session).Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Session).BillingAddress)
+                .Build();
+
+            billToParty.AddPartyContactMechanism(partyContactMechanism);
+            this.Session.Derive(false);
+
+            var engagement = new EngagementBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            engagement.BillToParty = billToParty;
+            this.Session.Derive(false);
+
+            Assert.Equal(partyContactMechanism.ContactMechanism, engagement.BillToContactMechanism);
+        }
+
+        [Fact]
+        public void ChangedPlacingPartyDerivePlacingContactMechanism()
+        {
+            var placingParty = this.InternalOrganisation.ActiveCustomers[0];
+
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new PostalAddressBuilder(this.Session).Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Session).OrderAddress)
+                .Build();
+
+            placingParty.AddPartyContactMechanism(partyContactMechanism);
+            this.Session.Derive(false);
+
+            var engagement = new EngagementBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            engagement.PlacingParty = placingParty;
+            this.Session.Derive(false);
+
+            Assert.Equal(partyContactMechanism.ContactMechanism, engagement.PlacingContactMechanism);
+        }
+    }
 }

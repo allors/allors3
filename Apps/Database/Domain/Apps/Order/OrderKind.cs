@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class OrderKind
     {
-        public void BaseOnBuild(ObjectOnBuild method)
+        public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistScheduleManually)
             {
