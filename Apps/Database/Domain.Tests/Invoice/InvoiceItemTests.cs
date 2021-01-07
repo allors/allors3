@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.Tests
         { }
 
         [Fact]
-        public void DeriveOnChangedRolePaymentApplicationAmountApplied()
+        public void ChangedPaymentApplicationAmountAppliedThrowValidationError()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
@@ -54,7 +54,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void DeriveOnChangedRoleSalesTotalIncVat()
+        public void ChangedSalesInvoiceItemTotalIncVatThrowValidationError()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void DeriveOnChangedRolePurchaseTotalIncVat()
+        public void ChangedPurchaseInvoiceItemTotalIncVatThrowValidationError()
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
             var invoiceItem = purchaseInvoice.InvoiceItems.First();

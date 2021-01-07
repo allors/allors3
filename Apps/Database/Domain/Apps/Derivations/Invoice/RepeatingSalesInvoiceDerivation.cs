@@ -18,7 +18,9 @@ namespace Allors.Database.Domain
         public RepeatingSalesInvoiceDerivation(M m) : base(m, new Guid("BEC1F9FD-71CF-4B74-BF40-CDA30AB4C3FB")) =>
             this.Patterns = new[]
             {
-                new ChangedPattern(this.M.RepeatingSalesInvoice.Frequency)
+                new ChangedPattern(m.RepeatingSalesInvoice.Frequency),
+                new ChangedPattern(m.RepeatingSalesInvoice.DayOfWeek),
+                new ChangedPattern(m.RepeatingSalesInvoice.NextExecutionDate)
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -44,7 +46,9 @@ namespace Allors.Database.Domain
                         validation.AssertNotExists(@this, this.M.RepeatingSalesInvoice.DayOfWeek);
                     }
 
-                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week) && @this.ExistDayOfWeek && @this.ExistNextExecutionDate)
+                    if (@this.Frequency.Equals(new TimeFrequencies(@this.Strategy.Session).Week)
+                        && @this.ExistDayOfWeek
+                        && @this.ExistNextExecutionDate)
                     {
                         if (!@this.NextExecutionDate.DayOfWeek.ToString().Equals(@this.DayOfWeek.Name))
                         {

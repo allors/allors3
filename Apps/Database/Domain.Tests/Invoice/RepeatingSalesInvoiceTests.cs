@@ -10,6 +10,7 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class RepeatingSalesInvoiceTests : DomainTest, IClassFixture<Fixture>
@@ -241,11 +242,10 @@ namespace Allors.Database.Domain.Tests
             Assert.False(this.Session.Derive(false).HasErrors);
 
             repeatingInvoice.NextExecutionDate = repeatingInvoice.NextExecutionDate.AddDays(1);
-            var validation = this.Session.Derive(false);
 
-            Assert.True(validation.HasErrors);
-            Assert.Single(validation.Errors);
-            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, validation.Errors.First().RoleTypes);
+            var expectedMessage = $"{repeatingInvoice} { this.M.RepeatingSalesInvoice.DayOfWeek} { ErrorMessages.DateDayOfWeek}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
@@ -526,6 +526,68 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.PreviousExecutionDate.Value.Date);
             Assert.Equal(4, repeatingInvoice.SalesInvoices.Count);
+        }
+    }
+
+    public class RepeatingSalesInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public RepeatingSalesInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedFrequencyThrowValidationError()
+        {
+            var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
+                .WithFrequency(new TimeFrequencies(this.Session).Hour)
+                .Build();
+
+            var expectedMessage = $"{repeatingInvoice} { this.M.RepeatingSalesInvoice.Frequency} { ErrorMessages.FrequencyNotSupported}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedDayOfWeekThrowValidationErrorAssertExistsDayOfWeek()
+        {
+            var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
+                .WithFrequency(new TimeFrequencies(this.Session).Week)
+                .WithDayOfWeek(new DaysOfWeek(this.Session).Monday)
+                .Build();
+            this.Session.Derive(false);
+
+            repeatingInvoice.RemoveDayOfWeek();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: RepeatingSalesInvoice.DayOfWeek"));
+        }
+
+        [Fact]
+        public void ChangedDayOfWeekThrowValidationErrorAssertnotExistsDayOfWeek()
+        {
+            var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
+                .WithFrequency(new TimeFrequencies(this.Session).Month)
+                .Build();
+            this.Session.Derive(false);
+
+            repeatingInvoice.DayOfWeek = new DaysOfWeek(this.Session).Monday;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertNotExists: RepeatingSalesInvoice.DayOfWeek"));
+        }
+
+        [Fact]
+        public void ChangedNextExecutionDateThrowValidationError()
+        {
+            var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Session)
+                .WithFrequency(new TimeFrequencies(this.Session).Week)
+                .WithDayOfWeek(new DaysOfWeek(this.Session).Monday)
+                .Build();
+            this.Session.Derive(false);
+
+            repeatingInvoice.NextExecutionDate = new DateTime(2021, 01, 06, 12, 0, 0, DateTimeKind.Utc);
+
+            var expectedMessage = $"{repeatingInvoice} { this.M.RepeatingSalesInvoice.DayOfWeek} { ErrorMessages.DateDayOfWeek}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }
