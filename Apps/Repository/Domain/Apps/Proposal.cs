@@ -130,6 +130,8 @@ namespace Allors.Repository
 
         public int SortableQuoteNumber { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Versioning

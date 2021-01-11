@@ -379,6 +379,13 @@ namespace Allors.Repository
         public Media[] ElectronicDocuments { get; set; }
 
         #region Allors
+        [Id("24343b2e-6b55-421a-b5b4-ac9b8fb76a8f")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public Guid DerivationTrigger { get; set; }
+
+        #region Allors
 
         [Id("8C858157-B9BC-4E2C-97BC-646066532854")]
 

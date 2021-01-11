@@ -28,9 +28,10 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<QuoteItem>())
             {
-                if (@this.InvoiceItemType.IsPartItem
-            || @this.InvoiceItemType.IsProductFeatureItem
-            || @this.InvoiceItemType.IsProductItem)
+                if (@this.ExistInvoiceItemType
+                    && (@this.InvoiceItemType.IsPartItem
+                        || @this.InvoiceItemType.IsProductFeatureItem
+                        || @this.InvoiceItemType.IsProductItem))
                 {
                     validation.AssertAtLeastOne(@this, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
                     validation.AssertExistsAtMostOne(@this, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);

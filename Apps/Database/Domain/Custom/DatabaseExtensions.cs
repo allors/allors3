@@ -104,6 +104,8 @@ namespace Allors.Database.Domain
                 new ProductQuoteApprovalDerivation(m),
                 new ProductQuoteApprovalParticipantsDerivation(m),
                 new ProductQuoteDerivation(m),
+                new ProductQuotePriceDerivation(m),
+                new ProductQuoteAwaitingApprovalDerivation(m),
                 new EngagementDerivation(m),
                 new QuoteDerivation(m),
                 new QuoteCreatedDerivation(m),

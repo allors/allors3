@@ -7,6 +7,8 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Resources;
+    using TestPopulation;
     using Xunit;
 
     public class QuoteTests : DomainTest, IClassFixture<Fixture>
@@ -175,10 +177,116 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    [Trait("Category", "Security")]
-    public class ProductQuoteSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class ProductQuoteDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProductQuoteSecurityTests(Fixture fixture) : base(fixture)
+        public ProductQuoteDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedIssuerThrowValidationError()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            quote.Issuer = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedError = $"{quote} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}";
+            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+        }
+
+        [Fact]
+        public void ChangedQuoteItemsDeriveValidQuoteItems()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(quoteItem, quote.ValidQuoteItems);
+        }
+
+        [Fact]
+        public void ChangedQuoteItemQuoteItemStateDeriveValidQuoteItems()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.Cancel();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(quoteItem, quote.ValidQuoteItems);
+        }
+
+        [Fact]
+        public void ChangedIssuerDeriveWorkItemDescription()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var expected = $"ProductQuote: {quote.QuoteNumber} [{quote.Issuer?.PartyName}]";
+            Assert.Equal(expected, quote.WorkItemDescription);
+        }
+
+        [Fact]
+        public void ChangedQuoteItemsDeriveQuoteItemSyncedQuote()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.SyncedQuote, quote);
+        }
+    }
+
+    public class ProductQuoteAwaitingApprovalDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProductQuoteAwaitingApprovalDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedQuoteStateCreateApprovalTask()
+        {
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
+            this.Session.Derive(false);
+
+            quote.QuoteState = new QuoteStates(this.Session).AwaitingApproval;
+            this.Session.Derive(false);
+
+            Assert.True(quote.ExistProductQuoteApprovalsWhereProductQuote);
+        }
+    }
+
+    public class ProductQuotePriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProductQuotePriceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnChangedValidQuoteItemsCalculatePrice()
+        {
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
+            this.Session.Derive();
+
+            Assert.True(quote.TotalIncVat > 0);
+            var totalIncVatBefore = quote.TotalIncVat;
+
+            quote.QuoteItems.First.Cancel();
+            this.Session.Derive();
+
+            Assert.Equal(quote.TotalIncVat, totalIncVatBefore - quote.QuoteItems.First.TotalIncVat);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class ProductQuoteDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProductQuoteDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Session).Get(this.M.ProductQuote.ObjectType, this.M.ProductQuote.Delete);
             this.setReadyPermission = new Permissions(this.Session).Get(this.M.ProductQuote.ObjectType, this.M.ProductQuote.SetReadyForProcessing);
@@ -189,12 +297,10 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission deletePermission;
         private readonly Permission setReadyPermission;
 
-
         [Fact]
         public void OnChangedProductQuoteQuoteItemStateCreatedDeriveSetReadyPermission()
         {
             var productQuote = new ProductQuoteBuilder(this.Session).Build();
-
             this.Session.Derive(false);
 
             var quoteItem = new QuoteItemBuilder(this.Session)
@@ -212,7 +318,6 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductQuoteWithoutQuoteItemStateCreatedDeriveSetReadyPermission()
         {
             var productQuote = new ProductQuoteBuilder(this.Session).Build();
-
             this.Session.Derive(false);
 
             Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
@@ -221,14 +326,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedProductQuoteStateNotCreatedDeriveSetReadyPermission()
         {
-            var productQuote = new ProductQuoteBuilder(this.Session).Build();
-
+            var productQuote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
             this.Session.Derive(false);
 
             productQuote.Send();
-
             this.Session.Derive(false);
 
+            Assert.True(productQuote.QuoteState.IsAwaitingAcceptance);
             Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
         }
 
@@ -306,9 +410,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class ProposalSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class ProposalDeniedPermissionDerivationTestsTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
+        public ProposalDeniedPermissionDerivationTestsTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
