@@ -47,8 +47,6 @@ namespace Allors.Repository
 
         public ContactMechanism FullfillContactMechanism { get; set; }
 
-        public QuoteItemByProduct[] QuoteItemsByProduct { get; set; }
-
         public VatRegime AssignedVatRegime { get; set; }
 
         public VatClause AssignedVatClause { get; set; }
@@ -136,6 +134,14 @@ namespace Allors.Repository
         public Guid DerivationTrigger { get; set; }
 
         #endregion
+
+        #region Allors
+        [Id("b5bf7d21-d81c-48d6-8c17-f7ddf447444b")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Derived]
+        [Indexed]
+        public ProductQuoteItemByProduct[] ProductQuoteItemsByProduct { get; set; }
 
         #region Allors
         [Id("8D92571B-AABE-45EC-A2BB-93219B3E8C12")]

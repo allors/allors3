@@ -138,14 +138,6 @@ namespace Allors.Repository
         ContactMechanism FullfillContactMechanism { get; set; }
 
         #region Allors
-        [Id("b5bf7d21-d81c-48d6-8c17-f7ddf447444b")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Derived]
-        [Indexed]
-        public QuoteItemByProduct[] QuoteItemsByProduct { get; set; }
-
-        #region Allors
         [Id("37D046B8-3804-4912-9B53-C98D66A67BC0")]
         #endregion
         [Workspace(Default)]

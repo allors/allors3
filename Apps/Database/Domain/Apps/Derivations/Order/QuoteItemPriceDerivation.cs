@@ -33,9 +33,9 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.Quote.Receiver) { Steps =  new IPropertyType[] {m.Quote.QuoteItems } },
                 new ChangedPattern(this.M.Quote.IssueDate) { Steps =  new IPropertyType[] {m.Quote.QuoteItems } },
                 new ChangedPattern(this.M.Quote.DerivationTrigger) { Steps =  new IPropertyType[] {m.Quote.QuoteItems } },
-                new ChangedPattern(this.M.QuoteItemByProduct.Product) { Steps =  new IPropertyType[] {m.QuoteItemByProduct.QuoteWhereQuoteItemsByProduct, m.Quote.QuoteItems } },
-                new ChangedPattern(this.M.QuoteItemByProduct.QuantityOrdered) { Steps =  new IPropertyType[] {m.QuoteItemByProduct.QuoteWhereQuoteItemsByProduct, m.Quote.QuoteItems } },
-                new ChangedPattern(this.M.QuoteItemByProduct.ValueOrdered) { Steps =  new IPropertyType[] {m.QuoteItemByProduct.QuoteWhereQuoteItemsByProduct, m.Quote.QuoteItems } },
+                new ChangedPattern(this.M.ProductQuoteItemByProduct.Product) { Steps =  new IPropertyType[] {m.ProductQuoteItemByProduct.ProductQuoteWhereProductQuoteItemsByProduct, m.Quote.QuoteItems } },
+                new ChangedPattern(this.M.ProductQuoteItemByProduct.QuantityOrdered) { Steps =  new IPropertyType[] {m.ProductQuoteItemByProduct.ProductQuoteWhereProductQuoteItemsByProduct, m.Quote.QuoteItems } },
+                new ChangedPattern(this.M.ProductQuoteItemByProduct.ValueOrdered) { Steps =  new IPropertyType[] {m.ProductQuoteItemByProduct.ProductQuoteWhereProductQuoteItemsByProduct, m.Quote.QuoteItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
 
                 if (quote != null)
                 {
-                    var itemByProduct = quote.QuoteItemsByProduct.FirstOrDefault(v => @this.ExistProduct && v.Product.Equals(@this.Product));
+                    var itemByProduct = ((ProductQuote)quote).ProductQuoteItemsByProduct.FirstOrDefault(v => @this.ExistProduct && v.Product.Equals(@this.Product));
 
                     var quantityOrdered = itemByProduct != null ? itemByProduct.QuantityOrdered : 0;
                     var valueOrdered = itemByProduct != null ? itemByProduct.ValueOrdered : 0;
@@ -151,7 +151,12 @@ namespace Allors.Database.Domain
                     @this.UnitIrpf = @this.ExistIrpfRate ? @this.UnitPrice * @this.IrpfRate.Rate / 100 : 0;
 
                     // Calculate Totals
-                    @this.TotalBasePrice = @this.UnitBasePrice * @this.Quantity;
+                    var totalBasePrice = @this.UnitBasePrice * @this.Quantity;
+                    if (@this.TotalBasePrice != totalBasePrice)
+                    {
+                        @this.TotalBasePrice = totalBasePrice;
+                    }
+
                     @this.TotalDiscount = @this.UnitDiscount * @this.Quantity;
                     @this.TotalSurcharge = @this.UnitSurcharge * @this.Quantity;
                     @this.TotalPriceAdjustment = @this.TotalSurcharge - @this.TotalDiscount;

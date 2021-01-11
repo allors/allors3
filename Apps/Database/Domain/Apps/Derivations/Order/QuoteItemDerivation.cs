@@ -25,9 +25,13 @@ namespace Allors.Database.Domain
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
+            var session = cycle.Session;
 
             foreach (var @this in matches.Cast<QuoteItem>())
             {
+                var quote = @this.QuoteWhereQuoteItem;
+                var productQuote = (ProductQuote)@this.QuoteWhereQuoteItem;
+
                 if (@this.ExistInvoiceItemType
                     && (@this.InvoiceItemType.IsPartItem
                         || @this.InvoiceItemType.IsProductFeatureItem
@@ -62,38 +66,45 @@ namespace Allors.Database.Domain
                     @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
                 }
 
-                @this.UnitVat = @this.ExistVatRate ? @this.UnitPrice * @this.VatRate.Rate / 100 : 0;
+                //@this.UnitVat = @this.ExistVatRate ? @this.UnitPrice * @this.VatRate.Rate / 100 : 0;
 
-                // Calculate Totals
-                @this.TotalBasePrice = @this.UnitBasePrice * @this.Quantity;
-                @this.TotalDiscount = @this.UnitDiscount * @this.Quantity;
-                @this.TotalSurcharge = @this.UnitSurcharge * @this.Quantity;
+                //// Calculate Totals
+                //@this.TotalBasePrice = @this.UnitBasePrice * @this.Quantity;
+                //@this.TotalDiscount = @this.UnitDiscount * @this.Quantity;
+                //@this.TotalSurcharge = @this.UnitSurcharge * @this.Quantity;
 
-                if (@this.TotalBasePrice > 0)
+                //if (@this.TotalBasePrice > 0)
+                //{
+                //    @this.TotalDiscountAsPercentage = Math.Round(@this.TotalDiscount / @this.TotalBasePrice * 100, 2);
+                //    @this.TotalSurchargeAsPercentage = Math.Round(@this.TotalSurcharge / @this.TotalBasePrice * 100, 2);
+                //}
+                //else
+                //{
+                //    @this.TotalDiscountAsPercentage = 0;
+                //    @this.TotalSurchargeAsPercentage = 0;
+                //}
+
+                //@this.TotalExVat = @this.UnitPrice * @this.Quantity;
+                //@this.TotalVat = @this.UnitVat * @this.Quantity;
+                //@this.TotalIncVat = @this.TotalExVat + @this.TotalVat;
+
+                //// CurrentVersion is Previous Version until PostDerive
+                //var previousSerialisedItem = @this.CurrentVersion?.SerialisedItem;
+                //if (previousSerialisedItem != null && !Equals(previousSerialisedItem, @this.SerialisedItem))
+                //{
+                //    previousSerialisedItem.DerivationTrigger = Guid.NewGuid();
+                //}
+
+                //if (!@this.ExistUnitPrice)
+                //{
+                //    validation.AddError($"{@this} {@this.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
+                //}
+
+                if (productQuote != null
+                    && @this.ExistProduct
+                    && !productQuote.ProductQuoteItemsByProduct.Any(v => v.Product.Equals(@this.Product)))
                 {
-                    @this.TotalDiscountAsPercentage = Math.Round(@this.TotalDiscount / @this.TotalBasePrice * 100, 2);
-                    @this.TotalSurchargeAsPercentage = Math.Round(@this.TotalSurcharge / @this.TotalBasePrice * 100, 2);
-                }
-                else
-                {
-                    @this.TotalDiscountAsPercentage = 0;
-                    @this.TotalSurchargeAsPercentage = 0;
-                }
-
-                @this.TotalExVat = @this.UnitPrice * @this.Quantity;
-                @this.TotalVat = @this.UnitVat * @this.Quantity;
-                @this.TotalIncVat = @this.TotalExVat + @this.TotalVat;
-
-                // CurrentVersion is Previous Version until PostDerive
-                var previousSerialisedItem = @this.CurrentVersion?.SerialisedItem;
-                if (previousSerialisedItem != null && !Equals(previousSerialisedItem, @this.SerialisedItem))
-                {
-                    previousSerialisedItem.DerivationTrigger = Guid.NewGuid();
-                }
-
-                if (!@this.ExistUnitPrice)
-                {
-                    validation.AddError($"{@this} {@this.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
+                    productQuote.AddProductQuoteItemsByProduct(new ProductQuoteItemByProductBuilder(session).WithProduct(@this.Product).Build());
                 }
             }
         }

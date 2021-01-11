@@ -35,8 +35,6 @@ namespace Allors.Repository
 
         public ContactMechanism FullfillContactMechanism { get; set; }
 
-        public QuoteItemByProduct[] QuoteItemsByProduct { get; set; }
-
         public VatRegime AssignedVatRegime { get; set; }
 
         public VatRegime DerivedVatRegime { get; set; }
@@ -96,6 +94,14 @@ namespace Allors.Repository
         public InternalOrganisation Issuer { get; set; }
 
         #endregion
+
+        #region Allors
+        [Id("7bae28f2-efb9-4377-91e8-5a1afc128aa2")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Derived]
+        [Indexed]
+        public ProductQuoteItemByProduct[] ProductQuoteItemsByProduct { get; set; }
 
         #region inherited methods
 

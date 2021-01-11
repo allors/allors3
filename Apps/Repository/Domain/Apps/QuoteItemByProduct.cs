@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("686515dc-1325-465a-b704-69d128675279")]
     #endregion
-    public partial class QuoteItemByProduct : Object
+    public partial class ProductQuoteItemByProduct : Object
     {
         #region inherited properties
 
