@@ -34,6 +34,8 @@ namespace Allors.Repository
 
         public ContactMechanism FullfillContactMechanism { get; set; }
 
+        public QuoteItemByProduct[] QuoteItemsByProduct { get; set; }
+
         public VatRegime AssignedVatRegime { get; set; }
 
         public VatRegime DerivedVatRegime { get; set; }

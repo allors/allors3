@@ -39,6 +39,11 @@ namespace Allors.Database.Domain
                 {
                     salesOrder.DerivationTrigger = Guid.NewGuid();
                 }
+
+                foreach (var quote in (@this.PricedBy as InternalOrganisation)?.QuotesWhereIssuer.Where(v => v.ExistQuoteState && v.QuoteState.IsCreated))
+                {
+                    quote.DerivationTrigger = Guid.NewGuid();
+                }
             }
         }
     }

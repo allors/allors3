@@ -72,7 +72,7 @@ namespace Allors.Database.Domain
                             new PriceComponents.IsApplicable
                             {
                                 PriceComponent = v,
-                                Customer = salesOrder?.BillToCustomer,
+                                Customer = salesOrder.BillToCustomer,
                                 Product = @this.Product,
                                 SalesOrder = salesOrder,
                                 QuantityOrdered = quantityOrdered,

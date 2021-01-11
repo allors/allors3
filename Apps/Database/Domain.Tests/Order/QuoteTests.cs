@@ -6,7 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
     using Resources;
     using TestPopulation;
     using Xunit;
@@ -280,6 +282,35 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(quote.TotalIncVat, totalIncVatBefore - quote.QuoteItems.First.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var basePrice = new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+
+            var expectedMessage = $"{quoteItem}, {this.M.QuoteItem.UnitBasePrice} No BasePrice with a Price";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+
+            Assert.Equal(0, quote.TotalIncVat);
+
+            basePrice.FromDate = this.Session.Now().AddMinutes(-1);
+            this.Session.Derive(false);
+
+            Assert.Equal(basePrice.Price, quote.TotalIncVat);
         }
     }
 
