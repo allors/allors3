@@ -147,13 +147,14 @@ namespace Allors.Database.Domain.Tests
             invoice.Confirm();
             this.Session.Derive();
 
-            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), invoice.InvoiceNumber.Split('-').Last())), invoice.SortableInvoiceNumber);
+            var number = int.Parse(invoice.InvoiceNumber.Split('-').Last()).ToString("000000");
+            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), number)), invoice.SortableInvoiceNumber);
         }
     }
 
-    public class PurchaseInvoiceBuildDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseInvoiceOnBuildTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseInvoiceBuildDerivationTests(Fixture fixture) : base(fixture) { }
+        public PurchaseInvoiceOnBuildTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DerivePurchaseInvoiceState()

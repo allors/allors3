@@ -19,13 +19,14 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.Quote.Issuer),
                 new ChangedPattern(m.Quote.Receiver),
                 new ChangedPattern(m.Quote.Locale),
+                new ChangedPattern(m.Quote.AssignedVatRegime),
+                new ChangedPattern(m.Quote.AssignedIrpfRegime),
                 new ChangedPattern(m.Quote.AssignedCurrency),
-                new ChangedPattern(m.Quote.QuoteItems),
-                new ChangedPattern(m.QuoteItem.AssignedVatRegime) { Steps = new IPropertyType[] { m.QuoteItem.QuoteWhereQuoteItem }},
-                new ChangedPattern(m.QuoteItem.AssignedIrpfRegime) { Steps = new IPropertyType[] { m.QuoteItem.QuoteWhereQuoteItem }},
-                new ChangedPattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
                 new ChangedPattern(m.Organisation.Locale) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereIssuer }},
+                new ChangedPattern(m.Party.Locale) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
                 new ChangedPattern(m.Party.PreferredCurrency) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new ChangedPattern(m.Party.VatRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
+                new ChangedPattern(m.Party.IrpfRegime) { Steps = new IPropertyType[] { m.Party.QuotesWhereReceiver }},
                 new ChangedPattern(m.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { m.Organisation.QuotesWhereReceiver }},
             };
 
@@ -34,20 +35,9 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Quote>().Where(v => v.QuoteState.IsCreated))
             {
                 @this.DerivedLocale = @this.Locale ?? @this.Receiver?.Locale ?? @this.Issuer?.Locale;
-                @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Receiver?.PreferredCurrency ?? @this.Issuer?.PreferredCurrency;
+                @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Receiver?.PreferredCurrency ?? @this.Receiver?.Locale?.Country?.Currency ?? @this.Issuer?.PreferredCurrency;
                 @this.DerivedVatRegime = @this.AssignedVatRegime ?? @this.Receiver?.VatRegime;
                 @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? @this.Receiver?.IrpfRegime;
-
-                foreach (QuoteItem quoteItem in @this.QuoteItems)
-                {
-                    var quoteItemDerivedRoles = quoteItem;
-
-                    quoteItemDerivedRoles.DerivedVatRegime = quoteItem.AssignedVatRegime ?? @this.DerivedVatRegime;
-                    quoteItemDerivedRoles.VatRate = quoteItem.DerivedVatRegime?.VatRate;
-
-                    quoteItemDerivedRoles.DerivedIrpfRegime = quoteItem.AssignedIrpfRegime ?? @this.DerivedIrpfRegime;
-                    quoteItemDerivedRoles.IrpfRate = quoteItem.DerivedIrpfRegime?.IrpfRate;
-                }
             }
         }
     }

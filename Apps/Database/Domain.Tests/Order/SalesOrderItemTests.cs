@@ -1242,9 +1242,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderItemBuildDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderItemOnBuildTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderItemBuildDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderItemOnBuildTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeriveSalesOrderItemState()

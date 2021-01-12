@@ -19,7 +19,14 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.QuoteItem.InvoiceItemType),
-                new ChangedPattern(this.M.Quote.QuoteItems) { Steps = new IPropertyType[] {m.Quote.QuoteItems } },
+                new ChangedPattern(this.M.QuoteItem.Product),
+                new ChangedPattern(this.M.QuoteItem.ProductFeature),
+                new ChangedPattern(this.M.QuoteItem.Deliverable),
+                new ChangedPattern(this.M.QuoteItem.WorkEffort),
+                new ChangedPattern(this.M.QuoteItem.SerialisedItem),
+                new ChangedPattern(this.M.QuoteItem.Quantity),
+                new ChangedPattern(this.M.QuoteItem.RequestItem),
+                new ChangedPattern(this.M.QuoteItem.UnitOfMeasure),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -43,17 +50,15 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    @this.Quantity = 1;
+                    if (@this.Quantity != 1)
+                    {
+                        @this.Quantity = 1;
+                    }
                 }
 
                 if (@this.ExistSerialisedItem && @this.Quantity != 1)
                 {
                     validation.AddError($"{@this} {@this.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
-                }
-
-                if (cycle.ChangeSet.IsCreated(@this) && !@this.ExistDetails)
-                {
-                    @this.DeriveDetails();
                 }
 
                 if (@this.ExistRequestItem)

@@ -99,6 +99,8 @@ namespace Allors.Database.Domain
                 new SerialisedItemDerivation(m),
                 new SerialisedItemDeniedPermissionDerivation(m),
                 new QuoteItemDerivation(m),
+                new QuoteItemCreatedDerivation(m),
+                new QuoteItemDetailsDerivation(m),
                 new QuoteItemPriceDerivation(m),
                 new PurchaseOrderApprovalLevel1Derivation(m),
                 new ProposalDerivation(m),

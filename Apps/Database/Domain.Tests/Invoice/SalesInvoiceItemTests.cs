@@ -1968,9 +1968,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceItemBuildDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceItemOnBuildTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemBuildDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceItemOnBuildTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeriveSalesInvoiceItemState()

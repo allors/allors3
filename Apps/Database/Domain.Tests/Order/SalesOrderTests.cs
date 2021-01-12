@@ -1456,7 +1456,8 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), order.OrderNumber.Split('-').Last())), order.SortableOrderNumber);
+            var number = int.Parse(order.OrderNumber.Split('-').Last()).ToString("000000");
+            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), number)), order.SortableOrderNumber);
         }
 
         [Fact]
@@ -2410,9 +2411,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesOrderBuildDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesOrderOnBuildTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesOrderBuildDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesOrderOnBuildTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeriveSalesOrderState()
@@ -2682,14 +2683,13 @@ namespace Allors.Database.Domain.Tests
                 .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
 
-            var order = new SalesOrderBuilder(this.Session).Build();
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+
+            var order = new SalesOrderBuilder(this.Session).WithBillToCustomer(customer).Build();
             this.Session.Derive(false);
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.RemovePreferredCurrency();
             customer.Locale = newLocale;
-
-            order.BillToCustomer = customer;
             this.Session.Derive(false);
 
             Assert.Equal(order.DerivedCurrency, se.Currency);

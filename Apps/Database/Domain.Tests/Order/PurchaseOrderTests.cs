@@ -220,7 +220,8 @@ namespace Allors.Database.Domain.Tests
             order.SetReadyForProcessing();
             this.Session.Derive();
 
-            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), order.OrderNumber.Split('-').Last())), order.SortableOrderNumber);
+            var number = int.Parse(order.OrderNumber.Split('-').Last()).ToString("000000");
+            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), number)), order.SortableOrderNumber);
         }
 
         [Fact]

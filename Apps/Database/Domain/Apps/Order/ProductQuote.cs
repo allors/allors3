@@ -10,8 +10,6 @@ namespace Allors.Database.Domain
 
     public partial class ProductQuote
     {
-        
-
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[]{
             new TransitionalConfiguration(this.M.ProductQuote, this.M.ProductQuote.QuoteState),

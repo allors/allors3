@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
+    using Resources;
     using TestPopulation;
     using Xunit;
 
@@ -19,13 +20,339 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSerialisedItem_WhenDerived_ThenSerialisedItemAvailabilityIsChanged()
         {
-            var quote = new ProductQuoteBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Session.Faker());
 
             this.Session.Derive();
 
             var serialisedItem = quote.QuoteItems.First().SerialisedItem;
 
             Assert.True(serialisedItem.OnQuote);
+        }
+    }
+
+    public class QuoteItemCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public QuoteItemCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithAssignedVatRegime(new VatRegimes(this.Session).Assessable10).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.DerivedVatRegime, quoteItem.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedVatRegimeDeriveDerivedVatRegime()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quote.AssignedVatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.DerivedVatRegime, quote.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedDerivedVatRegimeDeriveVatRate()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quote.AssignedVatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.VatRate, quote.AssignedVatRegime.VatRate);
+        }
+
+        [Fact]
+        public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithAssignedIrpfRegime(new IrpfRegimes(this.Session).Assessable15).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.DerivedIrpfRegime, quoteItem.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedsalesOrderDerivedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quote.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.DerivedIrpfRegime, quote.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedDerivedIrpfRegimeDeriveIrpfRate()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quote.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.IrpfRate, quote.AssignedIrpfRegime.IrpfRate);
+        }
+
+    }
+
+    public class QuoteItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public QuoteItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedInvoiceItemTypeThrowValidationError()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.InvoiceItemType = new InvoiceItemTypes(this.Session).ProductItem;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedProductThrowValidationError()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var productFeature = new ColourBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithProductFeature(productFeature)
+                .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.Product = product;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedProductFeatureThrowValidationError()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var productFeature = new ColourBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithProduct(product)
+                .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.ProductFeature = productFeature;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedDeliverableThrowValidationError()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var deliverable = new DeliverableBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithProduct(product)
+                .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.Deliverable = deliverable;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedWorkEffortThrowValidationError()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithProduct(product)
+                .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.WorkEffort = workTask;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.Product\nQuoteItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemThrowValidationError()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithWorkEffort(workTask)
+                .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.SerialisedItem = serialisedItem;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: QuoteItem.SerialisedItem\nQuoteItem.ProductFeature"));
+        }
+
+        [Fact]
+        public void ChangedQuantityThrowValidationError()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.Quantity = 2;
+
+            var expectedMessage = $"{quoteItem} { this.M.QuoteItem.Quantity} { ErrorMessages.SerializedItemQuantity}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
+        }
+
+        [Fact]
+        public void ChangedRequestItemDeriveRequiredByDate()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var requestItem = new RequestItemBuilder(this.Session).WithRequiredByDate(this.Session.Now().Date).Build();
+            request.AddRequestItem(requestItem);
+            this.Session.Derive(false);
+
+            quoteItem.RequestItem = requestItem;
+            this.Session.Derive(false);
+
+            Assert.Equal(this.Session.Now().Date, quoteItem.RequiredByDate);
+        }
+
+        [Fact]
+        public void ChangedUnitOfMeasureDeriveUnitOfMeasure()
+        {
+            var uom = new UnitsOfMeasure(this.Session).SquareMeter;
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithUnitOfMeasure(uom).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.RemoveUnitOfMeasure();
+            this.Session.Derive(false);
+
+            Assert.Equal(new UnitsOfMeasure(this.Session).Piece, quoteItem.UnitOfMeasure);
+        }
+    }
+
+    public class QuoteItemDetailsDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public QuoteItemDetailsDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSerialisedItemDeriveDetails()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithSerialisedItem(serialisedItem).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.True(quoteItem.ExistDetails);
+        }
+
+        [Fact]
+        public void ChangedProductDeriveDetails()
+        {
+            var product = new UnifiedGoodBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.True(quoteItem.ExistDetails);
         }
     }
 
@@ -476,9 +803,9 @@ namespace Allors.Database.Domain.Tests
     }
 
     [Trait("Category", "Security")]
-    public class QuoteItemDeniedPermissonDerivationSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class QuoteItemDeniedPermissonDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemDeniedPermissonDerivationSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.QuoteItem.ObjectType, this.M.QuoteItem.Delete);
+        public QuoteItemDeniedPermissonDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.QuoteItem.ObjectType, this.M.QuoteItem.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

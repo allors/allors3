@@ -64,7 +64,7 @@ namespace Allors.Database.Domain
                     }
                     else if (@this.ExistProductFeature)
                     {
-                        quoteItemPriceComponents = @this.ProductFeature?.GetPriceComponents(@this.QuoteItemWhereQuotedWithFeature.Product, quotePriceComponents);
+                        quoteItemPriceComponents = @this.ProductFeature?.GetPriceComponents(@this.QuoteItemWhereQuotedWithFeature?.Product, quotePriceComponents);
                     }
 
                     var priceComponents = quoteItemPriceComponents.Where(

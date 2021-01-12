@@ -291,7 +291,8 @@ namespace Allors.Database.Domain.Tests
             invoice.Send();
             this.Session.Derive();
 
-            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), invoice.InvoiceNumber.Split('-').Last())), invoice.SortableInvoiceNumber);
+            var number = int.Parse(invoice.InvoiceNumber.Split('-').Last()).ToString("000000");
+            Assert.Equal(int.Parse(string.Concat(this.Session.Now().Date.Year.ToString(), number)), invoice.SortableInvoiceNumber);
         }
 
         [Fact]
@@ -1090,9 +1091,9 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SalesInvoiceBuildDerivationTests : DomainTest, IClassFixture<Fixture>
+    public class SalesInvoiceOnBuildTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceBuildDerivationTests(Fixture fixture) : base(fixture) { }
+        public SalesInvoiceOnBuildTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void DeriveSalesOrderState()
