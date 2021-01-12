@@ -48,8 +48,10 @@ namespace Allors.Database.Domain
             {
                 if (prefix.Contains("{year}"))
                 {
+                    var number = int.Parse(identification.Substring(prefix.Length - 2)).ToString("000000");
+
                     // this.Store.SalesInvoiceNumberPrefix.Length - 2 because of {} in this string
-                    return int.Parse(string.Concat(year, identification.Substring(prefix.Length - 2)));
+                    return int.Parse(string.Concat(year, number));
                 }
                 else
                 {

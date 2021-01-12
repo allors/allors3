@@ -285,6 +285,45 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedQuoteItemsCalculatePriceForProductFeature()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            var productFeature = new ColourBuilder(this.Session)
+                .WithName("a colour")
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProductFeature(productFeature)
+                .WithPrice(0.2M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            var featureItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            quoteItem.AddQuotedWithFeature(featureItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, quote.TotalExVat);
+        }
+
+        [Fact]
         public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
@@ -311,6 +350,591 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Equal(basePrice.Price, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            new DiscountComponentBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(0.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDerivationTriggerTriggeredBySurchargeComponentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            new SurchargeComponentBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(0.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemQuantityCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            quoteItem.Quantity = 2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemAssignedUnitPriceCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            quoteItem.AssignedUnitPrice = 3;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemProductCalculatePrice()
+        {
+            var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
+            var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product1)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product2)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product1).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            quoteItem.Product = product2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemProductFeatureCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            var productFeature = new ColourBuilder(this.Session)
+                .WithName("a colour")
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithProductFeature(productFeature)
+                .WithPrice(0.1M)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            this.Session.Derive(false);
+
+            var orderFeatureItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            quoteItem.AddQuotedWithFeature(orderFeatureItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, quote.TotalExVat);
+        }
+
+        [Fact]
+        public void OnChangedReceiverCalculatePrice()
+        {
+            var theGood = new CustomOrganisationClassificationBuilder(this.Session).WithName("good customer").Build();
+            var theBad = new CustomOrganisationClassificationBuilder(this.Session).WithName("bad customer").Build();
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            customer1.AddPartyClassification(theGood);
+
+            var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
+            customer2.AddPartyClassification(theBad);
+
+            this.Session.Derive(false);
+
+            Assert.NotEqual(customer1, customer2);
+
+            new BasePriceBuilder(this.Session)
+                .WithPartyClassification(theGood)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithPartyClassification(theBad)
+                .WithProduct(product)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithReceiver(customer1).WithIssueDate(this.Session.Now()).WithAssignedVatRegime(new VatRegimes(this.Session).Exempt).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            quote.Receiver = customer2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemDiscountAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quoteItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quoteItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, quote.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemDiscountAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            quoteItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, quote.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemSurchargeAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quoteItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quoteItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, quote.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedQuoteItemSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            quoteItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, quote.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDiscountAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quote.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quote.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, quote.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedDiscountAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            quote.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, quote.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSurchargeAdjustmentsCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quote.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            quote.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, quote.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, quote.TotalIncVat);
+        }
+
+        [Fact]
+        public void OnChangedSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            new BasePriceBuilder(this.Session)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, quote.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            quote.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, quote.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, quote.TotalIncVat);
         }
     }
 

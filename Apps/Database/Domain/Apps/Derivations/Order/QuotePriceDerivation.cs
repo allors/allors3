@@ -195,20 +195,6 @@ namespace Allors.Database.Domain
                 @this.TotalIncVat = @this.TotalIncVat - discount - discountVat + surcharge + surchargeVat + fee + feeVat + shipping + shippingVat + miscellaneous + miscellaneousVat;
                 @this.TotalIrpf = @this.TotalIrpf + discountIrpf - surchargeIrpf - feeIrpf - shippingIrpf - miscellaneousIrpf;
                 @this.GrandTotal = @this.TotalIncVat - @this.TotalIrpf;
-
-                //// Only take into account items for which there is data at the item level.
-                //// Skip negative sales.
-                decimal totalUnitBasePrice = 0;
-                decimal totalListPrice = 0;
-
-                foreach (QuoteItem item1 in @this.ValidQuoteItems)
-                {
-                    if (item1.TotalExVat > 0)
-                    {
-                        totalUnitBasePrice += item1.UnitBasePrice;
-                        totalListPrice += item1.UnitPrice;
-                    }
-                }
             }
         }
     }

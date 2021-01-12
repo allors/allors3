@@ -139,6 +139,11 @@ namespace Allors.Database.Domain
                         @this.UnitPrice = @this.UnitBasePrice - @this.UnitDiscount + @this.UnitSurcharge;
                     }
 
+                    if (!@this.ExistUnitPrice)
+                    {
+                        validation.AddError($"{@this} {@this.Meta.UnitPrice} {ErrorMessages.UnitPriceRequired}");
+                    }
+
                     foreach (QuoteItem featureItem in @this.QuotedWithFeatures)
                     {
                         @this.UnitBasePrice += featureItem.UnitBasePrice;

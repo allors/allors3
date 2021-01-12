@@ -181,6 +181,9 @@ namespace Allors
             var vatRate = new VatRateBuilder(@this.Session()).WithRate(21).Build();
             var manufacturer = new OrganisationBuilder(@this.Session()).WithManufacturerDefaults(faker).Build();
 
+            allors.CreateB2BCustomer(faker);
+            allors.CreateB2CCustomer(faker);
+
             allors.CreateSupplier(faker);
             allors.CreateSupplier(faker);
 
@@ -466,6 +469,7 @@ line2")
             var anOrganisation = new Organisations(@this.Session()).FindBy(m.Organisation.IsInternalOrganisation, false);
 
             var item = new SerialisedItemBuilder(@this.Session())
+                .WithName("name")
                 .WithSerialNumber("112")
                 .WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Session()).Sold)
                 .WithAvailableForSale(false)
