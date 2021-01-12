@@ -6,12 +6,30 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using Resources;
     using Xunit;
 
-    [Trait("Category", "Security")]
-    public class StatementOfWorkSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class StatementOfWorkDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public StatementOfWorkSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.StatementOfWork.ObjectType, this.M.StatementOfWork.Delete);
+        public StatementOfWorkDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedIssuerThrowValidationError()
+        {
+            var quote = new StatementOfWorkBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            quote.Issuer = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedError = $"{quote} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}";
+            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class StatementOfWorkDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public StatementOfWorkDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.StatementOfWork.ObjectType, this.M.StatementOfWork.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

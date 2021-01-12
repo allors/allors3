@@ -197,35 +197,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedQuoteItemsDeriveValidQuoteItems()
-        {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var quoteItem = new QuoteItemBuilder(this.Session).Build();
-            quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
-
-            Assert.Contains(quoteItem, quote.ValidQuoteItems);
-        }
-
-        [Fact]
-        public void ChangedQuoteItemQuoteItemStateDeriveValidQuoteItems()
-        {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var quoteItem = new QuoteItemBuilder(this.Session).Build();
-            quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
-
-            quoteItem.Cancel();
-            this.Session.Derive(false);
-
-            Assert.DoesNotContain(quoteItem, quote.ValidQuoteItems);
-        }
-
-        [Fact]
         public void ChangedIssuerDeriveWorkItemDescription()
         {
             var quote = new ProductQuoteBuilder(this.Session).Build();
@@ -233,19 +204,6 @@ namespace Allors.Database.Domain.Tests
 
             var expected = $"ProductQuote: {quote.QuoteNumber} [{quote.Issuer?.PartyName}]";
             Assert.Equal(expected, quote.WorkItemDescription);
-        }
-
-        [Fact]
-        public void ChangedQuoteItemsDeriveQuoteItemSyncedQuote()
-        {
-            var quote = new ProductQuoteBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var quoteItem = new QuoteItemBuilder(this.Session).Build();
-            quote.AddQuoteItem(quoteItem);
-            this.Session.Derive(false);
-
-            Assert.Equal(quoteItem.SyncedQuote, quote);
         }
     }
 

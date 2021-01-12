@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public StatementOfWorkDerivation(M m) : base(m, new Guid("8307B027-0A59-409F-B47C-B2B2C98267C8")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.StatementOfWork.QuoteItems),
+                new ChangedPattern(this.M.StatementOfWork.Issuer),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,17 +32,6 @@ namespace Allors.Database.Domain
                     && @this.Issuer != @this.CurrentVersion.Issuer)
                 {
                     validation.AddError($"{@this} {this.M.StatementOfWork.Issuer} {ErrorMessages.InternalOrganisationChanged}");
-                }
-
-                Sync(@this);
-            }
-
-            void Sync(StatementOfWork statementOfWork)
-            {
-                // session.Prefetch(this.SyncPrefetch, this);
-                foreach (QuoteItem quoteItem in statementOfWork.QuoteItems)
-                {
-                    quoteItem.Sync(statementOfWork);
                 }
             }
         }

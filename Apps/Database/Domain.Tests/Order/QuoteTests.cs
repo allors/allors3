@@ -292,6 +292,48 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(quote.SortableQuoteNumber.Value, number + 1);
         }
+
+        [Fact]
+        public void ChangedQuoteItemsDeriveValidQuoteItems()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Contains(quoteItem, quote.ValidQuoteItems);
+        }
+
+        [Fact]
+        public void ChangedQuoteItemQuoteItemStateDeriveValidQuoteItems()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            quoteItem.Cancel();
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(quoteItem, quote.ValidQuoteItems);
+        }
+
+        [Fact]
+        public void ChangedQuoteItemsDeriveQuoteItemSyncedQuote()
+        {
+            var quote = new ProductQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var quoteItem = new QuoteItemBuilder(this.Session).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(quoteItem.SyncedQuote, quote);
+        }
     }
 
     public class QuotePriceDerivationTests : DomainTest, IClassFixture<Fixture>

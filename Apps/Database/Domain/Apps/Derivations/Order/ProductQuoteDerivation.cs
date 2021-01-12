@@ -18,9 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.ProductQuote.Issuer),
-                new ChangedPattern(this.M.ProductQuote.QuoteItems),
                 new ChangedPattern(this.M.ProductQuote.QuoteNumber),
-                new ChangedPattern(this.M.QuoteItem.QuoteItemState) { Steps =  new IPropertyType[] {m.QuoteItem.QuoteWhereQuoteItem}, OfType = m.ProductQuote.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -33,25 +31,12 @@ namespace Allors.Database.Domain
                     && @this.CurrentVersion.ExistIssuer
                     && @this.Issuer != @this.CurrentVersion.Issuer)
                 {
-                    validation.AddError($"{@this} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}");
+                    validation.AddError($"{@this} {this.M.Proposal.Issuer} {ErrorMessages.InternalOrganisationChanged}");
                 }
-
-                @this.ValidQuoteItems = @this.QuoteItems.Where(v => v.IsValid).ToArray();
 
                 @this.WorkItemDescription = $"ProductQuote: {@this.QuoteNumber} [{@this.Issuer?.PartyName}]";
 
-                Sync(@this);
-
                 @this.ResetPrintDocument();
-            }
-
-            void Sync(ProductQuote productQuote)
-            {
-                // session.Prefetch(this.SyncPrefetch, this);
-                foreach (QuoteItem quoteItem in productQuote.QuoteItems)
-                {
-                    quoteItem.Sync(productQuote);
-                }
             }
         }
     }

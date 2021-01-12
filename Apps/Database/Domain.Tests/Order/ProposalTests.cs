@@ -1,4 +1,4 @@
-// <copyright file="QuoteTests.cs" company="Allors bvba">
+// <copyright file="ProposalDeniedPermissionDerivationTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,12 +6,30 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using Resources;
     using Xunit;
 
-    [Trait("Category", "Security")]
-    public class ProposalDeniedPermissionDerivationTestsTests : DomainTest, IClassFixture<Fixture>
+    public class ProposalDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDeniedPermissionDerivationTestsTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
+        public ProposalDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedIssuerThrowValidationError()
+        {
+            var quote = new ProposalBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            quote.Issuer = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedError = $"{quote} {this.M.ProductQuote.Issuer} {ErrorMessages.InternalOrganisationChanged}";
+            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class ProposalDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProposalDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Proposal.ObjectType, this.M.Proposal.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
