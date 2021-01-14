@@ -252,7 +252,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
         [Indexed]
-        public Party PreviousTakenViaSubcontractor { get; set; }
+        public Organisation PreviousTakenViaSubcontractor { get; set; }
 
         #region Allors
         [Id("483f1661-9c50-4eb2-82b3-8c060920a90e")]
@@ -260,7 +260,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Party TakenViaSubcontractor { get; set; }
+        public Organisation TakenViaSubcontractor { get; set; }
 
         #region Allors
         [Id("4830cfc5-0375-4996-8cd8-27e36c102b65")]
@@ -353,6 +353,14 @@ namespace Allors.Repository
         [Required]
         [Derived]
         public bool OverDue { get; set; }
+
+        #region Allors
+        [Id("db6de178-8836-406a-b02a-e58500c9d617")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Derived]
+        [Indexed]
+        public PurchaseOrderItemByProduct[] PurchaseOrderItemsByProduct { get; set; }
 
         #region inherited methods
 

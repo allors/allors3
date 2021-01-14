@@ -2528,7 +2528,7 @@ namespace Allors.Database.Domain.Tests
                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
-            this.Session.GetSingleton().DefaultLocale = swedishLocale;
+            this.InternalOrganisation.Locale = swedishLocale;
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.RemoveLocale();
@@ -2540,7 +2540,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.False(customer.ExistLocale);
-            Assert.Equal(order.DerivedLocale, order.TakenBy.Locale);
+            Assert.Equal(order.DerivedLocale, swedishLocale);
         }
 
         [Fact]
@@ -2550,8 +2550,6 @@ namespace Allors.Database.Domain.Tests
                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
-
-            this.Session.GetSingleton().DefaultLocale = swedishLocale;
 
             var order = new SalesOrderBuilder(this.Session).Build();
             this.Session.Derive(false);

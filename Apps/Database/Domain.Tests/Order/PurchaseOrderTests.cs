@@ -10,6 +10,8 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Resources;
     using Xunit;
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
 
     public class PurchaseOrderTests : DomainTest, IClassFixture<Fixture>
     {
@@ -35,7 +37,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrder_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("customer2").Build();
+            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
             var internalOrganisation = this.InternalOrganisation;
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
@@ -72,7 +74,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseOrder_WhenDeriving_ThenTakenViaSupplierMustBeInSupplierRelationship()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("customer2").Build();
+            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
             var internalOrganisation = this.InternalOrganisation;
 
             new PurchaseOrderBuilder(this.Session)
@@ -90,7 +92,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOrder_WhenDeriving_ThenLocaleMustExist()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("customer2").Build();
+            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
@@ -227,7 +229,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseOrder_WhenConfirming_ThenAllValidItemsAreInConfirmedState()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("customer2").Build();
+            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
             var part = new NonUnifiedPartBuilder(this.Session)
@@ -271,7 +273,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPurchaseOrder_WhenOrdering_ThenAllValidItemsAreInInProcessState()
         {
-            var supplier = new OrganisationBuilder(this.Session).WithName("customer2").Build();
+            var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
             var part = new NonUnifiedPartBuilder(this.Session)
@@ -307,10 +309,510 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    [Trait("Category", "Security")]
-    public class PurchaseOrderSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class PurchaseOrderCreatedDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderSecurityTests(Fixture fixture) : base(fixture)
+        public PurchaseOrderCreatedDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedOrderedByDeriveDerivedLocaleFromOrderedByLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.Locale = swedishLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedLocale, swedishLocale);
+        }
+
+        [Fact]
+        public void ChangedLocaleDeriveDerivedLocaleFromLocale()
+        {
+            var swedishLocale = new LocaleBuilder(this.Session)
+               .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "SE"))
+               .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "sv"))
+               .Build();
+
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.Locale = swedishLocale;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedLocale, swedishLocale);
+        }
+
+        [Fact]
+        public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.AssignedVatRegime = new VatRegimes(this.Session).ServiceB2B;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, order.AssignedVatRegime);
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierDeriveDerivedVatRegime()
+        {
+            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
+            supplier1.VatRegime = new VatRegimes(this.Session).Assessable10;
+
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
+            supplier2.VatRegime = new VatRegimes(this.Session).Assessable21;
+
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier1).Build();
+            this.Session.Derive(false);
+
+            order.TakenViaSupplier = supplier2;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, supplier2.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierVatRegimeDeriveDerivedVatRegime()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            this.Session.Derive(false);
+
+            supplier.VatRegime = new VatRegimes(this.Session).Assessable10;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedVatRegime, supplier.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.AssignedIrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedIrpfRegime, order.AssignedIrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierDeriveDerivedIrpfRegime()
+        {
+            var supplier1 = this.InternalOrganisation.ActiveSuppliers.First;
+            supplier1.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
+            supplier2.IrpfRegime = new IrpfRegimes(this.Session).Assessable19;
+
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier1).Build();
+            this.Session.Derive(false);
+
+            order.TakenViaSupplier = supplier2;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedIrpfRegime, supplier2.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierIrpfRegimeDeriveDerivedIrpfRegime()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            this.Session.Derive(false);
+
+            supplier.IrpfRegime = new IrpfRegimes(this.Session).Assessable15;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedIrpfRegime, supplier.IrpfRegime);
+        }
+
+        [Fact]
+        public void ChangedAssignedCurrencyDeriveDerivedCurrency()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            order.AssignedCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedCurrency, order.AssignedCurrency);
+        }
+
+        [Fact]
+        public void ChangedOrderedByPreferredCurrencyDerivedCurrency()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            order.OrderedBy.PreferredCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedCurrency, order.OrderedBy.PreferredCurrency);
+        }
+
+        [Fact]
+        public void ChangedAssignedTakenViaContactMechanismDeriveDerivedTakenViaContactMechanism()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.AssignedTakenViaContactMechanism = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedTakenViaContactMechanism, order.AssignedTakenViaContactMechanism);
+        }
+
+        [Fact]
+        public void ChangedTakenByOrderAddressDeriveDerivedTakenViaContactMechanism()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            this.Session.Derive(false);
+
+            supplier.OrderAddress = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedTakenViaContactMechanism, supplier.OrderAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedBillToContactMechanismDeriveDeriveDerivedBillToContactMechanism()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.AssignedBillToContactMechanism = new PostalAddressBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, order.AssignedBillToContactMechanism);
+        }
+
+        [Fact]
+        public void ChangedOrderByBillingAddressDeriveDeriveDerivedBillToContactMechanism()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            this.InternalOrganisation.BillingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedOrderByGeneralCorrespondenceDeriveDeriveDerivedBillToContactMechanism()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            this.InternalOrganisation.RemoveBillingAddress();
+            this.InternalOrganisation.GeneralCorrespondence = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedBillToContactMechanism, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedAssignedShipToAddressDeriveDeriveDerivedShipToAddress()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            order.AssignedShipToAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToAddress, postalAddress);
+        }
+
+        [Fact]
+        public void ChangedOrderedByShippingAddressDeriveDeriveDerivedShipToAddress()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var postalAddress = new PostalAddressBuilder(this.Session).Build();
+            this.InternalOrganisation.ShippingAddress = postalAddress;
+            this.Session.Derive(false);
+
+            Assert.Equal(order.DerivedShipToAddress, postalAddress);
+        }
+    }
+
+    public class PurchaseOrderAwaitingApprovalLevel1DerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderAwaitingApprovalLevel1DerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseOrderStateCreateApprovalTask()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+            var supplierRelationship = supplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation.Equals(this.InternalOrganisation));
+            supplierRelationship.NeedsApproval = true;
+            supplierRelationship.ApprovalThresholdLevel1 = 0;
+
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(1).WithAssignedUnitPrice(100).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.SetReadyForProcessing();
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistPurchaseOrderApprovalsLevel1WherePurchaseOrder);
+        }
+    }
+
+    public class PurchaseOrderAwaitingApprovalLevel2DerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderAwaitingApprovalLevel2DerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseOrderStateCreateApprovalTask()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+            var supplierRelationship = supplier.SupplierRelationshipsWhereSupplier.First(v => v.InternalOrganisation.Equals(this.InternalOrganisation));
+            supplierRelationship.NeedsApproval = true;
+            supplierRelationship.ApprovalThresholdLevel1 = 0;
+            supplierRelationship.ApprovalThresholdLevel2 = 0;
+
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(1).WithAssignedUnitPrice(100).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.SetReadyForProcessing();
+            this.Session.Derive(false);
+
+            var approvalLevel1 = order.PurchaseOrderApprovalsLevel1WherePurchaseOrder.First;
+            approvalLevel1.Approve();
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistPurchaseOrderApprovalsLevel2WherePurchaseOrder);
+        }
+    }
+
+    public class PurchaseOrderDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedOrderedByThrowValidationError()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.OrderedBy = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.OrderedBy} { ErrorMessages.InternalOrganisationChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedInternalOrganisationActiveSuppliersThrowValidationError()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First).Build();
+            this.Session.Derive(false);
+
+            var supplierRelationship = this.InternalOrganisation.ActiveSuppliers.First.SupplierRelationshipsWhereSupplier.First;
+            supplierRelationship.ThroughDate = supplierRelationship.FromDate;
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedOrderDateThrowValidationErrorPartyIsNotASupplier()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First).Build();
+            this.Session.Derive(false);
+
+            var supplierRelationship = this.InternalOrganisation.ActiveSuppliers.First.SupplierRelationshipsWhereSupplier.First;
+            order.OrderDate = supplierRelationship.FromDate.AddDays(-1);
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierThrowValidationError()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.TakenViaSupplier = new OrganisationBuilder(this.Session).Build();
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedTakenViaSubcontractorThrowValidationError()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            order.TakenViaSubcontractor = new OrganisationBuilder(this.Session).Build();
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedInternalOrganisationActiveSubcontractorsThrowValidationError()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First).Build();
+            this.Session.Derive(false);
+
+            var subcontractorRelationship = this.InternalOrganisation.ActiveSubContractors.First.SubContractorRelationshipsWhereSubContractor.First;
+            subcontractorRelationship.ThroughDate = subcontractorRelationship.FromDate;
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedOrderDateThrowValidationErrorPartyIsNotASubcontractor()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First).Build();
+            this.Session.Derive(false);
+
+            var subcontractorRelationship = this.InternalOrganisation.ActiveSubContractors.First.SubContractorRelationshipsWhereSubContractor.First;
+            order.OrderDate = subcontractorRelationship.FromDate.AddDays(-1);
+
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSubcontractor} { ErrorMessages.PartyIsNotASubcontractor}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedOrderedByDeriveValidationErrorAtLeastOne()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: PurchaseOrder.TakenViaSupplier\nPurchaseOrder.TakenViaSubcontractor"));
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierDeriveValidationErrorAtMostOne()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithTakenViaSubcontractor(this.InternalOrganisation.ActiveSubContractors.First)
+                .Build();
+            this.Session.Derive(false);
+
+            order.TakenViaSupplier = this.InternalOrganisation.ActiveSuppliers.First;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: PurchaseOrder.TakenViaSupplier\nPurchaseOrder.TakenViaSubcontractor"));
+        }
+
+        [Fact]
+        public void ChangedTakenViaSubcontractorDeriveValidationErrorAtMostOne()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            order.TakenViaSubcontractor = this.InternalOrganisation.ActiveSubContractors.First;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertExistsAtMostOne: PurchaseOrder.TakenViaSupplier\nPurchaseOrder.TakenViaSubcontractor"));
+        }
+
+        [Fact]
+        public void ChangedOrderedByDeriveInvoiceNumber()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistOrderNumber);
+        }
+
+        [Fact]
+        public void ChangedOrderedByDeriveSortableInvoiceNumber()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.ExistSortableOrderNumber);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemsDeriveValidOrderItems()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Single(order.ValidOrderItems);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemPurchaseOrderItemStateDeriveValidOrderItems()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem1);
+            this.Session.Derive(false);
+
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem2);
+            this.Session.Derive(false);
+
+            Assert.Equal(2, order.ValidOrderItems.Count);
+
+            orderItem2.Cancel();
+            this.Session.Derive(false);
+
+            Assert.Single(order.ValidOrderItems);
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierDeriveWorkItemDescription()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var expected = $"PurchaseOrder: {order.OrderNumber} [{order.TakenViaSupplier?.PartyName}]";
+            Assert.Equal(expected, order.WorkItemDescription);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class PurchaseOrderDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderDeniedPermissionDerivationTests(Fixture fixture) : base(fixture)
         {
             this.deletePermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.Delete);
             this.setReadyPermission = new Permissions(this.Session).Get(this.M.PurchaseOrder.ObjectType, this.M.PurchaseOrder.SetReadyForProcessing);
@@ -331,312 +833,287 @@ namespace Allors.Database.Domain.Tests
         private readonly Permission rejectPermission;
         private readonly Permission cancelPermission;
 
-
         [Fact]
         public void OnChangedPurchaseOrderStateIsCompletedDeriveInvoicePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
+            order.Approve();
             this.Session.Derive(false);
 
-            purchaseOrder.Send();
+            order.Send();
             this.Session.Derive(false);
 
-            Assert.DoesNotContain(this.invoicePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(order.PurchaseOrderState.IsCompleted);
+            Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateApproveDeriveInvoicePermission()
+        public void OnChangedPurchaseOrderStateInProcessDeriveInvoicePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
+            order.SetReadyForProcessing();
             this.Session.Derive(false);
 
-            Assert.Contains(this.invoicePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(order.PurchaseOrderState.IsInProcess);
+            Assert.Contains(this.invoicePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateIsCompletedWithoutValidItemsDeriveInvoicePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+                .Build();
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
+            Assert.True(order.PurchaseOrderState.IsCompleted);
+            Assert.Contains(this.invoicePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemBillingDeriveInvoicePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            purchaseOrder.Send();
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
             this.Session.Derive(false);
 
-            Assert.Contains(this.invoicePermission, purchaseOrder.DeniedPermissions);
+            order.Approve();
+            this.Session.Derive(false);
+
+            order.Send();
+            this.Session.Derive(false);
+
+            new OrderItemBillingBuilder(this.Session).WithOrderItem(orderItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.invoicePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateIsInProcessDeriveRevisePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).InProcess)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.PurchaseOrderState.IsInProcess);
+            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderStateIsSentDeriveRevisePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.PurchaseOrderState.IsSent);
+            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateIsCompletedDeriveRevisePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+                .Build();
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
-            this.Session.Derive(false);
-
-            purchaseOrder.Send();
-            this.Session.Derive(false);
-
-            Assert.DoesNotContain(this.revisePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(order.PurchaseOrderState.IsCompleted);
+            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedDeriveRevisePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.revisePermission, purchaseOrder.DeniedPermissions);
+            Assert.Contains(this.revisePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateIsCompletedWithPurchaseInvoiceDeriveRevisePermission()
+        public void OnChangedPurchaseInvoicePurchaseOrdersDeriveRevisePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-            this.Session.Derive(false);
-
-            purchaseOrder.Approve();
-            this.Session.Derive(false);
-
-            purchaseOrder.Send();
-            this.Session.Derive(false);
-
-            purchaseOrder.Invoice();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.revisePermission, purchaseOrder.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateSentDeriveQuickReceivePermission()
-        {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
-
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithNonSerializedPartDefaults(part)
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
                 .Build();
-
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
+            new PurchaseInvoiceBuilder(this.Session).WithPurchaseOrder(order).Build();
             this.Session.Derive(false);
 
-            purchaseOrder.Send();
+            Assert.Contains(this.revisePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderShipmentStateReceivedDeriveRevisePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+                .Build();
             this.Session.Derive(false);
 
-            Assert.DoesNotContain(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Session).Received;
+            this.Session.Derive(false);
+
+            Assert.Contains(this.revisePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderShipmentStateNotReceivedDeriveRevisePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+                .Build();
+            this.Session.Derive(false);
+
+            order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Session).NotReceived;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedDeriveQuickReceivePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithIsReceivable(true)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithIsReceivable(true).Build();
+            order.AddPurchaseOrderItem(orderItem);
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(orderItem.IsReceivable);
+            Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateSentWithoutRecievableItemsDeriveQuickReceivePermission()
+        public void OnChangedPurchaseOrderStateSentDeriveQuickReceivePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+                .Build();
             this.Session.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithIsReceivable(false)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithIsReceivable(true).Build();
+            order.AddPurchaseOrderItem(orderItem);
             this.Session.Derive(false);
 
-            purchaseOrder.Approve();
-            this.Session.Derive(false);
-
-            purchaseOrder.Send();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(orderItem.IsReceivable);
+            Assert.True(order.PurchaseOrderState.IsSent);
+            Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedDeriveDeletePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.DoesNotContain(this.deletePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(order.PurchaseOrderState.IsCreated);
+            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateSentDeriveDeletePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            purchaseOrder.Approve();
-            this.Session.Derive(false);
-
-            purchaseOrder.Send();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateSentWithPurchaseInvoiceDeriveDeletePermission()
-        {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            purchaseOrder.Approve();
-            this.Session.Derive(false);
-
-            purchaseOrder.Send();
-            this.Session.Derive(false);
-
-            purchaseOrder.Invoice();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateCreatedWithSerialisedItemDeriveDeletePermission()
-        {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
-            this.Session.Derive(false);
-
-            var serializedPart = new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
-            var serializedItem = new SerialisedItemBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
-            serializedPart.AddSerialisedItem(serializedItem);
-
-            this.Session.Derive(false);
-
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-
-            purchaseOrder.Send();
-            this.Session.Derive(false);
-
-            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
-        }
-
-        [Fact]
-        public void OnChangedPurchaseOrderStateCreatedWithWorkEffortPurchaseOrderItemAssignmentDeriveDeletePermission()
-        {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
-            this.Session.Derive(false);
-
-            var serializedPart = new UnifiedGoodBuilder(this.Session).WithSerialisedDefaults(this.InternalOrganisation).Build();
-            var serializedItem = new SerialisedItemBuilder(this.Session).WithDefaults(this.InternalOrganisation).Build();
-            serializedPart.AddSerialisedItem(serializedItem);
-
-            this.Session.Derive(false);
-
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session).WithSerializedPartDefaults(serializedPart, serializedItem).Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-
-            var workEffortPurchaseOrderItemAssignments = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Session)
-                .WithAssignment(new WorkTaskBuilder(this.Session).Build())
-                .WithPurchaseOrderItem(purchaseOrderItem)
-                .WithPurchaseOrder(purchaseOrder)
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
                 .Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+            Assert.True(order.PurchaseOrderState.IsSent);
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateCreatedWithNotDeletablePurchaseOrderItemsDeriveDeletePermission()
+        public void OnChangedPurchaseInvoicePurchaseOrdersDeriveDeletePermission()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Session).Build())
-                .WithAssignedUnitPrice(1)
-            .Build();
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
+            new PurchaseInvoiceBuilder(this.Session).WithPurchaseOrder(order).Build();
             this.Session.Derive(false);
 
-            purchaseOrderItem.Approve();
+            Assert.True(order.PurchaseOrderState.IsCreated);
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedSerialisedItemPurchaseOrderDeriveDeletePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Contains(this.deletePermission, purchaseOrder.DeniedPermissions);
+            new SerialisedItemBuilder(this.Session).WithPurchaseOrder(order).Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.PurchaseOrderState.IsCreated);
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedWorkEffortPurchaseOrderItemAssignmentPurchaseOrderDeriveDeletePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Session).WithPurchaseOrder(order).Build();
+            this.Session.Derive(false);
+
+            Assert.True(order.PurchaseOrderState.IsCreated);
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+        }
+
+        [Fact]
+        public void OnChangedPurchaseOrderItemBillingDeriveDeletePermission()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            new OrderItemBillingBuilder(this.Session).WithOrderItem(orderItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.deletePermission, order.DeniedPermissions);
         }
 
         [Fact]
         public void OnChangedPurchaseOrderStateCreatedPurchaseOrderShipmentStateIsNaDeriveMultiplePermissions()
         {
-            var purchaseOrder = new PurchaseOrderBuilder(this.Session).Build();
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Session).NotReceived)
+                .Build();
             this.Session.Derive(false);
 
-            var part = new NonUnifiedPartBuilder(this.Session).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            Assert.True(order.PurchaseOrderShipmentState.IsNotReceived);
 
-            var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Session)
-                .WithNonSerializedPartDefaults(part)
-                .Build();
-
-            purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-
-            var shipmentReceipt = new ShipmentReceiptBuilder(this.Session)
-                .WithOrderItem(purchaseOrderItem)
-                .WithQuantityAccepted(1)
-                .Build();
-
-            this.Session.Derive(false);
-
-            Assert.Contains(this.rejectPermission, purchaseOrder.DeniedPermissions);
-            Assert.Contains(this.cancelPermission, purchaseOrder.DeniedPermissions);
-            Assert.Contains(this.quickReceivePermission, purchaseOrder.DeniedPermissions);
-            Assert.Contains(this.revisePermission, purchaseOrder.DeniedPermissions);
-            Assert.Contains(this.setReadyPermission, purchaseOrder.DeniedPermissions);
+            Assert.Contains(this.rejectPermission, order.DeniedPermissions);
+            Assert.Contains(this.cancelPermission, order.DeniedPermissions);
+            Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
+            Assert.Contains(this.revisePermission, order.DeniedPermissions);
+            Assert.Contains(this.setReadyPermission, order.DeniedPermissions);
         }
     }
 }

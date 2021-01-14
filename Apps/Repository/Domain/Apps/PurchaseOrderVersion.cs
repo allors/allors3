@@ -126,13 +126,13 @@ namespace Allors.Repository
         [Id("774CEA12-501D-4C7A-885B-A198079CF74E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        public Party TakenViaSupplier { get; set; }
+        public Organisation TakenViaSupplier { get; set; }
 
         #region Allors
         [Id("34274ec5-7e51-431c-bbe5-91a5131fe85c")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        public Party TakenViaSubcontractor { get; set; }
+        public Organisation TakenViaSubcontractor { get; set; }
 
         #region Allors
         [Id("8AC728F2-F766-47C4-93B7-15B5D5DC2FF6")]
@@ -200,6 +200,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         public Person ShipToContactPerson { get; set; }
+
+        #region Allors
+        [Id("df58fb2d-1b2a-4034-822e-7dedc94c465a")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Derived]
+        [Indexed]
+        public PurchaseOrderItemByProduct[] PurchaseOrderItemsByProduct { get; set; }
 
         #region inherited methods
 

@@ -13,14 +13,17 @@ namespace Allors.Database.Domain
         {
             decimal price = 0;
 
-            foreach (SupplierOffering supplierOffering in supplier.SupplierOfferingsWhereSupplier)
+            if (supplier != null)
             {
-                if (supplierOffering.ExistPart && supplierOffering.Part.Equals(part))
+                foreach (SupplierOffering supplierOffering in supplier.SupplierOfferingsWhereSupplier)
                 {
-                    if (supplierOffering.FromDate <= orderDate && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= orderDate))
+                    if (supplierOffering.ExistPart && supplierOffering.Part.Equals(part))
                     {
-                        price = supplierOffering.Price;
-                        break;
+                        if (supplierOffering.FromDate <= orderDate && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= orderDate))
+                        {
+                            price = supplierOffering.Price;
+                            break;
+                        }
                     }
                 }
             }

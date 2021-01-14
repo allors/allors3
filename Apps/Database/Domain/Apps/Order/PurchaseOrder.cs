@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        private bool CanInvoice
+        public bool CanInvoice
         {
             get
             {
@@ -77,17 +77,15 @@ namespace Allors.Database.Domain
             }
         }
 
-        private bool CanRevise
+        public bool CanRevise
         {
             get
             {
                 if ((this.PurchaseOrderState.IsInProcess || this.PurchaseOrderState.IsSent || this.PurchaseOrderState.IsCompleted)
-                    && (this.PurchaseOrderShipmentState.IsNotReceived || this.PurchaseOrderShipmentState.IsNa))
+                    && (this.PurchaseOrderShipmentState.IsNotReceived || this.PurchaseOrderShipmentState.IsNa)
+                    && !this.ExistPurchaseInvoicesWherePurchaseOrder)
                 {
-                    if (!this.ExistPurchaseInvoicesWherePurchaseOrder)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 return false;
@@ -108,7 +106,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        private bool IsDeletable =>
+        public bool IsDeletable =>
             (this.PurchaseOrderState.Equals(new PurchaseOrderStates(this.Strategy.Session).Created)
                 || this.PurchaseOrderState.Equals(new PurchaseOrderStates(this.Strategy.Session).Cancelled)
                 || this.PurchaseOrderState.Equals(new PurchaseOrderStates(this.Strategy.Session).Rejected))
@@ -393,14 +391,6 @@ namespace Allors.Database.Domain
 
                 this.DerivationTrigger = new Guid();
             }
-        }
-
-        private void Sync(IDerivation derivation, SalesOrderItem[] validOrderItems)
-        {
-            //foreach (var orderItem in validOrderItems)
-            //{
-            //    orderItem.Sync(this);
-            //}
         }
     }
 }

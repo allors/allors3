@@ -419,15 +419,6 @@ namespace Allors.Database.Domain
             //}
         }
 
-        //private void Sync(ISession session)
-        //{
-        //    // session.Prefetch(this.SyncPrefetch, this);
-        //    foreach (ShipmentItem shipmentItem in this.ShipmentItems)
-        //    {
-        //        shipmentItem.Sync(this);
-        //    }
-        //}
-
         public void AppsOnDeriveQuantityDecreased(ShipmentItem shipmentItem, SalesOrderItem orderItem, decimal correction)
         {
             var remainingCorrection = correction;

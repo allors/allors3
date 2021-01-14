@@ -434,7 +434,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Derived]
         [Indexed]
-        Party[] ActiveSubContractors { get; set; }
+        Organisation[] ActiveSubContractors { get; set; }
 
         #region Allors
         [Id("02076C50-183B-4657-BE2F-9CF4872E9989")]

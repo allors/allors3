@@ -1,0 +1,178 @@
+// <copyright file="Domain.cs" company="Allors bvba">
+// Copyright (c) Allors bvba. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Allors.Database.Domain
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Derivations;
+    using Meta;
+    using Database.Derivations;
+    using Resources;
+
+    public class PurchaseOrderItemStateDerivation : DomainDerivation
+    {
+        public PurchaseOrderItemStateDerivation(M m) : base(m, new Guid("046a8987-0a6a-4678-8959-2d1136a2b8f8")) =>
+            this.Patterns = new Pattern[]
+            {
+                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState),
+            };
+
+        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        {
+            var validation = cycle.Validation;
+            var session = cycle.Session;
+
+            foreach (var @this in matches.Cast<PurchaseOrderItem>())
+            {
+                var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
+                var states = new PurchaseOrderItemStates(@this.Session());
+                var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState;
+
+                if (!@this.ExistPurchaseOrderItemShipmentState)
+                {
+                    if (@this.IsReceivable)
+                    {
+                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).NotReceived;
+                    }
+                    else
+                    {
+                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).Na;
+                    }
+                }
+
+                if (purchaseOrderState.IsInProcess &&
+                    (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
+                {
+                    @this.PurchaseOrderItemState = states.InProcess;
+                }
+
+                if (purchaseOrderState.IsOnHold && @this.PurchaseOrderItemState.IsInProcess)
+                {
+                    @this.PurchaseOrderItemState = states.OnHold;
+                }
+
+                if (purchaseOrderState.IsSent && @this.PurchaseOrderItemState.IsInProcess)
+                {
+                    @this.PurchaseOrderItemState = states.Sent;
+                }
+
+                if (@this.IsValid && purchaseOrderState.IsFinished)
+                {
+                    @this.PurchaseOrderItemState = states.Finished;
+                }
+
+                if (@this.IsValid && purchaseOrderState.IsCancelled)
+                {
+                    @this.PurchaseOrderItemState = states.Cancelled;
+                }
+
+                if (@this.IsValid && purchaseOrderState.IsRejected)
+                {
+                    @this.PurchaseOrderItemState = states.Rejected;
+                }
+
+                var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(session);
+                var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(session);
+                var purchaseOrderItemStates = new PurchaseOrderItemStates(session);
+
+                if (@this.IsValid)
+                {
+                    // ShipmentState
+                    if (@this.IsReceivable)
+                    {
+                        var quantityReceived = 0M;
+                        foreach (ShipmentReceipt shipmentReceipt in @this.ShipmentReceiptsWhereOrderItem)
+                        {
+                            quantityReceived += shipmentReceipt.QuantityAccepted;
+                        }
+
+                        @this.QuantityReceived = quantityReceived;
+                    }
+
+                    if (!@this.IsReceivable)
+                    {
+                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).Na;
+                    }
+                    else
+                    {
+                        if (@this.QuantityReceived == 0 && @this.IsReceivable)
+                        {
+                            @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).NotReceived;
+                        }
+                        else
+                        {
+                            @this.PurchaseOrderItemShipmentState = @this.QuantityReceived < @this.QuantityOrdered ?
+                                purchaseOrderItemShipmentStates.PartiallyReceived :
+                                purchaseOrderItemShipmentStates.Received;
+                        }
+                    }
+
+                    // PaymentState
+                    var orderBilling = @this.OrderItemBillingsWhereOrderItem.Select(v => v.InvoiceItem).OfType<PurchaseInvoiceItem>().ToArray();
+
+                    if (orderBilling.Any())
+                    {
+                        if (orderBilling.All(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsPaid))
+                        {
+                            @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.Paid;
+                        }
+                        else if (orderBilling.Any(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsPartiallyPaid))
+                        {
+                            @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.PartiallyPaid;
+                        }
+                        else
+                        {
+                            @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.NotPaid;
+                        }
+                    }
+
+                    // PurchaseOrderItem States
+                    if (@this.PurchaseOrderItemState.IsInProcess
+                        && (@this.PurchaseOrderItemShipmentState.IsReceived || @this.PurchaseOrderItemShipmentState.IsNa))
+                    {
+                        @this.PurchaseOrderItemState = purchaseOrderItemStates.Completed;
+                    }
+
+                    if (@this.PurchaseOrderItemState.IsCompleted && @this.PurchaseOrderItemPaymentState.IsPaid)
+                    {
+                        @this.PurchaseOrderItemState = purchaseOrderItemStates.Finished;
+                    }
+                }
+
+                if (@this.PurchaseOrderItemState.Equals(states.InProcess) ||
+                    @this.PurchaseOrderItemState.Equals(states.Cancelled) ||
+                    @this.PurchaseOrderItemState.Equals(states.Rejected))
+                {
+                    NonSerialisedInventoryItem inventoryItem = null;
+
+                    if (@this.ExistPart)
+                    {
+                        var inventoryItems = @this.Part.InventoryItemsWherePart;
+                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility);
+                        inventoryItem = inventoryItems.First as NonSerialisedInventoryItem;
+                    }
+
+                    if (@this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).InProcess))
+                    {
+                        if (!@this.ExistPreviousQuantity || !@this.QuantityOrdered.Equals(@this.PreviousQuantity))
+                        {
+                            // TODO: Remove OnDerive
+                            //inventoryItem?.OnDerive(x => x.WithDerivation(derivation));
+                        }
+                    }
+
+                    if (@this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Cancelled) ||
+                        @this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Rejected))
+                    {
+                        // TODO: Remove OnDerive
+                        //inventoryItem?.OnDerive(x => x.WithDerivation(derivation));
+                    }
+                }
+            }
+        }
+    }
+}

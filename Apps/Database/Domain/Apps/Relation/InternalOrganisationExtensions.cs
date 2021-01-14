@@ -3,6 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Linq;
 using Allors.Database.Meta;
 
@@ -300,6 +301,38 @@ namespace Allors.Database.Domain
             }
 
             return int.Parse(candidate);
+        }
+
+        public static bool AppsIsActiveSupplier(this InternalOrganisation @this, Organisation supplier, DateTime? date)
+        {
+            if (date == DateTime.MinValue || supplier == null)
+            {
+                return false;
+            }
+
+            var m = @this.Strategy.Session.Database.Context().M;
+
+            var suplierRelationships = @this.SupplierRelationshipsWhereInternalOrganisation;
+            suplierRelationships.Filter.AddEquals(m.SupplierRelationship.Supplier, supplier);
+
+            return suplierRelationships.Any(relationship => relationship.FromDate.Date <= date
+                                                             && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
+        }
+
+        public static bool AppsIsActiveSubcontractor(this InternalOrganisation @this, Organisation subcontractor, DateTime? date)
+        {
+            if (date == DateTime.MinValue || subcontractor == null)
+            {
+                return false;
+            }
+
+            var m = @this.Strategy.Session.Database.Context().M;
+
+            var subcontractorRelationships = @this.SubContractorRelationshipsWhereContractor;
+            subcontractorRelationships.Filter.AddEquals(m.SubContractorRelationship.SubContractor, subcontractor);
+
+            return subcontractorRelationships.Any(relationship => relationship.FromDate.Date <= date
+                                                             && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
         }
     }
 }

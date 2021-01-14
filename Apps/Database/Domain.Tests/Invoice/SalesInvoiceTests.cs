@@ -1156,7 +1156,7 @@ namespace Allors.Database.Domain.Tests
             invoice.Locale = swedishLocale;
             this.Session.Derive(false);
 
-            Assert.Equal(invoice.DerivedLocale, invoice.Locale);
+            Assert.Equal(invoice.DerivedLocale, swedishLocale);
         }
 
         [Fact]
@@ -1360,7 +1360,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleBillToCustomerDeriveDerivedBillToContactMechanism()
+        public void ChangedBillToCustomerDeriveDerivedBillToContactMechanism()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1398,7 +1398,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
+        public void ChangedBillToEndCustomerDeriveBillToEndCustomerContactMechanism()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1436,7 +1436,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleShipToEndCustomerDeriveShipToEndCustomerAddress()
+        public void ChangedShipToEndCustomerDeriveShipToEndCustomerAddress()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1474,7 +1474,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleShipToCustomerDeriveShipToAddress()
+        public void ChangedShipToCustomerDeriveShipToAddress()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
 
@@ -1500,17 +1500,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedVatRegimeDeriveDerivedVatClause()
-        {
-            var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatRegime(intraCommunautair).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatClause, intraCommunautair.VatClause);
-        }
-
-        [Fact]
         public void ChangedVatRegimeDeriveDerivedVatClauseIsNull()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
@@ -1521,18 +1510,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedAssignedVatClauseDeriveDerivedVatClause()
-        {
-            var vatClause = new VatClauses(this.Session).BeArt14Par2;
-            var invoice = new SalesInvoiceBuilder(this.Session).WithAssignedVatClause(vatClause).Build();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DerivedVatClause, vatClause);
-        }
-
-        [Fact]
-        public void OnChangedRoleVatRegimeDeriveDerivedVatClause()
+        public void ChangedVatRegimeDeriveDerivedVatClause()
         {
             var intraCommunautair = new VatRegimes(this.Session).IntraCommunautair;
             var assessable9 = new VatRegimes(this.Session).Assessable9;
@@ -1548,7 +1526,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleAssignedVatClauseDeriveDerivedVatClause()
+        public void ChangedAssignedVatClauseDeriveDerivedVatClause()
         {
             var vatClause = new VatClauses(this.Session).BeArt14Par2;
             var invoice = new SalesInvoiceBuilder(this.Session).Build();
@@ -1690,7 +1668,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleRepeatingSalesInvoiceNextExecutionDateDeriveIsRepeatingInvoice()
+        public void ChangedRepeatingSalesInvoiceNextExecutionDateDeriveIsRepeatingInvoice()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
@@ -1708,7 +1686,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleRepeatingSalesInvoiceFinalExecutionDateDeriveIsRepeatingInvoice()
+        public void ChangedRepeatingSalesInvoiceFinalExecutionDateDeriveIsRepeatingInvoice()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
@@ -1732,41 +1710,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleInvoiceTermTermValueDerivePaymentDays()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            var paymentDays = invoice.SalesTerms.First(v => v.TermType.UniqueId.Equals(InvoiceTermTypes.PaymentNetDaysId));
-            var oldValue = int.Parse(paymentDays.TermValue);
-            var newValue = ++oldValue;
-            paymentDays.TermValue = newValue.ToString();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.PaymentDays, newValue);
-        }
-
-        [Fact]
-        public void OnChangedRoleInvoiceTermTermValueDeriveDueDate()
-        {
-            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-
-            this.Session.Derive(false);
-
-            var paymentDays = invoice.SalesTerms.First(v => v.TermType.UniqueId.Equals(InvoiceTermTypes.PaymentNetDaysId));
-            var oldValue = int.Parse(paymentDays.TermValue);
-            var newValue = ++oldValue;
-            paymentDays.TermValue = newValue.ToString();
-
-            this.Session.Derive(false);
-
-            Assert.Equal(invoice.DueDate, invoice.InvoiceDate.AddDays(newValue));
-        }
-
-        [Fact]
-        public void OnChangedRoleBillToCustomerDeriveCustomers()
+        public void ChangedBillToCustomerDeriveCustomers()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
@@ -1783,7 +1727,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleShipToCustomerDeriveCustomers()
+        public void ChangedShipToCustomerDeriveCustomers()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.First;
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
@@ -1800,7 +1744,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleCustomerRelationshipFromDateValidateBillToCustomerIsActiveCustomer()
+        public void ChangedCustomerRelationshipFromDateValidateBillToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -1813,7 +1757,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleCustomerRelationshipThroughDateValidateBillToCustomerIsActiveCustomer()
+        public void ChangedCustomerRelationshipThroughDateValidateBillToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -1826,7 +1770,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleCustomerRelationshipFromDateValidateShipToCustomerIsActiveCustomer()
+        public void ChangedCustomerRelationshipFromDateValidateShipToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
@@ -1839,7 +1783,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleCustomerRelationshipThroughDateValidateShipToCustomerIsActiveCustomer()
+        public void ChangedCustomerRelationshipThroughDateValidateShipToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
@@ -1852,7 +1796,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleInvoiceDateValidateBillToCustomerIsActiveCustomer()
+        public void ChangedInvoiceDateValidateBillToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithBillToCustomer(customer).Build();
@@ -1867,7 +1811,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleInvoiceDateValidateShipToCustomerIsActiveCustomer()
+        public void ChangedInvoiceDateValidateShipToCustomerIsActiveCustomer()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             var invoice = new SalesInvoiceBuilder(this.Session).WithShipToCustomer(customer).Build();
@@ -1882,7 +1826,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleInvoiceItemSyncInvoiceItemSyncedInvoice()
+        public void ChangedInvoiceItemSyncInvoiceItemSyncedInvoice()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -1900,7 +1844,7 @@ namespace Allors.Database.Domain.Tests
         public SalesInvoiceBillingDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void OnChangedRoleOrderItemBillingInvoiceItemDeriveSalesOrders()
+        public void ChangedOrderItemBillingInvoiceItemDeriveSalesOrders()
         {
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForOrderItems;
 
@@ -2017,7 +1961,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleWorkEffortBillingInvoiceItemDeriveWorkEfforts()
+        public void ChangedWorkEffortBillingInvoiceItemDeriveWorkEfforts()
         {
             var workTask = new WorkTaskBuilder(this.Session).WithScheduledWorkForExternalCustomer(this.InternalOrganisation).Build();
             this.Session.Derive();
@@ -2057,7 +2001,7 @@ namespace Allors.Database.Domain.Tests
 
         // billing time entry is not implemented
         //[Fact]
-        //public void OnChangedRoleTimeEntryBillingInvoiceItemDeriveWorkEfforts()
+        //public void ChangedTimeEntryBillingInvoiceItemDeriveWorkEfforts()
         //{
         //    var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
         //    new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(this.InternalOrganisation).Build();
@@ -2117,7 +2061,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemStateDeriveSalesInvoiceItemStateNotPaid()
+        public void ChangedSalesInvoiceItemStateDeriveSalesInvoiceItemStateNotPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2134,7 +2078,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid()
+        public void ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2163,7 +2107,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePaid()
+        public void ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2192,7 +2136,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceItemStatePaid()
+        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceItemStatePaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2230,7 +2174,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceStateNotPaid()
+        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceStateNotPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2247,7 +2191,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceStatePartiallyPaid()
+        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceStatePartiallyPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2276,7 +2220,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceStatePaid()
+        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveSalesInvoiceStatePaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2305,7 +2249,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleAdvancePaymentDeriveAmountPaid()
+        public void ChangedAdvancePaymentDeriveAmountPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2318,7 +2262,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRolePaymentApplicationAmountAppliedDeriveAmountPaid()
+        public void ChangedPaymentApplicationAmountAppliedDeriveAmountPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
             invoice.AdvancePayment = 0M;
@@ -2341,7 +2285,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemAmountPaidDeriveAmountPaid()
+        public void ChangedSalesInvoiceItemAmountPaidDeriveAmountPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
             invoice.AdvancePayment = 0M;
@@ -2367,7 +2311,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRolePaymentApplicationAmountAppliedDeriveInvoiceStatePartiallyPaid()
+        public void ChangedPaymentApplicationAmountAppliedDeriveInvoiceStatePartiallyPaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             invoice.AdvancePayment = 0M;
@@ -2388,7 +2332,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRolePaymentApplicationAmountAppliedDeriveInvoiceStatePaid()
+        public void ChangedPaymentApplicationAmountAppliedDeriveInvoiceStatePaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             invoice.AdvancePayment = 0M;
@@ -2409,7 +2353,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSalesInvoiceItemStateDeriveValidInvoiceItems()
+        public void ChangedSalesInvoiceItemSalesInvoiceItemStateDeriveValidInvoiceItems()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
 
@@ -2740,7 +2684,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemDiscountAdjustmentsCalculatePrice()
+        public void ChangedSalesInvoiceItemDiscountAdjustmentsCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
@@ -2831,7 +2775,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedRoleSalesInvoiceItemSurchargeAdjustmentsCalculatePrice()
+        public void ChangedSalesInvoiceItemSurchargeAdjustmentsCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 

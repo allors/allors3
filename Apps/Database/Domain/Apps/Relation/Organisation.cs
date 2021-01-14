@@ -198,40 +198,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        public bool AppsIsActiveProfessionalServicesProvider(DateTime? date)
-        {
-            if (date == DateTime.MinValue)
-            {
-                return false;
-            }
-
-            return this.ExistProfessionalServicesRelationshipsWhereProfessionalServicesProvider
-                   && this.ProfessionalServicesRelationshipsWhereProfessionalServicesProvider
-                       .Any(v => v.FromDate.Date <= date && (!v.ExistThroughDate || v.ThroughDate >= date));
-        }
-
-        public bool AppsIsActiveSubContractor(DateTime? date)
-        {
-            if (date == DateTime.MinValue)
-            {
-                return false;
-            }
-
-            return this.ExistSubContractorRelationshipsWhereContractor
-                   && this.SubContractorRelationshipsWhereContractor
-                        .Any(v => v.FromDate.Date <= date && (!v.ExistThroughDate || v.ThroughDate >= date));
-        }
-
-        public bool AppsIsActiveSupplier(DateTime? date)
-        {
-            if (date == DateTime.MinValue)
-            {
-                return false;
-            }
-
-            return this.ExistSupplierRelationshipsWhereSupplier && this.SupplierRelationshipsWhereSupplier
-                       .Any(v => v.FromDate <= date && (!v.ExistThroughDate || v.ThroughDate >= date));
-        }
     }
 }

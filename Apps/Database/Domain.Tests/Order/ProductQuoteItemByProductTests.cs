@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            var quote = new ProductQuoteBuilder(this.Session).Build();
             this.Session.Derive(false);
 
             var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
         {
             var product = new NonUnifiedGoodBuilder(this.Session).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            var quote = new ProductQuoteBuilder(this.Session).Build();
             this.Session.Derive(false);
 
             var quoteItem = new QuoteItemBuilder(this.Session).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
             var product1 = new NonUnifiedGoodBuilder(this.Session).Build();
             var product2 = new NonUnifiedGoodBuilder(this.Session).Build();
 
-            var quote = new ProductQuoteBuilder(this.Session).WithIssueDate(this.Session.Now()).Build();
+            var quote = new ProductQuoteBuilder(this.Session).Build();
             this.Session.Derive(false);
 
             var QuoteItem = new QuoteItemBuilder(this.Session).WithProduct(product1).WithQuantity(1).WithAssignedUnitPrice(1).Build();

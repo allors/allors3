@@ -121,7 +121,7 @@ namespace Allors.Repository
 
         public Organisation[] ActiveSuppliers { get; set; }
 
-        public Party[] ActiveSubContractors { get; set; }
+        public Organisation[] ActiveSubContractors { get; set; }
 
         public string PartyName { get; set; }
 
