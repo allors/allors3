@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public RequestForProposalDerivation(M m) : base(m, new Guid("E2C5250C-5C18-4720-BBFE-859AC31D8D49")) =>
             this.Patterns = new[]
             {
+                new ChangedPattern(this.M.RequestForProposal.Recipient),
                 new ChangedPattern(this.M.RequestForProposal.RequestItems)
             };
 

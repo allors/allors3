@@ -171,6 +171,7 @@ namespace Allors.Database.Domain
                 new RequestForProposalDerivation(m),
                 new RequestForInformationDerivation(m),
                 new RequestDerivation(m),
+                new RequestAnonymousDerivation(m),
                 new PurchaseInvoiceDerivation(m),
                 new PurchaseInvoiceCreatedDerivation(m),
                 new PurchaseInvoiceStateDerivation(m),

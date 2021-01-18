@@ -38,7 +38,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistRequestItemState)
             {
-                this.RequestItemState = new RequestItemStates(this.Strategy.Session).Submitted;
+                this.RequestItemState = new RequestItemStates(this.Strategy.Session).Draft;
             }
         }
 

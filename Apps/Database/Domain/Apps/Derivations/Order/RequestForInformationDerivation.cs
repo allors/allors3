@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public RequestForInformationDerivation(M m) : base(m, new Guid("5BCE8864-6EC2-4672-A29D-CA49A6C49718")) =>
             this.Patterns = new[]
             {
+                new ChangedPattern(this.M.RequestForInformation.Recipient),
                 new ChangedPattern(this.M.RequestForInformation.RequestItems)
             };
 

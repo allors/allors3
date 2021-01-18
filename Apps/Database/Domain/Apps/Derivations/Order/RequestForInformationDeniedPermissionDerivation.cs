@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(m.RequestForInformation.TransitionalDeniedPermissions),
+            new ChangedPattern(m.RequestForInformation.RequestItems),
+            new ChangedPattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForInformation.Class },
             new ChangedPattern(m.Quote.Request) { Steps =  new IPropertyType[] { m.Quote.Request }, OfType = m.RequestForInformation.Class },
         };
 

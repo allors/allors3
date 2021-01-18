@@ -19,7 +19,16 @@ namespace Allors.Database.Domain
             this.Patterns = new[]
             {
                 new ChangedPattern(this.M.RequestItem.RequestItemState),
+                new ChangedPattern(this.M.RequestItem.Product),
+                new ChangedPattern(this.M.RequestItem.ProductFeature),
+                new ChangedPattern(this.M.RequestItem.Description),
+                new ChangedPattern(this.M.RequestItem.NeededSkill),
+                new ChangedPattern(this.M.RequestItem.Deliverable),
+                new ChangedPattern(this.M.RequestItem.SerialisedItem),
+                new ChangedPattern(this.M.RequestItem.UnitOfMeasure),
+                new ChangedPattern(this.M.RequestItem.Quantity),
                 new ChangedPattern(this.M.Request.RequestItems) { Steps = new IPropertyType[] {m.Request.RequestItems } },
+                new ChangedPattern(this.M.Request.RequestState) { Steps = new IPropertyType[] {m.Request.RequestItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -33,7 +42,7 @@ namespace Allors.Database.Domain
                 validation.AssertExistsAtMostOne(@this, this.M.RequestItem.SerialisedItem, this.M.RequestItem.ProductFeature, this.M.RequestItem.Description, this.M.RequestItem.NeededSkill, this.M.RequestItem.Deliverable);
 
                 var requestItemStates = new RequestItemStates(cycle.Session);
-                if (@this.IsValid)
+                if (@this.ExistRequestWhereRequestItem && @this.IsValid)
                 {
                     if (@this.RequestWhereRequestItem.RequestState.IsSubmitted && @this.RequestItemState.IsDraft)
                     {
@@ -59,11 +68,6 @@ namespace Allors.Database.Domain
                 if (!@this.ExistUnitOfMeasure)
                 {
                     @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
-                }
-
-                if (@this.ExistRequestWhereRequestItem && new RequestStates(@this.Strategy.Session).Cancelled.Equals(@this.RequestWhereRequestItem.RequestState))
-                {
-                    @this.Cancel();
                 }
 
                 if (@this.ExistSerialisedItem && @this.Quantity != 1)

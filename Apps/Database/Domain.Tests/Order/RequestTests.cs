@@ -72,6 +72,149 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class RequestAnonymousDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public RequestAnonymousDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedOriginatorDeriveRequestState()
+        {
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            request.Originator = this.InternalOrganisation.ActiveCustomers.First;
+            this.Session.Derive(false);
+
+            Assert.True(request.RequestState.IsSubmitted);
+        }
+
+        [Fact]
+        public void ChangedOriginatorAddPartyContactMechanismEmailAddress()
+        {
+            var request = new RequestForQuoteBuilder(this.Session)
+                .WithEmailAddress("emailaddress")
+                .Build();
+            this.Session.Derive(false);
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            request.Originator = customer;
+            this.Session.Derive(false);
+
+            Assert.NotNull(customer.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals("emailaddress")));
+        }
+
+        [Fact]
+        public void ChangedOriginatorAddPartyContactMechanismTelecommunicationsNumber()
+        {
+            var request = new RequestForQuoteBuilder(this.Session)
+                .WithTelephoneNumber("phone")
+                .Build();
+            this.Session.Derive(false);
+
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            request.Originator = customer;
+            this.Session.Derive(false);
+
+            Assert.NotNull(customer.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals("phone")));
+        }
+    }
+
+    public class RequestDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public RequestDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAssignedCurrencyDeriveDerivedCurrency()
+        {
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            request.AssignedCurrency = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            this.Session.Derive(false);
+
+            Assert.Equal(request.DerivedCurrency, request.AssignedCurrency);
+        }
+
+        [Fact]
+        public void ChangedRecipientDeriveDerivedCurrency()
+        {
+            Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
+
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(request.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
+        }
+
+        [Fact]
+        public void ChangedRecipientPreferredCurrencyDeriveDerivedCurrency()
+        {
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            this.InternalOrganisation.PreferredCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(request.DerivedCurrency, swedishKrona);
+        }
+
+        [Fact]
+        public void ChangedOriginatorDeriveDerivedCurrency()
+        {
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            customer.PreferredCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            request.Originator = customer;
+            this.Session.Derive(false);
+
+            Assert.Equal(request.DerivedCurrency, swedishKrona);
+        }
+
+        [Fact]
+        public void ChangedOriginatorPreferredCurrencyDeriveDerivedCurrency()
+        {
+            var customer = this.InternalOrganisation.ActiveCustomers.First;
+
+            var request = new RequestForQuoteBuilder(this.Session).WithOriginator(customer).Build();
+            this.Session.Derive(false);
+
+            var swedishKrona = new Currencies(this.Session).FindBy(M.Currency.IsoCode, "SEK");
+            customer.PreferredCurrency = swedishKrona;
+            this.Session.Derive(false);
+
+            Assert.Equal(request.DerivedCurrency, swedishKrona);
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveOrderNumber()
+        {
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            this.InternalOrganisation.RemoveRequestNumberPrefix();
+            var number = this.InternalOrganisation.RequestNumberCounter.Value;
+
+            this.Session.Derive(false);
+
+            Assert.Equal(request.RequestNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveSortableOrderNumber()
+        {
+            var request = new RequestForQuoteBuilder(this.Session).Build();
+            var number = this.InternalOrganisation.RequestNumberCounter.Value;
+
+            this.Session.Derive(false);
+
+            Assert.Equal(request.SortableRequestNumber.Value, number + 1);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class RequestDeniedPermissonDerivationSecurityTests : DomainTest, IClassFixture<Fixture>
     {

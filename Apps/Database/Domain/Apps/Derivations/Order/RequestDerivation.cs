@@ -16,8 +16,11 @@ namespace Allors.Database.Domain
         public RequestDerivation(M m) : base(m, new Guid("AF5D09BF-9ACF-4C29-9445-6D24BE2F04E6")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Request.Recipient),
                 new ChangedPattern(this.M.Request.AssignedCurrency),
+                new ChangedPattern(this.M.Request.Recipient),
+                new ChangedPattern(this.M.Request.Originator),
+                new ChangedPattern(this.M.Party.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Party.RequestsWhereOriginator}},
+                new ChangedPattern(this.M.Organisation.PreferredCurrency) { Steps = new IPropertyType[] { this.M.Organisation.RequestsWhereRecipient}},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -37,31 +40,6 @@ namespace Allors.Database.Domain
                 }
 
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Originator?.PreferredCurrency ?? @this.Recipient?.PreferredCurrency;
-
-                if (@this.ExistRequestState && @this.RequestState.Equals(new RequestStates(session).Anonymous) && @this.ExistOriginator)
-                {
-                    @this.RequestState = new RequestStates(session).Submitted;
-
-                    if (@this.ExistEmailAddress
-                        && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals(@this.EmailAddress)) == null)
-                    {
-                        @this.Originator.AddPartyContactMechanism(
-                            new PartyContactMechanismBuilder(session)
-                                .WithContactMechanism(new EmailAddressBuilder(session).WithElectronicAddressString(@this.EmailAddress).Build())
-                                .WithContactPurpose(new ContactMechanismPurposes(session).GeneralEmail)
-                                .Build());
-                    }
-
-                    if (@this.ExistTelephoneNumber
-                        && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals(@this.TelephoneNumber)) == null)
-                    {
-                        @this.Originator.AddPartyContactMechanism(
-                            new PartyContactMechanismBuilder(session)
-                                .WithContactMechanism(new TelecommunicationsNumberBuilder(session).WithContactNumber(@this.TelephoneNumber).WithCountryCode(@this.TelephoneCountryCode).Build())
-                                .WithContactPurpose(new ContactMechanismPurposes(session).GeneralPhoneNumber)
-                                .Build());
-                    }
-                }
 
                 @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
             }

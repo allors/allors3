@@ -17,6 +17,9 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.RequestForProposal.TransitionalDeniedPermissions),
+            new ChangedPattern(m.RequestForProposal.RequestItems),
+            new ChangedPattern(m.RequestItem.RequestItemState) { Steps =  new IPropertyType[] { m.RequestItem.RequestWhereRequestItem}, OfType = m.RequestForProposal.Class },
+            new ChangedPattern(m.Quote.Request) { Steps =  new IPropertyType[] { m.Quote.Request }, OfType = m.RequestForProposal.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
