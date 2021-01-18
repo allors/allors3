@@ -75,14 +75,14 @@ namespace Allors.Database.Domain.Tests
         public void GivenPurchaseOrder_WhenDeriving_ThenTakenViaSupplierMustBeInSupplierRelationship()
         {
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier2").Build();
-            var internalOrganisation = this.InternalOrganisation;
 
-            new PurchaseOrderBuilder(this.Session)
+            var order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(supplier)
                 .Build();
 
-            var expectedError = ErrorMessages.PartyIsNotASupplier;
-            Assert.Equal(expectedError, this.Session.Derive(false).Errors[0].Message);
+            var expectedMessage = $"{order} { this.M.PurchaseOrder.TakenViaSupplier} { ErrorMessages.PartyIsNotASupplier}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
 
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
@@ -178,6 +178,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(supplier)
                 .Build();
+            this.Session.Derive();
 
             order.SetReadyForProcessing();
             this.Session.Derive();
@@ -198,6 +199,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(supplier)
                 .Build();
+            this.Session.Derive();
 
             order.SetReadyForProcessing();
             this.Session.Derive();
@@ -218,6 +220,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Session)
                 .WithTakenViaSupplier(supplier)
                 .Build();
+            this.Session.Derive();
 
             order.SetReadyForProcessing();
             this.Session.Derive();
@@ -809,6 +812,748 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class PurchaseOrderStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderStateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemsDerivePurchaseOrderShipmentStateNa()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(false)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).Na, order.PurchaseOrderShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemPurchaseOrderItemShipmentStateDerivePurchaseOrderShipmentStateReceived()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem1);
+            this.Session.Derive(false);
+
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(false)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem2);
+            this.Session.Derive(false);
+
+            orderItem1.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Session).Received;
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).Received, order.PurchaseOrderShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemPurchaseOrderItemShipmentStateDerivePurchaseOrderShipmentStateNotReceived()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            orderItem.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Session).NotReceived;
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).NotReceived, order.PurchaseOrderShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemPurchaseOrderItemShipmentStateDerivePurchaseOrderShipmentStatePartiallyReceived()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem1);
+            this.Session.Derive(false);
+
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem2);
+            this.Session.Derive(false);
+
+            orderItem1.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Session).Received;
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderShipmentStates(this.Session).PartiallyReceived, order.PurchaseOrderShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemsDerivePurchaseOrderPaymentStateNotPaid()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem1);
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderPaymentStates(this.Session).NotPaid, order.PurchaseOrderPaymentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemsDerivePurchaseOrderPaymentStatePaid()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
+                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Session).Paid)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem1);
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderPaymentStates(this.Session).Paid, order.PurchaseOrderPaymentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemsDerivePurchaseOrderPaymentStatePartiallyPaid()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem1 = new PurchaseOrderItemBuilder(this.Session)
+                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Session).Paid)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem1);
+            this.Session.Derive(false);
+
+            var orderItem2 = new PurchaseOrderItemBuilder(this.Session)
+                .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Session).NotPaid)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem2);
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderPaymentStates(this.Session).PartiallyPaid, order.PurchaseOrderPaymentState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderStateDerivePurchaseOrderState()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Session).Received)
+                .Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.PurchaseOrderState = new PurchaseOrderStates(this.Session).Sent;
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderStates(this.Session).Completed, order.PurchaseOrderState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderShipmentStateDerivePurchaseOrderState()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Sent)
+                .Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithIsReceivable(true)
+                .WithPurchaseOrderItemShipmentState(new PurchaseOrderItemShipmentStates(this.Session).Received)
+                .WithQuantityOrdered(1)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            new ShipmentReceiptBuilder(this.Session).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderStates(this.Session).Completed, order.PurchaseOrderState);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderPaymentStateDerivePurchaseOrderState()
+        {
+            var order = new PurchaseOrderBuilder(this.Session)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Session).Completed)
+                .Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            orderItem.PurchaseOrderItemPaymentState = new PurchaseOrderItemPaymentStates(this.Session).Paid;
+            this.Session.Derive(false);
+
+            Assert.Equal(new PurchaseOrderStates(this.Session).Finished, order.PurchaseOrderState);
+        }
+    }
+
+    public class PurchaseOrderPriceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderPriceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedValidOrderItemsCalculatePrice()
+        {
+            var invoice = this.InternalOrganisation.CreatePurchaseOrderWithSerializedItem();
+            this.Session.Derive();
+
+            Assert.True(invoice.TotalIncVat > 0);
+            var totalIncVatBefore = invoice.TotalIncVat;
+
+            invoice.PurchaseOrderItems.First.Cancel();
+            this.Session.Derive();
+
+            Assert.Equal(invoice.TotalIncVat, totalIncVatBefore - invoice.PurchaseOrderItems.First.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedDerivationTriggerCalculatePrice()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            var supplierOffering = new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers[0])
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers[0]).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(supplierOffering.Price, invoice.TotalIncVat);
+
+            supplierOffering.Price = 2;
+            this.Session.Derive(false);
+
+            Assert.Equal(supplierOffering.Price, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemQuantityOrderedCalculatePrice()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            invoiceItem.QuantityOrdered = 2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            invoiceItem.AssignedUnitPrice = 3;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemPartCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part1 = new UnifiedGoodBuilder(this.Session).Build();
+            var part2 = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part1)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part2)
+                .WithSupplier(supplier)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part1).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            invoiceItem.Part = part2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedTakenViaSupplierCalculatePrice()
+        {
+            var supplier1 = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier2 = this.InternalOrganisation.CreateSupplier(this.Session.Faker());
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier1)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier2)
+                .WithPrice(2)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier1).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            invoice.TakenViaSupplier = supplier2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedRoleSalesOrderItemDiscountAdjustmentsCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemDiscountAdjustmentAmountCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoiceItem.AddDiscountAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, invoice.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemSurchargeAdjustmentsCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoiceItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderItemSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoiceItem.AddSurchargeAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, invoice.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedDiscountAdjustmentsCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedDiscountAdjustmentPercentageCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.9M, invoice.TotalIncVat);
+
+            discount.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.8M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedDiscountAdjustmentAmountCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var discount = new DiscountAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoice.AddOrderAdjustment(discount);
+            this.Session.Derive(false);
+
+            Assert.Equal(0.5M, invoice.TotalIncVat);
+
+            discount.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(0.6M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSurchargeAdjustmentsCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSurchargeAdjustmentPercentageCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithPercentage(10).Build();
+            invoice.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.1M, invoice.TotalIncVat);
+
+            surcharge.Percentage = 20M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.2M, invoice.TotalIncVat);
+        }
+
+        [Fact]
+        public void ChangedSurchargeAdjustmentAmountCalculatePrice()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var part = new UnifiedGoodBuilder(this.Session).Build();
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseOrderBuilder(this.Session).WithTakenViaSupplier(supplier).WithOrderDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var invoiceItem = new PurchaseOrderItemBuilder(this.Session).WithPart(part).WithQuantityOrdered(1).Build();
+            invoice.AddPurchaseOrderItem(invoiceItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, invoice.TotalIncVat);
+
+            var surcharge = new SurchargeAdjustmentBuilder(this.Session).WithAmount(0.5M).Build();
+            invoice.AddOrderAdjustment(surcharge);
+            this.Session.Derive(false);
+
+            Assert.Equal(1.5M, invoice.TotalIncVat);
+
+            surcharge.Amount = 0.4M;
+            this.Session.Derive(false);
+
+            Assert.Equal(1.4M, invoice.TotalIncVat);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class PurchaseOrderDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {
@@ -1100,14 +1845,14 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedPurchaseOrderStateCreatedPurchaseOrderShipmentStateIsNaDeriveMultiplePermissions()
+        public void OnChangedPurchaseOrderPurchaseOrderShipmentStateDeriveMultiplePermissions()
         {
             var order = new PurchaseOrderBuilder(this.Session)
-                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Session).NotReceived)
+                .WithPurchaseOrderShipmentState(new PurchaseOrderShipmentStates(this.Session).Received)
                 .Build();
             this.Session.Derive(false);
 
-            Assert.True(order.PurchaseOrderShipmentState.IsNotReceived);
+            Assert.True(order.PurchaseOrderShipmentState.IsReceived);
 
             Assert.Contains(this.rejectPermission, order.DeniedPermissions);
             Assert.Contains(this.cancelPermission, order.DeniedPermissions);

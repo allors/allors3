@@ -20,6 +20,38 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem) { Steps = new IPropertyType[] {this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem } },
             };
 
+        
+                //if (@this.PurchaseOrderItemState.Equals(states.InProcess) ||
+                //    @this.PurchaseOrderItemState.Equals(states.Cancelled) ||
+                //    @this.PurchaseOrderItemState.Equals(states.Rejected))
+                //{
+                //    NonSerialisedInventoryItem inventoryItem = null;
+
+                //    if (@this.ExistPart)
+                //    {
+                //        var inventoryItems = @this.Part.InventoryItemsWherePart;
+                //        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility);
+                //        inventoryItem = inventoryItems.First as NonSerialisedInventoryItem;
+                //    }
+
+                //    if (@this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).InProcess))
+                //    {
+                //        if (!@this.ExistPreviousQuantity || !@this.QuantityOrdered.Equals(@this.PreviousQuantity))
+                //        {
+                //            // TODO: Remove OnDerive
+                //            //inventoryItem?.OnDerive(x => x.WithDerivation(derivation));
+                //        }
+                //    }
+
+                //    if (@this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Cancelled) ||
+                //        @this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Rejected))
+                //    {
+                //        // TODO: Remove OnDerive
+                //        //inventoryItem?.OnDerive(x => x.WithDerivation(derivation));
+                //    }
+                //}
+
+
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())

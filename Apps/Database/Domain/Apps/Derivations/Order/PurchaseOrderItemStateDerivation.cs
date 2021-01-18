@@ -8,17 +8,18 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Derivations;
     using Meta;
     using Database.Derivations;
-    using Resources;
 
     public class PurchaseOrderItemStateDerivation : DomainDerivation
     {
         public PurchaseOrderItemStateDerivation(M m) : base(m, new Guid("046a8987-0a6a-4678-8959-2d1136a2b8f8")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState),
+                new ChangedPattern(m.PurchaseOrderItem.IsReceivable),
+                new ChangedPattern(m.PurchaseOrder.PurchaseOrderState) {Steps = new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
+                new ChangedPattern(m.ShipmentReceipt.QuantityAccepted) {Steps = new IPropertyType[] {m.ShipmentReceipt.OrderItem }, OfType = m.PurchaseOrderItem.Class },
+                new ChangedPattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -30,49 +31,40 @@ namespace Allors.Database.Domain
             {
                 var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
                 var states = new PurchaseOrderItemStates(@this.Session());
-                var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState;
+                var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem?.PurchaseOrderState;
 
-                if (!@this.ExistPurchaseOrderItemShipmentState)
+                if (purchaseOrderState != null)
                 {
-                    if (@this.IsReceivable)
+                    if (purchaseOrderState.IsInProcess &&
+                        (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
                     {
-                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).NotReceived;
+                        @this.PurchaseOrderItemState = states.InProcess;
                     }
-                    else
+
+                    if (purchaseOrderState.IsOnHold && @this.PurchaseOrderItemState.IsInProcess)
                     {
-                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Session).Na;
+                        @this.PurchaseOrderItemState = states.OnHold;
                     }
-                }
 
-                if (purchaseOrderState.IsInProcess &&
-                    (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
-                {
-                    @this.PurchaseOrderItemState = states.InProcess;
-                }
+                    if (purchaseOrderState.IsSent && @this.PurchaseOrderItemState.IsInProcess)
+                    {
+                        @this.PurchaseOrderItemState = states.Sent;
+                    }
 
-                if (purchaseOrderState.IsOnHold && @this.PurchaseOrderItemState.IsInProcess)
-                {
-                    @this.PurchaseOrderItemState = states.OnHold;
-                }
+                    if (@this.IsValid && purchaseOrderState.IsFinished)
+                    {
+                        @this.PurchaseOrderItemState = states.Finished;
+                    }
 
-                if (purchaseOrderState.IsSent && @this.PurchaseOrderItemState.IsInProcess)
-                {
-                    @this.PurchaseOrderItemState = states.Sent;
-                }
+                    if (@this.IsValid && purchaseOrderState.IsCancelled)
+                    {
+                        @this.PurchaseOrderItemState = states.Cancelled;
+                    }
 
-                if (@this.IsValid && purchaseOrderState.IsFinished)
-                {
-                    @this.PurchaseOrderItemState = states.Finished;
-                }
-
-                if (@this.IsValid && purchaseOrderState.IsCancelled)
-                {
-                    @this.PurchaseOrderItemState = states.Cancelled;
-                }
-
-                if (@this.IsValid && purchaseOrderState.IsRejected)
-                {
-                    @this.PurchaseOrderItemState = states.Rejected;
+                    if (@this.IsValid && purchaseOrderState.IsRejected)
+                    {
+                        @this.PurchaseOrderItemState = states.Rejected;
+                    }
                 }
 
                 var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(session);
@@ -140,36 +132,6 @@ namespace Allors.Database.Domain
                     if (@this.PurchaseOrderItemState.IsCompleted && @this.PurchaseOrderItemPaymentState.IsPaid)
                     {
                         @this.PurchaseOrderItemState = purchaseOrderItemStates.Finished;
-                    }
-                }
-
-                if (@this.PurchaseOrderItemState.Equals(states.InProcess) ||
-                    @this.PurchaseOrderItemState.Equals(states.Cancelled) ||
-                    @this.PurchaseOrderItemState.Equals(states.Rejected))
-                {
-                    NonSerialisedInventoryItem inventoryItem = null;
-
-                    if (@this.ExistPart)
-                    {
-                        var inventoryItems = @this.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.PurchaseOrderWherePurchaseOrderItem.StoredInFacility);
-                        inventoryItem = inventoryItems.First as NonSerialisedInventoryItem;
-                    }
-
-                    if (@this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).InProcess))
-                    {
-                        if (!@this.ExistPreviousQuantity || !@this.QuantityOrdered.Equals(@this.PreviousQuantity))
-                        {
-                            // TODO: Remove OnDerive
-                            //inventoryItem?.OnDerive(x => x.WithDerivation(derivation));
-                        }
-                    }
-
-                    if (@this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Cancelled) ||
-                        @this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Rejected))
-                    {
-                        // TODO: Remove OnDerive
-                        //inventoryItem?.OnDerive(x => x.WithDerivation(derivation));
                     }
                 }
             }

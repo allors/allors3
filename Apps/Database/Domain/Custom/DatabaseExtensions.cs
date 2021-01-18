@@ -196,7 +196,7 @@ namespace Allors.Database.Domain
                 new SupplierRelationshipDerivation(m),
                 new PurchaseOrderItemIsReceivableDerivation(m),
                 new PurchaseOrderItemCreatedDerivation(m),
-                new PurchaseOrderItemPriceDerivation(m),
+                new PurchaseOrderItemStateDerivation(m),
                 new PurchaseOrderItemByProductDerivation(m),
                 new PurchaseOrderStateDerivation(m),
                 new PurchaseOrderPriceDerivation(m),

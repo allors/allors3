@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.PurchaseOrderItem.AssignedDeliveryDate),
                 new ChangedPattern(m.PurchaseOrderItem.AssignedVatRegime),
                 new ChangedPattern(m.PurchaseOrderItem.AssignedIrpfRegime),
+                new ChangedPattern(this.M.PurchaseOrder.PurchaseOrderItems) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new ChangedPattern(this.M.PurchaseOrder.DeliveryDate) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new ChangedPattern(this.M.PurchaseOrder.DerivedVatRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
                 new ChangedPattern(this.M.PurchaseOrder.DerivedIrpfRegime) { Steps =  new IPropertyType[] {m.PurchaseOrder.PurchaseOrderItems } },
