@@ -9,36 +9,6 @@ namespace Allors.Database.Domain
 
     public static partial class ProductExtensions
     {
-        public static void AppsOnDeriveVirtualProductPriceComponent(this Product @this)
-        {
-            if (!@this.ExistProductWhereVariant)
-            {
-                @this.RemoveVirtualProductPriceComponents();
-            }
-
-            if (@this.ExistVariants)
-            {
-                @this.RemoveVirtualProductPriceComponents();
-
-                var priceComponents = @this.PriceComponentsWhereProduct;
-
-                foreach (Product product in @this.Variants)
-                {
-                    foreach (PriceComponent priceComponent in priceComponents)
-                    {
-                        // HACK: DerivedRoles
-                        var productDerivedRoles = product;
-                        productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
-
-                        if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
-                        {
-                            productDerivedRoles.AddBasePrice(basePrice);
-                        }
-                    }
-                }
-            }
-        }
-
         public static PriceComponent[] GetPriceComponents(this Product @this, PriceComponent[] currentPriceComponents)
         {
             var genericPriceComponents = currentPriceComponents.Where(priceComponent => !priceComponent.ExistProduct && !priceComponent.ExistPart && !priceComponent.ExistProductFeature).ToArray();

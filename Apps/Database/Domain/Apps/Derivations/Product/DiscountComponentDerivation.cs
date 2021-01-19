@@ -17,7 +17,8 @@ namespace Allors.Database.Domain
         public DiscountComponentDerivation(M m) : base(m, new Guid("C395DB2E-C4A6-4974-BE35-EF2CC70D347D")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.DiscountComponent.PricedBy),
+                new ChangedPattern(this.M.DiscountComponent.Price),
+                new ChangedPattern(this.M.DiscountComponent.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,25 +27,8 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<DiscountComponent>())
             {
-                validation.AssertAtLeastOne(@this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
                 validation.AssertExistsAtMostOne(@this, this.M.DiscountComponent.Price, this.M.DiscountComponent.Percentage);
-
-                if (@this.ExistPrice)
-                {
-                    if (!@this.ExistCurrency && @this.ExistPricedBy)
-                    {
-                        @this.Currency = @this.PricedBy.PreferredCurrency;
-                    }
-
-                    validation.AssertExists(@this, this.M.BasePrice.Currency);
-                }
-
-                if (@this.ExistProduct)
-                {
-                    @this.Product.AppsOnDeriveVirtualProductPriceComponent();
-                }
             }
-
         }
     }
 }

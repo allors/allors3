@@ -9,6 +9,7 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Derivations;
     using Database.Derivations;
 
     public class PriceComponentDerivation : DomainDerivation
@@ -18,6 +19,7 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(m.PriceComponent.FromDate),
                 new ChangedPattern(m.PriceComponent.ThroughDate),
+                new ChangedPattern(m.PriceComponent.PricedBy),
                 new ChangedPattern(m.PriceComponent.Price),
                 new ChangedPattern(m.PriceComponent.Product),
                 new ChangedPattern(m.PriceComponent.Part),
@@ -28,6 +30,8 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PriceComponent>())
             {
                 foreach (var salesInvoice in (@this.PricedBy as InternalOrganisation)?.SalesInvoicesWhereBilledFrom.Where(v => v.ExistSalesInvoiceState && v.SalesInvoiceState.IsReadyForPosting))
@@ -43,6 +47,16 @@ namespace Allors.Database.Domain
                 foreach (var quote in (@this.PricedBy as InternalOrganisation)?.QuotesWhereIssuer.Where(v => v.ExistQuoteState && v.QuoteState.IsCreated))
                 {
                     quote.DerivationTrigger = Guid.NewGuid();
+                }
+
+                if (@this.ExistPrice)
+                {
+                    if (!@this.ExistCurrency && @this.ExistPricedBy)
+                    {
+                        @this.Currency = @this.PricedBy.PreferredCurrency;
+                    }
+
+                    validation.AssertExists(@this, this.M.BasePrice.Currency);
                 }
             }
         }

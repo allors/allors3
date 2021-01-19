@@ -6,7 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class PriceComponentTests : DomainTest, IClassFixture<Fixture>
@@ -327,153 +329,38 @@ namespace Allors.Database.Domain.Tests
         public PriceComponentDerivationsTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenBasePriceWhenDerivingThenRequiredRelationsMustExist()
+        public void ChangedPriceDeriveCurrency()
         {
             var basePrice = new BasePriceBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.Equal(basePrice.PricedBy, new Organisations(this.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray().First());
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingeWithPriceByThenPricedByEqualOrganisation()
-        {
-            var organisation = new OrganisationBuilder(this.Session).Build();
-
-            var basePrice = new BasePriceBuilder(this.Session).WithPricedBy(organisation).Build();
+            basePrice.Price = 1;
             this.Session.Derive(false);
 
-            Assert.Equal(basePrice.PricedBy, organisation);
+            Assert.Equal(basePrice.PricedBy.PreferredCurrency, basePrice.Currency);
         }
 
         [Fact]
-        public void GivenBasePriceWhenDerivingeWithTwoInternalOrganisationsThenPricedByMustNull()
+        public void ChangedPriceThrowValidationError()
         {
-            var organisation1 = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-            var organisation2 = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
-            var organisation3 = new OrganisationBuilder(this.Session).Build();
+            this.InternalOrganisation.RemovePreferredCurrency();
 
-            var basePrice = new BasePriceBuilder(this.Session).WithPricedBy(organisation3).Build();
+            var basePrice = new BasePriceBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.NotEqual(basePrice.PricedBy, organisation1);
-            Assert.NotEqual(basePrice.PricedBy, organisation2);
-            Assert.Equal(basePrice.PricedBy, organisation3);
-            Assert.True(new Organisations(this.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray().Length > 1);
+            basePrice.Price = 1;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BasePrice.Currency"));
         }
 
         [Fact]
-        public void GivenBasePriceWhenDerivingThenHasErrors()
+        public void OnCreatedDerivePricedBy()
         {
             var basePrice = new BasePriceBuilder(this.Session).Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithPartThenHasErrors()
-        {
-            var part = new UnifiedGoodBuilder(this.Session).WithName("Part").Build();
-            var basePrice = new BasePriceBuilder(this.Session).WithPart(part).Build();
-
-            Assert.Equal(basePrice.Part, part);
-            Assert.False(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithProductThenHasErrors()
-        {
-            var product = new UnifiedGoodBuilder(this.Session).WithName("Product").Build();
-            var basePrice = new BasePriceBuilder(this.Session).WithProduct(product).Build();
-
-            Assert.Equal(basePrice.Product, product);
-            Assert.False(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithProductFeatureThenHasErrors()
-        {
-            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
-            var basePrice = new BasePriceBuilder(this.Session).WithProductFeature(Colour).Build();
-
-            Assert.Equal(basePrice.ProductFeature, Colour);
-            Assert.False(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithPartWithProductWithProductFeatureThenHasNoErrors()
-        {
-            var part = new UnifiedGoodBuilder(this.Session).WithName("part").Build();
-            var product = new UnifiedGoodBuilder(this.Session).WithName("product").Build();
-            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
-
-            var basePrice = new BasePriceBuilder(this.Session).WithPart(part).WithProduct(product).WithProductFeature(Colour).Build();
-
-            Assert.Equal(basePrice.Part, part);
-            Assert.Equal(basePrice.Product, product);
-            Assert.Equal(basePrice.ProductFeature, Colour);
-            Assert.False(this.Session.Derive(true).HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithPartWithProductWithProductFeatureThenHasErrors()
-        {
-            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
-            var orderQuantityBreak = new OrderQuantityBreakBuilder(this.Session).Build();
-
-            var basePrice = new BasePriceBuilder(this.Session).WithOrderQuantityBreak(orderQuantityBreak).WithProductFeature(Colour).Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-        }
-
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithPartWithProductWithOrderValueThenHasErrors()
-        {
-            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
-            var orderValue = new OrderValueBuilder(this.Session).Build();
-
-            var basePrice = new BasePriceBuilder(this.Session).WithOrderValue(orderValue).WithProductFeature(Colour).Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithPriceWithCurrencyThenCurrenyMustExist()
-        {
-            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
-            var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
-            var euro = belgium.Currency;
-
-            var basePrice = new BasePriceBuilder(this.Session)
-                .WithCurrency(euro)
-                .WithPrice(1)
-                .WithProductFeature(Colour)
-                .Build();
-
-            Assert.Equal(1, basePrice.Price);
-            Assert.Equal(euro, basePrice.Currency);
-            Assert.False(this.Session.Derive().HasErrors);
-        }
-
-        [Fact]
-        public void GivenBasePriceWhenDerivingWithPriceWithPricedByThenCurrenyMustExist()
-        {
-            var Colour = new ColourBuilder(this.Session).WithName("Colour").Build();
-            var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
-            var euro = belgium.Currency;
-            var organisation = new OrganisationBuilder(this.Session).WithPreferredCurrency(euro).Build();
-
-            var basePrice = new BasePriceBuilder(this.Session)
-                .WithPricedBy(organisation)
-                .WithPrice(1)
-                .WithProductFeature(Colour)
-                .Build();
-
             this.Session.Derive(false);
 
-            Assert.Equal(1, basePrice.Price);
-            Assert.Equal(organisation.PreferredCurrency, basePrice.Currency);
+            Assert.Equal(this.InternalOrganisation, basePrice.PricedBy);
         }
     }
 }

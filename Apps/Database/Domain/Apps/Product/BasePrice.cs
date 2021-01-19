@@ -9,6 +9,8 @@ namespace Allors.Database.Domain
 {
     public partial class BasePrice
     {
+        public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.BasePrice.Part, this.M.BasePrice.Product, this.M.BasePrice.ProductFeature);
+
         public void AppsDelete(DeletableDelete method)
         {
             this.Product.RemoveBasePrice(this);

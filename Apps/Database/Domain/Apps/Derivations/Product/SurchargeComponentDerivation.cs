@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.SurchargeComponent.Price),
+                new ChangedPattern(this.M.SurchargeComponent.Percentage),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,23 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SurchargeComponent>())
             {
-                validation.AssertAtLeastOne(@this, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
                 validation.AssertExistsAtMostOne(@this, this.M.SurchargeComponent.Price, this.M.SurchargeComponent.Percentage);
-
-                if (@this.ExistPrice)
-                {
-                    if (!@this.ExistCurrency)
-                    {
-                        @this.Currency = @this.PricedBy.PreferredCurrency;
-                    }
-
-                    validation.AssertExists(@this, this.M.BasePrice.Currency);
-                }
-
-                if (@this.ExistProduct)
-                {
-                    @this.Product.AppsOnDeriveVirtualProductPriceComponent();
-                }
             }
         }
     }

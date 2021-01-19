@@ -20,6 +20,8 @@ namespace Allors.Database.Domain
 
                 // Apps
                 new BasePriceDerivation(m),
+                new DiscountComponentDerivation(m),
+                new SurchargeComponentDerivation(m),
                 new AccountingPeriodDerivation(m),
                 new BankDerivation(m),
                 new BankAccountDerivation(m),
@@ -86,7 +88,6 @@ namespace Allors.Database.Domain
                 new WorkTaskDeniedPermissionDerivation(m),
                 new ShipmentDerivation(m),
                 new SupplierOfferingDerivation(m),
-                new ServiceDerivation(m),
                 new SerialisedItemCharacteristicDerivation(m),
                 new SerialisedInventoryItemDerivation(m),
                 new PriceComponentDerivation(m),
@@ -228,6 +229,7 @@ namespace Allors.Database.Domain
                 new PurchaseOrderApprovalLevel2ParticipantsDerivation(m),
                 new CommunicationTaskParticipantsDerivation(m),
                 new ProductCategoryDerivation(m),
+                new ProductVirtualProductPriceComponentDerivation(m),
             };
 
             foreach (var derivation in derivations)
