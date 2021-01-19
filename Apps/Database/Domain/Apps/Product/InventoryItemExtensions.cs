@@ -9,15 +9,6 @@ namespace Allors.Database.Domain
 {
     public static partial class InventoryItemExtensions
     {
-        public static void AppsOnBuild(this InventoryItem @this, ObjectOnBuild method)
-        {
-            // TODO: Let Sync set Unit of Measure
-            if (!@this.ExistUnitOfMeasure)
-            {
-                @this.UnitOfMeasure = @this.Part?.UnitOfMeasure;
-            }
-        }
-
         public static void Sync(this InventoryItem @this, Part part)
         {
             @this.SearchString = part.SearchString;

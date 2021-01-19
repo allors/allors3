@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.Part.Name),
+                new ChangedPattern(this.M.InventoryItem.Part) { Steps = new IPropertyType[] {m.InventoryItem.Part } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -80,7 +81,6 @@ namespace Allors.Database.Domain
                 builder.Append(string.Join(", ", @this.Keywords));
 
                 @this.SearchString = builder.ToString();
-
 
                 foreach (InventoryItem inventoryItem in @this.InventoryItemsWherePart)
                 {

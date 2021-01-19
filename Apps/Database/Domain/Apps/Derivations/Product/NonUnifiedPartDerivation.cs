@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(this.M.NonUnifiedPart.ProductIdentifications),
                 new ChangedPattern(this.M.NonUnifiedPart.UniqueId),
+                new ChangedPattern(this.M.NonUnifiedPart.DefaultFacility),
+                new ChangedPattern(this.M.NonUnifiedPart.UnitOfMeasure),
                 new ChangedPattern(this.M.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part }, OfType = this.M.NonUnifiedPart.Class},
                 new ChangedPattern(this.M.NonSerialisedInventoryItem.QuantityOnHand) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
                 new ChangedPattern(this.M.NonSerialisedInventoryItem.AvailableToPromise) { Steps = new IPropertyType[]{ this.M.NonSerialisedInventoryItem.Part },OfType = this.M.NonUnifiedPart.Class},
@@ -105,7 +107,8 @@ namespace Allors.Database.Domain
             {
                 var inventoryItems = nonUnifiedPart.InventoryItemsWherePart;
 
-                if (!inventoryItems.Any(i => i.Facility != null && i.Facility.Equals(nonUnifiedPart.DefaultFacility) && i.UnitOfMeasure.Equals(nonUnifiedPart.UnitOfMeasure)))
+                if (!inventoryItems.Any(i => i.ExistFacility && i.Facility.Equals(nonUnifiedPart.DefaultFacility)
+                                            && i.ExistUnitOfMeasure && i.UnitOfMeasure.Equals(nonUnifiedPart.UnitOfMeasure)))
                 {
                     var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(nonUnifiedPart.Strategy.Session)
                       .WithFacility(nonUnifiedPart.DefaultFacility)

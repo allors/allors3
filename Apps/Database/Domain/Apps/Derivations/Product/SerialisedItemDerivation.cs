@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(this.M.SerialisedItem.AcquiredDate),
                 new ChangedPattern(this.M.SerialisedItem.AssignedSuppliedBy),
+                new ChangedPattern(this.M.SerialisedItem.SerialNumber),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,6 +35,11 @@ namespace Allors.Database.Domain
                 if (!@this.ExistName && @this.ExistPartWhereSerialisedItem)
                 {
                     @this.Name = @this.PartWhereSerialisedItem.Name;
+                }
+
+                if (!@this.ExistName && @this.ExistSerialNumber)
+                {
+                    @this.Name = @this.SerialNumber;
                 }
 
                 @this.SuppliedBy = @this.AssignedSuppliedBy ??

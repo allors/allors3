@@ -20,6 +20,9 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SalesOrderItem.QuantityPendingShipment),
                 new ChangedPattern(m.SalesOrderItem.QuantityShipped),
                 new ChangedPattern(m.NonSerialisedInventoryItem.QuantityOnHand) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityCommittedOut) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityExpectedIn) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(m.NonSerialisedInventoryItem.AvailableToPromise) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

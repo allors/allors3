@@ -35,7 +35,8 @@ namespace Allors.Database.Domain
                     {
                         var inventoryItems = @this.InventoryItemsWherePart;
 
-                        if (!inventoryItems.Any(i => i.Facility.Equals(@this.DefaultFacility) && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
+                        if (!inventoryItems.Any(i => i.ExistFacility && i.Facility.Equals(@this.DefaultFacility)
+                                                    && i.ExistUnitOfMeasure && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
                         {
                             var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Session)
                                 .WithFacility(@this.DefaultFacility)
