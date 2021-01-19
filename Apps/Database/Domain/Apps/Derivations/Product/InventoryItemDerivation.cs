@@ -24,31 +24,11 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<InventoryItem>())
             {
-                var now = cycle.Session.Now();
-
-                (@this).PartDisplayName = @this.Part?.DisplayName;
-
                 if (!@this.ExistFacility && @this.ExistPart && @this.Part.ExistDefaultFacility)
                 {
                     @this.Facility = @this.Part.DefaultFacility;
                 }
-
-                // TODO: Let Sync set Unit of Measure
-                if (!@this.ExistUnitOfMeasure)
-                {
-                    @this.UnitOfMeasure = @this.Part?.UnitOfMeasure;
-                }
-
-                var part = @this.Part;
-
-                var builder = new StringBuilder();
-
-                builder.Append(part.SearchString);
-
-                @this.SearchString = builder.ToString();
             }
-
         }
-
     }
 }

@@ -80,6 +80,12 @@ namespace Allors.Database.Domain
                 builder.Append(string.Join(", ", @this.Keywords));
 
                 @this.SearchString = builder.ToString();
+
+
+                foreach (InventoryItem inventoryItem in @this.InventoryItemsWherePart)
+                {
+                    inventoryItem.Sync(@this);
+                }
             }
         }
     }

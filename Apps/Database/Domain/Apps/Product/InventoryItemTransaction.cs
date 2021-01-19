@@ -38,26 +38,26 @@ namespace Allors.Database.Domain
             {
                 if (!this.ExistSerialisedInventoryItemState)
                 {
-                    this.SerialisedInventoryItemState = this.Reason.DefaultSerialisedInventoryItemState;
+                    this.SerialisedInventoryItemState = this.Reason?.DefaultSerialisedInventoryItemState;
                 }
             }
             else
             {
                 if (!this.ExistNonSerialisedInventoryItemState)
                 {
-                    this.NonSerialisedInventoryItemState = this.Reason.DefaultNonSerialisedInventoryItemState;
+                    this.NonSerialisedInventoryItemState = this.Reason?.DefaultNonSerialisedInventoryItemState;
                 }
             }
 
-            if (!this.ExistInventoryItem)
+            if (!this.ExistInventoryItem && this.ExistPart)
             {
                 this.SyncInventoryItem();
             }
 
             // Match on required properties
             var matched = false;
-            var matchingItems = this.Part.InventoryItemsWherePart.ToArray();
-            var possibleMatches = matchingItems.Length > 0;
+            var matchingItems = this.Part?.InventoryItemsWherePart.ToArray();
+            var possibleMatches = matchingItems != null && matchingItems.Length > 0;
 
             if (possibleMatches)
             {
@@ -148,7 +148,7 @@ namespace Allors.Database.Domain
                 derivation.Validation.AddError(this, this.Meta.SerialisedItem, message);
             }
 
-            if (this.Part.InventoryItemKind.IsSerialised)
+            if (this.ExistSerialisedItem && this.Part.InventoryItemKind.IsSerialised)
             {
                 var inventoryItems = this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem;
                 inventoryItems.Filter.AddEquals(this.M.InventoryItem.Part, this.Part);

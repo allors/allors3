@@ -91,11 +91,11 @@ namespace Allors.Database.Domain
             {
                 var reason = inventoryTransaction.Reason;
 
-                if (reason.IncreasesQuantityOnHand == true)
+                if (reason?.IncreasesQuantityOnHand == true)
                 {
                     quantityOnHand += inventoryTransaction.Quantity;
                 }
-                else if (reason.IncreasesQuantityOnHand == false)
+                else if (reason?.IncreasesQuantityOnHand == false)
                 {
                     quantityOnHand -= inventoryTransaction.Quantity;
                 }
@@ -129,11 +129,11 @@ namespace Allors.Database.Domain
             {
                 var reason = inventoryItemTransaction.Reason;
 
-                if (reason.IncreasesQuantityCommittedOut == true)
+                if (reason?.IncreasesQuantityCommittedOut == true)
                 {
                     quantityCommittedOut += inventoryItemTransaction.Quantity;
                 }
-                else if (reason.IncreasesQuantityCommittedOut == false)
+                else if (reason?.IncreasesQuantityCommittedOut == false)
                 {
                     quantityCommittedOut -= inventoryItemTransaction.Quantity;
                 }

@@ -25,8 +25,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<InventoryItemTransaction>())
             {
-
-                if (@this.Part.InventoryItemKind.IsSerialised)
+                if (@this.ExistPart && @this.Part.InventoryItemKind.IsSerialised)
                 {
                     if (@this.Quantity != 1 && @this.Quantity != -1 && @this.Quantity != 0)
                     {
@@ -53,8 +52,10 @@ namespace Allors.Database.Domain
                     }
 
                     if (@this.Quantity == 1
+                        && @this.ExistSerialisedItem
                         && @this.SerialisedItem.ExistSerialisedInventoryItemsWhereSerialisedItem
                         && @this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.Any(v => v.Quantity == 1)
+                        && @this.ExistReason
                         && @this.Reason.IncreasesQuantityOnHand == true)
                     {
                         var message = "Serialised item already in inventory";
@@ -62,7 +63,6 @@ namespace Allors.Database.Domain
                     }
                 }
             }
-
         }
     }
 }

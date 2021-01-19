@@ -17,5 +17,12 @@ namespace Allors.Database.Domain
                 @this.UnitOfMeasure = @this.Part?.UnitOfMeasure;
             }
         }
+
+        public static void Sync(this InventoryItem @this, Part part)
+        {
+            @this.SearchString = part.SearchString;
+            @this.UnitOfMeasure = part.UnitOfMeasure;
+            @this.PartDisplayName = part.DisplayName;
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace Allors.Database.Domain
                 {
                     var reason = inventoryTransaction.Reason;
 
-                    if (reason.IncreasesQuantityOnHand == true)
+                    if (reason?.IncreasesQuantityOnHand == true)
                     {
                         quantityOnHand += inventoryTransaction.Quantity;
 
@@ -89,7 +89,7 @@ namespace Allors.Database.Domain
                         var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
                         (@this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
                     }
-                    else if (reason.IncreasesQuantityOnHand == false)
+                    else if (reason?.IncreasesQuantityOnHand == false)
                     {
                         quantityOnHand -= inventoryTransaction.Quantity;
 
