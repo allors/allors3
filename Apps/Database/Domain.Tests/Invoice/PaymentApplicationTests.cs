@@ -51,7 +51,7 @@ namespace Allors.Database.Domain.Tests
 
             receipt.AddPaymentApplication(paymentApplication);
 
-            var expectedMessage = $"{paymentApplication} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsToSmall}";
+            var expectedMessage = $"{receipt} {this.M.Payment.Amount} {ErrorMessages.PaymentAmountIsToSmall}";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Contains(expectedMessage)));
         }

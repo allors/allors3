@@ -49,8 +49,7 @@ namespace Allors.Database.Domain
 
                         if (salesOrderItem.QuantityRequestsShipping > 0)
                         {
-                            // HACK: DerivedRoles
-                            (salesOrderItem).QuantityRequestsShipping -= @this.Quantity;
+                            salesOrderItem.QuantityRequestsShipping -= @this.Quantity;
                         }
 
                         if (salesOrderItem.ExistReservedFromNonSerialisedInventoryItem && @this.Quantity > salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand + quantityPicked)

@@ -19,10 +19,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SalesOrderItem.SalesOrderItemState),
                 new ChangedPattern(m.SalesOrderItem.QuantityPendingShipment),
                 new ChangedPattern(m.SalesOrderItem.QuantityShipped),
-                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityOnHand) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
-                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityCommittedOut) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
-                new ChangedPattern(m.NonSerialisedInventoryItem.QuantityExpectedIn) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
-                new ChangedPattern(m.NonSerialisedInventoryItem.AvailableToPromise) {Steps = new IPropertyType[]{m.NonSerialisedInventoryItem.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem}, OfType = m.SalesOrderItem.Class },
+                new ChangedPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
+                new ChangedPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem, m.NonSerialisedInventoryItem.SalesOrderItemInventoryAssignmentsWhereInventoryItem, m.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -33,55 +31,47 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SalesOrderItem>().Where(v => v.SalesOrderItemState.IsInProcess && !v.SalesOrderItemShipmentState.IsShipped))
             {
                 var salesOrder = @this.SalesOrderWhereSalesOrderItem;
+                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
                 if (@this.ExistReservedFromNonSerialisedInventoryItem)
                 {
                     if ((salesOrder.OrderKind?.ScheduleManually == true && @this.QuantityPendingShipment > 0)
                         || !salesOrder.ExistOrderKind || !salesOrder.OrderKind.ScheduleManually)
                     {
-                        var committedOutSameProductOtherItem = salesOrder.SalesOrderItems
-                            .Where(v => !Equals(v, @this) && Equals(v.Product, @this.Product))
-                            .Sum(v => v.QuantityRequestsShipping);
+                        var committedOutSameProductOtherItem = @this.ExistProduct ?
+                            @this.Product.SalesOrderItemsWhereProduct
+                                .Where(v => !Equals(v, @this))
+                                .Sum(v => v.QuantityRequestsShipping) :
+                            0; 
 
-                        var qoh = @this.ReservedFromNonSerialisedInventoryItem.QuantityOnHand;
+                        var qoh = @this.ReservedFromNonSerialisedInventoryItem.CalculateQuantityOnHand(settings);
+                        var xxx = @this.ReservedFromNonSerialisedInventoryItem.CalculateAvailableToPromise(settings);
 
-                        var atp = @this.ReservedFromNonSerialisedInventoryItem.AvailableToPromise - committedOutSameProductOtherItem > 0 ?
-                            @this.ReservedFromNonSerialisedInventoryItem.AvailableToPromise - committedOutSameProductOtherItem :
+                        var atp = xxx - committedOutSameProductOtherItem > 0 ?
+                            xxx - committedOutSameProductOtherItem :
                             0;
 
-                        var quantityCommittedOut = 0M;
-
-                        foreach (SalesOrderItemInventoryAssignment salesOrderItemInventoryAssignment1 in @this.SalesOrderItemInventoryAssignments)
-                        {
-                            foreach(InventoryItemTransaction inventoryItemTransaction in salesOrderItemInventoryAssignment1.InventoryItem.InventoryItemTransactionsWhereInventoryItem)
-                            {
-                                var reason = inventoryItemTransaction.Reason;
-
-                                if (reason.IncreasesQuantityCommittedOut == true)
-                                {
-                                    quantityCommittedOut += inventoryItemTransaction.Quantity;
-                                }
-                                else if (reason.IncreasesQuantityCommittedOut == false)
-                                {
-                                    quantityCommittedOut -= inventoryItemTransaction.Quantity;
-                                }
-                            }
-                        }
+                        var quantityCommittedOut = @this.SalesOrderItemInventoryAssignments
+                            .SelectMany(v => v.InventoryItemTransactions)
+                            .Where(t => t.Reason.Equals(new InventoryTransactionReasons(session).Reservation))
+                            .Sum(v => v.Quantity);
 
                         if (quantityCommittedOut < 0)
                         {
                             quantityCommittedOut = 0;
                         }
 
-                        @this.QuantityCommittedOut = quantityCommittedOut;
+                        if (@this.QuantityCommittedOut != quantityCommittedOut)
+                        {
+                            @this.QuantityCommittedOut = quantityCommittedOut;
+                        }
 
-                        var wantToShip = @this.QuantityCommittedOut - @this.QuantityPendingShipment;
-
-                        var inventoryAssignment = @this.SalesOrderItemInventoryAssignments.FirstOrDefault(v => v.InventoryItem.Equals(@this.ReservedFromNonSerialisedInventoryItem));
                         if (@this.QuantityCommittedOut > qoh)
                         {
-                            wantToShip = qoh;
+                            @this.QuantityCommittedOut = qoh;
                         }
+
+                        var wantToShip = @this.QuantityCommittedOut - @this.QuantityPendingShipment;
 
                         //if (salesOrderItem.ExistPreviousReservedFromNonSerialisedInventoryItem
                         //    && !Equals(salesOrderItem.ReservedFromNonSerialisedInventoryItem, salesOrderItem.PreviousReservedFromNonSerialisedInventoryItem))
@@ -101,6 +91,7 @@ namespace Allors.Database.Domain
                         var neededFromInventory = @this.QuantityOrdered - @this.QuantityShipped - @this.QuantityCommittedOut;
                         var availableFromInventory = neededFromInventory < atp ? neededFromInventory : atp;
 
+                        var inventoryAssignment = @this.SalesOrderItemInventoryAssignments.FirstOrDefault(v => v.InventoryItem.Equals(@this.ReservedFromNonSerialisedInventoryItem));
                         if (neededFromInventory != 0 || @this.QuantityShortFalled > 0)
                         {
                             if (inventoryAssignment == null)
@@ -125,16 +116,21 @@ namespace Allors.Database.Domain
                                 }
                             }
 
-                            @this.QuantityRequestsShipping = wantToShip + availableFromInventory;
+                            var quantityRequestsShipping = wantToShip + availableFromInventory;
 
-                            if (@this.QuantityRequestsShipping > qoh)
+                            if (quantityRequestsShipping > qoh)
                             {
-                                @this.QuantityRequestsShipping = qoh;
+                                quantityRequestsShipping = qoh;
                             }
 
                             if (salesOrder.OrderKind?.ScheduleManually == true)
                             {
-                                @this.QuantityRequestsShipping = 0;
+                                quantityRequestsShipping = 0;
+                            }
+
+                            if (@this.QuantityRequestsShipping != quantityRequestsShipping)
+                            {
+                                @this.QuantityRequestsShipping = quantityRequestsShipping;
                             }
 
                             @this.QuantityReserved = @this.QuantityOrdered - @this.QuantityShipped;

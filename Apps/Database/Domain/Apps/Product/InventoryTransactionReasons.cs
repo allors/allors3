@@ -169,7 +169,7 @@ namespace Allors.Database.Domain
                 localisedName.Set(v, dutchLocale, "Verbruik");
                 v.IsActive = true;
                 v.IsManualEntryAllowed = false;
-                v.IncreasesQuantityCommittedOut = false; // Decreases Quantity
+                v.IncreasesQuantityCommittedOut = null; // Does not affect Quantity
                 v.IncreasesQuantityExpectedIn = null; // Does not affect Quantity
                 v.IncreasesQuantityOnHand = false; // Decreases Quantity
                 v.DefaultSerialisedInventoryItemState = serialisedStates.Good;

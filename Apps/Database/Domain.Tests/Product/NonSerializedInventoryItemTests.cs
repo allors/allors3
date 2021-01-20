@@ -4,10 +4,9 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-using Allors.Database.Domain.TestPopulation;
-
 namespace Allors.Database.Domain.Tests
 {
+    using Allors.Database.Domain.TestPopulation;
     using System;
     using System.Linq;
     using Xunit;

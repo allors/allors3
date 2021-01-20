@@ -11,38 +11,63 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class NonSerialisedInventoryItemQuantityExpectedInDerivation : DomainDerivation
+    public class NonSerialisedInventoryItemQuantitiesDerivation : DomainDerivation
     {
-        public NonSerialisedInventoryItemQuantityExpectedInDerivation(M m) : base(m, new Guid("19215b2a-f0b7-4a85-a4ee-fff853c9a63d")) =>
+        public NonSerialisedInventoryItemQuantitiesDerivation(M m) : base(m, new Guid("36bb6207-ff7d-4bc1-afaf-a2c12d649c1c")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PurchaseOrderItem.Part) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
+                new ChangedPattern(m.NonSerialisedInventoryItem.NonSerialisedInventoryItemState),
+                new ChangedPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
+                new ChangedPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new ChangedPattern(m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
                 new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
             };
-
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())
             {
-                var quantityExpectedIn = 0M;
+                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
-                foreach (PurchaseOrderItem purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
+                var quantityOnHand = @this.CalculateQuantityOnHand(settings);
+                if (quantityOnHand != @this.QuantityOnHand)
                 {
-                    var facility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem.StoredInFacility;
-                    if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).InProcess)
-                         || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Sent))
-                        && @this.Facility.Equals(facility))
-                    {
-                        quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
-                        quantityExpectedIn -= purchaseOrderItem.QuantityReceived;
-                    }
+                    @this.QuantityOnHand = quantityOnHand;
                 }
 
-                if (quantityExpectedIn != @this.QuantityExpectedIn)
+                var quantityCommittedOut = @this.CalculateQuantityCommittedOut();
+                if (quantityCommittedOut != @this.QuantityCommittedOut)
                 {
-                    @this.QuantityExpectedIn = quantityExpectedIn;
+                    @this.QuantityCommittedOut = quantityCommittedOut;
+                }
+
+                var availableToPromise = @this.CalculateAvailableToPromise(settings);
+                if (availableToPromise != @this.AvailableToPromise)
+                {
+                    @this.AvailableToPromise = availableToPromise;
+                }
+
+                if (@this.ExistPart && @this.Part.ExistPurchaseOrderItemsWherePart)
+                {
+                    // QuantityExpectedIn
+                    var quantityExpectedIn = 0M;
+
+                    foreach (PurchaseOrderItem purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
+                    {
+                        var facility = purchaseOrderItem.PurchaseOrderWherePurchaseOrderItem?.StoredInFacility;
+                        if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).InProcess)
+                             || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Session).Sent))
+                            && @this.Facility.Equals(facility))
+                        {
+                            quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
+                            quantityExpectedIn -= purchaseOrderItem.QuantityReceived;
+                        }
+                    }
+
+                    if (quantityExpectedIn != @this.QuantityExpectedIn)
+                    {
+                        @this.QuantityExpectedIn = quantityExpectedIn;
+                    }
                 }
 
                 if (@this.ExistPreviousQuantityOnHand && @this.QuantityOnHand > @this.PreviousQuantityOnHand)
