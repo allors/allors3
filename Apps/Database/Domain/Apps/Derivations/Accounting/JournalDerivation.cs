@@ -18,7 +18,8 @@ namespace Allors.Database.Domain
         public JournalDerivation(M m) : base(m, new Guid("c52af46b-1cbd-47cd-a00f-76aa5c232db3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Journal.PreviousContraAccount),
+                new ChangedPattern(m.Journal.ContraAccount),
+                new ChangedPattern(m.Journal.JournalType),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,69 +28,20 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Journal>())
             {
-                AppsOnDeriveContraAccount(@this);
-                AppsOnDerivePreviousJournalType(@this);
-            }
-
-            void AppsOnDeriveContraAccount(Journal journal)
-            {
-                if (journal.ExistPreviousContraAccount)
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ContraAccount.ExistJournalEntryDetailsWhereGeneralLedgerAccount
+                    && @this.CurrentVersion.ExistContraAccount
+                    && @this.ContraAccount != @this.CurrentVersion.ContraAccount)
                 {
-                    if (journal.PreviousContraAccount.ExistJournalEntryDetailsWhereGeneralLedgerAccount)
-                    {
-                        validation.AssertAreEqual(journal, journal.Meta.ContraAccount, journal.Meta.PreviousContraAccount);
-                    }
-                    else
-                    {
-                        journal.PreviousContraAccount = journal.ContraAccount;
-                    }
+                    validation.AddError($"{@this} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}");
                 }
-                else
-                {
-                    if (journal.ExistJournalType && journal.JournalType.Equals(new JournalTypes(journal.Strategy.Session).Bank))
-                    {
-                        // initial derivation of ContraAccount, PreviousContraAccount does not exist yet.
-                        if (journal.ExistContraAccount)
-                        {
-                            var savedContraAccount = journal.ContraAccount;
-                            journal.RemoveContraAccount();
-                            if (!savedContraAccount.IsNeutralAccount())
-                            {
-                                validation.AddError($"{journal}, {journal.Meta.ContraAccount}, {ErrorMessages.GeneralLedgerAccountNotNeutral}");
-                            }
 
-                            if (!savedContraAccount.GeneralLedgerAccount.BalanceSheetAccount)
-                            {
-                                validation.AddError($"{journal}, {journal.Meta.ContraAccount}, {ErrorMessages.GeneralLedgerAccountNotBalanceAccount}");
-                            }
-
-                            journal.ContraAccount = savedContraAccount;
-                        }
-                    }
-                    // TODO: How to get HasErrors
-                    //if (!validation.HasErrors)
-                    //{
-                    //    journal.PreviousContraAccount = journal.ContraAccount;
-                    //}
-                }
-            }
-
-            void AppsOnDerivePreviousJournalType(Journal journal)
-            {
-                if (journal.ExistPreviousJournalType)
+                if (@this.ExistCurrentVersion
+                    && @this.CurrentVersion.ContraAccount.ExistJournalEntryDetailsWhereGeneralLedgerAccount
+                    && @this.CurrentVersion.ExistJournalType
+                    && @this.JournalType != @this.CurrentVersion.JournalType)
                 {
-                    if (journal.ExistPreviousContraAccount && journal.PreviousContraAccount.ExistJournalEntryDetailsWhereGeneralLedgerAccount)
-                    {
-                        validation.AssertAreEqual(journal, journal.Meta.JournalType, journal.Meta.PreviousJournalType);
-                    }
-                    else
-                    {
-                        journal.PreviousJournalType = journal.JournalType;
-                    }
-                }
-                else
-                {
-                    journal.PreviousJournalType = journal.JournalType;
+                    validation.AddError($"{@this} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}");
                 }
             }
         }

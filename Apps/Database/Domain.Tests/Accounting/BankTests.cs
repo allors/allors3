@@ -6,6 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class BankTests : DomainTest, IClassFixture<Fixture>
@@ -88,6 +91,21 @@ namespace Allors.Database.Domain.Tests
             bank.Bic = "RABONL2UAAA";
 
             Assert.False(this.Session.Derive(false).HasErrors);
+        }
+    }
+
+    public class BankDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public BankDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBicThrowValidationError()
+        {
+            var bank = new BankBuilder(this.Session).WithBic("invalid").Build();
+
+            var expectedMessage = $"{bank}, {bank.Bic}, {ErrorMessages.NotAValidBic}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }

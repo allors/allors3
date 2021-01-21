@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
         private bool IsDeletable => !this.ExistPart &&
                                     !this.ExistDeploymentsWhereProductOffering &&
                                     !this.ExistEngagementItemsWhereProduct &&
-                                    !this.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                                    !this.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
                                     !this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
                                     !this.ExistQuoteItemsWhereProduct &&
                                     !this.ExistShipmentItemsWhereGood &&

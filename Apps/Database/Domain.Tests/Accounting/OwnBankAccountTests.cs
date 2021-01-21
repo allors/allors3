@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class OwnBankAccountTests : DomainTest, IClassFixture<Fixture>
@@ -161,7 +163,7 @@ namespace Allors.Database.Domain.Tests
 
             internalOrganisation.DoAccounting = true;
 
-            (internalOrganisation).AddActiveCollectionMethod(collectionMethod);
+            (internalOrganisation).AddAssignedActiveCollectionMethod(collectionMethod);
 
             Assert.True(this.Session.Derive(false).HasErrors);
 
@@ -175,4 +177,48 @@ namespace Allors.Database.Domain.Tests
             Assert.False(this.Session.Derive(false).HasErrors);
         }
     }
+
+    public class OwnBankAccountDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public OwnBankAccountDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()
+        {
+            this.InternalOrganisation.DoAccounting = true;
+
+            var ownBankAccount = new OwnBankAccountBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.DefaultCollectionMethod = ownBankAccount;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: OwnBankAccount.GeneralLedgerAccount\nOwnBankAccount.Journal"));
+        }
+
+        [Fact]
+        public void ChangedGeneralLedgerAccountThrowValidation()
+        {
+            var ownBankAccount = new OwnBankAccountBuilder(this.Session).WithJournal(new JournalBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            ownBankAccount.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: OwnBankAccount.GeneralLedgerAccount\nOwnBankAccount.Journal"));
+        }
+
+        [Fact]
+        public void ChangedJournalThrowValidation()
+        {
+            var ownBankAccount = new OwnBankAccountBuilder(this.Session).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            ownBankAccount.Journal = new JournalBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: OwnBankAccount.GeneralLedgerAccount\nOwnBankAccount.Journal"));
+        }
+    }
+
 }

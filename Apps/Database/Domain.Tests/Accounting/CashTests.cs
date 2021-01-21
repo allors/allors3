@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class CashTests : DomainTest, IClassFixture<Fixture>
@@ -76,7 +78,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             internalOrganisation.DoAccounting = true;
-            (internalOrganisation).AddActiveCollectionMethod(cash);
+            (internalOrganisation).AddAssignedActiveCollectionMethod(cash);
 
             Assert.True(this.Session.Derive(false).HasErrors);
 
@@ -88,6 +90,49 @@ namespace Allors.Database.Domain.Tests
             cash.GeneralLedgerAccount = internalOrganisationGlAccount;
 
             Assert.False(this.Session.Derive(false).HasErrors);
+        }
+    }
+
+    public class CashDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CashDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()
+        {
+            this.InternalOrganisation.DoAccounting = true;
+
+            var cash = new CashBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            this.InternalOrganisation.DefaultCollectionMethod = cash;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("AssertAtLeastOne: Cash.GeneralLedgerAccount\nCash.Journal"));
+        }
+
+        [Fact]
+        public void ChangedGeneralLedgerAccountThrowValidation()
+        {
+            var cash = new CashBuilder(this.Session).WithJournal(new JournalBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            cash.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: Cash.GeneralLedgerAccount\nCash.Journal"));
+        }
+
+        [Fact]
+        public void ChangedJournalThrowValidation()
+        {
+            var cash = new CashBuilder(this.Session).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            cash.Journal = new JournalBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExistsAtMostOne: Cash.GeneralLedgerAccount\nCash.Journal"));
         }
     }
 }

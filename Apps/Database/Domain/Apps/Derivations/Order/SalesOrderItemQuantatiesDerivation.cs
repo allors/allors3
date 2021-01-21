@@ -45,10 +45,10 @@ namespace Allors.Database.Domain
                             0; 
 
                         var qoh = @this.ReservedFromNonSerialisedInventoryItem.CalculateQuantityOnHand(settings);
-                        var xxx = @this.ReservedFromNonSerialisedInventoryItem.CalculateAvailableToPromise(settings);
+                        var initialAtp = @this.ReservedFromNonSerialisedInventoryItem.CalculateAvailableToPromise(settings);
 
-                        var atp = xxx - committedOutSameProductOtherItem > 0 ?
-                            xxx - committedOutSameProductOtherItem :
+                        var atp = initialAtp - committedOutSameProductOtherItem > 0 ?
+                            initialAtp - committedOutSameProductOtherItem :
                             0;
 
                         var quantityCommittedOut = @this.SalesOrderItemInventoryAssignments

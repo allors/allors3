@@ -30,7 +30,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<BankAccount>())
             {
-
                 if (@this.ExistOwnBankAccountsWhereBankAccount)
                 {
                     validation.AssertExists(@this, @this.Meta.Bank);
@@ -38,38 +37,33 @@ namespace Allors.Database.Domain
                     validation.AssertExists(@this, @this.Meta.NameOnAccount);
                 }
 
-                DeriveIban(validation, @this);
-            }
-
-            void DeriveIban(IDomainValidation derivation, BankAccount bankAccount)
-            {
-                if (!string.IsNullOrEmpty(bankAccount.Iban))
+                if (!string.IsNullOrEmpty(@this.Iban))
                 {
-                    var iban = Regex.Replace(bankAccount.Iban, @"\s", string.Empty).ToUpper(); // remove empty space & convert all uppercase
+                    var iban = Regex.Replace(@this.Iban, @"\s", string.Empty).ToUpper(); // remove empty space & convert all uppercase
 
                     if (Regex.IsMatch(iban, @"\W"))
                     {
                         // contains chars other than (a-zA-Z0-9)
-                        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIllegalCharacters}");
+                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanIllegalCharacters}");
                     }
 
                     if (!Regex.IsMatch(iban, @"^\D\D\d\d.+"))
                     {
                         // first chars are letter letter digit digit
-                        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}");
+                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}");
                     }
 
                     if (Regex.IsMatch(iban, @"^\D\D00.+|^\D\D01.+|^\D\D99.+"))
                     {
                         // check digit are 00 or 01 or 99
-                        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanCheckDigitsError}");
+                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanCheckDigitsError}");
                     }
 
-                    var country = new Countries(bankAccount.Strategy.Session).FindBy(this.M.Country.IsoCode, bankAccount.Iban.Substring(0, 2));
+                    var country = new Countries(@this.Strategy.Session).FindBy(this.M.Country.IsoCode, @this.Iban.Substring(0, 2));
 
                     if (country == null || !country.ExistIbanRegex || !country.ExistIbanLength)
                     {
-                        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanValidationUnavailable}");
+                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanValidationUnavailable}");
                     }
 
                     if (country != null && country.ExistIbanRegex && country.ExistIbanLength)
@@ -77,13 +71,13 @@ namespace Allors.Database.Domain
                         if (iban.Length != country.IbanLength)
                         {
                             // fits length to country
-                            validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanLengthFailure}");
+                            validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanLengthFailure}");
                         }
 
                         if (!Regex.IsMatch(iban.Remove(0, 4), country.IbanRegex))
                         {
                             // check country specific structure
-                            validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}");
+                            validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanStructuralFailure}");
                         }
                     }
 
@@ -111,12 +105,12 @@ namespace Allors.Database.Domain
 
                         if (remainer != 1)
                         {
-                            validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
+                            validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
                         }
                     }
                     catch (Exception)
                     {
-                        validation.AddError($"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
+                        validation.AddError($"{@this}, {@this.Meta.Iban}, {ErrorMessages.IbanIncorrect}");
                     }
                 }
             }

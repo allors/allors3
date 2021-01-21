@@ -204,10 +204,18 @@ namespace Allors.Repository
         [Id("293758d7-cc0a-4f1c-b122-84f609a828c2")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        PaymentMethod[] AssignedActiveCollectionMethods { get; set; }
+
+        #region Allors
+        [Id("55795ded-db46-48ab-ac33-6eac2dfd58c3")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
         [Derived]
         [Indexed]
         [Workspace(Default)]
-        PaymentMethod[] ActiveCollectionMethods { get; set; }
+        PaymentMethod[] DerivedActiveCollectionMethods { get; set; }
 
         #region Allors
         [Id("37b4bf2c-5b09-42b0-84d9-59b57793cf37")]

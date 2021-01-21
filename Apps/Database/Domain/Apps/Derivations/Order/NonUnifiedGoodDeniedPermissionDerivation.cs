@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
             new ChangedPattern(this.M.NonUnifiedGood.Part),
             new ChangedPattern(this.M.Deployment.ProductOffering) { Steps = new IPropertyType[] {m.Deployment.ProductOffering }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.GoodOrderItem.Product) { Steps = new IPropertyType[] {m.GoodOrderItem.Product }, OfType = m.NonUnifiedGood.Class },
-            new ChangedPattern(this.M.GeneralLedgerAccount.CostUnitsAllowed) { Steps = new IPropertyType[] {m.GeneralLedgerAccount.CostUnitsAllowed }, OfType = m.NonUnifiedGood.Class },
+            new ChangedPattern(this.M.GeneralLedgerAccount.DerivedCostUnitsAllowed) { Steps = new IPropertyType[] {m.GeneralLedgerAccount.DerivedCostUnitsAllowed }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.GeneralLedgerAccount.DefaultCostUnit) { Steps = new IPropertyType[] {m.GeneralLedgerAccount.DefaultCostUnit }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.QuoteItem.Product) { Steps = new IPropertyType[] {m.QuoteItem.Product }, OfType = m.NonUnifiedGood.Class },
             new ChangedPattern(this.M.ShipmentItem.Good) { Steps = new IPropertyType[] {m.ShipmentItem.Good }, OfType = m.NonUnifiedGood.Class },
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
                 !nonUnifiedGood.ExistPart &&
                 !nonUnifiedGood.ExistDeploymentsWhereProductOffering &&
                 !nonUnifiedGood.ExistEngagementItemsWhereProduct &&
-                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
                 !nonUnifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
                 !nonUnifiedGood.ExistQuoteItemsWhereProduct &&
                 !nonUnifiedGood.ExistShipmentItemsWhereGood &&

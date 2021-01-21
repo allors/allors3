@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
             var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Session).WithCostUnitsAllowed(unifiedGood).Build();
+            var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Session).WithAssignedCostUnitsAllowed(unifiedGood).Build();
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);

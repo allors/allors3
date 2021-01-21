@@ -47,7 +47,9 @@ namespace Allors.Repository
 
         public WorkEffortSequence WorkEffortSequence { get; set; }
 
-        public PaymentMethod[] ActiveCollectionMethods { get; set; }
+        public PaymentMethod[] AssignedActiveCollectionMethods { get; set; }
+
+        public PaymentMethod[] DerivedActiveCollectionMethods { get; set; }
 
         public decimal MaximumAllowedPaymentDifference { get; set; }
 

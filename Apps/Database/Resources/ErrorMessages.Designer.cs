@@ -115,6 +115,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing contra account is not allowed.
+        /// </summary>
+        public static string ContraAccountChanged {
+            get {
+                return ResourceManager.GetString("ContraAccountChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cost center not in list of allowed cost centers.
         /// </summary>
         public static string CostCenterNotAllowed {
@@ -264,6 +273,15 @@ namespace Resources {
         public static string InvalidQuantity {
             get {
                 return ResourceManager.GetString("InvalidQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing journal type is not allowed.
+        /// </summary>
+        public static string JournalTypeChanged {
+            get {
+                return ResourceManager.GetString("JournalTypeChanged", resourceCulture);
             }
         }
         

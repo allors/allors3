@@ -65,6 +65,24 @@ namespace Allors.Repository
 
         #endregion
 
+        #region Versioning
+        #region Allors
+        [Id("553520A4-2FC7-43C5-A98A-9118E33BA455")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public AccountingPeriodVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("B6F890C3-69E3-4438-A4A8-012CD9FD9A2D")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public AccountingPeriodVersion[] AllVersions { get; set; }
+        #endregion
+
         #region Allors
         [Id("0fd97106-1e39-4629-a7bd-ad263bc2d296")]
         #endregion
@@ -91,24 +109,6 @@ namespace Allors.Repository
         [Indexed]
         [Required]
         public TimeFrequency Frequency { get; set; }
-
-        #region Versioning
-        #region Allors
-        [Id("553520A4-2FC7-43C5-A98A-9118E33BA455")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        public AccountingPeriodVersion CurrentVersion { get; set; }
-
-        #region Allors
-        [Id("B6F890C3-69E3-4438-A4A8-012CD9FD9A2D")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        public AccountingPeriodVersion[] AllVersions { get; set; }
-        #endregion
 
         #region inherited methods
 

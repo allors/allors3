@@ -204,4 +204,36 @@ namespace Allors.Database.Domain.Tests
             Assert.False(this.Session.Derive(false).HasErrors);
         }
     }
+
+    public class BankAccountDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public BankAccountDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedIbanThrowValidationError()
+        {
+            var bankAccount = new BankAccountBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            bankAccount.Iban = "TR330006100519716457841326";
+
+            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Single(errors.FindAll(e => e.Message.Equals(expectedErrorMessage)));
+        }
+
+        [Fact]
+        public void ChangedOwnBankAccountBankAccountThrowValidationError()
+        {
+            var bankAccount = new BankAccountBuilder(this.Session).WithIban("TR330006100519786457841326").Build();
+            this.Session.Derive();
+
+            new OwnBankAccountBuilder(this.Session).WithBankAccount(bankAccount).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BankAccount.Bank"));
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BankAccount.Currency"));
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: BankAccount.NameOnAccount"));
+        }
+    }
 }

@@ -28,7 +28,6 @@ namespace Allors.Database.Domain
                 new CashDerivation(m),
                 new GeneralLedgerAccountDerivation(m),
                 new JournalDerivation(m),
-                new OrganisationGlAccountDerivation(m),
                 new OwnBankAccountDerivation(m),
                 new OwnCreditCardDerivation(m),
                 new BudgetDeniedPermissionDerivation(m),

@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Resources;
     using Xunit;
 
@@ -113,10 +115,9 @@ namespace Allors.Database.Domain.Tests
 
             chart.AddGeneralLedgerAccount(glAccount0001Dup);
 
-            var derivationLog = this.Session.Derive(false);
-            var expectedMessage = ErrorMessages.AccountNumberUniqueWithinChartOfAccounts;
-
-            Assert.Equal(derivationLog.Errors[0].Message, expectedMessage);
+            var expectedMessage = $"{glAccount0001Dup}, { this.M.GeneralLedgerAccount.AccountNumber}, { ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
 
             new ChartOfAccountsBuilder(this.Session).WithName("another Chart").WithGeneralLedgerAccount(glAccount0001Dup).Build();
 
@@ -126,7 +127,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenGeneralLedgerAccount_WhenSettingCostCenterRequired_ThenAccountMustBeMarkedAsCostCenterAccount()
         {
-            new GeneralLedgerAccountBuilder(this.Session)
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithCostCenterRequired(true)
@@ -136,17 +137,15 @@ namespace Allors.Database.Domain.Tests
                 .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
                 .Build();
 
-            var derivationLog = this.Session.Derive(false);
-
-            var expectedMessage = ErrorMessages.NotACostCenterAccount;
-
-            Assert.Equal(derivationLog.Errors[0].Message, expectedMessage);
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void GivenGeneralLedgerAccount_WhenSettingCostUnitRequired_ThenAccountMustBeMarkedAsCostUnitAccount()
         {
-            new GeneralLedgerAccountBuilder(this.Session)
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
                 .WithName("GeneralLedgerAccount")
                 .WithCostUnitRequired(true)
@@ -156,65 +155,159 @@ namespace Allors.Database.Domain.Tests
                 .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
                 .Build();
 
-            var derivationLog = this.Session.Derive(false);
-            var expectedMessage = ErrorMessages.NotACostUnitAccount;
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+    }
 
-            Assert.Equal(derivationLog.Errors[0].Message, expectedMessage);
+    public class GeneralLedgerAccountDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public GeneralLedgerAccountDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultCostCenterDeriveDerivedCostCentersAllowed()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            glAccount.DefaultCostCenter = new CostCenterBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(glAccount.DefaultCostCenter, glAccount.DerivedCostCentersAllowed);
         }
 
         [Fact]
-        public void GivenGeneralLedgerAccount_WhenSettingDefaultCostCenter_ThenDefaultCostCenterMustBeInListOfAllowedCostCenters()
+        public void ChangedAssignedCostCentersAllowedDeriveDerivedCostCentersAllowed()
         {
-            var costCenter = new CostCenterBuilder(this.Session).WithName("costCenter").Build();
+            var defaultCostCenter = new CostCenterBuilder(this.Session).Build();
+            var allowedCostCenter = new CostCenterBuilder(this.Session).Build();
 
-            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
-                .WithAccountNumber("0001")
-                .WithName("GeneralLedgerAccount")
-                .WithCostCenterAccount(true)
-                .WithCostCenterRequired(true)
-                .WithDefaultCostCenter(costCenter)
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
-                .Build();
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).WithDefaultCostCenter(defaultCostCenter).Build();
+            this.Session.Derive(false);
 
-            var derivationLog = this.Session.Derive(false);
+            glAccount.AddAssignedCostCentersAllowed(allowedCostCenter);
+            this.Session.Derive(false);
 
-            var expectedMessage = ErrorMessages.CostCenterNotAllowed;
-
-            Assert.Equal(derivationLog.Errors[0].Message, expectedMessage);
-
-            glAccount.AddCostCentersAllowed(costCenter);
-
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.Contains(defaultCostCenter, glAccount.DerivedCostCentersAllowed);
+            Assert.Contains(allowedCostCenter, glAccount.DerivedCostCentersAllowed);
         }
 
         [Fact]
-        public void GivenGeneralLedgerAccount_WhenSettingDefaultCostUnit_ThenDefaultCostUnitMustBeInListOfAllowedCostUnits()
+        public void ChangedDefaultCostUnitDeriveDerivedCostUnitsAllowed()
         {
-            var costUnit = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).Build();
+            this.Session.Derive(false);
 
-            var glAccount = new GeneralLedgerAccountBuilder(this.Session)
-                .WithAccountNumber("0001")
-                .WithName("GeneralLedgerAccount")
-                .WithCostUnitAccount(true)
-                .WithCostUnitRequired(true)
-                .WithDefaultCostUnit(costUnit)
-                .WithBalanceSheetAccount(true)
-                .WithSide(new DebitCreditConstants(this.Session).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("accountGroup").Build())
+            glAccount.DefaultCostUnit = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(glAccount.DefaultCostUnit, glAccount.DerivedCostUnitsAllowed);
+        }
+
+        [Fact]
+        public void ChangedAssignedCostUnitsAllowedDeriveDerivedCostUnitsAllowed()
+        {
+            var defaultCostUnit = new UnifiedGoodBuilder(this.Session).Build();
+            var allowedCostUnit = new UnifiedGoodBuilder(this.Session).Build();
+
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).WithDefaultCostUnit(defaultCostUnit).Build();
+            this.Session.Derive(false);
+
+            glAccount.AddAssignedCostUnitsAllowed(allowedCostUnit);
+            this.Session.Derive(false);
+
+            Assert.Contains(defaultCostUnit, glAccount.DerivedCostUnitsAllowed);
+            Assert.Contains(allowedCostUnit, glAccount.DerivedCostUnitsAllowed);
+        }
+
+        [Fact]
+        public void ChangedChartOfAccountsGeneralLedgerAccountsThrowValidationError()
+        {
+            var chartOfAccounts = new ChartOfAccountsBuilder(this.Session)
+                .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Session).WithAccountNumber("1").Build())
                 .Build();
+            this.Session.Derive(false);
 
-            var derivationLog = this.Session.Derive(false);
-            var expectedMessage = ErrorMessages.CostUnitNotAllowed;
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).WithAccountNumber("1").Build();
+            chartOfAccounts.AddGeneralLedgerAccount(glAccount);
 
-            Assert.Equal(derivationLog.Errors[0].Message, expectedMessage);
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.AccountNumber}, { ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
 
-            glAccount.AddCostUnitsAllowed(costUnit);
+        [Fact]
+        public void ChangedAccountNumberThrowValidationError()
+        {
+            var chartOfAccounts = new ChartOfAccountsBuilder(this.Session)
+                .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Session).WithAccountNumber("1").Build())
+                .Build();
+            this.Session.Derive(false);
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).WithAccountNumber("2").Build();
+            chartOfAccounts.AddGeneralLedgerAccount(glAccount);
+
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.AccountNumber}, { ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+
+            glAccount.AccountNumber = "1";
+
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedCostCenterRequiredThrowValidationError()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            glAccount.CostCenterRequired = true;
+
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedCostCenterAccountThrowValidationError()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).WithCostCenterAccount(true).WithCostCenterRequired(true).Build();
+            this.Session.Derive(false);
+
+            glAccount.CostCenterAccount = false;
+
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostCenterRequired}, { ErrorMessages.NotACostCenterAccount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedCostUnitRequiredThrowValidationError()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            glAccount.CostUnitRequired = true;
+
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedCostUnitAccountThrowValidationError()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Session).WithCostUnitAccount(true).WithCostUnitRequired(true).Build();
+            this.Session.Derive(false);
+
+            glAccount.CostUnitAccount = false;
+
+            var expectedMessage = $"{glAccount}, { this.M.GeneralLedgerAccount.CostUnitRequired}, { ErrorMessages.NotACostUnitAccount}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }

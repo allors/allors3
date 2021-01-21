@@ -13,50 +13,6 @@ namespace Allors.Database.Domain.Tests
         public AccountingPeriodTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenAccountingPeriod_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            var builder = new AccountingPeriodBuilder(this.Session);
-            builder.Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            this.Session.Rollback();
-
-            builder.WithPeriodNumber(1);
-            builder.Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            this.Session.Rollback();
-
-            builder.WithFrequency(new TimeFrequencies(this.Session).Day);
-            builder.Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            this.Session.Rollback();
-
-            builder.WithFromDate(DateTimeFactory.CreateDate(2010, 12, 31));
-            builder.Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            this.Session.Rollback();
-
-            builder.WithThroughDate(DateTimeFactory.CreateDate(2011, 12, 31));
-            builder.Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            this.Session.Rollback();
-
-            builder.WithDescription("description");
-            builder.Build();
-
-            Assert.False(this.Session.Derive(false).HasErrors);
-        }
-
-        [Fact]
         public void GivenAccountingPeriod_WhenBuild_ThenPostBuildRelationsMustExist()
         {
             var accountingPeriod = new AccountingPeriodBuilder(this.Session).Build();
@@ -268,6 +224,40 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new TimeFrequencies(this.Session).Trimester, fourthQuarter.Frequency);
             Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(9).Date, fourthQuarter.FromDate);
             Assert.Equal(organisation.ActualAccountingPeriod.Parent.FromDate.AddMonths(12).AddSeconds(-1).Date, fourthQuarter.ThroughDate);
+        }
+    }
+
+    public class AccountingPeriodDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public AccountingPeriodDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedFromDateDeriveDescription()
+        {
+            var accountingPeriod = new AccountingPeriodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var fromDate = this.Session.Now().Date;
+            accountingPeriod.FromDate = fromDate;
+            this.Session.Derive(false);
+
+            Assert.Equal(string.Format("{0:d}", fromDate), accountingPeriod.Description);
+        }
+
+        [Fact]
+        public void ChangedThroughDateDeriveDescription()
+        {
+            var fromDate = this.Session.Now().Date;
+            var throughDate = this.Session.Now().Date.AddDays(1);
+
+            var accountingPeriod = new AccountingPeriodBuilder(this.Session).WithFromDate(fromDate).Build();
+            this.Session.Derive(false);
+
+            accountingPeriod.ThroughDate = throughDate;
+            this.Session.Derive(false);
+
+            var description = string.Format("{0:d} through {1:d}", fromDate, throughDate);
+            Assert.Equal(description, accountingPeriod.Description);
         }
     }
 }

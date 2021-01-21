@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Session).Build();
-            generalLedgerAccounts.AddCostUnitsAllowed(nonUnifiedGood);
+            generalLedgerAccounts.AddAssignedCostUnitsAllowed(nonUnifiedGood);
             this.Session.Derive(false);
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);

@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.InternalOrganisation.DefaultCollectionMethod),
+                new ChangedPattern(this.M.InternalOrganisation.AssignedActiveCollectionMethods),
                 new ChangedPattern(this.M.InternalOrganisation.IsInternalOrganisation),
                 new ChangedPattern(this.M.InternalOrganisation.DoAccounting),
             };
@@ -32,6 +33,9 @@ namespace Allors.Database.Domain
                     {
                         @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
                     }
+
+                    @this.DerivedActiveCollectionMethods = @this.AssignedActiveCollectionMethods;
+                    @this.AddDerivedActiveCollectionMethod(@this.DefaultCollectionMethod);
 
                     if (!@this.ExistSubAccountCounter)
                     {

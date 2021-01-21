@@ -17,6 +17,15 @@ namespace Allors.Database.Domain
         public GeneralLedgerAccountDerivation(M m) : base(m, new Guid("e916d6c3-b31b-41e2-b7ef-3265977e0fea")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.GeneralLedgerAccount.AccountNumber),
+                new ChangedPattern(m.GeneralLedgerAccount.DefaultCostCenter),
+                new ChangedPattern(m.GeneralLedgerAccount.AssignedCostCentersAllowed),
+                new ChangedPattern(m.GeneralLedgerAccount.CostCenterAccount),
+                new ChangedPattern(m.GeneralLedgerAccount.CostCenterRequired),
+                new ChangedPattern(m.GeneralLedgerAccount.DefaultCostUnit),
+                new ChangedPattern(m.GeneralLedgerAccount.AssignedCostUnitsAllowed),
+                new ChangedPattern(m.GeneralLedgerAccount.CostUnitAccount),
+                new ChangedPattern(m.GeneralLedgerAccount.CostUnitRequired),
                 new ChangedPattern(m.ChartOfAccounts.GeneralLedgerAccounts) { Steps =  new IPropertyType[] { m.ChartOfAccounts.GeneralLedgerAccounts } },
             };
 
@@ -26,13 +35,17 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<GeneralLedgerAccount>())
             {
+                @this.DerivedCostCentersAllowed = @this.AssignedCostCentersAllowed;
+                @this.AddDerivedCostCentersAllowed(@this.DefaultCostCenter);
+
+                @this.DerivedCostUnitsAllowed = @this.AssignedCostUnitsAllowed;
+                @this.AddDerivedCostUnitsAllowed(@this.DefaultCostUnit);
+
                 if (@this.ExistChartOfAccountsWhereGeneralLedgerAccount)
                 {
-                    var extent = @this.Strategy.Session.Extent<GeneralLedgerAccount>();
-                    extent.Filter.AddEquals(@this.Meta.ChartOfAccountsWhereGeneralLedgerAccount, @this.ChartOfAccountsWhereGeneralLedgerAccount);
-                    extent.Filter.AddEquals(@this.Meta.AccountNumber, @this.AccountNumber);
+                    var generalLedgerAccounts = @this.ChartOfAccountsWhereGeneralLedgerAccount.GeneralLedgerAccounts.Where(v => v.AccountNumber == @this.AccountNumber);
 
-                    if (extent.Count > 1)
+                    if (generalLedgerAccounts.Count() > 1)
                     {
                         validation.AddError($"{@this}, {@this.Meta.AccountNumber}, {ErrorMessages.AccountNumberUniqueWithinChartOfAccounts}");
                     }
@@ -43,25 +56,9 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this}, {@this.Meta.CostCenterRequired}, {ErrorMessages.NotACostCenterAccount}");
                 }
 
-                if (@this.CostCenterAccount && @this.ExistDefaultCostCenter)
-                {
-                    if (!@this.CostCentersAllowed.Contains(@this.DefaultCostCenter))
-                    {
-                        validation.AddError($"{@this}, {@this.Meta.DefaultCostCenter}, {ErrorMessages.CostCenterNotAllowed}");
-                    }
-                }
-
                 if (!@this.CostUnitAccount && @this.CostUnitRequired)
                 {
-                    validation.AddError($"{@this}, {@this.Meta.CostCenterRequired}, {ErrorMessages.NotACostUnitAccount}");
-                }
-
-                if (@this.CostUnitAccount && @this.ExistDefaultCostUnit)
-                {
-                    if (!@this.CostUnitsAllowed.Contains(@this.DefaultCostUnit))
-                    {
-                        validation.AddError($"{@this}, {@this.Meta.DefaultCostUnit}, {ErrorMessages.CostUnitNotAllowed}");
-                    }
+                    validation.AddError($"{@this}, {@this.Meta.CostUnitRequired}, {ErrorMessages.NotACostUnitAccount}");
                 }
             }
         }

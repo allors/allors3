@@ -129,7 +129,7 @@ namespace Allors.Database.Domain
                 !nonUnifiedGood.ExistPart &&
                 !nonUnifiedGood.ExistDeploymentsWhereProductOffering &&
                 !nonUnifiedGood.ExistEngagementItemsWhereProduct &&
-                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
                 !nonUnifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
                 !nonUnifiedGood.ExistQuoteItemsWhereProduct &&
                 !nonUnifiedGood.ExistShipmentItemsWhereGood &&

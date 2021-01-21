@@ -267,4 +267,10 @@
   <data name="InternalOrganisationChanged" xml:space="preserve">
     <value>Changing Internal Organisation is not allowed. </value>
   </data>
+  <data name="ContraAccountChanged" xml:space="preserve">
+    <value>Changing contra acoount is not allowed</value>
+  </data>
+  <data name="JournalTypeChanged" xml:space="preserve">
+    <value>Changing journal type is not allowed</value>
+  </data>
 </root>

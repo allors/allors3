@@ -18,14 +18,12 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.AccountingPeriod.FromDate),
+                new ChangedPattern(m.AccountingPeriod.ThroughDate),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-
-            //changeSet.AssociationsByRoleType.TryGetValue(M.BasePrice, out var changedEmployer);
-            //var employmentWhereEmployer = changedEmployer?.Select(session.Instantiate).OfType<BasePrice>();
 
             foreach (var @this in matches.Cast<AccountingPeriod>())
             {
@@ -44,6 +42,8 @@ namespace Allors.Database.Domain
 
                     stringBuilder.AppendFormat("{0:d}", @this.ThroughDate);
                 }
+
+                @this.Description = stringBuilder.ToString();
             }
         }
     }

@@ -6,6 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class JournalTests : DomainTest, IClassFixture<Fixture>
@@ -16,8 +19,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenDescriptionMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -54,8 +56,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenSingletonMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -86,8 +87,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenJournalTypeMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -124,8 +124,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenContraAccountMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var builder = new JournalBuilder(this.Session);
             builder.WithDescription("description");
@@ -160,8 +159,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenBlockUnpaidTransactionsIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -188,8 +186,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenCloseWhenInBalanceIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -216,8 +213,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenUseAsDefaultIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -244,8 +240,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenContraAccountCanBeChangedWhenNotUsedYet()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -283,21 +278,18 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(generalLedgerAccount1, journal.PreviousContraAccount.GeneralLedgerAccount);
-
             journal.ContraAccount = internalOrganisationGlAccount2;
 
             this.Session.Derive();
 
-            Assert.Equal(generalLedgerAccount2, journal.PreviousContraAccount.GeneralLedgerAccount);
+            Assert.Equal(generalLedgerAccount2, journal.ContraAccount.GeneralLedgerAccount);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenContraAccountCanNotBeChangedWhenJournalEntriesArePresent()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -334,8 +326,6 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             this.Session.Derive();
-
-            Assert.Equal(generalLedgerAccount1, journal.PreviousContraAccount.GeneralLedgerAccount);
 
             journal.AddJournalEntry(new JournalEntryBuilder(this.Session)
                                         .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Session)
@@ -347,15 +337,16 @@ namespace Allors.Database.Domain.Tests
 
             journal.ContraAccount = internalOrganisationGlAccount2;
 
-            Assert.Equal("Journal.ContraAccount, Journal.PreviousContraAccount are not equal", this.Session.Derive(false).Errors[0].Message);
+            var expectedMessage = $"{journal} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenJournalTypeCanBeChangedWhenJournalIsNotUsedYet()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -379,21 +370,18 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(generalLedgerAccount1, journal.PreviousContraAccount.GeneralLedgerAccount);
-
             journal.JournalType = new JournalTypes(this.Session).Cash;
 
             this.Session.Derive();
 
-            Assert.Equal(new JournalTypes(this.Session).Cash, journal.PreviousJournalType);
+            Assert.Equal(new JournalTypes(this.Session).Cash, journal.JournalType);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenJournalTypeCanNotBeChangedWhenJournalEntriesArePresent()
         {
             this.InternalOrganisation.DoAccounting = true;
-
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Session)
                 .WithAccountNumber("0001")
@@ -416,8 +404,6 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             this.Session.Derive();
-
-            Assert.Equal(generalLedgerAccount1, journal.PreviousContraAccount.GeneralLedgerAccount);
 
             journal.AddJournalEntry(new JournalEntryBuilder(this.Session)
                                         .WithJournalEntryDetail(new JournalEntryDetailBuilder(this.Session)
@@ -429,7 +415,53 @@ namespace Allors.Database.Domain.Tests
 
             journal.JournalType = new JournalTypes(this.Session).Cash;
 
-            Assert.Equal("Journal.JournalType, Journal.PreviousJournalType are not equal", this.Session.Derive(false).Errors[0].Message);
+            var expectedMessage = $"{journal} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+    }
+
+    public class JournalDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public JournalDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedContraAccountThrowValidationError()
+        {
+            var contraAccount = new OrganisationGlAccountBuilder(this.Session).Build();
+            var journal = new JournalBuilder(this.Session)
+                .WithContraAccount(contraAccount)
+                .Build();
+            this.Session.Derive(false);
+
+            var detail = new JournalEntryDetailBuilder(this.Session).WithGeneralLedgerAccount(contraAccount).Build();
+            this.Session.Derive(false);
+
+            journal.ContraAccount = new OrganisationGlAccountBuilder(this.Session).Build();
+
+            var expectedMessage = $"{journal} {this.M.Journal.ContraAccount} {ErrorMessages.ContraAccountChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedJournalTypeThrowValidationError()
+        {
+            var journalType = new JournalTypeBuilder(this.Session).Build();
+            var journal = new JournalBuilder(this.Session)
+                .WithContraAccount(new OrganisationGlAccountBuilder(this.Session).Build())
+                .WithJournalType(journalType)
+                .Build();
+            this.Session.Derive(false);
+
+            var detail = new JournalEntryDetailBuilder(this.Session).WithGeneralLedgerAccount(journal.ContraAccount).Build();
+            this.Session.Derive(false);
+
+            journal.JournalType = new JournalTypeBuilder(this.Session).Build();
+
+            var expectedMessage = $"{journal} {this.M.Journal.JournalType} {ErrorMessages.JournalTypeChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }

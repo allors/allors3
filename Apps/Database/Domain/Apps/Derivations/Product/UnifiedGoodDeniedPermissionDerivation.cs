@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         {
             new ChangedPattern(m.Deployment.ProductOffering){ Steps =  new IPropertyType[] {m.Deployment.ProductOffering}, OfType = m.UnifiedGood.Class },
             new ChangedPattern(m.EngagementItem.Product){ Steps =  new IPropertyType[] {m.EngagementItem.Product}, OfType = m.UnifiedGood.Class },
-            new ChangedPattern(m.GeneralLedgerAccount.CostUnitsAllowed){ Steps =  new IPropertyType[] {m.GeneralLedgerAccount.CostUnitsAllowed}, OfType = m.UnifiedGood.Class },
+            new ChangedPattern(m.GeneralLedgerAccount.DerivedCostUnitsAllowed){ Steps =  new IPropertyType[] {m.GeneralLedgerAccount.DerivedCostUnitsAllowed}, OfType = m.UnifiedGood.Class },
             new ChangedPattern(m.GeneralLedgerAccount.DefaultCostUnit){ Steps =  new IPropertyType[] {m.GeneralLedgerAccount.DefaultCostUnit}, OfType = m.UnifiedGood.Class },
             new ChangedPattern(m.QuoteItem.Product){ Steps =  new IPropertyType[] {m.QuoteItem.Product}, OfType = m.UnifiedGood.Class },
             new ChangedPattern(m.ShipmentItem.Good){ Steps =  new IPropertyType[] {m.ShipmentItem.Good}, OfType = m.UnifiedGood.Class },
@@ -51,7 +51,7 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistDeploymentsWhereProductOffering &&
                                 !@this.ExistEngagementItemsWhereProduct &&
-                                !@this.ExistGeneralLedgerAccountsWhereCostUnitsAllowed &&
+                                !@this.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
                                 !@this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
                                 !@this.ExistQuoteItemsWhereProduct &&
                                 !@this.ExistShipmentItemsWhereGood &&
