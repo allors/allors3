@@ -32,11 +32,7 @@ namespace Allors.Database.Domain
             {
                 var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
 
-                if (!@this.ExistWorkEffortInventoryProducedsWherePart &&
-                       !@this.ExistWorkEffortPartStandardsWherePart &&
-                       !@this.ExistPartBillOfMaterialsWherePart &&
-                       !@this.ExistPartBillOfMaterialsWhereComponentPart &&
-                       !@this.ExistInventoryItemTransactionsWherePart)
+                if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

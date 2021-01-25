@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class NonUnifiedPart
     {
-        private bool IsDeletable =>
+        public bool IsDeletable =>
                                !this.ExistWorkEffortInventoryProducedsWherePart &&
                                !this.ExistWorkEffortPartStandardsWherePart &&
                                !this.ExistPartBillOfMaterialsWherePart &&

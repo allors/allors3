@@ -13,23 +13,23 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Derivations;
 
-    public class ProductDerivation : DomainDerivation
+    public class DeliverableBasedServiceDerivation : DomainDerivation
     {
-        public ProductDerivation(M m) : base(m, new Guid("f0400e44-4b4b-4899-87dc-874038ceece3")) =>
+        public DeliverableBasedServiceDerivation(M m) : base(m, new Guid("f0400e44-4b4b-4899-87dc-874038ceece3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Product.Variants),
+                new ChangedPattern(this.M.DeliverableBasedService.Variants),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<NonUnifiedGood>())
+            foreach (var @this in matches.Cast<DeliverableBasedService>())
             {
                 if (@this.ExistCurrentVersion)
                 {
-                    foreach (Good variant in @this.CurrentVersion.Variants)
+                    foreach (Service variant in @this.CurrentVersion.Variants)
                     {
                         if (!@this.Variants.Contains(variant))
                         {
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
 
                     var priceComponents = @this.PriceComponentsWhereProduct;
 
-                    foreach (Good variant in @this.Variants)
+                    foreach (Service variant in @this.Variants)
                     {
                         foreach (PriceComponent priceComponent in priceComponents)
                         {

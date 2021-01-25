@@ -13,10 +13,18 @@ namespace Allors.Repository
     #region Allors
     [Id("0ae3caca-9b4b-407f-bd98-46db03b72a43")]
     #endregion
-    public partial class SupplierOffering : Commentable, Period, Deletable
+    public partial class SupplierOffering : Commentable, Period, Deletable, Versioned
     {
         #region inherited properties
         public string Comment { get; set; }
+
+        public User CreatedBy { get; set; }
+
+        public User LastModifiedBy { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public DateTime LastModifiedDate { get; set; }
 
         public LocalisedText[] LocalisedComments { get; set; }
 
@@ -28,6 +36,24 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("cf26c1a3-b696-464c-a9b8-0c2e142f992e")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public SupplierOfferingVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("f0e79f83-1698-4550-a7f9-9f0d69c4a087")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public SupplierOfferingVersion[] AllVersions { get; set; }
         #endregion
 
         #region Allors

@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.UnifiedGood.DerivationTrigger),
+                new ChangedPattern(this.M.UnifiedGood.Variants),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -83,7 +84,37 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                this.DeriveVirtualProductPriceComponent(@this);
+                if (@this.ExistCurrentVersion)
+                {
+                    foreach (Good variant in @this.CurrentVersion.Variants)
+                    {
+                        if (!@this.Variants.Contains(variant))
+                        {
+                            variant.RemoveVirtualProductPriceComponents();
+                        }
+                    }
+                }
+
+                if (@this.ExistVariants)
+                {
+                    @this.RemoveVirtualProductPriceComponents();
+
+                    var priceComponents = @this.PriceComponentsWhereProduct;
+
+                    foreach (Good variant in @this.Variants)
+                    {
+                        foreach (PriceComponent priceComponent in priceComponents)
+                        {
+                            variant.AddVirtualProductPriceComponent(priceComponent);
+
+                            if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
+                            {
+                                variant.AddBasePrice(basePrice);
+                            }
+                        }
+                    }
+                }
+
                 this.DeriveProductCharacteristics(@this);
                 this.DeriveQuantityOnHand(@this);
                 this.DeriveAvailableToPromise(@this);
@@ -256,37 +287,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        public void DeriveVirtualProductPriceComponent(UnifiedGood unifiedGood)
-        {
-            if (!unifiedGood.ExistProductWhereVariant)
-            {
-                unifiedGood.RemoveVirtualProductPriceComponents();
-            }
-
-            if (unifiedGood.ExistVariants)
-            {
-                unifiedGood.RemoveVirtualProductPriceComponents();
-
-                var priceComponents = unifiedGood.PriceComponentsWhereProduct;
-
-                foreach (Good product in unifiedGood.Variants)
-                {
-                    foreach (PriceComponent priceComponent in priceComponents)
-                    {
-                        // HACK: DerivedRoles
-                        var productDerivedRoles = product;
-
-                        productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
-
-                        if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
-                        {
-                            productDerivedRoles.AddBasePrice(basePrice);
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }

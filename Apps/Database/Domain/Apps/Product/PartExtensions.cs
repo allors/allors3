@@ -16,6 +16,24 @@ namespace Allors.Database.Domain
                 @this.PartWeightedAverage = new PartWeightedAverageBuilder(@this.Session()).Build();
             }
         }
+        public static void AppsOnInit(this Part @this, ObjectOnInit method)
+        {
+            var m = @this.Strategy.Session.Database.Context().M;
+            var settings = @this.Strategy.Session.GetSingleton().Settings;
+
+            var identifications = @this.ProductIdentifications;
+            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Part);
+            var partIdentification = identifications.FirstOrDefault();
+
+            if (partIdentification == null && settings.UsePartNumberCounter)
+            {
+                partIdentification = new PartNumberBuilder(@this.Strategy.Session)
+                    .WithIdentification(settings.NextPartNumber())
+                    .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Part).Build();
+
+                @this.AddProductIdentification(partIdentification);
+            }
+        }
 
         public static string PartIdentification(this Part @this)
         {

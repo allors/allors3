@@ -27,14 +27,17 @@ namespace Allors.Database.Domain
             var m = cycle.Session.Database.Context().M;
             foreach (var @this in matches.Cast<SupplierOffering>())
             {
-                foreach (var purchaseInvoice in @this.Supplier?.PurchaseInvoicesWhereBilledFrom.Where(v => v.ExistPurchaseInvoiceState && (v.PurchaseInvoiceState.IsCreated || v.PurchaseInvoiceState.IsRevising)))
+                if (@this.ExistSupplier)
                 {
-                    purchaseInvoice.DerivationTrigger = Guid.NewGuid();
-                }
+                    foreach (var purchaseInvoice in @this.Supplier.PurchaseInvoicesWhereBilledFrom.Where(v => v.ExistPurchaseInvoiceState && (v.PurchaseInvoiceState.IsCreated || v.PurchaseInvoiceState.IsRevising)))
+                    {
+                        purchaseInvoice.DerivationTrigger = Guid.NewGuid();
+                    }
 
-                foreach (var purchaseOrder in ((Organisation)@this.Supplier)?.PurchaseOrdersWhereTakenViaSupplier.Where(v => v.ExistPurchaseOrderState && v.PurchaseOrderState.IsCreated))
-                {
-                    purchaseOrder.DerivationTrigger = Guid.NewGuid();
+                    foreach (var purchaseOrder in ((Organisation)@this.Supplier).PurchaseOrdersWhereTakenViaSupplier.Where(v => v.ExistPurchaseOrderState && v.PurchaseOrderState.IsCreated))
+                    {
+                        purchaseOrder.DerivationTrigger = Guid.NewGuid();
+                    }
                 }
 
                 if (!@this.ExistCurrency)

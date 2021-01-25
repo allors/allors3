@@ -22,6 +22,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.NonUnifiedGood.LocalisedNames),
                 new ChangedPattern(m.NonUnifiedGood.LocalisedDescriptions),
                 new ChangedPattern(m.NonUnifiedGood.Keywords),
+                new ChangedPattern(m.NonUnifiedGood.Variants),
                 new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName}, OfType = m.NonUnifiedGood.Class },
                 new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedDescription}, OfType = m.NonUnifiedGood.Class },
                 new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.NonUnifiedGood.Class },
@@ -39,7 +40,7 @@ namespace Allors.Database.Domain
                 identifications.Filter.AddEquals(@this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
-                @this.ProductNumber = goodIdentification.Identification;
+                @this.ProductNumber = goodIdentification?.Identification;
 
                 if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
@@ -49,6 +50,37 @@ namespace Allors.Database.Domain
                 if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
                 {
                     @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
+                }
+
+                if (@this.ExistCurrentVersion)
+                {
+                    foreach (Good variant in @this.CurrentVersion.Variants)
+                    {
+                        if (!@this.Variants.Contains(variant))
+                        {
+                            variant.RemoveVirtualProductPriceComponents();
+                        }
+                    }
+                }
+
+                if (@this.ExistVariants)
+                {
+                    @this.RemoveVirtualProductPriceComponents();
+
+                    var priceComponents = @this.PriceComponentsWhereProduct;
+
+                    foreach (Good variant in @this.Variants)
+                    {
+                        foreach (PriceComponent priceComponent in priceComponents)
+                        {
+                            variant.AddVirtualProductPriceComponent(priceComponent);
+
+                            if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
+                            {
+                                variant.AddBasePrice(basePrice);
+                            }
+                        }
+                    }
                 }
 
                 var builder = new StringBuilder();
