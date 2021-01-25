@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("e3e87d40-b4f0-4953-9716-db13b35d716b")]
     #endregion
-    public partial class NonUnifiedGood : Good
+    public partial class NonUnifiedGood : Good, Versioned
     {
         #region inherited properties
         public string Comment { get; set; }
@@ -102,6 +102,24 @@ namespace Allors.Repository
         public LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
 
         public Scope Scope { get; set; }
+        #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("ecb52be1-da71-4965-aeca-0152ba39eb1a")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public NonUnifiedGoodVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("2fa67859-6a43-4d58-9823-b1282526b2a9")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public NonUnifiedGoodVersion[] AllVersions { get; set; }
         #endregion
 
         #region Allors

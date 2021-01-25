@@ -8,11 +8,12 @@ namespace Allors.Repository
     using System;
 
     using Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("98fc5441-2037-4134-b143-a9797af9d7f1")]
     #endregion
-    public partial class DeliverableBasedService : Service
+    public partial class DeliverableBasedService : Service, Versioned
     {
         #region inherited properties
 
@@ -93,6 +94,25 @@ namespace Allors.Repository
         public Scope Scope { get; set; }
 
         #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("b9ac82a9-21c8-4acb-b3fc-0e24a1ad9517")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public DeliverableBasedServiceVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("521df2d1-3de2-4536-ab40-79b09ad5de16")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public DeliverableBasedServiceVersion[] AllVersions { get; set; }
+        #endregion
+
         public string Comment { get; set; }
 
         #region inherited methods
@@ -113,6 +133,5 @@ namespace Allors.Repository
 
         public void Delete() { }
         #endregion
-
     }
 }

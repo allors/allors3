@@ -18,7 +18,13 @@ namespace Allors.Database.Domain
         public NonUnifiedGoodDerivation(M m) : base(m, new Guid("1D67AC19-4D77-441D-AC98-3F274FADFB2C")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.NonUnifiedGood.ProductIdentifications),
+                new ChangedPattern(m.NonUnifiedGood.ProductIdentifications),
+                new ChangedPattern(m.NonUnifiedGood.LocalisedNames),
+                new ChangedPattern(m.NonUnifiedGood.LocalisedDescriptions),
+                new ChangedPattern(m.NonUnifiedGood.Keywords),
+                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName}, OfType = m.NonUnifiedGood.Class },
+                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedDescription}, OfType = m.NonUnifiedGood.Class },
+                new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.NonUnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -28,32 +34,12 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
                 var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
-                var settings = @this.Strategy.Session.GetSingleton().Settings;
 
                 var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
+                identifications.Filter.AddEquals(@this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
-                if (goodIdentification == null && settings.UseProductNumberCounter)
-                {
-                    goodIdentification = new ProductNumberBuilder(@this.Strategy.Session)
-                        .WithIdentification(settings.NextProductNumber())
-                        .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Good).Build();
-
-                    @this.AddProductIdentification(goodIdentification);
-                }
-
                 @this.ProductNumber = goodIdentification.Identification;
-
-                if (!@this.ExistProductIdentifications)
-                {
-                    validation.AssertExists(@this, this.M.Good.ProductIdentifications);
-                }
-
-                if (!@this.ExistVariants)
-                {
-                    validation.AssertExists(@this, this.M.NonUnifiedGood.Part);
-                }
 
                 if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
@@ -64,8 +50,6 @@ namespace Allors.Database.Domain
                 {
                     @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
-
-                DeriveVirtualProductPriceComponent(@this);
 
                 var builder = new StringBuilder();
                 if (@this.ExistProductIdentifications)
@@ -81,68 +65,7 @@ namespace Allors.Database.Domain
                 builder.Append(string.Join(" ", @this.Keywords));
 
                 @this.SearchString = builder.ToString();
-
-                var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (IsDeletable(@this))
-                {
-                    @this.RemoveDeniedPermission(deletePermission);
-                }
-                else
-                {
-                    @this.AddDeniedPermission(deletePermission);
-                }
-
             }
-
-            void DeriveVirtualProductPriceComponent(NonUnifiedGood nonUnifiedGood)
-            {
-                if (!nonUnifiedGood.ExistProductWhereVariant)
-                {
-                    nonUnifiedGood.RemoveVirtualProductPriceComponents();
-                }
-
-                if (nonUnifiedGood.ExistVariants)
-                {
-                    nonUnifiedGood.RemoveVirtualProductPriceComponents();
-
-                    var priceComponents = nonUnifiedGood.PriceComponentsWhereProduct;
-
-                    foreach (Good product in nonUnifiedGood.Variants)
-                    {
-                        foreach (PriceComponent priceComponent in priceComponents)
-                        {
-                            // HACK: DerivedRoles
-                            var productDerivedRoles = product;
-
-                            productDerivedRoles.AddVirtualProductPriceComponent(priceComponent);
-
-                            if (priceComponent is BasePrice basePrice && !priceComponent.ExistProductFeature)
-                            {
-                                productDerivedRoles.AddBasePrice(basePrice);
-                            }
-                        }
-                    }
-                }
-            }
-
-            bool IsDeletable(NonUnifiedGood nonUnifiedGood) =>
-                !nonUnifiedGood.ExistPart &&
-                !nonUnifiedGood.ExistDeploymentsWhereProductOffering &&
-                !nonUnifiedGood.ExistEngagementItemsWhereProduct &&
-                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
-                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
-                !nonUnifiedGood.ExistQuoteItemsWhereProduct &&
-                !nonUnifiedGood.ExistShipmentItemsWhereGood &&
-                !nonUnifiedGood.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
-                !nonUnifiedGood.ExistMarketingPackageWhereProductsUsedIn &&
-                !nonUnifiedGood.ExistMarketingPackagesWhereProduct &&
-                !nonUnifiedGood.ExistOrganisationGlAccountsWhereProduct &&
-                !nonUnifiedGood.ExistProductConfigurationsWhereProductsUsedIn &&
-                !nonUnifiedGood.ExistProductConfigurationsWhereProduct &&
-                !nonUnifiedGood.ExistRequestItemsWhereProduct &&
-                !nonUnifiedGood.ExistSalesInvoiceItemsWhereProduct &&
-                !nonUnifiedGood.ExistSalesOrderItemsWhereProduct &&
-                !nonUnifiedGood.ExistWorkEffortTypesWhereProductToProduce;
         }
     }
 }

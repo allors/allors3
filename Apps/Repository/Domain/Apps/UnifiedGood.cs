@@ -1,3 +1,4 @@
+
 // <copyright file="UnifiedGood.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
@@ -13,7 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("76C7C629-AA80-48F7-8D66-0A4F3BB5AE38")]
     #endregion
-    public partial class UnifiedGood : Good, Part
+    public partial class UnifiedGood : Good, Part, Versioned
     {
         #region inherited properties
         public string Comment { get; set; }
@@ -140,6 +141,24 @@ namespace Allors.Repository
         public PartWeightedAverage PartWeightedAverage { get; set; }
 
         public Scope Scope { get; set; }
+        #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("dde1ce9a-0769-46b1-b09e-eddbd377523f")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public UnifiedGoodVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("edc1696c-2cd7-40fa-bc5e-07653e165099")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public UnifiedGoodVersion[] AllVersions { get; set; }
         #endregion
 
         #region Allors

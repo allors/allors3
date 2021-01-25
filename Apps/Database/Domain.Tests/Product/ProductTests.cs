@@ -108,4 +108,75 @@ namespace Allors.Database.Domain.Tests
             Assert.False(this.Session.Derive(false).HasErrors);
         }
     }
+
+    public class ProductDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProductDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedVariantsDeriveVirtualProductPriceComponents()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(nonUnifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            var variantGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedGood.AddVariant(variantGood);
+            this.Session.Derive(false);
+
+            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+        }
+
+        [Fact]
+        public void ChangedVariantsDeriveVirtualProductPriceComponents_2()
+        {
+            var variantGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).WithVariant(variantGood).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(nonUnifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            nonUnifiedGood.RemoveVariant(variantGood);
+            this.Session.Derive(false);
+
+            Assert.Empty(variantGood.VirtualProductPriceComponents);
+        }
+
+        [Fact]
+        public void ChangedVariantsDeriveBasePrice()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(nonUnifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            var variantGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedGood.AddVariant(variantGood);
+            this.Session.Derive(false);
+
+            Assert.Equal(variantGood.BasePrices.First, pricecomponent);
+        }
+    }
 }

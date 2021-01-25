@@ -118,7 +118,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("Internal")
                 .Build();
 
-            this.Session.Derive();
+            this.Session.Derive(false);
 
             organisation.StartNewFiscalYear();
 

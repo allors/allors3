@@ -40,30 +40,10 @@ namespace Allors.Database.Domain
             var session = cycle.Session;
             var validation = cycle.Validation;
 
-            bool IsDeletable(NonUnifiedGood nonUnifiedGood) =>
-                !nonUnifiedGood.ExistPart &&
-                !nonUnifiedGood.ExistDeploymentsWhereProductOffering &&
-                !nonUnifiedGood.ExistEngagementItemsWhereProduct &&
-                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
-                !nonUnifiedGood.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
-                !nonUnifiedGood.ExistQuoteItemsWhereProduct &&
-                !nonUnifiedGood.ExistShipmentItemsWhereGood &&
-                !nonUnifiedGood.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
-                !nonUnifiedGood.ExistMarketingPackageWhereProductsUsedIn &&
-                !nonUnifiedGood.ExistMarketingPackagesWhereProduct &&
-                !nonUnifiedGood.ExistOrganisationGlAccountsWhereProduct &&
-                !nonUnifiedGood.ExistProductConfigurationsWhereProductsUsedIn &&
-                !nonUnifiedGood.ExistProductConfigurationsWhereProduct &&
-                !nonUnifiedGood.ExistRequestItemsWhereProduct &&
-                !nonUnifiedGood.ExistSalesInvoiceItemsWhereProduct &&
-                !nonUnifiedGood.ExistSalesOrderItemsWhereProduct &&
-                !nonUnifiedGood.ExistWorkEffortTypesWhereProductToProduce;
-        
-
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
                 var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (IsDeletable(@this))
+                if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

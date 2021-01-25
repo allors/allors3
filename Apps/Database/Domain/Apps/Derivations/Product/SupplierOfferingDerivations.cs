@@ -56,7 +56,7 @@ namespace Allors.Database.Domain
 
                         if (inventoryItem == null)
                         {
-                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Session).WithPart(@this.Part).WithFacility(facility).Build();
+                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Session).WithPart(@this.Part).WithFacility(facility).WithUnitOfMeasure(@this.Part.UnitOfMeasure).Build();
                         }
                     }
                 }

@@ -51,15 +51,6 @@ namespace Allors.Database.Domain
                 identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
                 var goodIdentification = identifications.FirstOrDefault();
 
-                if (goodIdentification == null && settings.UseProductNumberCounter)
-                {
-                    goodIdentification = new ProductNumberBuilder(@this.Strategy.Session)
-                        .WithIdentification(settings.NextProductNumber())
-                        .WithProductIdentificationType(new ProductIdentificationTypes(@this.Strategy.Session).Good).Build();
-
-                    @this.AddProductIdentification(goodIdentification);
-                }
-
                 @this.ProductNumber = goodIdentification.Identification;
 
                 if (!@this.ExistProductIdentifications)

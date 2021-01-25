@@ -8,11 +8,12 @@ namespace Allors.Repository
     using System;
 
     using Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("da504b46-2fd0-4500-ae23-61fa73151077")]
     #endregion
-    public partial class TimeAndMaterialsService : Service
+    public partial class TimeAndMaterialsService : Service, Versioned
     {
         #region inherited properties
 
@@ -94,6 +95,24 @@ namespace Allors.Repository
 
         public Scope Scope { get; set; }
 
+        #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("fd696dba-3e95-44f5-85b0-e691515899af")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public TimeAndMaterialsServiceVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("b213bb3b-44ac-453e-9f43-b864f7529573")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public TimeAndMaterialsServiceVersion[] AllVersions { get; set; }
         #endregion
 
         #region inherited methods

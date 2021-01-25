@@ -123,13 +123,6 @@ namespace Allors.Database.Domain.Tests
             var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
             var euro = belgium.Currency;
 
-            var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
-
-            var ownBankAccount = new OwnBankAccountBuilder(this.Session)
-                .WithDescription("BE23 3300 6167 6391")
-                .WithBankAccount(new BankAccountBuilder(this.Session).WithBank(bank).WithCurrency(euro).WithIban("BE23 3300 6167 6391").WithNameOnAccount("Koen").Build())
-                .Build();
-
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
             var address1 = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
@@ -137,9 +130,27 @@ namespace Allors.Database.Domain.Tests
                 .WithIsInternalOrganisation(true)
                 .WithDoAccounting(true)
                 .WithName("internalOrganisation2")
-                .WithDefaultCollectionMethod(ownBankAccount)
                 .WithSubAccountCounter(new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())
                 .Build();
+
+            var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
+
+            var ownBankAccount = new OwnBankAccountBuilder(this.Session)
+                .WithDescription("BE23 3300 6167 6391")
+                .WithBankAccount(new BankAccountBuilder(this.Session).WithBank(bank).WithCurrency(euro).WithIban("BE23 3300 6167 6391").WithNameOnAccount("Koen").Build())
+                .WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Session)
+                                                .WithInternalOrganisation(internalOrganisation2)
+                                                .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Session)
+                                                                                .WithAccountNumber("1")
+                                                                                .WithName("name")
+                                                                                .WithSide(new DebitCreditConstants(this.Session).Debit)
+                                                                                .WithGeneralLedgerAccountGroup(new GeneralLedgerAccountGroupBuilder(this.Session).WithDescription("desc").Build())
+                                                                                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Session).WithDescription("desc").Build())
+                                                                                .Build())
+                                                .Build())
+                .Build();
+
+            internalOrganisation2.DefaultCollectionMethod = ownBankAccount;
 
             var customerRelationship2 = new CustomerRelationshipBuilder(this.Session)
                 .WithCustomer(customer2)

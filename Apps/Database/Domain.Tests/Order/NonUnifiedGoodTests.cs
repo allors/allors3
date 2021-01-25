@@ -1,3 +1,4 @@
+
 // <copyright file="OrderTermTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
@@ -6,9 +7,146 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
     using TestPopulation;
     using Xunit;
+
+    public class NonUnifiedGoodTests : DomainTest, IClassFixture<Fixture>
+    {
+        public NonUnifiedGoodTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void OnPostDeriveAssertExistPart()
+        {
+            this.Session.GetSingleton().Settings.UseProductNumberCounter = true;
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("NonUnifiedGood.Part is required"));
+        }
+    }
+
+    public class NonUnifiedGoodDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public NonUnifiedGoodDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedProductIdentificationsDeriveProductNumber()
+        {
+            var settings = this.Session.GetSingleton().Settings;
+            settings.UseProductNumberCounter = false;
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.False(nonUnifiedGood.ExistProductNumber);
+
+            var goodIdentification = new ProductNumberBuilder(this.Session)
+                .WithIdentification(settings.NextProductNumber())
+                .WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Good).Build();
+
+            nonUnifiedGood.AddProductIdentification(goodIdentification);
+            this.Session.Derive(false);
+
+            Assert.True(nonUnifiedGood.ExistProductNumber);
+        }
+
+        [Fact]
+        public void ChangedLocalisedNamesDeriveName()
+        {
+            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedGood.AddLocalisedName(localisedName);
+            this.Session.Derive(false);
+
+            Assert.Equal(nonUnifiedGood.Name, localisedName.Text);
+        }
+
+        [Fact]
+        public void ChangedLocalisedTextTextDeriveName()
+        {
+            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).WithLocalisedName(localisedName).Build();
+            this.Session.Derive(false);
+
+            localisedName.Text = "changed";
+            this.Session.Derive(false);
+
+            Assert.Equal(nonUnifiedGood.Name, localisedName.Text);
+        }
+
+        [Fact]
+        public void ChangedLocalisedDescriptionsDeriveDescription()
+        {
+            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var localisedDescription = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedGood.AddLocalisedDescription(localisedDescription);
+            this.Session.Derive(false);
+
+            Assert.Equal(nonUnifiedGood.Description, localisedDescription.Text);
+        }
+
+        [Fact]
+        public void ChangedLocalisedTextTextDeriveDescription()
+        {
+            var defaultLocale = this.Session.GetSingleton().DefaultLocale;
+            var localisedDescription = new LocalisedTextBuilder(this.Session).WithLocale(defaultLocale).WithText("defaultname").Build();
+
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).WithLocalisedDescription(localisedDescription).Build();
+            this.Session.Derive(false);
+
+            localisedDescription.Text = "changed";
+            this.Session.Derive(false);
+
+            Assert.Equal(nonUnifiedGood.Description, localisedDescription.Text);
+        }
+
+        [Fact]
+        public void ChangedProductIdentificationsDeriveSearchString()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(nonUnifiedGood.ProductIdentifications.First.Identification, nonUnifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedProductCategoryAllProductsDeriveSearchString()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new ProductCategoryBuilder(this.Session).WithName("catname").WithProduct(nonUnifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("catname", nonUnifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedKeywordsDeriveSearchString()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedGood.Keywords = "keywords";
+            this.Session.Derive(false);
+
+            Assert.Contains("keywords", nonUnifiedGood.SearchString);
+        }
+    }
 
     [Trait("Category", "Security")]
     public class NonUnifiedGoodDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>

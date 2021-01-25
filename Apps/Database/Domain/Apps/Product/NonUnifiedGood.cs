@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class NonUnifiedGood
     {
-        private bool IsDeletable => !this.ExistPart &&
+        public bool IsDeletable => !this.ExistPart &&
                                     !this.ExistDeploymentsWhereProductOffering &&
                                     !this.ExistEngagementItemsWhereProduct &&
                                     !this.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
@@ -24,6 +24,14 @@ namespace Allors.Database.Domain
                                     !this.ExistSalesInvoiceItemsWhereProduct &&
                                     !this.ExistSalesOrderItemsWhereProduct &&
                                     !this.ExistWorkEffortTypesWhereProductToProduce;
+
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            if (!this.ExistVariants)
+            {
+                method.Derivation.Validation.AssertExists(this, this.M.NonUnifiedGood.Part);
+            }
+        }
 
         public void AppsDelete(DeletableDelete method)
         {
