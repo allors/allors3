@@ -37,7 +37,6 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<QuoteItem>())
             {
                 var quote = @this.QuoteWhereQuoteItem;
-                var productQuote = (ProductQuote)@this.QuoteWhereQuoteItem;
 
                 if (@this.ExistInvoiceItemType
                     && (@this.InvoiceItemType.IsPartItem
@@ -71,7 +70,7 @@ namespace Allors.Database.Domain
                     @this.UnitOfMeasure = new UnitsOfMeasure(@this.Strategy.Session).Piece;
                 }
 
-                if (productQuote != null
+                if (@this.QuoteWhereQuoteItem is ProductQuote productQuote
                     && @this.ExistProduct
                     && !productQuote.ProductQuoteItemsByProduct.Any(v => v.Product.Equals(@this.Product)))
                 {

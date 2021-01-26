@@ -91,8 +91,6 @@ namespace Allors.Database.Domain
                 new SerialisedInventoryItemDerivation(m),
                 new PriceComponentDerivation(m),
                 new PartCategoryDerivation(m),
-                new OrderValueDerivation(m),
-                new OrderQuantityBreakDerivation(m),
                 new NonUnifiedGoodDerivation(m),
                 new StatementOfWorkDerivation(m),
                 new SurchargeComponentDerivation(m),

@@ -59,6 +59,18 @@ namespace Allors.Database.Domain.Tests
         public PartDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedNameDeriveDisplayName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.Name = "anotherName";
+            this.Session.Derive(false);
+
+            Assert.Equal("anotherName", nonUnifiedPart.DisplayName);
+        }
+
+        [Fact]
         public void ChangedUnitOfMeasureDeriveNonSerialisedInventoryItemWherePart()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();

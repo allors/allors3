@@ -479,7 +479,5 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
-
-
     }
 }

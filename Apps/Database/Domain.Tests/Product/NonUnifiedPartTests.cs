@@ -62,6 +62,132 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(nonUnifiedPart.ProductIdentifications.First.Identification, nonUnifiedPart.Name);
         }
+
+        [Fact]
+        public void ChangedProductIdentificationsDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.AddProductIdentification(new SkuIdentificationBuilder(this.Session).WithIdentification("sku").WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Sku).Build());
+            this.Session.Derive(false);
+
+            Assert.Contains("sku", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedLocalisedNamesDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.AddLocalisedName(new LocalisedTextBuilder(this.Session).WithText("localisedName").Build());
+            this.Session.Derive(false);
+
+            Assert.Contains("localisedName", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedLocalisedTextTextDeriveSearchString()
+        {
+            var localisedName = new LocalisedTextBuilder(this.Session).WithText("localisedName").Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session)
+                .WithLocalisedName(localisedName)
+                .Build();
+            this.Session.Derive(false);
+
+            localisedName.Text = "changed";
+            this.Session.Derive(false);
+
+            Assert.Contains("changed", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedPartCategoryPartsDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new PartCategoryBuilder(this.Session).WithName("catname").WithPart(nonUnifiedPart).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("catname", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedSupplierOfferingsPartDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(nonUnifiedPart)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First.PartyName, nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemsDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.AddSerialisedItem(new SerialisedItemBuilder(this.Session).WithSerialNumber("serialnumber").Build());
+            this.Session.Derive(false);
+
+            Assert.Contains("serialnumber", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedProductTypeDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.ProductType = new ProductTypeBuilder(this.Session).WithName("producttype").Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("producttype", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedBrandDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.Brand = new BrandBuilder(this.Session).WithName("brand").Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("brand", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedModelDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.Model = new ModelBuilder(this.Session).WithName("model").Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("model", nonUnifiedPart.SearchString);
+        }
+
+        [Fact]
+        public void ChangedKeywordsDeriveSearchString()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            nonUnifiedPart.Keywords = "keywords";
+            this.Session.Derive(false);
+
+            Assert.Contains("keywords", nonUnifiedPart.SearchString);
+        }
     }
 
     [Trait("Category", "Security")]

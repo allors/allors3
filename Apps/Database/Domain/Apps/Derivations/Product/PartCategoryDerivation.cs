@@ -16,7 +16,18 @@ namespace Allors.Database.Domain
         public PartCategoryDerivation(M m) : base(m, new Guid("C2B0DDB7-9410-4E4F-9581-D668A84B3627")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.PartCategory.CategoryImage),
+                new ChangedPattern(m.PartCategory.Name),
+                new ChangedPattern(m.PartCategory.PrimaryParent),
+                new ChangedPattern(m.PartCategory.SecondaryParents),
+                new ChangedPattern(m.PartCategory.CategoryImage),
+                new ChangedPattern(m.PartCategory.Parts),
+                new ChangedPattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.PartCategoryWhereLocalisedName } },
+                new ChangedPattern(m.LocalisedText.Text) {Steps = new IPropertyType[] {m.LocalisedText.PartCategoryWhereLocalisedDescription } },
+                new ChangedPattern(m.PartCategory.PrimaryParent) {Steps = new IPropertyType[] {m.PartCategory.PrimaryParent} },
+                new ChangedPattern(m.PartCategory.PrimaryParent) {Steps = new IPropertyType[] {m.PartCategory.PartCategoriesWhereDescendant } },
+                new ChangedPattern(m.PartCategory.SecondaryParents) {Steps = new IPropertyType[] {m.PartCategory.SecondaryParents} },
+                new ChangedPattern(m.PartCategory.SecondaryParents) {Steps = new IPropertyType[] {m.PartCategory.PartCategoriesWhereDescendant } },
+                new ChangedPattern(m.PartCategory.Parts) {Steps = new IPropertyType[] {m.PartCategory.PartCategoriesWhereDescendant } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

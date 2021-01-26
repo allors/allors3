@@ -48,7 +48,7 @@ namespace Allors.Database.Domain
 
                 if (quote != null)
                 {
-                    var itemByProduct = ((ProductQuote)quote).ProductQuoteItemsByProduct.FirstOrDefault(v => @this.ExistProduct && v.Product.Equals(@this.Product));
+                    var itemByProduct = quote is ProductQuote productQuote ? productQuote.ProductQuoteItemsByProduct.FirstOrDefault(v => @this.ExistProduct && v.Product.Equals(@this.Product)) : null;
 
                     var quantityOrdered = itemByProduct != null ? itemByProduct.QuantityOrdered : 0;
                     var valueOrdered = itemByProduct != null ? itemByProduct.ValueOrdered : 0;
