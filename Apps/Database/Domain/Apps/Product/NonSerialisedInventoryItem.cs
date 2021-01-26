@@ -66,6 +66,18 @@ namespace Allors.Database.Domain
                         }
                     }
                 }
+
+                foreach (ShipmentReceipt shipmentReceipt in this.ShipmentReceiptsWhereInventoryItem)
+                {
+                    if (shipmentReceipt.ExistShipmentItem && shipmentReceipt.ShipmentItem.Part.InventoryItemKind.IsNonSerialised)
+                    {
+                        var purchaseShipment = (PurchaseShipment)shipmentReceipt.ShipmentItem.ShipmentWhereShipmentItem;
+                        if (purchaseShipment.ShipmentState.Equals(new ShipmentStates(this.Strategy.Session).Received))
+                        {
+                            quantityOnHand += (int)shipmentReceipt.QuantityAccepted;
+                        }
+                    }
+                }
             }
 
             return quantityOnHand;

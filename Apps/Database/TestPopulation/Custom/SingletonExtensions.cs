@@ -212,6 +212,8 @@ namespace Allors
                 .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Session()).Good)
                 .Build();
 
+            @this.Session().Derive();
+
             var good3 = new NonUnifiedGoodBuilder(@this.Session()).WithNonSerialisedDefaults(allors).Build();
 
             var good4 = new NonUnifiedGoodBuilder(@this.Session()).WithSerialisedDefaults(allors).Build();

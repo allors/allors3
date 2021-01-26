@@ -642,6 +642,42 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(99, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityOnHand);
         }
+
+        [Fact]
+        public void ChangedShipmentReceiptsInventoryItemDeriveQuantity()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithDefaultFacility(new FacilityBuilder(this.Session).Build())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                .Build();
+
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Session)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithPart(part)
+                .WithQuantity(100)
+                .Build();
+            this.Session.Derive(false);
+
+            var purchaseShipment = new PurchaseShipmentBuilder(this.Session)
+                .WithShipmentState(new ShipmentStates(this.Session).Received)
+                .Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session)
+                .WithPart(part)
+                .Build();
+            purchaseShipment.AddShipmentItem(shipmentItem);
+
+            new ShipmentReceiptBuilder(this.Session)
+                .WithShipmentItem(shipmentItem)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantityAccepted(1)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(101, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityOnHand);
+        }
     }
 
     public class NonSerialisedInventoryItemQuantityCommittedOutDerivationTests : DomainTest, IClassFixture<Fixture>

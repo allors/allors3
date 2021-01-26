@@ -8,6 +8,8 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
     using System.Linq;
+    using Allors.Database.Derivations;
+    using System.Collections.Generic;
 
     public class SerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -179,5 +181,160 @@ namespace Allors.Database.Domain.Tests
 
         private InventoryItemTransaction CreateInventoryTransaction(int quantity, InventoryTransactionReason reason, Part part, SerialisedItem serialisedItem, Facility facility)
            => new InventoryItemTransactionBuilder(this.Session).WithQuantity(quantity).WithReason(reason).WithPart(part).WithSerialisedItem(serialisedItem).WithFacility(facility).Build();
+    }
+
+    public class SerialisedInventoryItemOnBuildTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedInventoryItemOnBuildTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void DeriveNonSerialisedInventoryItemState()
+        {
+            var inventoryItem = new SerialisedInventoryItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(new SerialisedInventoryItemStates(this.Session).Good, inventoryItem.SerialisedInventoryItemState);
+        }
+    }
+
+    public class SerialisedInventoryItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedInventoryItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartDeriveName()
+        {
+            var inventoryItem = new SerialisedInventoryItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            inventoryItem.Part = new UnifiedGoodBuilder(this.Session).WithName("partname").Build();
+            this.Session.Derive(false);
+
+            Assert.Equal("partname at  with state In good order", inventoryItem.Name);
+        }
+
+        [Fact]
+        public void ChangedFacilityDeriveName()
+        {
+            var inventoryItem = new SerialisedInventoryItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            inventoryItem.Facility = new FacilityBuilder(this.Session).WithName("facilityname").Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(" at facilityname with state In good order", inventoryItem.Name);
+        }
+    }
+
+    public class SerialisedInventoryItemQuantitiesDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedInventoryItemQuantitiesDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedNonSerialisedInventoryItemStateDeriveQuantity()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithDefaultFacility(new FacilityBuilder(this.Session).Build())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Session)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStateBuilder(this.Session).Build())
+                .WithPart(part)
+                .WithSerialisedItem(serialisedItem)
+                .WithQuantity(1)
+                .Build();
+            this.Session.Derive(false);
+
+            // InventoryItemState is excluded from InventoryStrategy
+            Assert.Equal(0, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).Quantity);
+        }
+
+        [Fact]
+        public void ChangedInventoryItemTransactionInventoryItemDeriveQuantity()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithDefaultFacility(new FacilityBuilder(this.Session).Build())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Session)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithPart(part)
+                .WithSerialisedItem(serialisedItem)
+                .WithQuantity(1)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(1, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).Quantity);
+        }
+
+        [Fact]
+        public void ChangedPickListItemInventoryItemDeriveQuantity()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithDefaultFacility(new FacilityBuilder(this.Session).Build())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+
+            var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Session)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithPart(part)
+                .WithSerialisedItem(serialisedItem)
+                .WithQuantity(1)
+                .Build();
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .Build();
+            this.Session.Derive(false);
+
+            var picklistItem = new PickListItemBuilder(this.Session)
+                .WithInventoryItem(inventoryItemTransaction.InventoryItem)
+                .WithQuantityPicked(1)
+                .Build();
+            picklist.AddPickListItem(picklistItem);
+
+            new ItemIssuanceBuilder(this.Session)
+                .WithPickListItem(picklistItem)
+                .WithShipmentItem(new ShipmentItemBuilder(this.Session).WithShipmentItemState(new ShipmentItemStates(this.Session).Created).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(0, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).Quantity);
+        }
+
+        [Fact]
+        public void ChangedQuantityThrowValidationError()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithDefaultFacility(new FacilityBuilder(this.Session).Build())
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithPart(part)
+                .WithSerialisedItem(serialisedItem)
+                .WithQuantity(2)
+                .Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
+        }
     }
 }
