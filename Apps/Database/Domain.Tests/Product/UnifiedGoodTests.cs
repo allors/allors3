@@ -10,10 +10,198 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Xunit;
 
-    [Trait("Category", "Security")]
-    public class UnifiedGoodSecurityTests : DomainTest, IClassFixture<Fixture>
+    public class UnifiedGoodDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public UnifiedGoodSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.UnifiedGood.ObjectType, this.M.UnifiedGood.Delete);
+        public UnifiedGoodDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedProductIdentificationsDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.AddProductIdentification(new SkuIdentificationBuilder(this.Session).WithIdentification("sku").WithProductIdentificationType(new ProductIdentificationTypes(this.Session).Sku).Build());
+            this.Session.Derive(false);
+
+            Assert.Contains("sku", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedProductCategoryAllProductsDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new ProductCategoryBuilder(this.Session).WithName("catname").WithProduct(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("catname", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedSupplierOfferingsPartDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new SupplierOfferingBuilder(this.Session)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithPart(unifiedGood).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First.PartyName, unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemsDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.AddSerialisedItem(new SerialisedItemBuilder(this.Session).WithSerialNumber("serialnumber").Build());
+            this.Session.Derive(false);
+
+            Assert.Contains("serialnumber", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedProductTypeDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.ProductType = new ProductTypeBuilder(this.Session).WithName("producttype").Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("producttype", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedBrandDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.Brand = new BrandBuilder(this.Session).WithName("brand").Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("brand", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedModelDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.Model = new ModelBuilder(this.Session).WithName("model").Build();
+            this.Session.Derive(false);
+
+            Assert.Contains("model", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedKeywordsDeriveSearchString()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.Keywords = "keywords";
+            this.Session.Derive(false);
+
+            Assert.Contains("keywords", unifiedGood.SearchString);
+        }
+
+        [Fact]
+        public void ChangedVariantsDeriveVirtualProductPriceComponents()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(unifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            var variantGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.AddVariant(variantGood);
+            this.Session.Derive(false);
+
+            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+        }
+
+        [Fact]
+        public void ChangedVariantsDeriveVirtualProductPriceComponents_2()
+        {
+            var variantGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).WithVariant(variantGood).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(unifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            unifiedGood.RemoveVariant(variantGood);
+            this.Session.Derive(false);
+
+            Assert.Empty(variantGood.VirtualProductPriceComponents);
+        }
+
+        [Fact]
+        public void ChangedVariantsDeriveBasePrice()
+        {
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(unifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            var variantGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            unifiedGood.AddVariant(variantGood);
+            this.Session.Derive(false);
+
+            Assert.Equal(variantGood.BasePrices.First, pricecomponent);
+        }
+
+        [Fact]
+        public void ChangedPriceComponentProductDeriveVirtualProductPriceComponents()
+        {
+            var variantGood = new UnifiedGoodBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var unifiedGood = new UnifiedGoodBuilder(this.Session).WithVariant(variantGood).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(unifiedGood)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class UnifiedGoodDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public UnifiedGoodDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.UnifiedGood.ObjectType, this.M.UnifiedGood.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 

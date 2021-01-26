@@ -67,6 +67,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenBasePriceForVirtualProduct_WhenDeriving_ThenProductVirtualProductPriceComponentIsUpdated()
         {
             var vatRate21 = new VatRateBuilder(this.Session).WithRate(21).Build();
+            var physicalGood = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
             var virtualGood = new NonUnifiedGoodBuilder(this.Session)
                 .WithProductIdentification(new ProductNumberBuilder(this.Session)
                     .WithIdentification("v101")
@@ -76,24 +77,22 @@ namespace Allors.Database.Domain.Tests
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .Build();
 
-            var physicalGood = new Goods(this.Session).FindBy(this.M.Good.Name, "good1");
-
-            virtualGood.AddVariant(physicalGood);
+            physicalGood.AddVariant(virtualGood);
 
             this.Session.Derive();
 
             var basePrice = new BasePriceBuilder(this.Session)
                 .WithDescription("baseprice")
                 .WithPrice(10)
-                .WithProduct(virtualGood)
+                .WithProduct(physicalGood)
                 .WithFromDate(this.Session.Now())
                 .Build();
 
             this.Session.Derive();
 
-            Assert.Single(physicalGood.VirtualProductPriceComponents);
-            Assert.Contains(basePrice, physicalGood.VirtualProductPriceComponents);
-            Assert.False(virtualGood.ExistVirtualProductPriceComponents);
+            Assert.Single(virtualGood.VirtualProductPriceComponents);
+            Assert.Contains(basePrice, virtualGood.VirtualProductPriceComponents);
+            Assert.False(physicalGood.ExistVirtualProductPriceComponents);
         }
 
         [Fact]
@@ -182,22 +181,22 @@ namespace Allors.Database.Domain.Tests
                 .WithVatRate(vatRate21)
                 .Build();
 
-            virtualService.AddVariant(physicalService);
+            physicalService.AddVariant(virtualService);
 
             this.Session.Derive();
 
             var discount = new DiscountComponentBuilder(this.Session)
                 .WithDescription("discount")
                 .WithPrice(10)
-                .WithProduct(virtualService)
+                .WithProduct(physicalService)
                 .WithFromDate(this.Session.Now())
                 .Build();
 
             this.Session.Derive();
 
-            Assert.Single(physicalService.VirtualProductPriceComponents);
-            Assert.Contains(discount, physicalService.VirtualProductPriceComponents);
-            Assert.False(virtualService.ExistVirtualProductPriceComponents);
+            Assert.Single(virtualService.VirtualProductPriceComponents);
+            Assert.Contains(discount, virtualService.VirtualProductPriceComponents);
+            Assert.False(physicalService.ExistVirtualProductPriceComponents);
         }
 
         [Fact]
@@ -286,22 +285,22 @@ namespace Allors.Database.Domain.Tests
                 .WithVatRate(vatRate21)
                 .Build();
 
-            virtualService.AddVariant(physicalService);
+            physicalService.AddVariant(virtualService);
 
             this.Session.Derive();
 
             var surcharge = new SurchargeComponentBuilder(this.Session)
                 .WithDescription("surcharge")
                 .WithPrice(10)
-                .WithProduct(virtualService)
+                .WithProduct(physicalService)
                 .WithFromDate(this.Session.Now())
                 .Build();
 
             this.Session.Derive();
 
-            Assert.Single(physicalService.VirtualProductPriceComponents);
-            Assert.Contains(surcharge, physicalService.VirtualProductPriceComponents);
-            Assert.False(virtualService.ExistVirtualProductPriceComponents);
+            Assert.Single(virtualService.VirtualProductPriceComponents);
+            Assert.Contains(surcharge, virtualService.VirtualProductPriceComponents);
+            Assert.False(physicalService.ExistVirtualProductPriceComponents);
         }
 
         [Fact]

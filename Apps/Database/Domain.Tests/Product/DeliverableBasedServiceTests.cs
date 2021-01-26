@@ -82,5 +82,24 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(variant.BasePrices.First, pricecomponent);
         }
+
+        [Fact]
+        public void ChangedPriceComponentProductDeriveVirtualProductPriceComponents()
+        {
+            var variantService = new DeliverableBasedServiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var service = new DeliverableBasedServiceBuilder(this.Session).WithVariant(variantService).Build();
+            this.Session.Derive(false);
+
+            var pricecomponent = new BasePriceBuilder(this.Session)
+                .WithProduct(service)
+                .WithPrice(1)
+                .WithFromDate(this.Session.Now().AddMinutes(-1))
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(variantService.VirtualProductPriceComponents.First, pricecomponent);
+        }
     }
 }

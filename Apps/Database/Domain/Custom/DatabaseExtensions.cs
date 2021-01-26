@@ -127,12 +127,13 @@ namespace Allors.Database.Domain
                 new CustomerReturnDerivation(m),
                 new DeliverableBasedServiceDerivation(m),
                 new TimeAndMaterialsServiceDerivation(m),
+                new GoodDerivation(m),
                 new UnifiedGoodDerivation(m),
                 new NonSerialisedInventoryItemDerivation(m),
                 new NonSerialisedInventoryItemQuantitiesDerivation(m),
                 new NonUnifiedPartDerivation(m),
-                new NonUnifiedPartSuppliedByDerivation(m),
-                new NonUnifiedPartQuantitiesDerivation(m),
+                new PartSuppliedByDerivation(m),
+                new PartQuantitiesDerivation(m),
                 new NonUnifiedPartDeniedPermissionDerivation(m),
                 new UnifiedGoodDeniedPermissionDerivation(m),
                 new NonUnifiedGoodDeniedPermissionDerivation(m),
@@ -233,7 +234,6 @@ namespace Allors.Database.Domain
                 new PurchaseOrderApprovalLevel2ParticipantsDerivation(m),
                 new CommunicationTaskParticipantsDerivation(m),
                 new ProductCategoryDerivation(m),
-                new ProductVirtualProductPriceComponentDerivation(m),
             };
 
             foreach (var derivation in derivations)

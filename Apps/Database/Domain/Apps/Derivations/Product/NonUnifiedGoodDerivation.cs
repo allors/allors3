@@ -19,13 +19,10 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.NonUnifiedGood.ProductIdentifications),
-                new ChangedPattern(m.NonUnifiedGood.LocalisedNames),
-                new ChangedPattern(m.NonUnifiedGood.LocalisedDescriptions),
                 new ChangedPattern(m.NonUnifiedGood.Keywords),
                 new ChangedPattern(m.NonUnifiedGood.Variants),
-                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedName}, OfType = m.NonUnifiedGood.Class },
-                new ChangedPattern(m.LocalisedText.Text) { Steps = new IPropertyType[]{ m.LocalisedText.UnifiedProductWhereLocalisedDescription}, OfType = m.NonUnifiedGood.Class },
                 new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.NonUnifiedGood.Class },
+                new ChangedPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.NonUnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -34,24 +31,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
-                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
-
-                var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(@this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
-                var goodIdentification = identifications.FirstOrDefault();
-
-                @this.ProductNumber = goodIdentification?.Identification;
-
-                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
-                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
                 if (@this.ExistCurrentVersion)
                 {
                     foreach (Good variant in @this.CurrentVersion.Variants)

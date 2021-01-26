@@ -18,72 +18,23 @@ namespace Allors.Database.Domain
         public UnifiedGoodDerivation(M m) : base(m, new Guid("B1C14106-C300-453D-989B-81E05767CFC4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.UnifiedGood.DerivationTrigger),
-                new ChangedPattern(this.M.UnifiedGood.Variants),
+                new ChangedPattern(m.UnifiedGood.DerivationTrigger),
+                new ChangedPattern(m.UnifiedGood.ProductIdentifications),
+                new ChangedPattern(m.UnifiedGood.Keywords),
+                new ChangedPattern(m.UnifiedGood.Variants),
+                new ChangedPattern(m.UnifiedGood.SerialisedItems),
+                new ChangedPattern(m.UnifiedGood.ProductType),
+                new ChangedPattern(m.UnifiedGood.Brand),
+                new ChangedPattern(m.UnifiedGood.Model),
+                new ChangedPattern(m.ProductCategory.AllProducts) { Steps = new IPropertyType[]{ m.ProductCategory.AllProducts }, OfType = m.UnifiedGood.Class },
+                new ChangedPattern(m.PriceComponent.Product) { Steps = new IPropertyType[] {m.PriceComponent.Product }, OfType = m.UnifiedGood.Class },
+                new ChangedPattern(m.SupplierOffering.Part) { Steps = new IPropertyType[] {m.SupplierOffering.Part }, OfType = m.UnifiedGood.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
-                var defaultLocale = @this.Strategy.Session.GetSingleton().DefaultLocale;
-                var settings = @this.Strategy.Session.GetSingleton().Settings;
-
-                if (cycle.ChangeSet.HasChangedRoles(@this, new RoleType[] { @this.Meta.UnitOfMeasure, @this.Meta.DefaultFacility }))
-                {
-                    // SyncDefaultInventoryItem
-                    if (@this.InventoryItemKind.IsNonSerialised)
-                    {
-                        var inventoryItems = @this.InventoryItemsWherePart;
-
-                        if (!inventoryItems.Any(i => i.ExistFacility && i.Facility.Equals(@this.DefaultFacility)
-                                                    && i.ExistUnitOfMeasure && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
-                        {
-                            var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Session)
-                                .WithFacility(@this.DefaultFacility)
-                                .WithUnitOfMeasure(@this.UnitOfMeasure)
-                                .WithPart(@this)
-                                .Build();
-                        }
-                    }
-                }
-
-                var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Session).Good);
-                var goodIdentification = identifications.FirstOrDefault();
-
-                @this.ProductNumber = goodIdentification.Identification;
-
-                if (!@this.ExistProductIdentifications)
-                {
-                    cycle.Validation.AssertExists(@this, this.M.Good.ProductIdentifications);
-                }
-
-                if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
-                if (@this.LocalisedDescriptions.Any(x => x.Locale.Equals(defaultLocale)))
-                {
-                    @this.Description = @this.LocalisedDescriptions.First(x => x.Locale.Equals(defaultLocale)).Text;
-                }
-
-                foreach (SupplierOffering supplierOffering in @this.SupplierOfferingsWherePart)
-                {
-                    if (supplierOffering.FromDate <= @this.Session().Now()
-                        && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= @this.Session().Now()))
-                    {
-                        @this.AddSuppliedBy(supplierOffering.Supplier);
-                    }
-
-                    if (supplierOffering.FromDate > @this.Session().Now()
-                        || (supplierOffering.ExistThroughDate && supplierOffering.ThroughDate < @this.Session().Now()))
-                    {
-                        @this.RemoveSuppliedBy(supplierOffering.Supplier);
-                    }
-                }
-
                 if (@this.ExistCurrentVersion)
                 {
                     foreach (Good variant in @this.CurrentVersion.Variants)
@@ -115,37 +66,6 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                this.DeriveProductCharacteristics(@this);
-                this.DeriveQuantityOnHand(@this);
-                this.DeriveAvailableToPromise(@this);
-                this.DeriveQuantityCommittedOut(@this);
-                this.DeriveQuantityExpectedIn(@this);
-
-                var quantityOnHand = 0M;
-                var totalCost = 0M;
-
-                foreach (InventoryItemTransaction inventoryTransaction in @this.InventoryItemTransactionsWherePart)
-                {
-                    var reason = inventoryTransaction.Reason;
-
-                    if (reason.IncreasesQuantityOnHand == true)
-                    {
-                        quantityOnHand += inventoryTransaction.Quantity;
-
-                        var transactionCost = inventoryTransaction.Quantity * inventoryTransaction.Cost;
-                        totalCost += transactionCost;
-
-                        var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
-                        (@this.PartWeightedAverage).AverageCost = decimal.Round(averageCost, 2);
-                    }
-                    else if (reason.IncreasesQuantityOnHand == false)
-                    {
-                        quantityOnHand -= inventoryTransaction.Quantity;
-
-                        totalCost = quantityOnHand * @this.PartWeightedAverage.AverageCost;
-                    }
-                }
-
                 var builder = new StringBuilder();
                 if (@this.ExistProductIdentifications)
                 {
@@ -155,11 +75,6 @@ namespace Allors.Database.Domain
                 if (@this.ExistProductCategoriesWhereAllProduct)
                 {
                     builder.Append(string.Join(" ", @this.ProductCategoriesWhereAllProduct.Select(v => v.Name)));
-                }
-
-                if (@this.ExistProductCategoriesWhereAllPart)
-                {
-                    builder.Append(string.Join(" ", @this.ProductCategoriesWhereAllPart.Select(v => v.Name)));
                 }
 
                 if (@this.ExistSupplierOfferingsWherePart)
@@ -188,103 +103,9 @@ namespace Allors.Database.Domain
                     builder.Append(string.Join(" ", @this.Model.Name));
                 }
 
-                foreach (PartCategory partCategory in @this.PartCategoriesWherePart)
-                {
-                    builder.Append(string.Join(" ", partCategory.Name));
-                }
-
                 builder.Append(string.Join(" ", @this.Keywords));
 
                 @this.SearchString = builder.ToString();
-            }
-        }
-
-        private void DeriveProductCharacteristics(UnifiedGood unifiedGood)
-        {
-            var characteristicsToDelete = unifiedGood.SerialisedItemCharacteristics.ToList();
-
-            if (unifiedGood.ExistProductType)
-            {
-                foreach (SerialisedItemCharacteristicType characteristicType in unifiedGood.ProductType.SerialisedItemCharacteristicTypes)
-                {
-                    var characteristic = unifiedGood.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(v.SerialisedItemCharacteristicType, characteristicType));
-                    if (characteristic == null)
-                    {
-                        unifiedGood.AddSerialisedItemCharacteristic(
-                            new SerialisedItemCharacteristicBuilder(unifiedGood.Strategy.Session)
-                                .WithSerialisedItemCharacteristicType(characteristicType)
-                                .Build());
-                    }
-                    else
-                    {
-                        characteristicsToDelete.Remove(characteristic);
-                    }
-                }
-            }
-
-            foreach (var characteristic in characteristicsToDelete)
-            {
-                unifiedGood.RemoveSerialisedItemCharacteristic(characteristic);
-            }
-        }
-
-        public void DeriveQuantityOnHand(UnifiedGood unifiedGood)
-        {
-            unifiedGood.QuantityOnHand = 0;
-
-            foreach (InventoryItem inventoryItem in unifiedGood.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialisedItem)
-                {
-                    unifiedGood.QuantityOnHand += nonSerialisedItem.QuantityOnHand;
-                }
-                else if (inventoryItem is SerialisedInventoryItem serialisedItem)
-                {
-                    unifiedGood.QuantityOnHand += serialisedItem.QuantityOnHand;
-                }
-            }
-        }
-
-        public void DeriveAvailableToPromise(UnifiedGood unifiedGood)
-        {
-            unifiedGood.AvailableToPromise = 0;
-
-            foreach (InventoryItem inventoryItem in unifiedGood.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialisedItem)
-                {
-                    unifiedGood.AvailableToPromise += nonSerialisedItem.AvailableToPromise;
-                }
-                else if (inventoryItem is SerialisedInventoryItem serialisedItem)
-                {
-                    unifiedGood.AvailableToPromise += serialisedItem.AvailableToPromise;
-                }
-            }
-        }
-
-        public void DeriveQuantityCommittedOut(UnifiedGood unifiedGood)
-        {
-            unifiedGood.QuantityCommittedOut = 0;
-
-            foreach (InventoryItem inventoryItem in unifiedGood.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialised)
-                {
-                    unifiedGood.QuantityCommittedOut += nonSerialised.QuantityCommittedOut;
-                }
-            }
-        }
-
-        public void DeriveQuantityExpectedIn(UnifiedGood unifiedGood)
-        {
-            unifiedGood.QuantityExpectedIn = 0;
-
-            foreach (InventoryItem inventoryItem in unifiedGood.InventoryItemsWherePart)
-            {
-                if (inventoryItem is NonSerialisedInventoryItem nonSerialised)
-                {
-                    unifiedGood.QuantityExpectedIn += nonSerialised.QuantityExpectedIn;
-                }
             }
         }
     }
