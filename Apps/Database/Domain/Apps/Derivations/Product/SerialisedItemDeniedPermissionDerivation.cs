@@ -31,14 +31,8 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
                 var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
-                if (!@this.ExistInventoryItemTransactionsWhereSerialisedItem
-                    && !@this.ExistPurchaseInvoiceItemsWhereSerialisedItem
-                    && !@this.ExistPurchaseOrderItemsWhereSerialisedItem
-                    && !@this.ExistQuoteItemsWhereSerialisedItem
-                    && !@this.ExistSalesInvoiceItemsWhereSerialisedItem
-                    && !@this.ExistSalesOrderItemsWhereSerialisedItem
-                    && !@this.ExistSerialisedInventoryItemsWhereSerialisedItem
-                    && !@this.ExistShipmentItemsWhereSerialisedItem)
+
+                if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

@@ -20,7 +20,6 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.InventoryItemTransaction.InventoryItem) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new ChangedPattern(m.InventoryItemTransaction.Quantity) { Steps = new IPropertyType[] {m.InventoryItemTransaction.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new ChangedPattern(m.PickListItem.InventoryItem) { Steps = new IPropertyType[] {m.PickListItem.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
-                new ChangedPattern(m.ShipmentReceipt.InventoryItem) { Steps = new IPropertyType[] {m.ShipmentReceipt.InventoryItem }, OfType = m.NonSerialisedInventoryItem.Class },
                 new ChangedPattern(m.PurchaseOrderItem.QuantityOrdered) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
                 new ChangedPattern(m.PurchaseOrderItem.PurchaseOrderItemState) { Steps = new IPropertyType[] {m.PurchaseOrderItem.Part, m.Part.InventoryItemsWherePart }, OfType = m.NonSerialisedInventoryItem.Class },
             };

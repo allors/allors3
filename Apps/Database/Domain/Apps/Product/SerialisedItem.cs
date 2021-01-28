@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
 
     public partial class SerialisedItem
     {
-        private bool IsDeletable =>
+        public bool IsDeletable =>
             !this.ExistInventoryItemTransactionsWhereSerialisedItem
             && !this.ExistPurchaseInvoiceItemsWhereSerialisedItem
             && !this.ExistPurchaseOrderItemsWhereSerialisedItem

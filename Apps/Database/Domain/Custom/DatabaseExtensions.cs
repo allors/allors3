@@ -88,6 +88,7 @@ namespace Allors.Database.Domain
                 new ShipmentDerivation(m),
                 new SupplierOfferingDerivation(m),
                 new SerialisedItemCharacteristicDerivation(m),
+                new SerialisedItemCharacteristicTypeDerivation(m),
                 new SerialisedInventoryItemDerivation(m),
                 new SerialisedInventoryItemQuantitiesDerivation(m),
                 new PriceComponentDerivation(m),

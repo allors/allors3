@@ -104,6 +104,8 @@ namespace Allors.Database.Domain.Tests
             var belgium = new Countries(this.Session).CountryByIsoCode["BE"];
             var euro = belgium.Currency;
 
+            singleton.AddAdditionalLocale(belgium.LocalesWhereCountry.First);
+
             var bank = new BankBuilder(this.Session).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
 
             var ownBankAccount = new OwnBankAccountBuilder(this.Session)

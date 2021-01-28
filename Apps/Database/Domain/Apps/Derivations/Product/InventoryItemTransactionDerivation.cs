@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
                         validation.AddError($"{@this} {@this.Meta.Reason} {message}");
                     }
 
-                    if (@this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.Sum(v => v.Quantity) > 1 )
+                    if (@this.SerialisedItem?.SerialisedInventoryItemsWhereSerialisedItem.Sum(v => v.Quantity) > 1 )
                     {
                         var message = "Serialised item already in inventory";
                         validation.AddError($"{@this} {@this.Meta.SerialisedItem} {message}");
