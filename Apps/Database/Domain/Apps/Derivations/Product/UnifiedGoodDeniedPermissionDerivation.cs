@@ -49,28 +49,7 @@ namespace Allors.Database.Domain
             {
                 var deletePermission = new Permissions(@this.Strategy.Session).Get(@this.Meta.ObjectType, @this.Meta.Delete);
 
-                if (!@this.ExistDeploymentsWhereProductOffering &&
-                                !@this.ExistEngagementItemsWhereProduct &&
-                                !@this.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
-                                !@this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&
-                                !@this.ExistQuoteItemsWhereProduct &&
-                                !@this.ExistShipmentItemsWhereGood &&
-                                !@this.ExistWorkEffortGoodStandardsWhereUnifiedProduct &&
-                                !@this.ExistMarketingPackageWhereProductsUsedIn &&
-                                !@this.ExistMarketingPackagesWhereProduct &&
-                                !@this.ExistOrganisationGlAccountsWhereProduct &&
-                                !@this.ExistProductConfigurationsWhereProductsUsedIn &&
-                                !@this.ExistProductConfigurationsWhereProduct &&
-                                !@this.ExistRequestItemsWhereProduct &&
-                                !@this.ExistSalesInvoiceItemsWhereProduct &&
-                                !@this.ExistSalesOrderItemsWhereProduct &&
-                                !@this.ExistWorkEffortTypesWhereProductToProduce &&
-                                !@this.ExistWorkEffortInventoryProducedsWherePart &&
-                                !@this.ExistWorkEffortPartStandardsWherePart &&
-                                !@this.ExistPartBillOfMaterialsWherePart &&
-                                !@this.ExistPartBillOfMaterialsWhereComponentPart &&
-                                !@this.ExistInventoryItemTransactionsWherePart &&
-                                !@this.ExistSerialisedItems)
+                if (@this.IsDeletable)
                 {
                     @this.RemoveDeniedPermission(deletePermission);
                 }

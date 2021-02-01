@@ -272,4 +272,29 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(100, workEffortInventoryAssignement.UnitSellingPrice);
         }
     }
+
+    public class SupplierOfferingDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SupplierOfferingDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void GivenSupplierOffering_WhenDeriving_ThenRequiredRelationsMustExist()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                .Build();
+
+            new SupplierOfferingBuilder(this.Session).WithPart(part).Build();
+            this.Session.Derive(false);
+
+            var warehouses = this.Session.Extent<Facility>();
+            warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse);
+
+            foreach (Facility facility in warehouses)
+            {
+                var inventoryItem = part.InventoryItemsWherePart.Where(v => v.Facility.Equals(facility));
+                Assert.NotNull(inventoryItem);
+            }
+        }
+    }
 }

@@ -17,13 +17,15 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.LetterCorrespondence.Subject),
+                new ChangedPattern(m.LetterCorrespondence.ToParty),
+                new ChangedPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.LetterCorrespondence.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<LetterCorrespondence>())
             {
-                @this.WorkItemDescription = $"Letter to {@this.ToParty.PartyName} about {@this.Subject}";
+                @this.WorkItemDescription = $"Letter to {@this.ToParty?.PartyName} about {@this.Subject}";
             }
         }
     }

@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.CommunicationTask.CommunicationEvent),
+                new ChangedPattern(this.M.CommunicationEvent.WorkItemDescription) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
+                new ChangedPattern(this.M.CommunicationEvent.ActualEnd) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

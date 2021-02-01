@@ -112,4 +112,65 @@ namespace Allors.Database.Domain.Tests
             Assert.Empty(this.Session.Extent<EmailCommunication>());
         }
     }
+
+
+    public class EmailCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public EmailCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSubjectDeriveSubject()
+        {
+            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+                .WithEmailTemplate(new EmailTemplateBuilder(this.Session).WithSubjectTemplate("subjectfromtemplate").Build())
+                .WithSubject("subject")
+                .Build();
+            this.Session.Derive(false);
+
+            emailCommunication.RemoveSubject();
+            this.Session.Derive(false);
+
+            Assert.Equal("subjectfromtemplate", emailCommunication.Subject);
+        }
+
+        [Fact]
+        public void ChangedEmailTemplateDeriveSubject()
+        {
+            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+                .Build();
+            this.Session.Derive(false);
+
+            emailCommunication.EmailTemplate = new EmailTemplateBuilder(this.Session).WithSubjectTemplate("subjectfromtemplate").Build();
+            this.Session.Derive(false);
+
+            Assert.Equal("subjectfromtemplate", emailCommunication.Subject);
+        }
+
+        [Fact]
+        public void ChangedSubjectDeriveWorkItemDescription()
+        {
+            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+                .Build();
+            this.Session.Derive(false);
+
+            emailCommunication.Subject = "subject";
+            this.Session.Derive(false);
+
+            Assert.Contains("subject", emailCommunication.WorkItemDescription);
+        }
+
+        [Fact]
+        public void ChangedToEmailDeriveWorkItemDescription()
+        {
+            var emailCommunication = new EmailCommunicationBuilder(this.Session)
+                .Build();
+            this.Session.Derive(false);
+
+            var to = new EmailAddressBuilder(this.Session).WithElectronicAddressString("email@something.com").Build();
+            emailCommunication.ToEmail = to;
+            this.Session.Derive(false);
+
+            Assert.Contains("email@something.com", emailCommunication.WorkItemDescription);
+        }
+    }
 }

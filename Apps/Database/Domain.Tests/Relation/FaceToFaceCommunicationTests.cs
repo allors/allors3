@@ -82,6 +82,53 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class FaceToFaceCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public FaceToFaceCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSubjectDeriveWorkItemDescription()
+        {
+            var communication = new FaceToFaceCommunicationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            communication.Subject = "subject";
+            this.Session.Derive(false);
+
+            Assert.Contains("subject", communication.WorkItemDescription);
+        }
+
+        [Fact]
+        public void ChangedToPartyDeriveWorkItemDescription()
+        {
+            var communication = new FaceToFaceCommunicationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
+            this.Session.Derive(false);
+
+            communication.ToParty = person;
+            this.Session.Derive(false);
+
+            Assert.Contains("person", communication.WorkItemDescription);
+        }
+
+        [Fact]
+        public void ChangedPartyPartyNameDeriveWorkItemDescription()
+        {
+            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
+            this.Session.Derive(false);
+
+            var communication = new FaceToFaceCommunicationBuilder(this.Session).WithToParty(person).Build();
+            this.Session.Derive(false);
+
+            person.LastName = "changed";
+            this.Session.Derive(false);
+
+            Assert.Contains("changed", communication.WorkItemDescription);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class FaceToFaceCommunicationSecurityTests : DomainTest, IClassFixture<Fixture>
     {

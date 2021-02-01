@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.AgreementProductApplicability.Agreement),
+                new ChangedPattern(m.AgreementProductApplicability.AgreementItem),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

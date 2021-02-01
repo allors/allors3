@@ -16,9 +16,15 @@ namespace Allors.Database.Domain
         public OrganisationDerivation(M m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Organisation.DerivationTrigger),
-                new ChangedPattern(this.M.Employment.Employer){Steps = new IPropertyType[]{ this.M.Employment.Employer}},
-                new ChangedPattern(this.M.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ this.M.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
+                new ChangedPattern(m.Organisation.Name),
+                new ChangedPattern(m.Organisation.DerivationTrigger),
+                new ChangedPattern(m.Employment.Employer) {Steps = new IPropertyType[]{ m.Employment.Employer} },
+                new ChangedPattern(m.Employment.FromDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = this.M.Organisation.Class},
+                new ChangedPattern(m.Employment.ThroughDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = this.M.Organisation.Class},
+                new ChangedPattern(m.CustomerRelationship.InternalOrganisation) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
+                new ChangedPattern(m.CustomerRelationship.FromDate) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
+                new ChangedPattern(m.CustomerRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
+                new ChangedPattern(m.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ m.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +33,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Organisation>())
             {
-                //var singleton = session.GetSingleton();
                 var now = session.Now();
 
                 session.Prefetch(@this.PrefetchPolicy);
@@ -44,7 +49,6 @@ namespace Allors.Database.Domain
                     .Select(v => v.Customer)
                     .ToArray();
 
-                // Contacts
                 if (!@this.ExistContactsUserGroup)
                 {
                     var customerContactGroupName = $"Customer contacts at {@this.Name} ({@this.UniqueId})";
@@ -54,11 +58,6 @@ namespace Allors.Database.Domain
                 @this.DeriveRelationships();
 
                 @this.ContactsUserGroup.Members = @this.CurrentContacts.ToArray();
-
-                @this.ActiveEmployees = @this.EmploymentsWhereEmployer
-                    .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
-                    .Select(v => v.Employee)
-                    .ToArray();
 
                 @this.DeriveRelationships();
             }

@@ -16,14 +16,16 @@ namespace Allors.Database.Domain
         public FaceToFaceCommunicationDerivation(M m) : base(m, new Guid("165A1691-F94C-40D2-B183-EFC764582784")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.FaceToFaceCommunication.Subject),
+                new ChangedPattern(m.FaceToFaceCommunication.Subject),
+                new ChangedPattern(m.FaceToFaceCommunication.ToParty),
+                new ChangedPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.FaceToFaceCommunication.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<FaceToFaceCommunication>())
             {
-                @this.WorkItemDescription = $"Meeting with {@this.ToParty.PartyName} about {@this.Subject}";
+                @this.WorkItemDescription = $"Meeting with {@this.ToParty?.PartyName} about {@this.Subject}";
             }
         }
     }

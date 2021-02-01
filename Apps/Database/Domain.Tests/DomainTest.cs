@@ -179,6 +179,7 @@ namespace Allors.Database.Domain.Tests
 
             new ProductCategoryBuilder(this.Session).WithName("Primary Category").Build();
 
+            internalOrganisation.CreateEmployee("letmein", this.Session.Faker());
             internalOrganisation.CreateB2BCustomer(this.Session.Faker());
             internalOrganisation.CreateB2CCustomer(this.Session.Faker());
             internalOrganisation.CreateSupplier(this.Session.Faker());

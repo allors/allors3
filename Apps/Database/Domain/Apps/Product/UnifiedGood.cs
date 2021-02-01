@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 {
     public partial class UnifiedGood
     {
-        private bool IsDeletable => !this.ExistDeploymentsWhereProductOffering &&
+        public bool IsDeletable => !this.ExistDeploymentsWhereProductOffering &&
                                     !this.ExistEngagementItemsWhereProduct &&
                                     !this.ExistGeneralLedgerAccountsWhereAssignedCostUnitsAllowed &&
                                     !this.ExistGeneralLedgerAccountsWhereDefaultCostUnit &&

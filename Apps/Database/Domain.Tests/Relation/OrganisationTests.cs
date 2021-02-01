@@ -80,15 +80,123 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    [Trait("Category", "Security")]
-    public class OrganisationDeniedPermissionTests : DomainTest, IClassFixture<Fixture>
+    public class OrganisationDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public OrganisationDeniedPermissionTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Organisation.ObjectType, this.M.Organisation.Delete);
+        public OrganisationDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedNameDerivePartyName()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            organisation.Name = "name";
+            this.Session.Derive(false);
+
+            Assert.Equal("name", organisation.PartyName);
+        }
+
+        [Fact]
+        public void ChangedEmploymentEmployerDeriveActiveEmployees()
+        {
+            var employee = new PersonBuilder(this.Session).Build();
+            var employment = new EmploymentBuilder(this.Session).WithEmployee(employee).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var employer = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            employment.Employer = employer;
+            this.Session.Derive(false);
+
+            Assert.Contains(employee, employer.ActiveEmployees);
+        }
+
+        [Fact]
+        public void ChangedEmploymentFromDateDeriveActiveEmployees()
+        {
+            var employee = new PersonBuilder(this.Session).Build();
+            var employer = new OrganisationBuilder(this.Session).Build();
+            var employment = new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(employer).Build();
+            this.Session.Derive(false);
+
+            employment.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(employee, employer.ActiveEmployees);
+        }
+
+        [Fact]
+        public void ChangedEmploymentThroughDateDeriveActiveEmployees()
+        {
+            var employee = new PersonBuilder(this.Session).Build();
+            var employer = new OrganisationBuilder(this.Session).Build();
+            var employment = new EmploymentBuilder(this.Session).WithFromDate(this.Session.Now()).WithEmployee(employee).WithEmployer(employer).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(employee, employer.ActiveEmployees);
+
+            employment.ThroughDate = employment.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(employee, employer.ActiveEmployees);
+        }
+
+        [Fact]
+        public void ChangedCustomerRelationshipEmployerDeriveActiveCustomers()
+        {
+            var customer = new PersonBuilder(this.Session).Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            customerRelationship.InternalOrganisation = internalOrganisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(customer, internalOrganisation.ActiveCustomers);
+        }
+
+        [Fact]
+        public void ChangedCustomerRelationshipFromDateDeriveActiveCustomers()
+        {
+            var customer = new PersonBuilder(this.Session).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            customerRelationship.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(customer, internalOrganisation.ActiveCustomers);
+        }
+
+        [Fact]
+        public void ChangedCustomerRelationshipThroughDateDeriveActiveCustomers()
+        {
+            var customer = new PersonBuilder(this.Session).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var customerRelationship = new CustomerRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(customer, internalOrganisation.ActiveCustomers);
+
+            customerRelationship.ThroughDate = customerRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(customer, internalOrganisation.ActiveCustomers);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class OrganisationDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public OrganisationDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Organisation.ObjectType, this.M.Organisation.Delete);
 
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Permission deletePermission;
-
 
         [Fact]
         public void OnChangeOrganisationDeriveDeletePermission()

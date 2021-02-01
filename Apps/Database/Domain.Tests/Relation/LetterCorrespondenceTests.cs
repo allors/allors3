@@ -80,4 +80,52 @@ namespace Allors.Database.Domain.Tests
             Assert.Empty(this.Session.Extent<LetterCorrespondence>());
         }
     }
+
+    public class LetterCorrespondenceCommunicationDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public LetterCorrespondenceCommunicationDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSubjectDeriveWorkItemDescription()
+        {
+            var communication = new LetterCorrespondenceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            communication.Subject = "subject";
+            this.Session.Derive(false);
+
+            Assert.Contains("subject", communication.WorkItemDescription);
+        }
+
+        [Fact]
+        public void ChangedToPartyDeriveWorkItemDescription()
+        {
+            var communication = new LetterCorrespondenceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
+            this.Session.Derive(false);
+
+            communication.ToParty = person;
+            this.Session.Derive(false);
+
+            Assert.Contains("person", communication.WorkItemDescription);
+        }
+
+        [Fact]
+        public void ChangedPartyPartyNameDeriveWorkItemDescription()
+        {
+            var person = new PersonBuilder(this.Session).WithLastName("person").Build();
+            this.Session.Derive(false);
+
+            var communication = new LetterCorrespondenceBuilder(this.Session).WithToParty(person).Build();
+            this.Session.Derive(false);
+
+            person.LastName = "changed";
+            this.Session.Derive(false);
+
+            Assert.Contains("changed", communication.WorkItemDescription);
+        }
+    }
+
 }

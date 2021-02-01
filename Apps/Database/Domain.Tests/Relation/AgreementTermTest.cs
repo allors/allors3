@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class AgreementTermTest : DomainTest, IClassFixture<Fixture>
@@ -112,6 +114,50 @@ namespace Allors.Database.Domain.Tests
             threshold.RemoveDescription();
 
             Assert.False(this.Session.Derive(false).HasErrors);
+        }
+
+        [Fact]
+        public void OnCreatedThrowValidationError()
+        {
+            new InvoiceTermBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
+        }
+    }
+
+    public class AgreementTermDerivationTest : DomainTest, IClassFixture<Fixture>
+    {
+        public AgreementTermDerivationTest(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDescriptionThrowValidationError()
+        {
+            var agreementTerm = new InvoiceTermBuilder(this.Session)
+                .WithDescription("description")
+                .Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
+
+            agreementTerm.RemoveDescription();
+
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
+        }
+
+        [Fact]
+        public void ChangedTermTypeThrowValidationError()
+        {
+            var agreementTerm = new InvoiceTermBuilder(this.Session)
+                .WithTermType(new InvoiceTermTypes(this.Session).PaymentNetDays)
+                .Build();
+            this.Session.Derive(false);
+
+            agreementTerm.RemoveTermType();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertAtLeastOne: InvoiceTerm.TermType\nInvoiceTerm.Description"));
         }
     }
 }

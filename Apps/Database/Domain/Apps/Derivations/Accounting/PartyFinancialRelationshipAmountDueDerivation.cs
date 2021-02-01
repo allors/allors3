@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(m.SalesInvoice.TotalIncVat) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
                 new ChangedPattern(m.SalesInvoice.AmountPaid) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
+                new ChangedPattern(m.SalesInvoice.DueDate) { Steps =  new IPropertyType[] {m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } },
                 new ChangedPattern(m.Store.PaymentGracePeriod) { Steps =  new IPropertyType[] { m.Store.SalesInvoicesWhereStore, m.SalesInvoice.BillToCustomer, m.Party.PartyFinancialRelationshipsWhereFinancialParty } }
             };
 

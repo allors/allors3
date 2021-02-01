@@ -95,6 +95,26 @@ namespace Allors.Database.Domain
                 {
                     @this.WorkEffortSequence = new WorkEffortSequences(@this.Strategy.Session).EnforcedSequence;
                 }
+
+                if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Session.Extent<PaymentMethod>().Count == 1)
+                {
+                    @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
+                }
+
+                if (!@this.ExistSubAccountCounter)
+                {
+                    @this.SubAccountCounter = new CounterBuilder(@this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
+                }
+
+                if (!@this.ExistFiscalYearStartMonth)
+                {
+                    @this.FiscalYearStartMonth = 1;
+                }
+
+                if (!@this.ExistFiscalYearStartDay)
+                {
+                    @this.FiscalYearStartDay = 1;
+                }
             }
         }
 

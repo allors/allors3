@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.Person.DerivationTrigger),
+                new ChangedPattern(this.M.Person.LastName),
                 new ChangedPattern(this.M.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
                 new ChangedPattern(this.M.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };

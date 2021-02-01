@@ -288,4 +288,35 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(280, partyFinancial.AmountOverDue);
         }
     }
+
+    public class CustomerRelationshipDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CustomerRelationshipDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedCustomerDeriveParties()
+        {
+            var customerRelationship = new CustomerRelationshipBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var customer = new PersonBuilder(this.Session).Build();
+            customerRelationship.Customer = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(customer, customerRelationship.Parties);
+        }
+
+        [Fact]
+        public void ChangedInternalOrganisationDeriveParties()
+        {
+            var customerRelationship = new CustomerRelationshipBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            customerRelationship.InternalOrganisation = internalOrganisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(internalOrganisation, customerRelationship.Parties);
+        }
+    }
 }

@@ -247,20 +247,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInternalOrganisation_ActiveCustomers_AreDerived()
         {
-            var internalOrganisation = this.InternalOrganisation;
-
             var activeCustomersBefore = this.InternalOrganisation.ActiveCustomers.Count;
 
             var acme = new OrganisationBuilder(this.Session).WithName("Acme").Build();
             var nike = new OrganisationBuilder(this.Session).WithName("Nike").Build();
 
             var acmeRelation = new CustomerRelationshipBuilder(this.Session)
-                .WithInternalOrganisation(internalOrganisation).WithCustomer(acme)
+                .WithInternalOrganisation(this.InternalOrganisation).WithCustomer(acme)
                 .WithFromDate(this.Session.Now().AddDays(-10))
                 .Build();
 
             var nikeRelation = new CustomerRelationshipBuilder(this.Session)
-                .WithInternalOrganisation(internalOrganisation)
+                .WithInternalOrganisation(this.InternalOrganisation)
                 .WithCustomer(nike)
                 .Build();
 
@@ -285,6 +283,130 @@ namespace Allors.Database.Domain.Tests
             Assert.True(this.InternalOrganisation.ExistCustomerRelationshipsWhereInternalOrganisation);
             Assert.True(this.InternalOrganisation.ExistActiveCustomers);
             Assert.Equal(activeCustomersBefore + 1, this.InternalOrganisation.ActiveCustomers.Count);
+        }
+    }
+
+    public class InternalOrganisationDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public InternalOrganisationDerivationTests(Fixture fixture) : base(fixture)
+        { }
+
+        [Fact]
+        public void ChangedDefaultCollectionMethodDeriveDerivedActiveCollectionMethods()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(internalOrganisation.DefaultCollectionMethod, internalOrganisation.DerivedActiveCollectionMethods);
+        }
+
+        [Fact]
+        public void ChangedAssignedActiveCollectionMethodsDeriveDerivedActiveCollectionMethods()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            var cash = new CashBuilder(this.Session).Build();
+            internalOrganisation.AddAssignedActiveCollectionMethod(cash);
+            this.Session.Derive(false);
+
+            Assert.Contains(cash, internalOrganisation.DerivedActiveCollectionMethods);
+        }
+
+        [Fact]
+        public void ChangedInvoiceSequenceDerivePurchaseInvoiceNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session)
+                .WithInvoiceSequence(new InvoiceSequences(this.Session).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.False(internalOrganisation.ExistPurchaseInvoiceNumberCounter);
+
+            internalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.Session.Derive(false);
+
+            Assert.True(internalOrganisation.ExistPurchaseInvoiceNumberCounter);
+        }
+
+        [Fact]
+        public void ChangedInvoiceSequenceDerivePurchaseOrderNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session)
+                .WithInvoiceSequence(new InvoiceSequences(this.Session).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.False(internalOrganisation.ExistPurchaseOrderNumberCounter);
+
+            internalOrganisation.InvoiceSequence = new InvoiceSequences(this.Session).EnforcedSequence;
+            this.Session.Derive(false);
+
+            Assert.True(internalOrganisation.ExistPurchaseOrderNumberCounter);
+        }
+
+        [Fact]
+        public void ChangedRequestSequenceDeriveRequestNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session)
+                .WithRequestSequence(new RequestSequences(this.Session).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.False(internalOrganisation.ExistRequestNumberCounter);
+
+            internalOrganisation.RequestSequence = new RequestSequences(this.Session).EnforcedSequence;
+            this.Session.Derive(false);
+
+            Assert.True(internalOrganisation.ExistRequestNumberCounter);
+        }
+
+        [Fact]
+        public void ChangedQuoteSequenceDeriveQuoteNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session)
+                .WithQuoteSequence(new QuoteSequences(this.Session).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.False(internalOrganisation.ExistQuoteNumberCounter);
+
+            internalOrganisation.QuoteSequence = new QuoteSequences(this.Session).EnforcedSequence;
+            this.Session.Derive(false);
+
+            Assert.True(internalOrganisation.ExistQuoteNumberCounter);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortSequenceDeriveWorkEffortNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session)
+                .WithWorkEffortSequence(new WorkEffortSequences(this.Session).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.False(internalOrganisation.ExistWorkEffortNumberCounter);
+
+            internalOrganisation.WorkEffortSequence = new WorkEffortSequences(this.Session).EnforcedSequence;
+            this.Session.Derive(false);
+
+            Assert.True(internalOrganisation.ExistWorkEffortNumberCounter);
+        }
+
+        [Fact]
+        public void ChangedPurchaseShipmentSequenceDeriveIncomingShipmentNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Session)
+                .WithPurchaseShipmentSequence(new PurchaseShipmentSequences(this.Session).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            Assert.False(internalOrganisation.ExistIncomingShipmentNumberCounter);
+
+            internalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
+            this.Session.Derive(false);
+
+            Assert.True(internalOrganisation.ExistIncomingShipmentNumberCounter);
         }
     }
 }

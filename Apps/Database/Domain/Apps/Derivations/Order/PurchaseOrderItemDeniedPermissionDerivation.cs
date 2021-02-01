@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         {
             new ChangedPattern(m.PurchaseOrderItem.TransitionalDeniedPermissions),
             new ChangedPattern(m.OrderItemBilling.OrderItem) { Steps = new IPropertyType[] { m.OrderItemBilling.OrderItem}, OfType = m.PurchaseOrderItem.Class },
-            new ChangedPattern(m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}},
+            new ChangedPattern(m.OrderRequirementCommitment.OrderItem) { Steps = new IPropertyType[] { m.OrderRequirementCommitment.OrderItem}, OfType = m.PurchaseOrderItem.Class},
             new ChangedPattern(m.WorkEffort.OrderItemFulfillment) { Steps = new IPropertyType[] { m.WorkEffort.OrderItemFulfillment}, OfType = m.PurchaseOrderItem.Class },
             new ChangedPattern(m.OrderShipment.OrderItem) { Steps = new IPropertyType[] { m.OrderShipment.OrderItem}, OfType = m.PurchaseOrderItem.Class },
         };

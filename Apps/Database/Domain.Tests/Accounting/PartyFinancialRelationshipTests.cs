@@ -40,6 +40,23 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedSalesInvoiceDueDateDeriveAmountOverDue()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
+            this.Session.Derive();
+
+            invoice.Store.PaymentGracePeriod = 0;
+            this.Session.Derive();
+
+            var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
+
+            invoice.DueDate = this.Session.Now().AddDays(-31);
+            this.Session.Derive();
+
+            Assert.True(partyFinancial.AmountOverDue == invoice.TotalIncVat - invoice.AdvancePayment);
+        }
+
+        [Fact]
         public void ChangedStorePaymentGracePeriodWithoutGraceDeriveAmountOverDue()
         {
             var invoice = new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();

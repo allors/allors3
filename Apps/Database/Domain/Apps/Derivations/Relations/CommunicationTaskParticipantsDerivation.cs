@@ -16,14 +16,27 @@ namespace Allors.Database.Domain
         public CommunicationTaskParticipantsDerivation(M m) : base(m, new Guid("888c676f-3a56-4a99-8da5-70c3b4c7f9f9")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.CommunicationTask.DateClosed)
+                new ChangedPattern(m.CommunicationTask.DateClosed),
+                new ChangedPattern(m.CommunicationEvent.FromParty) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
+                new ChangedPattern(m.CommunicationEvent.ToParty) { Steps = new IPropertyType[] {m.CommunicationEvent.CommunicationTasksWhereCommunicationEvent} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<CommunicationTask>())
             {
-                var participants = @this.ExistDateClosed ? Array.Empty<User>() : new[] { @this.CommunicationEvent.FromParty as User };
+                var assigned = new List<User>();
+                if (@this.CommunicationEvent.ExistFromParty && @this.CommunicationEvent.FromParty is User userFrom && userFrom.ExistUserProfile)
+                {
+                    assigned.Add(userFrom);
+                }
+
+                if (@this.CommunicationEvent.ExistToParty && @this.CommunicationEvent.ToParty is User userTo && userTo.ExistUserProfile)
+                {
+                    assigned.Add(userTo);
+                }
+
+                var participants = @this.ExistDateClosed ? Array.Empty<User>() : assigned.ToArray();
                 @this.AssignParticipants(participants);
             }
         }

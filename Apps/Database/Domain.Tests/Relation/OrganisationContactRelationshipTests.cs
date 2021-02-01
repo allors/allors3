@@ -123,4 +123,95 @@ namespace Allors.Database.Domain.Tests
             this.organisationContactRelationship = (OrganisationContactRelationship)session.Instantiate(this.organisationContactRelationship);
         }
     }
+
+    public class OrganisationContactRelationshipDateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public OrganisationContactRelationshipDateDerivationTests(Fixture fixture) : base(fixture)
+        {
+        }
+
+        [Fact]
+        public void ChangedFromDateDeriveContactsUserGroupMembers()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+
+            new OrganisationContactRelationshipBuilder(this.Session)
+                .WithContact(contact)
+                .WithOrganisation(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, this.InternalOrganisation.ContactsUserGroup.Members);
+        }
+
+        [Fact]
+        public void ChangedThroughDateDeriveContactsUserGroupMembers()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+
+            var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Session)
+                .WithContact(contact)
+                .WithOrganisation(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, this.InternalOrganisation.ContactsUserGroup.Members);
+
+            organisationContactRelationship.ThroughDate = organisationContactRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(contact, this.InternalOrganisation.ContactsUserGroup.Members);
+        }
+
+        [Fact]
+        public void ChangedContactDeriveContactsUserGroupMembers()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+
+            var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Session)
+                .WithOrganisation(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            organisationContactRelationship.Contact = contact;
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, this.InternalOrganisation.ContactsUserGroup.Members);
+        }
+    }
+
+    public class OrganisationContactRelationshipPartyDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public OrganisationContactRelationshipPartyDerivationTests(Fixture fixture) : base(fixture)
+        {
+        }
+
+        [Fact]
+        public void ChangedContactDeriveParties()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+
+            var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            organisationContactRelationship.Contact = contact;
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, organisationContactRelationship.Parties);
+        }
+
+        [Fact]
+        public void ChangedOrganisationDeriveParties()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+
+            var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            organisationContactRelationship.Organisation = organisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(organisation, organisationContactRelationship.Parties);
+        }
+    }
 }

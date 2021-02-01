@@ -575,6 +575,147 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class SerialisedItemPurchaseInvoiceDervivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemPurchaseInvoiceDervivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseInvoicePurchaseInvoiceStateDerivePurchaseInvoice()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoice.Confirm();
+            this.Session.Derive(false);
+
+            invoice.Approve();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice, serialisedItem.PurchaseInvoice);
+        }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceValidInvoiceItemsDerivePurchaseInvoice()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoice.Confirm();
+            this.Session.Derive(false);
+
+            invoice.Approve();
+            this.Session.Derive(false);
+
+            Assert.Equal(invoice, serialisedItem.PurchaseInvoice);
+
+            invoiceItem.CancelFromInvoice();
+            this.Session.Derive(false);
+
+            Assert.False(serialisedItem.ExistPurchaseInvoice);
+        }
+    }
+
+    public class SerialisedItemPurchasePriceDervivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemPurchasePriceDervivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceDerivePurchasePrice()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .WithAssignedUnitPrice(1)
+                .Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Session.Derive(false);
+
+            invoice.Confirm();
+            this.Session.Derive(false);
+
+            invoice.Approve();
+            this.Session.Derive(false);
+
+            Assert.Equal(1, serialisedItem.PurchasePrice);
+        }
+    }
+
+    public class SerialisedItemPurchaseOrderDervivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemPurchaseOrderDervivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseOrderPurchaseOrderStateDerivePurchaseOrder()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.SetReadyForProcessing();
+            this.Session.Derive(false);
+
+            order.Send();
+            this.Session.Derive(false);
+
+            Assert.Equal(order, serialisedItem.PurchaseOrder);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderValidOrderItemsDerivePurchaseOrder()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Session)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Session).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            order.SetReadyForProcessing();
+            this.Session.Derive(false);
+
+            order.Send();
+            this.Session.Derive(false);
+
+            Assert.Equal(order, serialisedItem.PurchaseOrder);
+
+            orderItem.Cancel();
+            this.Session.Derive(false);
+
+            Assert.False(serialisedItem.ExistPurchaseOrder);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class SerialisedItemDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
     {

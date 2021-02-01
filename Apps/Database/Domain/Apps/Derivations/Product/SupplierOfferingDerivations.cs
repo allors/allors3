@@ -20,6 +20,7 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.SupplierOffering.ThroughDate),
                 new ChangedPattern(m.SupplierOffering.Price),
                 new ChangedPattern(m.SupplierOffering.Part),
+                new ChangedPattern(m.SupplierOffering.Supplier),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

@@ -83,4 +83,35 @@ namespace Allors.Database.Domain.Tests
             this.employment = (Employment)session.Instantiate(this.employment);
         }
     }
+
+    public class EmploymentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public EmploymentDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedEmployeeDeriveParties()
+        {
+            var employment = new EmploymentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var customer = new PersonBuilder(this.Session).Build();
+            employment.Employee = customer;
+            this.Session.Derive(false);
+
+            Assert.Contains(customer, employment.Parties);
+        }
+
+        [Fact]
+        public void ChangedEmployerDeriveParties()
+        {
+            var employment = new EmploymentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            employment.Employer = internalOrganisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(internalOrganisation, employment.Parties);
+        }
+    }
 }

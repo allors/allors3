@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.EmailCommunication.Subject),
+                new ChangedPattern(this.M.EmailCommunication.EmailTemplate),
+                new ChangedPattern(this.M.EmailCommunication.ToEmail),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
