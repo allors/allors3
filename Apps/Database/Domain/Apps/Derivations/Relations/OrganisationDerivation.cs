@@ -17,14 +17,26 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.Organisation.Name),
+                new ChangedPattern(m.Organisation.UniqueId),
                 new ChangedPattern(m.Organisation.DerivationTrigger),
                 new ChangedPattern(m.Employment.Employer) {Steps = new IPropertyType[]{ m.Employment.Employer} },
-                new ChangedPattern(m.Employment.FromDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = this.M.Organisation.Class},
-                new ChangedPattern(m.Employment.ThroughDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = this.M.Organisation.Class},
+                new ChangedPattern(m.Employment.FromDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation.Class},
+                new ChangedPattern(m.Employment.ThroughDate) {Steps = new IPropertyType[]{ m.Employment.Employer}, OfType = m.Organisation.Class},
                 new ChangedPattern(m.CustomerRelationship.InternalOrganisation) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
                 new ChangedPattern(m.CustomerRelationship.FromDate) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
                 new ChangedPattern(m.CustomerRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.CustomerRelationship.InternalOrganisation} },
-                new ChangedPattern(m.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ m.SupplierRelationship.InternalOrganisation}, OfType = this.M.Organisation.Class},
+                new ChangedPattern(m.SupplierRelationship.InternalOrganisation) {Steps = new IPropertyType[]{ m.SupplierRelationship.InternalOrganisation} },
+                new ChangedPattern(m.SupplierRelationship.FromDate) {Steps = new IPropertyType[]{ m.SupplierRelationship.InternalOrganisation} },
+                new ChangedPattern(m.SupplierRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.SupplierRelationship.InternalOrganisation} },
+                new ChangedPattern(m.OrganisationContactRelationship.Organisation) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Organisation} },
+                new ChangedPattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Organisation} },
+                new ChangedPattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Organisation} },
+                new ChangedPattern(m.SubContractorRelationship.Contractor) {Steps = new IPropertyType[]{ m.SubContractorRelationship.Contractor } },
+                new ChangedPattern(m.SubContractorRelationship.FromDate) {Steps = new IPropertyType[]{ m.SubContractorRelationship.Contractor } },
+                new ChangedPattern(m.SubContractorRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.SubContractorRelationship.Contractor } },
+                new ChangedPattern(m.Organisation.PartyContactMechanisms),
+                new ChangedPattern(m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism }, OfType = m.Organisation.Class },
+                new ChangedPattern(m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism }, OfType = m.Organisation.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -39,16 +51,6 @@ namespace Allors.Database.Domain
 
                 @this.PartyName = @this.Name;
 
-                @this.ActiveEmployees = @this.EmploymentsWhereEmployer
-                    .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
-                    .Select(v => v.Employee)
-                    .ToArray();
-
-                (@this).ActiveCustomers = @this.CustomerRelationshipsWhereInternalOrganisation
-                    .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
-                    .Select(v => v.Customer)
-                    .ToArray();
-
                 if (!@this.ExistContactsUserGroup)
                 {
                     var customerContactGroupName = $"Customer contacts at {@this.Name} ({@this.UniqueId})";
@@ -57,9 +59,11 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
-                @this.ContactsUserGroup.Members = @this.CurrentContacts.ToArray();
-
-                @this.DeriveRelationships();
+                var partyContactMechanisms = @this.PartyContactMechanisms.ToArray();
+                foreach (OrganisationContactRelationship organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
+                {
+                    organisationContactRelationship.Contact.Sync(partyContactMechanisms);
+                }
             }
         }
     }

@@ -7,6 +7,16 @@ namespace Allors.Database.Domain
 {
     public partial class Parties
     {
+        public static void Daily(ISession session)
+        {
+            var parties = new Parties(session).Extent();
+
+            foreach (Party party in parties)
+            {
+                party.DeriveRelationships();
+            }
+        }
+
         protected override void AppsPrepare(Setup setup)
         {
             setup.AddDependency(this.ObjectType, this.M.ContactMechanismPurpose);

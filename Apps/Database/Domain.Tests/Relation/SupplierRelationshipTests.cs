@@ -238,4 +238,35 @@ namespace Allors.Database.Domain.Tests
             this.organisationContactRelationship = (OrganisationContactRelationship)session.Instantiate(this.organisationContactRelationship);
         }
     }
+
+    public class SupplierRelationshipDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SupplierRelationshipDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSupplierDeriveParties()
+        {
+            var relationship = new SupplierRelationshipBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var supplier = new OrganisationBuilder(this.Session).Build();
+            relationship.Supplier = supplier;
+            this.Session.Derive(false);
+
+            Assert.Contains(supplier, relationship.Parties);
+        }
+
+        [Fact]
+        public void ChangedInternalOrganisationDeriveParties()
+        {
+            var relationship = new SupplierRelationshipBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            relationship.InternalOrganisation = internalOrganisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(internalOrganisation, relationship.Parties);
+        }
+    }
 }

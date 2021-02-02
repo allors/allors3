@@ -33,6 +33,11 @@ namespace Allors.Database.Domain
                 var organisation = (Organisation)@this;
                 if (organisation.IsInternalOrganisation)
                 {
+                    if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Session.Extent<PaymentMethod>().Count == 1)
+                    {
+                        @this.DefaultCollectionMethod = @this.Strategy.Session.Extent<PaymentMethod>().First;
+                    }
+
                     @this.DerivedActiveCollectionMethods = @this.AssignedActiveCollectionMethods;
                     @this.AddDerivedActiveCollectionMethod(@this.DefaultCollectionMethod);
 

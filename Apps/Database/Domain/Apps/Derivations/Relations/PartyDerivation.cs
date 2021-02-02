@@ -16,9 +16,14 @@ namespace Allors.Database.Domain
         public PartyDerivation(M m) : base(m, new Guid("C57CD79C-F75E-4282-BFAD-B2F5F54FD4A4")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Party.DerivationTrigger),
-                new ChangedPattern(this.M.Party.PartyContactMechanisms),
-                new ChangedPattern(this.M.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new ChangedPattern(m.Party.DerivationTrigger),
+                new ChangedPattern(m.Party.PartyContactMechanisms),
+                new ChangedPattern(m.PartyContactMechanism.ContactPurposes) {Steps = new IPropertyType[] { this.M.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new ChangedPattern(m.PartyContactMechanism.FromDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new ChangedPattern(m.PartyContactMechanism.ThroughDate) {Steps = new IPropertyType[]{ m.PartyContactMechanism.PartyWherePartyContactMechanism } },
+                new ChangedPattern(m.PartyRelationship.Parties) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
+                new ChangedPattern(m.PartyRelationship.FromDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
+                new ChangedPattern(m.PartyRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.PartyRelationship.Parties } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -157,24 +162,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                // SyncPartyRelationships
-                @this.CurrentPartyContactMechanisms = @this.PartyContactMechanisms
-                    .Where(v => v.FromDate <= @this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= @this.Strategy.Session.Now()))
-                    .ToArray();
-
-                @this.InactivePartyContactMechanisms = @this.PartyContactMechanisms
-                    .Except(@this.CurrentPartyContactMechanisms)
-                    .ToArray();
-
-                var allPartyRelationshipsWhereParty = @this.PartyRelationshipsWhereParty;
-
-                @this.CurrentPartyRelationships = allPartyRelationshipsWhereParty
-                    .Where(v => v.FromDate <= @this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= @this.Strategy.Session.Now()))
-                    .ToArray();
-
-                @this.InactivePartyRelationships = allPartyRelationshipsWhereParty
-                    .Except(@this.CurrentPartyRelationships)
-                    .ToArray();
+                @this.DeriveRelationships();
 
                 var internalOrganisations = new Organisations(@this.Strategy.Session).InternalOrganisations();
 
@@ -197,12 +185,6 @@ namespace Allors.Database.Domain
                             partyFinancial.SubAccountNumber = internalOrganisation.NextSubAccountNumber();
                         }
                     }
-                }
-
-                if (@this is Organisation organisation)
-                {
-                    // TODO: Martien
-                    //PersonDerivation.SyncContactPartyContactMechanism(organisation);
                 }
             }
         }

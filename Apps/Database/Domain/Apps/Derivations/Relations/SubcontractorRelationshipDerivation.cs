@@ -17,8 +17,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.SubContractorRelationship.Contractor),
-                new ChangedPattern(this.M.SubContractorRelationship.FromDate),
-                new ChangedPattern(this.M.SubContractorRelationship.ThroughDate),
+                new ChangedPattern(this.M.SubContractorRelationship.SubContractor),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,41 +25,6 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
                 @this.Parties = new[] { @this.Contractor, @this.SubContractor };
-
-                if (@this.ExistContractor && @this.ExistSubContractor)
-                {
-                    if (@this.FromDate <= @this.Session().Now() && (!@this.ExistThroughDate || @this.ThroughDate >= @this.Session().Now()))
-                    {
-                        @this.Contractor.AddActiveSubContractor(@this.SubContractor);
-                    }
-
-                    if (@this.FromDate > @this.Session().Now() || (@this.ExistThroughDate && @this.ThroughDate < @this.Session().Now()))
-                    {
-                        @this.Contractor.RemoveActiveSubContractor(@this.SubContractor);
-                    }
-
-                    if (@this.SubContractor?.ContactsUserGroup != null)
-                    {
-                        foreach (OrganisationContactRelationship contactRelationship in @this.SubContractor.OrganisationContactRelationshipsWhereOrganisation)
-                        {
-                            if (contactRelationship.FromDate <= @this.Session().Now() &&
-                                (!contactRelationship.ExistThroughDate || @this.ThroughDate >= @this.Session().Now()))
-                            {
-                                if (!@this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                                {
-                                    @this.SubContractor.ContactsUserGroup.AddMember(contactRelationship.Contact);
-                                }
-                            }
-                            else
-                            {
-                                if (@this.SubContractor.ContactsUserGroup.Members.Contains(contactRelationship.Contact))
-                                {
-                                    @this.SubContractor.ContactsUserGroup.RemoveMember(contactRelationship.Contact);
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }

@@ -111,9 +111,9 @@ namespace Allors.Repository
 
         public string RequestNumberPrefix { get; set; }
 
-        public Party[] CurrentCustomers { get; set; }
+        public Party[] ObsoleteCurrentCustomers { get; set; }
 
-        public Organisation[] CurrentSuppliers { get; set; }
+        public Organisation[] ObsoleteCurrentSuppliers { get; set; }
 
         public GeneralLedgerAccount GlAccount { get; set; }
 

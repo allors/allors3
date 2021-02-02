@@ -112,6 +112,20 @@ namespace Allors.Database.Domain
                 .ToArray();
         }
 
+        public void Sync(PartyContactMechanism[] organisationContactMechanisms)
+        {
+            foreach (var partyContactMechanism in organisationContactMechanisms)
+            {
+                this.RemoveCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
+
+                if (partyContactMechanism.FromDate <= this.Session().Now() &&
+                    (!partyContactMechanism.ExistThroughDate || partyContactMechanism.ThroughDate >= this.Session().Now()))
+                {
+                    this.AddCurrentOrganisationContactMechanism(partyContactMechanism.ContactMechanism);
+                }
+            }
+        }
+
         public void AppsDelete(DeletableDelete method)
         {
             if (!this.IsDeletable)

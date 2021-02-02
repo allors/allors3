@@ -391,7 +391,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
-        Party[] CurrentCustomers { get; set; }
+        Party[] ObsoleteCurrentCustomers { get; set; }
 
         #region Allors
         [Id("D4B532F9-12F0-4B51-AF8E-0E2160A2488E")]
@@ -399,7 +399,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
-        Organisation[] CurrentSuppliers { get; set; }
+        Organisation[] ObsoleteCurrentSuppliers { get; set; }
 
         #region Allors
         [Id("0ac44c21-6a2c-4162-9d77-fe1b16b60b73")]

@@ -415,7 +415,7 @@ line2")
 
             for (var i = 0; i < 4; i++)
             {
-                var supplier = faker.Random.ListItem(allors.CurrentSuppliers);
+                var supplier = faker.Random.ListItem(allors.ActiveSuppliers);
 
                 var purchaseInvoiceItem1 = new PurchaseInvoiceItemBuilder(@this.Session())
                     .WithDescription("first item")

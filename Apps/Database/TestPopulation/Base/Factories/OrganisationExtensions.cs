@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var part = new NonUnifiedPartBuilder(@this.Session()).WithNonSerialisedDefaults(@this).Build();
 
-            foreach (Organisation supplier in @this.CurrentSuppliers)
+            foreach (Organisation supplier in @this.ActiveSuppliers)
             {
                 new SupplierOfferingBuilder(@this.Session())
                     .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))
@@ -152,7 +152,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var part = new NonUnifiedPartBuilder(@this.Session()).WithSerialisedDefaults(@this, faker).Build();
 
-            foreach (Organisation supplier in @this.CurrentSuppliers)
+            foreach (Organisation supplier in @this.ActiveSuppliers)
             {
                 new SupplierOfferingBuilder(@this.Session())
                     .WithFromDate(faker.Date.Past(refDate: @this.Session().Now()))

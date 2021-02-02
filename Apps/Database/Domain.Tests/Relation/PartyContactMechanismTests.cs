@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class PartyContactMechanismTests : DomainTest, IClassFixture<Fixture>
@@ -46,6 +48,60 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.Equal(countBefore - 1, this.Session.Extent<PartyContactMechanism>().Count);
+        }
+    }
+
+    public class PartyContactMechanismDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartyContactMechanismDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedUseAsDefaultThrowValidationError()
+        {
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            partyContactMechanism.UseAsDefault = true;
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
+        }
+
+        [Fact]
+        public void ChangedContactPurposesThrowValidationError()
+        {
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice).WithUseAsDefault(true).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
+
+            partyContactMechanism.RemoveContactPurposes();
+
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: PartyContactMechanism.ContactPurposes"));
+        }
+
+        [Fact]
+        public void ChangedUseAsDefaultDeriveUseAsDefault()
+        {
+            var party = new PersonBuilder(this.Session).Build();
+            var partyContactMechanism1 = new PartyContactMechanismBuilder(this.Session)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+                .WithUseAsDefault(true)
+                .Build();
+            party.AddPartyContactMechanism(partyContactMechanism1);
+            this.Session.Derive(false);
+
+            var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Session)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Session).Build())
+                .WithUseAsDefault(true)
+                .Build();
+            party.AddPartyContactMechanism(partyContactMechanism2);
+            this.Session.Derive(false);
+
+            Assert.False(partyContactMechanism1.UseAsDefault);
         }
     }
 }

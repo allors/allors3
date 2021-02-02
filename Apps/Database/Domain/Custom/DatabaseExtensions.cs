@@ -169,7 +169,6 @@ namespace Allors.Database.Domain
                 new OrganisationRollupDerivation(m),
                 new PartyContactMechanismDerivation(m),
                 new SubcontractorRelationshipDerivation(m),
-                new PassportDerivation(m),
                 new RequestItemDerivation(m),
                 new RequestForQuoteDerivation(m),
                 new RequestForProposalDerivation(m),

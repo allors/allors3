@@ -92,7 +92,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenInternalOrganisation_WhenBuildWithout_ThenInvoiceSequenceIsEqualRestartOnFiscalYear()
+        public void GivenInternalOrganisation_WhenBuildWithout_ThenInvoiceSequenceIsEqualEnforcedSequence()
         {
             this.InstantiateObjects(this.Session);
 
@@ -104,7 +104,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(new InvoiceSequences(this.Session).RestartOnFiscalYear, internalOrganisation.InvoiceSequence);
+            Assert.Equal(new InvoiceSequences(this.Session).EnforcedSequence, internalOrganisation.InvoiceSequence);
         }
 
         [Fact]
@@ -265,13 +265,6 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             Assert.True(this.InternalOrganisation.ExistCustomerRelationshipsWhereInternalOrganisation);
-            Assert.True(this.InternalOrganisation.ExistActiveCustomers);
-            Assert.Equal(activeCustomersBefore + 2, this.InternalOrganisation.ActiveCustomers.Count);
-
-            // Removing will not do anything.
-            (this.InternalOrganisation).RemoveActiveCustomers();
-
-            this.Session.Derive();
             Assert.True(this.InternalOrganisation.ExistActiveCustomers);
             Assert.Equal(activeCustomersBefore + 2, this.InternalOrganisation.ActiveCustomers.Count);
 

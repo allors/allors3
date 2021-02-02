@@ -18,6 +18,10 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.Store.InternalOrganisation),
+                new ChangedPattern(m.Store.DefaultCollectionMethod),
+                new ChangedPattern(m.Store.CollectionMethods),
+                new ChangedPattern(m.Store.FiscalYearsStoreSequenceNumbers),
+                new ChangedPattern(m.Store.SalesInvoiceNumberCounter),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,13 +30,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Store>())
             {
-                var internalOrganisations = new Organisations(@this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
-
-                if (!@this.ExistInternalOrganisation && internalOrganisations.Length == 1)
-                {
-                    @this.InternalOrganisation = internalOrganisations.First();
-                }
-
                 if (@this.ExistDefaultCollectionMethod && !@this.CollectionMethods.Contains(@this.DefaultCollectionMethod))
                 {
                     @this.AddCollectionMethod(@this.DefaultCollectionMethod);
@@ -53,11 +50,6 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                if (!@this.ExistDefaultFacility)
-                {
-                    @this.DefaultFacility = @this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
-                }
-
                 if (@this.InternalOrganisation.InvoiceSequence != new InvoiceSequences(@this.Session()).RestartOnFiscalYear)
                 {
                     if (!@this.ExistSalesInvoiceNumberCounter)
@@ -76,13 +68,9 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                if (@this.InternalOrganisation.CustomerShipmentSequence != new CustomerShipmentSequences(@this.Session()).RestartOnFiscalYear)
+                if (@this.InternalOrganisation.CustomerShipmentSequence != new CustomerShipmentSequences(@this.Session()).RestartOnFiscalYear && !@this.ExistOutgoingShipmentNumberCounter)
                 {
-
-                    if (!@this.ExistOutgoingShipmentNumberCounter)
-                    {
-                        @this.OutgoingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
-                    }
+                    @this.OutgoingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                 }
 
                 validation.AssertExistsAtMostOne(@this, @this.M.Store.FiscalYearsStoreSequenceNumbers, @this.M.Store.SalesInvoiceNumberCounter);

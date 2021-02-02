@@ -113,6 +113,18 @@ namespace Allors.Database.Domain
             {
                 this.SalesInvoiceTemporaryCounter = new CounterBuilder(this.Strategy.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build();
             }
+
+            var internalOrganisations = new Organisations(this.Strategy.Session).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistInternalOrganisation && internalOrganisations.Length == 1)
+            {
+                this.InternalOrganisation = internalOrganisations.First();
+            }
+
+            if (!this.ExistDefaultFacility)
+            {
+                this.DefaultFacility = this.Strategy.Session.GetSingleton().Settings.DefaultFacility;
+            }
         }
     }
 }

@@ -117,12 +117,10 @@ namespace Allors.Database.Domain.Tests
             var organisation1 = new OrganisationBuilder(this.Session).WithName("organisation1").Build();
             var organisation2 = new OrganisationBuilder(this.Session).WithName("organisation2").Build();
 
-            // Even when relationship is inactive CurrentOrganisationContactMechanisms is maintained
             new OrganisationContactRelationshipBuilder(this.Session)
                 .WithContact(contact)
                 .WithOrganisation(organisation1)
                 .WithFromDate(this.Session.Now().Date.AddDays(-1))
-                .WithThroughDate(this.Session.Now().Date.AddDays(-1))
                 .Build();
 
             var contactMechanism1 = new TelecommunicationsNumberBuilder(this.Session).WithAreaCode("111").WithContactNumber("222").Build();
@@ -157,6 +155,177 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(2, contact.CurrentOrganisationContactMechanisms.Count);
             Assert.Contains(contactMechanism1, contact.CurrentOrganisationContactMechanisms);
             Assert.Contains(contactMechanism2, contact.CurrentOrganisationContactMechanisms);
+        }
+    }
+
+    public class PersonDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PersonDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSalutationDeriveGender()
+        {
+            var person = new PersonBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            person.Salutation = new Salutations(this.Session).Mr;
+            this.Session.Derive(false);
+
+            Assert.Equal(new GenderTypes(this.Session).Male, person.Gender);
+        }
+
+        [Fact]
+        public void ChangedFirstNameDerivePartyName()
+        {
+            var person = new PersonBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            person.FirstName = "firstname";
+            this.Session.Derive(false);
+
+            Assert.Contains("firstname", person.PartyName);
+        }
+
+        [Fact]
+        public void ChangedMiddleNameDerivePartyName()
+        {
+            var person = new PersonBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            person.MiddleName = "middlename";
+            this.Session.Derive(false);
+
+            Assert.Contains("middlename", person.PartyName);
+        }
+
+        [Fact]
+        public void ChangedLastNameDerivePartyName()
+        {
+            var person = new PersonBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            person.LastName = "lastname";
+            this.Session.Derive(false);
+
+            Assert.Contains("lastname", person.PartyName);
+        }
+
+        [Fact]
+        public void ChangedUserNameDerivePartyName()
+        {
+            var person = new PersonBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            person.UserName = "username";
+            this.Session.Derive(false);
+
+            Assert.Contains("username", person.PartyName);
+        }
+
+        [Fact]
+        public void ChangedDerivationTriggerDeriveVatRegime()
+        {
+            var person = new PersonBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(new VatRegimes(this.Session).PrivatePerson, person.VatRegime);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipEmployerDeriveCurrentOrganisationContactRelationships()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            contactRelationship.Organisation = organisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(contactRelationship, contact.CurrentOrganisationContactRelationships);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipFromDateDeriveCurrentOrganisationContactRelationships()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithOrganisation(organisation).Build();
+            this.Session.Derive(false);
+
+            contactRelationship.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(contactRelationship, contact.CurrentOrganisationContactRelationships);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipThroughDateDeriveCurrentOrganisationContactRelationships()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithContact(contact).WithOrganisation(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
+
+            contactRelationship.ThroughDate = contactRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(contactRelationship, contact.CurrentOrganisationContactRelationships);
+        }
+
+        [Fact]
+        public void ChangedPartyContactMechanismFromDateDeriveCurrentOrganisationContactMechanisms()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contact = new PersonBuilder(this.Session).Build();
+            new OrganisationContactRelationshipBuilder(this.Session).WithOrganisation(organisation).WithContact(contact).Build();
+
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithFromDate(this.Session.Now()).WithContactMechanism(new EmailAddressBuilder(this.Session).Build()).Build();
+            organisation.AddPartyContactMechanism(partyContactMechanism);
+
+            this.Session.Derive(false);
+
+            partyContactMechanism.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(partyContactMechanism.ContactMechanism, contact.CurrentOrganisationContactMechanisms);
+        }
+
+        [Fact]
+        public void ChangedPartyContactMechanismThroughDateDeriveCurrentOrganisationContactMechanisms()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contact = new PersonBuilder(this.Session).Build();
+            new OrganisationContactRelationshipBuilder(this.Session).WithOrganisation(organisation).WithContact(contact).Build();
+
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithFromDate(this.Session.Now()).WithContactMechanism(new EmailAddressBuilder(this.Session).Build()).Build();
+            organisation.AddPartyContactMechanism(partyContactMechanism);
+
+            this.Session.Derive(false);
+
+            Assert.Contains(partyContactMechanism.ContactMechanism, contact.CurrentOrganisationContactMechanisms);
+
+            partyContactMechanism.ThroughDate = partyContactMechanism.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(partyContactMechanism.ContactMechanism, contact.CurrentOrganisationContactMechanisms);
+        }
+
+        [Fact]
+        public void ChangedEmploymentFromDateCreateTimeSheet()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            new EmploymentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(contact.ExistTimeSheetWhereWorker);
         }
     }
 
@@ -202,6 +371,16 @@ namespace Allors.Database.Domain.Tests
             acl = new DatabaseAccessControlLists(existingAdministrator)[internalOrganisation];
             Assert.True(acl.CanWrite(this.M.Organisation.Name));
         }
+    }
+
+    [Trait("Category", "Security")]
+    public class PersonDeniedPermissionDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PersonDeniedPermissionDerivationTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Session).Get(this.M.Person.ObjectType, this.M.Person.Delete);
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Permission deletePermission;
 
         [Fact]
         public void OnChangedPersonDeriveDeletePermission()

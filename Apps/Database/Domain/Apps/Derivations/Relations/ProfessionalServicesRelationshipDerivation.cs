@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.ProfessionalServicesRelationship.Professional),
+                new ChangedPattern(this.M.ProfessionalServicesRelationship.ProfessionalServicesProvider),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -25,7 +26,7 @@ namespace Allors.Database.Domain
             {
                 @this.Parties = new Party[] { @this.Professional, @this.ProfessionalServicesProvider };
 
-                if (!@this.ExistProfessional | !@this.ExistProfessionalServicesProvider)
+                if (!@this.ExistProfessional && !@this.ExistProfessionalServicesProvider)
                 {
                     // TODO: Move Delete
                     @this.Delete();

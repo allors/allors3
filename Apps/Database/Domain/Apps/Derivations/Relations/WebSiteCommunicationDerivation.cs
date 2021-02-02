@@ -16,14 +16,16 @@ namespace Allors.Database.Domain
         public WebSiteCommunicationsDerivation(M m) : base(m, new Guid("F960FDF6-8C3F-4D0F-9E41-48A30CB115F8")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.WebSiteCommunication.ToParty),
+                new ChangedPattern(m.WebSiteCommunication.Subject),
+                new ChangedPattern(m.WebSiteCommunication.ToParty),
+                new ChangedPattern(m.Party.PartyName) { Steps = new IPropertyType[] { m.Party.CommunicationEventsWhereToParty}, OfType = m.WebSiteCommunication.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<WebSiteCommunication>())
             {
-                @this.WorkItemDescription = $"Access website of {@this.ToParty.PartyName} about {@this.Subject}";
+                @this.WorkItemDescription = $"Access website of {@this.ToParty?.PartyName} about {@this.Subject}";
             }
         }
     }

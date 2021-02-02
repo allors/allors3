@@ -97,21 +97,33 @@ namespace Allors.Database.Domain
 
         public void DeriveRelationships()
         {
-            this.CurrentSuppliers = this.SupplierRelationshipsWhereInternalOrganisation
-                .Where(v => v.FromDate <= this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Strategy.Session.Now()))
+            var now = this.Session().Now();
+
+            this.ActiveEmployees = this.EmploymentsWhereEmployer
+                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+                .Select(v => v.Employee)
+                .ToArray();
+
+            this.ActiveCustomers = this.CustomerRelationshipsWhereInternalOrganisation
+                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+                .Select(v => v.Customer)
+                .ToArray();
+
+            this.ActiveSuppliers = this.SupplierRelationshipsWhereInternalOrganisation
+                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                 .Select(v => v.Supplier)
                 .ToArray();
 
-            this.CurrentCustomers = this.CustomerRelationshipsWhereCustomer
-                .Where(v => v.FromDate <= this.Strategy.Session.Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Strategy.Session.Now()))
-                .Select(v => v.Customer)
+            this.ActiveSubContractors = this.SubContractorRelationshipsWhereContractor
+                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+                .Select(v => v.SubContractor)
                 .ToArray();
 
             var allContactRelationships = this.OrganisationContactRelationshipsWhereOrganisation.ToArray();
             var allContacts = allContactRelationships.Select(v => v.Contact);
 
             this.CurrentOrganisationContactRelationships = allContactRelationships
-                .Where(v => v.FromDate <= this.Session().Now() && (!v.ExistThroughDate || v.ThroughDate >= this.Session().Now()))
+                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                 .ToArray();
 
             this.InactiveOrganisationContactRelationships = allContactRelationships
@@ -124,6 +136,8 @@ namespace Allors.Database.Domain
             this.InactiveContacts = this.InactiveOrganisationContactRelationships
                 .Select(v => v.Contact)
                 .ToArray();
+
+            this.ContactsUserGroup.Members = this.CurrentContacts.ToArray();
         }
 
         public void AppsDelete(DeletableDelete method)

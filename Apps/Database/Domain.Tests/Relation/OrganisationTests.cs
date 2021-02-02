@@ -97,6 +97,15 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedUniqueIdDeriveContactsUserGroup()
+        {
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(organisation.ExistContactsUserGroup);
+        }
+
+        [Fact]
         public void ChangedEmploymentEmployerDeriveActiveEmployees()
         {
             var employee = new PersonBuilder(this.Session).Build();
@@ -186,6 +195,190 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.DoesNotContain(customer, internalOrganisation.ActiveCustomers);
+        }
+
+        [Fact]
+        public void ChangedSupplierRelationshipEmployerDeriveActiveSuppliers()
+        {
+            var supplier = new OrganisationBuilder(this.Session).Build();
+            var supplierRelationship = new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            supplierRelationship.InternalOrganisation = internalOrganisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(supplier, internalOrganisation.ActiveSuppliers);
+        }
+
+        [Fact]
+        public void ChangedSupplierRelationshipFromDateDeriveActiveSuppliers()
+        {
+            var supplier = new OrganisationBuilder(this.Session).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var supplierRelationship = new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).WithInternalOrganisation(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            supplierRelationship.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(supplier, internalOrganisation.ActiveSuppliers);
+        }
+
+        [Fact]
+        public void ChangedSupplierRelationshipThroughDateDeriveActiveSuppliers()
+        {
+            var supplier = new OrganisationBuilder(this.Session).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var supplierRelationship = new SupplierRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithSupplier(supplier).WithInternalOrganisation(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(supplier, internalOrganisation.ActiveSuppliers);
+
+            supplierRelationship.ThroughDate = supplierRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(supplier, internalOrganisation.ActiveSuppliers);
+        }
+
+        [Fact]
+        public void ChangedSubContractorRelationshipEmployerDeriveActiveSubContractors()
+        {
+            var subContractor = new OrganisationBuilder(this.Session).Build();
+            var subContractorRelationship = new SubContractorRelationshipBuilder(this.Session).WithSubContractor(subContractor).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            this.Session.Derive(false);
+
+            subContractorRelationship.Contractor = internalOrganisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(subContractor, internalOrganisation.ActiveSubContractors);
+        }
+
+        [Fact]
+        public void ChangedSubContractorRelationshipFromDateDeriveActiveSubContractors()
+        {
+            var subContractor = new OrganisationBuilder(this.Session).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var subContractorRelationship = new SubContractorRelationshipBuilder(this.Session).WithSubContractor(subContractor).WithContractor(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            subContractorRelationship.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(subContractor, internalOrganisation.ActiveSubContractors);
+        }
+
+        [Fact]
+        public void ChangedSubContractorRelationshipThroughDateDeriveActiveSubContractors()
+        {
+            var subContractor = new OrganisationBuilder(this.Session).Build();
+            var internalOrganisation = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+            var subContractorRelationship = new SubContractorRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithSubContractor(subContractor).WithContractor(internalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(subContractor, internalOrganisation.ActiveSubContractors);
+
+            subContractorRelationship.ThroughDate = subContractorRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(subContractor, internalOrganisation.ActiveSubContractors);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipEmployerDeriveCurrentOrganisationContactRelationships()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            contactRelationship.Organisation = organisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipFromDateDeriveCurrentOrganisationContactRelationships()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithOrganisation(organisation).Build();
+            this.Session.Derive(false);
+
+            contactRelationship.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipThroughDateDeriveCurrentOrganisationContactRelationships()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithContact(contact).WithOrganisation(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
+
+            contactRelationship.ThroughDate = contactRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(contactRelationship, organisation.CurrentOrganisationContactRelationships);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipEmployerDeriveCurrentContacts()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithFromDate(this.Session.Now()).Build();
+            this.Session.Derive(false);
+
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            contactRelationship.Organisation = organisation;
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, organisation.CurrentContacts);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipFromDateDeriveCurrentContacts()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithContact(contact).WithOrganisation(organisation).Build();
+            this.Session.Derive(false);
+
+            contactRelationship.FromDate = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, organisation.CurrentContacts);
+        }
+
+        [Fact]
+        public void ChangedOrganisationContactRelationshipThroughDateDeriveCurrentContacts()
+        {
+            var contact = new PersonBuilder(this.Session).Build();
+            var organisation = new OrganisationBuilder(this.Session).Build();
+            var contactRelationship = new OrganisationContactRelationshipBuilder(this.Session).WithFromDate(this.Session.Now()).WithContact(contact).WithOrganisation(organisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Contains(contact, organisation.CurrentContacts);
+
+            contactRelationship.ThroughDate = contactRelationship.FromDate;
+            this.Session.Derive(false);
+
+            Assert.DoesNotContain(contact, organisation.CurrentContacts);
         }
     }
 

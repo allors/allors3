@@ -17,10 +17,17 @@ namespace Allors.Database.Domain
         public PersonDerivation(M m) : base(m, new Guid("BC3969F4-4050-47A1-B80C-8F23879E3B10")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.Person.DerivationTrigger),
-                new ChangedPattern(this.M.Person.LastName),
-                new ChangedPattern(this.M.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
-                new ChangedPattern(this.M.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new ChangedPattern(m.Person.DerivationTrigger),
+                new ChangedPattern(m.Person.Salutation),
+                new ChangedPattern(m.Person.FirstName),
+                new ChangedPattern(m.Person.MiddleName),
+                new ChangedPattern(m.Person.LastName),
+                new ChangedPattern(m.Person.UserName),
+                new ChangedPattern(m.OrganisationContactRelationship.Contact) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact} },
+                new ChangedPattern(m.OrganisationContactRelationship.FromDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new ChangedPattern(m.OrganisationContactRelationship.ThroughDate) {Steps = new IPropertyType[]{ m.OrganisationContactRelationship.Contact } },
+                new ChangedPattern(m.Employment.FromDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
+                new ChangedPattern(m.Employment.ThroughDate) { Steps =  new IPropertyType[] {m.Employment.Employee} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
