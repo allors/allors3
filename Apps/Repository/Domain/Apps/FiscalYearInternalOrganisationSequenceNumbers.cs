@@ -73,7 +73,7 @@ namespace Allors.Repository
         #endregion
         [Workspace]
         [Size(256)]
-        public string IncomingShipmentNumberPrefix { get; set; }
+        public string PurchaseShipmentNumberPrefix { get; set; }
 
         #region Allors
         [Id("96201883-7ccb-4fea-9958-de7ef27fabd0")]
@@ -81,7 +81,37 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace]
-        public Counter IncomingShipmentNumberCounter { get; set; }
+        public Counter PurchaseShipmentNumberCounter { get; set; }
+
+        #region Allors
+        [Id("9762a55f-08f0-45a5-93af-9998921994e7")]
+        #endregion
+        [Workspace]
+        [Size(256)]
+        public string CustomerReturnNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("fad093f8-a46c-464a-800a-7d99b214e2c0")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace]
+        public Counter CustomerReturnNumberCounter { get; set; }
+
+        #region Allors
+        [Id("1486b1ff-ffa4-4bdc-914b-c7b4d86ca020")]
+        #endregion
+        [Workspace]
+        [Size(256)]
+        public string IncomingTransferNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("b3713ae3-abf0-408f-a680-c2d1930f2cfe")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace]
+        public Counter IncomingTransferNumberCounter { get; set; }
 
         #region Allors
         [Id("c54b04d9-e38d-410b-9572-a039446fccd0")]

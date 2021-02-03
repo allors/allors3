@@ -59,10 +59,10 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
-                var partyContactMechanisms = @this.PartyContactMechanisms.ToArray();
+                var partyContactMechanisms = @this.PartyContactMechanisms?.ToArray();
                 foreach (OrganisationContactRelationship organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
                 {
-                    organisationContactRelationship.Contact.Sync(partyContactMechanisms);
+                    organisationContactRelationship.Contact?.Sync(partyContactMechanisms);
                 }
             }
         }

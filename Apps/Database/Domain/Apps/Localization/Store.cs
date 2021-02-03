@@ -50,11 +50,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public string NextOutgoingShipmentNumber(int year)
+        public string NextCustomerShipmentNumber(int year)
         {
             if (this.InternalOrganisation.CustomerShipmentSequence.Equals(new CustomerShipmentSequences(this.Strategy.Session).EnforcedSequence))
             {
-                return string.Concat(this.OutgoingShipmentNumberPrefix, this.OutgoingShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(this.CustomerShipmentNumberPrefix, this.CustomerShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain
                     this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
                 }
 
-                return fiscalYearStoreSequenceNumbers.NextOutgoingShipmentNumber(year);
+                return fiscalYearStoreSequenceNumbers.NextCustomerShipmentNumber(year);
             }
         }
 

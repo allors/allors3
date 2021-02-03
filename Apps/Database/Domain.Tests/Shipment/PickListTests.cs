@@ -517,7 +517,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
                 .WithDefaultCarrier(new Carriers(this.Session).Fedex)
                 .WithSalesOrderNumberPrefix("")
-                .WithOutgoingShipmentNumberPrefix("")
+                .WithCustomerShipmentNumberPrefix("")
                 .WithIsImmediatelyPacked(true)
                 .Build();
 

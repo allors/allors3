@@ -123,7 +123,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDoAccounting(false)
                 .WithName("internalOrganisation")
                 .WithPreferredCurrency(new Currencies(this.Session).CurrencyByCode["EUR"])
-                .WithIncomingShipmentNumberPrefix("incoming shipmentno: ")
+                .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
                 .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
                 .WithPurchaseOrderNumberPrefix("purchase orderno: ")
                 .WithSubAccountCounter(new CounterBuilder(this.Session).WithUniqueId(Guid.NewGuid()).WithValue(0).Build())

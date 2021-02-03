@@ -38,10 +38,10 @@ namespace Allors.Database.Domain
                 if (!@this.ExistShipmentNumber && shipToParty != null)
                 {
                     var year = @this.Strategy.Session.Now().Year;
-                    @this.ShipmentNumber = shipToParty.NextShipmentNumber(year);
+                    @this.ShipmentNumber = shipToParty.NextPurchaseShipmentNumber(year);
 
                     var fiscalYearInternalOrganisationSequenceNumbers = shipToParty.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = ((InternalOrganisation)@this.ShipToParty).CustomerShipmentSequence.IsEnforcedSequence ? ((InternalOrganisation)@this.ShipToParty).IncomingShipmentNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.IncomingShipmentNumberPrefix;
+                    var prefix = ((InternalOrganisation)@this.ShipToParty).CustomerShipmentSequence.IsEnforcedSequence ? ((InternalOrganisation)@this.ShipToParty).PurchaseShipmentNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.PurchaseShipmentNumberPrefix;
                     @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
 

@@ -43,7 +43,17 @@ namespace Allors.Repository
 
         public CustomerShipmentSequence CustomerShipmentSequence { get; set; }
 
+        public CustomerReturnSequence CustomerReturnSequence { get; set; }
+
         public PurchaseShipmentSequence PurchaseShipmentSequence { get; set; }
+
+        public PurchaseReturnSequence PurchaseReturnSequence { get; set; }
+
+        public DropShipmentSequence DropShipmentSequence { get; set; }
+
+        public IncomingTransferSequence IncomingTransferSequence { get; set; }
+
+        public OutgoingTransferSequence OutgoingTransferSequence { get; set; }
 
         public WorkEffortSequence WorkEffortSequence { get; set; }
 
@@ -73,7 +83,17 @@ namespace Allors.Repository
 
         public Counter AccountingTransactionCounter { get; set; }
 
-        public Counter IncomingShipmentNumberCounter { get; set; }
+        public string PurchaseShipmentNumberPrefix { get; set; }
+
+        public Counter PurchaseShipmentNumberCounter { get; set; }
+
+        public string CustomerReturnNumberPrefix { get; set; }
+
+        public Counter CustomerReturnNumberCounter { get; set; }
+
+        public string IncomingTransferNumberPrefix { get; set; }
+
+        public Counter IncomingTransferNumberCounter { get; set; }
 
         public GeneralLedgerAccount RetainedEarningsAccount { get; set; }
 
@@ -106,8 +126,6 @@ namespace Allors.Repository
         public string PurchaseTransactionReferenceNumberPrefix { get; set; }
 
         public GeneralLedgerAccount CalculationDifferencesAccount { get; set; }
-
-        public string IncomingShipmentNumberPrefix { get; set; }
 
         public string RequestNumberPrefix { get; set; }
 

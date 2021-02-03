@@ -4,10 +4,9 @@
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
 
-using Allors.Database.Domain.TestPopulation;
-
 namespace Allors.Database.Domain.Tests
 {
+    using Allors.Database.Domain.TestPopulation;
     using Xunit;
 
     public class CustomerShipmentTests : DomainTest, IClassFixture<Fixture>
@@ -117,7 +116,7 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Session).EnforcedSequence;
             var store = new StoreBuilder(this.Session).WithName("store")
                 .WithDefaultFacility(new Facilities(this.Session).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Session).Warehouse))
-                .WithOutgoingShipmentNumberPrefix("the format is ")
+                .WithCustomerShipmentNumberPrefix("the format is ")
                 .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
                 .WithDefaultCarrier(new Carriers(this.Session).Fedex)
                 .WithIsImmediatelyPacked(true)
@@ -151,7 +150,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipFromWithoutShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.RemoveOutgoingShipmentNumberPrefix();
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.RemoveCustomerShipmentNumberPrefix();
             this.Session.Derive();
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
@@ -171,7 +170,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenShipFromWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
             this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Session).EnforcedSequence;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.OutgoingShipmentNumberPrefix = "prefix-";
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.CustomerShipmentNumberPrefix = "prefix-";
             this.Session.Derive();
 
             var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
@@ -843,7 +842,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
                 .WithDefaultCarrier(new Carriers(this.Session).Fedex)
                 .WithSalesOrderNumberPrefix("")
-                .WithOutgoingShipmentNumberPrefix("")
+                .WithCustomerShipmentNumberPrefix("")
                 .WithIsImmediatelyPacked(true)
                 .Build();
 
@@ -1349,6 +1348,30 @@ namespace Allors.Database.Domain.Tests
 
             var invoice = customer.SalesInvoicesWhereBillToCustomer.First;
             Assert.Equal(15M, invoice.TotalShippingAndHandling);
+        }
+    }
+
+    public class CustomerShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CustomerShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void GivenCustomerShipment_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
+        {
+            var customer = new PersonBuilder(this.Session).WithLastName("customer").Build();
+            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
+            var shipToAddress = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipToParty(customer)
+                .WithShipToAddress(shipToAddress)
+                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .Build();
+
+            this.Session.Derive();
+
+            Assert.Equal(new ShipmentStates(this.Session).Created, shipment.ShipmentState);
+            Assert.Equal(shipment.LastShipmentState, shipment.ShipmentState);
         }
     }
 

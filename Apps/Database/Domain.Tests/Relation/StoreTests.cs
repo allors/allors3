@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedInternalOrganisationDeriveOutgoingShipmentNumberCounter()
+        public void ChangedInternalOrganisationDeriveCustomerShipmentNumberCounter()
         {
             this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Session).EnforcedSequence;
             this.Session.Derive(false);
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
             var store = new StoreBuilder(this.Session).Build();
             this.Session.Derive(false);
 
-            Assert.True(store.ExistOutgoingShipmentNumberCounter);
+            Assert.True(store.ExistCustomerShipmentNumberCounter);
         }
 
         [Fact]

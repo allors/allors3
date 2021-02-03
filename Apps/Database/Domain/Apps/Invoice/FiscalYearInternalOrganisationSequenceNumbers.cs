@@ -29,9 +29,19 @@ namespace Allors.Database.Domain
                 this.QuoteNumberCounter = new CounterBuilder(this.Session()).Build();
             }
 
-            if (!this.ExistIncomingShipmentNumberCounter)
+            if (!this.ExistPurchaseShipmentNumberCounter)
             {
-                this.IncomingShipmentNumberCounter = new CounterBuilder(this.Session()).Build();
+                this.PurchaseShipmentNumberCounter = new CounterBuilder(this.Session()).Build();
+            }
+
+            if (!this.ExistCustomerReturnNumberCounter)
+            {
+                this.CustomerReturnNumberCounter = new CounterBuilder(this.Session()).Build();
+            }
+
+            if (!this.ExistIncomingTransferNumberCounter)
+            {
+                this.IncomingTransferNumberCounter = new CounterBuilder(this.Session()).Build();
             }
 
             if (!this.ExistWorkEffortNumberCounter)
@@ -64,10 +74,22 @@ namespace Allors.Database.Domain
             return string.Concat(this.ExistQuoteNumberPrefix ? this.QuoteNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
         }
 
-        public string NextIncomingShipmentNumber(int year)
+        public string NextPurchaseShipmentNumber(int year)
         {
-            var number = this.IncomingShipmentNumberCounter.NextValue();
-            return string.Concat(this.ExistIncomingShipmentNumberPrefix ? this.IncomingShipmentNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+            var number = this.PurchaseShipmentNumberCounter.NextValue();
+            return string.Concat(this.ExistPurchaseShipmentNumberPrefix ? this.PurchaseShipmentNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+        }
+
+        public string NextCustomerReturnNumber(int year)
+        {
+            var number = this.CustomerReturnNumberCounter.NextValue();
+            return string.Concat(this.ExistCustomerReturnNumberPrefix ? this.CustomerReturnNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+        }
+
+        public string NextIncomingTransferNumber(int year)
+        {
+            var number = this.IncomingTransferNumberCounter.NextValue();
+            return string.Concat(this.ExistIncomingTransferNumberPrefix ? this.IncomingTransferNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
         }
 
         public string NextWorkEffortNumber(int year)

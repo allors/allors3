@@ -24,6 +24,8 @@ namespace Allors.Database.Domain
                 new ChangedPattern(this.M.InternalOrganisation.QuoteSequence),
                 new ChangedPattern(this.M.InternalOrganisation.WorkEffortSequence),
                 new ChangedPattern(this.M.InternalOrganisation.PurchaseShipmentSequence),
+                new ChangedPattern(this.M.InternalOrganisation.CustomerReturnSequence),
+                new ChangedPattern(this.M.InternalOrganisation.IncomingTransferSequence),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -69,9 +71,19 @@ namespace Allors.Database.Domain
                         @this.WorkEffortNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                     }
 
-                    if (@this.PurchaseShipmentSequence != new PurchaseShipmentSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistIncomingShipmentNumberCounter)
+                    if (@this.PurchaseShipmentSequence != new PurchaseShipmentSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistPurchaseShipmentNumberCounter)
                     {
-                        @this.IncomingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                        @this.PurchaseShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+
+                    if (@this.CustomerReturnSequence != new CustomerReturnSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistCustomerReturnNumberCounter)
+                    {
+                        @this.CustomerReturnNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    }
+
+                    if (@this.IncomingTransferSequence != new IncomingTransferSequences(@this.Strategy.Session).RestartOnFiscalYear && !@this.ExistIncomingTransferNumberCounter)
+                    {
+                        @this.IncomingTransferNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                     }
                 }
             }

@@ -65,7 +65,7 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive();
 
             var internalOrganisation = this.InternalOrganisation;
-            internalOrganisation.RemoveIncomingShipmentNumberPrefix();
+            internalOrganisation.RemovePurchaseShipmentNumberPrefix();
 
             var shipment1 = new PurchaseShipmentBuilder(this.Session)
                 .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
@@ -117,7 +117,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipToWithoutShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.RemoveIncomingShipmentNumberPrefix();
+            this.InternalOrganisation.RemovePurchaseShipmentNumberPrefix();
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 
@@ -137,7 +137,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenShipToWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
             this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
-            this.InternalOrganisation.IncomingShipmentNumberPrefix = "prefix-";
+            this.InternalOrganisation.PurchaseShipmentNumberPrefix = "prefix-";
             var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
             new SupplierRelationshipBuilder(this.Session).WithSupplier(supplier).Build();
 

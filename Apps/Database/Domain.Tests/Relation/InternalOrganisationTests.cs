@@ -387,19 +387,19 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedPurchaseShipmentSequenceDeriveIncomingShipmentNumberCounter()
+        public void ChangedPurchaseShipmentSequenceDerivePurchaseShipmentNumberCounter()
         {
             var internalOrganisation = new OrganisationBuilder(this.Session)
                 .WithPurchaseShipmentSequence(new PurchaseShipmentSequences(this.Session).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
             this.Session.Derive(false);
 
-            Assert.False(internalOrganisation.ExistIncomingShipmentNumberCounter);
+            Assert.False(internalOrganisation.ExistPurchaseShipmentNumberCounter);
 
             internalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Session).EnforcedSequence;
             this.Session.Derive(false);
 
-            Assert.True(internalOrganisation.ExistIncomingShipmentNumberCounter);
+            Assert.True(internalOrganisation.ExistPurchaseShipmentNumberCounter);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public PostalAddressDerivation(M m) : base(m, new Guid("412c754a-4806-40ab-ac49-b5569bb9b9a9")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.PostalAddress.Address1),
                 new ChangedPattern(m.PostalAddress.Locality),
                 new ChangedPattern(m.PostalAddress.Region),
                 new ChangedPattern(m.PostalAddress.PostalCode),

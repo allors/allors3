@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
             string logo,
             string storeName,
             BillingProcess billingProcess,
-            string outgoingShipmentNumberPrefix,
+            string customerShipmentNumberPrefix,
             string salesInvoiceNumberPrefix,
             string salesOrderNumberPrefix,
             string purchaseOrderNumberPrefix,
@@ -357,7 +357,7 @@ namespace Allors.Database.Domain
                 var sequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(session).WithFiscalYear(session.Now().Year).Build();
 
                 sequenceNumbers.CreditNoteNumberPrefix = creditNoteNumberPrefix;
-                sequenceNumbers.OutgoingShipmentNumberPrefix = outgoingShipmentNumberPrefix;
+                sequenceNumbers.CustomerShipmentNumberPrefix = customerShipmentNumberPrefix;
                 sequenceNumbers.SalesInvoiceNumberPrefix = salesInvoiceNumberPrefix;
                 sequenceNumbers.SalesOrderNumberPrefix = salesOrderNumberPrefix;
 
@@ -376,7 +376,7 @@ namespace Allors.Database.Domain
             else
             {
                 store.CreditNoteNumberPrefix = creditNoteNumberPrefix;
-                store.OutgoingShipmentNumberPrefix = outgoingShipmentNumberPrefix;
+                store.CustomerShipmentNumberPrefix = customerShipmentNumberPrefix;
                 store.SalesInvoiceNumberPrefix = salesInvoiceNumberPrefix;
                 store.SalesOrderNumberPrefix = salesOrderNumberPrefix;
 

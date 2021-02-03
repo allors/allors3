@@ -88,12 +88,52 @@ namespace Allors.Repository
         CustomerShipmentSequence CustomerShipmentSequence { get; set; }
 
         #region Allors
+        [Id("5d758176-8dd7-4578-87a5-0f370801d7df")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        CustomerReturnSequence CustomerReturnSequence { get; set; }
+
+        #region Allors
         [Id("b04166d7-cd76-40cc-984b-edfe25630f02")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace]
         PurchaseShipmentSequence PurchaseShipmentSequence { get; set; }
+
+        #region Allors
+        [Id("f757fc1b-66b8-4f40-8f5d-a9388964ecb8")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        PurchaseReturnSequence PurchaseReturnSequence { get; set; }
+
+        #region Allors
+        [Id("713ebf82-bce2-4c1d-a4cf-c77ae03f5d12")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        DropShipmentSequence DropShipmentSequence { get; set; }
+
+        #region Allors
+        [Id("98af108a-dad4-4034-b3c1-fd318d424d9e")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        IncomingTransferSequence IncomingTransferSequence { get; set; }
+
+        #region Allors
+        [Id("902674e4-7e21-4935-a125-5cada12405d1")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        OutgoingTransferSequence OutgoingTransferSequence { get; set; }
 
         #region Allors
         [Id("23bc3a20-aea2-4e05-b792-fdcf92def95b")]
@@ -140,12 +180,49 @@ namespace Allors.Repository
         int FiscalYearStartMonth { get; set; }
 
         #region Allors
+        [Id("fe96e14b-9dbd-4497-935f-f605abd2ada7")]
+        #endregion
+        [Workspace(Default)]
+        [Size(256)]
+        string PurchaseShipmentNumberPrefix { get; set; }
+
+        #region Allors
         [Id("86dd32e2-74e7-4ced-bfbd-4e1fdc723588")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
-        Counter IncomingShipmentNumberCounter { get; set; }
+        Counter PurchaseShipmentNumberCounter { get; set; }
+
+        #region Allors
+        [Id("fd8dcd59-cc0a-4b9a-bea1-2e3baff9dd8d")]
+        #endregion
+        [Workspace(Default)]
+        [Size(256)]
+        string CustomerReturnNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("23c83f3f-1837-4fa9-9393-0a515b6c9daa")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        Counter CustomerReturnNumberCounter { get; set; }
+
+        #region Allors
+        [Id("280df890-7f5d-4ba9-9225-f22526e5883c")]
+        #endregion
+        [Workspace]
+        [Size(256)]
+        public string IncomingTransferNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("799b3992-f189-4030-960f-4c40021430b0")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace]
+        public Counter IncomingTransferNumberCounter { get; set; }
 
         #region Allors
         [Id("ba00c0d2-6067-4584-bdc4-e6c72be77232")]
@@ -370,13 +447,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         GeneralLedgerAccount CalculationDifferencesAccount { get; set; }
-
-        #region Allors
-        [Id("fe96e14b-9dbd-4497-935f-f605abd2ada7")]
-        #endregion
-        [Workspace(Default)]
-        [Size(256)]
-        string IncomingShipmentNumberPrefix { get; set; }
 
         #region Allors
         [Id("06FABCD6-EFA4-45DD-B76C-8F791A0E10EF")]

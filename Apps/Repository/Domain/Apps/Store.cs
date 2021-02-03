@@ -96,14 +96,28 @@ namespace Allors.Repository
         #endregion
         [Size(256)]
         [Workspace(Default)]
-        public string OutgoingShipmentNumberPrefix { get; set; }
+        public string CustomerShipmentNumberPrefix { get; set; }
 
         #region Allors
         [Id("dfc3f6be-0a95-49e0-8742-3901dbab5185")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        public Counter OutgoingShipmentNumberCounter { get; set; }
+        public Counter CustomerShipmentNumberCounter { get; set; }
+
+        #region Allors
+        [Id("892e4e3b-0c84-4814-8483-a9257d539bf1")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string PurchaseReturnNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("d5fdeec2-a1d0-483e-a1ec-e2f1f02bb65a")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        public Counter PurchaseReturnNumberCounter { get; set; }
 
         #region Allors
         [Id("3CBCF813-7FD4-4C69-98C8-CFC260234477")]
@@ -111,6 +125,34 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         public Counter SalesInvoiceTemporaryCounter { get; set; }
+
+        #region Allors
+        [Id("961d61b1-58f8-4580-a9be-22e0b466a1b9")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string DropShipmentNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("2398ea89-47cc-44d7-86f6-9b06d3ab0763")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        public Counter DropShipmentNumberCounter { get; set; }
+
+        #region Allors
+        [Id("0d7c64d3-c61f-4edf-92b1-cd7d82f0b8ed")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string OutgoingTransferNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("ed1963f4-e4ca-4c52-8e43-6afc4e06585d")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        public Counter OutgoingTransferNumberCounter { get; set; }
 
         #region Allors
         [Id("4927a65d-a9d3-4fad-afce-1ec8679d3a55")]

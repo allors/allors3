@@ -22,6 +22,10 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.Store.CollectionMethods),
                 new ChangedPattern(m.Store.FiscalYearsStoreSequenceNumbers),
                 new ChangedPattern(m.Store.SalesInvoiceNumberCounter),
+                new ChangedPattern(m.Store.CustomerShipmentNumberPrefix),
+                new ChangedPattern(m.Store.PurchaseReturnNumberPrefix),
+                new ChangedPattern(m.Store.DropShipmentNumberPrefix),
+                new ChangedPattern(m.Store.OutgoingTransferNumberPrefix),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -68,9 +72,24 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                if (@this.InternalOrganisation.CustomerShipmentSequence != new CustomerShipmentSequences(@this.Session()).RestartOnFiscalYear && !@this.ExistOutgoingShipmentNumberCounter)
+                if (@this.InternalOrganisation.CustomerShipmentSequence != new CustomerShipmentSequences(@this.Session()).RestartOnFiscalYear && !@this.ExistCustomerShipmentNumberCounter)
                 {
-                    @this.OutgoingShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                    @this.CustomerShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                }
+
+                if (@this.InternalOrganisation.PurchaseReturnSequence != new PurchaseReturnSequences(@this.Session()).RestartOnFiscalYear && !@this.ExistPurchaseReturnNumberCounter)
+                {
+                    @this.PurchaseReturnNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                }
+
+                if (@this.InternalOrganisation.DropShipmentSequence != new DropShipmentSequences(@this.Session()).RestartOnFiscalYear && !@this.ExistDropShipmentNumberCounter)
+                {
+                    @this.DropShipmentNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
+                }
+
+                if (@this.InternalOrganisation.OutgoingTransferSequence != new OutgoingTransferSequences(@this.Session()).RestartOnFiscalYear && !@this.ExistOutgoingTransferNumberCounter)
+                {
+                    @this.OutgoingTransferNumberCounter = new CounterBuilder(@this.Strategy.Session).Build();
                 }
 
                 validation.AssertExistsAtMostOne(@this, @this.M.Store.FiscalYearsStoreSequenceNumbers, @this.M.Store.SalesInvoiceNumberCounter);

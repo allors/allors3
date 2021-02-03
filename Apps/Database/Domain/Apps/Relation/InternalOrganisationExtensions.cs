@@ -238,11 +238,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static string NextShipmentNumber(this InternalOrganisation @this, int year)
+        public static string NextPurchaseShipmentNumber(this InternalOrganisation @this, int year)
         {
             if (@this.PurchaseShipmentSequence.Equals(new PurchaseShipmentSequences(@this.Session()).EnforcedSequence))
             {
-                return string.Concat(@this.IncomingShipmentNumberPrefix, @this.IncomingShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.PurchaseShipmentNumberPrefix, @this.PurchaseShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -254,7 +254,27 @@ namespace Allors.Database.Domain
                     @this.AddFiscalYearsInternalOrganisationSequenceNumber(fiscalYearInternalOrganisationSequenceNumbers);
                 }
 
-                return fiscalYearInternalOrganisationSequenceNumbers.NextIncomingShipmentNumber(year);
+                return fiscalYearInternalOrganisationSequenceNumbers.NextPurchaseShipmentNumber(year);
+            }
+        }
+
+        public static string NextCustomerReturnNumber(this InternalOrganisation @this, int year)
+        {
+            if (@this.PurchaseShipmentSequence.Equals(new PurchaseShipmentSequences(@this.Session()).EnforcedSequence))
+            {
+                return string.Concat(@this.CustomerReturnNumberPrefix, @this.CustomerReturnNumberCounter.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearInternalOrganisationSequenceNumbers = @this.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearInternalOrganisationSequenceNumbers == null)
+                {
+                    fiscalYearInternalOrganisationSequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(@this.Session()).WithFiscalYear(year).Build();
+                    @this.AddFiscalYearsInternalOrganisationSequenceNumber(fiscalYearInternalOrganisationSequenceNumbers);
+                }
+
+                return fiscalYearInternalOrganisationSequenceNumbers.NextCustomerReturnNumber(year);
             }
         }
 

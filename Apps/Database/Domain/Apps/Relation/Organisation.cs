@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                     .WithRule(this.M.Organisation.PurchaseInvoiceNumberCounter)
                     .WithRule(this.M.Organisation.PurchaseOrderNumberCounter)
                     .WithRule(this.M.Organisation.SubAccountCounter)
-                    .WithRule(this.M.Organisation.IncomingShipmentNumberCounter)
+                    .WithRule(this.M.Organisation.PurchaseShipmentNumberCounter)
                     .WithRule(this.M.Organisation.WorkEffortNumberCounter)
                     .WithRule(this.M.Organisation.InvoiceSequence)
                     .WithRule(this.M.Organisation.ContactsUserGroup)
