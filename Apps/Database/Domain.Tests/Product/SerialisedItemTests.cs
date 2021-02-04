@@ -101,7 +101,6 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(customer.PartyName, newItem.OwnedByPartyName);
         }
 
-
         [Fact]
         public void GivenSerializedItem_WhenDerived_ThenRentedByPartyNameIsSet()
         {
@@ -572,6 +571,79 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Contains("catname", serialisedItem.DisplayProductCategories);
+        }
+    }
+
+    public class SerialisedItemOwnerDervivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemOwnerDervivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipmentShipmentStateDeriveOwnedBy()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).CustomerShipmentShip);
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var shipToParty = new PersonBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(shipToParty).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session)
+                .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session).Sold)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Shipped;
+            this.Session.Derive(false);
+
+            Assert.Equal(shipToParty, serialisedItem.OwnedBy);
+        }
+
+        [Fact]
+        public void ChangedShipmentShipmentStateDeriveOwnership()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).CustomerShipmentShip);
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var shipToParty = new PersonBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(shipToParty).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session)
+                .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Session).Sold)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Shipped;
+            this.Session.Derive(false);
+
+            Assert.Equal(new Ownerships(this.Session).ThirdParty, serialisedItem.Ownership);
+        }
+
+        [Fact]
+        public void ChangedShipmentShipmentStateDeriveAvailableForSale()
+        {
+            this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Session).CustomerShipmentShip);
+            var serialisedItem = new SerialisedItemBuilder(this.Session).Build();
+
+            var shipToParty = new PersonBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(shipToParty).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Shipped;
+            this.Session.Derive(false);
+
+            Assert.False(serialisedItem.AvailableForSale);
         }
     }
 

@@ -13,6 +13,28 @@ namespace Allors.Database.Domain.Tests
         public CustomerReturnDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public void ChangedShipToPartyDeriveShipmentNumber()
+        {
+            this.InternalOrganisation.RemoveCustomerReturnNumberPrefix();
+            var number = this.InternalOrganisation.CustomerReturnNumberCounter.Value;
+
+            var shipment = new CustomerReturnBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void ChangedShipToPartyDeriveSortableShipmentNumber()
+        {
+            var number = this.InternalOrganisation.CustomerReturnNumberCounter.Value;
+            var shipment = new CustomerReturnBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
+        }
+
+        [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
             var shipment = new CustomerReturnBuilder(this.Session)

@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
                     {
                         foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
-                            if (!itemIssuance.ShipmentItem.ShipmentItemState.Shipped)
+                            if (!itemIssuance.ShipmentItem.ShipmentItemState.IsShipped)
                             {
                                 @this.Quantity -= (int)pickListItem.QuantityPicked;
                             }

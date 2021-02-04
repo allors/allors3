@@ -181,4 +181,31 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(shippingAddress.ContactMechanism, order.ShipToAddress);
         }
     }
+
+    public class PurchaseShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseShipmentDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipToPartyDeriveShipmentNumber()
+        {
+            this.InternalOrganisation.RemovePurchaseShipmentNumberPrefix();
+            var number = this.InternalOrganisation.PurchaseShipmentNumberCounter.Value;
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void ChangedShipToPartyDeriveSortableShipmentNumber()
+        {
+            var number = this.InternalOrganisation.PurchaseShipmentNumberCounter.Value;
+            var shipment = new PurchaseShipmentBuilder(this.Session).WithShipToParty(this.InternalOrganisation).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
+        }
+    }
 }

@@ -16,6 +16,7 @@ namespace Allors.Database.Domain
         public DropShipmentDerivation(M m) : base(m, new Guid("1B7E3857-425A-4946-AB63-15AEE196350D")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.DropShipment.Store),
                 new ChangedPattern(this.M.DropShipment.ShipToParty),
             };
 
@@ -23,6 +24,16 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<DropShipment>())
             {
+                if (!@this.ExistShipmentNumber && @this.ExistStore)
+                {
+                    var year = @this.Session().Now().Year;
+                    @this.ShipmentNumber = @this.Store.NextDropShipmentNumber(year);
+
+                    var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = ((InternalOrganisation)@this.ShipFromParty).DropShipmentSequence.IsEnforcedSequence ? @this.Store.DropShipmentNumberPrefix : fiscalYearStoreSequenceNumbers.DropShipmentNumberPrefix;
+                    @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
+                }
+
                 if (!@this.ExistShipToAddress && @this.ExistShipToParty)
                 {
                     @this.ShipToAddress = @this.ShipToParty.ShippingAddress;

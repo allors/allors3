@@ -8,6 +8,7 @@ namespace Allors.Repository
     using System;
 
     using Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("a0cf565a-2dcf-4513-9110-8c34468d993f")]
@@ -96,6 +97,26 @@ namespace Allors.Repository
 
         public int SortableShipmentNumber { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
+        #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("76a0fee6-f611-4705-9448-d4b399ea248c")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public PurchaseReturnVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("7d8cf556-64da-43cd-9cbe-c4e5a658cb48")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public PurchaseReturnVersion[] AllVersions { get; set; }
         #endregion
 
         #region inherited methods

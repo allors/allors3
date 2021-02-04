@@ -226,6 +226,13 @@ namespace Allors.Repository
         int SortableShipmentNumber { get; set; }
 
         #region Allors
+        [Id("033e0d42-14c3-4631-ad1b-ca5959005351")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public Guid DerivationTrigger { get; set; }
+
+        #region Allors
 
         [Id("11D44169-2D96-4310-AD6C-59417D8CA0C2")]
 

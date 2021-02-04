@@ -16,11 +16,18 @@ namespace Allors.Database.Domain
         public CustomerShipmentStateDerivation(M m) : base(m, new Guid("7ff771c2-af69-427a-aeb0-4ceb73e699c7")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(m.CustomerShipment.DerivationTrigger),
                 new ChangedPattern(m.CustomerShipment.ShipToParty),
                 new ChangedPattern(m.CustomerShipment.ShipmentItems),
                 new ChangedPattern(m.CustomerShipment.ShipmentState),
+                new ChangedPattern(m.CustomerShipment.ShipmentValue),
+                new ChangedPattern(m.CustomerShipment.ReleasedManually),
                 new ChangedPattern(m.ShipmentItem.Quantity) { Steps =  new IPropertyType[] {m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
                 new ChangedPattern(m.PackagingContent.Quantity) { Steps =  new IPropertyType[] {m.PackagingContent.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem}, OfType = m.CustomerShipment.Class },
+                new ChangedPattern(m.PickList.ShipToParty) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new ChangedPattern(m.PickList.CurrentVersion) { Steps = new IPropertyType[] { m.PickList.AllVersions, m.PickListVersion.ShipToParty, m.Party.ShipmentsWhereShipToParty }, OfType = m.CustomerShipment.Class },
+                new ChangedPattern(m.Store.ShipmentThreshold) { Steps = new IPropertyType[] { m.Store.ShipmentsWhereStore }, OfType = m.CustomerShipment.Class },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -49,9 +56,7 @@ namespace Allors.Database.Domain
                         }
                     }
 
-                    if ((@this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Picking) ||
-                         @this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Picked)) &&
-                        @this.ShipToParty.ExistPickListsWhereShipToParty)
+                    if (@this.ShipmentState.IsPicking && @this.ShipToParty.ExistPickListsWhereShipToParty)
                     {
                         var isPicked = true;
                         foreach (PickList pickList in @this.ShipToParty.PickListsWhereShipToParty)
@@ -69,8 +74,7 @@ namespace Allors.Database.Domain
                         }
                     }
 
-                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Picked)
-                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Packed))
+                    if (@this.ShipmentState.IsPicked)
                     {
                         var totalShippingQuantity = 0M;
                         var totalPackagedQuantity = 0M;
@@ -89,10 +93,9 @@ namespace Allors.Database.Domain
                         }
                     }
 
-                    if (@this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Created)
-                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Picked)
-                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Picked)
-                        || @this.ShipmentState.Equals(new ShipmentStates(@this.Session()).Packed))
+                    if (@this.ShipmentState.IsCreated
+                        || @this.ShipmentState.IsPicked
+                        || @this.ShipmentState.IsPacked)
                     {
                         if (@this.ShipmentValue < @this.Store.ShipmentThreshold && !@this.ReleasedManually)
                         {

@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Allors.Database.Domain
 {
     public partial class PickList
@@ -51,6 +53,14 @@ namespace Allors.Database.Domain
             foreach (PickListItem pickListItem in this.PickListItems)
             {
                 pickListItem.Delete();
+            }
+
+            if (this.ExistShipToParty)
+            {
+                foreach (Shipment shipment in this.ShipToParty.ShipmentsWhereShipToParty)
+                {
+                    shipment.DerivationTrigger = Guid.NewGuid();
+                }
             }
         }
 

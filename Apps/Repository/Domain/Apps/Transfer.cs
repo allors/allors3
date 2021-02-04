@@ -97,6 +97,8 @@ namespace Allors.Repository
 
         public int SortableShipmentNumber { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Versioning

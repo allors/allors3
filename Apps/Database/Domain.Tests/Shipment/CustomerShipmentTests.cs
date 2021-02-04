@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Allors.Database.Domain.TestPopulation;
     using Xunit;
 
@@ -1349,6 +1351,15 @@ namespace Allors.Database.Domain.Tests
             var invoice = customer.SalesInvoicesWhereBillToCustomer.First;
             Assert.Equal(15M, invoice.TotalShippingAndHandling);
         }
+
+        [Fact]
+        public void OnCreatedThrowValidationError()
+        {
+            new CustomerShipmentBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("CustomerShipment.ShipToParty is required"));
+        }
     }
 
     public class CustomerShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -1356,22 +1367,689 @@ namespace Allors.Database.Domain.Tests
         public CustomerShipmentDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenCustomerShipment_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
+        public void ChangedStoreDeriveShipmentNumber()
         {
-            var customer = new PersonBuilder(this.Session).WithLastName("customer").Build();
-            var mechelen = new CityBuilder(this.Session).WithName("Mechelen").Build();
-            var shipToAddress = new PostalAddressBuilder(this.Session).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            store.RemoveCustomerShipmentNumberPrefix();
+            var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First.CustomerShipmentNumberCounter.Value;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithStore(store).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveSortableShipmentNumber()
+        {
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            var number = store.CustomerShipmentNumberCounter.Value;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithStore(store).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
+        }
+
+        [Fact]
+        public void ChangedShipToPartyDeriveShipToAddress()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToAddressDeriveShipToAddress()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.RemoveShipToAddress();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipFromPartyDeriveShipFromAddress()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipFromParty(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
+        }
+
+        [Fact]
+        public void ChangedShipFromAddressDeriveShipFromAddress()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipFromParty(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.RemoveShipFromAddress();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
+        }
+
+        [Fact]
+        public void ChangedShipmentStateCreateInvoice()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Session).BillingForShipmentItems;
+
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            salesOrder.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            salesOrder.SalesOrderState = new SalesOrderStates(this.Session).OnHold;
+            this.Session.Derive(false);
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new OrderShipmentBuilder(this.Session).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Shipped;
+            this.Session.Derive(false);
+
+            Assert.True(shipmentItem.ExistShipmentItemBillingsWhereShipmentItem);
+        }
+
+        [Fact]
+        public void ChangedShipmentItemsSyncshipmentItemSyncedShipment()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(shipment, shipmentItem.SyncedShipment);
+        }
+    }
+
+    public class CustomerShipmentStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CustomerShipmentStateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipmentItemsDeriveShipmentStateCancelled()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedShipmentItemQuantityDeriveShipmentStateCancelled()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+
+            shipmentItem.Quantity = 0;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedDerivationTriggerPartyDeriveShipmentStateCancelled()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.Quantity = 0;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+
+            picklist.Delete();
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPickListShipToPartyDeriveShipmentStateCancelled()
+        {
+            var shipToParty = new PersonBuilder(this.Session).Build();
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(shipToParty).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.Quantity = 0;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+
+            picklist.RemoveShipToParty();
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPickListPickListStateDeriveShipmentStateCancelled()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.Quantity = 0;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+
+            picklist.PickListState = new PickListStates(this.Session).Picked;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedShipmentStateDeriveShipmentStateCancelled()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.Quantity = 0;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+
+            picklist.PickListState = new PickListStates(this.Session).Picked;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Cancelled, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPickListPickListStateDeriveShipmentStatePicked()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipmentState(new ShipmentStates(this.Session).Picking)
+                .WithShipToParty(new PersonBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Picked, shipment.ShipmentState);
+
+            picklist.PickListState = new PickListStates(this.Session).Picked;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Picked, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedShipmentStateDeriveShipmentStatePicked()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipToParty(new PersonBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Picked, shipment.ShipmentState);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Picking;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Picked, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedShipmentStateDeriveShipmentStatePacked()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPacked = true;
 
             var shipment = new CustomerShipmentBuilder(this.Session)
-                .WithShipToParty(customer)
-                .WithShipToAddress(shipToAddress)
-                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipToParty(new PersonBuilder(this.Session).Build())
                 .Build();
+            this.Session.Derive(false);
 
-            this.Session.Derive();
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(1).Build();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Packed, shipment.ShipmentState);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Picked;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Packed, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedQuantityDeriveShipmentStatePacked()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPacked = true;
+
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipmentState(new ShipmentStates(this.Session).Picked)
+                .WithShipToParty(new PersonBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(2).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(1).Build();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Packed, shipment.ShipmentState);
+
+            shipmentItem.Quantity = 1;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Packed, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPackagingContentQuantityDeriveShipmentStatePacked()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPacked = true;
+
+            var shipment = new CustomerShipmentBuilder(this.Session)
+                .WithShipmentState(new ShipmentStates(this.Session).Picked)
+                .WithShipToParty(new PersonBuilder(this.Session).Build())
+                .Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Packed, shipment.ShipmentState);
+
+            new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(1).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Packed, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedShipmentValueDeriveShipmentStateOnHold()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipmentValue(10).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+
+            shipment.ShipmentValue = 9;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedStoreShipmentThresholdDeriveShipmentStateOnHold()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipmentValue(10).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 11;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedReleasedManuallyDeriveShipmentStateOnHold()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+
+            shipment.ReleasedManually = true;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedShipmentValueDeriveShipmentStateCreated()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+
+            shipment.ShipmentValue = 11;
+            this.Session.Derive(false);
 
             Assert.Equal(new ShipmentStates(this.Session).Created, shipment.ShipmentState);
-            Assert.Equal(shipment.LastShipmentState, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedStoreShipmentThresholdDeriveShipmentStateCreated()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).OnHold, shipment.ShipmentState);
+
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 9;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Created, shipment.ShipmentState);
+        }
+    }
+
+    public class CustomerShipmentShipmentValueDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CustomerShipmentShipmentValueDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedOrderShipmentShipmentItemDeriveShipmentValue()
+        {
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedUnitPrice(1).Build();
+            salesOrder.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new OrderShipmentBuilder(this.Session).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(1, shipment.ShipmentValue);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderItemUnitPriceDeriveShipmentValue()
+        {
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedUnitPrice(1).Build();
+            salesOrder.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new OrderShipmentBuilder(this.Session).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(1, shipment.ShipmentValue);
+
+            orderItem.AssignedUnitPrice = 2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, shipment.ShipmentValue);
+        }
+
+        [Fact]
+        public void ChangedOrderShipmentQuantityDeriveShipmentValue()
+        {
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedUnitPrice(1).Build();
+            salesOrder.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var orderShipment = new OrderShipmentBuilder(this.Session).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(1, shipment.ShipmentValue);
+
+            orderShipment.Quantity = 2;
+            this.Session.Derive(false);
+
+            Assert.Equal(2, shipment.ShipmentValue);
+        }
+    }
+
+    public class CustomerShipmentShipDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CustomerShipmentShipDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipmentStateDeriveShipmentState()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Packed;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Shipped, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedPicklistPickListStateDeriveShipmentState()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).OnHold)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Packed;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Shipped, shipment.ShipmentState);
+
+            picklist.PickListState = new PickListStates(this.Session).Picked;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Shipped, shipment.ShipmentState);
+        }
+
+        [Fact]
+        public void ChangedSalesOrderSalesOrderStateDeriveShipmentState()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+
+            var salesOrder = new SalesOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new SalesOrderItemBuilder(this.Session).WithAssignedUnitPrice(1).Build();
+            salesOrder.AddSalesOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            salesOrder.SalesOrderState = new SalesOrderStates(this.Session).OnHold;
+            this.Session.Derive(false);
+
+            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new OrderShipmentBuilder(this.Session).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
+            this.Session.Derive(false);
+
+            var picklist = new PickListBuilder(this.Session)
+                .WithPickListState(new PickListStates(this.Session).Picked)
+                .WithShipToParty(shipment.ShipToParty)
+                .WithStore(shipment.Store)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.ShipmentState = new ShipmentStates(this.Session).Packed;
+            this.Session.Derive(false);
+
+            Assert.NotEqual(new ShipmentStates(this.Session).Shipped, shipment.ShipmentState);
+
+            salesOrder.SalesOrderState = new SalesOrderStates(this.Session).InProcess;
+            this.Session.Derive(false);
+
+            Assert.Equal(new ShipmentStates(this.Session).Shipped, shipment.ShipmentState);
         }
     }
 

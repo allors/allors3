@@ -70,6 +70,46 @@ namespace Allors.Database.Domain
             }
         }
 
+        public string NextPurchaseReturnNumber(int year)
+        {
+            if (this.InternalOrganisation.PurchaseReturnSequence.Equals(new PurchaseReturnSequences(this.Strategy.Session).EnforcedSequence))
+            {
+                return string.Concat(this.PurchaseReturnNumberPrefix, this.PurchaseReturnNumberCounter.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearStoreSequenceNumbers == null)
+                {
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
+                }
+
+                return fiscalYearStoreSequenceNumbers.NextPurchaseReturnNumber(year);
+            }
+        }
+
+        public string NextDropShipmentNumber(int year)
+        {
+            if (this.InternalOrganisation.DropShipmentSequence.Equals(new DropShipmentSequences(this.Strategy.Session).EnforcedSequence))
+            {
+                return string.Concat(this.DropShipmentNumberPrefix, this.DropShipmentNumberCounter.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearStoreSequenceNumbers == null)
+                {
+                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Session).WithFiscalYear(year).Build();
+                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
+                }
+
+                return fiscalYearStoreSequenceNumbers.NextDropShipmentNumber(year);
+            }
+        }
+
         public string NextSalesOrderNumber(int year)
         {
             if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Session).EnforcedSequence))

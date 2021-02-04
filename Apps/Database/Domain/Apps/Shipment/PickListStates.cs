@@ -9,10 +9,10 @@ namespace Allors.Database.Domain
 
     public partial class PickListStates
     {
-        private static readonly Guid CreatedId = new Guid("E65872C0-AD3C-4802-A253-CF99F8209011");
-        private static readonly Guid PickedId = new Guid("93C6B430-91BD-4e6c-AC2C-C287F2A8021D");
-        private static readonly Guid CancelledId = new Guid("CD552AF5-E695-4329-BF87-5644C2EA98F3");
-        private static readonly Guid OnHoldId = new Guid("1733E2B0-48CA-4731-8F3C-93C6CF3A9543");
+        public static readonly Guid CreatedId = new Guid("E65872C0-AD3C-4802-A253-CF99F8209011");
+        public static readonly Guid PickedId = new Guid("93C6B430-91BD-4e6c-AC2C-C287F2A8021D");
+        public static readonly Guid CancelledId = new Guid("CD552AF5-E695-4329-BF87-5644C2EA98F3");
+        public static readonly Guid OnHoldId = new Guid("1733E2B0-48CA-4731-8F3C-93C6CF3A9543");
 
         private UniquelyIdentifiableCache<PickListState> cache;
 

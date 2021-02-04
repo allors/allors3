@@ -23,6 +23,6 @@ namespace Allors.Database.Domain
 
         public bool IsCancelled => Equals(this.UniqueId, ShipmentStates.CancelledId);
 
-        public bool IsOnHoldId => Equals(this.UniqueId, ShipmentStates.OnHoldId);
+        public bool IsOnHold => Equals(this.UniqueId, ShipmentStates.OnHoldId);
     }
 }
