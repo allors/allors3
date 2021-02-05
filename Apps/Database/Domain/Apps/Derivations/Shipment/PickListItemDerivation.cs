@@ -17,7 +17,9 @@ namespace Allors.Database.Domain
         public PickListItemDerivation(M m) : base(m, new Guid("7E5843FB-7D25-4D41-833B-077C1B83AAD1")) =>
             this.Patterns = new Pattern[]
             {
+                new ChangedPattern(this.M.PickListItem.Quantity),
                 new ChangedPattern(this.M.PickListItem.QuantityPicked),
+                new ChangedPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems} },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,10 +28,10 @@ namespace Allors.Database.Domain
             {
                 if (@this.Quantity > 0 && @this.QuantityPicked > @this.Quantity)
                 {
-                    cycle.Validation.AddError($"{@this} {this.M.PickListItem.QuantityPicked} {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
+                    cycle.Validation.AddError($"{@this}, {this.M.PickListItem.QuantityPicked}, {ErrorMessages.PickListItemQuantityMoreThanAllowed}");
                 }
 
-                if (@this.QuantityPicked > 0 && @this.ExistPickListWherePickListItem && @this.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Session()).Picked))
+                if (@this.QuantityPicked > 0 && @this.ExistPickListWherePickListItem && @this.PickListWherePickListItem.PickListState.IsPicked)
                 {
                     var quantityProcessed = @this.ItemIssuancesWherePickListItem.SelectMany(v => v.ShipmentItem.OrderShipmentsWhereShipmentItem).Sum(v => v.Quantity);
                     var diff = quantityProcessed - @this.QuantityPicked;
@@ -45,23 +47,13 @@ namespace Allors.Database.Domain
                                 {
                                     if (orderShipment.Quantity >= diff)
                                     {
-                                        new OrderShipmentBuilder(@this.Strategy.Session)
-                                            .WithOrderItem(salesOrderItem)
-                                            .WithShipmentItem(orderShipment.ShipmentItem)
-                                            .WithQuantity(diff * -1)
-                                            .Build();
-
+                                        orderShipment.Quantity -= diff;
                                         diff = 0;
                                     }
                                     else
                                     {
-                                        new OrderShipmentBuilder(@this.Strategy.Session)
-                                            .WithOrderItem(salesOrderItem)
-                                            .WithShipmentItem(orderShipment.ShipmentItem)
-                                            .WithQuantity(orderShipment.Quantity * -1)
-                                            .Build();
-
                                         diff -= orderShipment.Quantity;
+                                        orderShipment.Quantity = 0;
                                     }
                                 }
                             }

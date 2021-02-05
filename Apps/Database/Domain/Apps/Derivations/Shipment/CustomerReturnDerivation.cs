@@ -20,7 +20,6 @@ namespace Allors.Database.Domain
                 new ChangedPattern(m.CustomerReturn.ShipFromAddress),
                 new ChangedPattern(m.CustomerReturn.ShipToParty),
                 new ChangedPattern(m.CustomerReturn.ShipToAddress),
-                new ChangedPattern(m.CustomerReturn.ShipmentItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -45,11 +44,6 @@ namespace Allors.Database.Domain
                 if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
                 {
                     @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
-                }
-
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
-                {
-                    shipmentItem.Sync(@this);
                 }
             }
         }

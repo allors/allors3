@@ -36,5 +36,55 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
+
+        [Fact]
+        public void ChangedShipToPartyDeriveShipToAddress()
+        {
+            var shipment = new PurchaseReturnBuilder(this.Session)
+                .WithShipToParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToAddressDeriveShipToAddress()
+        {
+            var shipment = new PurchaseReturnBuilder(this.Session)
+                .WithShipToParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.RemoveShipToAddress();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipFromPartyDeriveShipFromAddress()
+        {
+            var shipment = new PurchaseReturnBuilder(this.Session)
+                .WithShipFromParty(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
+        }
+
+        [Fact]
+        public void ChangedShipFromAddressDeriveShipFromAddress()
+        {
+            var shipment = new PurchaseReturnBuilder(this.Session)
+                .WithShipFromParty(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.RemoveShipFromAddress();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
+        }
     }
 }

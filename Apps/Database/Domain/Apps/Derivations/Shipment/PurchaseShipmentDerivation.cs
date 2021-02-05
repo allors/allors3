@@ -17,26 +17,17 @@ namespace Allors.Database.Domain
         public PurchaseShipmentDerivation(M m) : base(m, new Guid("89A2FB27-6839-40D4-AFAB-79E25259B1C8")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.PurchaseShipment.ShipToParty),
-                new ChangedPattern(this.M.PurchaseShipment.ShipFromParty),
+                new ChangedPattern(m.PurchaseShipment.ShipFromParty),
+                new ChangedPattern(m.PurchaseShipment.ShipFromAddress),
+                new ChangedPattern(m.PurchaseShipment.ShipToParty),
+                new ChangedPattern(m.PurchaseShipment.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<PurchaseShipment>())
             {
-                cycle.Validation.AssertExists(@this, @this.Meta.ShipFromParty);
-
-                var shipToParty = @this.ShipToParty as InternalOrganisation;
-
-                @this.ShipToAddress ??= @this.ShipToParty?.ShippingAddress ?? @this.ShipToParty?.GeneralCorrespondence as PostalAddress;
-
-                if (!@this.ExistShipToFacility && shipToParty != null && shipToParty.StoresWhereInternalOrganisation.Count == 1)
-                {
-                    @this.ShipToFacility = shipToParty.StoresWhereInternalOrganisation.Single().DefaultFacility;
-                }
-
-                if (!@this.ExistShipmentNumber && shipToParty != null)
+                if (!@this.ExistShipmentNumber && @this.ShipToParty is InternalOrganisation shipToParty)
                 {
                     var year = @this.Strategy.Session.Now().Year;
                     @this.ShipmentNumber = shipToParty.NextPurchaseShipmentNumber(year);
@@ -46,23 +37,11 @@ namespace Allors.Database.Domain
                     @this.SortableShipmentNumber = @this.Session().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
 
+                @this.ShipToAddress ??= @this.ShipToParty?.ShippingAddress ?? @this.ShipToParty?.GeneralCorrespondence as PostalAddress;
+
                 if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
                 {
                     @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
-                }
-
-                if (@this.ShipmentItems.Any()
-                    && @this.ShipmentItems.All(v => v.ExistShipmentReceiptWhereShipmentItem
-                    && v.ShipmentReceiptWhereShipmentItem.QuantityAccepted.Equals(v.ShipmentReceiptWhereShipmentItem.OrderItem?.QuantityOrdered))
-                    && @this.ShipmentItems.All(v => v.ShipmentItemState.Equals(new ShipmentItemStates(@this.Strategy.Session).Received)))
-                {
-                    @this.ShipmentState = new ShipmentStates(@this.Strategy.Session).Received;
-                }
-
-                // session.Prefetch(this.SyncPrefetch, this);
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
-                {
-                    shipmentItem.Sync(@this);
                 }
             }
         }

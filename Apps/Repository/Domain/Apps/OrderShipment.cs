@@ -5,15 +5,42 @@
 
 namespace Allors.Repository
 {
+    using System;
     using Attributes;
     using static Workspaces;
 
     #region Allors
     [Id("00be6409-1ca0-491e-b0a1-3d53e17005f6")]
     #endregion
-    public partial class OrderShipment : Deletable
+    public partial class OrderShipment : Deletable, Versioned
     {
         #region inherited properties
+
+        public User CreatedBy { get; set; }
+
+        public User LastModifiedBy { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public DateTime LastModifiedDate { get; set; }
+        #endregion
+
+        #region Versioning
+        #region Allors
+        [Id("338e45dd-b6cb-4ca7-9c96-8e57841ac3b0")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        public OrderShipmentVersion CurrentVersion { get; set; }
+
+        #region Allors
+        [Id("62bbe594-f05a-4658-83eb-af0fe03cb844")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public OrderShipmentVersion[] AllVersions { get; set; }
         #endregion
 
         #region Allors

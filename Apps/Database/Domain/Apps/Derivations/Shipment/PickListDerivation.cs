@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
         public PickListDerivation(M m) : base(m, new Guid("8D9F3C91-DBA7-44AA-AA60-C1A58CAFDF0D")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.PickList.PickListItems),
+                new ChangedPattern(m.PickList.Store),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,26 +26,6 @@ namespace Allors.Database.Domain
                 if (@this.Store.IsImmediatelyPicked)
                 {
                     @this.SetPicked();
-
-                    foreach (PickListItem pickListItem in @this.PickListItems)
-                    {
-                        foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
-                        {
-                            var shipment = itemIssuance.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
-                            var package = shipment?.ShipmentPackages.FirstOrDefault();
-
-                            if (@this.Store.AutoGenerateShipmentPackage
-                                && package != null
-                                && package.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)
-                            {
-                                package.AddPackagingContent(
-                                    new PackagingContentBuilder(@this.Strategy.Session)
-                                        .WithShipmentItem(itemIssuance.ShipmentItem)
-                                        .WithQuantity(itemIssuance.Quantity)
-                                        .Build());
-                            }
-                        }
-                    }
                 }
             }
         }

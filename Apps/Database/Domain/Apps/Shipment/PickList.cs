@@ -70,17 +70,6 @@ namespace Allors.Database.Domain
 
         public void AppsContinue(PickListContinue method) => this.PickListState = this.PreviousPickListState;
 
-        public void AppsSetPicked(PickListSetPicked method)
-        {
-            foreach (PickListItem pickListItem in this.PickListItems)
-            {
-                if (pickListItem.QuantityPicked == 0)
-                {
-                    pickListItem.QuantityPicked = pickListItem.Quantity;
-                }
-            }
-
-            this.PickListState = new PickListStates(this.Strategy.Session).Picked;
-        }
+        public void AppsSetPicked(PickListSetPicked method) => this.PickListState = new PickListStates(this.Strategy.Session).Picked;
     }
 }

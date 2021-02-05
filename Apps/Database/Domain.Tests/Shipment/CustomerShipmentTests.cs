@@ -1472,19 +1472,6 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(shipmentItem.ExistShipmentItemBillingsWhereShipmentItem);
         }
-
-        [Fact]
-        public void ChangedShipmentItemsSyncshipmentItemSyncedShipment()
-        {
-            var shipment = new CustomerShipmentBuilder(this.Session).WithShipToParty(new PersonBuilder(this.Session).Build()).Build();
-            this.Session.Derive(false);
-
-            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(1).Build();
-            shipment.AddShipmentItem(shipmentItem);
-            this.Session.Derive(false);
-
-            Assert.Equal(shipment, shipmentItem.SyncedShipment);
-        }
     }
 
     public class CustomerShipmentStateDerivationTests : DomainTest, IClassFixture<Fixture>

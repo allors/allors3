@@ -6,6 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class PackagingContentTests : DomainTest, IClassFixture<Fixture>
@@ -122,6 +125,7 @@ namespace Allors.Database.Domain.Tests
             pickList.SetPicked();
 
             var package = new ShipmentPackageBuilder(this.Session).Build();
+            shipment.AddShipmentPackage(package);
             foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
             {
                 package.AddPackagingContent(new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
@@ -136,6 +140,71 @@ namespace Allors.Database.Domain.Tests
             {
                 Assert.Equal(shipmentItem.QuantityShipped, shipmentItem.Quantity);
             }
+        }
+    }
+
+    public class PackagingContentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PackagingContentDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPackagingContentShipmentItemThrowValidationError()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(10).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var packagingContent = new PackagingContentBuilder(this.Session).WithQuantity(11).Build();
+            this.Session.Derive(false);
+
+            packagingContent.ShipmentItem = shipmentItem;
+
+            var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedShipmentItemQuantityThrowValidationError()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(10).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var packagingContent = new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.Quantity = 9;
+
+            var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedShipmentItemQuantityShippedThrowValidationError()
+        {
+            var shipment = new CustomerShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithQuantity(10).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var packagingContent = new PackagingContentBuilder(this.Session).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.QuantityShipped = 1;
+
+            var expectedMessage = $"{packagingContent}, { this.M.PackagingContent.Quantity}, { ErrorMessages.PackagingContentMaximum}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }

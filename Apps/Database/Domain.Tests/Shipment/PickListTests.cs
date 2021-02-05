@@ -624,6 +624,21 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class PickListDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PickListDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedStoreDerivePickListState()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPicked = true;
+            var pickList = new PickListBuilder(this.Session).Build();
+            this.Session.Derive();
+
+            Assert.Equal(new PickListStates(this.Session).Picked, pickList.PickListState);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class PickListSecurityTests : DomainTest, IClassFixture<Fixture>
     {

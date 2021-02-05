@@ -35,7 +35,14 @@ namespace Allors.Database.Domain
             {
                 this.ShipToParty = internalOrganisations.First();
             }
+
+            if (!this.ExistShipToFacility && this.ExistShipToParty && this.ShipToParty is InternalOrganisation internalOrganisation)
+            {
+                this.ShipToFacility = internalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
+            }
         }
+
+        public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertExists(this, this.M.PurchaseShipment.ShipFromParty);
 
         public void AppsReceive(PurchaseShipmentReceive method)
         {

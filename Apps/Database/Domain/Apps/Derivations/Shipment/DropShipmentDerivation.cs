@@ -16,8 +16,10 @@ namespace Allors.Database.Domain
         public DropShipmentDerivation(M m) : base(m, new Guid("1B7E3857-425A-4946-AB63-15AEE196350D")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.DropShipment.Store),
-                new ChangedPattern(this.M.DropShipment.ShipToParty),
+                new ChangedPattern(m.DropShipment.ShipFromParty),
+                new ChangedPattern(m.DropShipment.ShipFromAddress),
+                new ChangedPattern(m.DropShipment.ShipToParty),
+                new ChangedPattern(m.DropShipment.ShipToAddress),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -42,12 +44,6 @@ namespace Allors.Database.Domain
                 if (!@this.ExistShipFromAddress && @this.ExistShipFromParty)
                 {
                     @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
-                }
-
-                // session.Prefetch(this.SyncPrefetch, this);
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
-                {
-                    shipmentItem.Sync(@this);
                 }
             }
         }

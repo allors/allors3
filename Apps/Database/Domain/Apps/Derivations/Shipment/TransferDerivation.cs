@@ -32,12 +32,6 @@ namespace Allors.Database.Domain
                 {
                     @this.ShipFromAddress = @this.ShipFromParty.ShippingAddress;
                 }
-
-                // session.Prefetch(this.SyncPrefetch, this);
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
-                {
-                    shipmentItem.Sync(@this);
-                }
             }
         }
     }

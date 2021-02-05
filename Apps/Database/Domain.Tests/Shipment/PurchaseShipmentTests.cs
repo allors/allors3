@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
+    using Allors.Database.Derivations;
     using Xunit;
 
     public class PurchaseShipmentTests : DomainTest, IClassFixture<Fixture>
@@ -180,6 +182,15 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(shippingAddress.ContactMechanism, order.ShipToAddress);
         }
+
+        [Fact]
+        public void OnCreatedThrowValidationError()
+        {
+            new PurchaseShipmentBuilder(this.Session).Build();
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("PurchaseShipment.ShipFromParty is required"));
+        }
     }
 
     public class PurchaseShipmentDerivationTests : DomainTest, IClassFixture<Fixture>
@@ -206,6 +217,102 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
+        }
+
+        [Fact]
+        public void ChangedShipToPartyDeriveShipToAddress()
+        {
+            var shipment = new PurchaseShipmentBuilder(this.Session)
+                .WithShipToParty(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToAddressDeriveShipToAddress()
+        {
+            var shipment = new PurchaseShipmentBuilder(this.Session)
+                .WithShipToParty(this.InternalOrganisation)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.RemoveShipToAddress();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipFromPartyDeriveShipFromAddress()
+        {
+            var shipment = new PurchaseShipmentBuilder(this.Session)
+                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
+        }
+
+        [Fact]
+        public void ChangedShipFromAddressDeriveShipFromAddress()
+        {
+            var shipment = new PurchaseShipmentBuilder(this.Session)
+                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .Build();
+            this.Session.Derive(false);
+
+            shipment.RemoveShipFromAddress();
+            this.Session.Derive(false);
+
+            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
+        }
+    }
+
+    public class PurchaseShipmentStateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseShipmentStateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipmentReceiptQuantityAcceptedDeriveShipmentState()
+        {
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(10).Build();
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithShipmentItemState(new ShipmentItemStates(this.Session).Received).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
+            this.Session.Derive(false);
+
+            Assert.True(shipment.ShipmentState.IsReceived);
+        }
+
+        [Fact]
+        public void ChangedShipmentItemShipmentItemStateDeriveShipmentState()
+        {
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).WithQuantityOrdered(10).Build();
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Session).Received;
+            this.Session.Derive(false);
+
+            Assert.True(shipment.ShipmentState.IsReceived);
         }
     }
 }

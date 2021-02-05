@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.ShipmentPackage.SequenceNumber),
+                new ChangedPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -43,9 +44,29 @@ namespace Allors.Database.Domain
 
                 if (!@this.ExistDocuments)
                 {
-                    var name =
-                        $"Package {(@this.ExistSequenceNumber ? @this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
+                    var name = $"Package {(@this.ExistSequenceNumber ? @this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
                     @this.AddDocument(new PackagingSlipBuilder(@this.Strategy.Session).WithName(name).Build());
+                }
+
+                var shipment = @this.ShipmentWhereShipmentPackage as CustomerShipment;
+
+                if (shipment.Store.AutoGenerateShipmentPackage)
+                {
+                    foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
+                    {
+                        foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
+                        {
+                            if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.IsPicked
+                                && @this.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)
+                            {
+                                @this.AddPackagingContent(
+                                    new PackagingContentBuilder(@this.Strategy.Session)
+                                        .WithShipmentItem(itemIssuance.ShipmentItem)
+                                        .WithQuantity(itemIssuance.Quantity)
+                                        .Build());
+                            }
+                        }
+                    }
                 }
             }
         }

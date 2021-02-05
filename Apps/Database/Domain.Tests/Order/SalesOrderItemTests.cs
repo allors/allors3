@@ -1189,7 +1189,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(5)
                 .Build();
 
-            var expectedMessage = $"{orderShipment} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}";
+            var expectedMessage = $"{orderShipment}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
 

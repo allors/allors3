@@ -16,13 +16,19 @@ namespace Allors.Database.Domain
         public ShipmentDerivation(M m) : base(m, new Guid("C08727A3-808A-4CB1-B926-DA7432BAAC44")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.Shipment.ShipmentNumber),
+                new ChangedPattern(m.Shipment.DerivationTrigger),
+                new ChangedPattern(m.Shipment.ShipmentItems),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Shipment>())
             {
+                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
+                {
+                    shipmentItem.Sync(@this);
+                }
+
                 @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
             }
         }

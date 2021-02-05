@@ -6,7 +6,10 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class ShipmentItemTests : DomainTest, IClassFixture<Fixture>
@@ -30,11 +33,34 @@ namespace Allors.Database.Domain.Tests
             var shipmentItem = new ShipmentItemBuilder(this.Session).WithPart(good1.Part).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
 
-            var validation = this.Session.Derive(false);
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: ShipmentItem.UnitPurchasePrice"));
+        }
+    }
 
-            Assert.True(validation.HasErrors);
-            Assert.Single(validation.Errors);
-            Assert.Contains(this.M.ShipmentItem.UnitPurchasePrice, validation.Errors.First().RoleTypes);
+    public class ShipmentItemDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ShipmentItemDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void GivenPurchaseShipmentItemForNonSerialisedNotFromPurchaseOrder_WhenDerived_ThenUnitPurchasePriceIsRequired()
+        {
+            var good1 = new NonUnifiedGoods(this.Session).FindBy(this.M.Good.Name, "good1");
+
+            User user = this.Administrator;
+            this.Session.SetUser(user);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session)
+                .WithShipmentMethod(new ShipmentMethods(this.Session).Ground)
+                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithCreationDate(this.Session.Now())
+                .Build();
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithPart(good1.Part).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals("AssertExists: ShipmentItem.UnitPurchasePrice"));
         }
     }
 

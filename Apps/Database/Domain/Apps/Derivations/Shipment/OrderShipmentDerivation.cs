@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.OrderShipment.ShipmentItem),
+                new ChangedPattern(this.M.OrderShipment.OrderItem),
+                new ChangedPattern(this.M.OrderShipment.Quantity),
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,19 +28,14 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<OrderShipment>())
             {
-                if (@this.ShipmentItem.ShipmentWhereShipmentItem is CustomerShipment customerShipment && @this.OrderItem is SalesOrderItem salesOrderItem)
+                if (@this.ExistShipmentItem
+                    && @this.ExistOrderItem
+                    && @this.ShipmentItem.ShipmentWhereShipmentItem is CustomerShipment customerShipment && @this.OrderItem is SalesOrderItem salesOrderItem)
                 {
-                    var quantityPendingShipment = @this.OrderItem?.OrderShipmentsWhereOrderItem?
-                        .Where(v => v.ExistShipmentItem
-                                    && !((CustomerShipment)v.ShipmentItem.ShipmentWhereShipmentItem).ShipmentState.Equals(new ShipmentStates(@this.Session()).Shipped))
-                        .Sum(v => v.Quantity);
-
-                    if (salesOrderItem.QuantityPendingShipment > quantityPendingShipment)
+                    if (@this.ExistCurrentVersion && @this.CurrentVersion.Quantity > @this.Quantity)
                     {
-                        var diff = @this.Quantity * -1;
+                        var diff = @this.CurrentVersion.Quantity - @this.Quantity;
 
-                        // HACK: DerivedRoles
-                        (salesOrderItem).QuantityPendingShipment -= diff;
                         customerShipment.AppsOnDeriveQuantityDecreased(@this.ShipmentItem, salesOrderItem, diff);
                     }
 
@@ -54,17 +51,17 @@ namespace Allors.Database.Domain
 
                         if (salesOrderItem.ExistReservedFromNonSerialisedInventoryItem && @this.Quantity > salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityOnHand + quantityPicked)
                         {
-                            validation.AddError($"{@this} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
+                            validation.AddError($"{@this}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable}");
                         }
                         else if (@this.Quantity > salesOrderItem.QuantityOrdered)
                         {
-                            validation.AddError($"{@this} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
+                            validation.AddError($"{@this}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityOrdered}");
                         }
                         else
                         {
                             if (@this.Quantity > salesOrderItem.QuantityOrdered - salesOrderItem.QuantityShipped - pendingFromOthers + salesOrderItem.QuantityReturned + quantityPicked)
                             {
-                                validation.AddError($"{@this} {this.M.OrderShipment.Quantity} {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
+                                validation.AddError($"{@this}, {this.M.OrderShipment.Quantity}, {ErrorMessages.SalesOrderItemQuantityToShipNowIsLargerThanQuantityRemaining}");
                             }
                         }
                     }

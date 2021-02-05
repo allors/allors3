@@ -18,7 +18,10 @@ namespace Allors.Database.Domain
         public ShipmentItemDerivation(M m) : base(m, new Guid("472FF004-E087-4237-8BE4-D9B9194D3BB3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(this.M.OrderShipment.Quantity) { Steps =  new IPropertyType[] {m.OrderShipment.ShipmentItem} },
+                new ChangedPattern(m.OrderShipment.Quantity) { Steps = new IPropertyType[] {m.OrderShipment.ShipmentItem } },
+                new ChangedPattern(m.ItemIssuance.Quantity) { Steps = new IPropertyType[] {m.ItemIssuance.ShipmentItem } },
+                new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] {m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem } },
+                new ChangedPattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +30,8 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ShipmentItem>())
             {
-                if ((@this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(CustomerShipment).Name) || @this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(PurchaseReturn).Name))
+                if (@this.ExistShipmentWhereShipmentItem
+                    && (@this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(CustomerShipment).Name) || @this.ShipmentWhereShipmentItem.GetType().Name.Equals(typeof(PurchaseReturn).Name))
                     && @this.ExistSerialisedItem
                     && !@this.ExistNextSerialisedItemAvailability)
                 {
@@ -39,19 +43,18 @@ namespace Allors.Database.Domain
                     validation.AddError($"{@this} {@this.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
                 }
 
-                // AppsOnDeriveCustomerShipmentItem
                 if (@this.ShipmentWhereShipmentItem is CustomerShipment)
                 {
                     @this.QuantityPicked = 0;
                     foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWhereShipmentItem)
                     {
-                        if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Strategy.Session).Picked))
+                        if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.IsPicked)
                         {
                             @this.QuantityPicked += itemIssuance.Quantity;
                         }
                     }
 
-                    if (Equals(@this.ShipmentWhereShipmentItem.ShipmentState, new ShipmentStates(@this.Strategy.Session).Shipped))
+                    if (@this.ShipmentWhereShipmentItem.ShipmentState.IsShipped)
                     {
                         @this.QuantityShipped = 0;
                         foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWhereShipmentItem)
@@ -61,7 +64,6 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                // AppsOnDeriveCustomerShipmentItem
                 if (@this.ExistShipmentWhereShipmentItem
                     && @this.ShipmentWhereShipmentItem is PurchaseShipment
                     && @this.ExistPart
@@ -89,8 +91,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        //TODO fixs
-        //void Sync(Shipment shipment) => this.SyncedShipment = shipment;
     }
 }

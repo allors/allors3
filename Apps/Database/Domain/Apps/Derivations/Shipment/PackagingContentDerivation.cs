@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.PackagingContent.ShipmentItem),
+            new ChangedPattern(this.M.ShipmentItem.Quantity) { Steps = new IPropertyType[] { m.ShipmentItem.PackagingContentsWhereShipmentItem } },
+            new ChangedPattern(this.M.ShipmentItem.QuantityShipped) { Steps = new IPropertyType[] { m.ShipmentItem.PackagingContentsWhereShipmentItem } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -26,12 +28,15 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PackagingContent>())
             {
-                if (@this.ExistQuantity && @this.ExistShipmentItem)
+                if (@this.ExistQuantity
+                    && @this.ExistShipmentItem
+                    && @this.ShipmentItem.ExistShipmentWhereShipmentItem
+                    && !@this.ShipmentItem.ShipmentWhereShipmentItem.ShipmentState.IsShipped)
                 {
                     var maxQuantity = @this.ShipmentItem.Quantity - @this.ShipmentItem.QuantityShipped;
                     if (@this.Quantity == 0 || @this.Quantity > maxQuantity)
                     {
-                        validation.AddError($"{@this} {this.M.PackagingContent.Quantity} {ErrorMessages.PackagingContentMaximum}");
+                        validation.AddError($"{@this}, {this.M.PackagingContent.Quantity}, {ErrorMessages.PackagingContentMaximum}");
                     }
                 }
             }
