@@ -1,4 +1,5 @@
 module.exports = {
+  displayName: 'client-tests',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,16 +11,4 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/client/tests',
-  reporters: [
-    'default',
-    [
-      'jest-trx-results-processor',
-      {
-        outputFile: '../../../artifacts/tests/core.client.trx',
-      },
-    ],
-  ],
-  displayName: 'client-tests',
-  // --runInBand
-  maxWorkers: 1,
 };

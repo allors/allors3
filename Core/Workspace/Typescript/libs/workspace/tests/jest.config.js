@@ -1,4 +1,5 @@
 module.exports = {
+  displayName: 'workspace-tests',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,14 +11,4 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/workspace/tests',
-  reporters: [
-    'default',
-    [
-      'jest-trx-results-processor',
-      {
-        outputFile: '../../../artifacts/tests/core.workspace.memory.trx',
-      },
-    ],
-  ],
-  displayName: 'workspace-tests',
 };

@@ -1,1 +1,1 @@
-export { MemoryDatabase } from './Remote/Database';
+export { MemoryDatabase } from './lib/Remote/Database';

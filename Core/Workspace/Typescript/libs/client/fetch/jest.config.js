@@ -1,4 +1,5 @@
 module.exports = {
+  displayName: 'client-fetch',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,5 +11,4 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/client/fetch',
-  displayName: 'client-fetch',
 };
