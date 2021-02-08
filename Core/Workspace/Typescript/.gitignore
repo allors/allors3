@@ -37,3 +37,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+/apps/gatsby/node_modules
+/apps/gatsby/public
+/apps/gatsby/.cache

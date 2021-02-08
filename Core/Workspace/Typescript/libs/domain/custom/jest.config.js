@@ -1,4 +1,5 @@
 module.exports = {
+  displayName: 'domain-custom',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,14 +11,4 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/domain/custom',
-  reporters: [
-    'default',
-    [
-      'jest-trx-results-processor',
-      {
-        outputFile: '../../../artifacts/tests/core.domain.trx',
-      },
-    ],
-  ],
-  displayName: 'domain-custom',
 };

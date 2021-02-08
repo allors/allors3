@@ -1,73 +1,36 @@
 {
   "npmScope": "allors",
-  "affected": {
-    "defaultBase": "master"
-  },
+  "affected": { "defaultBase": "master" },
   "implicitDependencies": {
     "workspace.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
-    "nx.json": "*",
-    ".eslintrc.json": "*"
+    ".eslintrc.json": "*",
+    "nx.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
     }
   },
   "projects": {
-    "react": {
-      "tags": []
-    },
-    "react-e2e": {
-      "tags": [],
-      "implicitDependencies": ["react"]
-    },
-    "domain-custom": {
-      "tags": []
-    },
-    "workspace-memory": {
-      "tags": []
-    },
-    "workspace-tests": {
-      "tags": []
-    },
-    "client-tests": {
-      "tags": []
-    },
-    "client-fetch": {
-      "tags": []
-    },
-    "meta-tests": {
-      "tags": []
-    },
-    "domain-generated": {
-      "tags": []
-    },
-    "meta-generated": {
-      "tags": []
-    },
-    "data-core": {
-      "tags": []
-    },
-    "meta-core": {
-      "tags": []
-    },
-    "protocol-core": {
-      "tags": []
-    },
-    "workspace-core": {
-      "tags": []
-    },
-    "domain-core": {
-      "tags": []
-    }
+    "angular-app": { "tags": [] },
+    "angular-material-app": { "tags": [] },
+    "gatsby": { "tags": [] },
+    "client-fetch": { "tags": [] },
+    "client-tests": { "tags": [] },
+    "data-core": { "tags": [] },
+    "domain-core": { "tags": [] },
+    "domain-custom": { "tags": [] },
+    "domain-generated": { "tags": [] },
+    "meta-core": { "tags": [] },
+    "meta-generated": { "tags": [] },
+    "meta-tests": { "tags": [] },
+    "protocol-core": { "tags": [] },
+    "workspace-core": { "tags": [] },
+    "workspace-memory": { "tags": [] },
+    "workspace-tests": { "tags": [] }
   }
 }
