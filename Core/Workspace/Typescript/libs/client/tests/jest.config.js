@@ -11,4 +11,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/client/tests',
+  // Allors: --runInBand
+  maxWorkers: 1,
 };

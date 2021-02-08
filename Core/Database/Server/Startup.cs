@@ -119,7 +119,7 @@ namespace Allors.Server
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "allors/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllers();
             });
         }
