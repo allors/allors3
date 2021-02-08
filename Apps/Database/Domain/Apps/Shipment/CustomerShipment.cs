@@ -24,10 +24,10 @@ namespace Allors.Database.Domain
                     return false;
                 }
 
-                var picklists = this.ShipToParty.PickListsWhereShipToParty;
-                picklists.Filter.AddEquals(this.M.PickList.Store, this.Store);
-                picklists.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Strategy.Session).Picked);
-                if (picklists.First != null)
+                var picklists = this.ShipToParty?.PickListsWhereShipToParty;
+                picklists?.Filter.AddEquals(this.M.PickList.Store, this.Store);
+                picklists?.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Strategy.Session).Picked);
+                if (picklists?.First != null)
                 {
                     return false;
                 }

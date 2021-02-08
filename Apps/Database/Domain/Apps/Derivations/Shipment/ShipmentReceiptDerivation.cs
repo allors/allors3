@@ -17,14 +17,17 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(this.M.ShipmentReceipt.ShipmentItem),
+                new ChangedPattern(this.M.ShipmentReceipt.OrderItem),
+                new ChangedPattern(this.M.ShipmentReceipt.QuantityAccepted),
+                new ChangedPattern(this.M.ShipmentReceipt.Facility),
+                new ChangedPattern(this.M.ShipmentItem.SerialisedItem) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
+                new ChangedPattern(this.M.ShipmentItem.Part) { Steps = new IPropertyType[] { m.ShipmentItem.ShipmentReceiptWhereShipmentItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<ShipmentReceipt>())
             {
-                @this.ReceivedDateTime = @this.ReceivedDateTime.Date;
-
                 if (@this.ExistOrderItem && @this.ExistShipmentItem)
                 {
                     var orderShipmentsWhereShipmentItem = @this.ShipmentItem.OrderShipmentsWhereShipmentItem;
@@ -44,7 +47,6 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                // AppsOnDeriveInventoryItem
                 if (@this.ExistShipmentItem && @this.ExistFacility)
                 {
                     if (@this.ShipmentItem.ExistSerialisedItem)
@@ -64,7 +66,8 @@ namespace Allors.Database.Domain
                                 .Build();
                         }
                     }
-                    else
+
+                    if (@this.ShipmentItem.ExistPart && @this.ShipmentItem.Part.InventoryItemKind.IsNonSerialised)
                     {
                         var inventoryItems = @this.ShipmentItem.Part.InventoryItemsWherePart;
                         inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.Facility);

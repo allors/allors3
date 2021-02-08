@@ -19,29 +19,13 @@ namespace Allors.Database.Domain
             {
                 new ChangedPattern(this.M.ShipmentPackage.SequenceNumber),
                 new ChangedPattern(this.M.PickList.PickListState) { Steps = new IPropertyType[] { m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
+                new ChangedPattern(this.M.ItemIssuance.ShipmentItem) { Steps = new IPropertyType[] { m.ItemIssuance.ShipmentItem, m.ShipmentItem.ShipmentWhereShipmentItem, m.Shipment.ShipmentPackages } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<ShipmentPackage>())
             {
-                var highestNumber = 0;
-                if (@this.ExistShipmentWhereShipmentPackage)
-                {
-                    foreach (ShipmentPackage shipmentPackageShipmentWhereShipmentPackage in @this.ShipmentWhereShipmentPackage.ShipmentPackages)
-                    {
-                        if (shipmentPackageShipmentWhereShipmentPackage.ExistSequenceNumber && shipmentPackageShipmentWhereShipmentPackage.SequenceNumber > highestNumber)
-                        {
-                            highestNumber = shipmentPackageShipmentWhereShipmentPackage.SequenceNumber;
-                        }
-                    }
-
-                    if (!@this.ExistSequenceNumber || @this.SequenceNumber == 0)
-                    {
-                        @this.SequenceNumber = highestNumber + 1;
-                    }
-                }
-
                 if (!@this.ExistDocuments)
                 {
                     var name = $"Package {(@this.ExistSequenceNumber ? @this.SequenceNumber.ToString(CultureInfo.InvariantCulture) : string.Empty)}";
@@ -50,7 +34,7 @@ namespace Allors.Database.Domain
 
                 var shipment = @this.ShipmentWhereShipmentPackage as CustomerShipment;
 
-                if (shipment.Store.AutoGenerateShipmentPackage)
+                if (shipment!= null && shipment.Store.AutoGenerateShipmentPackage)
                 {
                     foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
                     {

@@ -274,7 +274,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Quantity = 2;
 
-            var expectedMessage = $"{quoteItem} { this.M.QuoteItem.Quantity} { ErrorMessages.SerializedItemQuantity}";
+            var expectedMessage = $"{quoteItem}, { this.M.QuoteItem.Quantity}, { ErrorMessages.SerializedItemQuantity}";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Single(errors.FindAll(e => e.Message.Equals(expectedMessage)));
         }

@@ -18,10 +18,18 @@ namespace Allors.Database.Domain
         public ShipmentItemDerivation(M m) : base(m, new Guid("472FF004-E087-4237-8BE4-D9B9194D3BB3")) =>
             this.Patterns = new Pattern[]
             {
-                new ChangedPattern(m.OrderShipment.Quantity) { Steps = new IPropertyType[] {m.OrderShipment.ShipmentItem } },
+                new ChangedPattern(m.ShipmentItem.NextSerialisedItemAvailability),
+                new ChangedPattern(m.ShipmentItem.SerialisedItem),
+                new ChangedPattern(m.ShipmentItem.Quantity),
+                new ChangedPattern(m.ShipmentItem.UnitPurchasePrice),
+                new ChangedPattern(m.ShipmentItem.Part),
+                new ChangedPattern(m.ShipmentItem.StoredInFacility),
                 new ChangedPattern(m.ItemIssuance.Quantity) { Steps = new IPropertyType[] {m.ItemIssuance.ShipmentItem } },
                 new ChangedPattern(m.PickList.PickListState) { Steps = new IPropertyType[] {m.PickList.PickListItems, m.PickListItem.ItemIssuancesWherePickListItem, m.ItemIssuance.ShipmentItem } },
                 new ChangedPattern(m.Shipment.ShipmentState) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
+                new ChangedPattern(m.Shipment.ShipToFacility) { Steps = new IPropertyType[] {m.Shipment.ShipmentItems } },
+                new ChangedPattern(m.ShipmentReceipt.QuantityAccepted) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
+                new ChangedPattern(m.ShipmentReceipt.QuantityRejected) { Steps = new IPropertyType[] {m.ShipmentReceipt.ShipmentItem } },
             };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -40,7 +48,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSerialisedItem && @this.Quantity != 1)
                 {
-                    validation.AddError($"{@this} {@this.Meta.Quantity} {ErrorMessages.SerializedItemQuantity}");
+                    validation.AddError($"{@this}, {@this.Meta.Quantity}, {ErrorMessages.SerializedItemQuantity}");
                 }
 
                 if (@this.ShipmentWhereShipmentItem is CustomerShipment)
@@ -85,9 +93,14 @@ namespace Allors.Database.Domain
                     && @this.ShipmentWhereShipmentItem is PurchaseShipment
                     && @this.ExistShipmentReceiptWhereShipmentItem)
                 {
-                    @this.Quantity = 0;
+                    var quantity = 0M;
                     var shipmentReceipt = @this.ShipmentReceiptWhereShipmentItem;
-                    @this.Quantity += shipmentReceipt.QuantityAccepted + shipmentReceipt.QuantityRejected;
+                    quantity += shipmentReceipt.QuantityAccepted + shipmentReceipt.QuantityRejected;
+
+                    if (quantity != @this.Quantity)
+                    {
+                        @this.Quantity = quantity;
+                    }
                 }
             }
         }

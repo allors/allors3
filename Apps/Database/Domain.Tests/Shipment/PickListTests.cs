@@ -155,7 +155,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(97, good1Inventory.QuantityOnHand);
             Assert.Equal(0, good1Inventory.QuantityCommittedOut);
             Assert.Equal(96, good2Inventory.QuantityOnHand);
-            Assert.Equal(0, good2Inventory.QuantityCommittedOut);
+            Assert.Equal(1, good2Inventory.QuantityCommittedOut);
         }
 
         [Fact]

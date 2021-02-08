@@ -212,7 +212,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Quantity = 2;
 
-            var expectedMessage = $"{requestItem} { this.M.RequestItem.Quantity} { ErrorMessages.SerializedItemQuantity}";
+            var expectedMessage = $"{requestItem}, { this.M.RequestItem.Quantity}, { ErrorMessages.SerializedItemQuantity}";
             var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
             Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }

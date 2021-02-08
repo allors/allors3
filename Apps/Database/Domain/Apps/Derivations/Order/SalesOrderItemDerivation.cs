@@ -125,7 +125,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSerialisedItem && @this.QuantityOrdered != 1)
                 {
-                    validation.AddError($"{@this} {@this.Meta.QuantityOrdered} {ErrorMessages.SerializedItemQuantity}");
+                    validation.AddError($"{@this}, {@this.Meta.QuantityOrdered}, {ErrorMessages.SerializedItemQuantity}");
                 }
 
                 if (@this.IsValid && @this.Part != null && salesOrder?.TakenBy != null)

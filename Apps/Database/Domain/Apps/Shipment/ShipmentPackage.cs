@@ -28,5 +28,22 @@ namespace Allors.Database.Domain
                 this.CreationDate = this.Session().Now();
             }
         }
+
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            var highestNumber = 0;
+            if (this.ExistShipmentWhereShipmentPackage)
+            {
+                foreach (ShipmentPackage shipmentPackageShipmentWhereShipmentPackage in this.ShipmentWhereShipmentPackage.ShipmentPackages)
+                {
+                    if (shipmentPackageShipmentWhereShipmentPackage.ExistSequenceNumber && shipmentPackageShipmentWhereShipmentPackage.SequenceNumber > highestNumber)
+                    {
+                        highestNumber = shipmentPackageShipmentWhereShipmentPackage.SequenceNumber;
+                    }
+                }
+
+                this.SequenceNumber = highestNumber + 1;
+            }
+        }
     }
 }
