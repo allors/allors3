@@ -63,6 +63,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
 
             var package = new ShipmentPackageBuilder(this.Session).Build();
+            shipment.AddShipmentPackage(package);
             package.AddPackagingContent(new PackagingContentBuilder(this.Session)
                                             .WithShipmentItem(shipment.ShipmentItems[0])
                                             .WithQuantity(shipment.ShipmentItems[0].Quantity + 1)

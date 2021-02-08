@@ -244,4 +244,169 @@ namespace Allors.Database.Domain.Tests
             this.Session.Rollback();
         }
     }
+
+    public class ShipmentReceiptDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ShipmentReceiptDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedShipmentReceiptShipmentItemCreateOrderShipment()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var receipt = new ShipmentReceiptBuilder(this.Session).WithOrderItem(orderItem).Build();
+            this.Session.Derive(false);
+
+            receipt.ShipmentItem = shipmentItem;
+            this.Session.Derive(false);
+
+            Assert.True(shipmentItem.ExistOrderShipmentsWhereShipmentItem);
+        }
+
+        [Fact]
+        public void ChangedShipmentReceiptOrderItemCreateOrderShipment()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var receipt = new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).Build();
+            this.Session.Derive(false);
+
+            receipt.OrderItem = orderItem;
+            this.Session.Derive(false);
+
+            Assert.True(shipmentItem.ExistOrderShipmentsWhereShipmentItem);
+        }
+
+        [Fact]
+        public void ChangedQuantityAcceptedDeriveOrderShipmentQuantity()
+        {
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).Build();
+            this.Session.Derive(false);
+
+            shipmentReceipt.QuantityAccepted = 2;
+            this.Session.Derive(false);
+
+            var orderShipment = shipmentItem.OrderShipmentsWhereShipmentItem.First;
+            Assert.Equal(2, orderShipment.Quantity);
+        }
+
+        [Fact]
+        public void ChangedFacilityDeriveInventoryItem()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithPart(part).WithSerialisedItem(new SerialisedItemBuilder(this.Session).Build()).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).Build();
+            this.Session.Derive(false);
+
+            shipmentReceipt.Facility = this.InternalOrganisation.FacilitiesWhereOwner.First;
+            this.Session.Derive(false);
+
+            Assert.True(shipmentReceipt.ExistInventoryItem);
+        }
+
+        [Fact]
+        public void ChangedSerialisedItemDeriveInventoryItem()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).Serialised).WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).WithPart(part).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(shipmentReceipt.ExistInventoryItem);
+        }
+
+        [Fact]
+        public void ChangedPartDeriveInventoryItem()
+        {
+            var part = new UnifiedGoodBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece).Build();
+            var order = new PurchaseOrderBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Session).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Session.Derive(false);
+
+            var shipment = new PurchaseShipmentBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var shipmentItem = new ShipmentItemBuilder(this.Session).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Session.Derive(false);
+
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Session).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).Build();
+            this.Session.Derive(false);
+
+            shipmentItem.Part = part;
+            this.Session.Derive(false);
+
+            Assert.True(shipmentReceipt.ExistInventoryItem);
+        }
+    }
 }

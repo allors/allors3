@@ -119,7 +119,6 @@ namespace Allors.Database.Domain
                 new PurchaseShipmentDerivation(m),
                 new PurchaseShipmentStateDerivation(m),
                 new ShipmentPackageDerivation(m),
-                new ShipmentValueDerivation(m),
                 new PickListItemDerivation(m),
                 new PickListItemQuantityPickedDerivation(m),
                 new PickListDerivation(m),
