@@ -28,7 +28,9 @@
       "@allors/workspace/core": ["libs/workspace/core/src/index.ts"],
       "@allors/workspace/memory": ["libs/workspace/memory/src/index.ts"],
       "@allors/workspace/tests": ["libs/workspace/tests/src/index.ts"]
-    }
+    },
+    "preserveSymlinks": true,
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "tmp"]
 }

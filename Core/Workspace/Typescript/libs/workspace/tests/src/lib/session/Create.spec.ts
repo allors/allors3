@@ -7,6 +7,8 @@ import { data, Meta } from '@allors/meta/generated';
 
 import { extend } from '@allors/domain/custom';
 
+import 'jest-extended';
+
 describe('Session', () => {
   let session: Session;
   let session2: Session;

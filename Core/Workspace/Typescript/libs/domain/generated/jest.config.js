@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'client-tests',
+  displayName: 'domain-generated',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,7 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/client/tests',
-  // Allors: --runInBand
-  maxWorkers: 1,
+  coverageDirectory: '../../../coverage/libs/domain/generated',
 };
