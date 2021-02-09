@@ -18,8 +18,15 @@ namespace Allors.Database.Domain
         public WorkTaskDerivation(M m) : base(m, new Guid("12794dc5-8a79-4983-b480-4324602ae717")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.WorkTask.TransitionalDeniedPermissions),
-            new ChangedPattern(this.M.WorkTask.TakenBy),
+            new ChangedPattern(m.WorkTask.TakenBy),
+            new ChangedPattern(m.WorkTask.ExecutedBy),
+            new ChangedPattern(m.WorkTask.ActualStart),
+            new ChangedPattern(m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new ChangedPattern(m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new ChangedPattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
+            new ChangedPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
+            new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -53,15 +60,74 @@ namespace Allors.Database.Domain
                     @this.ExecutedBy = @this.TakenBy;
                 }
 
-                VerifyWorkEffortPartyAssignments(@this, validation);
-                DeriveActualHoursAndDates(@this);
+                foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
+                {
+                    if (serviceEntry is TimeEntry timeEntry)
+                    {
+                        var from = timeEntry.FromDate;
+                        var through = timeEntry.ThroughDate;
+                        var worker = timeEntry.TimeSheetWhereTimeEntry?.Worker;
+                        var facility = timeEntry.WorkEffort.Facility;
+
+                        var matchingAssignment = @this.WorkEffortPartyAssignmentsWhereAssignment.FirstOrDefault
+                            (a => a.Assignment.Equals(@this)
+                            && a.Party.Equals(worker)
+                            && ((a.ExistFacility && a.Facility.Equals(facility)) || (!a.ExistFacility && facility == null))
+                            && (!a.ExistFromDate || (a.ExistFromDate && (a.FromDate <= from)))
+                            && (!a.ExistThroughDate || (a.ExistThroughDate && (a.ThroughDate >= through))));
+
+                        if (matchingAssignment == null)
+                        {
+                            if (@this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true)
+                            {
+                                var message = $"No Work Effort Party Assignment matches Worker: {worker}, Facility: {facility}" +
+                                    $", Work Effort: {@this}, From: {from}, Through {through}";
+                                validation.AddError($"{@this}, {@this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment}, {message}");
+                            }
+                            else if (worker != null) // Sync a new WorkEffortPartyAssignment
+                            {
+                                new WorkEffortPartyAssignmentBuilder(@this.Strategy.Session)
+                                    .WithAssignment(@this)
+                                    .WithParty(worker)
+                                    .WithFacility(facility)
+                                    .Build();
+                            }
+                        }
+                    }
+                }
+
+                @this.ActualHours = 0M;
+
+                foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
+                {
+                    if (serviceEntry is TimeEntry timeEntry)
+                    {
+                        @this.ActualHours += timeEntry.ActualHours;
+
+                        if (!@this.ExistActualStart)
+                        {
+                            @this.ActualStart = timeEntry.FromDate;
+                        }
+                        else if (timeEntry.FromDate < @this.ActualStart)
+                        {
+                            @this.ActualStart = timeEntry.FromDate;
+                        }
+
+                        if (!@this.ExistActualCompletion)
+                        {
+                            @this.ActualCompletion = timeEntry.ThroughDate;
+                        }
+                        else if (timeEntry.ThroughDate > @this.ActualCompletion)
+                        {
+                            @this.ActualCompletion = timeEntry.ThroughDate;
+                        }
+                    }
+                }
 
                 if (@this.ExistActualStart && @this.WorkEffortState.IsCreated)
                 {
                     @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).InProgress;
                 }
-
-                DeriveCanInvoice(@this);
 
                 if (@this.WorkEffortState.IsFinished && @this.CanInvoice)
                 {
@@ -78,65 +144,6 @@ namespace Allors.Database.Domain
                     foreach (InventoryTransactionReason cancelReason in @this.WorkEffortState.InventoryTransactionReasonsToCancel)
                     {
                         SyncInventoryTransactions(validation,inventoryAssignment, inventoryAssignment.InventoryItem, inventoryAssignment.Quantity, cancelReason, true);
-                    }
-                }
-
-                static void DeriveCanInvoice(WorkEffort @this)
-                {
-                    // when proforma invoice is deleted then WorkEffortBillingsWhereWorkEffort do not exist and WorkEffortState is Finished
-                    if (@this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed)
-                        || @this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Finished))
-                    {
-                        @this.CanInvoice = true;
-
-                        if (@this.ExecutedBy.Equals(@this.Customer))
-                        {
-                            @this.CanInvoice = false;
-                        }
-
-                        if (@this.ExistWorkEffortBillingsWhereWorkEffort)
-                        {
-                            @this.CanInvoice = false;
-                        }
-
-                        if (@this.CanInvoice)
-                        {
-                            foreach (TimeEntry timeEntry in @this.ServiceEntriesWhereWorkEffort)
-                            {
-                                if (!timeEntry.ExistThroughDate)
-                                {
-                                    @this.CanInvoice = false;
-                                    break;
-                                }
-
-                                if (timeEntry.ExistTimeEntryBillingsWhereTimeEntry)
-                                {
-                                    @this.CanInvoice = false;
-                                }
-                            }
-                        }
-
-                        if (@this.ExistWorkEffortWhereChild)
-                        {
-                            @this.CanInvoice = false;
-                        }
-
-                        if (@this.CanInvoice)
-                        {
-                            foreach (WorkEffort child in @this.Children)
-                            {
-                                if (!(child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed)
-                                    || child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Finished)))
-                                {
-                                    @this.CanInvoice = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        @this.CanInvoice = false;
                     }
                 }
 
@@ -175,81 +182,6 @@ namespace Allors.Database.Domain
                             .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
                             .WithReason(reason)
                             .Build());
-                    }
-                }
-
-                static void DeriveActualHoursAndDates(WorkEffort @this)
-                {
-                    @this.ActualHours = 0M;
-
-                    foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
-                    {
-                        if (serviceEntry is TimeEntry timeEntry)
-                        {
-                            @this.ActualHours += timeEntry.ActualHours;
-
-                            if (!@this.ExistActualStart)
-                            {
-                                @this.ActualStart = timeEntry.FromDate;
-                            }
-                            else if (timeEntry.FromDate < @this.ActualStart)
-                            {
-                                @this.ActualStart = timeEntry.FromDate;
-                            }
-
-                            if (!@this.ExistActualCompletion)
-                            {
-                                @this.ActualCompletion = timeEntry.ThroughDate;
-                            }
-                            else if (timeEntry.ThroughDate > @this.ActualCompletion)
-                            {
-                                @this.ActualCompletion = timeEntry.ThroughDate;
-                            }
-                        }
-                    }
-                }
-
-                static void VerifyWorkEffortPartyAssignments(WorkEffort @this, IDomainValidation validation)
-                {
-                    var m = @this.Strategy.Session.Database.Context().M;
-
-                    var existingAssignmentRequired = @this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true;
-                    var existingAssignments = @this.WorkEffortPartyAssignmentsWhereAssignment.ToArray();
-
-                    foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
-                    {
-                        if (serviceEntry is TimeEntry timeEntry)
-                        {
-                            var from = timeEntry.FromDate;
-                            var through = timeEntry.ThroughDate;
-                            var worker = timeEntry.TimeSheetWhereTimeEntry?.Worker;
-                            var facility = timeEntry.WorkEffort.Facility;
-
-                            var matchingAssignment = existingAssignments.FirstOrDefault
-                                (a => a.Assignment.Equals(@this)
-                                && a.Party.Equals(worker)
-                                && ((a.ExistFacility && a.Facility.Equals(facility)) || (!a.ExistFacility && facility == null))
-                                && (!a.ExistFromDate || (a.ExistFromDate && (a.FromDate <= from)))
-                                && (!a.ExistThroughDate || (a.ExistThroughDate && (a.ThroughDate >= through))));
-
-                            if (matchingAssignment == null)
-                            {
-                                if (existingAssignmentRequired)
-                                {
-                                    var message = $"No Work Effort Party Assignment matches Worker: {worker}, Facility: {facility}" +
-                                        $", Work Effort: {@this}, From: {from}, Through {through}";
-                                    validation.AddError($"{@this}, {m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment}, {message}");
-                                }
-                                else if (worker != null) // Sync a new WorkEffortPartyAssignment
-                                {
-                                    new WorkEffortPartyAssignmentBuilder(@this.Strategy.Session)
-                                        .WithAssignment(@this)
-                                        .WithParty(worker)
-                                        .WithFacility(facility)
-                                        .Build();
-                                }
-                            }
-                        }
                     }
                 }
             }

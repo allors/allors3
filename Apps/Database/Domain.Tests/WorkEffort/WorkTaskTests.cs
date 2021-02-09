@@ -7,7 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class WorkTaskTests : DomainTest, IClassFixture<Fixture>
@@ -733,5 +736,301 @@ namespace Allors.Database.Domain.Tests
             .WithOrderItemFulfillment(salesOrderItem)
             .WithSpecialTerms("Net 45 Days")
             .Build();
+    }
+
+    public class WorkTaskDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkTaskDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedTakenByDeriveValidationError()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            workTask.TakenBy = new OrganisationBuilder(this.Session).WithIsInternalOrganisation(true).Build();
+
+            var expectedMessage = $"{workTask} { this.M.WorkTask.TakenBy} { ErrorMessages.InternalOrganisationChanged}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+
+        [Fact]
+        public void ChangedTakenByDeriveInvoiceNumber()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(workTask.ExistWorkEffortNumber);
+        }
+
+        [Fact]
+        public void ChangedTakenByDeriveSortableInvoiceNumber()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.True(workTask.ExistSortableWorkEffortNumber);
+        }
+
+        [Fact]
+        public void ChangedTakenByDeriveExecutedBy()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(workTask.TakenBy, workTask.ExecutedBy);
+        }
+
+        [Fact]
+        public void ChangedExecutedByDeriveExecutedBy()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            workTask.RemoveExecutedBy();
+            this.Session.Derive(false);
+
+            Assert.Equal(workTask.TakenBy, workTask.ExecutedBy);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryWorkEffortCreateWorkEffortPartyAssignment()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var worker = this.InternalOrganisation.ActiveEmployees.First;
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .WithWorker(worker)
+                .Build();
+            worker.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+            this.Session.Derive(false);
+
+            Assert.True(workTask.ExistWorkEffortPartyAssignmentsWhereAssignment);
+        }
+
+        [Fact]
+        public void ChangedTimesheetTimeEntryCreateWorkEffortPartyAssignment()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var worker = this.InternalOrganisation.ActiveEmployees.First;
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .WithWorker(worker)
+                .Build();
+            this.Session.Derive(false);
+
+            worker.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+            this.Session.Derive(false);
+
+            Assert.True(workTask.ExistWorkEffortPartyAssignmentsWhereAssignment);
+        }
+
+        [Fact]
+        public void ChangedTimesheetTimeEntryThrowValidationError()
+        {
+            this.InternalOrganisation.RequireExistingWorkEffortPartyAssignment = true;
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var worker = this.InternalOrganisation.ActiveEmployees.First;
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .WithWorker(worker)
+                .Build();
+            this.Session.Derive(false);
+
+            worker.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains("No Work Effort Party Assignment matches Worker"));
+        }
+
+        [Fact]
+        public void ChangedTimeEntryFromDateDeriveActualHours()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .Build();
+            this.Session.Derive(false);
+
+            timeEntry.FromDate = this.Session.Now().AddHours(-1);
+            this.Session.Derive(false);
+
+            Assert.Equal(1, workTask.ActualHours);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryThroughDateDeriveActualHours()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .Build();
+            this.Session.Derive(false);
+
+            timeEntry.ThroughDate = this.Session.Now().AddHours(2);
+            this.Session.Derive(false);
+
+            Assert.Equal(2, workTask.ActualHours);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryDeriveActualStart()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(timeEntry.FromDate, workTask.ActualStart);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryFromDateDeriveActualStart()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .Build();
+            this.Session.Derive(false);
+
+            var fromDate = this.Session.Now().AddDays(-1);
+            timeEntry.FromDate = fromDate;
+            this.Session.Derive(false);
+
+            Assert.Equal(fromDate.Date, workTask.ActualStart.Value.Date);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryDeriveActualCompletion()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .WithThroughDate(this.Session.Now().AddHours(1))
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(timeEntry.ThroughDate, workTask.ActualCompletion);
+        }
+
+        [Fact]
+        public void ChangedTimeEntryFromDateDeriveActualCompletion()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var timeEntry = new TimeEntryBuilder(this.Session)
+                .WithWorkEffort(workTask)
+                .WithThroughDate(this.Session.Now().AddSeconds(1))
+                .Build();
+            this.Session.Derive(false);
+
+            var throughDate = this.Session.Now().AddDays(1);
+            timeEntry.ThroughDate = throughDate;
+            this.Session.Derive(false);
+
+            Assert.Equal(throughDate.Date, workTask.ActualCompletion.Value.Date);
+        }
+
+        [Fact]
+        public void ChangedActualStartDeriveWorkEffortState()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            workTask.ActualStart = this.Session.Now();
+            this.Session.Derive(false);
+
+            Assert.True(workTask.WorkEffortState.IsInProgress);
+        }
+
+        [Fact]
+        public void ChangedCanInvoiceDeriveWorkEffortState()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).WithWorkEffortState(new WorkEffortStates(this.Session).Finished).Build();
+            this.Session.Derive(false);
+
+            workTask.CanInvoice = true;
+            this.Session.Derive(false);
+
+            Assert.True(workTask.WorkEffortState.IsCompleted);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentAssignmentCreateWorkEffortInventoryAssignmentInventoryItemTransaction()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).WithPart(part).Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session).WithInventoryItem(inventoryItem).WithQuantity(10).Build();
+            this.Session.Derive(false);
+
+            inventoryAssignment.Assignment = workTask;
+            this.Session.Derive(false);
+
+            Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First.Quantity);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentQuantityCreateWorkEffortInventoryAssignmentInventoryItemTransaction()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).WithPart(part).Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session).WithAssignment(workTask).WithInventoryItem(inventoryItem).Build();
+            this.Session.Derive(false);
+
+            inventoryAssignment.Quantity = 10;
+            this.Session.Derive(false);
+
+            Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First.Quantity);
+        }
+    }
+
+    public class WorkTaskCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkTaskCanInvoiceDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedWorkEffortStateDeriveCanInvoice()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            workTask.WorkEffortState = new WorkEffortStates(this.Session).Completed;
+            this.Session.Derive(false);
+
+            Assert.True(workTask.CanInvoice);
+        }
     }
 }
