@@ -9,7 +9,6 @@ import { syncResponse, securityResponse } from '../fixture';
 
 import { extend } from '@allors/domain/custom';
 
-
 import 'jest-extended';
 
 describe('Session', () => {

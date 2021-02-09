@@ -1,9 +1,10 @@
-import 'jest-extended';
 import { Pull, Result, Fetch, Tree, Extent, Node } from '@allors/data/core';
 import { PullRequest } from '@allors/protocol/core';
 import { Person } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';
+
+import 'jest-extended';
 
 describe('Instantiate', () => {
   let fixture: Fixture;

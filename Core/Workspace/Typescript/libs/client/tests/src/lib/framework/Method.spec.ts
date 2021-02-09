@@ -1,7 +1,8 @@
-import 'jest-extended';
 import { Organisation } from '@allors/domain/generated';
 
 import { Fixture } from '../Fixture';
+
+import 'jest-extended';
 
 describe('Method',
   () => {
