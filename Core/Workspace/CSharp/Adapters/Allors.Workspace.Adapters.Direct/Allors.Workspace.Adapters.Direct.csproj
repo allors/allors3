@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="7.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\System\Database\Allors.Database\Allors.Database.csproj" />
+    <ProjectReference Include="..\..\..\..\..\System\Protocol\Allors.Protocol.Direct\Allors.Protocol.Direct.csproj" />
+    <ProjectReference Include="..\..\Allors.Workspace\Allors.Workspace.csproj" />
+  </ItemGroup>
+
+</Project>
