@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             new ChangedPattern(this.M.WorkEffortAssignmentRate.WorkEffort),
+            new ChangedPattern(this.M.WorkEffortAssignmentRate.WorkEffortPartyAssignment),
+            new ChangedPattern(this.M.WorkEffortAssignmentRate.RateType),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -32,7 +34,7 @@ namespace Allors.Database.Domain
                     @this.WorkEffort = @this.WorkEffortPartyAssignment.Assignment;
                 }
 
-                if (@this.ExistRateType)
+                if (@this.ExistWorkEffort && @this.ExistRateType)
                 {
                     var extent = @this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort;
                     extent.Filter.AddEquals(@this.M.WorkEffortAssignmentRate.RateType, @this.RateType);

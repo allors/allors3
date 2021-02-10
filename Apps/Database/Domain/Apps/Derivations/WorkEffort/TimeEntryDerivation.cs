@@ -17,7 +17,40 @@ namespace Allors.Database.Domain
         public TimeEntryDerivation(M m) : base(m, new Guid("fcacc37e-581a-4c6f-bb77-d06a2987ebcf")) =>
             this.Patterns = new Pattern[]
         {
+            new ChangedPattern(m.TimeEntry.WorkEffort),
+            new ChangedPattern(m.TimeEntry.Worker),
+            new ChangedPattern(m.TimeEntry.RateType),
+            new ChangedPattern(m.TimeEntry.TimeFrequency),
+            new ChangedPattern(m.TimeEntry.BillingFrequency),
             new ChangedPattern(m.TimeEntry.AssignedBillingRate),
+            new ChangedPattern(m.TimeEntry.FromDate),
+            new ChangedPattern(m.TimeEntry.ThroughDate),
+            new ChangedPattern(m.TimeEntry.AssignedAmountOfTime),
+            new ChangedPattern(m.WorkEffort.Customer) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.WorkEffort.ExecutedBy) { Steps = new IPropertyType[] { m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries } },
+            new ChangedPattern(m.WorkEffortAssignmentRate.WorkEffort) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.WorkEffortAssignmentRate.RateType) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.WorkEffortAssignmentRate.Frequency) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.WorkEffortAssignmentRate.Rate) { Steps = new IPropertyType[] { m.WorkEffortAssignmentRate.WorkEffort, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.Party.PartyRates) { Steps = new IPropertyType[] { m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Party.WorkEffortsWhereCustomer, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.Party.PartyRates) { Steps = new IPropertyType[] { m.Person.TimeEntriesWhereWorker }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
+            new ChangedPattern(m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
+            new ChangedPattern(m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
+            new ChangedPattern(m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
+            new ChangedPattern(m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Person.TimeEntriesWhereWorker } },
+            new ChangedPattern(m.Party.PartyRates) { Steps = new IPropertyType[] { m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.RateType) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.Frequency) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.Rate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.FromDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
+            new ChangedPattern(m.PartyRate.ThroughDate) { Steps = new IPropertyType[] { m.PartyRate.PartyWherePartyRate, m.Organisation.WorkEffortsWhereExecutedBy, m.WorkEffort.ServiceEntriesWhereWorkEffort }, OfType = m.TimeEntry.Class },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,9 +60,6 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<TimeEntry>())
             {
-                validation.AssertExists(@this, @this.Meta.TimeSheetWhereTimeEntry);
-                validation.AssertAtLeastOne(@this, @this.Meta.WorkEffort, @this.Meta.EngagementItem);
-
                 var useInternalRate = @this.WorkEffort?.Customer is Organisation organisation && organisation.IsInternalOrganisation;
                 var rateType = useInternalRate ? new RateTypes(@this.Session()).InternalRate : @this.RateType;
 
@@ -60,7 +90,11 @@ namespace Allors.Database.Domain
                 {
                     if (@this.ExistWorkEffort)
                     {
-                        var workEffortAssignmentRate = @this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort.FirstOrDefault(v => v.RateType.Equals(@this.RateType) && v.Frequency.Equals(@this.BillingFrequency));
+                        var workEffortAssignmentRate = @this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort.FirstOrDefault(v =>
+                                                                v.ExistRateType
+                                                                && v.ExistFrequency
+                                                                && v.RateType.Equals(@this.RateType)
+                                                                && v.Frequency.Equals(@this.BillingFrequency));
                         if (workEffortAssignmentRate != null)
                         {
                             billingRate = workEffortAssignmentRate.Rate;
@@ -72,9 +106,12 @@ namespace Allors.Database.Domain
                         && @this.WorkEffort.ExistCustomer
                         && (@this.WorkEffort.Customer as Organisation)?.IsInternalOrganisation == false)
                     {
-                        var partyRate = @this.WorkEffort.Customer.PartyRates.FirstOrDefault(v => v.RateType.Equals(rateType)
-                                                                                   && v.Frequency.Equals(@this.BillingFrequency)
-                                                                                   && v.FromDate <= @this.FromDate && (!v.ExistThroughDate || v.ThroughDate >= @this.FromDate));
+                        var partyRate = @this.WorkEffort.Customer.PartyRates.FirstOrDefault(v =>
+                                        v.ExistRateType
+                                        && v.ExistFrequency
+                                        && v.RateType.Equals(rateType)
+                                        && v.Frequency.Equals(@this.BillingFrequency)
+                                        && v.FromDate <= @this.FromDate && (!v.ExistThroughDate || v.ThroughDate >= @this.FromDate));
                         if (partyRate != null)
                         {
                             billingRate = partyRate.Rate;
@@ -83,9 +120,12 @@ namespace Allors.Database.Domain
 
                     if (billingRate == 0 && @this.ExistWorker && @this.ExistRateType)
                     {
-                        var partyRate = @this.Worker.PartyRates.FirstOrDefault(v => v.RateType.Equals(rateType)
-                                                                                   && v.Frequency.Equals(@this.BillingFrequency)
-                                                                                   && v.FromDate <= @this.FromDate && (!v.ExistThroughDate || v.ThroughDate >= @this.FromDate));
+                        var partyRate = @this.Worker.PartyRates.FirstOrDefault(v =>
+                                        v.ExistRateType
+                                        && v.ExistFrequency
+                                        && v.RateType.Equals(rateType)
+                                        && v.Frequency.Equals(@this.BillingFrequency)
+                                        && v.FromDate <= @this.FromDate && (!v.ExistThroughDate || v.ThroughDate >= @this.FromDate));
                         if (partyRate != null)
                         {
                             billingRate = partyRate.Rate;
@@ -94,9 +134,12 @@ namespace Allors.Database.Domain
 
                     if (billingRate == 0 && @this.ExistWorkEffort && @this.WorkEffort.ExistExecutedBy)
                     {
-                        var partyRate = @this.WorkEffort.ExecutedBy.PartyRates.FirstOrDefault(v => v.RateType.Equals(rateType)
-                                                                                   && v.Frequency.Equals(@this.BillingFrequency)
-                                                                                   && v.FromDate <= @this.FromDate && (!v.ExistThroughDate || v.ThroughDate >= @this.FromDate));
+                        var partyRate = @this.WorkEffort.ExecutedBy.PartyRates.FirstOrDefault(v =>
+                                        v.ExistRateType
+                                        && v.ExistFrequency
+                                        && v.RateType.Equals(rateType)
+                                        && v.Frequency.Equals(@this.BillingFrequency)
+                                        && v.FromDate <= @this.FromDate && (!v.ExistThroughDate || v.ThroughDate >= @this.FromDate));
                         if (partyRate != null)
                         {
                             billingRate = partyRate.Rate;

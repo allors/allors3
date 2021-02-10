@@ -17,7 +17,11 @@ namespace Allors.Database.Domain
         public WorkEffortInventoryAssignmentDerivation(M m) : base(m, new Guid("cd533d3e-922c-4938-a12d-cfacd6c3b9d9")) =>
             this.Patterns = new Pattern[]
         {
-            new ChangedPattern(this.M.WorkEffortInventoryAssignment.Assignment),
+            new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment),
+            new ChangedPattern(m.WorkEffortInventoryAssignment.InventoryItem),
+            new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity),
+            new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedUnitSellingPrice),
+            new ChangedPattern(m.WorkEffortInventoryAssignment.AssignedBillableQuantity),
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
@@ -27,16 +31,13 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkEffortInventoryAssignment>())
             {
-                var state = @this.Assignment.WorkEffortState;
-                var inventoryItemChanged = @this.ExistCurrentVersion &&
-                                           (!Equals(@this.CurrentVersion.InventoryItem, @this.InventoryItem));
-
-                if (inventoryItemChanged)
+                if (@this.ExistCurrentVersion
+                    && !Equals(@this.CurrentVersion.InventoryItem, @this.InventoryItem))
                 {
-                    // CurrentVersion is Previous Version until PostDerive
+                    // CurrentVersion is updated on PostDerive
                     var previousInventoryItem = @this.CurrentVersion.InventoryItem;
                     var previousQuantity = @this.CurrentVersion.Quantity;
-                    state = @this.CurrentVersion.Assignment.PreviousWorkEffortState ??
+                    var state = @this.CurrentVersion.Assignment.PreviousWorkEffortState ??
                             @this.CurrentVersion.Assignment.WorkEffortState;
 
                     foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
@@ -52,8 +53,7 @@ namespace Allors.Database.Domain
 
                 @this.CalculatePurchasePrice();
                 @this.CalculateSellingPrice();
-                // TODO: Martien
-                //this.CalculateBillableQuantity();
+                @this.CalculateBillableQuantity();
 
                 if (@this.ExistAssignment)
                 {

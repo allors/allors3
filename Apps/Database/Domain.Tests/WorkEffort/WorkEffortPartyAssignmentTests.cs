@@ -6,7 +6,10 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class WorkEffortPartyAssignmentTests : DomainTest, IClassFixture<Fixture>
@@ -84,12 +87,8 @@ namespace Allors.Database.Domain.Tests
 
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-            // Act
-            var derivation = this.Session.Derive(false);
-
-            // Assert
-            Assert.True(derivation.HasErrors);
-            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RelationType.Equals(this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment.RelationType));
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Contains("No Work Effort Party Assignment matches Worker"));
 
             // Re-Arrange
             employee.TimeSheetWhereWorker.RemoveTimeEntries();
@@ -102,10 +101,10 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            derivation = this.Session.Derive(false);
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
 
             // Assert
-            Assert.False(derivation.HasErrors);
+            Assert.Empty(errors);
         }
 
         [Fact]
@@ -121,7 +120,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Session).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Session).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            var assignedParty = new WorkEffortPartyAssignmentBuilder(this.Session).WithAssignment(workOrder).WithParty(employee).Build();
+            var workEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Session).WithAssignment(workOrder).WithParty(employee).Build();
 
             this.Session.Derive(true);
 
@@ -133,12 +132,11 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
-            assignedParty.AddAssignmentRate(assignedRate);
+            workEffortPartyAssignment.AddAssignmentRate(assignedRate);
 
-            var derivation = this.Session.Derive(false);
-
-            Assert.True(derivation.HasErrors);
-            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RelationType.Equals(this.M.WorkEffortPartyAssignment.AssignmentRates.RelationType));
+            var expectedMessage = $"{workEffortPartyAssignment}, { this.M.WorkEffortPartyAssignment.AssignmentRates}, { ErrorMessages.WorkEffortRateError}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }

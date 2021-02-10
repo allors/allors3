@@ -499,4 +499,196 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(10, part.QuantityOnHand);
         }
     }
+
+    public class WorkEffortInventoryAssignmentDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortInventoryAssignmentDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedInventoryItemCreateInventoryItemTransaction()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var part2 = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part1)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part2)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(2, part1.QuantityOnHand);
+            Assert.Equal(3, part2.QuantityOnHand);
+
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, part1.QuantityOnHand);
+            Assert.Equal(2, part2.QuantityOnHand);
+        }
+
+        [Fact]
+        public void ChangedInventoryItemDeriveCostOfGoodsSold()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Session)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                .Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part1)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .WithCost(10)
+                .Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(20, inventoryAssignment.CostOfGoodsSold);
+        }
+
+        [Fact]
+        public void ChangedQuantityDeriveCostOfGoodsSold()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                .Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .WithCost(10)
+                .Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Session.Derive(false);
+
+            inventoryAssignment.Quantity = 3;
+            this.Session.Derive(false);
+
+            Assert.Equal(30, inventoryAssignment.CostOfGoodsSold);
+        }
+
+        [Fact]
+        public void ChangedAssignedUnitSellingPriceDeriveUnitSellingPrice()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session)
+                .WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised)
+                .Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Session.Derive(false);
+
+            inventoryAssignment.AssignedUnitSellingPrice = 11;
+            this.Session.Derive(false);
+
+            Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
+        }
+
+        [Fact]
+        public void ChangedInventoryItemDeriveUnitSellingPrice()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            new BasePriceBuilder(this.Session).WithPart(part).WithPrice(11).Build();
+            this.Session.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithQuantity(2)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
+        }
+
+        [Fact]
+        public void ChangedAssignedBillableQuantityDeriveDerivedBillableQuantity()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Session.Derive(false);
+
+            inventoryAssignment.AssignedBillableQuantity = 1;
+            this.Session.Derive(false);
+
+            Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
+        }
+
+        [Fact]
+        public void ChangedQuantityDeriveDerivedBillableQuantity()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(2)
+                .Build();
+            this.Session.Derive(false);
+
+            inventoryAssignment.Quantity = 1;
+            this.Session.Derive(false);
+
+            Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
+        }
+    }
 }

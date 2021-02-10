@@ -52,21 +52,11 @@ namespace Allors.Database.Domain
             {
                 this.RateType = useInternalRate ? new RateTypes(this.Session()).InternalRate : new RateTypes(this.Session()).StandardRate;
             }
-
-            if (!this.ExistBillingFrequency)
-            {
-                this.BillingFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
-            }
-
-            if (!this.ExistTimeFrequency)
-            {
-                this.TimeFrequency = new TimeFrequencies(this.Strategy.Session).Hour;
-            }
-
-            if (!this.ExistIsBillable)
-            {
-                this.IsBillable = true;
-            }
+        }
+        public void AppsOnPostDerive(ObjectOnPostDerive method)
+        {
+            method.Derivation.Validation.AssertExists(this, this.M.TimeEntry.TimeSheetWhereTimeEntry);
+            method.Derivation.Validation.AssertAtLeastOne(this, this.M.TimeEntry.WorkEffort, this.M.TimeEntry.EngagementItem);
         }
 
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)

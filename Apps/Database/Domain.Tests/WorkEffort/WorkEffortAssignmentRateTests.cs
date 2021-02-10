@@ -6,7 +6,10 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class WorkEffortAssignmentRateTests : DomainTest, IClassFixture<Fixture>
@@ -44,16 +47,67 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(this.Session.Derive(false).HasErrors);
 
-            new WorkEffortAssignmentRateBuilder(this.Session)
+            var assignmentRate = new WorkEffortAssignmentRateBuilder(this.Session)
                 .WithWorkEffort(workOrder)
                 .WithRate(1)
                 .WithRateType(new RateTypes(this.Session).StandardRate)
                 .Build();
 
-            var derivation = this.Session.Derive(false);
+            var expectedMessage = $"{assignmentRate}, { this.M.WorkEffortAssignmentRate.RateType}, { ErrorMessages.WorkEffortRateError}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
+        }
+    }
 
-            Assert.True(derivation.HasErrors);
-            Assert.Contains(derivation.Errors.SelectMany(e => e.Relations), r => r.RelationType.Equals(this.M.WorkEffortAssignmentRate.RateType.RelationType));
+    public class WorkEffortAssignmentRateDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortAssignmentRateDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedWorkEffortPartyAssignmentDeriveWorkEffort()
+        {
+            var workEffortAssignmentRate = new WorkEffortAssignmentRateBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            workEffortAssignmentRate.WorkEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Session).WithAssignment(workTask).Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(workTask, workEffortAssignmentRate.WorkEffort);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortDeriveWorkEffort()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            var workEffortAssignmentRate = new WorkEffortAssignmentRateBuilder(this.Session).WithWorkEffort(workTask).Build();
+            this.Session.Derive(false);
+
+            workEffortAssignmentRate.WorkEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Session).WithAssignment(workTask).Build();
+            this.Session.Derive(false);
+
+            workEffortAssignmentRate.RemoveWorkEffort();
+            this.Session.Derive(false);
+
+            Assert.Equal(workTask, workEffortAssignmentRate.WorkEffort);
+        }
+
+        [Fact]
+        public void ChangedRateTypeThrowValidationError()
+        {
+            var workTask = new WorkTaskBuilder(this.Session).Build();
+            var workEffortAssignmentRate1 = new WorkEffortAssignmentRateBuilder(this.Session).WithWorkEffort(workTask).WithRateType(new RateTypes(this.Session).StandardRate).Build();
+            var workEffortAssignmentRate2 = new WorkEffortAssignmentRateBuilder(this.Session).WithWorkEffort(workTask).WithRateType(new RateTypes(this.Session).OvertimeRate).Build();
+            this.Session.Derive(false);
+
+            var expectedMessage = $"{workEffortAssignmentRate2}, { this.M.WorkEffortAssignmentRate.RateType}, { ErrorMessages.WorkEffortRateError}";
+            var errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.DoesNotContain(errors, e => e.Message.Equals(expectedMessage));
+
+            workEffortAssignmentRate2.RateType = new RateTypes(this.Session).StandardRate;
+
+            errors = new List<IDerivationError>(this.Session.Derive(false).Errors);
+            Assert.Contains(errors, e => e.Message.Equals(expectedMessage));
         }
     }
 }

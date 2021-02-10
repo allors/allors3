@@ -84,12 +84,11 @@ namespace Allors.Database.Domain
         {
             if (!method.Result.HasValue)
             {
-                @this.DeriveCanInvoice();
-
                 if (@this.CanInvoice)
                 {
                     @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Finished;
                     @this.InvoiceThis();
+                    @this.CanInvoice = false;
                 }
 
                 method.Result = true;
@@ -166,60 +165,6 @@ namespace Allors.Database.Domain
                     .WithWorkEffort(@this)
                     .WithInvoiceItem(invoiceItem)
                     .Build();
-            }
-        }
-
-        private static void DeriveCanInvoice(this WorkEffort @this)
-        {
-            // when proforma invoice is deleted then WorkEffortBillingsWhereWorkEffort do not exist and WorkEffortState is Finished
-            if (@this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed)
-                || @this.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Finished))
-            {
-                @this.CanInvoice = true;
-
-                if (@this.ExistWorkEffortBillingsWhereWorkEffort)
-                {
-                    @this.CanInvoice = false;
-                }
-
-                if (@this.CanInvoice)
-                {
-                    foreach (TimeEntry timeEntry in @this.ServiceEntriesWhereWorkEffort)
-                    {
-                        if (!timeEntry.ExistThroughDate)
-                        {
-                            @this.CanInvoice = false;
-                            break;
-                        }
-
-                        if (timeEntry.ExistTimeEntryBillingsWhereTimeEntry)
-                        {
-                            @this.CanInvoice = false;
-                        }
-                    }
-                }
-
-                if (@this.ExistWorkEffortWhereChild)
-                {
-                    @this.CanInvoice = false;
-                }
-
-                if (@this.CanInvoice)
-                {
-                    foreach (WorkEffort child in @this.Children)
-                    {
-                        if (!(child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Completed)
-                            || child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Session).Finished)))
-                        {
-                            @this.CanInvoice = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                @this.CanInvoice = false;
             }
         }
 
