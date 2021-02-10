@@ -5,9 +5,11 @@
 
 namespace Tests.Workspace.Remote
 {
-    public class MethodTests : Workspace.MethodTests
+    using Xunit;
+
+    public class MethodTests : Workspace.MethodTests, IClassFixture<Fixture>
     {
-        public MethodTests() => this.Profile = new Profile();
+        public MethodTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         protected override IProfile Profile { get; }
     }

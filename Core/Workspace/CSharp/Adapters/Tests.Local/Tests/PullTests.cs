@@ -5,8 +5,6 @@
 
 namespace Tests.Workspace.Remote
 {
-    using System.Linq;
-    using Allors.Database.Domain;
     using Allors.Protocol.Direct.Api;
     using Allors.Protocol.Direct.Api.Pull;
     using Allors.Workspace;

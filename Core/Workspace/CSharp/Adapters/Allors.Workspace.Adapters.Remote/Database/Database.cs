@@ -342,7 +342,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal async Task<PullResponse> Pull(PullRequest pullRequest)
         {
-            var uri = new Uri("allors/pull", UriKind.Relative);
+            var uri = new Uri("pull", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pullRequest);
             response.EnsureSuccessStatusCode();
             return await this.ReadAsAsync<PullResponse>(response);
@@ -359,7 +359,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal async Task<SyncResponse> Sync(SyncRequest syncRequest)
         {
-            var uri = new Uri("allors/sync", UriKind.Relative);
+            var uri = new Uri("sync", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, syncRequest);
             response.EnsureSuccessStatusCode();
 
@@ -368,7 +368,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal async Task<PushResponse> Push(PushRequest pushRequest)
         {
-            var uri = new Uri("allors/push", UriKind.Relative);
+            var uri = new Uri("push", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, pushRequest);
             response.EnsureSuccessStatusCode();
 
@@ -377,7 +377,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal async Task<InvokeResponse> Invoke(InvokeRequest invokeRequest)
         {
-            var uri = new Uri("allors/invoke", UriKind.Relative);
+            var uri = new Uri("invoke", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, invokeRequest);
             response.EnsureSuccessStatusCode();
 
@@ -395,7 +395,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal async Task<SecurityResponse> Security(SecurityRequest securityRequest)
         {
-            var uri = new Uri("allors/security", UriKind.Relative);
+            var uri = new Uri("security", UriKind.Relative);
             var response = await this.PostAsJsonAsync(uri, securityRequest);
             response.EnsureSuccessStatusCode();
 

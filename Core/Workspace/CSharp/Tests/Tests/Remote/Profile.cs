@@ -16,10 +16,10 @@ namespace Tests.Workspace.Remote
 
     public class Profile : IProfile
     {
-        public const string Url = "http://localhost:5000";
+        public const string Url = "http://localhost:5000/allors/";
 
-        public const string SetupUrl = "/Test/Setup?population=full";
-        public const string LoginUrl = "/TestAuthentication/Token";
+        public const string SetupUrl = "Test/Setup?population=full";
+        public const string LoginUrl = "TestAuthentication/Token";
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
@@ -38,7 +38,7 @@ namespace Tests.Workspace.Remote
                 {
                     BaseAddress = new Uri(Url),
                 });
-        
+
         public async Task InitializeAsync()
         {
             var response = await this.Database.HttpClient.GetAsync(SetupUrl);

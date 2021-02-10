@@ -7,11 +7,15 @@ namespace Tests.Workspace
 {
     using System;
     using Allors.Workspace.Domain;
-
+    using Remote;
     using Xunit;
 
     public abstract class UnitSamplesTests : Test
     {
+        protected UnitSamplesTests(Fixture fixture) : base(fixture)
+        {
+        }
+
         [Fact]
         public async void Null()
         {

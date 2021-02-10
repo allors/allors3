@@ -5,9 +5,11 @@
 
 namespace Tests.Workspace.Remote
 {
-    public class LifecycleTests : Workspace.LifecycleTests
+    using Xunit;
+
+    public class LifecycleTests : Workspace.LifecycleTests, IClassFixture<Fixture>
     {
-        public LifecycleTests() => this.Profile = new Profile();
+        public LifecycleTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         protected override IProfile Profile { get; }
     }

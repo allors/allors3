@@ -8,10 +8,15 @@ namespace Tests.Workspace
     using System;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
+    using Remote;
     using Xunit;
 
     public abstract class LoadTests : Test
     {
+        protected LoadTests(Fixture fixture) : base(fixture)
+        {
+        }
+
         [Fact]
         public void WithAccessControl()
         {

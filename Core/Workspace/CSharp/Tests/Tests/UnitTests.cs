@@ -5,15 +5,18 @@
 
 namespace Tests.Workspace
 {
-    using System;
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
-
+    using Remote;
     using Xunit;
 
     public abstract class UnitTests : Test
     {
+        protected UnitTests(Fixture fixture) : base(fixture)
+        {
+        }
+
         [Fact]
         public async void Load()
         {
