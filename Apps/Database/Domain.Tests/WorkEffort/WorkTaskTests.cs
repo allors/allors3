@@ -1015,6 +1015,72 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First.Quantity);
         }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentInventoryItemCreateInventoryItemTransaction()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            var part1 = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            var part2 = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part1)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part2)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+            this.Session.Derive(false);
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(2, part1.QuantityOnHand);
+            Assert.Equal(3, part2.QuantityOnHand);
+
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, part1.QuantityOnHand);
+            Assert.Equal(2, part2.QuantityOnHand);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortStateCreateInventoryItemTransaction()
+        {
+            var workEffort = new WorkTaskBuilder(this.Session).Build();
+            var part = new NonUnifiedPartBuilder(this.Session).WithInventoryItemKind(new InventoryItemKinds(this.Session).NonSerialised).Build();
+            this.Session.Derive(false);
+
+            new InventoryItemTransactionBuilder(this.Session)
+                .WithPart(part)
+                .WithReason(new InventoryTransactionReasons(this.Session).IncomingShipment)
+                .WithQuantity(3)
+                .Build();
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Session)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithQuantity(1)
+                .Build();
+            this.Session.Derive(false);
+
+            Assert.Equal(2, part.QuantityOnHand);
+
+            workEffort.WorkEffortState = new WorkEffortStates(this.Session).Cancelled;
+            this.Session.Derive(false);
+
+            Assert.Equal(3, part.QuantityOnHand);
+        }
     }
 
     public class WorkTaskCanInvoiceDerivationTests : DomainTest, IClassFixture<Fixture>

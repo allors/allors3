@@ -88,6 +88,7 @@ namespace Allors.Database.Domain
                 {
                     @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Session).Finished;
                     @this.InvoiceThis();
+                    @this.CanInvoice = false;
                 }
 
                 method.Result = true;

@@ -20,6 +20,7 @@ namespace Allors.Database.Domain
             new ChangedPattern(m.TimeEntry.WorkEffort),
             new ChangedPattern(m.TimeEntry.Worker),
             new ChangedPattern(m.TimeEntry.RateType),
+            new ChangedPattern(m.TimeEntry.TimeFrequency),
             new ChangedPattern(m.TimeEntry.BillingFrequency),
             new ChangedPattern(m.TimeEntry.AssignedBillingRate),
             new ChangedPattern(m.TimeEntry.FromDate),

@@ -21,12 +21,14 @@ namespace Allors.Database.Domain
             new ChangedPattern(m.WorkTask.TakenBy),
             new ChangedPattern(m.WorkTask.ExecutedBy),
             new ChangedPattern(m.WorkTask.ActualStart),
+            new ChangedPattern(m.WorkTask.WorkEffortState),
             new ChangedPattern(m.TimeEntry.FromDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
             new ChangedPattern(m.TimeEntry.ThroughDate) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
             new ChangedPattern(m.TimeEntry.WorkEffort) { Steps = new IPropertyType[] { m.TimeEntry.WorkEffort} },
             new ChangedPattern(m.TimeSheet.TimeEntries) { Steps = new IPropertyType[] { m.TimeSheet.TimeEntries, m.TimeEntry.WorkEffort} },
             new ChangedPattern(m.WorkEffortInventoryAssignment.Assignment) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
             new ChangedPattern(m.WorkEffortInventoryAssignment.Quantity) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
+            new ChangedPattern(m.WorkEffortInventoryAssignment.InventoryItem) { Steps = new IPropertyType[] { m.WorkEffortInventoryAssignment.Assignment } },
         };
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)

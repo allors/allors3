@@ -170,5 +170,13 @@ namespace Allors.Repository
         public void CalculateSellingPrice()
         {
         }
+
+        #region Allors
+        [Id("cdcec858-2046-44dd-afcf-9308d8b87213")]
+        #endregion
+        [Workspace]
+        public void CalculateBillableQuantity()
+        {
+        }
     }
 }

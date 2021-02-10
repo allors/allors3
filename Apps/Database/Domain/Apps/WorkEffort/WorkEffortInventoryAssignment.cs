@@ -49,14 +49,21 @@ namespace Allors.Database.Domain
                 {
                     var part = this.InventoryItem.Part;
 
-                    var currentPriceComponents = this.Assignment.TakenBy?.PriceComponentsWherePricedBy
+                    var currentPriceComponents = this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
                         .Where(v => v.FromDate <= this.Assignment.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= this.Assignment.ScheduledStart))
                         .ToArray();
 
-                    var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
+                    if (currentPriceComponents != null)
+                    {
+                        var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
 
-                    var price = currentPartPriceComponents.OfType<BasePrice>().Max(v => v.Price);
-                    this.UnitSellingPrice = price ?? 0M;
+                        var price = currentPartPriceComponents.OfType<BasePrice>().Max(v => v.Price);
+                        this.UnitSellingPrice = price ?? 0M;
+                    }
+                    else
+                    {
+                        this.UnitSellingPrice = 0M;
+                    }
                 }
 
                 method.Result = true;
