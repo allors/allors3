@@ -14,6 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Base\Builders\Facility\" />
+    <Folder Include="Apps\Builders\Facility\" />
   </ItemGroup>
 </Project>
