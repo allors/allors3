@@ -15,7 +15,7 @@ partial class Build
                 .SetProjectFile(this.Paths.SystemRepositoryGenerate)
                 .SetApplicationArguments($"{this.Paths.DerivationRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.DerivationDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetWorkingDirectory(this.Paths.Derivation)
+                .SetProcessWorkingDirectory(this.Paths.Derivation)
                 .SetProjectFile(this.Paths.DerivationDatabaseGenerate));
         });
 

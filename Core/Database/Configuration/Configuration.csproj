@@ -7,11 +7,11 @@
   <ItemGroup>
     <PackageReference Include="Allors.Documents" Version="1.0.3" />
     <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
-    <PackageReference Include="MailKit" Version="2.9.0" />
+    <PackageReference Include="MailKit" Version="2.10.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.8" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
-    <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.9" />
+    <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.10" />
   </ItemGroup>
 
   <ItemGroup>

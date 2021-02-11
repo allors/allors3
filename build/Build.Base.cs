@@ -46,7 +46,7 @@ partial class Build
                  .SetProjectFile(this.Paths.SystemRepositoryGenerate)
                  .SetApplicationArguments($"{this.Paths.BaseRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.BaseDatabaseMetaGenerated}"));
              DotNetRun(s => s
-                 .SetWorkingDirectory(this.Paths.Base)
+                 .SetProcessWorkingDirectory(this.Paths.Base)
                  .SetProjectFile(this.Paths.BaseDatabaseGenerate));
          });
 
@@ -55,7 +55,7 @@ partial class Build
          .Executes(() =>
          {
              var dotNetPublishSettings = new DotNetPublishSettings()
-                 .SetWorkingDirectory(this.Paths.BaseDatabaseCommands)
+                 .SetProcessWorkingDirectory(this.Paths.BaseDatabaseCommands)
                  .SetOutput(this.Paths.ArtifactsBaseCommands);
              DotNetPublish(dotNetPublishSettings);
          });
@@ -65,7 +65,7 @@ partial class Build
          .Executes(() =>
          {
              var dotNetPublishSettings = new DotNetPublishSettings()
-                 .SetWorkingDirectory(this.Paths.BaseDatabaseServer)
+                 .SetProcessWorkingDirectory(this.Paths.BaseDatabaseServer)
                  .SetOutput(this.Paths.ArtifactsBaseServer);
              DotNetPublish(dotNetPublishSettings);
          });
@@ -74,8 +74,8 @@ partial class Build
         .Executes(() =>
         {
             NpmInstall(s => s
-                .SetEnvironmentVariable("npm_config_loglevel", "error")
-                .SetWorkingDirectory(this.Paths.BaseWorkspaceTypescript));
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(this.Paths.BaseWorkspaceTypescript));
         });
 
     private Target BaseWorkspaceTypescriptSession => _ => _
@@ -84,8 +84,8 @@ partial class Build
          .Executes(() =>
          {
              NpmRun(s => s
-                 .SetEnvironmentVariable("npm_config_loglevel", "error")
-                 .SetWorkingDirectory(this.Paths.BaseWorkspaceTypescript)
+                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                 .SetProcessWorkingDirectory(this.Paths.BaseWorkspaceTypescript)
                  .SetCommand("domain:test"));
          });
 

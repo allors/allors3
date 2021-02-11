@@ -5,13 +5,11 @@ using Nuke.Common.Execution;
 using Nuke.Common.IO;
 using static Nuke.Common.IO.FileSystemTasks;
 
-[CheckBuildProjectConfigurations(TimeoutInMilliseconds = 5000)]
-[UnsetVisualStudioEnvironmentVariables]
 partial class Build : NukeBuild
 {
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-
+    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    
     Target Install => _ => _
         .DependsOn(this.CoreInstall)
         .DependsOn(this.BaseInstall)
