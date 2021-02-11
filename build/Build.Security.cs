@@ -15,7 +15,7 @@ partial class Build
                 .SetProjectFile(this.Paths.SystemRepositoryGenerate)
                 .SetApplicationArguments($"{this.Paths.SecurityRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.SecurityDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetWorkingDirectory(this.Paths.Security)
+                .SetProcessWorkingDirectory(this.Paths.Security)
                 .SetProjectFile(this.Paths.SecurityDatabaseGenerate));
         });
 

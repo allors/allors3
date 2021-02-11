@@ -5,9 +5,11 @@
 
 namespace Tests.Workspace.Remote
 {
-    public class Many2OneTests : Workspace.Many2OneTests
+    using Xunit;
+
+    public class Many2OneTests : Workspace.Many2OneTests, IClassFixture<Fixture>
     {
-        public Many2OneTests() => this.Profile = new Profile();
+        public Many2OneTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         protected override IProfile Profile { get; }
     }

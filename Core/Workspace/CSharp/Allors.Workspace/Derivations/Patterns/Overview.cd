@@ -1,79 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Allors.Pattern">
-    <Position X="9.25" Y="0.5" Width="1.5" />
+  <Class Name="Allors.Workspace.Pattern">
+    <Position X="7" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>Derivation\Patterns\Pattern.cs</FileName>
+      <FileName>Derivations\Patterns\Pattern.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Steps" />
-      <Property Name="OfType" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="Allors.ChangedAssociationPattern">
-    <Position X="13.5" Y="4" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Derivation\Patterns\ChangedAssociationPattern.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="AssociationType" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="Allors.ChangedRolePattern">
-    <Position X="8.5" Y="4" Width="1.75" />
+  <Class Name="Allors.Workspace.ChangedPattern">
+    <Position X="8.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Derivation\Patterns\ChangedRolePattern.cs</FileName>
+      <FileName>Derivations\Patterns\ChangedPattern.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="RoleType" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Allors.CreatedPattern">
-    <Position X="5.75" Y="4" Width="1.5" />
+  <Class Name="Allors.Workspace.CreatedPattern">
+    <Position X="6.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Derivation\Patterns\CreatedPattern.cs</FileName>
+      <FileName>Derivations\Patterns\CreatedPattern.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Composite" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Allors.ChangedConcreteRolePattern">
-    <Position X="11" Y="4" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IPropertyType" Collapsed="true">
+    <Position X="12" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Derivation\Patterns\ChangedConcreteRolePattern.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Interface Name="Allors.Meta.IComposite" Collapsed="true">
-    <Position X="5.25" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAIAAAAAAAFABAARACAQAAAAAQAAEAACQQBAAAAAAAA=</HashCode>
-      <FileName>Meta\IComposite.cs</FileName>
+      <HashCode>AAAAiAAAAAAAAAJAAAAAAAQAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Meta\IPropertyType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Meta.IAssociationType" Collapsed="true">
-    <Position X="14.25" Y="2.25" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IOperandType" Collapsed="true">
+    <Position X="12" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIEAAAAAAAAAAAAAEAAAAAAAAAAAAAQAJIAAAAAAAA=</HashCode>
-      <FileName>Meta\IAssociationType.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IOperandType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Meta.IRoleType" Collapsed="true">
-    <Position X="12" Y="2.25" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IRoleType" Collapsed="true">
+    <Position X="12" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAgAAAAEIAAAAAgAAAAAAQABIAAAAAEAA=</HashCode>
+      <HashCode>AAAEAAAAAAAAgAAAAEIAIAAAgAAAAAAACBAAAAAAEAA=</HashCode>
       <FileName>Meta\IRoleType.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Meta.IPropertyType" Collapsed="true">
-    <Position X="12.75" Y="0.5" Width="1.5" />
+  <Interface Name="Allors.Workspace.Meta.IComposite" Collapsed="true">
+    <Position X="3.25" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAiAAAAAAAAAJAAAAAAAQAAAAAAAACAIAAAABAAAA=</HashCode>
-      <FileName>Meta\IPropertyType.cs</FileName>
+      <HashCode>AAABAAAAAARAAAAQAIAAAABAAAAAEAACAQCAAAAQAAA=</HashCode>
+      <FileName>Meta\IComposite.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Workspace.Meta.IObjectType" Collapsed="true">
+    <Position X="3.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAIAAAAAAAQAACCAAAACAAAAAUAAAAA=</HashCode>
+      <FileName>Meta\IObjectType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

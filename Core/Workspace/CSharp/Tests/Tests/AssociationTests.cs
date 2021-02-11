@@ -8,11 +8,16 @@ namespace Tests.Workspace
     using System.Linq;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
+    using Remote;
     using Xunit;
     using Result = Allors.Workspace.Data.Result;
 
     public abstract class AssociationTests : Test
     {
+        protected AssociationTests(Fixture fixture) : base(fixture)
+        {
+        }
+
         [Fact]
         public async void Database_GetOne2Many()
         {

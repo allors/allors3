@@ -6,10 +6,15 @@
 namespace Tests.Workspace
 {
     using Allors.Workspace.Domain;
+    using Remote;
     using Xunit;
 
     public abstract class LifecycleTests : Test
     {
+        protected LifecycleTests(Fixture fixture) : base(fixture)
+        {
+        }
+
         [Fact]
         public async void Workspace_Instantiate()
         {

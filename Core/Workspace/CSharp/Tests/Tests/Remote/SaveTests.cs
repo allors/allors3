@@ -5,9 +5,11 @@
 
 namespace Tests.Workspace.Remote
 {
-    public class SaveTests : Workspace.SaveTests
+    using Xunit;
+
+    public class SaveTests : Workspace.SaveTests, IClassFixture<Fixture>
     {
-        public SaveTests() => this.Profile = new Profile();
+        public SaveTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         protected override IProfile Profile { get; }
     }

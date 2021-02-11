@@ -101,7 +101,7 @@ namespace Allors.Database.Meta
         }
 
         public IEnumerable<Interface> Subinterfaces => this.Subtypes.OfType<Interface>();
-        
+
         public override Class ExclusiveClass
         {
             get
@@ -133,8 +133,8 @@ namespace Allors.Database.Meta
         internal void DeriveWorkspaceNames() =>
             this.derivedWorkspaceNames = this
                 .RoleTypes.SelectMany(v => v.RelationType.WorkspaceNames)
-                .Union(this.AssociationTypes.SelectMany(v=>v.RelationType.WorkspaceNames))
-                .Union(this.MethodTypes.SelectMany(v=>v.WorkspaceNames))
+                .Union(this.AssociationTypes.SelectMany(v => v.RelationType.WorkspaceNames))
+                .Union(this.MethodTypes.SelectMany(v => v.WorkspaceNames))
                 .ToArray();
 
         /// <summary>

@@ -6,10 +6,15 @@
 namespace Tests.Workspace
 {
     using System;
+    using Remote;
     using Xunit;
 
     public abstract class SaveTests : Test
     {
+        protected SaveTests(Fixture fixture) : base(fixture)
+        {
+        }
+
         [Fact]
         public async void ShouldSyncNewlyCreatedObject()
         {

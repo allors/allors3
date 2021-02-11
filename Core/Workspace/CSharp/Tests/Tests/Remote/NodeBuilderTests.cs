@@ -5,9 +5,11 @@
 
 namespace Tests.Workspace.Remote
 {
-    public class NodeBuilderTests : Workspace.NodeBuilderTests
+    using Xunit;
+
+    public class NodeBuilderTests : Workspace.NodeBuilderTests, IClassFixture<Fixture>
     {
-        public NodeBuilderTests() => this.Profile = new Profile();
+        public NodeBuilderTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         protected override IProfile Profile { get; }
     }

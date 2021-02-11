@@ -33,7 +33,7 @@ partial class Build
                 .SetProjectFile(this.Paths.SystemRepositoryGenerate)
                 .SetApplicationArguments($"{this.Paths.CoreRepositoryDomainRepository} {this.Paths.SystemRepositoryTemplatesMetaCs} {this.Paths.CoreDatabaseMetaGenerated}"));
             DotNetRun(s => s
-                .SetWorkingDirectory(this.Paths.Core)
+                .SetProcessWorkingDirectory(this.Paths.Core)
                 .SetProjectFile(this.Paths.CoreDatabaseGenerate));
         });
 
@@ -62,7 +62,7 @@ partial class Build
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetWorkingDirectory(this.Paths.CoreDatabaseCommands)
+                .SetProcessWorkingDirectory(this.Paths.CoreDatabaseCommands)
                 .SetOutput(this.Paths.ArtifactsCoreCommands);
             DotNetPublish(dotNetPublishSettings);
         });
@@ -72,7 +72,7 @@ partial class Build
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetWorkingDirectory(this.Paths.CoreDatabaseServer)
+                .SetProcessWorkingDirectory(this.Paths.CoreDatabaseServer)
                 .SetOutput(this.Paths.ArtifactsCoreServer);
             DotNetPublish(dotNetPublishSettings);
         });
@@ -97,8 +97,8 @@ partial class Build
         .Executes(() =>
         {
             NpmInstall(s => s
-                .SetEnvironmentVariable("npm_config_loglevel", "error")
-                .SetWorkingDirectory(this.Paths.CoreWorkspaceTypescript));
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript));
         });
 
     Target CoreWorkspaceTypescriptMeta => _ => _
@@ -108,8 +108,8 @@ partial class Build
         .Executes(() =>
         {
             NpmRun(s => s
-                .SetEnvironmentVariable("npm_config_loglevel", "error")
-                .SetWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
                 .SetCommand("test:meta"));
         });
 
@@ -121,8 +121,8 @@ partial class Build
         .Executes(() =>
         {
             NpmRun(s => s
-                .SetEnvironmentVariable("npm_config_loglevel", "error")
-                .SetWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
                 .SetCommand("test:workspace"));
         });
 
@@ -139,12 +139,12 @@ partial class Build
             using var server = new Server(this.Paths.ArtifactsCoreServer);
             await server.Ready();
             NpmRun(s => s
-                .SetEnvironmentVariable("npm_config_loglevel", "error")
-                .SetWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(this.Paths.CoreWorkspaceTypescript)
                 .SetCommand("test:client"));
         });
 
-    Target CoreWorkspaceCSharpTests => _ => _
+    Target CoreWorkspaceCSharpTest => _ => _
         .DependsOn(this.CorePublishServer)
         .DependsOn(this.CorePublishCommands)
         .DependsOn(this.CoreResetDatabase)
@@ -157,6 +157,11 @@ partial class Build
             DotNetTest(s => s
                 .SetProjectFile(this.Paths.CoreWorkspaceCSharpTests)
                 .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTests.trx")
+                .SetResultsDirectory(this.Paths.ArtifactsTests));
+
+            DotNetTest(s => s
+                .SetProjectFile(this.Paths.CoreWorkspaceCSharpDirectTests)
+                .SetLogger("trx;LogFileName=CoreWorkspaceCSharpDirectTests.trx")
                 .SetResultsDirectory(this.Paths.ArtifactsTests));
 
             DotNetTest(s => s
@@ -174,9 +179,6 @@ partial class Build
         .DependsOn(this.CoreWorkspaceTypescriptMeta)
         .DependsOn(this.CoreWorkspaceTypescriptWorkspace)
         .DependsOn(this.CoreWorkspaceTypescriptClient);
-
-    Target CoreWorkspaceCSharpTest => _ => _
-        .DependsOn(this.CoreWorkspaceCSharpTests);
 
     Target CoreWorkspaceTest => _ => _
         .DependsOn(this.CoreWorkspaceCSharpTest)

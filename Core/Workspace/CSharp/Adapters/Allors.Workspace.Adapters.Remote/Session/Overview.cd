@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Allors.Workspace.Adapters.Remote.Session">
-    <Position X="0.5" Y="0.5" Width="2.25" />
+    <Position X="0.5" Y="2.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAQAwMAAAQBABgQoAAQAAAgEAAAgAEAAAIAQAQBAAAA=</HashCode>
-      <FileName>Session.cs</FileName>
+      <HashCode>AAQAwMAAAUBABgQgAAQEAAgEAAAgAEAAAIAQBQBAAAA=</HashCode>
+      <FileName>Session\Session.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Field Name="strategyByWorkspaceId" />
@@ -14,34 +14,42 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.SessionStrategy">
-    <Position X="9.5" Y="5.25" Width="1.5" />
+    <Position X="9.5" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Strategies\SessionStrategy.cs</FileName>
+      <FileName>Session\SessionStrategy.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.WorkspaceStrategy">
-    <Position X="7.5" Y="5.25" Width="1.75" />
+    <Position X="7.5" Y="6.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Strategies\WorkspaceStrategy.cs</FileName>
+      <FileName>Session\WorkspaceStrategy.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.DatabaseStrategy">
-    <Position X="4.75" Y="5.25" Width="2.5" />
+    <Position X="4.75" Y="6.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>JAICAAAAQIBABABAEEAABAgAAAAiAAAAQBAUIAFIAAI=</HashCode>
-      <FileName>Strategies\DatabaseStrategy.cs</FileName>
+      <HashCode>JAICAAAAQIBABABAEEAABAgAAAAiAAAAQAAUIAFIAAI=</HashCode>
+      <FileName>Session\DatabaseStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Workspace.Adapters.Remote.Strategy">
-    <Position X="7.5" Y="0.5" Width="1.5" />
+    <Position X="7.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAICAAAAAIAABQBgAAIABEAAAAIAAAAAAAAQAAEAAAA=</HashCode>
-      <FileName>Strategies\Strategy.cs</FileName>
+      <FileName>Session\Strategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
+  <Interface Name="Allors.Workspace.IDatabaseStrategy" Collapsed="true">
+    <Position X="5" Y="3" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Allors.Workspace.IStrategy" Collapsed="true">
+    <Position X="7.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

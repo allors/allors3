@@ -7,10 +7,16 @@ namespace Tests.Workspace
 {
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
+    using Remote;
     using Xunit;
 
     public abstract class NodeBuilderTests : Test
     {
+        protected NodeBuilderTests(Fixture fixture) : base(fixture)
+        {
+        }
+
+
         [Fact]
         public void Class()
         {
