@@ -24,7 +24,11 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points"
+    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
+    "test:meta": "npx nx test meta-tests --skipNxCache",
+    "test:workspace": "npx nx test workspace-tests --skipNxCache",
+    "test:client": "npx nx test client-tests --skipNxCache",
+    "test:all": "npm run test:meta && npm run test:workspace && npm run test:client"
   },
   "private": true,
   "dependencies": {
