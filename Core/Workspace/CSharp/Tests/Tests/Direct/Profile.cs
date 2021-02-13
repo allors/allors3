@@ -43,7 +43,7 @@ namespace Tests.Workspace.Direct
 
             this.Workspace = new Workspace(
                 new Allors.Workspace.Meta.MetaBuilder().Build(),
-                typeof(Allors.Workspace.Domain.User),
+                 typeof(Allors.Workspace.Domain.User),
                 new WorkspaceContext(),
                 this.Database);
         }

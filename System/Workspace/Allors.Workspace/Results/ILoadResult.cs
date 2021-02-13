@@ -9,9 +9,9 @@ namespace Allors.Workspace
 
     public interface ILoadResult : IResult
     {
-        IReadOnlyDictionary<string, IObject> Objects { get; }
-
         IReadOnlyDictionary<string, IObject[]> Collections { get; }
+
+        IReadOnlyDictionary<string, IObject> Objects { get; }
 
         IReadOnlyDictionary<string, object> Values { get; }
 

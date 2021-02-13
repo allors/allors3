@@ -11,7 +11,7 @@ namespace Allors.Workspace
 
     public static partial class SessionExtensions
     {
-        public static ISessionContext Context(this ISession @this) => ((ISessionContext)@this.StateLifecycle);
+        public static ISessionContext Context(this ISession @this) => ((ISessionContext)@this.SessionLifecycle);
     }
 
     public static partial class WorkspaceExtensions

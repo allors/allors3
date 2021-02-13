@@ -3,7 +3,6 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -12,7 +11,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5B9CABEA-DCB0-4D90-88F7-D2EAE374DE28")]
-
-[assembly: InternalsVisibleTo("Workspace.Tests")]
-[assembly: InternalsVisibleTo("Workspace.Tests.Direct")]
+[assembly: Guid("B05D1EE9-0E2A-4884-9A66-0377679A30B7")]

@@ -14,7 +14,7 @@ namespace Allors.Workspace
     {
         IWorkspace Workspace { get; }
 
-        ISessionLifecycle StateLifecycle { get; }
+        ISessionLifecycle SessionLifecycle { get; }
 
         T Create<T>() where T : class, IObject;
 

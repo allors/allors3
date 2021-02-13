@@ -25,11 +25,11 @@ namespace Allors.Workspace.Adapters.Remote
         private ISet<DatabaseStrategy> newDatabaseStrategies;
         private SessionChangeSet sessionChangeSet;
 
-        public Session(Workspace workspace, ISessionLifecycle stateLifecycle)
+        public Session(Workspace workspace, ISessionLifecycle sessionLifecycle)
         {
             this.Workspace = workspace;
             this.Database = this.Workspace.Database;
-            this.StateLifecycle = stateLifecycle;
+            this.SessionLifecycle = sessionLifecycle;
             this.Workspace.RegisterSession(this);
 
             this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
@@ -37,15 +37,14 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.State = new State();
             this.sessionChangeSet = new SessionChangeSet(this);
-            this.StateLifecycle.OnInit(this);
+            this.SessionLifecycle.OnInit(this);
         }
 
         ~Session() => this.Workspace.UnregisterSession(this);
 
-        public ISessionLifecycle StateLifecycle { get; }
+        public ISessionLifecycle SessionLifecycle { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
-
         internal Workspace Workspace { get; }
 
         internal Database Database { get; }

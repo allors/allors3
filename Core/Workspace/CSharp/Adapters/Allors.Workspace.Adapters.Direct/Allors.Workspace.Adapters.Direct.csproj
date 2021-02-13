@@ -9,8 +9,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\System\Database\Allors.Database\Allors.Database.csproj" />
-    <ProjectReference Include="..\..\..\..\..\System\Protocol\Allors.Protocol.Direct\Allors.Protocol.Direct.csproj" />
-    <ProjectReference Include="..\..\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\..\..\..\..\System\Workspace\Allors.Workspace.Protocol.Direct\Allors.Workspace.Protocol.Direct.csproj" />
+    <ProjectReference Include="..\..\..\..\..\System\Workspace\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
   </ItemGroup>
 
 </Project>

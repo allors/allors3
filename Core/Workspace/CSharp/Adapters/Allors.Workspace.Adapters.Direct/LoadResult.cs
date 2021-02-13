@@ -1,36 +1,37 @@
-// <copyright file="ILoadResult.cs" company="Allors bvba">
+// <copyright file="Session.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Workspace.Adapters.Direct
 {
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using Protocol.Direct.Api.Pull;
 
-    public class LoadResult : Result, ILoadResult
+    public class LoadResult : ILoadResult
     {
         public LoadResult(Workspace workspace)
         {
             this.Workspace = workspace;
-
-            this.Objects = new Dictionary<string, IObject>();
-            this.Collections = new Dictionary<string, IObject[]>();
-            this.Values = new Dictionary<string, object>();
+            this.Collections = new ConcurrentDictionary<string, IObject[]>();
+            this.Objects = new ConcurrentDictionary<string, IObject>();
+            this.Values = new ConcurrentDictionary<string, object>();
         }
 
-        IReadOnlyDictionary<string, IObject> ILoadResult.Objects => this.Objects;
+        public bool HasErrors { get; }
+        public string ErrorMessage { get; }
+        public string[] VersionErrors { get; }
+        public string[] AccessErrors { get; }
+        public string[] MissingErrors { get; }
+        public IDerivationError[] DerivationErrors { get; }
 
         IReadOnlyDictionary<string, IObject[]> ILoadResult.Collections => this.Collections;
-
+        public ConcurrentDictionary<string, IObject[]> Collections { get; }
+        IReadOnlyDictionary<string, IObject> ILoadResult.Objects => this.Objects;
+        public ConcurrentDictionary<string, IObject> Objects { get; }
         IReadOnlyDictionary<string, object> ILoadResult.Values => this.Values;
-
-        public Dictionary<string, IObject> Objects { get; }
-
-        public Dictionary<string, IObject[]> Collections { get; }
-
-        public Dictionary<string, object> Values { get; }
+        public ConcurrentDictionary<string, object> Values { get; }
 
         private IWorkspace Workspace { get; }
 

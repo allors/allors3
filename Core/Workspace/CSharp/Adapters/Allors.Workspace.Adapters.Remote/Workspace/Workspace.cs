@@ -42,7 +42,6 @@ namespace Allors.Workspace.Adapters.Remote
         public IDictionary<Guid, IDomainDerivation> DomainDerivationById { get; }
 
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
-
         internal ObjectFactory ObjectFactory { get; }
 
         internal Database Database { get; }
