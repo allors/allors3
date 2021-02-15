@@ -11,6 +11,11 @@ namespace Allors.Database.Domain
     {
         public static PriceComponent[] GetPriceComponents(this Product @this, PriceComponent[] currentPriceComponents)
         {
+            if (currentPriceComponents == null)
+            {
+                return new PriceComponent[] { };
+            }
+
             var genericPriceComponents = currentPriceComponents.Where(priceComponent => !priceComponent.ExistProduct && !priceComponent.ExistPart && !priceComponent.ExistProductFeature).ToArray();
 
             var exclusiveProductPriceComponents = currentPriceComponents.Where(priceComponent => priceComponent.Product?.Equals(@this) == true && !priceComponent.ExistProductFeature).ToArray();
