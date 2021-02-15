@@ -143,8 +143,8 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new SalesOrderStates(this.Session).Provisional, order.SalesOrderState);
 
             var acl = new DatabaseAccessControlLists(employee)[order];
-            Assert.False(acl.CanExecute(this.M.SalesOrder.DoTransfer));
-            Assert.False(acl.CanWrite(this.M.SalesOrder.Description));
+            Assert.False(acl.CanExecute(this.M.SalesOrder.Ship));
+            Assert.True(acl.CanWrite(this.M.SalesOrder.Description));
             Assert.True(acl.CanRead(this.M.SalesOrder.Description));
         }
 

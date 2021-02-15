@@ -104,8 +104,6 @@ namespace Allors.Database.Domain
                 @this.PreviousBillToCustomer = @this.BillToCustomer;
                 @this.PreviousShipToCustomer = @this.ShipToCustomer;
 
-                @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
-
                 foreach (SalesInvoiceItem invoiceItem in @this.SalesInvoiceItems)
                 {
                     invoiceItem.Sync(@this);

@@ -81,9 +81,6 @@ namespace Allors.Database.Domain
                     new CommunicationTaskBuilder(@this.Strategy.Session).WithCommunicationEvent(@this).Build();
                 }
 
-                @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
-                @this.AddSecurityToken(@this.Owner?.OwnerSecurityToken);
-
                 var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();
 
                 var organisation = parties.OfType<Person>()

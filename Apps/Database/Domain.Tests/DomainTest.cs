@@ -72,7 +72,6 @@ namespace Allors.Database.Domain.Tests
             if (populate)
             {
                 this.Populate();
-                new Setup(this.Session, this.Config).Apply();
                 this.Session.Commit();
             }
         }

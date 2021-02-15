@@ -94,8 +94,6 @@ namespace Allors.Database.Domain
                     salesOrderItem.Sync(@this);
                 }
 
-                @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
-
                 @this.ResetPrintDocument();
 
                 if (@this.CanShip && @this.Store.AutoGenerateCustomerShipment)

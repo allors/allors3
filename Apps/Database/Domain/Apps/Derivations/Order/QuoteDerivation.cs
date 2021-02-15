@@ -41,8 +41,6 @@ namespace Allors.Database.Domain
                 {
                     quoteItem.Sync(@this);
                 }
-
-                @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
             }
         }
     }
