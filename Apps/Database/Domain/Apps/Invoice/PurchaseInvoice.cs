@@ -74,6 +74,8 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsOnPostDerive(ObjectOnPostDerive method) => this.AddSecurityToken(new SecurityTokens(this.Session()).DefaultSecurityToken);
+
         public void AppsPrint(PrintablePrint method)
         {
             if (!method.IsPrinted)
