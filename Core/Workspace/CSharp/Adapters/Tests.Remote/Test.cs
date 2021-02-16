@@ -19,7 +19,7 @@ namespace Tests.Workspace.Remote
     {
         public Workspace Workspace { get; }
 
-        public Database Database => this.Workspace.Database;
+        public DatabaseStore DatabaseStore => this.Workspace.DatabaseStore;
 
         public M M => this.Workspace.Context().M;
 

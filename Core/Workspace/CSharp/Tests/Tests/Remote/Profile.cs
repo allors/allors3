@@ -25,7 +25,7 @@ namespace Tests.Workspace.Remote
 
         public Workspace Workspace { get; }
 
-        public Database Database => this.Workspace.Database;
+        public DatabaseStore DatabaseStore => this.Workspace.DatabaseStore;
 
         public M M => this.Workspace.Context().M;
 
@@ -41,7 +41,7 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
-            var response = await this.Database.HttpClient.GetAsync(SetupUrl);
+            var response = await this.DatabaseStore.HttpClient.GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);
             await this.Login("administrator");
         }
@@ -51,7 +51,7 @@ namespace Tests.Workspace.Remote
         public async Task Login(string user)
         {
             var uri = new Uri(LoginUrl, UriKind.Relative);
-            var response = await this.Database.Login(uri, user, null);
+            var response = await this.DatabaseStore.Login(uri, user, null);
             Assert.True(response);
         }
     }

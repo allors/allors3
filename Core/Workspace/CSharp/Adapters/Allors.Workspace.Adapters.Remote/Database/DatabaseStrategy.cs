@@ -10,7 +10,6 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Push;
 
     public class DatabaseStrategy : Strategy, IDatabaseStrategy
@@ -21,13 +20,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         public DatabaseStrategy(Session session, IClass @class, long workspaceId) : base(session, workspaceId, @class) { }
 
-        public DatabaseStrategy(Session session, DatabaseObject databaseObject, long workspaceId) : base(session, workspaceId, databaseObject.Class) => this.DatabaseObject = databaseObject;
+        public DatabaseStrategy(Session session, DatabaseRoles databaseRoles, long workspaceId) : base(session, workspaceId, databaseRoles.Class) => this.DatabaseRoles = databaseRoles;
 
-        public DatabaseObject DatabaseObject { get; private set; }
+        public DatabaseRoles DatabaseRoles { get; private set; }
 
-        public long? DatabaseId => this.DatabaseObject?.DatabaseId;
+        public long? DatabaseId => this.DatabaseRoles?.DatabaseId;
 
-        public long? Version => this.DatabaseObject?.Version;
+        public long? Version => this.DatabaseRoles?.Version;
 
         public bool HasDatabaseChanges
         {
@@ -44,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         ISession IStrategy.Session => this.Session;
 
-        private bool ExistDatabaseObject => this.DatabaseObject != null;
+        private bool ExistDatabaseObject => this.DatabaseRoles != null;
 
         public bool CanRead(IRoleType roleType)
         {
@@ -53,8 +52,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Read);
-            return this.DatabaseObject.IsPermitted(permission);
+            var permission = this.Session.Workspace.DatabaseStore.GetPermission(this.Class, roleType, Operations.Read);
+            return this.DatabaseRoles.IsPermitted(permission);
         }
 
         public bool CanWrite(IRoleType roleType)
@@ -64,8 +63,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, roleType, Operations.Write);
-            return this.DatabaseObject.IsPermitted(permission);
+            var permission = this.Session.Workspace.DatabaseStore.GetPermission(this.Class, roleType, Operations.Write);
+            return this.DatabaseRoles.IsPermitted(permission);
         }
 
         public bool CanExecute(IMethodType methodType)
@@ -75,8 +74,8 @@ namespace Allors.Workspace.Adapters.Remote
                 return true;
             }
 
-            var permission = this.Session.Workspace.Database.GetPermission(this.Class, methodType, Operations.Execute);
-            return this.DatabaseObject.IsPermitted(permission);
+            var permission = this.Session.Workspace.DatabaseStore.GetPermission(this.Class, methodType, Operations.Execute);
+            return this.DatabaseRoles.IsPermitted(permission);
         }
 
         public override bool Exist(IRoleType roleType)
@@ -102,7 +101,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.ExistDatabaseObject)
                 {
-                    var databaseRole = this.DatabaseObject.GetRole(roleType);
+                    var databaseRole = this.DatabaseRoles.GetRole(roleType);
                     if (databaseRole != null)
                     {
                         if (roleType.ObjectType.IsUnit)
@@ -246,9 +245,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal void Reset()
         {
-            if (this.DatabaseObject != null)
+            if (this.DatabaseRoles != null)
             {
-                this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
+                this.DatabaseRoles = this.Session.Workspace.DatabaseStore.Get(this.DatabaseId.Value);
             }
 
             this.changedRoleByRoleType = null;
@@ -256,7 +255,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.roleByRoleType = new Dictionary<IRoleType, object>();
         }
 
-        internal void PushResponse(DatabaseObject databaseObject) => this.DatabaseObject = databaseObject;
+        internal void PushResponse(DatabaseRoles databaseRoles) => this.DatabaseRoles = databaseRoles;
 
         internal void Refresh(bool merge = false)
         {
@@ -268,9 +267,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (merge)
                 {
-                    if (this.DatabaseObject != null)
+                    if (this.DatabaseRoles != null)
                     {
-                        this.DatabaseObject = this.Session.Workspace.Database.Get(this.DatabaseId.Value);
+                        this.DatabaseRoles = this.Session.Workspace.DatabaseStore.Get(this.DatabaseId.Value);
                     }
                 }
             }
@@ -282,7 +281,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.ExistDatabaseObject)
                 {
-                    var databaseRole = this.DatabaseObject.GetRole(roleType);
+                    var databaseRole = this.DatabaseRoles.GetRole(roleType);
                     if (databaseRole != null)
                     {
                         if (roleType.ObjectType.IsUnit)
@@ -359,7 +358,7 @@ namespace Allors.Workspace.Adapters.Remote
                             }
                             else
                             {
-                                var databaseRole = this.DatabaseObject.GetRole(roleType);
+                                var databaseRole = this.DatabaseRoles.GetRole(roleType);
                                 if (databaseRole == null)
                                 {
                                     pushRequestRole.AddRole = roleIds;

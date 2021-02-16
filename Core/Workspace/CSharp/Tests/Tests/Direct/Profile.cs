@@ -42,6 +42,7 @@ namespace Tests.Workspace.Direct
             this.Database.RegisterDerivations();
 
             this.Workspace = new Workspace(
+                "Default",
                 new Allors.Workspace.Meta.MetaBuilder().Build(),
                  typeof(Allors.Workspace.Domain.User),
                 new WorkspaceContext(),

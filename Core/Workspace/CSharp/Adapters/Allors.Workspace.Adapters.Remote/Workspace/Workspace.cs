@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.StateLifecycle = state;
 
             this.ObjectFactory = new ObjectFactory(this.MetaPopulation, instance);
-            this.Database = new Database(this.MetaPopulation, httpClient);
+            this.DatabaseStore = new DatabaseStore(this.MetaPopulation, httpClient);
             this.Sessions = new HashSet<Session>();
 
             this.State = new State();
@@ -44,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
         IObjectFactory IWorkspace.ObjectFactory => this.ObjectFactory;
         internal ObjectFactory ObjectFactory { get; }
 
-        internal Database Database { get; }
+        internal DatabaseStore DatabaseStore { get; }
 
         internal State State { get; }
 
@@ -54,7 +54,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IChangeSet[] Checkpoint()
         {
-            var workspaceChangeSet = new WorkspaceChangeSet(this.Database.Checkpoint(), this.State.Checkpoint());
+            var workspaceChangeSet = this.State.Checkpoint();
             return this.Sessions.Select(v => v.Checkpoint(workspaceChangeSet)).ToArray();
         }
 

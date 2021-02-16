@@ -53,6 +53,7 @@ namespace Tests.Workspace.Remote
             }
 
             this.Workspace = new Workspace(
+                "Default",
                 new Allors.Workspace.Meta.MetaBuilder().Build(),
                 typeof(Allors.Workspace.Domain.User),
                 new WorkspaceContext(),
