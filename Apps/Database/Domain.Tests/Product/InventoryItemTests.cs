@@ -9,9 +9,9 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Xunit;
 
-    public class InventoryItemTests : DomainTest, IClassFixture<Fixture>
+    public class InventoryItemDerivationTests : DomainTest, IClassFixture<Fixture>
     {
-        public InventoryItemTests(Fixture fixture) : base(fixture) { }
+        public InventoryItemDerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void ChangedPartDeriveFacility()
@@ -26,6 +26,45 @@ namespace Allors.Database.Domain.Tests
             this.Session.Derive(false);
 
             Assert.Equal(facility, inventoryItem.Facility);
+        }
+    }
+
+    public class InventoryItemSearchStringDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public InventoryItemSearchStringDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartDeriveSearchString()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).WithSearchString("partsearch").Build();
+
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            inventoryItem.Part = part;
+            this.Session.Derive(false);
+
+            Assert.Contains(part.SearchString, inventoryItem.SearchString);
+        }
+    }
+
+    public class InventoryItemPartDisplayNameDerivationTests : DomainTest, IClassFixture<Fixture>
+    {
+        public InventoryItemPartDisplayNameDerivationTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartDerivePartDisplayName()
+        {
+            var part = new NonUnifiedPartBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Session).Build();
+            this.Session.Derive(false);
+
+            inventoryItem.Part = part;
+            this.Session.Derive(false);
+
+            Assert.Contains(part.DisplayName, inventoryItem.PartDisplayName);
         }
     }
 }

@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
 
             var acl = new DatabaseAccessControlLists(employee)[salesInvoice];
             Assert.True(acl.CanRead(this.M.SalesInvoice.Description));
-            Assert.False(acl.CanWrite(this.M.SalesInvoice.Description));
+            Assert.True(acl.CanWrite(this.M.SalesInvoice.Description));
 
             this.Session.Commit();
 
