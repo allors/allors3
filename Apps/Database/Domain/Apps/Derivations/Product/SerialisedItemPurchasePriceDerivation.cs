@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Database.Derivations;
 
-    public class SerialisedItemPurchasePriceDervivation : DomainDerivation
+    public class SerialisedItemPurchasePriceDerivation : DomainDerivation
     {
-        public SerialisedItemPurchasePriceDervivation(M m) : base(m, new Guid("d9748a88-862d-4793-8fa2-0e052c6c13c9")) =>
+        public SerialisedItemPurchasePriceDerivation(M m) : base(m, new Guid("d9748a88-862d-4793-8fa2-0e052c6c13c9")) =>
             this.Patterns = new Pattern[]
             {
                 new ChangedPattern(m.SerialisedItem.PurchaseInvoice),
