@@ -414,6 +414,16 @@ namespace Allors.Database.Domain
             setup.AddDependency(this.Meta.ObjectType, this.M.Role);
             setup.AddDependency(this.Meta.ObjectType, this.M.OrganisationRole);
             setup.AddDependency(this.Meta.ObjectType, this.M.InvoiceSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.RequestSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.QuoteSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.CustomerShipmentSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.CustomerReturnSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.DropShipmentSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.PurchaseShipmentSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.PurchaseReturnSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.IncomingTransferSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.OutgoingTransferSequence);
+            setup.AddDependency(this.Meta.ObjectType, this.M.WorkEffortSequence);
             setup.AddDependency(this.Meta.ObjectType, this.M.Singleton);
             setup.AddDependency(this.Meta.ObjectType, this.M.FacilityType);
         }
