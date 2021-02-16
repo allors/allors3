@@ -69,8 +69,6 @@ namespace Allors.Database.Domain
                 //DeriveWorkflow
                 @this.WorkItemDescription = $"PurchaseInvoice: {@this.InvoiceNumber} [{@this.BilledFrom?.PartyName}]";
 
-                @this.AddSecurityToken(new SecurityTokens(@this.Session()).DefaultSecurityToken);
-
                 //Sync
                 foreach (PurchaseInvoiceItem invoiceItem in @this.PurchaseInvoiceItems)
                 {

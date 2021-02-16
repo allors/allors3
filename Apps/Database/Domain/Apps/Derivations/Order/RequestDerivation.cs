@@ -40,8 +40,6 @@ namespace Allors.Database.Domain
                 }
 
                 @this.DerivedCurrency = @this.AssignedCurrency ?? @this.Originator?.PreferredCurrency ?? @this.Recipient?.PreferredCurrency;
-
-                @this.AddSecurityToken(new SecurityTokens(session).DefaultSecurityToken);
             }
         }
     }

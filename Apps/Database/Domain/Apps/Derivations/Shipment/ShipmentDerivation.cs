@@ -28,8 +28,6 @@ namespace Allors.Database.Domain
                 {
                     shipmentItem.Sync(@this);
                 }
-
-                @this.AddSecurityToken(new SecurityTokens(cycle.Session).DefaultSecurityToken);
             }
         }
     }

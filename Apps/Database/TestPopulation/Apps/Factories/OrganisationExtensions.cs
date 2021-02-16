@@ -28,6 +28,7 @@ namespace Allors.Database.Domain.TestPopulation
                 .Build();
 
             new UserGroups(@this.Session()).Creators.AddMember(person);
+            new UserGroups(@this.Session()).Employees.AddMember(person);
 
             person.SetPassword(password);
 

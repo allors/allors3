@@ -144,6 +144,8 @@ namespace Allors.Database.Domain
                 new PartDerivation(m),
                 new InventoryItemTransactionDerivation(m),
                 new InventoryItemDerivation(m),
+                new InventoryItemPartDisplayNameDerivation(m),
+                new InventoryItemSearchStringDerivation(m),
                 new CatalogueDerivation(m),
                 new SingletonLocalesDerivation(m),
                 new PayrollPreferenceDerivation(m),

@@ -11,9 +11,7 @@ namespace Allors.Database.Domain
     {
         public static void Sync(this InventoryItem @this, Part part)
         {
-            @this.SearchString = part.SearchString;
             @this.UnitOfMeasure = part.UnitOfMeasure;
-            @this.PartDisplayName = part.DisplayName;
         }
     }
 }
