@@ -8,7 +8,6 @@ namespace Allors.Workspace.Adapters.Direct
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Reflection;
     using Database;
     using Derivations;
     using Meta;
@@ -18,15 +17,25 @@ namespace Allors.Workspace.Adapters.Direct
 
     public class Workspace : IWorkspace
     {
-        public Workspace(IMetaPopulation metaPopulation, Type domainType, IWorkspaceLifecycle stateLifecycle, Allors.Database.IDatabase database)
+        public Workspace(string name, IMetaPopulation metaPopulation, Type domainType, IWorkspaceLifecycle stateLifecycle, Allors.Database.IDatabase database)
         {
+            this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.ObjectFactory = new Adapters.ObjectFactory(metaPopulation, domainType);
             this.StateLifecycle = stateLifecycle;
             this.Database = database;
             this.DomainDerivationById = new ConcurrentDictionary<Guid, IDomainDerivation>();
             this.Sessions = new ConcurrentDictionary<Session, object>();
+
+            this.DatabaseStore = new DatabaseStore(this.MetaPopulation);
+
+            this.State = new State();
+            this.WorkspaceOrSessionClassByWorkspaceId = new Dictionary<long, IClass>();
+
+            this.StateLifecycle.OnInit(this);
         }
+
+        public string Name { get; }
 
         public IMetaPopulation MetaPopulation { get; }
 
@@ -41,6 +50,12 @@ namespace Allors.Workspace.Adapters.Direct
         IEnumerable<ISession> IWorkspace.Sessions => this.Sessions.Keys;
 
         public IDatabase Database { get; }
+
+        internal DatabaseStore DatabaseStore { get; }
+
+        internal State State { get; }
+
+        internal Dictionary<long, IClass> WorkspaceOrSessionClassByWorkspaceId { get; }
 
         public ISession CreateSession() => new Session(this, this.StateLifecycle.CreateSessionContext());
 

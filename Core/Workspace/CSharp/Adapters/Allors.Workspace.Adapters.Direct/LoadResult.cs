@@ -5,18 +5,18 @@
 
 namespace Allors.Workspace.Adapters.Direct
 {
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
 
     public class LoadResult : ILoadResult
     {
-        public LoadResult(Workspace workspace)
+        public LoadResult(Session session, PullResult pullResult)
         {
-            this.Workspace = workspace;
-            this.Collections = new ConcurrentDictionary<string, IObject[]>();
-            this.Objects = new ConcurrentDictionary<string, IObject>();
-            this.Values = new ConcurrentDictionary<string, object>();
+            this.Workspace = session.Workspace;
+
+            this.Collections = pullResult.CollectionsByName.ToDictionary(v => v.Key, v => v.Value.Select(w => session.Instantiate(w.Id)).ToArray());
+            this.Objects = pullResult.ObjectByName.ToDictionary(v => v.Key, v => session.Instantiate(v.Value.Id));
+            this.Values = pullResult.ValueByName;
         }
 
         public bool HasErrors { get; }
@@ -27,11 +27,11 @@ namespace Allors.Workspace.Adapters.Direct
         public IDerivationError[] DerivationErrors { get; }
 
         IReadOnlyDictionary<string, IObject[]> ILoadResult.Collections => this.Collections;
-        public ConcurrentDictionary<string, IObject[]> Collections { get; }
+        public Dictionary<string, IObject[]> Collections { get; }
         IReadOnlyDictionary<string, IObject> ILoadResult.Objects => this.Objects;
-        public ConcurrentDictionary<string, IObject> Objects { get; }
+        public Dictionary<string, IObject> Objects { get; }
         IReadOnlyDictionary<string, object> ILoadResult.Values => this.Values;
-        public ConcurrentDictionary<string, object> Values { get; }
+        public Dictionary<string, object> Values { get; }
 
         private IWorkspace Workspace { get; }
 

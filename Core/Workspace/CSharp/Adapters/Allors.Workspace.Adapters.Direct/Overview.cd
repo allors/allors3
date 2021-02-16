@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Workspace.Adapters.Direct.Workspace">
+    <Position X="1" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gAQAAEAAAEAAAhAAACAAAAQEAAEAAABAAAAAAABAAIA=</HashCode>
+      <FileName>Workspace.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DatabaseStore" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Direct.DatabaseStore">
+    <Position X="4.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Database\DatabaseStore.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="CacheObjectById" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Allors.Workspace.Adapters.Direct.DatabaseRoles">
+    <Position X="7.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Database\DatabaseRoles.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

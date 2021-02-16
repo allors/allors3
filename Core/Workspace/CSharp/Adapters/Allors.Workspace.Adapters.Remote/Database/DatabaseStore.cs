@@ -22,18 +22,17 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Protocol.Json.Auth;
 
-    public class Database
+    public class DatabaseStore
     {
-        private readonly Dictionary<long, DatabaseObject> databaseObjectByDatabaseId;
+        private readonly Dictionary<long, DatabaseRoles> databaseObjectByDatabaseId;
 
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, Permission>> executePermissionByOperandTypeByClass;
 
         private long worskpaceIdCounter;
-        private DatabaseChangeSet databaseChangeSet;
 
-        public Database(IMetaPopulation metaPopulation, HttpClient httpClient)
+        public DatabaseStore(IMetaPopulation metaPopulation, HttpClient httpClient)
         {
             this.MetaPopulation = metaPopulation;
             this.HttpClient = httpClient;
@@ -44,7 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.AccessControlById = new Dictionary<long, AccessControl>();
             this.PermissionById = new Dictionary<long, Permission>();
 
-            this.databaseObjectByDatabaseId = new Dictionary<long, DatabaseObject>();
+            this.databaseObjectByDatabaseId = new Dictionary<long, DatabaseRoles>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, Permission>>();
@@ -53,11 +52,9 @@ namespace Allors.Workspace.Adapters.Remote
             this.worskpaceIdCounter = 0;
             this.WorkspaceIdByDatabaseId = new Dictionary<long, long>();
             this.DatabaseIdByWorkspaceId = new Dictionary<long, long>();
-
-            this.databaseChangeSet = new DatabaseChangeSet();
         }
 
-        ~Database() => this.HttpClient.Dispose();
+        ~DatabaseStore() => this.HttpClient.Dispose();
 
         public IMetaPopulation MetaPopulation { get; }
 
@@ -96,9 +93,9 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal DatabaseObject PushResponse(long databaseId, IClass @class)
+        internal DatabaseRoles PushResponse(long databaseId, IClass @class)
         {
-            var databaseObject = new DatabaseObject(this, databaseId, @class);
+            var databaseObject = new DatabaseRoles(this, databaseId, @class);
             this.databaseObjectByDatabaseId[databaseId] = databaseObject;
             return databaseObject;
         }
@@ -108,7 +105,7 @@ namespace Allors.Workspace.Adapters.Remote
             var ctx = new ResponseContext(this.AccessControlById, this.PermissionById);
             foreach (var syncResponseObject in syncResponse.Objects)
             {
-                var databaseObject = new DatabaseObject(this, ctx, syncResponseObject);
+                var databaseObject = new DatabaseRoles(this, ctx, syncResponseObject);
                 this.databaseObjectByDatabaseId[databaseObject.DatabaseId] = databaseObject;
                 if (!this.DatabaseIdByWorkspaceId.TryGetValue(databaseObject.DatabaseId, out var workspaceId))
                 {
@@ -190,7 +187,7 @@ namespace Allors.Workspace.Adapters.Remote
             return workspaceId;
         }
 
-        internal DatabaseObject Get(long databaseId)
+        internal DatabaseRoles Get(long databaseId)
         {
             var databaseObject = this.databaseObjectByDatabaseId[databaseId];
             if (databaseObject == null)
@@ -295,7 +292,7 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        internal IEnumerable<DatabaseObject> Get(IComposite objectType)
+        internal IEnumerable<DatabaseRoles> Get(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.DatabaseClasses);
             return this.databaseObjectByDatabaseId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);
@@ -417,18 +414,6 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(json);
-        }
-
-        internal DatabaseChangeSet Checkpoint()
-        {
-            try
-            {
-                return this.databaseChangeSet;
-            }
-            finally
-            {
-                this.databaseChangeSet = null;
-            }
         }
     }
 }

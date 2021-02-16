@@ -110,7 +110,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleTypes(association).Add(roleType);
         }
 
-        internal void Merge(WorkspaceChangeSet workspaceChangeSet, StateChangeSet checkpoint)
+        internal void Merge(StateChangeSet workspaceChangeSet, StateChangeSet checkpoint)
         {
         }
 

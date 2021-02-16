@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Workspace.Adapters.Remote
+namespace Allors.Workspace.Adapters
 {
     using System;
     using System.Collections;
@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Meta;
 
-    internal class State
+    public class State
     {
         private readonly Dictionary<IRoleType, Dictionary<long, object>> roleByAssociationByRoleType;
         private readonly Dictionary<IAssociationType, Dictionary<long, object>> associationByRoleByAssociationType;
@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRoleType, Dictionary<long, object>> changedRoleByAssociationByRoleType;
         private Dictionary<IAssociationType, Dictionary<long, object>> changedAssociationByRoleByAssociationType;
 
-        internal State()
+        public State()
         {
             this.roleByAssociationByRoleType = new Dictionary<IRoleType, Dictionary<long, object>>();
             this.associationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.changedAssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<long, object>>();
         }
 
-        internal StateChangeSet Checkpoint()
+        public StateChangeSet Checkpoint()
         {
             foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
             {
@@ -96,7 +96,7 @@ namespace Allors.Workspace.Adapters.Remote
             return changeSet;
         }
 
-        internal void GetRole(long association, IRoleType roleType, out object role)
+        public void GetRole(long association, IRoleType roleType, out object role)
         {
             if (this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation) &&
                 changedRoleByAssociation.TryGetValue(association, out role))
@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.RoleByAssociation(roleType).TryGetValue(association, out role);
         }
 
-        internal void SetRole(long association, IRoleType roleType, object role)
+        public void SetRole(long association, IRoleType roleType, object role)
         {
             if (role == null)
             {
@@ -180,7 +180,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void AddRole(long association, IRoleType roleType, long role)
+        public void AddRole(long association, IRoleType roleType, long role)
         {
             var associationType = roleType.AssociationType;
             this.GetAssociation(role, associationType, out var previousAssociation);
@@ -213,7 +213,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void RemoveRole(long association, IRoleType roleType, long role)
+        public void RemoveRole(long association, IRoleType roleType, long role)
         {
             var associationType = roleType.AssociationType;
             this.GetAssociation(role, associationType, out var previousAssociation);
@@ -240,7 +240,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void RemoveRole(long association, IRoleType roleType)
+        public void RemoveRole(long association, IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -283,7 +283,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        internal void GetAssociation(long role, IAssociationType associationType, out object association)
+        public void GetAssociation(long role, IAssociationType associationType, out object association)
         {
             if (this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole) &&
                 changedAssociationByRole.TryGetValue(role, out association))

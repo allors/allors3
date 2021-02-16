@@ -9,11 +9,10 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using Meta;
     using System.Linq;
-    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api;
     using Allors.Protocol.Json.Api.Sync;
 
-    public class DatabaseObject
+    public class DatabaseRoles
     {
         private Permission[] deniedPermissions;
         private AccessControl[] accessControls;
@@ -21,26 +20,26 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<Guid, object> roleByRelationTypeId;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseObject(Database database, long databaseId, IClass @class)
+        internal DatabaseRoles(DatabaseStore databaseStore, long databaseId, IClass @class)
         {
-            this.Database = database;
+            this.DatabaseStore = databaseStore;
             this.DatabaseId = databaseId;
             this.Class = @class;
             this.Version = 0;
         }
 
-        internal DatabaseObject(Database database, ResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal DatabaseRoles(DatabaseStore databaseStore, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
-            this.Database = database;
+            this.DatabaseStore = databaseStore;
             this.DatabaseId = long.Parse(syncResponseObject.Id);
-            this.Class = (IClass)this.Database.MetaPopulation.Find(Guid.Parse(syncResponseObject.ObjectTypeOrKey));
+            this.Class = (IClass)this.DatabaseStore.MetaPopulation.Find(Guid.Parse(syncResponseObject.ObjectTypeOrKey));
             this.Version = !string.IsNullOrEmpty(syncResponseObject.Version) ? long.Parse(syncResponseObject.Version) : 0;
             this.syncResponseRoles = syncResponseObject.Roles;
             this.SortedAccessControlIds = ctx.ReadSortedAccessControlIds(syncResponseObject.AccessControls);
             this.SortedDeniedPermissionIds = ctx.ReadSortedDeniedPermissionIds(syncResponseObject.DeniedPermissions);
         }
 
-        public Database Database { get; }
+        public DatabaseStore DatabaseStore { get; }
 
         public IClass Class { get; }
 
@@ -58,7 +57,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.syncResponseRoles != null)
                 {
-                    var metaPopulation = this.Database.MetaPopulation;
+                    var metaPopulation = this.DatabaseStore.MetaPopulation;
                     this.roleByRelationTypeId = this.syncResponseRoles.ToDictionary(
                         v => Guid.Parse(v.RoleType),
                         v =>
@@ -98,7 +97,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 null when this.SortedAccessControlIds == null => Array.Empty<AccessControl>(),
                 null => this.SortedAccessControlIds.Split(Encoding.SeparatorChar)
-                    .Select(v => this.Database.AccessControlById[long.Parse(v)])
+                    .Select(v => this.DatabaseStore.AccessControlById[long.Parse(v)])
                     .ToArray(),
                 _ => this.accessControls
             };
@@ -108,7 +107,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 null when this.SortedDeniedPermissionIds == null => Array.Empty<Permission>(),
                 null => this.SortedDeniedPermissionIds.Split(Encoding.SeparatorChar)
-                    .Select(v => this.Database.PermissionById[long.Parse(v)])
+                    .Select(v => this.DatabaseStore.PermissionById[long.Parse(v)])
                     .ToArray(),
                 _ => this.deniedPermissions
             };

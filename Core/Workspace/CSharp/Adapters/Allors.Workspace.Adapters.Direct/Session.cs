@@ -7,17 +7,25 @@ namespace Allors.Workspace.Adapters.Direct
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Data;
     using Meta;
-    using Protocol.Direct;
 
     public class Session : ISession
     {
+        private readonly Dictionary<long, Strategy> strategyByWorkspaceId;
+
+        private readonly IList<DatabaseStrategy> existingDatabaseStrategies;
+        private ISet<DatabaseStrategy> newDatabaseStrategies;
+
         public Session(Workspace workspace, ISessionLifecycle sessionLifecycle)
         {
             this.Workspace = workspace;
             this.SessionLifecycle = sessionLifecycle;
             this.Workspace.RegisterSession(this);
+
+            this.strategyByWorkspaceId = new Dictionary<long, Strategy>();
+            this.existingDatabaseStrategies = new List<DatabaseStrategy>();
+
+            this.State = new State();
 
             this.SessionLifecycle.OnInit(this);
         }
@@ -27,6 +35,8 @@ namespace Allors.Workspace.Adapters.Direct
         IWorkspace ISession.Workspace => this.Workspace;
         internal Workspace Workspace { get; }
 
+        internal State State { get; }
+
         public ISessionLifecycle SessionLifecycle { get; }
 
         public T Create<T>() where T : class, IObject => throw new System.NotImplementedException();
@@ -35,7 +45,44 @@ namespace Allors.Workspace.Adapters.Direct
 
         public T Instantiate<T>(T @object) where T : IObject => throw new System.NotImplementedException();
 
-        public IObject Instantiate(long id) => throw new System.NotImplementedException();
+        public IObject Instantiate(long id)
+        {
+            var databaseStore = this.Workspace.DatabaseStore;
+
+            if (id == 0)
+            {
+                return null;
+            }
+
+            if (!this.strategyByWorkspaceId.TryGetValue(id, out var strategy))
+            {
+                if (this.Workspace.WorkspaceOrSessionClassByWorkspaceId.TryGetValue(id, out var @class))
+                {
+                    //strategy = new WorkspaceStrategy(this, @class, workspaceId);
+                    //this.strategyByWorkspaceId[workspaceId] = strategy;
+                }
+                else
+                {
+                    //if (!databaseStore.DatabaseIdByWorkspaceId.TryGetValue(workspaceId, out var databaseId))
+                    //{
+                    //    return null;
+                    //}
+
+                    if (databaseStore.DatabaseRolesById.TryGetValue(id, out var databaseRoles))
+                    {
+                        strategy = new DatabaseStrategy(this, databaseRoles, id);
+                        this.existingDatabaseStrategies.Add((DatabaseStrategy)strategy);
+                        this.strategyByWorkspaceId[id] = strategy;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine(0);
+                    }
+                }
+            }
+
+            return strategy?.Object;
+        }
 
         public IEnumerable<IObject> Instantiate(IEnumerable<long> ids) => throw new System.NotImplementedException();
 
@@ -49,20 +96,16 @@ namespace Allors.Workspace.Adapters.Direct
 
         public Task<ICallResult> Call(string service, object args) => throw new System.NotImplementedException();
 
-        public Task<ILoadResult> Load(params Pull[] pulls)
+        public Task<ILoadResult> Load(params Data.Pull[] pulls)
         {
-            using var databaseSession = this.Workspace.Database.CreateSession();
-            var visitor = new ToDatabaseVisitor(databaseSession);
+            var pullResult = new PullResult(this.Workspace);
+            pullResult.Execute(pulls);
 
-            var loadResults = new LoadResult(this.Workspace);
-            
-            foreach (var pull in pulls)
-            {
-                var databasePull = visitor.Visit(pull);
-                // TODO: Load
-            }
-            
-            return Task.FromResult<ILoadResult>(loadResults);
+            this.Workspace.DatabaseStore.Sync(pullResult);
+
+            var loadResult = new LoadResult(this, pullResult);
+
+            return Task.FromResult<ILoadResult>(loadResult);
         }
 
         public Task<ILoadResult> Load(string service, object args) => throw new System.NotImplementedException();

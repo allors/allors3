@@ -13,9 +13,9 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Load()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
 
-            var martien = this.Database.Get(3);
+            var martien = this.DatabaseStore.Get(3);
 
             Assert.Equal(3, martien.DatabaseId);
             Assert.Equal(1003, martien.Version);
@@ -30,7 +30,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void Diff()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -42,7 +42,7 @@ namespace Tests.Workspace.Remote
                            },
             };
 
-            var requireLoad = this.Database.Diff(pullResponse);
+            var requireLoad = this.DatabaseStore.Diff(pullResponse);
 
             Assert.Empty(requireLoad.Objects);
         }
@@ -50,7 +50,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffVersion()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -62,7 +62,7 @@ namespace Tests.Workspace.Remote
                     },
             };
 
-            var requireLoad = this.Database.Diff(pullResponse);
+            var requireLoad = this.DatabaseStore.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -72,7 +72,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffAccessControl()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -84,7 +84,7 @@ namespace Tests.Workspace.Remote
                     },
             };
 
-            var requireLoad = this.Database.Diff(pullResponse);
+            var requireLoad = this.DatabaseStore.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -94,7 +94,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffChangeDeniedPermission()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -106,7 +106,7 @@ namespace Tests.Workspace.Remote
                     },
             };
 
-            var requireLoad = this.Database.Diff(pullResponse);
+            var requireLoad = this.DatabaseStore.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -116,7 +116,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffAddDeniedPermission()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -128,7 +128,7 @@ namespace Tests.Workspace.Remote
                     },
             };
 
-            var requireLoad = this.Database.Diff(pullResponse);
+            var requireLoad = this.DatabaseStore.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 
@@ -138,7 +138,7 @@ namespace Tests.Workspace.Remote
         [Fact]
         public void DiffRemoveDeniedPermission()
         {
-            this.Database.SyncResponse(Fixture.LoadData(this.M));
+            this.DatabaseStore.SyncResponse(Fixture.LoadData(this.M));
             var pullResponse = new PullResponse
             {
                 Objects =
@@ -150,7 +150,7 @@ namespace Tests.Workspace.Remote
                     },
             };
 
-            var requireLoad = this.Database.Diff(pullResponse);
+            var requireLoad = this.DatabaseStore.Diff(pullResponse);
 
             Assert.Single(requireLoad.Objects);
 

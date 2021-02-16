@@ -20,11 +20,12 @@ namespace Tests.Workspace.Remote
             var m = this.Workspace.Context().M;
 
             var session = this.Workspace.CreateSession();
-            var pull = new Pull {Extent = new Extent(m.C1.ObjectType)};
+            var pull = new Pull { Extent = new Extent(m.C1.ObjectType) };
             var result = session.Load(pull).Result;
 
             var c1s = result.GetCollection<C1>();
-            Assert.Equal(3, c1s.Length);
+            Assert.NotNull(c1s);
+            Assert.Equal(4, c1s.Length);
         }
     }
 }

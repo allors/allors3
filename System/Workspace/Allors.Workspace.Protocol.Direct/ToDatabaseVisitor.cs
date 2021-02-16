@@ -32,24 +32,18 @@ namespace Allors.Workspace.Protocol.Direct
                 Parameters = this.Visit(ws.Parameters)
             };
 
-        private Database.Data.IExtent Visit(Data.IExtent ws)
-        {
-            switch (ws)
+        private Database.Data.IExtent Visit(Data.IExtent ws) =>
+            ws switch
             {
-                case Data.Extent extent:
-                    return this.Visit(extent);
-                case Data.Except except:
-                    return this.Visit(except);
-                case Data.Intersect intersect:
-                    return this.Visit(intersect);
-                case Data.Union union:
-                    return this.Visit(union);
-            }
+                Data.Extent extent => this.Visit(extent),
+                Data.Except except => this.Visit(except),
+                Data.Intersect intersect => this.Visit(intersect),
+                Data.Union union => this.Visit(union),
+                null => null,
+                _ => throw new Exception($"Unknown implementation of IExtent: {ws.GetType()}")
+            };
 
-            throw new Exception($"Unknown implementation of IExtent: {ws.GetType()}");
-        }
-
-        private Database.Data.Extent Visit(Data.Extent ws) => new Database.Data.Extent((IComposite)Visit(ws.ObjectType));
+        private Database.Data.Extent Visit(Data.Extent ws) => new Database.Data.Extent((IComposite)this.Visit(ws.ObjectType));
 
         private Database.Data.Except Visit(Data.Except ws) => new Database.Data.Except();
 
@@ -57,12 +51,36 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Database.Data.Union Visit(Data.Union ws) => new Database.Data.Union();
 
-        private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => (IObjectType)this.metaPopulation.Find(ws.Id);
+        private Database.Meta.IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.Find(ws.Id) : null;
 
-        private Database.IObject Visit(IDatabaseObject ws) => throw new System.NotImplementedException();
+        private Database.IObject Visit(IDatabaseObject ws)
+        {
+            if (ws != null)
+            {
+                throw new System.NotImplementedException();
+            }
 
-        private Database.Data.Result[] Visit(Data.Result[] ws) => throw new System.NotImplementedException();
+            return null;
+        }
 
-        private IDictionary<string, string> Visit(IDictionary<string, string> ws) => throw new System.NotImplementedException();
+        private Database.Data.Result[] Visit(Data.Result[] ws)
+        {
+            if (ws != null)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            return null;
+        }
+
+        private IDictionary<string, string> Visit(IDictionary<string, string> ws)
+        {
+            if (ws != null)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            return null;
+        }
     }
 }
